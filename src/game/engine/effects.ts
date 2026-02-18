@@ -1,0 +1,303 @@
+import type { CombatState } from "../schemas/combat-state";
+import type { Effect } from "../schemas/effects";
+import type { PlayerState, EnemyState } from "../schemas/entities";
+import { calculateDamage, applyDamage, applyBlock } from "./damage";
+import { applyBuff } from "./buffs";
+import { drawCards } from "./deck";
+import type { RNG } from "./rng";
+
+export type EffectSource =
+  | "player"
+  | { type: "enemy" | "ally"; instanceId: string };
+
+export type EffectTarget =
+  | "player"
+  | "all_enemies"
+  | "all_allies"
+  | { type: "enemy"; instanceId: string }
+  | { type: "ally"; instanceId: string };
+
+export interface EffectContext {
+  source: EffectSource;
+  target: EffectTarget;
+}
+
+function getSourceStats(state: CombatState, source: EffectSource) {
+  if (source === "player") {
+    return {
+      strength: state.player.strength,
+      buffs: state.player.buffs,
+      focus: state.player.focus,
+    };
+  }
+  const enemy = state.enemies.find((e) => e.instanceId === source.instanceId);
+  return {
+    strength: 0,
+    buffs: enemy?.buffs ?? [],
+    focus: 0,
+  };
+}
+
+function updatePlayer(
+  state: CombatState,
+  updater: (p: PlayerState) => PlayerState
+): CombatState {
+  return { ...state, player: updater(state.player) };
+}
+
+function updateEnemy(
+  state: CombatState,
+  instanceId: string,
+  updater: (e: EnemyState) => EnemyState
+): CombatState {
+  return {
+    ...state,
+    enemies: state.enemies.map((e) =>
+      e.instanceId === instanceId ? updater(e) : e
+    ),
+  };
+}
+
+function applyDamageToTarget(
+  state: CombatState,
+  target: EffectTarget,
+  baseDamage: number,
+  source: EffectSource
+): CombatState {
+  const sourceStats = getSourceStats(state, source);
+
+  if (target === "player") {
+    const finalDmg = calculateDamage(baseDamage, sourceStats, {
+      buffs: state.player.buffs,
+    });
+    const result = applyDamage(state.player, finalDmg);
+    return updatePlayer(state, (p) => ({
+      ...p,
+      currentHp: result.currentHp,
+      block: result.block,
+    }));
+  }
+
+  if (target === "all_enemies") {
+    let s = state;
+    for (const enemy of state.enemies) {
+      if (enemy.currentHp <= 0) continue;
+      const finalDmg = calculateDamage(baseDamage, sourceStats, {
+        buffs: enemy.buffs,
+      });
+      const result = applyDamage(enemy, finalDmg);
+      s = updateEnemy(s, enemy.instanceId, (e) => ({
+        ...e,
+        currentHp: result.currentHp,
+        block: result.block,
+      }));
+    }
+    return s;
+  }
+
+  if (typeof target === "object" && target.type === "enemy") {
+    const enemy = state.enemies.find((e) => e.instanceId === target.instanceId);
+    if (!enemy || enemy.currentHp <= 0) return state;
+    const finalDmg = calculateDamage(baseDamage, sourceStats, {
+      buffs: enemy.buffs,
+    });
+    const result = applyDamage(enemy, finalDmg);
+    return updateEnemy(state, target.instanceId, (e) => ({
+      ...e,
+      currentHp: result.currentHp,
+      block: result.block,
+    }));
+  }
+
+  return state;
+}
+
+function applyBlockToTarget(
+  state: CombatState,
+  target: EffectTarget,
+  amount: number,
+  focus: number
+): CombatState {
+  if (target === "player") {
+    return updatePlayer(state, (p) => ({
+      ...p,
+      block: applyBlock(p.block, amount, focus),
+    }));
+  }
+
+  if (typeof target === "object" && target.type === "enemy") {
+    return updateEnemy(state, target.instanceId, (e) => ({
+      ...e,
+      block: applyBlock(e.block, amount, 0),
+    }));
+  }
+
+  return state;
+}
+
+function applyHealToTarget(
+  state: CombatState,
+  target: EffectTarget,
+  amount: number
+): CombatState {
+  if (target === "player") {
+    return updatePlayer(state, (p) => ({
+      ...p,
+      currentHp: Math.min(p.maxHp, p.currentHp + amount),
+    }));
+  }
+  return state;
+}
+
+export function resolveEffect(
+  state: CombatState,
+  effect: Effect,
+  ctx: EffectContext,
+  rng: RNG
+): CombatState {
+  const sourceStats = getSourceStats(state, ctx.source);
+
+  switch (effect.type) {
+    case "DAMAGE":
+      return applyDamageToTarget(state, ctx.target, effect.value, ctx.source);
+
+    case "BLOCK":
+      return applyBlockToTarget(
+        state,
+        ctx.source === "player" ? "player" : ctx.target,
+        effect.value,
+        sourceStats.focus
+      );
+
+    case "HEAL":
+      return applyHealToTarget(state, ctx.target, effect.value);
+
+    case "DRAW_CARDS":
+      return drawCards(state, effect.value, rng);
+
+    case "GAIN_ENERGY":
+      return updatePlayer(state, (p) => ({
+        ...p,
+        energyCurrent: p.energyCurrent + effect.value,
+      }));
+
+    case "GAIN_INK":
+      return updatePlayer(state, (p) => ({
+        ...p,
+        inkCurrent: Math.min(p.inkMax, p.inkCurrent + effect.value),
+      }));
+
+    case "GAIN_STRENGTH":
+      if (ctx.target === "player") {
+        return updatePlayer(state, (p) => ({
+          ...p,
+          strength: p.strength + effect.value,
+        }));
+      }
+      return state;
+
+    case "GAIN_FOCUS":
+      if (ctx.target === "player") {
+        return updatePlayer(state, (p) => ({
+          ...p,
+          focus: p.focus + effect.value,
+        }));
+      }
+      return state;
+
+    case "APPLY_BUFF":
+    case "APPLY_DEBUFF": {
+      if (!effect.buff) return state;
+
+      if (ctx.target === "player") {
+        return updatePlayer(state, (p) => ({
+          ...p,
+          buffs: applyBuff(
+            p.buffs,
+            effect.buff!,
+            effect.value,
+            effect.duration
+          ),
+        }));
+      }
+
+      if (ctx.target === "all_enemies") {
+        let s = state;
+        for (const enemy of state.enemies) {
+          if (enemy.currentHp <= 0) continue;
+          s = updateEnemy(s, enemy.instanceId, (e) => ({
+            ...e,
+            buffs: applyBuff(
+              e.buffs,
+              effect.buff!,
+              effect.value,
+              effect.duration
+            ),
+          }));
+        }
+        return s;
+      }
+
+      if (typeof ctx.target === "object" && ctx.target.type === "enemy") {
+        return updateEnemy(state, ctx.target.instanceId, (e) => ({
+          ...e,
+          buffs: applyBuff(
+            e.buffs,
+            effect.buff!,
+            effect.value,
+            effect.duration
+          ),
+        }));
+      }
+
+      return state;
+    }
+
+    case "DRAIN_INK":
+      return updatePlayer(state, (p) => ({
+        ...p,
+        inkCurrent: Math.max(0, p.inkCurrent - effect.value),
+      }));
+
+    case "EXHAUST":
+      // Handled at card-play level, not here
+      return state;
+
+    default:
+      return state;
+  }
+}
+
+export function resolveEffects(
+  state: CombatState,
+  effects: Effect[],
+  ctx: EffectContext,
+  rng: RNG
+): CombatState {
+  let current = state;
+  let damageFullyBlocked = false;
+
+  for (const effect of effects) {
+    // When an enemy attacks the player and damage was fully blocked,
+    // skip debuffs and ink drain — they only apply if damage gets through
+    if (
+      damageFullyBlocked &&
+      ctx.target === "player" &&
+      typeof ctx.source === "object" &&
+      ctx.source.type === "enemy" &&
+      (effect.type === "APPLY_DEBUFF" || effect.type === "DRAIN_INK")
+    ) {
+      continue;
+    }
+
+    // Track whether damage was fully absorbed by block
+    if (effect.type === "DAMAGE" && ctx.target === "player") {
+      const hpBefore = current.player.currentHp;
+      current = resolveEffect(current, effect, ctx, rng);
+      damageFullyBlocked = current.player.currentHp >= hpBefore;
+    } else {
+      current = resolveEffect(current, effect, ctx, rng);
+    }
+  }
+  return current;
+}

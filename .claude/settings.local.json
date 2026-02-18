@@ -4,7 +4,20 @@
       "Bash(npm install)",
       "Bash(npm run build:*)",
       "Bash(npm install:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx prisma generate:*)",
+      "mcp__Neon__create_project",
+      "mcp__Neon__get_connection_string",
+      "Bash(npx prisma db push:*)",
+      "Bash(npx tsx:*)",
+      "mcp__Neon__get_database_tables",
+      "mcp__Neon__run_sql",
+      "Bash(npx next lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

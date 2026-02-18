@@ -1,0 +1,96 @@
+"use client";
+
+import type { RoomNode } from "@/game/schemas/run-state";
+import { cn } from "@/lib/utils/cn";
+import { GAME_CONSTANTS } from "@/game/constants";
+
+interface FloorMapProps {
+  map: RoomNode[][];
+  currentRoom: number;
+  onSelectRoom: (choiceIndex: number) => void;
+}
+
+const roomIcons: Record<string, string> = {
+  COMBAT: "Sword",
+  MERCHANT: "Shop",
+  SPECIAL: "Star",
+};
+
+const roomColors: Record<string, string> = {
+  COMBAT: "border-red-500 bg-red-950/50 text-red-400",
+  MERCHANT: "border-yellow-500 bg-yellow-950/50 text-yellow-400",
+  SPECIAL: "border-purple-500 bg-purple-950/50 text-purple-400",
+};
+
+export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
+  return (
+    <div className="flex flex-col items-center gap-4 py-8">
+      <h2 className="text-xl font-bold text-white">Choose Your Path</h2>
+
+      {/* Show current room choices */}
+      {currentRoom < map.length ? (
+        <div className="space-y-4">
+          <p className="text-center text-sm text-gray-400">
+            Room {currentRoom + 1} of {GAME_CONSTANTS.ROOMS_PER_FLOOR}
+            {currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX && " — BOSS"}
+          </p>
+
+          <div className="flex gap-4">
+            {map[currentRoom]?.map((room, i) => (
+              <button
+                key={`${room.index}-${i}`}
+                className={cn(
+                  "flex w-40 flex-col items-center gap-2 rounded-lg border-2 p-4 transition hover:scale-105",
+                  roomColors[room.type] ?? "border-gray-500 bg-gray-800"
+                )}
+                onClick={() => onSelectRoom(i)}
+              >
+                <span className="text-2xl">
+                  {room.type === "COMBAT"
+                    ? "⚔"
+                    : room.type === "MERCHANT"
+                      ? "🏪"
+                      : "✨"}
+                </span>
+                <span className="text-sm font-medium">
+                  {roomIcons[room.type]}
+                </span>
+                {room.type === "COMBAT" &&
+                  room.enemyIds &&
+                  room.enemyIds.length > 0 && (
+                    <span className="text-xs text-gray-400">
+                      {room.enemyIds.length} enem
+                      {room.enemyIds.length > 1 ? "ies" : "y"}
+                    </span>
+                  )}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className="text-gray-400">Floor complete!</p>
+      )}
+
+      {/* Mini map preview */}
+      <div className="mt-8 flex gap-2">
+        {map.map((_, i) => {
+          const isCompleted = i < currentRoom;
+          const isCurrent = i === currentRoom;
+          return (
+            <div
+              key={i}
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded text-xs font-bold",
+                isCompleted && "bg-green-800 text-green-300",
+                isCurrent && "bg-white text-gray-900",
+                !isCompleted && !isCurrent && "bg-gray-700 text-gray-400"
+              )}
+            >
+              {i + 1}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

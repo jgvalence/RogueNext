@@ -1,154 +1,105 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import Link from "next/link";
+import { auth } from "@/lib/auth/config";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+  const isSignedIn = !!session?.user;
+
   return (
-    <main className="container mx-auto px-4 py-16">
-      <div className="mx-auto max-w-4xl">
-        {/* Hero Section */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-            Base Next.js Template
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gray-950 text-white">
+      {/* Background glow effects */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-900/20 blur-[128px]" />
+        <div className="absolute bottom-0 left-0 h-[300px] w-[400px] rounded-full bg-blue-900/15 blur-[96px]" />
+        <div className="absolute right-0 top-0 h-[250px] w-[350px] rounded-full bg-amber-900/10 blur-[96px]" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center gap-8 px-4 text-center">
+        {/* Title */}
+        <div className="flex flex-col items-center gap-3">
+          <span className="text-sm font-medium uppercase tracking-[0.3em] text-purple-400">
+            Deck-builder Roguelike
+          </span>
+          <h1 className="bg-gradient-to-b from-white via-white to-gray-500 bg-clip-text text-6xl font-black tracking-tight text-transparent sm:text-8xl">
+            Panlibrarium
           </h1>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            A professional Next.js starter with TypeScript, Tailwind CSS,
-            Prisma, NextAuth, and more. Built with best practices for
-            production-ready applications.
+          <p className="max-w-md text-lg text-gray-400">
+            Parcourez les livres de la mythologie. Construisez votre deck.
+            Survivez.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Link href="/dashboard">
-              <Button size="lg">Get Started</Button>
-            </Link>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
+        </div>
+
+        {/* CTA */}
+        <div className="flex flex-col items-center gap-4">
+          {isSignedIn ? (
+            <Link
+              href="/game"
+              className="group relative inline-flex items-center gap-2 rounded-lg bg-purple-600 px-10 py-4 text-lg font-bold transition-all hover:bg-purple-500 hover:shadow-[0_0_32px_rgba(147,51,234,0.4)]"
             >
-              <Button variant="outline" size="lg">
-                View on GitHub
-              </Button>
-            </a>
-          </div>
-        </div>
-
-        {/* Features */}
-        <div className="mt-24 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>TypeScript Strict</CardTitle>
-              <CardDescription>
-                Fully typed with strict TypeScript configuration
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                All code is strictly typed with noImplicitAny and strict null
-                checks enabled.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Authentication</CardTitle>
-              <CardDescription>NextAuth v5 with RBAC</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Complete authentication setup with role-based access control and
-                OAuth providers.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Database Ready</CardTitle>
-              <CardDescription>Prisma ORM with PostgreSQL</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Production-ready database schema with migrations, seed data, and
-                connection pooling.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Error Handling</CardTitle>
-              <CardDescription>Standardized error system</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Business and technical errors handled consistently across the
-                application.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Design System</CardTitle>
-              <CardDescription>Reusable UI components</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Built with Tailwind CSS and Ant Design, with custom reusable
-                components.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Production Ready</CardTitle>
-              <CardDescription>Monitoring & deployment</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600">
-                Sentry integration, Vercel deployment, and comprehensive testing
-                setup.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Tech Stack */}
-        <div className="mt-24">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
-            Built with Modern Tech Stack
-          </h2>
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-8">
-            {[
-              "Next.js 15",
-              "React 19",
-              "TypeScript",
-              "Tailwind CSS",
-              "Prisma",
-              "PostgreSQL",
-              "NextAuth",
-              "React Query",
-              "Zod",
-              "Sentry",
-            ].map((tech) => (
-              <div
-                key={tech}
-                className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900"
+              <span>Jouer</span>
+              <svg
+                className="h-5 w-5 transition-transform group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
               >
-                {tech}
-              </div>
-            ))}
-          </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/auth/signin"
+                className="group relative inline-flex items-center gap-2 rounded-lg bg-purple-600 px-10 py-4 text-lg font-bold transition-all hover:bg-purple-500 hover:shadow-[0_0_32px_rgba(147,51,234,0.4)]"
+              >
+                <span>Commencer l&apos;aventure</span>
+                <svg
+                  className="h-5 w-5 transition-transform group-hover:translate-x-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </Link>
+              <span className="text-sm text-gray-500">
+                Connectez-vous pour sauvegarder votre progression
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Feature tags */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          {[
+            "Combats tactiques",
+            "Deck-building",
+            "Mythologies du monde",
+            "Roguelike",
+          ].map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full border border-gray-800 bg-gray-900/50 px-4 py-1.5 text-xs font-medium text-gray-400"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
       </div>
+
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-950 to-transparent" />
     </main>
   );
 }

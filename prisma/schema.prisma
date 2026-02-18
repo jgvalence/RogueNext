@@ -36,6 +36,7 @@ model User {
   // Relations
   accounts Account[]
   sessions Session[]
+  runs     Run[]
 
   @@index([email])
   @@map("users")
@@ -84,122 +85,96 @@ model VerificationToken {
 }
 
 // ==============================================================================
-// EXAMPLE: E-COMMERCE MODELS (Optional - Remove if not needed)
+// GAME MODELS
 // ==============================================================================
 
-enum OrderStatus {
-  PENDING
-  PAID
-  PROCESSING
-  SHIPPED
-  DELIVERED
-  CANCELLED
-  REFUNDED
+enum RunStatus {
+  IN_PROGRESS
+  VICTORY
+  DEFEAT
+  ABANDONED
 }
 
-model Product {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  description String?  @db.Text
-  price       Int // In cents
-  currency    String   @default("USD")
-  stock       Int      @default(0)
-  images      String[] // Array of image URLs
-  isActive    Boolean  @default(true)
+model Run {
+  id     String    @id @default(cuid())
+  userId String
+  status RunStatus @default(IN_PROGRESS)
+  seed   String
+  floor  Int       @default(1)
+  room   Int       @default(0)
+  gold   Int       @default(0)
+
+  // Full game state snapshot (JSON) for resume
+  state Json
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  endedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("runs")
+}
+
+model CardDefinition {
+  id           String  @id // e.g. "strike", "fireball"
+  name         String
+  type         String // ATTACK | SKILL | POWER
+  energyCost   Int
+  inkCost      Int     @default(0)
+  targeting    String // SINGLE_ENEMY | ALL_ENEMIES | SELF | SINGLE_ALLY | ALL_ALLIES
+  rarity       String // STARTER | COMMON | UNCOMMON | RARE
+  description  String
+  effects      Json // Array of effect descriptors
+  inkedVariant Json? // Nullable: inked version effects + description
+
+  isStarterCard Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relations
-  orderItems OrderItem[]
-
-  @@index([slug])
-  @@index([isActive])
-  @@map("products")
+  @@map("card_definitions")
 }
 
-model Order {
-  id              String      @id @default(cuid())
-  orderNumber     String      @unique
-  userId          String?
-  email           String
-  status          OrderStatus @default(PENDING)
-  total           Int // In cents
-  currency        String      @default("USD")
-  stripePaymentId String?     @unique
-
-  // Shipping info (snapshot at order time)
-  shippingName    String?
-  shippingAddress String?
-  shippingCity    String?
-  shippingZip     String?
-  shippingCountry String?
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  paidAt    DateTime?
-
-  // Relations
-  items OrderItem[]
-
-  @@index([userId])
-  @@index([status])
-  @@index([createdAt])
-  @@map("orders")
-}
-
-// Snapshot pattern: preserve product details at order time
-model OrderItem {
-  id String @id @default(cuid())
-
-  orderId   String
-  productId String
-
-  // Snapshot of product data at order time
-  productName  String
-  productPrice Int // In cents
-  quantity     Int
+model EnemyDefinition {
+  id        String  @id // e.g. "skeleton_warrior"
+  name      String
+  maxHp     Int
+  speed     Int
+  abilities Json // Array of ability descriptors
+  isBoss    Boolean @default(false)
+  tier      Int     @default(1)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // Relations
-  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id])
-
-  @@index([orderId])
-  @@index([productId])
-  @@map("order_items")
+  @@map("enemy_definitions")
 }
 
-// ==============================================================================
-// AUDIT LOG (Optional - for tracking important actions)
-// ==============================================================================
-
-enum AuditAction {
-  CREATE
-  UPDATE
-  DELETE
-  LOGIN
-  LOGOUT
-  PAYMENT
-  REFUND
-}
-
-model AuditLog {
-  id        String      @id @default(cuid())
-  userId    String?
-  action    AuditAction
-  entity    String // e.g., "User", "Order", "Product"
-  entityId  String
-  metadata  Json? // Additional context
-  ipAddress String?
-  userAgent String?
+model RelicDefinition {
+  id          String @id // e.g. "ink_well"
+  name        String
+  description String
+  rarity      String // COMMON | UNCOMMON | RARE | BOSS
+  effects     Json // Array of passive effect descriptors
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([userId])
-  @@index([entity, entityId])
-  @@index([createdAt])
-  @@map("audit_logs")
+  @@map("relic_definitions")
+}
+
+model AllyDefinition {
+  id        String @id
+  name      String
+  maxHp     Int
+  speed     Int
+  abilities Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ally_definitions")
 }

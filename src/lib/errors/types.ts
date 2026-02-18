@@ -33,9 +33,8 @@ export enum ErrorCode {
   EXTERNAL_SERVICE_ERROR = "EXTERNAL_SERVICE_ERROR",
 
   // Business Logic Errors
-  INSUFFICIENT_STOCK = "INSUFFICIENT_STOCK",
-  PAYMENT_FAILED = "PAYMENT_FAILED",
   INVALID_STATE = "INVALID_STATE",
+  INSUFFICIENT_RESOURCE = "INSUFFICIENT_RESOURCE",
 }
 
 export interface ErrorDetails {
@@ -183,27 +182,26 @@ export class DatabaseError extends AppError {
 }
 
 /**
- * Business Logic Errors (operational - expected in normal flow)
+ * Game Logic Errors (operational - expected in normal flow)
  */
 
-export class InsufficientStockError extends AppError {
-  constructor(productName: string, available: number) {
+export class InvalidGameStateError extends AppError {
+  constructor(message: string) {
     super({
-      code: ErrorCode.INSUFFICIENT_STOCK,
-      message: `Insufficient stock for ${productName}`,
+      code: ErrorCode.INVALID_STATE,
+      message,
       statusCode: 400,
-      metadata: { productName, available },
     });
   }
 }
 
-export class PaymentFailedError extends AppError {
-  constructor(reason?: string) {
+export class InsufficientResourceError extends AppError {
+  constructor(resource: string, required: number, available: number) {
     super({
-      code: ErrorCode.PAYMENT_FAILED,
-      message: reason || "Payment failed",
-      statusCode: 402,
-      metadata: { reason },
+      code: ErrorCode.INSUFFICIENT_RESOURCE,
+      message: `Insufficient ${resource}: need ${required}, have ${available}`,
+      statusCode: 400,
+      metadata: { resource, required, available },
     });
   }
 }

@@ -36,6 +36,30 @@ const config: Config = {
       borderRadius: {
         "4xl": "2rem",
       },
+      keyframes: {
+        "float-up": {
+          "0%": { opacity: "1", transform: "translateX(-50%) translateY(0)" },
+          "100%": {
+            opacity: "0",
+            transform: "translateX(-50%) translateY(-40px)",
+          },
+        },
+        shake: {
+          "0%, 100%": { transform: "translateX(0)" },
+          "25%": { transform: "translateX(-4px)" },
+          "75%": { transform: "translateX(4px)" },
+        },
+        "card-play": {
+          "0%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.5", transform: "scale(1.1) translateY(-20px)" },
+          "100%": { opacity: "0", transform: "scale(0.8) translateY(-40px)" },
+        },
+      },
+      animation: {
+        "float-up": "float-up 0.8s ease-out forwards",
+        shake: "shake 0.3s ease-in-out",
+        "card-play": "card-play 0.4s ease-out forwards",
+      },
     },
   },
   plugins: [],

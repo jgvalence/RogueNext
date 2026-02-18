@@ -31,7 +31,11 @@ export default auth((req) => {
   }
 
   // Protected app routes
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) {
+  if (
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/game")
+  ) {
     if (!isAuthenticated) {
       const signInUrl = new URL("/auth/signin", req.url);
       signInUrl.searchParams.set("callbackUrl", pathname);
@@ -46,7 +50,7 @@ export default auth((req) => {
 
   // Redirect authenticated users away from auth pages
   if (isAuthenticated && pathname.startsWith("/auth/")) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    return NextResponse.redirect(new URL("/game", req.url));
   }
 
   return NextResponse.next();
