@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { createPortal } from "react-dom";
+import { useState, useCallback } from "react";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { cn } from "@/lib/utils/cn";
-import { GameCard } from "../combat/GameCard";
+import {
+  UpgradePreviewPortal,
+  type UpgradePreviewHoverInfo,
+} from "../shared/UpgradePreviewPortal";
 
 interface PreBossRoomViewProps {
   playerCurrentHp: number;
@@ -77,106 +79,13 @@ export function PreBossRoomView({
         >
           <p className="font-medium text-purple-300">Hunt for a Relic</p>
           <p className="text-sm text-purple-600">
-            Defeat a guardian — win a relic or a rare card
+            Defeat a guardian, win a relic or a rare card
           </p>
         </button>
       </div>
     </div>
   );
 }
-
-// ─── Upgrade helpers — must stay in sync with boostEffects() in engine/cards.ts
-
-/** ×1.5 (floor), min +1 */
-const MULTIPLICATIVE_BOOST = new Set(["DAMAGE", "BLOCK", "HEAL", "GAIN_INK"]);
-/** +1 */
-const ADDITIVE_BOOST = new Set([
-  "DRAW_CARDS",
-  "GAIN_ENERGY",
-  "GAIN_STRENGTH",
-  "GAIN_FOCUS",
-  "APPLY_BUFF",
-  "APPLY_DEBUFF",
-]);
-
-function computeUpgradedValue(effectType: string, value: number): number {
-  if (MULTIPLICATIVE_BOOST.has(effectType))
-    return Math.max(Math.floor(value * 1.5), value + 1);
-  if (ADDITIVE_BOOST.has(effectType)) return value + 1;
-  return value;
-}
-
-/**
- * Returns the upgraded description for a card.
- * Uses card-specific upgrade.description if defined; otherwise falls back to
- * regex-substitution on the base description (mirrors boostEffects() in the engine).
- */
-function buildUpgradedDescription(def: CardDefinition): string {
-  if (def.upgrade) return def.upgrade.description;
-
-  const boostableEffects = def.effects.filter(
-    (e) => MULTIPLICATIVE_BOOST.has(e.type) || ADDITIVE_BOOST.has(e.type)
-  );
-  if (boostableEffects.length === 0) return def.description;
-
-  let desc = def.description;
-  for (const effect of boostableEffects) {
-    const boosted = computeUpgradedValue(effect.type, effect.value);
-    // Replace the first occurrence of this exact integer (word-boundary safe)
-    desc = desc.replace(new RegExp(`\\b${effect.value}\\b`), String(boosted));
-  }
-  return desc;
-}
-
-// ─── Hover preview panel ──────────────────────────────────────────────────────
-
-type HoverInfo = { def: CardDefinition; x: number; y: number } | null;
-
-function UpgradePreviewPanel({ info }: { info: HoverInfo }) {
-  if (!info) return null;
-  const { def, x, y } = info;
-
-  const upgradedDesc = buildUpgradedDescription(def);
-  const upgradedEnergyCost =
-    def.upgrade?.energyCost !== undefined
-      ? def.upgrade.energyCost
-      : def.energyCost;
-  const upgradedDef: CardDefinition = {
-    ...def,
-    description: upgradedDesc,
-    energyCost: upgradedEnergyCost,
-  };
-
-  return createPortal(
-    <div
-      className="pointer-events-none fixed z-[9999] flex items-start gap-3 rounded-xl border border-gray-600 bg-gray-950/95 p-3 shadow-2xl"
-      style={{ left: x + 12, top: y, transform: "translateY(-50%)" }}
-    >
-      {/* Current card */}
-      <div className="flex flex-col items-center gap-1.5">
-        <p className="text-[9px] font-semibold uppercase tracking-wide text-gray-400">
-          Actuel
-        </p>
-        <GameCard definition={def} size="sm" />
-      </div>
-
-      <div className="flex items-center self-center text-lg text-amber-400">
-        →
-      </div>
-
-      {/* Upgraded card */}
-      <div className="flex flex-col items-center gap-1.5">
-        <p className="text-[9px] font-semibold uppercase tracking-wide text-yellow-400">
-          ★ Amélioré
-        </p>
-        <GameCard definition={upgradedDef} upgraded size="sm" />
-      </div>
-    </div>,
-    document.body
-  );
-}
-
-// ─── Upgrade sub-view ─────────────────────────────────────────────────────────
 
 function UpgradeSubView({
   deck,
@@ -190,17 +99,13 @@ function UpgradeSubView({
   onBack: () => void;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
-  const [hoverInfo, setHoverInfo] = useState<HoverInfo>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
+    null
+  );
 
   const handleMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>, def: CardDefinition) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      setHoverInfo({ def, x: rect.right, y: rect.top + rect.height / 2 });
+      setHoverInfo({ definition: def, anchorEl: e.currentTarget });
     },
     []
   );
@@ -218,9 +123,7 @@ function UpgradeSubView({
   return (
     <div className="flex flex-col items-center gap-6 py-8">
       <h2 className="text-2xl font-bold text-blue-400">Enchanted Anvil</h2>
-      <p className="text-gray-400">
-        Survolez une carte pour prévisualiser l&apos;amélioration
-      </p>
+      <p className="text-gray-400">Hover a card to preview the upgrade</p>
 
       <div className="flex max-w-2xl flex-wrap justify-center gap-3">
         {upgradable.map((card) => {
@@ -242,7 +145,7 @@ function UpgradeSubView({
             >
               <span className="text-xs font-bold text-white">{def.name}</span>
               <span className="text-[10px] text-gray-400">
-                {def.type} · {def.rarity}
+                {def.type} - {def.rarity}
               </span>
             </button>
           );
@@ -270,7 +173,7 @@ function UpgradeSubView({
         </button>
       </div>
 
-      {mounted && <UpgradePreviewPanel info={hoverInfo} />}
+      <UpgradePreviewPortal info={hoverInfo} />
     </div>
   );
 }

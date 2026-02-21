@@ -4,7 +4,12 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils/cn";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { CardDefinition } from "@/game/schemas/cards";
-import type { EnemyDefinition } from "@/game/schemas/entities";
+import type {
+  EnemyDefinition,
+  AllyDefinition,
+  EnemyState,
+  EnemyAbility,
+} from "@/game/schemas/entities";
 import type { InkPowerType } from "@/game/schemas/enums";
 import { EnemyCard } from "./EnemyCard";
 import { GameCard } from "./GameCard";
@@ -14,11 +19,13 @@ import { InkGauge } from "./InkGauge";
 // TEMPORARY: centralized asset registry — swap paths in src/lib/assets.ts when real art is ready
 import { BACKGROUNDS, PLAYER_AVATAR } from "@/lib/assets";
 import { playSound } from "@/lib/sound";
+import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 
 interface CombatViewProps {
   combat: CombatState;
   cardDefs: Map<string, CardDefinition>;
   enemyDefs: Map<string, EnemyDefinition>;
+  allyDefs: Map<string, AllyDefinition>;
   onPlayCard: (
     instanceId: string,
     targetId: string | null,
@@ -36,6 +43,7 @@ export function CombatView({
   combat,
   cardDefs,
   enemyDefs,
+  allyDefs,
   onPlayCard,
   onEndTurn,
   onUseInkPower,
@@ -82,6 +90,13 @@ export function CombatView({
   const needsTarget =
     selectedDef?.targeting === "SINGLE_ENEMY" ||
     selectedDef?.targeting === "SINGLE_ALLY";
+  const selectingEnemyTarget = selectedDef?.targeting === "SINGLE_ENEMY";
+  const selectingAllyTarget = selectedDef?.targeting === "SINGLE_ALLY";
+  const selfCanRetargetToAlly =
+    selectedDef?.targeting === "SELF" &&
+    selectedDef.effects.some(
+      (e) => e.type === "HEAL" || e.type === "BLOCK" || e.type === "APPLY_BUFF"
+    );
 
   const handleEnemyClick = useCallback(
     (enemyInstanceId: string) => {
@@ -91,7 +106,7 @@ export function CombatView({
         return;
       }
 
-      if (selectedCardId && needsTarget) {
+      if (selectedCardId && selectingEnemyTarget) {
         onPlayCard(selectedCardId, enemyInstanceId, pendingInked);
         setSelectedCardId(null);
         setPendingInked(false);
@@ -101,9 +116,26 @@ export function CombatView({
       isSelectingCheatKillTarget,
       onCheatKillEnemy,
       selectedCardId,
-      needsTarget,
+      selectingEnemyTarget,
       pendingInked,
       onPlayCard,
+    ]
+  );
+
+  const handleAllyClick = useCallback(
+    (allyInstanceId: string) => {
+      if (!selectedCardId || (!selectingAllyTarget && !selfCanRetargetToAlly))
+        return;
+      onPlayCard(selectedCardId, allyInstanceId, pendingInked);
+      setSelectedCardId(null);
+      setPendingInked(false);
+    },
+    [
+      selectedCardId,
+      selectingAllyTarget,
+      selfCanRetargetToAlly,
+      onPlayCard,
+      pendingInked,
     ]
   );
 
@@ -114,20 +146,27 @@ export function CombatView({
       const def = cardDefs.get(card.definitionId);
       if (!def) return;
 
-      // TEMPORARY: play card sound (file: /public/sounds/ui/card_play.ogg)
-      playSound("CARD_PLAY", 0.6);
+      const sameSelection =
+        selectedCardId === instanceId && pendingInked === useInked;
 
-      if (def.targeting === "SINGLE_ENEMY" || def.targeting === "SINGLE_ALLY") {
+      // Mobile-friendly flow: first tap selects, second tap confirms.
+      if (!sameSelection) {
         setSelectedCardId(instanceId);
         setPendingInked(useInked);
         return;
       }
 
+      if (def.targeting === "SINGLE_ENEMY" || def.targeting === "SINGLE_ALLY") {
+        return;
+      }
+
+      // TEMPORARY: play card sound (file: /public/sounds/ui/card_play.ogg)
+      playSound("CARD_PLAY", 0.6);
       onPlayCard(instanceId, null, useInked);
       setSelectedCardId(null);
       setPendingInked(false);
     },
-    [combat.hand, cardDefs, onPlayCard]
+    [combat.hand, cardDefs, onPlayCard, pendingInked, selectedCardId]
   );
 
   const isPlayerTurn = combat.phase === "PLAYER_TURN";
@@ -196,10 +235,24 @@ export function CombatView({
     setIsSelectingCheatKillTarget(false);
   }, []);
 
+  const handleGlobalClick = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (!selectedCardId) return;
+      const target = event.target as HTMLElement;
+      if (target.closest('[data-keep-selection="true"]')) return;
+      setSelectedCardId(null);
+      setPendingInked(false);
+    },
+    [selectedCardId]
+  );
+
   return (
-    <div className="flex h-full flex-col">
+    <div
+      className="relative flex h-full min-h-0 flex-col overflow-hidden"
+      onClick={handleGlobalClick}
+    >
       {/* ── BATTLEFIELD ─────────────────────────────────── */}
-      <div className="relative flex flex-1 flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-6 py-4">
+      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-2 py-2 lg:px-6 lg:py-4">
         {/* Background — TEMPORARY: shows image if present, CSS gradient otherwise */}
         {!bgFailed && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -215,13 +268,13 @@ export function CombatView({
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950 to-transparent" />
 
         {/* Turn indicator */}
-        <div className="relative z-10 flex items-center gap-2 self-start">
-          <span className="rounded bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-500">
+        <div className="relative z-10 flex items-center gap-1.5 self-start lg:gap-2">
+          <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-medium text-slate-500 lg:px-2 lg:text-xs">
             Turn {combat.turnNumber}
           </span>
           <span
             className={cn(
-              "rounded-full px-3 py-0.5 text-xs font-semibold uppercase tracking-widest transition-colors",
+              "rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide transition-colors lg:px-3 lg:text-xs lg:tracking-widest",
               turnBadgeClass
             )}
           >
@@ -230,7 +283,7 @@ export function CombatView({
         </div>
 
         {/* Enemy row */}
-        <div className="relative z-10 flex flex-1 items-center justify-center gap-6 py-4">
+        <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center gap-2 py-1 lg:gap-6 lg:py-4">
           {combat.enemies.map((enemy) => {
             const def = enemyDefs.get(enemy.definitionId);
             if (!def) return null;
@@ -240,11 +293,16 @@ export function CombatView({
                 enemy={enemy}
                 definition={def}
                 isTargeted={
-                  needsTarget &&
+                  selectingEnemyTarget &&
                   selectedCardId !== null &&
                   enemy.currentHp > 0 &&
                   !actingEnemyId
                 }
+                intentTargetLabel={resolveEnemyIntentTargetLabel(
+                  combat,
+                  enemy,
+                  def.abilities[enemy.intentIndex]
+                )}
                 isActing={actingEnemyId === enemy.instanceId}
                 isAttacking={attackingEnemyId === enemy.instanceId}
                 onClick={() => handleEnemyClick(enemy.instanceId)}
@@ -255,43 +313,92 @@ export function CombatView({
 
         {/* Target prompt */}
         {needsTarget && selectedCardId && (
-          <div className="relative z-10 animate-bounce pb-1 text-sm font-semibold text-yellow-300">
-            Choose a target for{" "}
+          <div className="relative z-10 animate-bounce pb-1 text-xs font-semibold text-yellow-300 lg:text-sm">
+            {selectingAllyTarget ? "Choose an ally for " : "Choose a target for "}
             <span className="text-white">{selectedDef?.name}</span>
           </div>
         )}
+        {!needsTarget && selectedCardId && (
+          <div className="relative z-10 pb-1 text-[10px] font-semibold text-cyan-300 lg:text-xs">
+            {selfCanRetargetToAlly
+              ? "Tap card again to self-cast, or click an ally to target them"
+              : "Tap the selected card again to play it"}
+          </div>
+        )}
         {combat.allies.length > 0 && (
-          <div className="relative z-10 mb-2 flex flex-wrap items-center justify-center gap-2">
-            {combat.allies.map((ally) => (
-              <div
-                key={ally.instanceId}
-                className={cn(
-                  "rounded border px-2 py-1 text-xs",
-                  ally.currentHp > 0
-                    ? "border-cyan-700 bg-cyan-950/50 text-cyan-200"
-                    : "border-gray-700 bg-gray-900/60 text-gray-500"
-                )}
-              >
-                {ally.name}: {Math.max(0, ally.currentHp)}/{ally.maxHp}
-              </div>
-            ))}
+          <div className="relative z-10 mb-1 flex w-full max-w-4xl flex-wrap items-stretch justify-center gap-2 lg:mb-2">
+            {combat.allies.map((ally) => {
+              const def = allyDefs.get(ally.definitionId);
+              const intent = def?.abilities[ally.intentIndex];
+              return (
+                <div
+                  key={ally.instanceId}
+                  data-keep-selection="true"
+                  onClick={
+                    (selectingAllyTarget || selfCanRetargetToAlly) &&
+                    ally.currentHp > 0 &&
+                    !actingEnemyId
+                      ? () => handleAllyClick(ally.instanceId)
+                      : undefined
+                  }
+                  className={cn(
+                    "w-44 rounded-lg border p-2 text-left transition",
+                    ally.currentHp > 0
+                      ? "border-cyan-700 bg-cyan-950/50 text-cyan-100"
+                      : "border-gray-700 bg-gray-900/60 text-gray-500",
+                    (selectingAllyTarget || selfCanRetargetToAlly) &&
+                      ally.currentHp > 0 &&
+                      !actingEnemyId &&
+                      "cursor-pointer hover:border-cyan-400 hover:bg-cyan-900/50"
+                  )}
+                >
+                  <div className="truncate text-xs font-bold">{ally.name}</div>
+                  <div className="mt-0.5 text-[11px]">
+                    HP {Math.max(0, ally.currentHp)}/{ally.maxHp} - SPD{" "}
+                    {ally.speed}
+                  </div>
+                  {ally.block > 0 && (
+                    <div className="mt-0.5 text-[10px] text-blue-300">
+                      Block {ally.block}
+                    </div>
+                  )}
+                  {!intent ? (
+                    <div className="mt-1 text-[10px] text-cyan-300/70">
+                      No ability
+                    </div>
+                  ) : (
+                    <div className="mt-1 rounded border border-cyan-800/70 bg-cyan-900/40 px-1.5 py-1">
+                      <div className="text-[10px] uppercase tracking-wide text-cyan-300">
+                        Next
+                      </div>
+                      <div className="truncate text-[11px] font-semibold text-white">
+                        {intent.name}
+                      </div>
+                      <div className="mt-0.5 text-[10px] text-cyan-200">
+                        {formatAllyIntent(intent)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
         {isSelectingCheatKillTarget && (
-          <div className="relative z-10 animate-bounce pb-1 text-sm font-semibold text-rose-300">
+          <div className="relative z-10 animate-bounce pb-1 text-xs font-semibold text-rose-300 lg:text-sm">
             DEV: choose an enemy to kill
           </div>
         )}
       </div>
 
       {/* ── PLAYER ZONE ──────────────────────────────────── */}
-      <div className="border-t border-slate-700/50 bg-slate-950">
+      <div className="shrink-0 border-t border-slate-700/50 bg-slate-950">
         {/* HUD row */}
-        <div className="flex items-center gap-3 px-4 py-3">
+        <div className="flex items-center gap-1.5 px-2 py-1.5 lg:gap-3 lg:px-4 lg:py-3">
           {/* Player avatar — TEMPORARY: shows image if present, ✦ otherwise */}
           <div
             className={cn(
-              "relative flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 bg-slate-800 text-2xl transition-colors duration-100",
+              "relative flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 bg-slate-800 text-xl transition-colors duration-100 lg:h-14 lg:w-14 lg:text-2xl",
               playerHit
                 ? "animate-player-hit border-red-500 text-red-400"
                 : "border-slate-700 text-slate-600"
@@ -316,7 +423,7 @@ export function CombatView({
           </div>
 
           {/* Ink gauge */}
-          <div className="w-60 flex-shrink-0">
+          <div className="w-36 flex-shrink-0 lg:w-60">
             <InkGauge
               player={combat.player}
               combatState={combat}
@@ -328,7 +435,7 @@ export function CombatView({
           {/* End turn */}
           <button
             className={cn(
-              "flex-shrink-0 rounded-lg px-5 py-3 text-sm font-bold uppercase tracking-wide transition-all",
+              "flex-shrink-0 rounded-lg px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-all lg:px-5 lg:py-3 lg:text-sm",
               endTurnClass
             )}
             disabled={!isPlayerTurn}
@@ -340,7 +447,7 @@ export function CombatView({
           {onCheatKillEnemy && (
             <button
               className={cn(
-                "flex-shrink-0 rounded-lg border px-3 py-2 text-xs font-bold uppercase tracking-wide transition-all",
+                "flex-shrink-0 rounded-lg border px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-all lg:px-3 lg:py-2 lg:text-xs",
                 isSelectingCheatKillTarget
                   ? "border-rose-500 bg-rose-900/60 text-rose-200"
                   : "border-rose-700 bg-rose-950/60 text-rose-300 hover:border-rose-500"
@@ -360,7 +467,7 @@ export function CombatView({
         </div>
 
         {/* Hand */}
-        <div className="border-t border-slate-800/60 px-4 pb-4 pt-3">
+        <div className="border-t border-slate-800/60 px-2 pb-2 pt-1.5 lg:px-4 lg:pb-4 lg:pt-3">
           <HandArea
             hand={combat.hand}
             combatState={combat}
@@ -371,9 +478,9 @@ export function CombatView({
           />
 
           {/* Pile counters */}
-          <div className="mt-2 flex justify-center gap-6 text-xs text-slate-600">
+          <div className="mt-1 flex justify-center gap-2 text-[10px] text-slate-600 lg:mt-2 lg:gap-6 lg:text-xs">
             <button
-              className="rounded border border-slate-700/80 bg-slate-900/70 px-2 py-1 hover:border-slate-500 hover:text-slate-300"
+              className="rounded border border-slate-700/80 bg-slate-900/70 px-1.5 py-0.5 hover:border-slate-500 hover:text-slate-300 lg:px-2 lg:py-1"
               onClick={() => {
                 setIsSelectingCheatKillTarget(false);
                 setIsSelectingRewriteTarget(false);
@@ -387,7 +494,7 @@ export function CombatView({
               </span>
             </button>
             <button
-              className="rounded border border-slate-700/80 bg-slate-900/70 px-2 py-1 hover:border-slate-500 hover:text-slate-300"
+              className="rounded border border-slate-700/80 bg-slate-900/70 px-1.5 py-0.5 hover:border-slate-500 hover:text-slate-300 lg:px-2 lg:py-1"
               onClick={() => {
                 setIsSelectingCheatKillTarget(false);
                 setIsSelectingRewriteTarget(false);
@@ -402,7 +509,7 @@ export function CombatView({
             </button>
             {combat.exhaustPile.length > 0 && (
               <button
-                className="rounded border border-slate-700/80 bg-slate-900/70 px-2 py-1 hover:border-slate-500 hover:text-slate-300"
+                className="rounded border border-slate-700/80 bg-slate-900/70 px-1.5 py-0.5 hover:border-slate-500 hover:text-slate-300 lg:px-2 lg:py-1"
                 onClick={() => {
                   setIsSelectingCheatKillTarget(false);
                   setIsSelectingRewriteTarget(false);
@@ -498,4 +605,67 @@ export function CombatView({
       )}
     </div>
   );
+}
+
+function formatAllyIntent(ability: EnemyAbility): string {
+  const effects = ability.effects.map((effect) => {
+    switch (effect.type) {
+      case "DAMAGE":
+        return `damage ${effect.value}`;
+      case "HEAL":
+        return `heal ${effect.value}`;
+      case "BLOCK":
+        return `block ${effect.value}`;
+      case "DRAW_CARDS":
+        return `draw ${effect.value}`;
+      case "GAIN_INK":
+        return `+${effect.value} ink`;
+      case "GAIN_FOCUS":
+        return `+${effect.value} focus`;
+      case "GAIN_STRENGTH":
+        return `+${effect.value} strength`;
+      case "GAIN_ENERGY":
+        return `+${effect.value} energy`;
+      case "APPLY_BUFF":
+        return `buff ${effect.buff ?? "status"} ${effect.value}`;
+      case "APPLY_DEBUFF":
+        return `debuff ${effect.buff ?? "status"} ${effect.value}`;
+      case "DRAIN_INK":
+        return `drain ${effect.value} ink`;
+      default:
+        return `${effect.type.toLowerCase()} ${effect.value}`;
+    }
+  });
+
+  const targetLabel =
+    ability.target === "ALL_ENEMIES"
+      ? "all enemies"
+      : ability.target === "LOWEST_HP_ENEMY"
+        ? "lowest HP enemy"
+        : ability.target === "ALLY_PRIORITY"
+          ? "ally priority"
+        : ability.target === "SELF"
+          ? "self"
+          : "player";
+
+  return `${targetLabel}: ${effects.join(", ")}`;
+}
+
+function resolveEnemyIntentTargetLabel(
+  combat: CombatState,
+  enemy: EnemyState,
+  ability: EnemyAbility | undefined
+): string | null {
+  if (!ability) return null;
+  const target = resolveEnemyAbilityTarget(combat, enemy, ability);
+  if (target === "player") return "You";
+  if (target === "all_enemies") return "All enemies";
+  if (target === "all_allies") return "All allies";
+  if (target.type === "ally") {
+    return combat.allies.find((a) => a.instanceId === target.instanceId)?.name ?? "Ally";
+  }
+  if (target.type === "enemy") {
+    return combat.enemies.find((e) => e.instanceId === target.instanceId)?.name ?? "Enemy";
+  }
+  return "You";
 }

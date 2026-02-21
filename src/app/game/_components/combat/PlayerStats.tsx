@@ -39,7 +39,7 @@ export function PlayerStats({ player }: PlayerStatsProps) {
   }, []);
 
   return (
-    <div className="relative flex items-center gap-4 rounded-lg border border-gray-700 bg-gray-800/50 p-3">
+    <div className="relative flex items-center gap-1.5 rounded-lg border border-gray-700 bg-gray-800/50 p-1.5 lg:gap-4 lg:p-3">
       {/* Damage/heal popups */}
       {dmgPopups.map((p) => (
         <DamageNumber
@@ -50,12 +50,16 @@ export function PlayerStats({ player }: PlayerStatsProps) {
         />
       ))}
 
-      <EnergyOrb current={player.energyCurrent} max={player.energyMax} />
+      <EnergyOrb
+        current={player.energyCurrent}
+        max={player.energyMax}
+        className="h-8 w-8 text-[11px] lg:h-14 lg:w-14 lg:text-xl"
+      />
 
-      <div className="flex-1 space-y-2">
+      <div className="flex-1 space-y-1 lg:space-y-2">
         <HpBar current={player.currentHp} max={player.maxHp} />
 
-        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+        <div className="flex flex-wrap items-center gap-1 text-[10px] lg:gap-1.5 lg:text-xs">
           {player.block > 0 && (
             <Tooltip content="Absorbs incoming damage this turn. Resets at the start of your turn.">
               <span className="cursor-default rounded bg-blue-800 px-2 py-0.5 text-blue-200">

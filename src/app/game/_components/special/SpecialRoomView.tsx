@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { CardInstance } from "@/game/schemas/cards";
 import type { RNG } from "@/game/engine/rng";
@@ -11,6 +11,10 @@ import {
 } from "@/game/engine/run";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { cn } from "@/lib/utils/cn";
+import {
+  UpgradePreviewPortal,
+  type UpgradePreviewHoverInfo,
+} from "../shared/UpgradePreviewPortal";
 
 interface SpecialRoomViewProps {
   playerCurrentHp: number;
@@ -111,14 +115,29 @@ function UpgradeRoom({
   onSkip: () => void;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
+  const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
+    null
+  );
+  const handleCardMouseEnter = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>, def: CardDefinition) => {
+      setHoverInfo({ definition: def, anchorEl: e.currentTarget });
+    },
+    []
+  );
+  const handleCardMouseLeave = useCallback(() => {
+    setHoverInfo(null);
+  }, []);
 
-  // Only show non-upgraded cards
-  const upgradable = deck.filter((c) => !c.upgraded);
+  const upgradable = deck.filter((c) => {
+    if (c.upgraded) return false;
+    const def = cardDefs.get(c.definitionId);
+    return def ? def.type !== "CURSE" && def.type !== "STATUS" : false;
+  });
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
       <h2 className="text-2xl font-bold text-blue-400">Enchanted Anvil</h2>
-      <p className="text-gray-400">Choose a card to upgrade</p>
+      <p className="text-gray-400">Hover a card to preview the upgrade</p>
 
       <div className="flex max-w-2xl flex-wrap justify-center gap-3">
         {upgradable.map((card) => {
@@ -131,8 +150,10 @@ function UpgradeRoom({
             <button
               key={card.instanceId}
               onClick={() => setSelected(card.instanceId)}
+              onMouseEnter={(e) => handleCardMouseEnter(e, def)}
+              onMouseLeave={handleCardMouseLeave}
               className={cn(
-                "flex w-32 flex-col items-center gap-1 rounded-lg border-2 p-3 text-center transition",
+                "relative flex w-32 flex-col items-center gap-1 rounded-lg border-2 p-3 text-center transition",
                 isSelected
                   ? "border-blue-400 bg-blue-950/60 ring-2 ring-blue-400"
                   : "border-gray-600 bg-gray-800/50 hover:border-gray-400"
@@ -140,9 +161,9 @@ function UpgradeRoom({
             >
               <span className="text-xs font-bold text-white">{def.name}</span>
               <span className="text-[10px] text-gray-400">
-                {def.type} · {def.rarity}
+                {def.type} - {def.rarity}
               </span>
-              <span className="text-[10px] text-gray-500">
+              <span className="line-clamp-2 text-[10px] text-gray-500">
                 {def.description}
               </span>
             </button>
@@ -170,6 +191,7 @@ function UpgradeRoom({
           Skip
         </button>
       </div>
+      <UpgradePreviewPortal info={hoverInfo} />
     </div>
   );
 }
@@ -195,7 +217,7 @@ function EventRoom({
       <p className="max-w-md text-center text-gray-400">{event.description}</p>
 
       <div className="text-xs text-gray-500">
-        HP: {playerCurrentHp}/{playerMaxHp} · Gold: {gold}
+        HP: {playerCurrentHp}/{playerMaxHp} - Gold: {gold}
       </div>
 
       <div className="flex flex-col gap-3">

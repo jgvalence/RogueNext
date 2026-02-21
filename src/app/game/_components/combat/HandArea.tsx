@@ -23,7 +23,7 @@ export function HandArea({
   onPlayCard,
 }: HandAreaProps) {
   return (
-    <div className="flex items-end justify-center gap-2 py-2">
+    <div className="flex h-[72px] items-end justify-center gap-1 overflow-visible py-0.5 lg:h-auto lg:gap-2 lg:py-2">
       {hand.map((card) => {
         const def = cardDefs.get(card.definitionId);
         if (!def) return null;

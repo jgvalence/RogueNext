@@ -28,7 +28,7 @@ export function GameLayout({ children }: GameLayoutProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-950 text-white">
+    <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-slate-950 text-white">
       <div className="fixed inset-0 z-50 hidden flex-col items-center justify-center gap-6 bg-slate-950 sm:hidden portrait:flex">
         <div className="text-5xl font-black tracking-[0.2em]">ROTATE</div>
         <p className="text-xl font-bold text-white">Rotate your device</p>
@@ -37,13 +37,13 @@ export function GameLayout({ children }: GameLayoutProps) {
         </p>
       </div>
 
-      <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/90 px-5 py-2.5 backdrop-blur-sm">
+      <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/90 px-2 py-1.5 backdrop-blur-sm sm:px-5 sm:py-2.5">
         <div className="flex items-center gap-2">
           <span className="rounded bg-slate-700 px-2.5 py-1 text-xs font-semibold uppercase tracking-widest text-slate-300">
             Floor {state.floor}
           </span>
-          <span className="text-sm text-slate-500">|</span>
-          <span className="text-sm text-slate-400">
+          <span className="text-xs text-slate-500 sm:text-sm">|</span>
+          <span className="text-xs text-slate-400 sm:text-sm">
             Room{" "}
             <span className="font-semibold text-slate-200">
               {state.currentRoom + 1}
@@ -57,7 +57,7 @@ export function GameLayout({ children }: GameLayoutProps) {
         </span>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
+          <div className="hidden items-center gap-1.5 sm:flex">
             <span className="text-sm text-red-400">HP</span>
             <span
               className={`text-sm font-bold ${
@@ -74,8 +74,8 @@ export function GameLayout({ children }: GameLayoutProps) {
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-sm text-amber-400">Gold</span>
-            <span className="text-sm font-bold text-amber-300">
+            <span className="text-xs text-amber-400 sm:text-sm">Gold</span>
+            <span className="text-xs font-bold text-amber-300 sm:text-sm">
               {state.gold}
             </span>
           </div>
@@ -97,7 +97,7 @@ export function GameLayout({ children }: GameLayoutProps) {
             </div>
           )}
 
-          <div className="flex items-center gap-1.5">
+          <div className="hidden items-center gap-1.5 sm:flex">
             <span className="text-xs text-slate-500">Deck</span>
             <span className="text-sm font-semibold text-slate-200">
               {state.deck.length}
@@ -132,7 +132,7 @@ export function GameLayout({ children }: GameLayoutProps) {
         </div>
       </div>
 
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 overflow-hidden">{children}</div>
 
       {showRelics && (
         <div

@@ -1,10 +1,18 @@
 "use client";
 
+"use client";
+
+import { useCallback, useState } from "react";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { BiomeResource } from "@/game/schemas/enums";
 import type { RelicDefinitionData } from "@/game/data/relics";
 import type { AllyDefinition } from "@/game/schemas/entities";
+import type { Effect } from "@/game/schemas/effects";
 import { GameCard } from "../combat/GameCard";
+import {
+  UpgradePreviewPortal,
+  type UpgradePreviewHoverInfo,
+} from "../shared/UpgradePreviewPortal";
 
 const RESOURCE_LABELS: Record<string, string> = {
   PAGES: "Pages",
@@ -45,6 +53,19 @@ export function RewardScreen({
   onPickAlly,
   onSkip,
 }: RewardScreenProps) {
+  const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
+    null
+  );
+  const handleCardMouseEnter = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>, card: CardDefinition) => {
+      setHoverInfo({ definition: card, anchorEl: e.currentTarget });
+    },
+    []
+  );
+  const handleCardMouseLeave = useCallback(() => {
+    setHoverInfo(null);
+  }, []);
+
   const resourceEntries = Object.entries(biomeResources).filter(
     ([, v]) => (v ?? 0) > 0
   );
@@ -57,10 +78,8 @@ export function RewardScreen({
     <div className="flex flex-col items-center gap-6 py-8">
       <h2 className="text-2xl font-bold text-green-400">Victory!</h2>
 
-      {/* Gold */}
       <div className="text-lg text-yellow-400">+{gold} Gold</div>
 
-      {/* Resources earned */}
       {resourceEntries.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2">
           {resourceEntries.map(([key, val]) => (
@@ -74,7 +93,6 @@ export function RewardScreen({
         </div>
       )}
 
-      {/* Boss: must pick one of 3 relics */}
       {isBoss && relicChoices.length > 0 && (
         <>
           <p className="text-sm font-medium text-purple-400">Choose a relic:</p>
@@ -89,29 +107,33 @@ export function RewardScreen({
         </>
       )}
 
-      {/* Elite: pick a rare card OR a relic */}
       {isElite && !isBoss && (
         <>
           <p className="text-sm text-gray-400">
             {hasCardChoices && hasRelicChoices
-              ? "Choose your reward - card or relic:"
+              ? "Choose your reward: card or relic"
               : hasCardChoices
-                ? "Choose your reward - card:"
+                ? "Choose your reward: card"
                 : hasRelicChoices
-                  ? "Choose your reward - relic:"
+                  ? "Choose your reward: relic"
                   : hasAllyChoices
-                    ? "Choose your reward - ally:"
+                    ? "Choose your reward: ally"
                     : "No reward choices available."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             {cardChoices.map((card) => (
-              <GameCard
+              <div
                 key={card.id}
-                definition={card}
-                canPlay={true}
-                onClick={() => onPickCard(card.id)}
-                size="md"
-              />
+                onMouseEnter={(e) => handleCardMouseEnter(e, card)}
+                onMouseLeave={handleCardMouseLeave}
+              >
+                <GameCard
+                  definition={card}
+                  canPlay={true}
+                  onClick={() => onPickCard(card.id)}
+                  size="md"
+                />
+              </div>
             ))}
             {relicChoices.map((relic) => (
               <RelicCard key={relic.id} relic={relic} onPick={onPickRelic} />
@@ -131,7 +153,6 @@ export function RewardScreen({
         </>
       )}
 
-      {/* Normal: pick a card or skip */}
       {!isBoss && !isElite && (
         <>
           <p className="text-sm text-gray-400">
@@ -139,13 +160,18 @@ export function RewardScreen({
           </p>
           <div className="flex gap-4">
             {cardChoices.map((card) => (
-              <GameCard
+              <div
                 key={card.id}
-                definition={card}
-                canPlay={true}
-                onClick={() => onPickCard(card.id)}
-                size="md"
-              />
+                onMouseEnter={(e) => handleCardMouseEnter(e, card)}
+                onMouseLeave={handleCardMouseLeave}
+              >
+                <GameCard
+                  definition={card}
+                  canPlay={true}
+                  onClick={() => onPickCard(card.id)}
+                  size="md"
+                />
+              </div>
             ))}
           </div>
           <button
@@ -156,6 +182,7 @@ export function RewardScreen({
           </button>
         </>
       )}
+      <UpgradePreviewPortal info={hoverInfo} />
     </div>
   );
 }
@@ -177,10 +204,74 @@ function AllyCard({
       </span>
       <span className="text-sm font-bold text-white">{ally.name}</span>
       <span className="text-xs text-cyan-200">
-        {ally.maxHp} HP · {ally.speed} SPD
+        {ally.maxHp} HP - {ally.speed} SPD
       </span>
+      <div className="mt-1 w-full space-y-1 text-left">
+        {ally.abilities.map((ability, i) => (
+          <div
+            key={`${ally.id}-ability-${i}`}
+            className="rounded border border-cyan-800/70 bg-cyan-900/40 px-2 py-1"
+          >
+            <div className="truncate text-[11px] font-semibold text-cyan-100">
+              {ability.name}
+            </div>
+            <div className="text-[10px] text-cyan-300">
+              {formatTarget(ability.target)} - {formatEffects(ability.effects)}
+            </div>
+          </div>
+        ))}
+      </div>
     </button>
   );
+}
+
+function formatTarget(target?: string): string {
+  switch (target) {
+    case "ALL_ENEMIES":
+      return "all enemies";
+    case "LOWEST_HP_ENEMY":
+      return "lowest HP enemy";
+    case "ALLY_PRIORITY":
+      return "ally priority";
+    case "SELF":
+      return "self";
+    case "PLAYER":
+    default:
+      return "player";
+  }
+}
+
+function formatEffects(effects: Effect[]): string {
+  return effects.map(formatEffect).join(", ");
+}
+
+function formatEffect(effect: Effect): string {
+  switch (effect.type) {
+    case "DAMAGE":
+      return `damage ${effect.value}`;
+    case "HEAL":
+      return `heal ${effect.value}`;
+    case "BLOCK":
+      return `block ${effect.value}`;
+    case "DRAW_CARDS":
+      return `draw ${effect.value}`;
+    case "GAIN_INK":
+      return `gain ${effect.value} ink`;
+    case "GAIN_ENERGY":
+      return `gain ${effect.value} energy`;
+    case "GAIN_FOCUS":
+      return `gain ${effect.value} focus`;
+    case "GAIN_STRENGTH":
+      return `gain ${effect.value} strength`;
+    case "APPLY_BUFF":
+      return `buff ${effect.buff ?? "status"} ${effect.value}`;
+    case "APPLY_DEBUFF":
+      return `debuff ${effect.buff ?? "status"} ${effect.value}`;
+    case "DRAIN_INK":
+      return `drain ${effect.value} ink`;
+    default:
+      return `${effect.type.toLowerCase()} ${effect.value}`;
+  }
 }
 
 function RelicCard({

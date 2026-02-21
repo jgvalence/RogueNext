@@ -13,11 +13,13 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Splatter",
         weight: 1,
+        target: "PLAYER",
         effects: [{ type: "DAMAGE", value: 7 }],
       },
       {
         name: "Ink Drain",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 3 },
           { type: "DRAIN_INK", value: 3 },
@@ -68,11 +70,13 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Quick Stab",
         weight: 2,
+        target: "LOWEST_HP_ENEMY",
         effects: [{ type: "DAMAGE", value: 5 }],
       },
       {
         name: "Poison Tip",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 3 },
           { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
@@ -93,11 +97,13 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Shadow Strike",
         weight: 1,
+        target: "PLAYER",
         effects: [{ type: "DAMAGE", value: 10 }],
       },
       {
         name: "Weaken",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 4 },
           { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
@@ -106,6 +112,7 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Drain",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 6 },
           { type: "DRAIN_INK", value: 4 },
@@ -126,11 +133,13 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Coil Strike",
         weight: 2,
+        target: "PLAYER",
         effects: [{ type: "DAMAGE", value: 8 }],
       },
       {
         name: "Venomous Bite",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 5 },
           { type: "APPLY_DEBUFF", value: 6, buff: "POISON" },
@@ -155,6 +164,7 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Ink Storm",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 10 },
           { type: "DRAIN_INK", value: 5 },
@@ -163,11 +173,13 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Ink Flood",
         weight: 1,
+        target: "PLAYER",
         effects: [{ type: "DAMAGE", value: 16 }],
       },
       {
         name: "Corrupt",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 7 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
@@ -190,6 +202,7 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Titan Crush",
         weight: 1,
+        target: "PLAYER",
         effects: [{ type: "DAMAGE", value: 17 }],
       },
       {
@@ -200,6 +213,7 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Shatter",
         weight: 1,
+        target: "LOWEST_HP_ENEMY",
         effects: [
           { type: "DAMAGE", value: 12 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
@@ -208,6 +222,7 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Grind",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 10 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
@@ -228,11 +243,13 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Serpent Strike",
         weight: 2,
+        target: "LOWEST_HP_ENEMY",
         effects: [{ type: "DAMAGE", value: 13 }],
       },
       {
         name: "Toxic Cloud",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 8 },
           { type: "APPLY_DEBUFF", value: 8, buff: "POISON" },
@@ -266,11 +283,13 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Heavy Slam",
         weight: 1,
+        target: "PLAYER",
         effects: [{ type: "DAMAGE", value: 20 }],
       },
       {
         name: "Page Storm",
         weight: 1,
+        target: "LOWEST_HP_ENEMY",
         effects: [
           { type: "DAMAGE", value: 12 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
@@ -287,6 +306,7 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Ink Devour",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 16 },
           { type: "DRAIN_INK", value: 6 },
@@ -295,11 +315,13 @@ export const enemyDefinitions: EnemyDefinition[] = [
       {
         name: "Crushing Verdict",
         weight: 1,
+        target: "PLAYER",
         effects: [{ type: "DAMAGE", value: 20 }],
       },
       {
         name: "Binding Curse",
         weight: 1,
+        target: "ALLY_PRIORITY",
         effects: [
           { type: "DAMAGE", value: 14 },
           { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 3 },

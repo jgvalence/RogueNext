@@ -84,6 +84,7 @@ export default function RunPage() {
       <GameContent
         cardDefs={cardDefsMap}
         enemyDefs={enemyDefs}
+        allyDefs={allyDefs}
         isAdmin={runData.userRole === "ADMIN"}
       />
     </GameProvider>
@@ -104,10 +105,12 @@ type GamePhase =
 function GameContent({
   cardDefs,
   enemyDefs,
+  allyDefs,
   isAdmin,
 }: {
   cardDefs: Map<string, CardDefinition>;
   enemyDefs: Map<string, EnemyDefinition>;
+  allyDefs: Map<string, AllyDefinition>;
   isAdmin: boolean;
 }) {
   const { state, dispatch, rng } = useGame();
@@ -419,7 +422,7 @@ function GameContent({
 
   return (
     <GameLayout>
-      <div className="flex min-h-[calc(100vh-3rem)] flex-col">
+      <div className="flex h-full min-h-0 flex-col overflow-hidden">
         {phase === "MAP" && (
           <FloorMap
             map={state.map}
@@ -433,6 +436,7 @@ function GameContent({
             combat={state.combat}
             cardDefs={cardDefs}
             enemyDefs={enemyDefs}
+            allyDefs={allyDefs}
             onPlayCard={(instanceId, targetId, useInked) =>
               dispatch({
                 type: "PLAY_CARD",

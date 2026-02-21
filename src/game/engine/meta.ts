@@ -26,9 +26,9 @@ const ALL_RESOURCES = Object.values(BIOME_RESOURCE) as BiomeResource[];
 /**
  * Calcule les ressources gagnées pour un combat donné.
  * - Normal : base faible
- * - Élite  : ×2
- * - Boss   : ×4
- * - 25% de chance de gagner 1 ressource d'un biome aléatoire différent
+ * - Élite  : ×1.5
+ * - Boss   : ×3
+ * - 10% de chance de gagner 1 ressource d'un biome aléatoire différent
  */
 export function getResourcesForCombat(
   biome: BiomeType,
@@ -37,12 +37,12 @@ export function getResourcesForCombat(
   floor: number,
   rng?: RNG
 ): Partial<Record<BiomeResource, number>> {
-  const base = 2 + (floor - 1);
+  const base = 1 + (floor - 1);
   let amount = base;
   if (isBoss) {
-    amount = Math.round(base * 4);
+    amount = Math.round(base * 3);
   } else if (isElite) {
-    amount = Math.round(base * 2);
+    amount = Math.round(base * 1.5);
   }
 
   const primaryResource = BIOME_RESOURCE[biome];
@@ -50,8 +50,8 @@ export function getResourcesForCombat(
     [primaryResource]: amount,
   };
 
-  // 25% chance d'obtenir 1 ressource d'un biome aléatoire différent
-  if (rng && rng.next() < 0.25) {
+  // 10% chance d'obtenir 1 ressource d'un biome aléatoire différent
+  if (rng && rng.next() < 0.1) {
     const otherResources = ALL_RESOURCES.filter((r) => r !== primaryResource);
     const bonus = rng.pick(otherResources);
     result[bonus] = (result[bonus] ?? 0) + 1;

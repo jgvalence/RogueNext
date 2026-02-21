@@ -1,14 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
+import type { CardDefinition } from "@/game/schemas/cards";
 import type { BiomeType, Rarity } from "@/game/schemas/enums";
+import {
+  UpgradePreviewPortal,
+  type UpgradePreviewHoverInfo,
+} from "@/app/game/_components/shared/UpgradePreviewPortal";
 
 type CollectionTypeFilter = "ALL" | "ATTACK" | "DEFENSE" | "POWER";
 type LockFilter = "ALL" | "UNLOCKED" | "LOCKED";
 
 export interface CollectionCardRow {
   id: string;
+  definition: CardDefinition;
   name: string;
   biome: BiomeType;
   type: "ATTACK" | "SKILL" | "POWER";
@@ -41,6 +47,18 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
   const [rarity, setRarity] = useState<Rarity | "ALL">("ALL");
   const [lock, setLock] = useState<LockFilter>("ALL");
   const [query, setQuery] = useState("");
+  const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
+    null
+  );
+  const handleCardMouseEnter = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>, definition: CardDefinition) => {
+      setHoverInfo({ definition, anchorEl: e.currentTarget });
+    },
+    []
+  );
+  const handleCardMouseLeave = useCallback(() => {
+    setHoverInfo(null);
+  }, []);
 
   const filtered = useMemo(() => {
     return cards
@@ -148,7 +166,9 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
           {filtered.map((card) => (
             <div
               key={card.id}
-              className={`rounded-lg border p-3 ${
+              onMouseEnter={(e) => handleCardMouseEnter(e, card.definition)}
+              onMouseLeave={handleCardMouseLeave}
+              className={`relative rounded-lg border p-3 ${
                 card.unlocked
                   ? "border-emerald-700/50 bg-emerald-950/20"
                   : "border-rose-800/50 bg-rose-950/20"
@@ -186,9 +206,11 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
                   )}
                 </div>
               )}
+
             </div>
           ))}
         </div>
+        <UpgradePreviewPortal info={hoverInfo} />
       </div>
     </div>
   );

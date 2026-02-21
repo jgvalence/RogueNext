@@ -202,7 +202,13 @@ function createGameReducer(deps: ReducerDeps) {
         if (!enemy || enemy.currentHp <= 0) return state;
         const def = enemyDefs.get(enemy.definitionId);
         if (!def) return state;
-        let combat = executeOneEnemyTurn(state.combat, enemy, def, rng);
+        let combat = executeOneEnemyTurn(
+          state.combat,
+          enemy,
+          def,
+          rng,
+          enemyDefs
+        );
         combat = checkCombatEnd(combat);
         return { ...state, combat };
       }

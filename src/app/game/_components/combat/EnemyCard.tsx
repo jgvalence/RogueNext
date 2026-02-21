@@ -17,6 +17,7 @@ import { playSound } from "@/lib/sound";
 interface EnemyCardProps {
   enemy: EnemyState;
   definition: EnemyDefinition;
+  intentTargetLabel?: string | null;
   isTargeted?: boolean;
   isActing?: boolean;
   isAttacking?: boolean;
@@ -26,6 +27,7 @@ interface EnemyCardProps {
 export function EnemyCard({
   enemy,
   definition,
+  intentTargetLabel = null,
   isTargeted = false,
   isActing = false,
   isAttacking = false,
@@ -60,8 +62,12 @@ export function EnemyCard({
     setDmgPopups((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
-  const cardW = definition.isBoss ? "w-52" : "w-40";
-  const artH = definition.isBoss ? "h-36" : "h-28";
+  const cardW = definition.isBoss
+    ? "w-24 lg:w-36 xl:w-52"
+    : "w-20 lg:w-32 xl:w-40";
+  const artH = definition.isBoss
+    ? "h-14 lg:h-24 xl:h-36"
+    : "h-12 lg:h-20 xl:h-28";
 
   let stateClasses =
     "border-gray-600 cursor-pointer hover:border-red-500 hover:scale-105";
@@ -82,6 +88,7 @@ export function EnemyCard({
 
   return (
     <div
+      data-keep-selection="true"
       className={cn(
         "relative flex flex-col overflow-hidden rounded-xl border-2 bg-gray-900 transition-colors duration-150",
         isAttacking && "animate-enemy-attack",
@@ -167,18 +174,23 @@ export function EnemyCard({
       </div>
 
       {/* Info area */}
-      <div className="flex flex-col gap-1.5 p-2">
+      <div className="flex flex-col gap-1 p-1.5 lg:gap-1.5 lg:p-2">
         {/* Intent */}
         {!isDead && intent && (
-          <div className="rounded bg-gray-800 px-2 py-1">
+          <div className="rounded bg-gray-800 px-1.5 py-0.5 lg:px-2 lg:py-1">
             <div className="mb-0.5 flex items-center gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+              <span className="text-[9px] font-semibold uppercase tracking-wide text-gray-400 lg:text-[10px]">
                 Next:
               </span>
-              <span className="truncate text-[10px] font-medium text-gray-200">
+              <span className="truncate text-[9px] font-medium text-gray-200 lg:text-[10px]">
                 {intent.name}
               </span>
             </div>
+            {intentTargetLabel && (
+              <div className="mb-0.5 text-[9px] text-amber-300 lg:text-[10px]">
+                Target: {intentTargetLabel}
+              </div>
+            )}
             <div className="flex flex-wrap gap-1">{formatIntent(intent)}</div>
           </div>
         )}
@@ -187,7 +199,9 @@ export function EnemyCard({
         <div
           className={cn(
             "font-bold leading-tight",
-            definition.isBoss ? "text-sm text-yellow-300" : "text-xs text-white"
+            definition.isBoss
+              ? "text-xs text-yellow-300 lg:text-sm"
+              : "text-[11px] text-white lg:text-xs"
           )}
         >
           {enemy.name}
@@ -221,7 +235,7 @@ function formatIntent(ability: EnemyAbility) {
         parts.push(
           <span
             key={`d-${parts.length}`}
-            className="text-[11px] font-bold text-red-400"
+            className="text-[9px] font-bold text-red-400 lg:text-[11px]"
           >
             ⚔ {effect.value}
           </span>
@@ -231,7 +245,7 @@ function formatIntent(ability: EnemyAbility) {
         parts.push(
           <span
             key={`b-${parts.length}`}
-            className="text-[11px] font-bold text-blue-400"
+            className="text-[9px] font-bold text-blue-400 lg:text-[11px]"
           >
             🛡 {effect.value}
           </span>
@@ -241,7 +255,7 @@ function formatIntent(ability: EnemyAbility) {
         parts.push(
           <span
             key={`x-${parts.length}`}
-            className="text-[10px] text-purple-400"
+            className="text-[9px] text-purple-400 lg:text-[10px]"
           >
             {effect.buff} {effect.value}
           </span>
@@ -249,7 +263,10 @@ function formatIntent(ability: EnemyAbility) {
         break;
       case "DRAIN_INK":
         parts.push(
-          <span key={`i-${parts.length}`} className="text-[10px] text-cyan-400">
+          <span
+            key={`i-${parts.length}`}
+            className="text-[9px] text-cyan-400 lg:text-[10px]"
+          >
             -{effect.value}✦
           </span>
         );

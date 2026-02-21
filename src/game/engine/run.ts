@@ -120,7 +120,7 @@ export function generateFloorMap(
     ...Array<"SPECIAL">(numSpecial).fill("SPECIAL"),
     ...Array<"COMBAT">(6 - numSpecial).fill("COMBAT"),
   ];
-  const shuffledMiddle = rng.shuffle(middleTypes);
+  const shuffledMiddle = buildBalancedMiddleRooms(middleTypes, rng);
 
   const PRE_BOSS_ROOM_INDEX = GAME_CONSTANTS.BOSS_ROOM_INDEX - 1; // 8
 
@@ -195,6 +195,54 @@ export function generateFloorMap(
   }
 
   return map;
+}
+
+function buildBalancedMiddleRooms(
+  middleTypes: Array<"COMBAT" | "MERCHANT" | "SPECIAL">,
+  rng: RNG
+): Array<"COMBAT" | "MERCHANT" | "SPECIAL"> {
+  // Avoid long early-combat streaks:
+  // at least one non-combat in the first 5 slots, and at most one non-combat in last 2.
+  const isAcceptable = (rooms: Array<"COMBAT" | "MERCHANT" | "SPECIAL">) => {
+    const firstFiveHaveNonCombat = rooms
+      .slice(0, 5)
+      .some((t) => t !== "COMBAT");
+    const tailNonCombatCount = rooms
+      .slice(5)
+      .filter((t) => t !== "COMBAT").length;
+    return firstFiveHaveNonCombat && tailNonCombatCount <= 1;
+  };
+
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const shuffled = rng.shuffle(middleTypes);
+    if (isAcceptable(shuffled)) return shuffled;
+  }
+
+  // Fallback: keep randomness but force a single early non-combat if needed.
+  const fallback = rng.shuffle(middleTypes);
+  const firstFiveHaveNonCombat = fallback
+    .slice(0, 5)
+    .some((t) => t !== "COMBAT");
+  if (firstFiveHaveNonCombat) return fallback;
+
+  const lateNonCombatIndex = fallback.findIndex(
+    (t, idx) => idx >= 5 && t !== "COMBAT"
+  );
+  if (lateNonCombatIndex === -1) return fallback;
+
+  const earlyCombatSlots = fallback
+    .map((t, idx) => ({ t, idx }))
+    .filter((x) => x.idx < 5 && x.t === "COMBAT")
+    .map((x) => x.idx);
+  if (earlyCombatSlots.length === 0) return fallback;
+
+  const swapWith = rng.pick(earlyCombatSlots);
+  const result = [...fallback];
+  [result[swapWith], result[lateNonCombatIndex]] = [
+    result[lateNonCombatIndex]!,
+    result[swapWith]!,
+  ];
+  return result;
 }
 
 /**
@@ -314,12 +362,18 @@ export function completeCombat(
   let pendingBiomeChoices: RunState["pendingBiomeChoices"] = null;
 
   if (isBossRoom && !isFinalFloor) {
-    // Draw 2 distinct biomes from AVAILABLE_BIOMES
-    const shuffled = rng.shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);
-    pendingBiomeChoices = [shuffled[0]!, shuffled[1]!] as [
-      BiomeType,
-      BiomeType,
-    ];
+    if (runState.floor === 1) {
+      // First transition (floor 1 -> 2): always include LIBRARY.
+      const firstNonLibrary = rng.pick(GAME_CONSTANTS.AVAILABLE_BIOMES);
+      pendingBiomeChoices = ["LIBRARY", firstNonLibrary];
+    } else {
+      // Floors 2+: draw 2 distinct non-LIBRARY biomes.
+      const shuffled = rng.shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);
+      pendingBiomeChoices = [shuffled[0]!, shuffled[1]!] as [
+        BiomeType,
+        BiomeType,
+      ];
+    }
   }
 
   // Accumulate biome resources earned this combat

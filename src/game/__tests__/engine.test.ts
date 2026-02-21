@@ -37,6 +37,7 @@ import {
 import { generateCombatRewards, addCardToRunDeck } from "../engine/rewards";
 import { applyRelicsOnCombatStart } from "../engine/relics";
 import { resolveEffects, type EffectContext } from "../engine/effects";
+import { executeOneEnemyTurn } from "../engine/enemies";
 import {
   computeUnlockedCardIds,
   getCardUnlockDetails,
@@ -44,6 +45,7 @@ import {
 import type { CombatState } from "../schemas/combat-state";
 import type { Effect } from "../schemas/effects";
 import { DEFAULT_META_BONUSES } from "../schemas/meta";
+import { GAME_CONSTANTS } from "../constants";
 import { buildAllyDefsMap, buildCardDefsMap, buildEnemyDefsMap } from "../data";
 import { relicDefinitions } from "../data/relics";
 
@@ -221,6 +223,77 @@ describe("Deck operations", () => {
     const result = moveFromDiscardToHand(state, "c1");
     expect(result.discardPile).toHaveLength(0);
     expect(result.hand).toHaveLength(1);
+  });
+
+  it("can play a SELF heal card on an ally target", () => {
+    const rng = createRNG("heal-ally-target");
+    const healingScript = [...cardDefs.values()].find(
+      (c) => c.name === "Healing Script"
+    );
+    expect(healingScript).toBeDefined();
+    if (!healingScript) return;
+
+    const state = makeMinimalCombat({
+      hand: [
+        {
+          instanceId: "heal1",
+          definitionId: healingScript.id,
+          upgraded: false,
+        },
+      ],
+      allies: [
+        {
+          instanceId: "a1",
+          definitionId: "scribe_apprentice",
+          name: "Scribe Apprentice",
+          currentHp: 10,
+          maxHp: 24,
+          block: 0,
+          speed: 7,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+
+    const result = playCard(state, "heal1", "a1", false, cardDefs, rng);
+    expect(result.allies[0]?.currentHp).toBeGreaterThan(10);
+    expect(result.player.currentHp).toBe(80);
+  });
+
+  it("can play a SELF block card on an ally target", () => {
+    const rng = createRNG("block-ally-target");
+    const fortify = [...cardDefs.values()].find((c) => c.name === "Fortify");
+    expect(fortify).toBeDefined();
+    if (!fortify) return;
+
+    const state = makeMinimalCombat({
+      hand: [
+        {
+          instanceId: "block1",
+          definitionId: fortify.id,
+          upgraded: false,
+        },
+      ],
+      player: { ...makeMinimalCombat().player, block: 0 },
+      allies: [
+        {
+          instanceId: "a1",
+          definitionId: "scribe_apprentice",
+          name: "Scribe Apprentice",
+          currentHp: 24,
+          maxHp: 24,
+          block: 0,
+          speed: 7,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+
+    const result = playCard(state, "block1", "a1", false, cardDefs, rng);
+    expect(result.allies[0]?.block).toBeGreaterThan(0);
+    expect(result.player.block).toBe(0);
   });
 });
 
@@ -600,6 +673,359 @@ describe("Combat flow", () => {
     expect(result.player.currentHp).toBeLessThan(80);
   });
 
+  it("ALLY_PRIORITY enemy attacks hit an ally first when one is alive", () => {
+    const rng = createRNG("enemy-target-ally");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 80 },
+      allies: [
+        {
+          instanceId: "ally-1",
+          definitionId: "scribe_apprentice",
+          name: "Scribe Apprentice",
+          currentHp: 8,
+          maxHp: 24,
+          block: 0,
+          speed: 7,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+      enemies: [
+        {
+          instanceId: "e1",
+          definitionId: "ink_slime",
+          name: "Ink Slime",
+          currentHp: 14,
+          maxHp: 14,
+          block: 0,
+          speed: 2,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+    const enemy = state.enemies[0]!;
+    const baseDef = enemyDefs.get(enemy.definitionId);
+    expect(baseDef).toBeDefined();
+    if (!baseDef) return;
+    const def = {
+      ...baseDef,
+      abilities: baseDef.abilities.map((a, i) =>
+        i === 0 ? { ...a, target: "ALLY_PRIORITY" as const } : a
+      ),
+    };
+
+    const result = executeOneEnemyTurn(state, enemy, def, rng, enemyDefs);
+    expect(result.allies[0]?.currentHp).toBeLessThan(8);
+    expect(result.player.currentHp).toBe(80);
+  });
+
+  it("legacy damage fallback targets player when no explicit target is set", () => {
+    const rng = createRNG("enemy-target-player-fallback");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 80 },
+      allies: [
+        {
+          instanceId: "ally-1",
+          definitionId: "scribe_apprentice",
+          name: "Scribe Apprentice",
+          currentHp: 8,
+          maxHp: 24,
+          block: 0,
+          speed: 7,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+      enemies: [
+        {
+          instanceId: "e1",
+          definitionId: "ink_slime",
+          name: "Ink Slime",
+          currentHp: 14,
+          maxHp: 14,
+          block: 0,
+          speed: 2,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+    const enemy = state.enemies[0]!;
+    const def = enemyDefs.get(enemy.definitionId);
+    expect(def).toBeDefined();
+    if (!def) return;
+
+    const result = executeOneEnemyTurn(state, enemy, def, rng, enemyDefs);
+    expect(result.player.currentHp).toBeLessThan(80);
+    expect(result.allies[0]?.currentHp).toBe(8);
+  });
+
+  it("ally death is not permanent across combats", () => {
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const runState = createNewRun(
+      "run-ally-reset",
+      "run-ally-reset",
+      starterCards,
+      createRNG("run-ally-reset"),
+      { ...DEFAULT_META_BONUSES, allySlots: 1 }
+    );
+    runState.allyIds = ["scribe_apprentice"];
+
+    const firstCombat = initCombat(
+      runState,
+      ["ink_slime"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("run-ally-reset-1")
+    );
+    expect(firstCombat.allies[0]?.currentHp).toBe(24);
+
+    // Simulate ally death during a combat snapshot; run master state keeps only ally ids.
+    const deadCombatRun = { ...runState, combat: firstCombat };
+    deadCombatRun.combat!.allies[0]!.currentHp = 0;
+
+    const nextCombat = initCombat(
+      deadCombatRun,
+      ["ink_slime"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("run-ally-reset-2")
+    );
+    expect(nextCombat.allies[0]?.currentHp).toBe(24);
+  });
+
+  it("chapter guardian triggers phase 2 once at half HP", () => {
+    const rng = createRNG("chapter-phase2");
+    const def = enemyDefs.get("chapter_guardian");
+    expect(def).toBeDefined();
+    if (!def) return;
+
+    const state = makeMinimalCombat({
+      enemies: [
+        {
+          instanceId: "boss-1",
+          definitionId: "chapter_guardian",
+          name: "Chapter Guardian",
+          currentHp: 70,
+          maxHp: 160,
+          block: 0,
+          mechanicFlags: {},
+          speed: 5,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+
+    const once = executeOneEnemyTurn(
+      state,
+      state.enemies[0]!,
+      def,
+      rng,
+      enemyDefs
+    );
+    const bossAfterOnce = once.enemies[0]!;
+    expect(bossAfterOnce.currentHp).toBeGreaterThan(70);
+    expect(bossAfterOnce.mechanicFlags?.chapter_guardian_phase2).toBe(1);
+    expect(
+      once.drawPile.filter((c) => c.definitionId === "haunting_regret").length
+    ).toBeGreaterThanOrEqual(2);
+
+    const twice = executeOneEnemyTurn(
+      once,
+      bossAfterOnce,
+      def,
+      createRNG("chapter-phase2-second"),
+      enemyDefs
+    );
+    expect(
+      twice.drawPile.filter((c) => c.definitionId === "haunting_regret").length
+    ).toBe(once.drawPile.filter((c) => c.definitionId === "haunting_regret").length);
+  });
+
+  it("chapter guardian can summon adds on Page Storm", () => {
+    const rng = createRNG("chapter-summon");
+    const def = enemyDefs.get("chapter_guardian");
+    expect(def).toBeDefined();
+    if (!def) return;
+
+    const state = makeMinimalCombat({
+      enemies: [
+        {
+          instanceId: "boss-1",
+          definitionId: "chapter_guardian",
+          name: "Chapter Guardian",
+          currentHp: 160,
+          maxHp: 160,
+          block: 0,
+          mechanicFlags: {},
+          speed: 5,
+          buffs: [],
+          intentIndex: 1, // Page Storm
+        },
+      ],
+    });
+
+    const result = executeOneEnemyTurn(
+      state,
+      state.enemies[0]!,
+      def,
+      rng,
+      enemyDefs
+    );
+    expect(result.enemies.length).toBeGreaterThan(1);
+    expect(result.enemies.some((e) => e.definitionId === "ink_slime")).toBe(
+      true
+    );
+  });
+
+  it("chapter guardian Ink Devour deals bonus damage per combat curse", () => {
+    const rng = createRNG("chapter-curse-bonus");
+    const def = enemyDefs.get("chapter_guardian");
+    expect(def).toBeDefined();
+    if (!def) return;
+
+    const state = makeMinimalCombat({
+      enemies: [
+        {
+          instanceId: "boss-1",
+          definitionId: "chapter_guardian",
+          name: "Chapter Guardian",
+          currentHp: 160,
+          maxHp: 160,
+          block: 0,
+          mechanicFlags: {},
+          speed: 5,
+          buffs: [],
+          intentIndex: 3, // Ink Devour
+        },
+      ],
+      drawPile: [
+        { instanceId: "curse1", definitionId: "haunting_regret", upgraded: false },
+        { instanceId: "curse2", definitionId: "hexed_parchment", upgraded: false },
+      ],
+    });
+
+    const result = executeOneEnemyTurn(
+      state,
+      state.enemies[0]!,
+      def,
+      rng,
+      enemyDefs
+    );
+    // Base Ink Devour = 16, plus 2*2 curse bonus = 4.
+    expect(result.player.currentHp).toBe(60);
+  });
+
+  it("each boss has a distinct phase-2 mechanic trigger", () => {
+    const cases: Array<{
+      id: string;
+      check: (result: CombatState) => void;
+    }> = [
+      {
+        id: "chapter_guardian",
+        check: (r) =>
+          expect(
+            r.drawPile.some((c) => c.definitionId === "haunting_regret")
+          ).toBe(true),
+      },
+      {
+        id: "fenrir",
+        check: (r) =>
+          expect(r.enemies.some((e) => e.definitionId === "draugr")).toBe(true),
+      },
+      {
+        id: "medusa",
+        check: (r) => expect(r.enemies[0]?.block ?? 0).toBeGreaterThan(0),
+      },
+      {
+        id: "ra_avatar",
+        check: (r) =>
+          expect(r.player.buffs.some((b) => b.type === "VULNERABLE")).toBe(
+            true
+          ),
+      },
+      {
+        id: "nyarlathotep_shard",
+        check: (r) =>
+          expect(
+            r.enemies.some(
+              (e) =>
+                e.definitionId === "void_tendril" ||
+                r.drawPile.some((c) => c.definitionId === "haunting_regret")
+            )
+          ).toBe(true),
+      },
+      {
+        id: "tezcatlipoca_echo",
+        check: (r) =>
+          expect(r.drawPile.some((c) => c.definitionId === "ink_burn")).toBe(
+            true
+          ),
+      },
+      {
+        id: "dagda_shadow",
+        check: (r) =>
+          expect(
+            r.discardPile.some((c) => c.definitionId === "hexed_parchment")
+          ).toBe(true),
+      },
+      {
+        id: "baba_yaga_hut",
+        check: (r) =>
+          expect(r.enemies.some((e) => e.definitionId === "frost_witch")).toBe(
+            true
+          ),
+      },
+      {
+        id: "soundiata_spirit",
+        check: (r) =>
+          expect(r.enemies.some((e) => e.definitionId === "mask_hunter")).toBe(
+            true
+          ),
+      },
+    ];
+
+    for (const testCase of cases) {
+      const def = enemyDefs.get(testCase.id);
+      expect(def).toBeDefined();
+      if (!def) continue;
+
+      const state = makeMinimalCombat({
+        enemies: [
+          {
+            instanceId: "boss-unique",
+            definitionId: testCase.id,
+            name: def.name,
+            currentHp: Math.floor(def.maxHp / 2),
+            maxHp: def.maxHp,
+            block: 0,
+            mechanicFlags: {},
+            speed: def.speed,
+            buffs: [],
+            intentIndex: 0,
+          },
+        ],
+      });
+
+      const result = executeOneEnemyTurn(
+        state,
+        state.enemies[0]!,
+        def,
+        createRNG(`boss-unique-${testCase.id}`),
+        enemyDefs
+      );
+
+      expect(result.enemies[0]?.mechanicFlags?.[`${testCase.id}_phase2`]).toBe(
+        1
+      );
+      testCase.check(result);
+    }
+  });
+
   it("checkCombatEnd detects victory when all enemies dead", () => {
     const state = makeMinimalCombat({
       enemies: [
@@ -661,6 +1087,36 @@ describe("Run management", () => {
     expect(map[9]?.[0]?.type).toBe("COMBAT");
   });
 
+  it("generateFloorMap distributes non-combat rooms before late-floor slots", () => {
+    const seeds = [
+      "map-balance-1",
+      "map-balance-2",
+      "map-balance-3",
+      "map-balance-4",
+      "map-balance-5",
+      "map-balance-6",
+      "map-balance-7",
+      "map-balance-8",
+    ];
+
+    for (const seed of seeds) {
+      const map = generateFloorMap(1, createRNG(seed), "LIBRARY");
+      const middleBaseTypes = map
+        .slice(1, 8)
+        .map((slot) => slot?.[0]?.type ?? "COMBAT");
+
+      const firstFiveHaveNonCombat = middleBaseTypes
+        .slice(0, 5)
+        .some((t) => t === "MERCHANT" || t === "SPECIAL");
+      const tailNonCombatCount = middleBaseTypes
+        .slice(5)
+        .filter((t) => t === "MERCHANT" || t === "SPECIAL").length;
+
+      expect(firstFiveHaveNonCombat).toBe(true);
+      expect(tailNonCombatCount).toBeLessThanOrEqual(1);
+    }
+  });
+
   it("selectRoom marks room as completed", () => {
     const rng = createRNG("select-room");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
@@ -683,6 +1139,57 @@ describe("Run management", () => {
 
     const result = completeCombat(run, combatResult, 0, rng, { PAGES: 2 });
     expect(result.playerCurrentHp).toBe(58); // 50 + 10% of 80
+  });
+
+  it("completeCombat offers LIBRARY as a guaranteed option after floor 1 boss", () => {
+    const rng = createRNG("boss-floor-1-biomes");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun("run-1", "boss-floor-1-biomes", starterCards, rng);
+    const combat = makeMinimalCombat();
+
+    const result = completeCombat(
+      {
+        ...run,
+        floor: 1,
+        currentRoom: GAME_CONSTANTS.BOSS_ROOM_INDEX,
+      },
+      combat,
+      0,
+      createRNG("boss-floor-1-biomes-next")
+    );
+
+    expect(result.pendingBiomeChoices).not.toBeNull();
+    expect(result.pendingBiomeChoices).toContain("LIBRARY");
+    const nonLibraryChoices = (result.pendingBiomeChoices ?? []).filter(
+      (b) => b !== "LIBRARY"
+    );
+    expect(nonLibraryChoices).toHaveLength(1);
+    expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(nonLibraryChoices[0]);
+  });
+
+  it("completeCombat offers only non-LIBRARY biomes after floor 2+ boss", () => {
+    const rng = createRNG("boss-floor-2-biomes");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun("run-1", "boss-floor-2-biomes", starterCards, rng);
+    const combat = makeMinimalCombat();
+
+    const result = completeCombat(
+      {
+        ...run,
+        floor: 2,
+        currentRoom: GAME_CONSTANTS.BOSS_ROOM_INDEX,
+      },
+      combat,
+      0,
+      createRNG("boss-floor-2-biomes-next")
+    );
+
+    expect(result.pendingBiomeChoices).not.toBeNull();
+    expect(result.pendingBiomeChoices).not.toContain("LIBRARY");
+    const choices = result.pendingBiomeChoices ?? [];
+    expect(choices[0]).not.toBe(choices[1]);
+    expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(choices[0]);
+    expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(choices[1]);
   });
 });
 

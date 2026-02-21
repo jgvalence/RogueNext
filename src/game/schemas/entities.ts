@@ -33,7 +33,13 @@ export const EnemyAbilitySchema = z.object({
   name: z.string(),
   weight: z.number().default(1),
   target: z
-    .enum(["PLAYER", "LOWEST_HP_ENEMY", "ALL_ENEMIES", "SELF"])
+    .enum([
+      "PLAYER",
+      "LOWEST_HP_ENEMY",
+      "ALL_ENEMIES",
+      "SELF",
+      "ALLY_PRIORITY",
+    ])
     .optional(),
   effects: z.array(EffectSchema),
 });
@@ -59,6 +65,7 @@ export const EnemyStateSchema = z.object({
   currentHp: z.number().int(),
   maxHp: z.number().int(),
   block: z.number().int().default(0),
+  mechanicFlags: z.record(z.string(), z.number().int()).optional(),
   speed: z.number().int(),
   buffs: z.array(BuffInstanceSchema).default([]),
   intentIndex: z.number().int().default(0),
@@ -80,6 +87,7 @@ export const AllyStateSchema = z.object({
   name: z.string(),
   currentHp: z.number().int(),
   maxHp: z.number().int(),
+  block: z.number().int().default(0),
   speed: z.number().int(),
   buffs: z.array(BuffInstanceSchema).default([]),
   intentIndex: z.number().int().default(0),

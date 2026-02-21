@@ -1,6 +1,6 @@
 import type { CombatState } from "../schemas/combat-state";
 import type { Effect } from "../schemas/effects";
-import type { PlayerState, EnemyState } from "../schemas/entities";
+import type { PlayerState, EnemyState, AllyState } from "../schemas/entities";
 import { calculateDamage, applyDamage, applyBlock } from "./damage";
 import { applyBuff, getBuffStacks } from "./buffs";
 import { drawCards } from "./deck";
@@ -63,6 +63,19 @@ function updateEnemy(
     ...state,
     enemies: state.enemies.map((e) =>
       e.instanceId === instanceId ? updater(e) : e
+    ),
+  };
+}
+
+function updateAlly(
+  state: CombatState,
+  instanceId: string,
+  updater: (a: AllyState) => AllyState
+): CombatState {
+  return {
+    ...state,
+    allies: state.allies.map((a) =>
+      a.instanceId === instanceId ? updater(a) : a
     ),
   };
 }
@@ -135,6 +148,37 @@ function applyDamageToTarget(
     }));
   }
 
+  if (target === "all_allies") {
+    let s = state;
+    for (const ally of state.allies) {
+      if (ally.currentHp <= 0) continue;
+      const finalDmg = calculateDamage(baseDamage, sourceStats, {
+        buffs: ally.buffs,
+      });
+      const result = applyDamage(ally, finalDmg);
+      s = updateAlly(s, ally.instanceId, (a) => ({
+        ...a,
+        currentHp: result.currentHp,
+        block: result.block,
+      }));
+    }
+    return s;
+  }
+
+  if (typeof target === "object" && target.type === "ally") {
+    const ally = state.allies.find((a) => a.instanceId === target.instanceId);
+    if (!ally || ally.currentHp <= 0) return state;
+    const finalDmg = calculateDamage(baseDamage, sourceStats, {
+      buffs: ally.buffs,
+    });
+    const result = applyDamage(ally, finalDmg);
+    return updateAlly(state, target.instanceId, (a) => ({
+      ...a,
+      currentHp: result.currentHp,
+      block: result.block,
+    }));
+  }
+
   return state;
 }
 
@@ -158,6 +202,25 @@ function applyBlockToTarget(
     }));
   }
 
+  if (target === "all_allies") {
+    let s = state;
+    for (const ally of state.allies) {
+      if (ally.currentHp <= 0) continue;
+      s = updateAlly(s, ally.instanceId, (a) => ({
+        ...a,
+        block: applyBlock(a.block, amount, 0),
+      }));
+    }
+    return s;
+  }
+
+  if (typeof target === "object" && target.type === "ally") {
+    return updateAlly(state, target.instanceId, (a) => ({
+      ...a,
+      block: applyBlock(a.block, amount, 0),
+    }));
+  }
+
   return state;
 }
 
@@ -172,6 +235,26 @@ function applyHealToTarget(
       currentHp: Math.min(p.maxHp, p.currentHp + amount),
     }));
   }
+
+  if (target === "all_allies") {
+    let s = state;
+    for (const ally of state.allies) {
+      if (ally.currentHp <= 0) continue;
+      s = updateAlly(s, ally.instanceId, (a) => ({
+        ...a,
+        currentHp: Math.min(a.maxHp, a.currentHp + amount),
+      }));
+    }
+    return s;
+  }
+
+  if (typeof target === "object" && target.type === "ally") {
+    return updateAlly(state, target.instanceId, (a) => ({
+      ...a,
+      currentHp: Math.min(a.maxHp, a.currentHp + amount),
+    }));
+  }
+
   return state;
 }
 
@@ -188,12 +271,11 @@ export function resolveEffect(
       return applyDamageToTarget(state, ctx.target, effect.value, ctx.source);
 
     case "BLOCK":
-      // Block always applies to the source: player blocks themselves,
-      // enemies block themselves (not the player they're targeting).
+      // Player-origin block uses the chosen target (player or ally).
       if (ctx.source === "player") {
         return applyBlockToTarget(
           state,
-          "player",
+          ctx.target,
           effect.value,
           sourceStats.focus
         );
@@ -282,6 +364,35 @@ export function resolveEffect(
           ...e,
           buffs: applyBuff(
             e.buffs,
+            effect.buff!,
+            effect.value,
+            effect.duration
+          ),
+        }));
+      }
+
+      if (ctx.target === "all_allies") {
+        let s = state;
+        for (const ally of state.allies) {
+          if (ally.currentHp <= 0) continue;
+          s = updateAlly(s, ally.instanceId, (a) => ({
+            ...a,
+            buffs: applyBuff(
+              a.buffs,
+              effect.buff!,
+              effect.value,
+              effect.duration
+            ),
+          }));
+        }
+        return s;
+      }
+
+      if (typeof ctx.target === "object" && ctx.target.type === "ally") {
+        return updateAlly(state, ctx.target.instanceId, (a) => ({
+          ...a,
+          buffs: applyBuff(
+            a.buffs,
             effect.buff!,
             effect.value,
             effect.duration

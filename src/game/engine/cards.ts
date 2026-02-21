@@ -1,7 +1,7 @@
 import type { CombatState } from "../schemas/combat-state";
 import type { CardDefinition } from "../schemas/cards";
-import type { Effect } from "../schemas/effects";
 import type { Targeting } from "../schemas/enums";
+import { boostEffectsForUpgrade } from "./card-upgrades";
 import { moveCardToDiscard, moveCardToExhaust } from "./deck";
 import { resolveEffects, type EffectTarget } from "./effects";
 import type { RNG } from "./rng";
@@ -50,7 +50,7 @@ function targetingToEffectTarget(
     case "ALL_ENEMIES":
       return "all_enemies";
     case "SELF":
-      return "player";
+      return targetId ? { type: "ally", instanceId: targetId } : "player";
     case "SINGLE_ALLY":
       return targetId ? { type: "ally", instanceId: targetId } : "player";
     case "ALL_ALLIES":
@@ -87,7 +87,7 @@ export function playCard(
       if (def.upgrade.energyCost !== undefined)
         energyCost = def.upgrade.energyCost;
     } else {
-      effects = boostEffects(effects);
+      effects = boostEffectsForUpgrade(effects);
     }
   }
 
@@ -142,34 +142,4 @@ export function playCard(
   }
 
   return current;
-}
-
-/**
- * Boost effect values for upgraded cards.
- * - DAMAGE / BLOCK / HEAL / GAIN_INK : ×1.5 (floor), minimum +1
- * - DRAW_CARDS / GAIN_ENERGY / GAIN_STRENGTH / GAIN_FOCUS : +1
- * - APPLY_BUFF / APPLY_DEBUFF : +1 stack
- */
-function boostEffects(effects: Effect[]): Effect[] {
-  return effects.map((e) => {
-    switch (e.type) {
-      case "DAMAGE":
-      case "BLOCK":
-      case "HEAL":
-      case "GAIN_INK":
-        return {
-          ...e,
-          value: Math.max(Math.floor(e.value * 1.5), e.value + 1),
-        };
-      case "DRAW_CARDS":
-      case "GAIN_ENERGY":
-      case "GAIN_STRENGTH":
-      case "GAIN_FOCUS":
-      case "APPLY_BUFF":
-      case "APPLY_DEBUFF":
-        return { ...e, value: e.value + 1 };
-      default:
-        return e;
-    }
-  });
 }

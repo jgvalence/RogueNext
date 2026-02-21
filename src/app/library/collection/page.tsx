@@ -36,6 +36,7 @@ export default async function CardCollectionPage() {
     )
     .map((c) => ({
       id: c.id,
+      definition: c,
       name: c.name,
       biome: c.biome,
       type: c.type as "ATTACK" | "SKILL" | "POWER",

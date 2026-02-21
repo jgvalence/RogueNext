@@ -35,23 +35,23 @@ export function InkGauge({
   );
 
   return (
-    <div className="space-y-2 rounded-lg border border-cyan-800 bg-cyan-950/30 p-3">
+    <div className="space-y-1 rounded-lg border border-cyan-800 bg-cyan-950/30 p-1.5 lg:space-y-2 lg:p-3">
       {/* Ink bar */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-medium text-cyan-400">INK</span>
-        <div className="relative h-4 flex-1 rounded bg-gray-700">
+      <div className="flex items-center gap-1.5 lg:gap-2">
+        <span className="text-[10px] font-medium text-cyan-400 lg:text-xs">INK</span>
+        <div className="relative h-3 flex-1 rounded bg-gray-700 lg:h-4">
           <div
             className="h-full rounded bg-cyan-500 transition-all duration-300"
             style={{ width: `${percent}%` }}
           />
-          <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white drop-shadow">
+          <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow lg:text-xs">
             {player.inkCurrent}/{player.inkMax}
           </span>
         </div>
       </div>
 
       {/* Ink powers */}
-      <div className="flex gap-2">
+      <div className="flex gap-1 lg:gap-2">
         {inkPowers.map((power) => {
           const canUse = canUseInkPower(combatState, power.type);
           const cost = GAME_CONSTANTS.INK_POWER_COSTS[power.type];
@@ -60,7 +60,7 @@ export function InkGauge({
             <button
               key={power.type}
               className={cn(
-                "flex-1 rounded px-2 py-1.5 text-xs font-medium transition",
+                "flex-1 rounded px-1 py-0.5 text-[9px] font-medium transition lg:px-2 lg:py-1.5 lg:text-xs",
                 canUse
                   ? "bg-cyan-700 text-cyan-100 hover:bg-cyan-600"
                   : "cursor-not-allowed bg-gray-700 text-gray-500"
