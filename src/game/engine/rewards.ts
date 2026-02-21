@@ -15,6 +15,7 @@ export interface CombatRewards {
   biomeResources: Partial<Record<BiomeResource, number>>;
   relicChoices: RelicDefinitionData[];
   allyChoices: AllyDefinition[];
+  bossMaxHpBonus: number | null;
 }
 
 /**
@@ -118,7 +119,17 @@ export function generateCombatRewards(
     allyChoices = rng.shuffle(availableAllies).slice(0, 2);
   }
 
-  return { gold, cardChoices, biomeResources, relicChoices, allyChoices };
+  // Boss only: 50% chance to offer +15 max HP as an alternative to a relic
+  const bossMaxHpBonus = isBoss && rng.nextFloat() < 0.5 ? 15 : null;
+
+  return {
+    gold,
+    cardChoices,
+    biomeResources,
+    relicChoices,
+    allyChoices,
+    bossMaxHpBonus,
+  };
 }
 
 /**

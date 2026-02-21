@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 export default function GameHubPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: activeRun, isLoading } = useActiveRun();
+  const { data: activeRun, isLoading, isFetching } = useActiveRun();
   const launched = useRef(false);
 
   const createRun = useMutation({
@@ -25,15 +25,17 @@ export default function GameHubPage() {
     },
   });
 
+  // Wait for a fresh fetch (not stale cache) before deciding to resume or create.
+  // Without this, a stale cached run that has already ended causes "Run not found".
   useEffect(() => {
-    if (isLoading || launched.current) return;
+    if (isLoading || isFetching || launched.current) return;
     launched.current = true;
     if (activeRun) {
       router.replace(`/game/${activeRun.id}`);
     } else {
       createRun.mutate();
     }
-  }, [isLoading, activeRun]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoading, isFetching, activeRun]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">

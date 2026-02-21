@@ -84,6 +84,7 @@ export type GameAction =
     }
   | { type: "PICK_RELIC_REWARD"; payload: { relicId: string } }
   | { type: "PICK_ALLY_REWARD"; payload: { allyId: string } }
+  | { type: "GAIN_MAX_HP"; payload: { amount: number } }
   | { type: "APPLY_HEAL_ROOM" }
   | { type: "ADVANCE_ROOM" }
   | { type: "BUY_SHOP_ITEM"; payload: { item: ShopItem } }
@@ -251,7 +252,8 @@ function createGameReducer(deps: ReducerDeps) {
           action.payload.goldReward,
           rng,
           action.payload.biomeResources,
-          [...cardDefs.values()]
+          [...cardDefs.values()],
+          state.relicIds
         );
       }
 
@@ -315,6 +317,13 @@ function createGameReducer(deps: ReducerDeps) {
         return {
           ...state,
           relicIds: [...state.relicIds, action.payload.relicId],
+        };
+
+      case "GAIN_MAX_HP":
+        return {
+          ...state,
+          playerMaxHp: state.playerMaxHp + action.payload.amount,
+          playerCurrentHp: state.playerCurrentHp + action.payload.amount,
         };
 
       case "PICK_ALLY_REWARD": {

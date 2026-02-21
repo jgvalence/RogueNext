@@ -5,12 +5,13 @@ import { nanoid } from "nanoid";
 
 export interface ShopItem {
   id: string;
-  type: "card" | "relic" | "heal";
+  type: "card" | "relic" | "heal" | "max_hp";
   cardDef?: CardDefinition;
   relicId?: string;
   relicName?: string;
   relicDescription?: string;
   healAmount?: number;
+  maxHpAmount?: number;
   price: number;
 }
 
@@ -70,6 +71,14 @@ export function generateShopInventory(
     price: 30 + floor * 5,
   });
 
+  // 1 max HP potion (always available)
+  items.push({
+    id: nanoid(),
+    type: "max_hp",
+    maxHpAmount: 10,
+    price: 75 + floor * 10,
+  });
+
   return items;
 }
 
@@ -127,6 +136,15 @@ export function buyShopItem(
           state.playerMaxHp,
           state.playerCurrentHp + heal
         ),
+      };
+      break;
+    }
+    case "max_hp": {
+      const bonus = item.maxHpAmount ?? 10;
+      state = {
+        ...state,
+        playerMaxHp: state.playerMaxHp + bonus,
+        playerCurrentHp: state.playerCurrentHp + bonus,
       };
       break;
     }

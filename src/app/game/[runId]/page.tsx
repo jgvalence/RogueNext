@@ -375,6 +375,27 @@ function GameContent({
     [dispatch, isBossRewards, state.pendingBiomeChoices]
   );
 
+  const handlePickMaxHp = useCallback(
+    (amount: number) => {
+      dispatch({ type: "GAIN_MAX_HP", payload: { amount } });
+      setRewards(null);
+      if (state.pendingBiomeChoices !== null) {
+        setPhase("BIOME_SELECT");
+      } else {
+        if (!runEndedRef.current) {
+          runEndedRef.current = true;
+          void endRunAction({
+            runId: stateRef.current.runId,
+            status: "VICTORY",
+            earnedResources: stateRef.current.earnedResources,
+          });
+        }
+        setPhase("VICTORY");
+      }
+    },
+    [dispatch, state.pendingBiomeChoices]
+  );
+
   const handlePickBiome = useCallback(
     (biome: BiomeType) => {
       dispatch({ type: "CHOOSE_BIOME", payload: { biome } });
@@ -474,11 +495,13 @@ function GameContent({
             biomeResources={rewards.biomeResources}
             relicChoices={rewards.relicChoices}
             allyChoices={rewards.allyChoices}
+            bossMaxHpBonus={rewards.bossMaxHpBonus}
             isBoss={isBossRewards}
             isElite={isEliteRewards}
             onPickCard={handlePickCard}
             onPickRelic={handlePickRelic}
             onPickAlly={handlePickAlly}
+            onPickMaxHp={handlePickMaxHp}
             onSkip={handleSkipReward}
           />
         )}

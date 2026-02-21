@@ -347,16 +347,35 @@ export function completeCombat(
   goldReward: number,
   rng: RNG,
   biomeResources?: Partial<Record<BiomeResource, number>>,
-  allCards?: CardDefinition[]
+  allCards?: CardDefinition[],
+  relicIds?: string[]
 ): RunState {
   const isBossRoom = runState.currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
   const isFinalFloor = runState.floor >= GAME_CONSTANTS.MAX_FLOORS;
   const hpAfterCombat = Math.max(0, combatResult.player.currentHp);
   const healPct = Math.max(0, runState.metaBonuses?.healAfterCombat ?? 0);
-  const healAmount = Math.floor((runState.playerMaxHp * healPct) / 100);
+
+  // Blood Grimoire relic: gain max HP for each enemy killed this combat
+  const roomChoicesForRelic = runState.map[runState.currentRoom];
+  const selectedRoomForRelic =
+    roomChoicesForRelic?.find((r) => r.completed) ?? roomChoicesForRelic?.[0];
+  const isEliteRoom = selectedRoomForRelic?.isElite ?? false;
+  const enemyCount = combatResult.enemies.length;
+  const bloodGrimoireGain = (relicIds ?? runState.relicIds).includes(
+    "blood_grimoire"
+  )
+    ? isBossRoom
+      ? 5
+      : isEliteRoom
+        ? enemyCount * 2
+        : enemyCount * 1
+    : 0;
+
+  const newPlayerMaxHp = runState.playerMaxHp + bloodGrimoireGain;
+  const healAmount = Math.floor((newPlayerMaxHp * healPct) / 100);
   const hpAfterMetaHeal = Math.min(
-    runState.playerMaxHp,
-    hpAfterCombat + healAmount
+    newPlayerMaxHp,
+    hpAfterCombat + healAmount + bloodGrimoireGain
   );
 
   let pendingBiomeChoices: RunState["pendingBiomeChoices"] = null;
@@ -408,6 +427,7 @@ export function completeCombat(
 
   return {
     ...runState,
+    playerMaxHp: newPlayerMaxHp,
     playerCurrentHp: hpAfterMetaHeal,
     gold: runState.gold + goldReward,
     combat: null,
@@ -627,6 +647,39 @@ const EVENTS: GameEvent[] = [
           playerCurrentHp: Math.min(s.playerMaxHp, s.playerCurrentHp + 10),
           currentRoom: s.currentRoom + 1,
         }),
+      },
+    ],
+  },
+  {
+    id: "ancient_sarcophagus",
+    title: "Ancient Sarcophagus",
+    description:
+      "A sealed sarcophagus hums with old energy. Opening it could fortify your body — or drain it.",
+    choices: [
+      {
+        label: "Absorb the essence",
+        description: "Gain 20 max HP.",
+        apply: (s) => ({
+          ...s,
+          playerMaxHp: s.playerMaxHp + 20,
+          playerCurrentHp: s.playerCurrentHp + 20,
+          currentRoom: s.currentRoom + 1,
+        }),
+      },
+      {
+        label: "Take the risk",
+        description: "Gain 30 max HP, but lose 15 current HP.",
+        apply: (s) => ({
+          ...s,
+          playerMaxHp: s.playerMaxHp + 30,
+          playerCurrentHp: Math.max(1, s.playerCurrentHp - 15),
+          currentRoom: s.currentRoom + 1,
+        }),
+      },
+      {
+        label: "Leave it sealed",
+        description: "Nothing happens.",
+        apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
       },
     ],
   },

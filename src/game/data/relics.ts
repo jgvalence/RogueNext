@@ -86,4 +86,11 @@ export const relicDefinitions: RelicDefinitionData[] = [
     description: "Start each combat with +1 Strength.",
     rarity: "UNCOMMON",
   },
+  {
+    id: "blood_grimoire",
+    name: "Blood Grimoire",
+    description:
+      "Gain 1 max HP per normal enemy killed, 2 per elite, 5 per boss.",
+    rarity: "BOSS",
+  },
 ];

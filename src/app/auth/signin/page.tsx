@@ -136,16 +136,6 @@ function SignInForm() {
             S&apos;inscrire
           </Link>
         </p>
-
-        {/* Demo credentials hint */}
-        <div className="mt-6 rounded-lg border border-gray-800/50 bg-gray-900/50 p-4">
-          <p className="mb-1 text-xs font-medium text-gray-500">
-            Compte de test :
-          </p>
-          <p className="font-mono text-xs text-gray-400">
-            user@example.com / user123
-          </p>
-        </div>
       </div>
     </main>
   );

@@ -32,11 +32,13 @@ interface RewardScreenProps {
   biomeResources: Partial<Record<BiomeResource, number>>;
   relicChoices: RelicDefinitionData[];
   allyChoices: AllyDefinition[];
+  bossMaxHpBonus?: number | null;
   isBoss?: boolean;
   isElite?: boolean;
   onPickCard: (definitionId: string) => void;
   onPickRelic: (relicId: string) => void;
   onPickAlly: (allyId: string) => void;
+  onPickMaxHp?: (amount: number) => void;
   onSkip: () => void;
 }
 
@@ -46,11 +48,13 @@ export function RewardScreen({
   biomeResources,
   relicChoices,
   allyChoices,
+  bossMaxHpBonus,
   isBoss,
   isElite,
   onPickCard,
   onPickRelic,
   onPickAlly,
+  onPickMaxHp,
   onSkip,
 }: RewardScreenProps) {
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
@@ -93,9 +97,11 @@ export function RewardScreen({
         </div>
       )}
 
-      {isBoss && relicChoices.length > 0 && (
+      {isBoss && (relicChoices.length > 0 || bossMaxHpBonus) && (
         <>
-          <p className="text-sm font-medium text-purple-400">Choose a relic:</p>
+          <p className="text-sm font-medium text-purple-400">
+            Choose a reward:
+          </p>
           <div className="flex flex-wrap justify-center gap-3">
             {relicChoices.map((relic) => (
               <RelicCard key={relic.id} relic={relic} onPick={onPickRelic} />
@@ -103,6 +109,22 @@ export function RewardScreen({
             {allyChoices.map((ally) => (
               <AllyCard key={ally.id} ally={ally} onPick={onPickAlly} />
             ))}
+            {bossMaxHpBonus && onPickMaxHp && (
+              <button
+                onClick={() => onPickMaxHp(bossMaxHpBonus)}
+                className="flex w-36 flex-col items-center gap-2 rounded-xl border-2 border-red-700 bg-red-950/40 p-4 text-center transition hover:border-red-500 hover:bg-red-950/60"
+              >
+                <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
+                  Vitality
+                </span>
+                <span className="text-sm font-bold text-white">
+                  +{bossMaxHpBonus} Max HP
+                </span>
+                <span className="text-xs text-red-200">
+                  Increase your maximum health permanently
+                </span>
+              </button>
+            )}
           </div>
         </>
       )}
