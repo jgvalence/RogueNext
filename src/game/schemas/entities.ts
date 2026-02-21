@@ -33,13 +33,7 @@ export const EnemyAbilitySchema = z.object({
   name: z.string(),
   weight: z.number().default(1),
   target: z
-    .enum([
-      "PLAYER",
-      "LOWEST_HP_ENEMY",
-      "ALL_ENEMIES",
-      "SELF",
-      "ALLY_PRIORITY",
-    ])
+    .enum(["PLAYER", "LOWEST_HP_ENEMY", "ALL_ENEMIES", "SELF", "ALLY_PRIORITY"])
     .optional(),
   effects: z.array(EffectSchema),
 });

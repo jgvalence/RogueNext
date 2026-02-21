@@ -639,16 +639,24 @@ function applyBuffToPlayer(
   };
 }
 
-function grantStrengthToAllEnemies(state: CombatState, amount: number): CombatState {
+function grantStrengthToAllEnemies(
+  state: CombatState,
+  amount: number
+): CombatState {
   return {
     ...state,
     enemies: state.enemies.map((e) =>
-      e.currentHp > 0 ? { ...e, buffs: applyBuff(e.buffs, "STRENGTH", amount) } : e
+      e.currentHp > 0
+        ? { ...e, buffs: applyBuff(e.buffs, "STRENGTH", amount) }
+        : e
     ),
   };
 }
 
-function grantBlockToAllEnemies(state: CombatState, amount: number): CombatState {
+function grantBlockToAllEnemies(
+  state: CombatState,
+  amount: number
+): CombatState {
   return {
     ...state,
     enemies: state.enemies.map((e) =>

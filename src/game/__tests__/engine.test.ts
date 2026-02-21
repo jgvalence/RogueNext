@@ -843,7 +843,9 @@ describe("Combat flow", () => {
     );
     expect(
       twice.drawPile.filter((c) => c.definitionId === "haunting_regret").length
-    ).toBe(once.drawPile.filter((c) => c.definitionId === "haunting_regret").length);
+    ).toBe(
+      once.drawPile.filter((c) => c.definitionId === "haunting_regret").length
+    );
   });
 
   it("chapter guardian can summon adds on Page Storm", () => {
@@ -904,8 +906,16 @@ describe("Combat flow", () => {
         },
       ],
       drawPile: [
-        { instanceId: "curse1", definitionId: "haunting_regret", upgraded: false },
-        { instanceId: "curse2", definitionId: "hexed_parchment", upgraded: false },
+        {
+          instanceId: "curse1",
+          definitionId: "haunting_regret",
+          upgraded: false,
+        },
+        {
+          instanceId: "curse2",
+          definitionId: "hexed_parchment",
+          upgraded: false,
+        },
       ],
     });
 

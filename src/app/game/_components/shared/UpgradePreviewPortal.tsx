@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import type { CardDefinition } from "@/game/schemas/cards";
 import { CardUpgradePreview } from "./CardUpgradePreview";
@@ -20,9 +26,10 @@ interface UpgradePreviewPortalProps {
 export function UpgradePreviewPortal({ info }: UpgradePreviewPortalProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [position, setPosition] = useState<{ left: number; top: number } | null>(
-    null
-  );
+  const [position, setPosition] = useState<{
+    left: number;
+    top: number;
+  } | null>(null);
 
   useEffect(() => {
     setMounted(true);

@@ -42,7 +42,9 @@ function buildUpgradedDescriptionFromEffects(def: CardDefinition): string {
   return description;
 }
 
-export function buildUpgradedCardDefinition(def: CardDefinition): CardDefinition {
+export function buildUpgradedCardDefinition(
+  def: CardDefinition
+): CardDefinition {
   if (def.upgrade) {
     return {
       ...def,

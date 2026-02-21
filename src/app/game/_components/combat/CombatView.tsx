@@ -314,7 +314,9 @@ export function CombatView({
         {/* Target prompt */}
         {needsTarget && selectedCardId && (
           <div className="relative z-10 animate-bounce pb-1 text-xs font-semibold text-yellow-300 lg:text-sm">
-            {selectingAllyTarget ? "Choose an ally for " : "Choose a target for "}
+            {selectingAllyTarget
+              ? "Choose an ally for "
+              : "Choose a target for "}
             <span className="text-white">{selectedDef?.name}</span>
           </div>
         )}
@@ -644,9 +646,9 @@ function formatAllyIntent(ability: EnemyAbility): string {
         ? "lowest HP enemy"
         : ability.target === "ALLY_PRIORITY"
           ? "ally priority"
-        : ability.target === "SELF"
-          ? "self"
-          : "player";
+          : ability.target === "SELF"
+            ? "self"
+            : "player";
 
   return `${targetLabel}: ${effects.join(", ")}`;
 }
@@ -662,10 +664,16 @@ function resolveEnemyIntentTargetLabel(
   if (target === "all_enemies") return "All enemies";
   if (target === "all_allies") return "All allies";
   if (target.type === "ally") {
-    return combat.allies.find((a) => a.instanceId === target.instanceId)?.name ?? "Ally";
+    return (
+      combat.allies.find((a) => a.instanceId === target.instanceId)?.name ??
+      "Ally"
+    );
   }
   if (target.type === "enemy") {
-    return combat.enemies.find((e) => e.instanceId === target.instanceId)?.name ?? "Enemy";
+    return (
+      combat.enemies.find((e) => e.instanceId === target.instanceId)?.name ??
+      "Enemy"
+    );
   }
   return "You";
 }

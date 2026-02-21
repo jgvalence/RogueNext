@@ -206,7 +206,6 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
                   )}
                 </div>
               )}
-
             </div>
           ))}
         </div>

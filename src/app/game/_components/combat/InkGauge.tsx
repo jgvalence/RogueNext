@@ -38,7 +38,9 @@ export function InkGauge({
     <div className="space-y-1 rounded-lg border border-cyan-800 bg-cyan-950/30 p-1.5 lg:space-y-2 lg:p-3">
       {/* Ink bar */}
       <div className="flex items-center gap-1.5 lg:gap-2">
-        <span className="text-[10px] font-medium text-cyan-400 lg:text-xs">INK</span>
+        <span className="text-[10px] font-medium text-cyan-400 lg:text-xs">
+          INK
+        </span>
         <div className="relative h-3 flex-1 rounded bg-gray-700 lg:h-4">
           <div
             className="h-full rounded bg-cyan-500 transition-all duration-300"
