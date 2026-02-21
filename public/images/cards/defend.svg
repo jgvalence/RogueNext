@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="shield" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="boss" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+  </defs>
+  <!-- Glow -->
+  <circle cx="40" cy="42" r="30" fill="#1d4ed8" opacity="0.1"/>
+  <!-- Shield body -->
+  <path d="M40 8 L68 22 L68 50 Q68 68 40 76 Q12 68 12 50 L12 22 Z" fill="url(#shield)"/>
+  <!-- Shield inner border -->
+  <path d="M40 14 L62 26 L62 50 Q62 64 40 70 Q18 64 18 50 L18 26 Z" fill="none" stroke="#93c5fd" stroke-width="1.5"/>
+  <!-- Boss stripe / chevron -->
+  <path d="M40 22 L58 32 L58 46 Q58 56 40 62 Q22 56 22 46 L22 32 Z" fill="url(#boss)" opacity="0.3"/>
+  <!-- Central emblem — scroll / book -->
+  <rect x="30" y="34" width="20" height="16" rx="3" fill="#fef9e7"/>
+  <line x1="32" y1="39" x2="48" y2="39" stroke="#b8a860" stroke-width="1"/>
+  <line x1="32" y1="43" x2="48" y2="43" stroke="#b8a860" stroke-width="1"/>
+  <line x1="32" y1="47" x2="48" y2="47" stroke="#b8a860" stroke-width="1"/>
+  <!-- Shield boss (center button) -->
+  <circle cx="40" cy="28" r="5" fill="#f59e0b"/>
+  <circle cx="40" cy="28" r="2.5" fill="#fbbf24"/>
+  <!-- Rivets on corners -->
+  <circle cx="25" cy="28" r="2" fill="#93c5fd" opacity="0.7"/>
+  <circle cx="55" cy="28" r="2" fill="#93c5fd" opacity="0.7"/>
+</svg>

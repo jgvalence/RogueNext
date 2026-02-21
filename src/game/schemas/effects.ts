@@ -6,5 +6,6 @@ export const EffectSchema = z.object({
   value: z.number(),
   buff: BuffType.optional(),
   duration: z.number().optional(),
+  cardId: z.string().optional(),
 });
 export type Effect = z.infer<typeof EffectSchema>;

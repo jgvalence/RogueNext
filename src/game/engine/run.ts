@@ -1,9 +1,41 @@
 import type { RunState, RoomNode } from "../schemas/run-state";
 import type { CombatState } from "../schemas/combat-state";
 import type { CardDefinition, CardInstance } from "../schemas/cards";
+import type { BiomeType, BiomeResource } from "../schemas/enums";
+import type { ComputedMetaBonuses } from "../schemas/meta";
 import { GAME_CONSTANTS } from "../constants";
+import { enemyDefinitions } from "../data/enemies";
+import type { CardUnlockProgress } from "./card-unlocks";
+import { computeUnlockedCardIds, onBossKilled, onEliteKilled, onEnterBiome } from "./card-unlocks";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
+
+type EnemyDef = (typeof enemyDefinitions)[0];
+
+function weightedPick<T>(
+  items: readonly T[],
+  getWeight: (item: T) => number,
+  rng: RNG
+): T {
+  const weights = items.map((item) => Math.max(0, getWeight(item)));
+  const total = weights.reduce((sum, w) => sum + w, 0);
+  if (total <= 0) return rng.pick(items);
+
+  let roll = rng.next() * total;
+  for (let i = 0; i < items.length; i++) {
+    roll -= weights[i]!;
+    if (roll <= 0) return items[i]!;
+  }
+  return items[items.length - 1]!;
+}
+
+function getEnemySelectionWeight(enemy: EnemyDef, floor: number): number {
+  // Base weight by explicit tier ("difficulty level").
+  const tierWeight = 1 + Math.max(0, enemy.tier - 1) * Math.max(0, floor - 1);
+  // Extra bias by HP so stronger monsters inside a tier appear more on high floors.
+  const hpWeight = 1 + ((enemy.maxHp / 100) * Math.max(0, floor - 1));
+  return tierWeight * hpWeight;
+}
 
 /**
  * Create a new run with starter deck and generated map.
@@ -12,7 +44,11 @@ export function createNewRun(
   runId: string,
   seed: string,
   starterCards: CardDefinition[],
-  rng: RNG
+  rng: RNG,
+  metaBonuses?: ComputedMetaBonuses,
+  unlockedStoryIdsSnapshot: string[] = [],
+  initialUnlockProgress?: CardUnlockProgress,
+  allCards?: CardDefinition[]
 ): RunState {
   // Build starter deck instances
   const deck: CardInstance[] = starterCards.map((card) => ({
@@ -21,7 +57,19 @@ export function createNewRun(
     upgraded: false,
   }));
 
-  const map = generateFloorMap(1, rng);
+  const map = generateFloorMap(1, rng, "LIBRARY");
+
+  const startingGold = GAME_CONSTANTS.STARTING_GOLD + (metaBonuses?.startingGold ?? 0);
+  const extraHp = metaBonuses?.extraHp ?? 0;
+  const unlockProgress = initialUnlockProgress ?? {
+    enteredBiomes: { LIBRARY: 1 },
+    biomeRunsCompleted: {},
+    eliteKillsByBiome: {},
+    bossKillsByBiome: {},
+  };
+  const unlockedCardIds = allCards
+    ? computeUnlockedCardIds(allCards, unlockProgress, unlockedStoryIdsSnapshot)
+    : [];
 
   return {
     runId,
@@ -29,47 +77,104 @@ export function createNewRun(
     status: "IN_PROGRESS",
     floor: 1,
     currentRoom: 0,
-    gold: GAME_CONSTANTS.STARTING_GOLD,
-    playerMaxHp: GAME_CONSTANTS.STARTING_HP,
-    playerCurrentHp: GAME_CONSTANTS.STARTING_HP,
+    gold: startingGold,
+    playerMaxHp: GAME_CONSTANTS.STARTING_HP + extraHp,
+    playerCurrentHp: GAME_CONSTANTS.STARTING_HP + extraHp,
     deck,
+    allyIds: [],
     relicIds: [],
     map,
     combat: null,
+    currentBiome: "LIBRARY",
+    pendingBiomeChoices: null,
+    earnedResources: {},
+    metaBonuses,
+    unlockedStoryIdsSnapshot,
+    unlockedCardIds,
+    initialUnlockedCardIds: unlockedCardIds,
+    cardUnlockProgress: unlockProgress,
   };
 }
 
 /**
  * Generate a floor map: array of room slots, each with 1-3 room choices.
  * Room 0 = always COMBAT, Room 9 = always COMBAT (boss).
- * Rooms 1-8 = weighted random: ~60% combat, ~20% merchant, ~20% special.
+ * Rooms 1-8: exactly 1 MERCHANT + 1-2 SPECIAL + rest COMBAT, shuffled.
  */
-export function generateFloorMap(floor: number, rng: RNG): RoomNode[][] {
+export function generateFloorMap(
+  floor: number,
+  rng: RNG,
+  biome: BiomeType
+): RoomNode[][] {
+  // Build the sequence for rooms 1-7 (7 middle rooms): 1 shop, 1-2 events, rest combat
+  // Room 8 is always PRE_BOSS; Room 9 is always BOSS
+  const numSpecial = rng.nextInt(1, 2);
+  const middleTypes: Array<"COMBAT" | "MERCHANT" | "SPECIAL"> = [
+    "MERCHANT",
+    ...Array<"SPECIAL">(numSpecial).fill("SPECIAL"),
+    ...Array<"COMBAT">(6 - numSpecial).fill("COMBAT"),
+  ];
+  const shuffledMiddle = rng.shuffle(middleTypes);
+
+  const PRE_BOSS_ROOM_INDEX = GAME_CONSTANTS.BOSS_ROOM_INDEX - 1; // 8
+
   const map: RoomNode[][] = [];
 
   for (let i = 0; i < GAME_CONSTANTS.ROOMS_PER_FLOOR; i++) {
     const isBossRoom = i === GAME_CONSTANTS.BOSS_ROOM_INDEX;
     const isFirstRoom = i === 0;
+    const isPreBossRoom = i === PRE_BOSS_ROOM_INDEX;
+
+    // PRE_BOSS room: always a single node with 1 elite enemy for the "fight for relic" option
+    if (isPreBossRoom) {
+      const elitePool = enemyDefinitions
+        .filter((e) => e.isElite && (e.biome === biome || e.biome === "LIBRARY"))
+        .map((e) => e.id);
+      const eliteDefs = enemyDefinitions.filter(
+        (e) =>
+          e.isElite &&
+          elitePool.includes(e.id) &&
+          (e.biome === biome || e.biome === "LIBRARY")
+      );
+      const preBossEnemyId =
+        eliteDefs.length > 0
+          ? weightedPick(eliteDefs, (e) => getEnemySelectionWeight(e, floor), rng).id
+          : "ink_slime";
+      map.push([
+        {
+          index: i,
+          type: "PRE_BOSS",
+          enemyIds: [preBossEnemyId],
+          isElite: true,
+          completed: false,
+        },
+      ]);
+      continue;
+    }
 
     const numChoices =
       isBossRoom || isFirstRoom
         ? 1
         : rng.nextInt(1, GAME_CONSTANTS.ROOM_CHOICES);
 
+    const baseType: "COMBAT" | "MERCHANT" | "SPECIAL" =
+      isBossRoom || isFirstRoom ? "COMBAT" : shuffledMiddle[i - 1]!;
+
     const choices: RoomNode[] = [];
     for (let j = 0; j < numChoices; j++) {
-      const type =
-        isBossRoom || isFirstRoom ? ("COMBAT" as const) : pickRoomType(rng);
+      // First choice uses the assigned type; extra choices are always COMBAT
+      const type = j === 0 ? baseType : ("COMBAT" as const);
 
-      const enemyIds =
+      const enemyResult =
         type === "COMBAT"
-          ? generateRoomEnemies(floor, i, isBossRoom, rng)
+          ? generateRoomEnemies(floor, i, isBossRoom, biome, rng)
           : undefined;
 
       choices.push({
         index: i,
         type,
-        enemyIds,
+        enemyIds: enemyResult?.enemyIds,
+        isElite: enemyResult?.isElite ?? false,
         completed: false,
       });
     }
@@ -80,43 +185,68 @@ export function generateFloorMap(floor: number, rng: RNG): RoomNode[][] {
   return map;
 }
 
-function pickRoomType(rng: RNG): "COMBAT" | "MERCHANT" | "SPECIAL" {
-  const roll = rng.next();
-  if (roll < 0.6) return "COMBAT";
-  if (roll < 0.8) return "MERCHANT";
-  return "SPECIAL";
-}
-
 /**
- * Generate enemy IDs for a combat room.
- * MVP: pick 1-3 random enemies from available pool.
- * Boss rooms: single boss enemy.
+ * Generate enemy IDs for a combat room, filtered by biome.
+ * Library enemies appear in all biomes (they're universal).
+ * Biome-specific enemies only appear in their biome.
  */
 function generateRoomEnemies(
-  _floor: number,
-  _room: number,
+  floor: number,
+  room: number,
   isBoss: boolean,
+  biome: BiomeType,
   rng: RNG
-): string[] {
+): { enemyIds: string[]; isElite: boolean } {
+  const canAppear = (e: (typeof enemyDefinitions)[0]) =>
+    e.biome === biome || e.biome === "LIBRARY";
+
   if (isBoss) {
-    return ["chapter_guardian"]; // Our MVP boss
+    const bossPool = enemyDefinitions
+      .filter((e) => e.isBoss && e.biome === biome)
+      .map((e) => e.id);
+    // Fallback to Library boss if biome has none
+    if (bossPool.length === 0) {
+      return { enemyIds: ["chapter_guardian"], isElite: false };
+    }
+    return { enemyIds: [rng.pick(bossPool)], isElite: false };
   }
 
-  // Regular enemies — pool of MVP enemy IDs
-  const enemyPool = [
-    "ink_slime",
-    "paper_golem",
-    "quill_sprite",
-    "tome_wraith",
-    "scroll_serpent",
-  ];
+  // Elite rooms — only from room 3 onwards
+  const elitePool = enemyDefinitions
+    .filter((e) => e.isElite && canAppear(e))
+    .map((e) => e.id);
+  const eliteDefs = enemyDefinitions.filter((e) => elitePool.includes(e.id));
+  const eliteChance = Math.min(0.5, 0.25 + (floor - 1) * 0.05);
+  if (room >= 3 && eliteDefs.length > 0 && rng.next() < eliteChance) {
+    const elite = weightedPick(
+      eliteDefs,
+      (e) => getEnemySelectionWeight(e, floor),
+      rng
+    );
+    return { enemyIds: [elite.id], isElite: true };
+  }
 
-  const count = rng.nextInt(1, 3);
+  // Regular enemies
+  const normalPool = enemyDefinitions.filter(
+    (e) => !e.isBoss && !e.isElite && canAppear(e)
+  );
+
+  if (normalPool.length === 0) {
+    return { enemyIds: ["ink_slime"], isElite: false };
+  }
+
+  const maxEnemyCount = Math.min(GAME_CONSTANTS.MAX_ENEMIES, 2 + Math.floor(floor / 2));
+  const count = rng.nextInt(1, maxEnemyCount);
   const enemies: string[] = [];
   for (let i = 0; i < count; i++) {
-    enemies.push(rng.pick(enemyPool));
+    const picked = weightedPick(
+      normalPool,
+      (e) => getEnemySelectionWeight(e, floor),
+      rng
+    );
+    enemies.push(picked.id);
   }
-  return enemies;
+  return { enemyIds: enemies, isElite: false };
 }
 
 /**
@@ -144,21 +274,112 @@ export function selectRoom(runState: RunState, choiceIndex: number): RunState {
 
 /**
  * Complete a combat and update run state.
+ * - Non-boss: advance room normally.
+ * - Boss on floor < MAX_FLOORS: generate biome choices for the next floor.
+ * - Boss on final floor: set status VICTORY.
  */
 export function completeCombat(
   runState: RunState,
   combatResult: CombatState,
-  goldReward: number
+  goldReward: number,
+  rng: RNG,
+  biomeResources?: Partial<Record<BiomeResource, number>>,
+  allCards?: CardDefinition[]
 ): RunState {
   const isBossRoom = runState.currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
+  const isFinalFloor = runState.floor >= GAME_CONSTANTS.MAX_FLOORS;
+  const hpAfterCombat = Math.max(0, combatResult.player.currentHp);
+  const healPct = Math.max(0, runState.metaBonuses?.healAfterCombat ?? 0);
+  const healAmount = Math.floor((runState.playerMaxHp * healPct) / 100);
+  const hpAfterMetaHeal = Math.min(runState.playerMaxHp, hpAfterCombat + healAmount);
+
+  let pendingBiomeChoices: RunState["pendingBiomeChoices"] = null;
+
+  if (isBossRoom && !isFinalFloor) {
+    // Draw 2 distinct biomes from AVAILABLE_BIOMES
+    const shuffled = rng.shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);
+    pendingBiomeChoices = [shuffled[0]!, shuffled[1]!] as [
+      BiomeType,
+      BiomeType,
+    ];
+  }
+
+  // Accumulate biome resources earned this combat
+  const updatedEarnedResources = { ...runState.earnedResources };
+  if (biomeResources) {
+    for (const [key, amount] of Object.entries(biomeResources)) {
+      updatedEarnedResources[key] = (updatedEarnedResources[key] ?? 0) + (amount as number);
+    }
+  }
+
+  let unlockProgress = runState.cardUnlockProgress ?? {
+    enteredBiomes: {},
+    biomeRunsCompleted: {},
+    eliteKillsByBiome: {},
+    bossKillsByBiome: {},
+  };
+  const roomChoices = runState.map[runState.currentRoom];
+  const selectedRoom = roomChoices?.find((r) => r.completed) ?? roomChoices?.[0];
+  if (selectedRoom?.isElite) {
+    unlockProgress = onEliteKilled(unlockProgress, runState.currentBiome);
+  }
+  if (isBossRoom) {
+    unlockProgress = onBossKilled(unlockProgress, runState.currentBiome);
+  }
+  const unlockedCardIds = computeUnlockedCardIds(
+    allCards ?? [],
+    unlockProgress,
+    runState.unlockedStoryIdsSnapshot ?? []
+  );
 
   return {
     ...runState,
-    playerCurrentHp: Math.max(0, combatResult.player.currentHp),
+    playerCurrentHp: hpAfterMetaHeal,
     gold: runState.gold + goldReward,
     combat: null,
     currentRoom: runState.currentRoom + 1,
-    status: isBossRoom ? "VICTORY" : runState.status,
+    status: isBossRoom && isFinalFloor ? "VICTORY" : runState.status,
+    pendingBiomeChoices,
+    earnedResources: updatedEarnedResources,
+    unlockedCardIds: unlockedCardIds.length > 0 ? unlockedCardIds : runState.unlockedCardIds,
+    cardUnlockProgress: unlockProgress,
+  };
+}
+
+/**
+ * Advance to the next floor after the player chooses a biome.
+ * Generates a fresh map for the new floor/biome.
+ */
+export function advanceFloor(
+  state: RunState,
+  biome: BiomeType,
+  rng: RNG,
+  allCards?: CardDefinition[]
+): RunState {
+  const newFloor = state.floor + 1;
+  const newMap = generateFloorMap(newFloor, rng, biome);
+
+  const unlockProgress = onEnterBiome(state.cardUnlockProgress ?? {
+    enteredBiomes: {},
+    biomeRunsCompleted: {},
+    eliteKillsByBiome: {},
+    bossKillsByBiome: {},
+  }, biome);
+  const unlockedCardIds = computeUnlockedCardIds(
+    allCards ?? [],
+    unlockProgress,
+    state.unlockedStoryIdsSnapshot ?? []
+  );
+
+  return {
+    ...state,
+    floor: newFloor,
+    currentRoom: 0,
+    map: newMap,
+    currentBiome: biome,
+    pendingBiomeChoices: null,
+    unlockedCardIds: unlockedCardIds.length > 0 ? unlockedCardIds : state.unlockedCardIds,
+    cardUnlockProgress: unlockProgress,
   };
 }
 
@@ -233,6 +454,20 @@ export interface EventChoice {
   label: string;
   description: string;
   apply: (state: RunState) => RunState;
+}
+
+function addDeckCard(state: RunState, definitionId: string): RunState {
+  return {
+    ...state,
+    deck: [
+      ...state.deck,
+      {
+        instanceId: nanoid(),
+        definitionId,
+        upgraded: false,
+      },
+    ],
+  };
 }
 
 const EVENTS: GameEvent[] = [
@@ -313,6 +548,37 @@ const EVENTS: GameEvent[] = [
           playerCurrentHp: Math.min(s.playerMaxHp, s.playerCurrentHp + 10),
           currentRoom: s.currentRoom + 1,
         }),
+      },
+    ],
+  },
+  {
+    id: "whispering_idol",
+    title: "Whispering Idol",
+    description:
+      "A cracked idol offers you a pact: wealth now, but a curse bound to your deck.",
+    choices: [
+      {
+        label: "Accept the pact",
+        description: "Gain 90 gold. Add Hexed Parchment to your deck.",
+        apply: (s) => ({
+          ...addDeckCard(s, "hexed_parchment"),
+          gold: s.gold + 90,
+          currentRoom: s.currentRoom + 1,
+        }),
+      },
+      {
+        label: "Push your luck",
+        description: "Gain 140 gold. Add Haunting Regret to your deck.",
+        apply: (s) => ({
+          ...addDeckCard(s, "haunting_regret"),
+          gold: s.gold + 140,
+          currentRoom: s.currentRoom + 1,
+        }),
+      },
+      {
+        label: "Refuse",
+        description: "Leave safely.",
+        apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
       },
     ],
   },

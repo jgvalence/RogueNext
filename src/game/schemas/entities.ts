@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BuffType } from "./enums";
+import { BuffType, BiomeType } from "./enums";
 import { EffectSchema } from "./effects";
 
 export const BuffInstanceSchema = z.object({
@@ -17,7 +17,10 @@ export const PlayerStateSchema = z.object({
   energyMax: z.number().int(),
   inkCurrent: z.number().int().default(0),
   inkMax: z.number().int(),
-  inkPerCardPlayed: z.number().int().default(0),
+  inkPerCardChance: z.number().int().min(0).max(100).default(0),
+  inkPerCardValue: z.number().int().min(0).default(1),
+  regenPerTurn: z.number().int().min(0).default(0),
+  firstHitDamageReductionPercent: z.number().int().min(0).max(100).default(0),
   drawCount: z.number().int().default(5),
   speed: z.number().int().default(0),
   strength: z.number().int().default(0),
@@ -29,6 +32,9 @@ export type PlayerState = z.infer<typeof PlayerStateSchema>;
 export const EnemyAbilitySchema = z.object({
   name: z.string(),
   weight: z.number().default(1),
+  target: z
+    .enum(["PLAYER", "LOWEST_HP_ENEMY", "ALL_ENEMIES", "SELF"])
+    .optional(),
   effects: z.array(EffectSchema),
 });
 export type EnemyAbility = z.infer<typeof EnemyAbilitySchema>;
@@ -40,7 +46,9 @@ export const EnemyDefinitionSchema = z.object({
   speed: z.number().int(),
   abilities: z.array(EnemyAbilitySchema),
   isBoss: z.boolean().default(false),
+  isElite: z.boolean().default(false),
   tier: z.number().int().default(1),
+  biome: BiomeType.default("LIBRARY"),
 });
 export type EnemyDefinition = z.infer<typeof EnemyDefinitionSchema>;
 
@@ -74,5 +82,6 @@ export const AllyStateSchema = z.object({
   maxHp: z.number().int(),
   speed: z.number().int(),
   buffs: z.array(BuffInstanceSchema).default([]),
+  intentIndex: z.number().int().default(0),
 });
 export type AllyState = z.infer<typeof AllyStateSchema>;

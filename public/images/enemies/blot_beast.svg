@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="bb" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#374151"/>
+      <stop offset="100%" stop-color="#030712"/>
+    </radialGradient>
+  </defs>
+  <!-- Spiky outline protrusions -->
+  <polygon points="40,2 44,14 40,10 36,14" fill="#111827"/>
+  <polygon points="62,12 60,25 55,20 58,16" fill="#111827"/>
+  <polygon points="72,36 60,38 64,32 68,30" fill="#111827"/>
+  <polygon points="68,58 56,56 61,50 65,52" fill="#111827"/>
+  <polygon points="18,12 20,25 25,20 22,16" fill="#111827"/>
+  <polygon points="8,36 20,38 16,32 12,30" fill="#111827"/>
+  <polygon points="12,58 24,56 19,50 15,52" fill="#111827"/>
+  <!-- Main body -->
+  <circle cx="40" cy="42" r="28" fill="url(#bb)"/>
+  <!-- Ink texture blobs -->
+  <circle cx="30" cy="36" r="8" fill="#1f2937" opacity="0.7"/>
+  <circle cx="52" cy="38" r="7" fill="#1f2937" opacity="0.7"/>
+  <circle cx="40" cy="52" r="9" fill="#1f2937" opacity="0.6"/>
+  <!-- Single huge eye -->
+  <ellipse cx="40" cy="38" rx="14" ry="12" fill="#111827"/>
+  <ellipse cx="40" cy="38" rx="10" ry="9" fill="#fbbf24"/>
+  <ellipse cx="40" cy="38" rx="6" ry="7" fill="#1c1917"/>
+  <ellipse cx="40" cy="36" rx="3" ry="2" fill="#fef3c7"/>
+  <!-- Slit pupil -->
+  <ellipse cx="40" cy="38" rx="1.5" ry="6" fill="#0c0a09"/>
+  <!-- Smaller side eyes -->
+  <circle cx="22" cy="42" r="4" fill="#fbbf24"/>
+  <circle cx="22" cy="42" r="2" fill="#0c0a09"/>
+  <circle cx="58" cy="42" r="4" fill="#fbbf24"/>
+  <circle cx="58" cy="42" r="2" fill="#0c0a09"/>
+  <!-- Gaping maw -->
+  <path d="M26 56 Q40 68 54 56 Q46 62 40 60 Q34 62 26 56 Z" fill="#0c0a09"/>
+  <!-- Teeth -->
+  <polygon points="29,57 31,63 33,57" fill="#e5e7eb"/>
+  <polygon points="36,58 38,64 40,58" fill="#e5e7eb"/>
+  <polygon points="43,58 45,64 47,57" fill="#e5e7eb"/>
+  <polygon points="50,57 52,63 54,56" fill="#e5e7eb"/>
+</svg>

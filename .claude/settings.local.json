@@ -17,7 +17,14 @@
       "Bash(npx next lint:*)",
       "Bash(npx eslint:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git -C /c/Projects/RogueNext rev-parse:*)",
+      "Bash(git -C /c/Projects/RogueNext ls-files)",
+      "Bash(grep:*)",
+      "Bash(npx next build:*)",
+      "Bash(python3:*)",
+      "Bash(node -e:*)",
+      "Bash(npx prisma migrate dev:*)"
     ]
   }
 }

@@ -34,9 +34,10 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  accounts Account[]
-  sessions Session[]
-  runs     Run[]
+  accounts    Account[]
+  sessions    Session[]
+  runs        Run[]
+  progression UserProgression?
 
   @@index([email])
   @@map("users")
@@ -177,4 +178,19 @@ model AllyDefinition {
   updatedAt DateTime @updatedAt
 
   @@map("ally_definitions")
+}
+
+model UserProgression {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Partial<Record<BiomeResource, number>> — ressources accumulées
+  resources        Json     @default("{}")
+  // string[] — IDs des histoires débloquées
+  unlockedStoryIds Json     @default("[]")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_progressions")
 }

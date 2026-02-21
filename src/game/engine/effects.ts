@@ -2,8 +2,9 @@ import type { CombatState } from "../schemas/combat-state";
 import type { Effect } from "../schemas/effects";
 import type { PlayerState, EnemyState } from "../schemas/entities";
 import { calculateDamage, applyDamage, applyBlock } from "./damage";
-import { applyBuff } from "./buffs";
+import { applyBuff, getBuffStacks } from "./buffs";
 import { drawCards } from "./deck";
+import { nanoid } from "nanoid";
 import type { RNG } from "./rng";
 
 export type EffectSource =
@@ -28,6 +29,14 @@ function getSourceStats(state: CombatState, source: EffectSource) {
       strength: state.player.strength,
       buffs: state.player.buffs,
       focus: state.player.focus,
+    };
+  }
+  if (source.type === "ally") {
+    const ally = state.allies.find((a) => a.instanceId === source.instanceId);
+    return {
+      strength: 0,
+      buffs: ally?.buffs ?? [],
+      focus: 0,
     };
   }
   const enemy = state.enemies.find((e) => e.instanceId === source.instanceId);
@@ -67,15 +76,31 @@ function applyDamageToTarget(
   const sourceStats = getSourceStats(state, source);
 
   if (target === "player") {
-    const finalDmg = calculateDamage(baseDamage, sourceStats, {
+    const rawDamage = calculateDamage(baseDamage, sourceStats, {
       buffs: state.player.buffs,
     });
+    const canUseFirstHitReduction =
+      typeof source === "object" &&
+      source.type === "enemy" &&
+      !state.firstHitReductionUsed &&
+      state.player.firstHitDamageReductionPercent > 0 &&
+      rawDamage > 0;
+    const finalDmg = canUseFirstHitReduction
+      ? Math.floor(
+          rawDamage * (100 - state.player.firstHitDamageReductionPercent) / 100
+        )
+      : rawDamage;
     const result = applyDamage(state.player, finalDmg);
-    return updatePlayer(state, (p) => ({
-      ...p,
-      currentHp: result.currentHp,
-      block: result.block,
-    }));
+    return {
+      ...updatePlayer(state, (p) => ({
+        ...p,
+        currentHp: result.currentHp,
+        block: result.block,
+      })),
+      firstHitReductionUsed: canUseFirstHitReduction
+        ? true
+        : state.firstHitReductionUsed,
+    };
   }
 
   if (target === "all_enemies") {
@@ -162,12 +187,20 @@ export function resolveEffect(
       return applyDamageToTarget(state, ctx.target, effect.value, ctx.source);
 
     case "BLOCK":
-      return applyBlockToTarget(
-        state,
-        ctx.source === "player" ? "player" : ctx.target,
-        effect.value,
-        sourceStats.focus
-      );
+      // Block always applies to the source: player blocks themselves,
+      // enemies block themselves (not the player they're targeting).
+      if (ctx.source === "player") {
+        return applyBlockToTarget(state, "player", effect.value, sourceStats.focus);
+      }
+      if (typeof ctx.source === "object" && ctx.source.type === "enemy") {
+        return applyBlockToTarget(
+          state,
+          { type: "enemy", instanceId: ctx.source.instanceId },
+          effect.value,
+          0
+        );
+      }
+      return state;
 
     case "HEAL":
       return applyHealToTarget(state, ctx.target, effect.value);
@@ -263,6 +296,34 @@ export function resolveEffect(
       // Handled at card-play level, not here
       return state;
 
+    case "ADD_CARD_TO_DRAW":
+      if (!effect.cardId) return state;
+      return {
+        ...state,
+        drawPile: [
+          ...state.drawPile,
+          {
+            instanceId: nanoid(),
+            definitionId: effect.cardId,
+            upgraded: false,
+          },
+        ],
+      };
+
+    case "ADD_CARD_TO_DISCARD":
+      if (!effect.cardId) return state;
+      return {
+        ...state,
+        discardPile: [
+          ...state.discardPile,
+          {
+            instanceId: nanoid(),
+            definitionId: effect.cardId,
+            upgraded: false,
+          },
+        ],
+      };
+
     default:
       return state;
   }
@@ -293,8 +354,29 @@ export function resolveEffects(
     // Track whether damage was fully absorbed by block
     if (effect.type === "DAMAGE" && ctx.target === "player") {
       const hpBefore = current.player.currentHp;
+      const thorns = getBuffStacks(current.player.buffs, "THORNS");
       current = resolveEffect(current, effect, ctx, rng);
       damageFullyBlocked = current.player.currentHp >= hpBefore;
+
+      // Thorns retaliates when enemies hit the player.
+      if (
+        thorns > 0 &&
+        typeof ctx.source === "object" &&
+        ctx.source.type === "enemy"
+      ) {
+        const enemySourceId = ctx.source.instanceId;
+        const attacker = current.enemies.find(
+          (e) => e.instanceId === enemySourceId
+        );
+        if (attacker && attacker.currentHp > 0) {
+          const thornsResult = applyDamage(attacker, thorns);
+          current = updateEnemy(current, attacker.instanceId, (e) => ({
+            ...e,
+            currentHp: thornsResult.currentHp,
+            block: thornsResult.block,
+          }));
+        }
+      }
     } else {
       current = resolveEffect(current, effect, ctx, rng);
     }

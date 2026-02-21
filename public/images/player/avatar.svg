@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="cloak" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%"   stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+    <linearGradient id="inner" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <radialGradient id="hglow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#93c5fd" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#93c5fd" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Blue glow aura -->
+  <circle cx="32" cy="32" r="28" fill="url(#hglow)"/>
+  <!-- Cloak / lower body -->
+  <path d="M8 64 L10 38 Q14 32 32 32 Q50 32 54 38 L56 64 Z" fill="url(#cloak)"/>
+  <!-- Cloak inner -->
+  <path d="M22 64 L24 40 Q28 36 32 36 Q36 36 40 40 L42 64 Z" fill="url(#inner)" opacity="0.6"/>
+  <!-- Cloak trim (gold) -->
+  <path d="M10 42 L14 56 L32 60 L50 56 L54 42" stroke="#f59e0b" stroke-width="1" fill="none"/>
+  <!-- Ink rune on cloak -->
+  <text x="27" y="54" font-size="10" fill="#93c5fd" opacity="0.7" font-family="serif">✦</text>
+  <!-- Torso / chest armour -->
+  <rect x="22" y="22" width="20" height="12" rx="3" fill="#1d4ed8"/>
+  <rect x="24" y="24" width="16" height="8" rx="2" fill="#2563eb"/>
+  <!-- Collar -->
+  <path d="M24 22 Q32 18 40 22" stroke="#60a5fa" stroke-width="1.5" fill="none"/>
+  <!-- Head -->
+  <circle cx="32" cy="14" r="11" fill="#1e40af"/>
+  <!-- Hood -->
+  <path d="M22 14 Q22 4 32 2 Q42 4 42 14" fill="#1e3a8a"/>
+  <!-- Face -->
+  <ellipse cx="32" cy="16" rx="7" ry="6" fill="#dbeafe"/>
+  <!-- Eyes — determined gaze -->
+  <ellipse cx="29" cy="15" rx="2.5" ry="2" fill="#1e3a8a"/>
+  <ellipse cx="35" cy="15" rx="2.5" ry="2" fill="#1e3a8a"/>
+  <!-- Eye glint -->
+  <circle cx="29.8" cy="14.5" r="0.8" fill="#93c5fd"/>
+  <circle cx="35.8" cy="14.5" r="0.8" fill="#93c5fd"/>
+  <!-- Ink mark on face (the writer's mark) -->
+  <path d="M28 19 Q32 21 36 19" stroke="#3b82f6" stroke-width="1" fill="none" stroke-linecap="round"/>
+  <!-- Floating ink drop (power) -->
+  <path d="M48 8 Q52 12 52 16 Q52 20 48 22 Q44 20 44 16 Q44 12 48 8 Z" fill="#7c3aed" opacity="0.8"/>
+  <circle cx="47" cy="14" r="1" fill="#c4b5fd" opacity="0.8"/>
+</svg>

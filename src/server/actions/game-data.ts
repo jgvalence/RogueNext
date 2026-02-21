@@ -3,6 +3,7 @@
 import { handleServerActionError, success } from "@/lib/errors/handlers";
 import {
   allCardDefinitions,
+  allyDefinitions,
   buildCardDefsMap,
   enemyDefinitions,
   relicDefinitions,
@@ -29,6 +30,14 @@ export async function getCardDefsMapAction() {
 export async function getEnemyDefinitionsAction() {
   try {
     return success(enemyDefinitions);
+  } catch (error) {
+    return handleServerActionError(error);
+  }
+}
+
+export async function getAllyDefinitionsAction() {
+  try {
+    return success(allyDefinitions);
   } catch (error) {
     return handleServerActionError(error);
   }

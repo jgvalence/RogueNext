@@ -25,5 +25,6 @@ export const CombatStateSchema = z.object({
   discardPile: z.array(CardInstanceSchema),
   exhaustPile: z.array(CardInstanceSchema).default([]),
   inkPowerUsedThisTurn: z.boolean().default(false),
+  firstHitReductionUsed: z.boolean().default(false),
 });
 export type CombatState = z.infer<typeof CombatStateSchema>;

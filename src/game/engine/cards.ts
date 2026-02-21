@@ -16,6 +16,7 @@ export function canPlayCard(
 
   const def = cardDefs.get(cardInst.definitionId);
   if (!def) return false;
+  if (def.type === "STATUS" || def.type === "CURSE") return false;
 
   if (state.player.energyCurrent < def.energyCost) return false;
   if (def.inkCost > 0 && state.player.inkCurrent < def.inkCost) return false;
@@ -71,9 +72,6 @@ export function playCard(
   const def = cardDefs.get(cardInst.definitionId);
   if (!def) return state;
 
-  // Validate costs
-  if (state.player.energyCurrent < def.energyCost) return state;
-
   let effects =
     useInked && def.inkedVariant ? def.inkedVariant.effects : def.effects;
   const inkCost =
@@ -81,19 +79,27 @@ export function playCard(
       ? def.inkCost + def.inkedVariant.inkMarkCost
       : def.inkCost;
 
-  if (inkCost > 0 && state.player.inkCurrent < inkCost) return state;
-
-  // Apply upgrade bonus (+50% to DAMAGE and BLOCK values)
+  // Apply upgrade: use card-specific upgrade if defined, else generic boost
+  let energyCost = def.energyCost;
   if (cardInst.upgraded) {
-    effects = boostEffects(effects);
+    if (def.upgrade) {
+      effects = def.upgrade.effects;
+      if (def.upgrade.energyCost !== undefined) energyCost = def.upgrade.energyCost;
+    } else {
+      effects = boostEffects(effects);
+    }
   }
+
+  // Validate costs
+  if (state.player.energyCurrent < energyCost) return state;
+  if (inkCost > 0 && state.player.inkCurrent < inkCost) return state;
 
   // Deduct costs
   let current: CombatState = {
     ...state,
     player: {
       ...state.player,
-      energyCurrent: state.player.energyCurrent - def.energyCost,
+      energyCurrent: state.player.energyCurrent - energyCost,
       inkCurrent: state.player.inkCurrent - inkCost,
     },
   };
@@ -102,23 +108,29 @@ export function playCard(
   const target = targetingToEffectTarget(def.targeting, targetId);
   current = resolveEffects(current, effects, { source: "player", target }, rng);
 
-  // Gain ink for playing a card (only if inkPerCardPlayed > 0, e.g. from relics)
-  if (current.player.inkPerCardPlayed > 0) {
+  // Chance-based extra ink on card play.
+  if (current.player.inkPerCardChance > 0 && current.player.inkPerCardValue > 0) {
+    const gainedInk =
+      rng.next() * 100 < current.player.inkPerCardChance
+        ? current.player.inkPerCardValue
+        : 0;
+    if (gainedInk > 0) {
     current = {
       ...current,
       player: {
         ...current.player,
         inkCurrent: Math.min(
           current.player.inkMax,
-          current.player.inkCurrent + current.player.inkPerCardPlayed
+          current.player.inkCurrent + gainedInk
         ),
       },
     };
+    }
   }
 
   // Move card to appropriate pile
-  const hasExhaustEffect = effects.some((e) => e.type === "EXHAUST");
-  if (hasExhaustEffect) {
+  const shouldExhaust = def.type === "POWER" || effects.some((e) => e.type === "EXHAUST");
+  if (shouldExhaust) {
     current = moveCardToExhaust(current, instanceId);
   } else {
     current = moveCardToDiscard(current, instanceId);
@@ -128,14 +140,28 @@ export function playCard(
 }
 
 /**
- * Boost effect values by +50% for upgraded cards.
- * Only boosts DAMAGE, BLOCK, and HEAL values.
+ * Boost effect values for upgraded cards.
+ * - DAMAGE / BLOCK / HEAL / GAIN_INK : ×1.5 (floor), minimum +1
+ * - DRAW_CARDS / GAIN_ENERGY / GAIN_STRENGTH / GAIN_FOCUS : +1
+ * - APPLY_BUFF / APPLY_DEBUFF : +1 stack
  */
 function boostEffects(effects: Effect[]): Effect[] {
   return effects.map((e) => {
-    if (e.type === "DAMAGE" || e.type === "BLOCK" || e.type === "HEAL") {
-      return { ...e, value: Math.floor(e.value * 1.5) };
+    switch (e.type) {
+      case "DAMAGE":
+      case "BLOCK":
+      case "HEAL":
+      case "GAIN_INK":
+        return { ...e, value: Math.max(Math.floor(e.value * 1.5), e.value + 1) };
+      case "DRAW_CARDS":
+      case "GAIN_ENERGY":
+      case "GAIN_STRENGTH":
+      case "GAIN_FOCUS":
+      case "APPLY_BUFF":
+      case "APPLY_DEBUFF":
+        return { ...e, value: e.value + 1 };
+      default:
+        return e;
     }
-    return e;
   });
 }

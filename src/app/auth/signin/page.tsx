@@ -3,9 +3,9 @@
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
-export default function SignInPage() {
+function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/game";
@@ -127,6 +127,13 @@ export default function SignInPage() {
           </button>
         </form>
 
+        <p className="mt-6 text-center text-sm text-gray-500">
+          Pas encore de compte ?{" "}
+          <Link href="/auth/signup" className="text-purple-400 hover:text-purple-300">
+            S&apos;inscrire
+          </Link>
+        </p>
+
         {/* Demo credentials hint */}
         <div className="mt-6 rounded-lg border border-gray-800/50 bg-gray-900/50 p-4">
           <p className="mb-1 text-xs font-medium text-gray-500">
@@ -138,5 +145,19 @@ export default function SignInPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gray-950 text-white">
+          Chargement...
+        </div>
+      }
+    >
+      <SignInForm />
+    </Suspense>
   );
 }

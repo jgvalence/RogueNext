@@ -43,7 +43,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   pages: {
     signIn: "/auth/signin",
-    // signUp: "/auth/signup",
     // error: "/auth/error",
     // verifyRequest: "/auth/verify",
   },
@@ -116,7 +115,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as UserRole;
+        // Always re-fetch role from DB so changes take effect without re-login
+        try {
+          const freshUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { role: true },
+          });
+          session.user.role = freshUser?.role ?? (token.role as UserRole);
+        } catch {
+          session.user.role = token.role as UserRole;
+        }
       }
       return session;
     },

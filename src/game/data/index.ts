@@ -1,10 +1,12 @@
 import type { CardDefinition } from "../schemas/cards";
-import type { EnemyDefinition } from "../schemas/entities";
+import type { EnemyDefinition, AllyDefinition } from "../schemas/entities";
 import { starterCardDefinitions, starterDeckComposition } from "./starter-deck";
 import { lootableCardDefinitions } from "./cards";
 import { enemyDefinitions } from "./enemies";
 import { relicDefinitions } from "./relics";
 import { allyDefinitions } from "./allies";
+import { BIOME_METADATA } from "./biomes";
+import { histoireDefinitions, buildHistoireDefsMap } from "./histoires";
 
 export {
   starterCardDefinitions,
@@ -13,6 +15,9 @@ export {
   enemyDefinitions,
   relicDefinitions,
   allyDefinitions,
+  BIOME_METADATA,
+  histoireDefinitions,
+  buildHistoireDefsMap,
 };
 
 /** All card definitions (starter + lootable) */
@@ -33,6 +38,13 @@ export function buildEnemyDefsMap(
   enemies: EnemyDefinition[] = enemyDefinitions
 ): Map<string, EnemyDefinition> {
   return new Map(enemies.map((e) => [e.id, e]));
+}
+
+/** Ally definitions as a Map for O(1) lookup */
+export function buildAllyDefsMap(
+  allies: AllyDefinition[] = allyDefinitions
+): Map<string, AllyDefinition> {
+  return new Map(allies.map((a) => [a.id, a]));
 }
 
 /** Relic definitions as a Map */

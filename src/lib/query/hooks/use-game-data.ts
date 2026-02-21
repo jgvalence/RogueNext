@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { gameKeys } from "../game-keys";
 import {
+  getAllyDefinitionsAction,
   getCardDefinitionsAction,
   getEnemyDefinitionsAction,
   getRelicDefinitionsAction,
@@ -39,6 +40,18 @@ export function useEnemyDefinitions() {
     queryKey: gameKeys.enemyDefinitions,
     queryFn: async () => {
       const result = await getEnemyDefinitionsAction();
+      if (!result.success) throw new Error(result.error.message);
+      return result.data;
+    },
+    staleTime: Infinity,
+  });
+}
+
+export function useAllyDefinitions() {
+  return useQuery({
+    queryKey: gameKeys.allyDefinitions,
+    queryFn: async () => {
+      const result = await getAllyDefinitionsAction();
       if (!result.success) throw new Error(result.error.message);
       return result.data;
     },

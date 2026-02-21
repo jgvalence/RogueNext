@@ -54,11 +54,32 @@ const config: Config = {
           "50%": { opacity: "0.5", transform: "scale(1.1) translateY(-20px)" },
           "100%": { opacity: "0", transform: "scale(0.8) translateY(-40px)" },
         },
+        // Enemy acting: pulsing glow while the enemy prepares to attack
+        "enemy-acting": {
+          "0%, 100%": { boxShadow: "0 0 8px 2px rgba(251,146,60,0.4)", transform: "scale(1)" },
+          "50%": { boxShadow: "0 0 20px 6px rgba(251,146,60,0.75)", transform: "scale(1.03)" },
+        },
+        // Enemy attack: quick lunge downward toward player
+        "enemy-attack": {
+          "0%":   { transform: "translateY(0) scale(1)" },
+          "35%":  { transform: "translateY(16px) scale(1.06)" },
+          "65%":  { transform: "translateY(16px) scale(1.06)" },
+          "100%": { transform: "translateY(0) scale(1)" },
+        },
+        // Player hit flash: brief red tint when taking damage
+        "player-hit": {
+          "0%":   { boxShadow: "0 0 0 0 rgba(239,68,68,0)" },
+          "20%":  { boxShadow: "0 0 0 4px rgba(239,68,68,0.8)" },
+          "100%": { boxShadow: "0 0 0 0 rgba(239,68,68,0)" },
+        },
       },
       animation: {
         "float-up": "float-up 0.8s ease-out forwards",
         shake: "shake 0.3s ease-in-out",
         "card-play": "card-play 0.4s ease-out forwards",
+        "enemy-acting": "enemy-acting 0.7s ease-in-out infinite",
+        "enemy-attack": "enemy-attack 0.35s ease-in-out forwards",
+        "player-hit": "player-hit 0.5s ease-out forwards",
       },
     },
   },

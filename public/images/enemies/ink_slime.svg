@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="bg" cx="42%" cy="38%" r="58%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#1e1b4b"/>
+    </radialGradient>
+    <radialGradient id="shine" cx="35%" cy="25%" r="45%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Body blob -->
+  <ellipse cx="40" cy="50" rx="26" ry="20" fill="url(#bg)"/>
+  <!-- Head bumps -->
+  <circle cx="28" cy="36" r="12" fill="#6d28d9"/>
+  <circle cx="52" cy="36" r="12" fill="#6d28d9"/>
+  <circle cx="40" cy="30" r="15" fill="#7c3aed"/>
+  <!-- Shine overlay -->
+  <ellipse cx="40" cy="38" rx="26" ry="22" fill="url(#shine)"/>
+  <!-- Eyes -->
+  <circle cx="34" cy="34" r="6" fill="#ede9fe"/>
+  <circle cx="46" cy="34" r="6" fill="#ede9fe"/>
+  <circle cx="35" cy="33" r="3" fill="#2e1065"/>
+  <circle cx="47" cy="33" r="3" fill="#2e1065"/>
+  <circle cx="36" cy="32" r="1.2" fill="white"/>
+  <circle cx="48" cy="32" r="1.2" fill="white"/>
+  <!-- Mouth -->
+  <path d="M35 43 Q40 47 45 43" stroke="#4c1d95" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Ink drip -->
+  <path d="M38 64 Q37 70 40 74 Q43 70 42 64" fill="#4c1d95"/>
+  <ellipse cx="40" cy="74" rx="3" ry="2" fill="#4c1d95"/>
+</svg>

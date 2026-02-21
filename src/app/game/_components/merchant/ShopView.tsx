@@ -11,6 +11,7 @@ interface ShopViewProps {
   floor: number;
   gold: number;
   relicIds: string[];
+  unlockedCardIds: string[];
   cardDefs: Map<string, CardDefinition>;
   rng: RNG;
   onBuy: (item: ShopItem) => void;
@@ -33,6 +34,7 @@ export function ShopView({
   floor,
   gold,
   relicIds,
+  unlockedCardIds,
   cardDefs,
   rng,
   onBuy,
@@ -41,8 +43,15 @@ export function ShopView({
   const [soldIds, setSoldIds] = useState<Set<string>>(new Set());
 
   const inventory = useMemo(
-    () => generateShopInventory(floor, [...cardDefs.values()], relicIds, rng),
-    [floor, cardDefs, relicIds, rng]
+    () =>
+      generateShopInventory(
+        floor,
+        [...cardDefs.values()],
+        relicIds,
+        rng,
+        unlockedCardIds
+      ),
+    [floor, cardDefs, relicIds, rng, unlockedCardIds]
   );
 
   const handleBuy = (item: ShopItem) => {

@@ -11,15 +11,24 @@ interface FloorMapProps {
 }
 
 const roomIcons: Record<string, string> = {
-  COMBAT: "Sword",
+  COMBAT: "Combat",
   MERCHANT: "Shop",
-  SPECIAL: "Star",
+  SPECIAL: "Événement",
+  PRE_BOSS: "Avant-Boss",
+};
+
+const roomEmojis: Record<string, string> = {
+  COMBAT: "⚔",
+  MERCHANT: "🏪",
+  SPECIAL: "✨",
+  PRE_BOSS: "🛡",
 };
 
 const roomColors: Record<string, string> = {
   COMBAT: "border-red-500 bg-red-950/50 text-red-400",
   MERCHANT: "border-yellow-500 bg-yellow-950/50 text-yellow-400",
   SPECIAL: "border-purple-500 bg-purple-950/50 text-purple-400",
+  PRE_BOSS: "border-amber-500 bg-amber-950/50 text-amber-400",
 };
 
 export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
@@ -46,16 +55,18 @@ export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
                 onClick={() => onSelectRoom(i)}
               >
                 <span className="text-2xl">
-                  {room.type === "COMBAT"
-                    ? "⚔"
-                    : room.type === "MERCHANT"
-                      ? "🏪"
-                      : "✨"}
+                  {roomEmojis[room.type] ?? "✨"}
                 </span>
                 <span className="text-sm font-medium">
-                  {roomIcons[room.type]}
+                  {roomIcons[room.type] ?? room.type}
                 </span>
+                {room.type === "COMBAT" && room.isElite && (
+                  <span className="rounded bg-orange-700/80 px-2 py-0.5 text-xs font-bold text-orange-100">
+                    ⚠ Elite
+                  </span>
+                )}
                 {room.type === "COMBAT" &&
+                  !room.isElite &&
                   room.enemyIds &&
                   room.enemyIds.length > 0 && (
                     <span className="text-xs text-gray-400">

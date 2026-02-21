@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="robe" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6d28d9"/>
+      <stop offset="100%" stop-color="#2e1065"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c4b5fd"/>
+      <stop offset="60%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#4c1d95"/>
+    </radialGradient>
+  </defs>
+  <!-- Robe bottom (wide) -->
+  <path d="M20 78 L16 44 Q20 40 40 40 Q60 40 64 44 L60 78 Z" fill="url(#robe)"/>
+  <!-- Robe trim -->
+  <path d="M20 78 L24 60 L40 64 L56 60 L60 78" stroke="#f59e0b" stroke-width="1.5" fill="none"/>
+  <!-- Arcane symbols on robe -->
+  <text x="36" y="70" font-size="8" fill="#f59e0b" opacity="0.7" font-family="serif">✦</text>
+  <text x="26" y="60" font-size="6" fill="#a78bfa" opacity="0.5" font-family="serif">◈</text>
+  <text x="46" y="60" font-size="6" fill="#a78bfa" opacity="0.5" font-family="serif">◈</text>
+  <!-- Body / chest -->
+  <rect x="28" y="26" width="24" height="16" rx="4" fill="#5b21b6"/>
+  <!-- Collar gold trim -->
+  <path d="M28 30 Q40 24 52 30" stroke="#f59e0b" stroke-width="2" fill="none"/>
+  <!-- Arms -->
+  <path d="M28 32 L12 48 L16 52 L32 40" fill="#6d28d9"/>
+  <path d="M52 32 L68 48 L64 52 L48 40" fill="#6d28d9"/>
+  <!-- Orb in left hand -->
+  <circle cx="12" cy="52" r="7" fill="url(#orb)"/>
+  <circle cx="10" cy="50" r="2" fill="white" opacity="0.5"/>
+  <!-- Head -->
+  <circle cx="40" cy="18" r="14" fill="#4c1d95"/>
+  <!-- Crown -->
+  <path d="M28 14 L30 6 L34 12 L40 4 L46 12 L50 6 L52 14 Z" fill="#f59e0b"/>
+  <!-- Face -->
+  <ellipse cx="40" cy="20" rx="9" ry="8" fill="#1e1035"/>
+  <!-- Glowing eyes -->
+  <ellipse cx="36" cy="19" rx="3" ry="2.5" fill="#f59e0b"/>
+  <ellipse cx="44" cy="19" rx="3" ry="2.5" fill="#f59e0b"/>
+  <circle cx="36" cy="19" r="1" fill="white" opacity="0.8"/>
+  <circle cx="44" cy="19" r="1" fill="white" opacity="0.8"/>
+  <!-- Floating arcane rune above -->
+  <text x="34" y="3" font-size="10" fill="#f59e0b" opacity="0.8" font-family="serif">☽</text>
+</svg>

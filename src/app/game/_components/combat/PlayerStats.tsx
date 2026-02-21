@@ -5,6 +5,8 @@ import type { PlayerState } from "@/game/schemas/entities";
 import { HpBar } from "../shared/HpBar";
 import { EnergyOrb } from "../shared/EnergyOrb";
 import { DamageNumber } from "./DamageNumber";
+import { BuffPill } from "../shared/BuffPill";
+import { Tooltip } from "../shared/Tooltip";
 
 interface PlayerStatsProps {
   player: PlayerState;
@@ -53,30 +55,30 @@ export function PlayerStats({ player }: PlayerStatsProps) {
       <div className="flex-1 space-y-2">
         <HpBar current={player.currentHp} max={player.maxHp} />
 
-        <div className="flex items-center gap-3 text-xs">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
           {player.block > 0 && (
-            <span className="rounded bg-blue-800 px-2 py-0.5 text-blue-200">
-              Block: {player.block}
-            </span>
+            <Tooltip content="Absorbs incoming damage this turn. Resets at the start of your turn.">
+              <span className="cursor-default rounded bg-blue-800 px-2 py-0.5 text-blue-200">
+                🛡 {player.block}
+              </span>
+            </Tooltip>
           )}
           {player.strength > 0 && (
-            <span className="rounded bg-red-800 px-2 py-0.5 text-red-200">
-              Str: +{player.strength}
-            </span>
+            <Tooltip content={`Increases all damage dealt by ${player.strength}.`}>
+              <span className="cursor-default rounded bg-red-800 px-2 py-0.5 text-red-200">
+                ⚔ +{player.strength}
+              </span>
+            </Tooltip>
           )}
           {player.focus > 0 && (
-            <span className="rounded bg-green-800 px-2 py-0.5 text-green-200">
-              Focus: +{player.focus}
-            </span>
+            <Tooltip content={`Increases block gained by ${player.focus}.`}>
+              <span className="cursor-default rounded bg-blue-900 px-2 py-0.5 text-blue-300">
+                Focus +{player.focus}
+              </span>
+            </Tooltip>
           )}
           {player.buffs.map((b, i) => (
-            <span
-              key={`${b.type}-${i}`}
-              className="rounded bg-gray-700 px-2 py-0.5 text-gray-300"
-            >
-              {b.type}: {b.stacks}
-              {b.duration !== undefined && ` (${b.duration}t)`}
-            </span>
+            <BuffPill key={`${b.type}-${i}`} buff={b} />
           ))}
         </div>
       </div>

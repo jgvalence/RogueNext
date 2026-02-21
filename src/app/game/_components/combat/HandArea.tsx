@@ -10,7 +10,7 @@ interface HandAreaProps {
   combatState: CombatState;
   cardDefs: Map<string, CardDefinition>;
   selectedCardId: string | null;
-  onSelectCard: (instanceId: string) => void;
+  pendingInked: boolean;
   onPlayCard: (instanceId: string, useInked: boolean) => void;
 }
 
@@ -19,7 +19,7 @@ export function HandArea({
   combatState,
   cardDefs,
   selectedCardId,
-  onSelectCard,
+  pendingInked,
   onPlayCard,
 }: HandAreaProps) {
   return (
@@ -43,25 +43,14 @@ export function HandArea({
             canPlay={canPlay}
             canPlayInked={canInked}
             isSelected={selectedCardId === card.instanceId}
+            isPendingInked={selectedCardId === card.instanceId && pendingInked}
             onClick={() => {
-              if (selectedCardId === card.instanceId) {
-                // Double-click plays (self-targeting cards)
-                if (
-                  def.targeting === "SELF" ||
-                  def.targeting === "ALL_ENEMIES"
-                ) {
-                  onPlayCard(card.instanceId, false);
-                }
-              } else {
-                onSelectCard(card.instanceId);
-              }
+              // Always route through onPlayCard so handlePlayCard sets pendingInked correctly
+              onPlayCard(card.instanceId, false);
             }}
             onInkedClick={() => {
-              if (def.targeting === "SELF" || def.targeting === "ALL_ENEMIES") {
-                onPlayCard(card.instanceId, true);
-              } else {
-                onSelectCard(card.instanceId);
-              }
+              // Always pass useInked=true — handlePlayCard handles targeting
+              onPlayCard(card.instanceId, true);
             }}
           />
         );

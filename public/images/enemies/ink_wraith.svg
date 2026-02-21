@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="wg" cx="50%" cy="30%" r="55%">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="100%" stop-color="#0c0a1a"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Ghostly body — tapers to wispy bottom -->
+  <path d="M40 6 C24 6 14 18 14 32 C14 48 18 58 22 64 C25 68 19 76 23 77 C26 78 28 72 31 74 C33 76 36 72 38 74 C40 76 42 72 44 74 C46 76 48 72 51 74 C54 76 52 77 56 77 C60 76 55 68 58 64 C62 58 66 48 66 32 C66 18 56 6 40 6 Z" fill="url(#wg)" opacity="0.92"/>
+  <!-- Glow overlay -->
+  <ellipse cx="40" cy="35" rx="25" ry="30" fill="url(#glow)"/>
+  <!-- Hood / dark face area -->
+  <ellipse cx="40" cy="26" rx="17" ry="14" fill="#1e1b4b" opacity="0.85"/>
+  <!-- Glowing eyes -->
+  <ellipse cx="33" cy="26" rx="5" ry="4" fill="#818cf8"/>
+  <ellipse cx="47" cy="26" rx="5" ry="4" fill="#818cf8"/>
+  <ellipse cx="33" cy="26" rx="3" ry="2.5" fill="#c7d2fe"/>
+  <ellipse cx="47" cy="26" rx="3" ry="2.5" fill="#c7d2fe"/>
+  <!-- Inner glow dots -->
+  <circle cx="33" cy="25" r="1" fill="white" opacity="0.9"/>
+  <circle cx="47" cy="25" r="1" fill="white" opacity="0.9"/>
+  <!-- Ethereal rune markings -->
+  <path d="M32 42 L36 48 L32 54" stroke="#6366f1" stroke-width="1.2" fill="none" opacity="0.5"/>
+  <path d="M48 42 L44 48 L48 54" stroke="#6366f1" stroke-width="1.2" fill="none" opacity="0.5"/>
+</svg>

@@ -21,12 +21,20 @@ export function generateShopInventory(
   floor: number,
   allCards: CardDefinition[],
   ownedRelicIds: string[],
-  rng: RNG
+  rng: RNG,
+  unlockedCardIds?: string[]
 ): ShopItem[] {
   const items: ShopItem[] = [];
 
   // 3 random non-starter cards
-  const lootable = rng.shuffle(allCards.filter((c) => !c.isStarterCard));
+  const lootable = rng.shuffle(
+    allCards.filter(
+      (c) =>
+        !c.isStarterCard &&
+        c.isCollectible !== false &&
+        (unlockedCardIds ? unlockedCardIds.includes(c.id) : true)
+    )
+  );
   for (let i = 0; i < 3 && i < lootable.length; i++) {
     const card = lootable[i]!;
     const price = getCardPrice(card.rarity, floor);
@@ -155,7 +163,55 @@ const ALL_SHOP_RELICS = [
   {
     id: "iron_binding",
     name: "Iron Binding",
-    description: "+1 ink per card played",
+    description: "+1 ink gained when ink-per-card triggers",
     price: 150,
+  },
+  {
+    id: "blighted_compass",
+    name: "Blighted Compass",
+    description: "+1 draw per turn, but start combat with Weak.",
+    price: 90,
+  },
+  {
+    id: "cursed_diacrit",
+    name: "Cursed Diacrit",
+    description: "+1 energy per turn, but gain a curse each combat.",
+    price: 100,
+  },
+  {
+    id: "runic_bulwark",
+    name: "Runic Bulwark",
+    description: "Retain 50% of your remaining Block each turn.",
+    price: 140,
+  },
+  {
+    id: "eternal_hourglass",
+    name: "Eternal Hourglass",
+    description: "Unspent energy is conserved between turns.",
+    price: 160,
+  },
+  {
+    id: "briar_codex",
+    name: "Briar Codex",
+    description: "Start each combat with 2 Thorns.",
+    price: 115,
+  },
+  {
+    id: "warded_ribbon",
+    name: "Warded Ribbon",
+    description: "Start each combat with 6 Block.",
+    price: 80,
+  },
+  {
+    id: "inkwell_reservoir",
+    name: "Inkwell Reservoir",
+    description: "+1 max ink and start each combat with 1 ink.",
+    price: 90,
+  },
+  {
+    id: "battle_lexicon",
+    name: "Battle Lexicon",
+    description: "Start each combat with +1 Strength.",
+    price: 120,
   },
 ];

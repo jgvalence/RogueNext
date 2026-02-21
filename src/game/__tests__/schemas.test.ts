@@ -36,6 +36,15 @@ describe("EffectSchema", () => {
   it("rejects invalid effect type", () => {
     expect(() => EffectSchema.parse({ type: "INVALID", value: 5 })).toThrow();
   });
+
+  it("parses add-card effect with cardId", () => {
+    const result = EffectSchema.parse({
+      type: "ADD_CARD_TO_DISCARD",
+      value: 1,
+      cardId: "hexed_parchment",
+    });
+    expect(result.cardId).toBe("hexed_parchment");
+  });
 });
 
 describe("CardDefinitionSchema", () => {
@@ -125,6 +134,10 @@ describe("PlayerStateSchema", () => {
     });
     expect(result.block).toBe(0);
     expect(result.inkCurrent).toBe(0);
+    expect(result.inkPerCardChance).toBe(0);
+    expect(result.inkPerCardValue).toBe(1);
+    expect(result.regenPerTurn).toBe(0);
+    expect(result.firstHitDamageReductionPercent).toBe(0);
     expect(result.drawCount).toBe(5);
     expect(result.strength).toBe(0);
     expect(result.buffs).toEqual([]);
@@ -221,6 +234,7 @@ describe("CombatStateSchema", () => {
     expect(result.phase).toBe("PLAYER_TURN");
     expect(result.allies).toEqual([]);
     expect(result.exhaustPile).toEqual([]);
+    expect(result.firstHitReductionUsed).toBe(false);
   });
 });
 
@@ -238,6 +252,7 @@ describe("RunStateSchema", () => {
     expect(result.floor).toBe(1);
     expect(result.currentRoom).toBe(0);
     expect(result.gold).toBe(0);
+    expect(result.allyIds).toEqual([]);
     expect(result.relicIds).toEqual([]);
     expect(result.combat).toBeNull();
   });

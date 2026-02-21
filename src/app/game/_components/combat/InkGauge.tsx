@@ -11,15 +11,17 @@ interface InkGaugeProps {
   player: PlayerState;
   combatState: CombatState;
   onUsePower: (power: InkPowerType) => void;
+  unlockedPowers?: InkPowerType[];
 }
 
-const inkPowers: { type: InkPowerType; label: string; desc: string }[] = [
+const ALL_INK_POWERS: { type: InkPowerType; label: string; desc: string }[] = [
   { type: "REWRITE", label: "Rewrite", desc: "Retrieve a card from discard" },
   { type: "LOST_CHAPTER", label: "Lost Chapter", desc: "Draw 2 cards" },
   { type: "SEAL", label: "Seal", desc: "Gain 8 block" },
 ];
 
-export function InkGauge({ player, combatState, onUsePower }: InkGaugeProps) {
+export function InkGauge({ player, combatState, onUsePower, unlockedPowers = ["REWRITE"] }: InkGaugeProps) {
+  const inkPowers = ALL_INK_POWERS.filter((p) => unlockedPowers.includes(p.type));
   const percent = Math.max(
     0,
     Math.min(100, (player.inkCurrent / player.inkMax) * 100)

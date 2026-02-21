@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth/config";
+import { LogoutButton } from "@/components/auth/LogoutButton";
 
 export default async function HomePage() {
   const session = await auth();
@@ -33,32 +34,12 @@ export default async function HomePage() {
         {/* CTA */}
         <div className="flex flex-col items-center gap-4">
           {isSignedIn ? (
-            <Link
-              href="/game"
-              className="group relative inline-flex items-center gap-2 rounded-lg bg-purple-600 px-10 py-4 text-lg font-bold transition-all hover:bg-purple-500 hover:shadow-[0_0_32px_rgba(147,51,234,0.4)]"
-            >
-              <span>Jouer</span>
-              <svg
-                className="h-5 w-5 transition-transform group-hover:translate-x-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"
-                />
-              </svg>
-            </Link>
-          ) : (
-            <>
+            <div className="flex items-center gap-3">
               <Link
-                href="/auth/signin"
+                href="/game"
                 className="group relative inline-flex items-center gap-2 rounded-lg bg-purple-600 px-10 py-4 text-lg font-bold transition-all hover:bg-purple-500 hover:shadow-[0_0_32px_rgba(147,51,234,0.4)]"
               >
-                <span>Commencer l&apos;aventure</span>
+                <span>Jouer</span>
                 <svg
                   className="h-5 w-5 transition-transform group-hover:translate-x-1"
                   fill="none"
@@ -73,6 +54,43 @@ export default async function HomePage() {
                   />
                 </svg>
               </Link>
+              <Link
+                href="/library"
+                className="rounded-lg border border-amber-700 px-6 py-4 font-semibold text-amber-400 transition hover:border-amber-500 hover:text-amber-300"
+              >
+                Biblioth&egrave;que
+              </Link>
+              <LogoutButton className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white" />
+            </div>
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Link
+                  href="/auth/signup"
+                  className="group relative inline-flex items-center gap-2 rounded-lg bg-purple-600 px-8 py-4 text-lg font-bold transition-all hover:bg-purple-500 hover:shadow-[0_0_32px_rgba(147,51,234,0.4)]"
+                >
+                  <span>S&apos;inscrire</span>
+                  <svg
+                    className="h-5 w-5 transition-transform group-hover:translate-x-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                    />
+                  </svg>
+                </Link>
+                <Link
+                  href="/auth/signin"
+                  className="rounded-lg border border-gray-700 px-8 py-4 text-lg font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
+                >
+                  Se connecter
+                </Link>
+              </div>
               <span className="text-sm text-gray-500">
                 Connectez-vous pour sauvegarder votre progression
               </span>

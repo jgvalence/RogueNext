@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="robe2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <radialGradient id="bglow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#dc2626" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#dc2626" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Red glow aura -->
+  <circle cx="40" cy="42" r="36" fill="url(#bglow)"/>
+  <!-- Robe — wide imposing silhouette -->
+  <path d="M12 80 L10 46 Q14 38 40 36 Q66 38 70 46 L68 80 Z" fill="url(#robe2)"/>
+  <!-- Robe trim — gold edge -->
+  <path d="M12 80 L16 58 L40 62 L64 58 L68 80" stroke="#f59e0b" stroke-width="1.5" fill="none"/>
+  <!-- Redaction bar on robe (censorship motif) -->
+  <rect x="22" y="50" width="36" height="5" rx="1" fill="#dc2626" opacity="0.8"/>
+  <rect x="26" y="58" width="28" height="4" rx="1" fill="#dc2626" opacity="0.6"/>
+  <!-- Body / chest armour -->
+  <rect x="26" y="24" width="28" height="16" rx="4" fill="#1e293b"/>
+  <!-- Gold authority seal on chest -->
+  <circle cx="40" cy="32" r="8" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="36" y="35" font-size="8" fill="#f59e0b" font-family="serif">✦</text>
+  <!-- Arms -->
+  <path d="M26 30 L8 44 L12 50 L30 38" fill="#1e293b"/>
+  <!-- Stamp/seal in left hand -->
+  <rect x="2" y="46" width="12" height="8" rx="2" fill="#dc2626"/>
+  <rect x="4" y="50" width="8" height="10" rx="1" fill="#7f1d1d"/>
+  <path d="M54 30 L72 44 L68 50 L50 38" fill="#1e293b"/>
+  <!-- Right hand — pointing finger of judgement -->
+  <ellipse cx="74" cy="48" rx="4" ry="3" fill="#1e293b"/>
+  <!-- Head — large, imposing judge wig shape -->
+  <rect x="24" y="4" width="32" height="22" rx="6" fill="#1e293b"/>
+  <!-- Wig/crown of authority -->
+  <path d="M24 14 Q24 4 40 2 Q56 4 56 14" fill="#334155"/>
+  <!-- Authority scrolls on sides -->
+  <rect x="20" y="8" width="6" height="12" rx="3" fill="#fef9e7"/>
+  <rect x="54" y="8" width="6" height="12" rx="3" fill="#fef9e7"/>
+  <!-- Face — covered by redaction bar -->
+  <rect x="26" y="14" width="28" height="7" rx="1" fill="#dc2626"/>
+  <!-- Only eyes visible above bar — cold, judging -->
+  <ellipse cx="34" cy="13" rx="4" ry="3" fill="#f97316"/>
+  <ellipse cx="46" cy="13" rx="4" ry="3" fill="#f97316"/>
+  <ellipse cx="34" cy="13" rx="2" ry="1.5" fill="#431407"/>
+  <ellipse cx="46" cy="13" rx="2" ry="1.5" fill="#431407"/>
+  <!-- Floating redaction blots -->
+  <rect x="6" y="18" width="10" height="4" rx="1" fill="#dc2626" opacity="0.6"/>
+  <rect x="64" y="18" width="10" height="4" rx="1" fill="#dc2626" opacity="0.6"/>
+</svg>
