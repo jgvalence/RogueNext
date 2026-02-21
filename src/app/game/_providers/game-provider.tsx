@@ -377,7 +377,7 @@ export function GameProvider({
 
   const reducer = useMemo(
     () => createGameReducer({ cardDefs, enemyDefs, allyDefs, rng, setRewards }),
-    [cardDefs, enemyDefs, allyDefs, rng]
+    [cardDefs, enemyDefs, allyDefs, rng] // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   const [state, dispatch] = useReducer(reducer, initialState);
