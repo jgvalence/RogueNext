@@ -29,10 +29,12 @@ export function GameLayout({ children }: GameLayoutProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 text-white">
-      <div className="fixed inset-0 z-50 hidden flex-col items-center justify-center gap-6 bg-slate-950 portrait:flex sm:hidden">
+      <div className="fixed inset-0 z-50 hidden flex-col items-center justify-center gap-6 bg-slate-950 sm:hidden portrait:flex">
         <div className="text-5xl font-black tracking-[0.2em]">ROTATE</div>
         <p className="text-xl font-bold text-white">Rotate your device</p>
-        <p className="text-sm text-slate-400">Panlibrarium requires landscape mode</p>
+        <p className="text-sm text-slate-400">
+          Panlibrarium requires landscape mode
+        </p>
       </div>
 
       <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/90 px-5 py-2.5 backdrop-blur-sm">
@@ -43,12 +45,14 @@ export function GameLayout({ children }: GameLayoutProps) {
           <span className="text-sm text-slate-500">|</span>
           <span className="text-sm text-slate-400">
             Room{" "}
-            <span className="font-semibold text-slate-200">{state.currentRoom + 1}</span>
+            <span className="font-semibold text-slate-200">
+              {state.currentRoom + 1}
+            </span>
             <span className="text-slate-600">/{state.map.length}</span>
           </span>
         </div>
 
-        <span className="hidden text-sm font-bold tracking-[0.2em] uppercase text-slate-500 sm:block">
+        <span className="hidden text-sm font-bold uppercase tracking-[0.2em] text-slate-500 sm:block">
           Panlibrarium
         </span>
 
@@ -71,10 +75,14 @@ export function GameLayout({ children }: GameLayoutProps) {
 
           <div className="flex items-center gap-1.5">
             <span className="text-sm text-amber-400">Gold</span>
-            <span className="text-sm font-bold text-amber-300">{state.gold}</span>
+            <span className="text-sm font-bold text-amber-300">
+              {state.gold}
+            </span>
           </div>
 
-          {Object.entries(state.earnedResources ?? {}).some(([, v]) => v > 0) && (
+          {Object.entries(state.earnedResources ?? {}).some(
+            ([, v]) => v > 0
+          ) && (
             <div className="hidden items-center gap-1 sm:flex">
               {Object.entries(state.earnedResources ?? {})
                 .filter(([, v]) => v > 0)
@@ -91,7 +99,9 @@ export function GameLayout({ children }: GameLayoutProps) {
 
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-slate-500">Deck</span>
-            <span className="text-sm font-semibold text-slate-200">{state.deck.length}</span>
+            <span className="text-sm font-semibold text-slate-200">
+              {state.deck.length}
+            </span>
           </div>
 
           {state.relicIds.length > 0 && (
@@ -101,7 +111,9 @@ export function GameLayout({ children }: GameLayoutProps) {
               title="Show relics"
             >
               <span className="text-xs text-purple-400">Relics</span>
-              <span className="text-sm font-semibold text-purple-300">{state.relicIds.length}</span>
+              <span className="text-sm font-semibold text-purple-300">
+                {state.relicIds.length}
+              </span>
             </button>
           )}
 
@@ -132,7 +144,9 @@ export function GameLayout({ children }: GameLayoutProps) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-slate-100">Your Relics</h3>
+              <h3 className="text-lg font-semibold text-slate-100">
+                Your Relics
+              </h3>
               <button
                 onClick={() => setShowRelics(false)}
                 className="rounded border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:border-slate-400"
@@ -146,14 +160,19 @@ export function GameLayout({ children }: GameLayoutProps) {
             ) : (
               <div className="space-y-2">
                 {ownedRelics.map((relic) => (
-                  <div key={relic.id} className="rounded border border-slate-700 bg-slate-950/60 p-3">
+                  <div
+                    key={relic.id}
+                    className="rounded border border-slate-700 bg-slate-950/60 p-3"
+                  >
                     <p className="text-sm font-semibold text-slate-100">
                       {relic.name}{" "}
                       <span className="ml-1 text-xs uppercase tracking-wide text-slate-400">
                         {relic.rarity}
                       </span>
                     </p>
-                    <p className="text-sm text-slate-300">{relic.description}</p>
+                    <p className="text-sm text-slate-300">
+                      {relic.description}
+                    </p>
                   </div>
                 ))}
               </div>

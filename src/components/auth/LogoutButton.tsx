@@ -7,7 +7,10 @@ interface LogoutButtonProps {
   label?: string;
 }
 
-export function LogoutButton({ className, label = "Se deconnecter" }: LogoutButtonProps) {
+export function LogoutButton({
+  className,
+  label = "Se deconnecter",
+}: LogoutButtonProps) {
   return (
     <button
       type="button"

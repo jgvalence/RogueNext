@@ -191,7 +191,9 @@ function resolveAllyAbilityTarget(state: CombatState, ability: EnemyAbility) {
       return "all_enemies" as const;
     case "LOWEST_HP_ENEMY": {
       const enemyId = pickLowestHpEnemy(state);
-      return enemyId ? ({ type: "enemy", instanceId: enemyId } as const) : "all_enemies";
+      return enemyId
+        ? ({ type: "enemy", instanceId: enemyId } as const)
+        : "all_enemies";
     }
     case "SELF":
       return "player" as const;
@@ -216,7 +218,9 @@ export function executeAlliesTurn(
     const def = allyDefs.get(ally.definitionId);
     if (!def || def.abilities.length === 0) continue;
 
-    const freshAlly = current.allies.find((a) => a.instanceId === ally.instanceId);
+    const freshAlly = current.allies.find(
+      (a) => a.instanceId === ally.instanceId
+    );
     if (!freshAlly || freshAlly.currentHp <= 0) continue;
 
     const ability = def.abilities[freshAlly.intentIndex];
@@ -236,7 +240,9 @@ export function executeAlliesTurn(
     current = {
       ...current,
       allies: current.allies.map((a) =>
-        a.instanceId === freshAlly.instanceId ? { ...a, intentIndex: nextIntent } : a
+        a.instanceId === freshAlly.instanceId
+          ? { ...a, intentIndex: nextIntent }
+          : a
       ),
     };
   }

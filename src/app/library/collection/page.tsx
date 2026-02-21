@@ -6,7 +6,10 @@ import {
   getCardUnlockDetails,
   readUnlockProgressFromResources,
 } from "@/game/engine/card-unlocks";
-import { CardCollectionClient, type CollectionCardRow } from "../_components/CardCollectionClient";
+import {
+  CardCollectionClient,
+  type CollectionCardRow,
+} from "../_components/CardCollectionClient";
 
 export default async function CardCollectionPage() {
   const session = await auth();

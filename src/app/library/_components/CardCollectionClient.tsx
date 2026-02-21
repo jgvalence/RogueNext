@@ -25,7 +25,10 @@ interface CardCollectionClientProps {
   cards: CollectionCardRow[];
 }
 
-function matchesType(card: CollectionCardRow, filter: CollectionTypeFilter): boolean {
+function matchesType(
+  card: CollectionCardRow,
+  filter: CollectionTypeFilter
+): boolean {
   if (filter === "ALL") return true;
   if (filter === "ATTACK") return card.type === "ATTACK";
   if (filter === "POWER") return card.type === "POWER";
@@ -164,7 +167,8 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
                 </span>
               </div>
               <p className="text-xs text-gray-400">
-                {card.biome} • {card.type} • {card.rarity} • {card.energyCost} energy
+                {card.biome} • {card.type} • {card.rarity} • {card.energyCost}{" "}
+                energy
               </p>
               <p className="mt-2 text-sm text-gray-300">{card.description}</p>
 
@@ -172,7 +176,8 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
                 <div className="mt-3 rounded border border-rose-900 bg-rose-950/30 p-2 text-xs text-rose-200">
                   <p className="font-semibold">Pourquoi cette carte est lock</p>
                   <p>
-                    Condition manquante: {card.missingCondition ?? card.unlockCondition}
+                    Condition manquante:{" "}
+                    {card.missingCondition ?? card.unlockCondition}
                   </p>
                   {card.unlockProgress && (
                     <p className="mt-1 text-rose-300">

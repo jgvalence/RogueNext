@@ -46,7 +46,9 @@ export function getResourcesForCombat(
   }
 
   const primaryResource = BIOME_RESOURCE[biome];
-  const result: Partial<Record<BiomeResource, number>> = { [primaryResource]: amount };
+  const result: Partial<Record<BiomeResource, number>> = {
+    [primaryResource]: amount,
+  };
 
   // 25% chance d'obtenir 1 ressource d'un biome aléatoire différent
   if (rng && rng.next() < 0.25) {
@@ -145,7 +147,10 @@ function applyBonusToComputed(
       result.healAfterCombat += bonus.value;
       break;
     case "EXHAUST_KEEP_CHANCE":
-      result.exhaustKeepChance = Math.min(100, result.exhaustKeepChance + bonus.value);
+      result.exhaustKeepChance = Math.min(
+        100,
+        result.exhaustKeepChance + bonus.value
+      );
       break;
     case "SURVIVAL_ONCE":
       result.survivalOnce = true;
@@ -176,8 +181,14 @@ export function applyMetaBonusesToCombat(
       energyMax: p.energyMax + bonuses.extraEnergyMax,
       energyCurrent: p.energyCurrent + bonuses.extraEnergyMax,
       inkMax: p.inkMax + bonuses.extraInkMax,
-      inkCurrent: Math.min(p.inkMax + bonuses.extraInkMax, p.inkCurrent + bonuses.startingInk),
-      inkPerCardChance: Math.min(100, p.inkPerCardChance + bonuses.inkPerCardChance),
+      inkCurrent: Math.min(
+        p.inkMax + bonuses.extraInkMax,
+        p.inkCurrent + bonuses.startingInk
+      ),
+      inkPerCardChance: Math.min(
+        100,
+        p.inkPerCardChance + bonuses.inkPerCardChance
+      ),
       inkPerCardValue: Math.max(0, p.inkPerCardValue + bonuses.inkPerCardValue),
       regenPerTurn: Math.max(0, p.regenPerTurn + bonuses.startingRegen),
       firstHitDamageReductionPercent: Math.min(
@@ -188,7 +199,10 @@ export function applyMetaBonusesToCombat(
       strength: p.strength + bonuses.startingStrength,
       block: p.block + bonuses.startingBlock,
       maxHp: p.maxHp + bonuses.extraHp,
-      currentHp: Math.min(p.maxHp + bonuses.extraHp, p.currentHp + bonuses.extraHp),
+      currentHp: Math.min(
+        p.maxHp + bonuses.extraHp,
+        p.currentHp + bonuses.extraHp
+      ),
     },
   };
 }

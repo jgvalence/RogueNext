@@ -20,8 +20,15 @@ const ALL_INK_POWERS: { type: InkPowerType; label: string; desc: string }[] = [
   { type: "SEAL", label: "Seal", desc: "Gain 8 block" },
 ];
 
-export function InkGauge({ player, combatState, onUsePower, unlockedPowers = ["REWRITE"] }: InkGaugeProps) {
-  const inkPowers = ALL_INK_POWERS.filter((p) => unlockedPowers.includes(p.type));
+export function InkGauge({
+  player,
+  combatState,
+  onUsePower,
+  unlockedPowers = ["REWRITE"],
+}: InkGaugeProps) {
+  const inkPowers = ALL_INK_POWERS.filter((p) =>
+    unlockedPowers.includes(p.type)
+  );
   const percent = Math.max(
     0,
     Math.min(100, (player.inkCurrent / player.inkMax) * 100)

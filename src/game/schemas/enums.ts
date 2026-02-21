@@ -61,13 +61,27 @@ export const InkPowerType = z.enum(["REWRITE", "LOST_CHAPTER", "SEAL"]);
 export type InkPowerType = z.infer<typeof InkPowerType>;
 
 export const BiomeType = z.enum([
-  "LIBRARY", "VIKING", "GREEK", "EGYPTIAN",
-  "LOVECRAFTIAN", "AZTEC", "CELTIC", "RUSSIAN", "AFRICAN",
+  "LIBRARY",
+  "VIKING",
+  "GREEK",
+  "EGYPTIAN",
+  "LOVECRAFTIAN",
+  "AZTEC",
+  "CELTIC",
+  "RUSSIAN",
+  "AFRICAN",
 ]);
 export type BiomeType = z.infer<typeof BiomeType>;
 
 export const BiomeResource = z.enum([
-  "PAGES", "RUNES", "LAURIERS", "GLYPHES", "FRAGMENTS",
-  "OBSIDIENNE", "AMBRE", "SCEAUX", "MASQUES",
+  "PAGES",
+  "RUNES",
+  "LAURIERS",
+  "GLYPHES",
+  "FRAGMENTS",
+  "OBSIDIENNE",
+  "AMBRE",
+  "SCEAUX",
+  "MASQUES",
 ]);
 export type BiomeResource = z.infer<typeof BiomeResource>;

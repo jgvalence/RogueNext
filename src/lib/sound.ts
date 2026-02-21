@@ -16,9 +16,11 @@ let _ctx: AudioContext | null = null;
 function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
   if (!_ctx) {
-    _ctx = new (window.AudioContext ||
+    _ctx = new (
+      window.AudioContext ||
       (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext)();
+        .webkitAudioContext
+    )();
   }
   // Resume after browser autoplay policy suspends it
   if (_ctx.state === "suspended") {
@@ -150,7 +152,7 @@ const SOUND_SYNTHS: Record<SoundKey, (c: AudioContext, vol: number) => void> = {
   VICTORY: (c, vol) => {
     const t = c.currentTime;
     [523.25, 659.25, 784.0, 1046.5].forEach((f, i) => {
-      tone(c, f, "sine",     t + i * 0.13, 0.4,  vol * 0.38);
+      tone(c, f, "sine", t + i * 0.13, 0.4, vol * 0.38);
       tone(c, f, "triangle", t + i * 0.13, 0.35, vol * 0.12);
     });
   },
@@ -159,7 +161,7 @@ const SOUND_SYNTHS: Record<SoundKey, (c: AudioContext, vol: number) => void> = {
   DEFEAT: (c, vol) => {
     const t = c.currentTime;
     [261.63, 207.65, 174.61].forEach((f, i) => {
-      tone(c, f,       "sine", t + i * 0.45, 0.7, vol * 0.32);
+      tone(c, f, "sine", t + i * 0.45, 0.7, vol * 0.32);
       tone(c, f * 0.5, "sine", t + i * 0.45, 0.7, vol * 0.12);
     });
   },

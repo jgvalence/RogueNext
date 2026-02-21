@@ -22,33 +22,33 @@ interface GameCardProps {
 
 const typeBorder: Record<string, string> = {
   ATTACK: "border-red-600",
-  SKILL:  "border-blue-500",
-  POWER:  "border-purple-500",
+  SKILL: "border-blue-500",
+  POWER: "border-purple-500",
 };
 
 const typeArtBg: Record<string, string> = {
   ATTACK: "from-red-950 to-red-900/60",
-  SKILL:  "from-blue-950 to-blue-900/60",
-  POWER:  "from-purple-950 to-purple-900/60",
+  SKILL: "from-blue-950 to-blue-900/60",
+  POWER: "from-purple-950 to-purple-900/60",
 };
 
 const typeBadge: Record<string, string> = {
   ATTACK: "bg-red-700 text-red-100",
-  SKILL:  "bg-blue-700 text-blue-100",
-  POWER:  "bg-purple-700 text-purple-100",
+  SKILL: "bg-blue-700 text-blue-100",
+  POWER: "bg-purple-700 text-purple-100",
 };
 
 const rarityColors: Record<string, string> = {
-  STARTER:  "text-gray-400",
-  COMMON:   "text-gray-100",
+  STARTER: "text-gray-400",
+  COMMON: "text-gray-100",
   UNCOMMON: "text-blue-300",
-  RARE:     "text-yellow-300",
+  RARE: "text-yellow-300",
 };
 
 const typeIcon: Record<string, string> = {
   ATTACK: "⚔",
-  SKILL:  "🛡",
-  POWER:  "✦",
+  SKILL: "🛡",
+  POWER: "✦",
 };
 
 export function GameCard({
@@ -77,14 +77,18 @@ export function GameCard({
   return (
     <div
       className={cn(
-        "relative flex flex-col overflow-hidden rounded-xl border-2 bg-gray-900 transition-all duration-150 select-none",
+        "relative flex select-none flex-col overflow-hidden rounded-xl border-2 bg-gray-900 transition-all duration-150",
         typeBorder[definition.type] ?? "border-gray-500",
         cardW,
         canPlay
           ? "cursor-pointer hover:-translate-y-3 hover:shadow-xl hover:shadow-black/50"
           : "cursor-not-allowed opacity-40",
-        isSelected && "ring-2 ring-offset-1 ring-offset-gray-900 -translate-y-3",
-        isSelected && (isPendingInked ? "ring-cyan-400 shadow-lg shadow-cyan-500/40" : "ring-white"),
+        isSelected &&
+          "-translate-y-3 ring-2 ring-offset-1 ring-offset-gray-900",
+        isSelected &&
+          (isPendingInked
+            ? "shadow-lg shadow-cyan-500/40 ring-cyan-400"
+            : "ring-white")
       )}
       onClick={canPlay ? onClick : undefined}
     >
@@ -95,13 +99,15 @@ export function GameCard({
 
       {/* Upgraded star */}
       {upgraded && (
-        <div className="absolute right-1 top-1 z-10 text-xs text-yellow-400">★</div>
+        <div className="absolute right-1 top-1 z-10 text-xs text-yellow-400">
+          ★
+        </div>
       )}
 
       {/* Art area — TEMPORARY: shows image if present, icon placeholder otherwise */}
       <div
         className={cn(
-          "relative flex flex-shrink-0 items-center justify-center bg-gradient-to-b overflow-hidden",
+          "relative flex flex-shrink-0 items-center justify-center overflow-hidden bg-gradient-to-b",
           artH,
           typeArtBg[definition.type] ?? "from-gray-800 to-gray-700"
         )}
@@ -126,7 +132,7 @@ export function GameCard({
       </div>
 
       {/* Card body */}
-      <div className={cn("flex flex-1 flex-col gap-1 px-2 pt-1.5 pb-2")}>
+      <div className={cn("flex flex-1 flex-col gap-1 px-2 pb-2 pt-1.5")}>
         {/* Name */}
         <div
           className={cn(
@@ -149,11 +155,13 @@ export function GameCard({
         </span>
 
         {/* Description — dimmed when inked variant is the active mode */}
-        <p className={cn(
-          "leading-snug transition-opacity",
-          isMd ? "text-[10px]" : "text-[9px]",
-          isPendingInked ? "text-gray-500 opacity-50" : "text-gray-300",
-        )}>
+        <p
+          className={cn(
+            "leading-snug transition-opacity",
+            isMd ? "text-[10px]" : "text-[9px]",
+            isPendingInked ? "text-gray-500 opacity-50" : "text-gray-300"
+          )}
+        >
           {definition.description}
         </p>
       </div>
@@ -168,13 +176,17 @@ export function GameCard({
                 <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
                   Normal
                 </p>
-                <p className="text-[11px] text-gray-200">{definition.description}</p>
+                <p className="text-[11px] text-gray-200">
+                  {definition.description}
+                </p>
               </div>
               <div>
                 <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-cyan-400">
                   ✦ Encré
                 </p>
-                <p className="text-[11px] text-cyan-200">{definition.inkedVariant.description}</p>
+                <p className="text-[11px] text-cyan-200">
+                  {definition.inkedVariant.description}
+                </p>
               </div>
             </div>
           }
@@ -183,7 +195,7 @@ export function GameCard({
             <button
               className={cn(
                 "w-full rounded px-1.5 py-1 text-left text-[10px] font-semibold transition-colors",
-                inkBtnVariant,
+                inkBtnVariant
               )}
               onClick={(e) => {
                 e.stopPropagation();
@@ -191,7 +203,12 @@ export function GameCard({
               }}
             >
               ✦ Ink ({definition.inkedVariant.inkMarkCost})
-              <span className={cn("mt-0.5 block text-[9px] font-normal leading-tight", inkDescVariant)}>
+              <span
+                className={cn(
+                  "mt-0.5 block text-[9px] font-normal leading-tight",
+                  inkDescVariant
+                )}
+              >
                 {definition.inkedVariant.description}
               </span>
             </button>

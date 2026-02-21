@@ -1578,13 +1578,15 @@ export const lootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Deal 4 damage to ALL enemies. Apply 1 Vulnerable to ALL enemies.",
+    description:
+      "Deal 4 damage to ALL enemies. Apply 1 Vulnerable to ALL enemies.",
     effects: [
       { type: "DAMAGE", value: 4 },
       { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
     ],
     inkedVariant: {
-      description: "Deal 6 damage to ALL enemies. Apply 2 Vulnerable to ALL enemies.",
+      description:
+        "Deal 6 damage to ALL enemies. Apply 2 Vulnerable to ALL enemies.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
@@ -1592,7 +1594,8 @@ export const lootableCardDefinitions: CardDefinition[] = [
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 6 damage to ALL enemies. Apply 2 Vulnerable to ALL enemies.",
+      description:
+        "Deal 6 damage to ALL enemies. Apply 2 Vulnerable to ALL enemies.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
@@ -1775,7 +1778,8 @@ export const lootableCardDefinitions: CardDefinition[] = [
       inkMarkCost: 3,
     },
     upgrade: {
-      description: "Deal 14 damage to ALL enemies. Apply 2 Weak to ALL enemies.",
+      description:
+        "Deal 14 damage to ALL enemies. Apply 2 Weak to ALL enemies.",
       effects: [
         { type: "DAMAGE", value: 14 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },

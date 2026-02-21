@@ -10,7 +10,11 @@ import {
 import type { RunState } from "@/game/schemas/run-state";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { EnemyDefinition, AllyDefinition } from "@/game/schemas/entities";
-import type { InkPowerType, BiomeType, BiomeResource } from "@/game/schemas/enums";
+import type {
+  InkPowerType,
+  BiomeType,
+  BiomeResource,
+} from "@/game/schemas/enums";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { createRNG, type RNG } from "@/game/engine/rng";
 import { playCard } from "@/game/engine/cards";
@@ -71,7 +75,13 @@ export type GameAction =
   | { type: "SELECT_ROOM"; payload: { choiceIndex: number } }
   | { type: "PICK_CARD_REWARD"; payload: { definitionId: string } }
   | { type: "SKIP_CARD_REWARD" }
-  | { type: "COMPLETE_COMBAT"; payload: { goldReward: number; biomeResources?: Partial<Record<BiomeResource, number>> } }
+  | {
+      type: "COMPLETE_COMBAT";
+      payload: {
+        goldReward: number;
+        biomeResources?: Partial<Record<BiomeResource, number>>;
+      };
+    }
   | { type: "PICK_RELIC_REWARD"; payload: { relicId: string } }
   | { type: "PICK_ALLY_REWARD"; payload: { allyId: string } }
   | { type: "APPLY_HEAL_ROOM" }
@@ -128,7 +138,11 @@ function createGameReducer(deps: ReducerDeps) {
         // initCombat already drew the initial hand before relics are applied.
         // If relics increased drawCount (e.g. Bookmark), top up opening hand.
         if (combat.hand.length < combat.player.drawCount) {
-          combat = drawCards(combat, combat.player.drawCount - combat.hand.length, rng);
+          combat = drawCards(
+            combat,
+            combat.player.drawCount - combat.hand.length,
+            rng
+          );
         }
 
         return { ...state, combat };
@@ -202,10 +216,7 @@ function createGameReducer(deps: ReducerDeps) {
           return state;
         let combat = finalizeEnemyRound(state.combat);
         combat = checkCombatEnd(combat);
-        if (
-          combat.phase !== "COMBAT_WON" &&
-          combat.phase !== "COMBAT_LOST"
-        ) {
+        if (combat.phase !== "COMBAT_WON" && combat.phase !== "COMBAT_LOST") {
           combat = startPlayerTurn(combat, rng, state.relicIds);
         }
         return { ...state, combat };
@@ -239,7 +250,9 @@ function createGameReducer(deps: ReducerDeps) {
       }
 
       case "CHOOSE_BIOME":
-        return advanceFloor(state, action.payload.biome, rng, [...cardDefs.values()]);
+        return advanceFloor(state, action.payload.biome, rng, [
+          ...cardDefs.values(),
+        ]);
 
       case "PICK_CARD_REWARD":
         deps.setRewards(null);

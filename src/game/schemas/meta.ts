@@ -16,12 +16,18 @@ export const MetaBonusSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("STARTING_BLOCK"), value: z.number().int() }),
   z.object({ type: z.literal("STARTING_STRENGTH"), value: z.number().int() }),
   z.object({ type: z.literal("STARTING_REGEN"), value: z.number().int() }),
-  z.object({ type: z.literal("FIRST_HIT_DAMAGE_REDUCTION"), value: z.number().int() }),
+  z.object({
+    type: z.literal("FIRST_HIT_DAMAGE_REDUCTION"),
+    value: z.number().int(),
+  }),
   z.object({ type: z.literal("EXTRA_HP"), value: z.number().int() }),
   z.object({ type: z.literal("EXTRA_HAND_AT_START"), value: z.number().int() }),
   // Bonuses appliqués à la création du run
   z.object({ type: z.literal("STARTING_GOLD"), value: z.number().int() }),
-  z.object({ type: z.literal("EXTRA_CARD_REWARD_CHOICES"), value: z.number().int() }),
+  z.object({
+    type: z.literal("EXTRA_CARD_REWARD_CHOICES"),
+    value: z.number().int(),
+  }),
   // Unlock d'Ink Powers
   z.object({ type: z.literal("UNLOCK_INK_POWER"), power: InkPowerType }),
   // Bonuses complexes (non encore implémentés dans le moteur, stockés pour l'avenir)
@@ -92,7 +98,7 @@ export const ComputedMetaBonusesSchema = z.object({
   // Ink powers — REWRITE toujours présent, SEAL et LOST_CHAPTER à débloquer
   unlockedInkPowers: z.array(InkPowerType).default(["REWRITE"]),
   // Complex bonuses
-  healAfterCombat: z.number().default(0),   // % of max HP healed after each combat
+  healAfterCombat: z.number().default(0), // % of max HP healed after each combat
   exhaustKeepChance: z.number().default(0), // % chance to not exhaust
   survivalOnce: z.boolean().default(false),
   freeUpgradePerRun: z.boolean().default(false),

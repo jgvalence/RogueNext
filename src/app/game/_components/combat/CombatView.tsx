@@ -19,7 +19,11 @@ interface CombatViewProps {
   combat: CombatState;
   cardDefs: Map<string, CardDefinition>;
   enemyDefs: Map<string, EnemyDefinition>;
-  onPlayCard: (instanceId: string, targetId: string | null, useInked: boolean) => void;
+  onPlayCard: (
+    instanceId: string,
+    targetId: string | null,
+    useInked: boolean
+  ) => void;
   onEndTurn: () => void;
   onUseInkPower: (power: InkPowerType, targetId: string | null) => void;
   onCheatKillEnemy?: (enemyInstanceId: string) => void;
@@ -45,8 +49,10 @@ export function CombatView({
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [pendingInked, setPendingInked] = useState(false);
   const [openPile, setOpenPile] = useState<PileType | null>(null);
-  const [isSelectingRewriteTarget, setIsSelectingRewriteTarget] = useState(false);
-  const [isSelectingCheatKillTarget, setIsSelectingCheatKillTarget] = useState(false);
+  const [isSelectingRewriteTarget, setIsSelectingRewriteTarget] =
+    useState(false);
+  const [isSelectingCheatKillTarget, setIsSelectingCheatKillTarget] =
+    useState(false);
 
   // Player hit flash + sound
   const prevPlayerHp = useRef(combat.player.currentHp);
@@ -70,7 +76,9 @@ export function CombatView({
   const selectedCard = selectedCardId
     ? combat.hand.find((c) => c.instanceId === selectedCardId)
     : null;
-  const selectedDef = selectedCard ? cardDefs.get(selectedCard.definitionId) : null;
+  const selectedDef = selectedCard
+    ? cardDefs.get(selectedCard.definitionId)
+    : null;
   const needsTarget =
     selectedDef?.targeting === "SINGLE_ENEMY" ||
     selectedDef?.targeting === "SINGLE_ALLY";
@@ -130,15 +138,18 @@ export function CombatView({
 
   let turnBadgeClass = "bg-slate-700 text-slate-400";
   if (isPlayerTurn) turnBadgeClass = "bg-emerald-900/80 text-emerald-300";
-  else if (combat.phase === "ALLIES_ENEMIES_TURN") turnBadgeClass = "bg-red-900/80 text-red-300";
-  else if (combat.phase === "COMBAT_WON") turnBadgeClass = "bg-yellow-900/80 text-yellow-300";
-  else if (combat.phase === "COMBAT_LOST") turnBadgeClass = "bg-red-900/80 text-red-300";
+  else if (combat.phase === "ALLIES_ENEMIES_TURN")
+    turnBadgeClass = "bg-red-900/80 text-red-300";
+  else if (combat.phase === "COMBAT_WON")
+    turnBadgeClass = "bg-yellow-900/80 text-yellow-300";
+  else if (combat.phase === "COMBAT_LOST")
+    turnBadgeClass = "bg-red-900/80 text-red-300";
 
   const turnLabel = isPlayerTurn
     ? "Your Turn"
     : combat.phase === "ALLIES_ENEMIES_TURN"
-    ? "Enemy Turn"
-    : combat.phase.replace(/_/g, " ");
+      ? "Enemy Turn"
+      : combat.phase.replace(/_/g, " ");
 
   const getPileCards = (pile: PileType) => {
     if (pile === "discard") return combat.discardPile;
@@ -158,10 +169,10 @@ export function CombatView({
     openPile === "draw"
       ? "Draw Pile"
       : openPile === "discard"
-      ? "Discard Pile"
-      : openPile === "exhaust"
-      ? "Exhaust Pile"
-      : null;
+        ? "Discard Pile"
+        : openPile === "exhaust"
+          ? "Exhaust Pile"
+          : null;
 
   const pileCards = openPile ? getPileCards(openPile) : [];
 
@@ -189,7 +200,6 @@ export function CombatView({
     <div className="flex h-full flex-col">
       {/* ── BATTLEFIELD ─────────────────────────────────── */}
       <div className="relative flex flex-1 flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-6 py-4">
-
         {/* Background — TEMPORARY: shows image if present, CSS gradient otherwise */}
         {!bgFailed && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -209,7 +219,12 @@ export function CombatView({
           <span className="rounded bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-500">
             Turn {combat.turnNumber}
           </span>
-          <span className={cn("rounded-full px-3 py-0.5 text-xs font-semibold uppercase tracking-widest transition-colors", turnBadgeClass)}>
+          <span
+            className={cn(
+              "rounded-full px-3 py-0.5 text-xs font-semibold uppercase tracking-widest transition-colors",
+              turnBadgeClass
+            )}
+          >
             {turnLabel}
           </span>
         </div>
@@ -224,7 +239,12 @@ export function CombatView({
                 key={enemy.instanceId}
                 enemy={enemy}
                 definition={def}
-                isTargeted={needsTarget && selectedCardId !== null && enemy.currentHp > 0 && !actingEnemyId}
+                isTargeted={
+                  needsTarget &&
+                  selectedCardId !== null &&
+                  enemy.currentHp > 0 &&
+                  !actingEnemyId
+                }
                 isActing={actingEnemyId === enemy.instanceId}
                 isAttacking={attackingEnemyId === enemy.instanceId}
                 onClick={() => handleEnemyClick(enemy.instanceId)}
@@ -236,7 +256,8 @@ export function CombatView({
         {/* Target prompt */}
         {needsTarget && selectedCardId && (
           <div className="relative z-10 animate-bounce pb-1 text-sm font-semibold text-yellow-300">
-            Choose a target for <span className="text-white">{selectedDef?.name}</span>
+            Choose a target for{" "}
+            <span className="text-white">{selectedDef?.name}</span>
           </div>
         )}
         {combat.allies.length > 0 && (
@@ -265,14 +286,17 @@ export function CombatView({
 
       {/* ── PLAYER ZONE ──────────────────────────────────── */}
       <div className="border-t border-slate-700/50 bg-slate-950">
-
         {/* HUD row */}
         <div className="flex items-center gap-3 px-4 py-3">
           {/* Player avatar — TEMPORARY: shows image if present, ✦ otherwise */}
-          <div className={cn(
-            "relative flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 bg-slate-800 text-2xl transition-colors duration-100",
-            playerHit ? "border-red-500 animate-player-hit text-red-400" : "border-slate-700 text-slate-600"
-          )}>
+          <div
+            className={cn(
+              "relative flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 bg-slate-800 text-2xl transition-colors duration-100",
+              playerHit
+                ? "animate-player-hit border-red-500 text-red-400"
+                : "border-slate-700 text-slate-600"
+            )}
+          >
             {!avatarFailed ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -312,7 +336,7 @@ export function CombatView({
           >
             End Turn
           </button>
-          
+
           {onCheatKillEnemy && (
             <button
               className={cn(
@@ -358,7 +382,9 @@ export function CombatView({
               type="button"
             >
               Draw{" "}
-              <span className="font-semibold text-slate-400">{combat.drawPile.length}</span>
+              <span className="font-semibold text-slate-400">
+                {combat.drawPile.length}
+              </span>
             </button>
             <button
               className="rounded border border-slate-700/80 bg-slate-900/70 px-2 py-1 hover:border-slate-500 hover:text-slate-300"
@@ -370,7 +396,9 @@ export function CombatView({
               type="button"
             >
               Discard{" "}
-              <span className="font-semibold text-slate-400">{combat.discardPile.length}</span>
+              <span className="font-semibold text-slate-400">
+                {combat.discardPile.length}
+              </span>
             </button>
             {combat.exhaustPile.length > 0 && (
               <button
@@ -383,7 +411,9 @@ export function CombatView({
                 type="button"
               >
                 Exhaust{" "}
-                <span className="font-semibold text-slate-400">{combat.exhaustPile.length}</span>
+                <span className="font-semibold text-slate-400">
+                  {combat.exhaustPile.length}
+                </span>
               </button>
             )}
           </div>
@@ -401,7 +431,9 @@ export function CombatView({
           >
             <div className="mb-3 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-slate-100">{pileTitle}</h3>
+                <h3 className="text-lg font-semibold text-slate-100">
+                  {pileTitle}
+                </h3>
                 <p className="text-xs text-slate-400">
                   {pileCards.length} card{pileCards.length > 1 ? "s" : ""}
                   {openPile === "draw" ? " (display order is masked)" : ""}

@@ -41,7 +41,9 @@ export function PreBossRoomView({
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
-      <h2 className="text-2xl font-bold text-amber-400">Room Before The Boss</h2>
+      <h2 className="text-2xl font-bold text-amber-400">
+        Room Before The Boss
+      </h2>
       <p className="max-w-md text-center text-gray-400">
         A moment of respite before the final challenge. Choose how to prepare.
       </p>
@@ -56,7 +58,8 @@ export function PreBossRoomView({
         >
           <p className="font-medium text-green-300">Healing Shrine</p>
           <p className="text-sm text-green-600">
-            Restore {Math.floor(GAME_CONSTANTS.HEAL_ROOM_PERCENT * 100)}% of your max HP
+            Restore {Math.floor(GAME_CONSTANTS.HEAL_ROOM_PERCENT * 100)}% of
+            your max HP
           </p>
         </button>
 
@@ -88,15 +91,18 @@ export function PreBossRoomView({
 const MULTIPLICATIVE_BOOST = new Set(["DAMAGE", "BLOCK", "HEAL", "GAIN_INK"]);
 /** +1 */
 const ADDITIVE_BOOST = new Set([
-  "DRAW_CARDS", "GAIN_ENERGY", "GAIN_STRENGTH", "GAIN_FOCUS",
-  "APPLY_BUFF", "APPLY_DEBUFF",
+  "DRAW_CARDS",
+  "GAIN_ENERGY",
+  "GAIN_STRENGTH",
+  "GAIN_FOCUS",
+  "APPLY_BUFF",
+  "APPLY_DEBUFF",
 ]);
 
 function computeUpgradedValue(effectType: string, value: number): number {
   if (MULTIPLICATIVE_BOOST.has(effectType))
     return Math.max(Math.floor(value * 1.5), value + 1);
-  if (ADDITIVE_BOOST.has(effectType))
-    return value + 1;
+  if (ADDITIVE_BOOST.has(effectType)) return value + 1;
   return value;
 }
 
@@ -109,7 +115,7 @@ function buildUpgradedDescription(def: CardDefinition): string {
   if (def.upgrade) return def.upgrade.description;
 
   const boostableEffects = def.effects.filter(
-    (e) => MULTIPLICATIVE_BOOST.has(e.type) || ADDITIVE_BOOST.has(e.type),
+    (e) => MULTIPLICATIVE_BOOST.has(e.type) || ADDITIVE_BOOST.has(e.type)
   );
   if (boostableEffects.length === 0) return def.description;
 
@@ -132,7 +138,9 @@ function UpgradePreviewPanel({ info }: { info: HoverInfo }) {
 
   const upgradedDesc = buildUpgradedDescription(def);
   const upgradedEnergyCost =
-    def.upgrade?.energyCost !== undefined ? def.upgrade.energyCost : def.energyCost;
+    def.upgrade?.energyCost !== undefined
+      ? def.upgrade.energyCost
+      : def.energyCost;
   const upgradedDef: CardDefinition = {
     ...def,
     description: upgradedDesc,
@@ -152,7 +160,9 @@ function UpgradePreviewPanel({ info }: { info: HoverInfo }) {
         <GameCard definition={def} size="sm" />
       </div>
 
-      <div className="flex items-center self-center text-lg text-amber-400">→</div>
+      <div className="flex items-center self-center text-lg text-amber-400">
+        →
+      </div>
 
       {/* Upgraded card */}
       <div className="flex flex-col items-center gap-1.5">
@@ -162,7 +172,7 @@ function UpgradePreviewPanel({ info }: { info: HoverInfo }) {
         <GameCard definition={upgradedDef} upgraded size="sm" />
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }
 
@@ -192,7 +202,7 @@ function UpgradeSubView({
       const rect = e.currentTarget.getBoundingClientRect();
       setHoverInfo({ def, x: rect.right, y: rect.top + rect.height / 2 });
     },
-    [],
+    []
   );
 
   const handleMouseLeave = useCallback(() => {
@@ -227,7 +237,7 @@ function UpgradeSubView({
                 "flex w-32 flex-col items-center gap-1 rounded-lg border-2 p-3 text-center transition",
                 isSelected
                   ? "border-blue-400 bg-blue-950/60 ring-2 ring-blue-400"
-                  : "border-gray-600 bg-gray-800/50 hover:border-gray-400",
+                  : "border-gray-600 bg-gray-800/50 hover:border-gray-400"
               )}
             >
               <span className="text-xs font-bold text-white">{def.name}</span>
@@ -247,7 +257,7 @@ function UpgradeSubView({
             "rounded-lg px-6 py-2 font-medium transition",
             selected
               ? "bg-blue-600 text-white hover:bg-blue-500"
-              : "cursor-not-allowed bg-gray-700 text-gray-500",
+              : "cursor-not-allowed bg-gray-700 text-gray-500"
           )}
         >
           Upgrade

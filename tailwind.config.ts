@@ -56,20 +56,26 @@ const config: Config = {
         },
         // Enemy acting: pulsing glow while the enemy prepares to attack
         "enemy-acting": {
-          "0%, 100%": { boxShadow: "0 0 8px 2px rgba(251,146,60,0.4)", transform: "scale(1)" },
-          "50%": { boxShadow: "0 0 20px 6px rgba(251,146,60,0.75)", transform: "scale(1.03)" },
+          "0%, 100%": {
+            boxShadow: "0 0 8px 2px rgba(251,146,60,0.4)",
+            transform: "scale(1)",
+          },
+          "50%": {
+            boxShadow: "0 0 20px 6px rgba(251,146,60,0.75)",
+            transform: "scale(1.03)",
+          },
         },
         // Enemy attack: quick lunge downward toward player
         "enemy-attack": {
-          "0%":   { transform: "translateY(0) scale(1)" },
-          "35%":  { transform: "translateY(16px) scale(1.06)" },
-          "65%":  { transform: "translateY(16px) scale(1.06)" },
+          "0%": { transform: "translateY(0) scale(1)" },
+          "35%": { transform: "translateY(16px) scale(1.06)" },
+          "65%": { transform: "translateY(16px) scale(1.06)" },
           "100%": { transform: "translateY(0) scale(1)" },
         },
         // Player hit flash: brief red tint when taking damage
         "player-hit": {
-          "0%":   { boxShadow: "0 0 0 0 rgba(239,68,68,0)" },
-          "20%":  { boxShadow: "0 0 0 4px rgba(239,68,68,0.8)" },
+          "0%": { boxShadow: "0 0 0 0 rgba(239,68,68,0)" },
+          "20%": { boxShadow: "0 0 0 4px rgba(239,68,68,0.8)" },
           "100%": { boxShadow: "0 0 0 0 rgba(239,68,68,0)" },
         },
       },

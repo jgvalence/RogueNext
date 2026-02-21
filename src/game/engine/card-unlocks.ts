@@ -184,7 +184,10 @@ export function readUnlockProgressFromResources(
       resources[progressKey("BIOME_BOSS_KILLS", biome)] ?? 0;
   }
   // Library is always considered entered.
-  progress.enteredBiomes.LIBRARY = Math.max(1, progress.enteredBiomes.LIBRARY ?? 0);
+  progress.enteredBiomes.LIBRARY = Math.max(
+    1,
+    progress.enteredBiomes.LIBRARY ?? 0
+  );
   return progress;
 }
 
@@ -194,10 +197,14 @@ export function writeUnlockProgressToResources(
 ): Record<string, number> {
   const next = { ...resources };
   for (const biome of BIOMES) {
-    next[progressKey("BIOME_ENTERED", biome)] = progress.enteredBiomes[biome] ?? 0;
-    next[progressKey("BIOME_RUNS", biome)] = progress.biomeRunsCompleted[biome] ?? 0;
-    next[progressKey("BIOME_ELITE_KILLS", biome)] = progress.eliteKillsByBiome[biome] ?? 0;
-    next[progressKey("BIOME_BOSS_KILLS", biome)] = progress.bossKillsByBiome[biome] ?? 0;
+    next[progressKey("BIOME_ENTERED", biome)] =
+      progress.enteredBiomes[biome] ?? 0;
+    next[progressKey("BIOME_RUNS", biome)] =
+      progress.biomeRunsCompleted[biome] ?? 0;
+    next[progressKey("BIOME_ELITE_KILLS", biome)] =
+      progress.eliteKillsByBiome[biome] ?? 0;
+    next[progressKey("BIOME_BOSS_KILLS", biome)] =
+      progress.bossKillsByBiome[biome] ?? 0;
   }
   return next;
 }
@@ -251,7 +258,9 @@ function isRuleUnlocked(
     case "STORY_UNLOCK":
       return unlockedStoryIds.includes(rule.storyId);
     case "ALL_OF":
-      return rule.rules.every((r) => isRuleUnlocked(r, progress, unlockedStoryIds));
+      return rule.rules.every((r) =>
+        isRuleUnlocked(r, progress, unlockedStoryIds)
+      );
   }
 }
 
@@ -305,15 +314,24 @@ function formatRuleProgress(
       return `${current}/1`;
     }
     case "BIOME_ELITE_KILLS": {
-      const current = Math.min(rule.count, progress.eliteKillsByBiome[rule.biome] ?? 0);
+      const current = Math.min(
+        rule.count,
+        progress.eliteKillsByBiome[rule.biome] ?? 0
+      );
       return `${current}/${rule.count}`;
     }
     case "BIOME_BOSS_KILLS": {
-      const current = Math.min(rule.count, progress.bossKillsByBiome[rule.biome] ?? 0);
+      const current = Math.min(
+        rule.count,
+        progress.bossKillsByBiome[rule.biome] ?? 0
+      );
       return `${current}/${rule.count}`;
     }
     case "BIOME_RUNS_COMPLETED": {
-      const current = Math.min(rule.count, progress.biomeRunsCompleted[rule.biome] ?? 0);
+      const current = Math.min(
+        rule.count,
+        progress.biomeRunsCompleted[rule.biome] ?? 0
+      );
       return `${current}/${rule.count}`;
     }
     case "STORY_UNLOCK":

@@ -87,7 +87,8 @@ function applyDamageToTarget(
       rawDamage > 0;
     const finalDmg = canUseFirstHitReduction
       ? Math.floor(
-          rawDamage * (100 - state.player.firstHitDamageReductionPercent) / 100
+          (rawDamage * (100 - state.player.firstHitDamageReductionPercent)) /
+            100
         )
       : rawDamage;
     const result = applyDamage(state.player, finalDmg);
@@ -190,7 +191,12 @@ export function resolveEffect(
       // Block always applies to the source: player blocks themselves,
       // enemies block themselves (not the player they're targeting).
       if (ctx.source === "player") {
-        return applyBlockToTarget(state, "player", effect.value, sourceStats.focus);
+        return applyBlockToTarget(
+          state,
+          "player",
+          effect.value,
+          sourceStats.focus
+        );
       }
       if (typeof ctx.source === "object" && ctx.source.type === "enemy") {
         return applyBlockToTarget(

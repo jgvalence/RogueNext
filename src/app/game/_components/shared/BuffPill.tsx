@@ -52,7 +52,9 @@ export function BuffPill({ buff, size = "sm" }: BuffPillProps) {
   const colorClass = meta?.color ?? "bg-gray-700 text-gray-300";
   const description = meta?.description(buff.stacks) ?? "";
   const durationNote =
-    buff.duration !== undefined ? ` Lasts ${buff.duration} turn${buff.duration !== 1 ? "s" : ""}.` : "";
+    buff.duration !== undefined
+      ? ` Lasts ${buff.duration} turn${buff.duration !== 1 ? "s" : ""}.`
+      : "";
 
   const textSize = size === "sm" ? "text-[10px]" : "text-xs";
 
@@ -60,7 +62,9 @@ export function BuffPill({ buff, size = "sm" }: BuffPillProps) {
     <Tooltip
       content={
         <span>
-          <span className="font-bold">{label} {buff.stacks}</span>
+          <span className="font-bold">
+            {label} {buff.stacks}
+          </span>
           {description && (
             <>
               <br />

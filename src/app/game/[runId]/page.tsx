@@ -130,7 +130,15 @@ function GameContent({
   // Music — start/stop based on phase, clean up on unmount
   useEffect(() => {
     if (phase === "COMBAT") startMusic("combat");
-    else if (phase === "MAP" || phase === "REWARDS" || phase === "MERCHANT" || phase === "SPECIAL" || phase === "PRE_BOSS" || phase === "BIOME_SELECT") startMusic("map");
+    else if (
+      phase === "MAP" ||
+      phase === "REWARDS" ||
+      phase === "MERCHANT" ||
+      phase === "SPECIAL" ||
+      phase === "PRE_BOSS" ||
+      phase === "BIOME_SELECT"
+    )
+      startMusic("map");
     else stopMusic(); // VICTORY or DEFEAT
   }, [phase]);
 
@@ -218,7 +226,8 @@ function GameContent({
 
       // Find the selected room to get enemy count and elite status
       const roomChoices = state.map[state.currentRoom];
-      const selectedRoom = roomChoices?.find((r) => r.completed) ?? roomChoices?.[0];
+      const selectedRoom =
+        roomChoices?.find((r) => r.completed) ?? roomChoices?.[0];
       const enemyCount = selectedRoom?.enemyIds?.length ?? 1;
       const isElite = selectedRoom?.isElite ?? false;
 
@@ -285,7 +294,11 @@ function GameContent({
       } else {
         if (!runEndedRef.current) {
           runEndedRef.current = true;
-          void endRunAction({ runId: stateRef.current.runId, status: "VICTORY", earnedResources: stateRef.current.earnedResources });
+          void endRunAction({
+            runId: stateRef.current.runId,
+            status: "VICTORY",
+            earnedResources: stateRef.current.earnedResources,
+          });
         }
         setPhase("VICTORY");
       }
@@ -303,7 +316,11 @@ function GameContent({
     } else {
       if (!runEndedRef.current) {
         runEndedRef.current = true;
-        void endRunAction({ runId: stateRef.current.runId, status: "VICTORY", earnedResources: stateRef.current.earnedResources });
+        void endRunAction({
+          runId: stateRef.current.runId,
+          status: "VICTORY",
+          earnedResources: stateRef.current.earnedResources,
+        });
       }
       setPhase("VICTORY");
     }
@@ -320,7 +337,11 @@ function GameContent({
       } else {
         if (!runEndedRef.current) {
           runEndedRef.current = true;
-          void endRunAction({ runId: stateRef.current.runId, status: "VICTORY", earnedResources: stateRef.current.earnedResources });
+          void endRunAction({
+            runId: stateRef.current.runId,
+            status: "VICTORY",
+            earnedResources: stateRef.current.earnedResources,
+          });
         }
         setPhase("VICTORY");
       }
@@ -339,7 +360,11 @@ function GameContent({
       } else {
         if (!runEndedRef.current) {
           runEndedRef.current = true;
-          void endRunAction({ runId: stateRef.current.runId, status: "VICTORY", earnedResources: stateRef.current.earnedResources });
+          void endRunAction({
+            runId: stateRef.current.runId,
+            status: "VICTORY",
+            earnedResources: stateRef.current.earnedResources,
+          });
         }
         setPhase("VICTORY");
       }
@@ -365,7 +390,11 @@ function GameContent({
     async (status: "VICTORY" | "DEFEAT" | "ABANDONED") => {
       if (!runEndedRef.current) {
         runEndedRef.current = true;
-        await endRunAction({ runId: stateRef.current.runId, status, earnedResources: stateRef.current.earnedResources });
+        await endRunAction({
+          runId: stateRef.current.runId,
+          status,
+          earnedResources: stateRef.current.earnedResources,
+        });
       }
       router.push("/game");
     },
@@ -417,7 +446,9 @@ function GameContent({
                 payload: { power, targetId },
               })
             }
-            unlockedInkPowers={state.metaBonuses?.unlockedInkPowers ?? ["REWRITE"]}
+            unlockedInkPowers={
+              state.metaBonuses?.unlockedInkPowers ?? ["REWRITE"]
+            }
             onCheatKillEnemy={
               isDevBuild && isAdmin
                 ? (enemyInstanceId) =>
@@ -540,7 +571,9 @@ function GameContent({
             </div>
             <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
               <div>
-                <p className="mb-1 font-semibold text-gray-300">Resources gained this run</p>
+                <p className="mb-1 font-semibold text-gray-300">
+                  Resources gained this run
+                </p>
                 {earnedResourcesSummary.length === 0 ? (
                   <p className="text-gray-500">None</p>
                 ) : (
@@ -554,7 +587,9 @@ function GameContent({
                 )}
               </div>
               <div>
-                <p className="mb-1 font-semibold text-gray-300">Cards unlocked this run</p>
+                <p className="mb-1 font-semibold text-gray-300">
+                  Cards unlocked this run
+                </p>
                 {newlyUnlockedCardNames.length === 0 ? (
                   <p className="text-gray-500">None</p>
                 ) : (
@@ -591,7 +626,9 @@ function GameContent({
             </div>
             <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
               <div>
-                <p className="mb-1 font-semibold text-gray-300">Resources gained this run</p>
+                <p className="mb-1 font-semibold text-gray-300">
+                  Resources gained this run
+                </p>
                 {earnedResourcesSummary.length === 0 ? (
                   <p className="text-gray-500">None</p>
                 ) : (
@@ -605,7 +642,9 @@ function GameContent({
                 )}
               </div>
               <div>
-                <p className="mb-1 font-semibold text-gray-300">Cards unlocked this run</p>
+                <p className="mb-1 font-semibold text-gray-300">
+                  Cards unlocked this run
+                </p>
                 {newlyUnlockedCardNames.length === 0 ? (
                   <p className="text-gray-500">None</p>
                 ) : (

@@ -84,7 +84,8 @@ export function playCard(
   if (cardInst.upgraded) {
     if (def.upgrade) {
       effects = def.upgrade.effects;
-      if (def.upgrade.energyCost !== undefined) energyCost = def.upgrade.energyCost;
+      if (def.upgrade.energyCost !== undefined)
+        energyCost = def.upgrade.energyCost;
     } else {
       effects = boostEffects(effects);
     }
@@ -109,27 +110,31 @@ export function playCard(
   current = resolveEffects(current, effects, { source: "player", target }, rng);
 
   // Chance-based extra ink on card play.
-  if (current.player.inkPerCardChance > 0 && current.player.inkPerCardValue > 0) {
+  if (
+    current.player.inkPerCardChance > 0 &&
+    current.player.inkPerCardValue > 0
+  ) {
     const gainedInk =
       rng.next() * 100 < current.player.inkPerCardChance
         ? current.player.inkPerCardValue
         : 0;
     if (gainedInk > 0) {
-    current = {
-      ...current,
-      player: {
-        ...current.player,
-        inkCurrent: Math.min(
-          current.player.inkMax,
-          current.player.inkCurrent + gainedInk
-        ),
-      },
-    };
+      current = {
+        ...current,
+        player: {
+          ...current.player,
+          inkCurrent: Math.min(
+            current.player.inkMax,
+            current.player.inkCurrent + gainedInk
+          ),
+        },
+      };
     }
   }
 
   // Move card to appropriate pile
-  const shouldExhaust = def.type === "POWER" || effects.some((e) => e.type === "EXHAUST");
+  const shouldExhaust =
+    def.type === "POWER" || effects.some((e) => e.type === "EXHAUST");
   if (shouldExhaust) {
     current = moveCardToExhaust(current, instanceId);
   } else {
@@ -152,7 +157,10 @@ function boostEffects(effects: Effect[]): Effect[] {
       case "BLOCK":
       case "HEAL":
       case "GAIN_INK":
-        return { ...e, value: Math.max(Math.floor(e.value * 1.5), e.value + 1) };
+        return {
+          ...e,
+          value: Math.max(Math.floor(e.value * 1.5), e.value + 1),
+        };
       case "DRAW_CARDS":
       case "GAIN_ENERGY":
       case "GAIN_STRENGTH":

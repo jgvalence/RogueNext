@@ -159,7 +159,10 @@ function SignUpForm() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Deja un compte ?{" "}
-          <Link href="/auth/signin" className="text-purple-400 hover:text-purple-300">
+          <Link
+            href="/auth/signin"
+            className="text-purple-400 hover:text-purple-300"
+          >
             Se connecter
           </Link>
         </p>

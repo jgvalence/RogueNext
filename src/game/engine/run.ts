@@ -6,7 +6,12 @@ import type { ComputedMetaBonuses } from "../schemas/meta";
 import { GAME_CONSTANTS } from "../constants";
 import { enemyDefinitions } from "../data/enemies";
 import type { CardUnlockProgress } from "./card-unlocks";
-import { computeUnlockedCardIds, onBossKilled, onEliteKilled, onEnterBiome } from "./card-unlocks";
+import {
+  computeUnlockedCardIds,
+  onBossKilled,
+  onEliteKilled,
+  onEnterBiome,
+} from "./card-unlocks";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 
@@ -33,7 +38,7 @@ function getEnemySelectionWeight(enemy: EnemyDef, floor: number): number {
   // Base weight by explicit tier ("difficulty level").
   const tierWeight = 1 + Math.max(0, enemy.tier - 1) * Math.max(0, floor - 1);
   // Extra bias by HP so stronger monsters inside a tier appear more on high floors.
-  const hpWeight = 1 + ((enemy.maxHp / 100) * Math.max(0, floor - 1));
+  const hpWeight = 1 + (enemy.maxHp / 100) * Math.max(0, floor - 1);
   return tierWeight * hpWeight;
 }
 
@@ -59,7 +64,8 @@ export function createNewRun(
 
   const map = generateFloorMap(1, rng, "LIBRARY");
 
-  const startingGold = GAME_CONSTANTS.STARTING_GOLD + (metaBonuses?.startingGold ?? 0);
+  const startingGold =
+    GAME_CONSTANTS.STARTING_GOLD + (metaBonuses?.startingGold ?? 0);
   const extraHp = metaBonuses?.extraHp ?? 0;
   const unlockProgress = initialUnlockProgress ?? {
     enteredBiomes: { LIBRARY: 1 },
@@ -128,7 +134,9 @@ export function generateFloorMap(
     // PRE_BOSS room: always a single node with 1 elite enemy for the "fight for relic" option
     if (isPreBossRoom) {
       const elitePool = enemyDefinitions
-        .filter((e) => e.isElite && (e.biome === biome || e.biome === "LIBRARY"))
+        .filter(
+          (e) => e.isElite && (e.biome === biome || e.biome === "LIBRARY")
+        )
         .map((e) => e.id);
       const eliteDefs = enemyDefinitions.filter(
         (e) =>
@@ -138,7 +146,11 @@ export function generateFloorMap(
       );
       const preBossEnemyId =
         eliteDefs.length > 0
-          ? weightedPick(eliteDefs, (e) => getEnemySelectionWeight(e, floor), rng).id
+          ? weightedPick(
+              eliteDefs,
+              (e) => getEnemySelectionWeight(e, floor),
+              rng
+            ).id
           : "ink_slime";
       map.push([
         {
@@ -235,7 +247,10 @@ function generateRoomEnemies(
     return { enemyIds: ["ink_slime"], isElite: false };
   }
 
-  const maxEnemyCount = Math.min(GAME_CONSTANTS.MAX_ENEMIES, 2 + Math.floor(floor / 2));
+  const maxEnemyCount = Math.min(
+    GAME_CONSTANTS.MAX_ENEMIES,
+    2 + Math.floor(floor / 2)
+  );
   const count = rng.nextInt(1, maxEnemyCount);
   const enemies: string[] = [];
   for (let i = 0; i < count; i++) {
@@ -291,7 +306,10 @@ export function completeCombat(
   const hpAfterCombat = Math.max(0, combatResult.player.currentHp);
   const healPct = Math.max(0, runState.metaBonuses?.healAfterCombat ?? 0);
   const healAmount = Math.floor((runState.playerMaxHp * healPct) / 100);
-  const hpAfterMetaHeal = Math.min(runState.playerMaxHp, hpAfterCombat + healAmount);
+  const hpAfterMetaHeal = Math.min(
+    runState.playerMaxHp,
+    hpAfterCombat + healAmount
+  );
 
   let pendingBiomeChoices: RunState["pendingBiomeChoices"] = null;
 
@@ -308,7 +326,8 @@ export function completeCombat(
   const updatedEarnedResources = { ...runState.earnedResources };
   if (biomeResources) {
     for (const [key, amount] of Object.entries(biomeResources)) {
-      updatedEarnedResources[key] = (updatedEarnedResources[key] ?? 0) + (amount as number);
+      updatedEarnedResources[key] =
+        (updatedEarnedResources[key] ?? 0) + (amount as number);
     }
   }
 
@@ -319,7 +338,8 @@ export function completeCombat(
     bossKillsByBiome: {},
   };
   const roomChoices = runState.map[runState.currentRoom];
-  const selectedRoom = roomChoices?.find((r) => r.completed) ?? roomChoices?.[0];
+  const selectedRoom =
+    roomChoices?.find((r) => r.completed) ?? roomChoices?.[0];
   if (selectedRoom?.isElite) {
     unlockProgress = onEliteKilled(unlockProgress, runState.currentBiome);
   }
@@ -341,7 +361,8 @@ export function completeCombat(
     status: isBossRoom && isFinalFloor ? "VICTORY" : runState.status,
     pendingBiomeChoices,
     earnedResources: updatedEarnedResources,
-    unlockedCardIds: unlockedCardIds.length > 0 ? unlockedCardIds : runState.unlockedCardIds,
+    unlockedCardIds:
+      unlockedCardIds.length > 0 ? unlockedCardIds : runState.unlockedCardIds,
     cardUnlockProgress: unlockProgress,
   };
 }
@@ -359,12 +380,15 @@ export function advanceFloor(
   const newFloor = state.floor + 1;
   const newMap = generateFloorMap(newFloor, rng, biome);
 
-  const unlockProgress = onEnterBiome(state.cardUnlockProgress ?? {
-    enteredBiomes: {},
-    biomeRunsCompleted: {},
-    eliteKillsByBiome: {},
-    bossKillsByBiome: {},
-  }, biome);
+  const unlockProgress = onEnterBiome(
+    state.cardUnlockProgress ?? {
+      enteredBiomes: {},
+      biomeRunsCompleted: {},
+      eliteKillsByBiome: {},
+      bossKillsByBiome: {},
+    },
+    biome
+  );
   const unlockedCardIds = computeUnlockedCardIds(
     allCards ?? [],
     unlockProgress,
@@ -378,7 +402,8 @@ export function advanceFloor(
     map: newMap,
     currentBiome: biome,
     pendingBiomeChoices: null,
-    unlockedCardIds: unlockedCardIds.length > 0 ? unlockedCardIds : state.unlockedCardIds,
+    unlockedCardIds:
+      unlockedCardIds.length > 0 ? unlockedCardIds : state.unlockedCardIds,
     cardUnlockProgress: unlockProgress,
   };
 }

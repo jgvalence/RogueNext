@@ -64,7 +64,9 @@ export function PlayerStats({ player }: PlayerStatsProps) {
             </Tooltip>
           )}
           {player.strength > 0 && (
-            <Tooltip content={`Increases all damage dealt by ${player.strength}.`}>
+            <Tooltip
+              content={`Increases all damage dealt by ${player.strength}.`}
+            >
               <span className="cursor-default rounded bg-red-800 px-2 py-0.5 text-red-200">
                 ⚔ +{player.strength}
               </span>

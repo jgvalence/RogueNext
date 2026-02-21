@@ -28,11 +28,19 @@ import {
   executeAlliesEnemiesTurn,
   checkCombatEnd,
 } from "../engine/combat";
-import { createNewRun, generateFloorMap, selectRoom, completeCombat } from "../engine/run";
+import {
+  createNewRun,
+  generateFloorMap,
+  selectRoom,
+  completeCombat,
+} from "../engine/run";
 import { generateCombatRewards, addCardToRunDeck } from "../engine/rewards";
 import { applyRelicsOnCombatStart } from "../engine/relics";
 import { resolveEffects, type EffectContext } from "../engine/effects";
-import { computeUnlockedCardIds, getCardUnlockDetails } from "../engine/card-unlocks";
+import {
+  computeUnlockedCardIds,
+  getCardUnlockDetails,
+} from "../engine/card-unlocks";
 import type { CombatState } from "../schemas/combat-state";
 import type { Effect } from "../schemas/effects";
 import { DEFAULT_META_BONUSES } from "../schemas/meta";
@@ -206,7 +214,9 @@ describe("Deck operations", () => {
 
   it("moveFromDiscardToHand retrieves card", () => {
     const state = makeMinimalCombat({
-      discardPile: [{ instanceId: "c1", definitionId: "strike", upgraded: false }],
+      discardPile: [
+        { instanceId: "c1", definitionId: "strike", upgraded: false },
+      ],
     });
     const result = moveFromDiscardToHand(state, "c1");
     expect(result.discardPile).toHaveLength(0);
@@ -345,7 +355,9 @@ describe("Card playing", () => {
 
   it("cannot play CURSE cards", () => {
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "hexed_parchment", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "hexed_parchment", upgraded: false },
+      ],
     });
     expect(canPlayCard(state, "c1", cardDefs)).toBe(false);
   });
@@ -399,7 +411,9 @@ describe("Card playing", () => {
   it("playCard with inked variant costs ink and deals more damage", () => {
     const rng = createRNG("inked-test");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "heavy_strike", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "heavy_strike", upgraded: false },
+      ],
       player: {
         ...makeMinimalCombat().player,
         inkCurrent: 5,
@@ -416,7 +430,9 @@ describe("Card playing", () => {
   it("playCard exhausts POWER cards for the rest of combat", () => {
     const rng = createRNG("power-exhaust-test");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "inner_focus", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "inner_focus", upgraded: false },
+      ],
     });
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
@@ -470,7 +486,9 @@ describe("Ink system", () => {
     const rng = createRNG("rewrite-test");
     const state = makeMinimalCombat({
       player: { ...makeMinimalCombat().player, inkCurrent: 5 },
-      discardPile: [{ instanceId: "c1", definitionId: "strike", upgraded: false }],
+      discardPile: [
+        { instanceId: "c1", definitionId: "strike", upgraded: false },
+      ],
     });
     const result = applyInkPower(state, "REWRITE", "c1", cardDefs, rng);
     expect(result.discardPile).toHaveLength(0);
@@ -749,7 +767,14 @@ describe("Legacy run robustness (missing fields from old DB records)", () => {
   it("initCombat handles undefined allyIds", () => {
     const run = makeLegacyRun();
     expect(() =>
-      initCombat(run, ["ink_slime"], enemyDefs, allyDefs, cardDefs, createRNG("legacy-2"))
+      initCombat(
+        run,
+        ["ink_slime"],
+        enemyDefs,
+        allyDefs,
+        cardDefs,
+        createRNG("legacy-2")
+      )
     ).not.toThrow();
   });
 
@@ -757,22 +782,48 @@ describe("Legacy run robustness (missing fields from old DB records)", () => {
     const run = makeLegacyRun();
     const combat = makeMinimalCombat();
     expect(() =>
-      completeCombat(run, combat, 0, createRNG("legacy-3"), { PAGES: 2 }, [...cardDefs.values()])
+      completeCombat(run, combat, 0, createRNG("legacy-3"), { PAGES: 2 }, [
+        ...cardDefs.values(),
+      ])
     ).not.toThrow();
   });
 
   it("completeCombat handles undefined earnedResources and accumulates resources", () => {
     const run = makeLegacyRun();
     const combat = makeMinimalCombat();
-    const result = completeCombat(run, combat, 10, createRNG("legacy-4"), { PAGES: 3 }, [...cardDefs.values()]);
+    const result = completeCombat(
+      run,
+      combat,
+      10,
+      createRNG("legacy-4"),
+      { PAGES: 3 },
+      [...cardDefs.values()]
+    );
     expect(result.gold).toBe(run.gold + 10);
     expect(result.earnedResources["PAGES"]).toBe(3);
   });
 
   it("initCombat applies metaBonuses from runState (extraDraw + extraEnergyMax)", () => {
-    const bonuses = { ...DEFAULT_META_BONUSES, extraDraw: 1, extraEnergyMax: 1 };
-    const bonusRun = createNewRun("run-meta", "meta-bonus", starterCards, createRNG("meta1"), bonuses);
-    const combat = initCombat(bonusRun, ["ink_slime"], enemyDefs, allyDefs, cardDefs, createRNG("meta2"));
+    const bonuses = {
+      ...DEFAULT_META_BONUSES,
+      extraDraw: 1,
+      extraEnergyMax: 1,
+    };
+    const bonusRun = createNewRun(
+      "run-meta",
+      "meta-bonus",
+      starterCards,
+      createRNG("meta1"),
+      bonuses
+    );
+    const combat = initCombat(
+      bonusRun,
+      ["ink_slime"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("meta2")
+    );
     expect(combat.player.drawCount).toBe(5); // base 4 + 1 extraDraw
     expect(combat.player.energyMax).toBe(4); // base 3 + 1 extraEnergyMax
   });
@@ -899,9 +950,9 @@ describe("Relics", () => {
     const state = makeMinimalCombat();
     const result = applyRelicsOnCombatStart(state, ["cursed_diacrit"]);
     expect(result.player.energyMax).toBe(4);
-    expect(result.discardPile.some((c) => c.definitionId === "haunting_regret")).toBe(
-      true
-    );
+    expect(
+      result.discardPile.some((c) => c.definitionId === "haunting_regret")
+    ).toBe(true);
   });
 
   it("runic_bulwark retains half of remaining block on next turn", () => {
@@ -1032,10 +1083,12 @@ describe("Debuff blocked by armor", () => {
       { type: "ADD_CARD_TO_DRAW", value: 1, cardId: "haunting_regret" },
     ];
     const result = resolveEffects(state, effects, enemyCtx, rng);
-    expect(result.discardPile.some((c) => c.definitionId === "dazed")).toBe(true);
-    expect(result.drawPile.some((c) => c.definitionId === "haunting_regret")).toBe(
+    expect(result.discardPile.some((c) => c.definitionId === "dazed")).toBe(
       true
     );
+    expect(
+      result.drawPile.some((c) => c.definitionId === "haunting_regret")
+    ).toBe(true);
   });
 
   it("thorns retaliates against enemy attacks", () => {

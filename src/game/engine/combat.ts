@@ -34,7 +34,10 @@ export function initCombat(
   const enemies: EnemyState[] = enemyIds.map((id) => {
     const def = enemyDefs.get(id);
     if (!def) throw new Error(`Unknown enemy definition: ${id}`);
-    const scaledHp = Math.max(1, Math.round(def.maxHp * floorEnemyHpMultiplier));
+    const scaledHp = Math.max(
+      1,
+      Math.round(def.maxHp * floorEnemyHpMultiplier)
+    );
     return {
       instanceId: nanoid(),
       definitionId: id,
@@ -110,7 +113,11 @@ export function initCombat(
 
   // Draw initial hand (extraHandAtStart included via drawCount bonus)
   const extraHand = bonuses?.extraHandAtStart ?? 0;
-  return drawCards(combatWithMeta, combatWithMeta.player.drawCount + extraHand, rng);
+  return drawCards(
+    combatWithMeta,
+    combatWithMeta.player.drawCount + extraHand,
+    rng
+  );
 }
 
 /**
@@ -129,7 +136,10 @@ export function startPlayerTurn(
     inkPowerUsedThisTurn: false,
     player: {
       ...state.player,
-      currentHp: Math.min(state.player.maxHp, state.player.currentHp + regenAmount),
+      currentHp: Math.min(
+        state.player.maxHp,
+        state.player.currentHp + regenAmount
+      ),
     },
   };
 

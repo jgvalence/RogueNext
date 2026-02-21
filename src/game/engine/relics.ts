@@ -134,7 +134,10 @@ export function applyRelicsOnCombatStart(
           player: {
             ...current.player,
             inkMax: current.player.inkMax + 1,
-            inkCurrent: Math.min(current.player.inkMax + 1, current.player.inkCurrent + 1),
+            inkCurrent: Math.min(
+              current.player.inkMax + 1,
+              current.player.inkCurrent + 1
+            ),
           },
         };
         break;

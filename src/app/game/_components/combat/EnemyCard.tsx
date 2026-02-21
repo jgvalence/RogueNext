@@ -23,7 +23,6 @@ interface EnemyCardProps {
   onClick?: () => void;
 }
 
-
 export function EnemyCard({
   enemy,
   definition,
@@ -35,7 +34,9 @@ export function EnemyCard({
   const isDead = enemy.currentHp <= 0;
   const intent = definition.abilities[enemy.intentIndex];
   const prevHp = useRef(enemy.currentHp);
-  const [dmgPopups, setDmgPopups] = useState<{ id: number; value: number }[]>([]);
+  const [dmgPopups, setDmgPopups] = useState<{ id: number; value: number }[]>(
+    []
+  );
   const popupId = useRef(0);
   // Track whether the enemy art image loaded successfully
   const [artFailed, setArtFailed] = useState(false);
@@ -60,14 +61,21 @@ export function EnemyCard({
   }, []);
 
   const cardW = definition.isBoss ? "w-52" : "w-40";
-  const artH  = definition.isBoss ? "h-36" : "h-28";
+  const artH = definition.isBoss ? "h-36" : "h-28";
 
-  let stateClasses = "border-gray-600 cursor-pointer hover:border-red-500 hover:scale-105";
-  if (isDead)                  stateClasses = "border-gray-700 opacity-30 grayscale";
-  else if (isActing)           stateClasses = "border-orange-400 animate-enemy-acting z-10";
-  else if (isTargeted)         stateClasses = "border-red-400 cursor-pointer scale-105 shadow-lg shadow-red-500/30";
-  else if (definition.isBoss)  stateClasses = "border-yellow-600 shadow-lg shadow-yellow-500/20";
-  else if (definition.isElite) stateClasses = "border-orange-600 cursor-pointer hover:border-red-500 hover:scale-105 shadow-md shadow-orange-500/20";
+  let stateClasses =
+    "border-gray-600 cursor-pointer hover:border-red-500 hover:scale-105";
+  if (isDead) stateClasses = "border-gray-700 opacity-30 grayscale";
+  else if (isActing)
+    stateClasses = "border-orange-400 animate-enemy-acting z-10";
+  else if (isTargeted)
+    stateClasses =
+      "border-red-400 cursor-pointer scale-105 shadow-lg shadow-red-500/30";
+  else if (definition.isBoss)
+    stateClasses = "border-yellow-600 shadow-lg shadow-yellow-500/20";
+  else if (definition.isElite)
+    stateClasses =
+      "border-orange-600 cursor-pointer hover:border-red-500 hover:scale-105 shadow-md shadow-orange-500/20";
 
   // TEMPORARY: use image from asset registry, fall back to emoji if missing
   const artImageSrc = ENEMY_IMAGES[definition.id];
@@ -95,11 +103,11 @@ export function EnemyCard({
       {/* Art area — TEMPORARY: shows image if present, emoji placeholder otherwise */}
       <div
         className={cn(
-          "relative flex flex-shrink-0 items-center justify-center bg-gradient-to-b overflow-hidden",
+          "relative flex flex-shrink-0 items-center justify-center overflow-hidden bg-gradient-to-b",
           artH,
           definition.isBoss
             ? "from-yellow-950 to-gray-900"
-            : "from-gray-800 to-gray-850"
+            : "to-gray-850 from-gray-800"
         )}
       >
         {/* Real art (hidden on error → falls back to emoji below) */}
@@ -115,24 +123,28 @@ export function EnemyCard({
 
         {/* Emoji placeholder — shown when image is missing */}
         {(!artImageSrc || artFailed) && (
-          <span className={cn(
-            "opacity-20 font-black",
-            definition.isBoss ? "text-6xl text-yellow-500" : "text-4xl text-gray-400"
-          )}>
+          <span
+            className={cn(
+              "font-black opacity-20",
+              definition.isBoss
+                ? "text-6xl text-yellow-500"
+                : "text-4xl text-gray-400"
+            )}
+          >
             {definition.isBoss ? "☽" : "◈"}
           </span>
         )}
 
         {/* Boss crown */}
         {definition.isBoss && (
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 rounded-full bg-yellow-600/80 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-100">
+          <div className="absolute left-1/2 top-2 -translate-x-1/2 rounded-full bg-yellow-600/80 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-yellow-100">
             Boss
           </div>
         )}
 
         {/* Elite badge */}
         {definition.isElite && (
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 rounded-full bg-orange-600/80 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-orange-100">
+          <div className="absolute left-1/2 top-2 -translate-x-1/2 rounded-full bg-orange-600/80 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-orange-100">
             Elite
           </div>
         )}
@@ -159,13 +171,15 @@ export function EnemyCard({
         {/* Intent */}
         {!isDead && intent && (
           <div className="rounded bg-gray-800 px-2 py-1">
-            <div className="flex items-center gap-1 mb-0.5">
-              <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Next:</span>
-              <span className="text-[10px] font-medium text-gray-200 truncate">{intent.name}</span>
+            <div className="mb-0.5 flex items-center gap-1">
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+                Next:
+              </span>
+              <span className="truncate text-[10px] font-medium text-gray-200">
+                {intent.name}
+              </span>
             </div>
-            <div className="flex flex-wrap gap-1">
-              {formatIntent(intent)}
-            </div>
+            <div className="flex flex-wrap gap-1">{formatIntent(intent)}</div>
           </div>
         )}
 
@@ -205,21 +219,30 @@ function formatIntent(ability: EnemyAbility) {
     switch (effect.type) {
       case "DAMAGE":
         parts.push(
-          <span key={`d-${parts.length}`} className="text-[11px] font-bold text-red-400">
+          <span
+            key={`d-${parts.length}`}
+            className="text-[11px] font-bold text-red-400"
+          >
             ⚔ {effect.value}
           </span>
         );
         break;
       case "BLOCK":
         parts.push(
-          <span key={`b-${parts.length}`} className="text-[11px] font-bold text-blue-400">
+          <span
+            key={`b-${parts.length}`}
+            className="text-[11px] font-bold text-blue-400"
+          >
             🛡 {effect.value}
           </span>
         );
         break;
       case "APPLY_DEBUFF":
         parts.push(
-          <span key={`x-${parts.length}`} className="text-[10px] text-purple-400">
+          <span
+            key={`x-${parts.length}`}
+            className="text-[10px] text-purple-400"
+          >
             {effect.buff} {effect.value}
           </span>
         );

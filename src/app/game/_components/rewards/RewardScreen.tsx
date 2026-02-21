@@ -45,7 +45,9 @@ export function RewardScreen({
   onPickAlly,
   onSkip,
 }: RewardScreenProps) {
-  const resourceEntries = Object.entries(biomeResources).filter(([, v]) => (v ?? 0) > 0);
+  const resourceEntries = Object.entries(biomeResources).filter(
+    ([, v]) => (v ?? 0) > 0
+  );
   const hasCardChoices = cardChoices.length > 0;
   const hasRelicChoices = relicChoices.length > 0;
   const hasAllyChoices = allyChoices.length > 0;
@@ -132,7 +134,9 @@ export function RewardScreen({
       {/* Normal: pick a card or skip */}
       {!isBoss && !isElite && (
         <>
-          <p className="text-sm text-gray-400">Choose a card to add to your deck:</p>
+          <p className="text-sm text-gray-400">
+            Choose a card to add to your deck:
+          </p>
           <div className="flex gap-4">
             {cardChoices.map((card) => (
               <GameCard

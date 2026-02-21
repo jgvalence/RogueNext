@@ -167,7 +167,8 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
     });
     const currentResources =
       (progression?.resources as Record<string, number>) ?? {};
-    const currentUnlockProgress = readUnlockProgressFromResources(currentResources);
+    const currentUnlockProgress =
+      readUnlockProgressFromResources(currentResources);
     const runUnlockProgress = runState.cardUnlockProgress ?? {
       enteredBiomes: {},
       biomeRunsCompleted: {},
@@ -180,25 +181,33 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       eliteKillsByBiome: { ...currentUnlockProgress.eliteKillsByBiome },
       bossKillsByBiome: { ...currentUnlockProgress.bossKillsByBiome },
     };
-    for (const [biome, value] of Object.entries(runUnlockProgress.enteredBiomes)) {
+    for (const [biome, value] of Object.entries(
+      runUnlockProgress.enteredBiomes
+    )) {
       mergedUnlockProgress.enteredBiomes[biome] = Math.max(
         mergedUnlockProgress.enteredBiomes[biome] ?? 0,
         value ?? 0
       );
     }
-    for (const [biome, value] of Object.entries(runUnlockProgress.biomeRunsCompleted)) {
+    for (const [biome, value] of Object.entries(
+      runUnlockProgress.biomeRunsCompleted
+    )) {
       mergedUnlockProgress.biomeRunsCompleted[biome] = Math.max(
         mergedUnlockProgress.biomeRunsCompleted[biome] ?? 0,
         value ?? 0
       );
     }
-    for (const [biome, value] of Object.entries(runUnlockProgress.eliteKillsByBiome)) {
+    for (const [biome, value] of Object.entries(
+      runUnlockProgress.eliteKillsByBiome
+    )) {
       mergedUnlockProgress.eliteKillsByBiome[biome] = Math.max(
         mergedUnlockProgress.eliteKillsByBiome[biome] ?? 0,
         value ?? 0
       );
     }
-    for (const [biome, value] of Object.entries(runUnlockProgress.bossKillsByBiome)) {
+    for (const [biome, value] of Object.entries(
+      runUnlockProgress.bossKillsByBiome
+    )) {
       mergedUnlockProgress.bossKillsByBiome[biome] = Math.max(
         mergedUnlockProgress.bossKillsByBiome[biome] ?? 0,
         value ?? 0
@@ -248,7 +257,10 @@ export async function getActiveRunAction() {
     const unlockedStoryIds = (progression?.unlockedStoryIds as string[]) ?? [];
     const freshMetaBonuses = computeMetaBonuses(unlockedStoryIds);
     const state = run.state as unknown as RunState;
-    const stateWithFreshBonuses: RunState = { ...state, metaBonuses: freshMetaBonuses };
+    const stateWithFreshBonuses: RunState = {
+      ...state,
+      metaBonuses: freshMetaBonuses,
+    };
 
     return success({
       run: {

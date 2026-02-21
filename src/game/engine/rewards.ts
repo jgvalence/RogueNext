@@ -63,26 +63,40 @@ export function generateCombatRewards(
   } else if (isElite) {
     // Elite: 1 rare card option
     const rareCards = shuffledCards.filter((c) => c.rarity === "RARE");
-    cardChoices = rareCards.length > 0 ? [rareCards[0]!] : shuffledCards.slice(0, 1);
+    cardChoices =
+      rareCards.length > 0 ? [rareCards[0]!] : shuffledCards.slice(0, 1);
   } else {
     cardChoices = shuffledCards.slice(0, GAME_CONSTANTS.CARD_REWARD_CHOICES);
   }
 
   // Biome resources (25% cross-biome chance via rng)
-  const biomeResources = getResourcesForCombat(biome, isElite, isBoss, floor, rng);
+  const biomeResources = getResourcesForCombat(
+    biome,
+    isElite,
+    isBoss,
+    floor,
+    rng
+  );
 
   // Relic choices
-  const availableRelics = relicDefinitions.filter((r) => !currentRelicIds.includes(r.id));
+  const availableRelics = relicDefinitions.filter(
+    (r) => !currentRelicIds.includes(r.id)
+  );
   let relicChoices: RelicDefinitionData[] = [];
 
   if (isBoss) {
     const pool = availableRelics.filter(
-      (r) => r.rarity === "UNCOMMON" || r.rarity === "RARE" || r.rarity === "BOSS"
+      (r) =>
+        r.rarity === "UNCOMMON" || r.rarity === "RARE" || r.rarity === "BOSS"
     );
-    relicChoices = rng.shuffle(pool.length >= 3 ? pool : availableRelics).slice(0, 3);
+    relicChoices = rng
+      .shuffle(pool.length >= 3 ? pool : availableRelics)
+      .slice(0, 3);
   } else if (isElite) {
     const pool = availableRelics.filter((r) => r.rarity !== "BOSS");
-    relicChoices = rng.shuffle(pool.length > 0 ? pool : availableRelics).slice(0, 1);
+    relicChoices = rng
+      .shuffle(pool.length > 0 ? pool : availableRelics)
+      .slice(0, 1);
     if (relicChoices.length === 0) {
       const rareCards = shuffledCards.filter((c) => c.rarity === "RARE");
       const existingCardIds = new Set(cardChoices.map((c) => c.id));

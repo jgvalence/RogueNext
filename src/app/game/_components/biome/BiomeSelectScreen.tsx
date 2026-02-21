@@ -70,9 +70,7 @@ export function BiomeSelectScreen({
         })}
       </div>
 
-      <p className="text-xs text-gray-600">
-        Floor {currentFloor + 1} of 3
-      </p>
+      <p className="text-xs text-gray-600">Floor {currentFloor + 1} of 3</p>
     </div>
   );
 }

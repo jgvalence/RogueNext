@@ -13,7 +13,10 @@ interface BioméSectionProps {
   onSelect: (histoire: Histoire) => void;
 }
 
-function getSlotState(histoire: Histoire, progression: MetaProgress): SlotState {
+function getSlotState(
+  histoire: Histoire,
+  progression: MetaProgress
+): SlotState {
   if (progression.unlockedStoryIds.includes(histoire.id)) return "UNLOCKED";
 
   const prereqsMet = histoire.prerequis.every((id) =>
@@ -22,7 +25,8 @@ function getSlotState(histoire: Histoire, progression: MetaProgress): SlotState 
   if (!prereqsMet) return "LOCKED_PREREQS";
 
   const canAfford = Object.entries(histoire.cout).every(
-    ([resource, cost]) => (progression.resources[resource] ?? 0) >= (cost as number)
+    ([resource, cost]) =>
+      (progression.resources[resource] ?? 0) >= (cost as number)
   );
   return canAfford ? "AVAILABLE" : "LOCKED_RESOURCES";
 }
@@ -55,7 +59,9 @@ export function BiomeSection({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className={`text-[10px] font-semibold uppercase tracking-widest ${theme.accent}`}>
+          <p
+            className={`text-[10px] font-semibold uppercase tracking-widest ${theme.accent}`}
+          >
             {theme.name}
           </p>
           <p className="text-[9px] text-slate-500">
@@ -69,7 +75,6 @@ export function BiomeSection({
 
       {/* Tree */}
       <div className="flex flex-col items-center gap-0.5">
-
         {/* Tier 1 */}
         <div className="flex gap-2">
           {t1s[0] && (

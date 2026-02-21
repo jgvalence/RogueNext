@@ -6,7 +6,6 @@ import type { Histoire } from "../schemas/meta";
  * Chaque Histoire débloque un bonus permanent pour les runs suivants.
  */
 export const histoireDefinitions: Histoire[] = [
-
   // =========================================================================
   // LIBRARY – Pages
   // =========================================================================
@@ -18,7 +17,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { PAGES: 8 },
     prerequis: [],
     bonus: { type: "EXTRA_DRAW", value: 1 },
-    description: "Un traité exhaustif consignant les techniques de mémorisation rapide. +1 carte piochée par tour.",
+    description:
+      "Un traité exhaustif consignant les techniques de mémorisation rapide. +1 carte piochée par tour.",
     visuel: "livre",
   },
   {
@@ -29,7 +29,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { PAGES: 10 },
     prerequis: [],
     bonus: { type: "EXTRA_ENERGY_MAX", value: 1 },
-    description: "Un manuel hermétique sur la canalisation de l'énergie vitale. +1 énergie max.",
+    description:
+      "Un manuel hermétique sur la canalisation de l'énergie vitale. +1 énergie max.",
     visuel: "grimoire",
   },
   {
@@ -40,7 +41,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { PAGES: 18 },
     prerequis: ["encyclopedie_du_savoir"],
     bonus: { type: "EXTRA_HAND_AT_START", value: 2 },
-    description: "Un système d'indexation occulte qui accélère la préparation au combat. Commence chaque combat avec 2 cartes supplémentaires en main.",
+    description:
+      "Un système d'indexation occulte qui accélère la préparation au combat. Commence chaque combat avec 2 cartes supplémentaires en main.",
     visuel: "grimoire",
   },
   {
@@ -51,7 +53,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { PAGES: 20 },
     prerequis: ["traite_de_lenergie"],
     bonus: { type: "FREE_UPGRADE_PER_RUN" },
-    description: "Des annotations marginales qui permettent d'améliorer une carte gratuitement avant chaque run.",
+    description:
+      "Des annotations marginales qui permettent d'améliorer une carte gratuitement avant chaque run.",
     visuel: "livre",
   },
   {
@@ -62,7 +65,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { PAGES: 40, LAURIERS: 5 },
     prerequis: ["grimoire_des_index", "manuel_de_revision"],
     bonus: { type: "EXTRA_DRAW", value: 1 },
-    description: "L'œuvre maîtresse de la Bibliothèque – un codex qui se réécrit lui-même. +1 carte piochée supplémentaire et récompenses de cartes avec un choix de plus.",
+    description:
+      "L'œuvre maîtresse de la Bibliothèque – un codex qui se réécrit lui-même. +1 carte piochée supplémentaire et récompenses de cartes avec un choix de plus.",
     visuel: "grimoire",
   },
 
@@ -78,7 +82,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { RUNES: 8 },
     prerequis: [],
     bonus: { type: "STARTING_STRENGTH", value: 1 },
-    description: "Les exploits de Ragnar Lodbrok mis en vers. +1 Force au début de chaque combat.",
+    description:
+      "Les exploits de Ragnar Lodbrok mis en vers. +1 Force au début de chaque combat.",
     visuel: "parchemin",
   },
   {
@@ -100,7 +105,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { RUNES: 18 },
     prerequis: ["saga_de_ragnar"],
     bonus: { type: "ATTACK_BONUS", value: 1 },
-    description: "Poèmes de bataille récités avant chaque assaut. +1 dégâts de base sur toutes les cartes Attaque.",
+    description:
+      "Poèmes de bataille récités avant chaque assaut. +1 dégâts de base sur toutes les cartes Attaque.",
     visuel: "parchemin",
   },
   {
@@ -111,7 +117,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { RUNES: 20 },
     prerequis: ["edda_des_berserkers"],
     bonus: { type: "SURVIVAL_ONCE" },
-    description: "Des runes gravées par Odin lui-même. Survit à 1 HP une fois par run.",
+    description:
+      "Des runes gravées par Odin lui-même. Survit à 1 HP une fois par run.",
     visuel: "tablette",
   },
   {
@@ -122,7 +129,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { RUNES: 40, PAGES: 5 },
     prerequis: ["chant_de_skald", "runes_du_valhalla"],
     bonus: { type: "STARTING_STRENGTH", value: 2 },
-    description: "L'épopée du grand héros germanique. +2 Force de départ et les ennemis élites ont 15% de HP en moins.",
+    description:
+      "L'épopée du grand héros germanique. +2 Force de départ et les ennemis élites ont 15% de HP en moins.",
     visuel: "livre",
   },
 
@@ -138,7 +146,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { LAURIERS: 8 },
     prerequis: [],
     bonus: { type: "STARTING_GOLD", value: 25 },
-    description: "Le récit du retour d'Ulysse, plein de ruses et de richesses. +25 or de départ à chaque run.",
+    description:
+      "Le récit du retour d'Ulysse, plein de ruses et de richesses. +25 or de départ à chaque run.",
     visuel: "parchemin",
   },
   {
@@ -150,7 +159,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { LAURIERS: 10 },
     prerequis: [],
     bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
-    description: "La philosophie politique de Platon appliquée au choix stratégique. +1 choix lors des récompenses de cartes.",
+    description:
+      "La philosophie politique de Platon appliquée au choix stratégique. +1 choix lors des récompenses de cartes.",
     visuel: "livre",
   },
   {
@@ -161,7 +171,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { LAURIERS: 18 },
     prerequis: ["l_odyssee"],
     bonus: { type: "RELIC_DISCOUNT", value: 20 },
-    description: "Douze épreuves qui enseignent l'art de négocier avec les dieux. Les reliques coûtent 20% moins cher chez le marchand.",
+    description:
+      "Douze épreuves qui enseignent l'art de négocier avec les dieux. Les reliques coûtent 20% moins cher chez le marchand.",
     visuel: "parchemin",
   },
   {
@@ -173,7 +184,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { LAURIERS: 20 },
     prerequis: ["la_republique"],
     bonus: { type: "STARTING_RARE_CARD" },
-    description: "Des hymnes aux dieux de l'Olympe qui attirent les faveurs divines. Commence chaque run avec une carte rare aléatoire dans le deck.",
+    description:
+      "Des hymnes aux dieux de l'Olympe qui attirent les faveurs divines. Commence chaque run avec une carte rare aléatoire dans le deck.",
     visuel: "parchemin",
   },
   {
@@ -185,7 +197,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { LAURIERS: 40, PAGES: 5 },
     prerequis: ["les_travaux_d_heracles", "hymnes_homeriques"],
     bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
-    description: "Le dialogue sur l'amour et la sagesse. Toutes les récompenses offrent un choix supplémentaire.",
+    description:
+      "Le dialogue sur l'amour et la sagesse. Toutes les récompenses offrent un choix supplémentaire.",
     visuel: "livre",
   },
 
@@ -200,7 +213,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { GLYPHES: 8 },
     prerequis: [],
     bonus: { type: "EXTRA_INK_MAX", value: 2 },
-    description: "Le guide égyptien de l'au-delà, riche en formules magiques. +2 Ink max.",
+    description:
+      "Le guide égyptien de l'au-delà, riche en formules magiques. +2 Ink max.",
     visuel: "parchemin",
   },
   {
@@ -211,7 +225,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { GLYPHES: 10 },
     prerequis: [],
     bonus: { type: "INK_PER_CARD_CHANCE", value: 100 },
-    description: "Un hymne au dieu soleil qui infuse chaque geste d'énergie divine. +100% de chance de gain d'Ink par carte jouée.",
+    description:
+      "Un hymne au dieu soleil qui infuse chaque geste d'énergie divine. +100% de chance de gain d'Ink par carte jouée.",
     visuel: "tablette",
   },
   {
@@ -222,7 +237,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { GLYPHES: 18 },
     prerequis: ["livre_des_morts"],
     bonus: { type: "UNLOCK_INK_POWER", power: "LOST_CHAPTER" },
-    description: "Les plus anciens textes religieux de l'humanité, gravés dans la pierre. Débloque le pouvoir d'Ink LOST_CHAPTER.",
+    description:
+      "Les plus anciens textes religieux de l'humanité, gravés dans la pierre. Débloque le pouvoir d'Ink LOST_CHAPTER.",
     visuel: "tablette",
   },
   {
@@ -233,7 +249,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { GLYPHES: 20 },
     prerequis: ["hymne_a_re"],
     bonus: { type: "STARTING_INK", value: 3 },
-    description: "Le célèbre papyrus funéraire d'Ani, chargé d'énergie mystique. Commence chaque combat avec 3 Ink.",
+    description:
+      "Le célèbre papyrus funéraire d'Ani, chargé d'énergie mystique. Commence chaque combat avec 3 Ink.",
     visuel: "parchemin",
   },
   {
@@ -244,7 +261,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { GLYPHES: 40, PAGES: 5 },
     prerequis: ["textes_des_pyramides", "papyrus_d_ani"],
     bonus: { type: "UNLOCK_INK_POWER", power: "SEAL" },
-    description: "Le rituel secret qui permet de sceller la réalité elle-même. Débloque le pouvoir d'Ink SEAL et +3 Ink max supplémentaires.",
+    description:
+      "Le rituel secret qui permet de sceller la réalité elle-même. Débloque le pouvoir d'Ink SEAL et +3 Ink max supplémentaires.",
     visuel: "tablette",
   },
 
@@ -259,7 +277,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { OBSIDIENNE: 8 },
     prerequis: [],
     bonus: { type: "EXTRA_HP", value: 10 },
-    description: "Le codex divinatoire aztèque, source de résistance corporelle. +10 HP max.",
+    description:
+      "Le codex divinatoire aztèque, source de résistance corporelle. +10 HP max.",
     visuel: "tablette",
   },
   {
@@ -270,7 +289,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { OBSIDIENNE: 10 },
     prerequis: [],
     bonus: { type: "HEAL_AFTER_COMBAT", value: 5 },
-    description: "La Piedra del Sol révèle les cycles de régénération. Récupère 5% des HP max après chaque combat.",
+    description:
+      "La Piedra del Sol révèle les cycles de régénération. Récupère 5% des HP max après chaque combat.",
     visuel: "tablette",
   },
   {
@@ -281,7 +301,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { OBSIDIENNE: 18 },
     prerequis: ["codex_fejerváry"],
     bonus: { type: "EXTRA_HP", value: 10 },
-    description: "L'hymne au Serpent à Plumes, symbole de renaissance. +10 HP max supplémentaires.",
+    description:
+      "L'hymne au Serpent à Plumes, symbole de renaissance. +10 HP max supplémentaires.",
     visuel: "parchemin",
   },
   {
@@ -292,7 +313,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { OBSIDIENNE: 20 },
     prerequis: ["calendrier_de_pierre"],
     bonus: { type: "HEAL_AFTER_COMBAT", value: 5 },
-    description: "Le rituel qui honore Tezcatlipoca, maître du miroir sombre. +5% de HP max récupérés supplémentaires après chaque combat.",
+    description:
+      "Le rituel qui honore Tezcatlipoca, maître du miroir sombre. +5% de HP max récupérés supplémentaires après chaque combat.",
     visuel: "tablette",
   },
   {
@@ -303,7 +325,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { OBSIDIENNE: 40, RUNES: 5 },
     prerequis: ["chant_de_quetzalcoatl", "rite_du_soleil_noir"],
     bonus: { type: "EXTRA_HP", value: 10 },
-    description: "Le sacrifice ultime qui maintient le soleil en mouvement. +10 HP max et les boss ont une chance de dropper une relique supplémentaire.",
+    description:
+      "Le sacrifice ultime qui maintient le soleil en mouvement. +10 HP max et les boss ont une chance de dropper une relique supplémentaire.",
     visuel: "tablette",
   },
 
@@ -319,7 +342,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { FRAGMENTS: 8 },
     prerequis: [],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 30 },
-    description: "Un fragment du livre maudit. Les cartes avec Exhaust ont 30% de chance de ne pas être exhaustées.",
+    description:
+      "Un fragment du livre maudit. Les cartes avec Exhaust ont 30% de chance de ne pas être exhaustées.",
     visuel: "grimoire",
   },
   {
@@ -330,7 +354,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { FRAGMENTS: 10 },
     prerequis: [],
     bonus: { type: "STARTING_RARE_CARD" },
-    description: "Les notes d'un chercheur de l'université de Miskatonic. Commence chaque run avec une carte rare aléatoire.",
+    description:
+      "Les notes d'un chercheur de l'université de Miskatonic. Commence chaque run avec une carte rare aléatoire.",
     visuel: "livre",
   },
   {
@@ -342,7 +367,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { FRAGMENTS: 18 },
     prerequis: ["necronomicon_fragment"],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 30 },
-    description: "Le traité secret sur les cultes anciens. +30% de chance supplémentaire de ne pas exhaustée une carte.",
+    description:
+      "Le traité secret sur les cultes anciens. +30% de chance supplémentaire de ne pas exhaustée une carte.",
     visuel: "grimoire",
   },
   {
@@ -353,7 +379,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { FRAGMENTS: 20 },
     prerequis: ["journal_de_miskatonic"],
     bonus: { type: "SURVIVAL_ONCE" },
-    description: "Une révélation sur la nature insaisissable de la réalité. Survit à 1 HP une fois par run (si non déjà obtenu via les Runes).",
+    description:
+      "Une révélation sur la nature insaisissable de la réalité. Survit à 1 HP une fois par run (si non déjà obtenu via les Runes).",
     visuel: "grimoire",
   },
   {
@@ -364,7 +391,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { FRAGMENTS: 40, GLYPHES: 5 },
     prerequis: ["cultes_innommables", "mondes_sans_nom"],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 20 },
-    description: "Le signe mystique qui permet de manipuler les lois du cosmos. Les variantes Inked coûtent 1 Ink de moins.",
+    description:
+      "Le signe mystique qui permet de manipuler les lois du cosmos. Les variantes Inked coûtent 1 Ink de moins.",
     visuel: "tablette",
   },
 
@@ -379,7 +407,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { AMBRE: 8 },
     prerequis: [],
     bonus: { type: "STARTING_BLOCK", value: 3 },
-    description: "Les contes gallois de la Première Branche. Commence chaque combat avec 3 Block.",
+    description:
+      "Les contes gallois de la Première Branche. Commence chaque combat avec 3 Block.",
     visuel: "parchemin",
   },
   {
@@ -390,7 +419,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { AMBRE: 10 },
     prerequis: [],
     bonus: { type: "STARTING_REGEN", value: 2 },
-    description: "Les épopées du héros Cú Chulainn, champion de l'Ulster. Récupère 2 HP au début de chaque tour.",
+    description:
+      "Les épopées du héros Cú Chulainn, champion de l'Ulster. Récupère 2 HP au début de chaque tour.",
     visuel: "parchemin",
   },
   {
@@ -401,7 +431,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { AMBRE: 18 },
     prerequis: ["mabinogion"],
     bonus: { type: "STARTING_BLOCK", value: 3 },
-    description: "Les poèmes du barde légendaire Taliesin. +3 Block supplémentaires au début de chaque combat.",
+    description:
+      "Les poèmes du barde légendaire Taliesin. +3 Block supplémentaires au début de chaque combat.",
     visuel: "livre",
   },
   {
@@ -412,7 +443,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { AMBRE: 20 },
     prerequis: ["cycle_d_ulster"],
     bonus: { type: "ATTACK_BONUS", value: 1 },
-    description: "Sagesse traditionnelle galloise organisée en triades. +1 dégâts sur les cartes Attaque.",
+    description:
+      "Sagesse traditionnelle galloise organisée en triades. +1 dégâts sur les cartes Attaque.",
     visuel: "tablette",
   },
   {
@@ -423,7 +455,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { AMBRE: 40, OBSIDIENNE: 5 },
     prerequis: ["taliesin", "les_triades_galloises"],
     bonus: { type: "STARTING_BLOCK", value: 4 },
-    description: "Le chaudron magique qui nourrit et soigne tous ceux qui en ont besoin. +4 Block et +1 Strength de départ.",
+    description:
+      "Le chaudron magique qui nourrit et soigne tous ceux qui en ont besoin. +4 Block et +1 Strength de départ.",
     visuel: "grimoire",
   },
 
@@ -438,7 +471,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { SCEAUX: 8 },
     prerequis: [],
     bonus: { type: "STARTING_BLOCK", value: 4 },
-    description: "Les chants héroïques d'Ilya Mouromets, héros du peuple russe. +4 Block au début de chaque combat.",
+    description:
+      "Les chants héroïques d'Ilya Mouromets, héros du peuple russe. +4 Block au début de chaque combat.",
     visuel: "parchemin",
   },
   {
@@ -449,7 +483,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { SCEAUX: 10 },
     prerequis: [],
     bonus: { type: "FIRST_HIT_DAMAGE_REDUCTION", value: 30 },
-    description: "Les contes de la sorcière de la forêt russe. Le premier coup subi en combat inflige 30% de dégâts en moins.",
+    description:
+      "Les contes de la sorcière de la forêt russe. Le premier coup subi en combat inflige 30% de dégâts en moins.",
     visuel: "livre",
   },
   {
@@ -460,7 +495,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { SCEAUX: 18 },
     prerequis: ["byliny_de_ilya"],
     bonus: { type: "STARTING_GOLD", value: 20 },
-    description: "Le conte de la capture de l'oiseau mythique. +20 or de départ à chaque run.",
+    description:
+      "Le conte de la capture de l'oiseau mythique. +20 or de départ à chaque run.",
     visuel: "parchemin",
   },
   {
@@ -471,7 +507,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { SCEAUX: 20 },
     prerequis: ["contes_de_baba_yaga"],
     bonus: { type: "STARTING_BLOCK", value: 4 },
-    description: "Les rituels pour s'attirer les faveurs de l'esprit protecteur du foyer. +4 Block supplémentaires.",
+    description:
+      "Les rituels pour s'attirer les faveurs de l'esprit protecteur du foyer. +4 Block supplémentaires.",
     visuel: "livre",
   },
   {
@@ -482,7 +519,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { SCEAUX: 40, AMBRE: 5 },
     prerequis: ["l_oiseau_de_feu", "domovoi"],
     bonus: { type: "EXTRA_ENERGY_MAX", value: 1 },
-    description: "Le grimoire interdit de la tradition russe. +1 énergie max et +5 Block de départ supplémentaires.",
+    description:
+      "Le grimoire interdit de la tradition russe. +1 énergie max et +5 Block de départ supplémentaires.",
     visuel: "grimoire",
   },
 
@@ -497,7 +535,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { MASQUES: 8 },
     prerequis: [],
     bonus: { type: "ALLY_SLOTS", value: 1 },
-    description: "L'épopée fondatrice de l'Empire du Mali. Débloque le système d'alliés (1 emplacement).",
+    description:
+      "L'épopée fondatrice de l'Empire du Mali. Débloque le système d'alliés (1 emplacement).",
     visuel: "parchemin",
   },
   {
@@ -508,7 +547,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { MASQUES: 10 },
     prerequis: [],
     bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
-    description: "Les ruses de l'araignée trickster, maître des histoires. +1 choix lors des récompenses de cartes.",
+    description:
+      "Les ruses de l'araignée trickster, maître des histoires. +1 choix lors des récompenses de cartes.",
     visuel: "livre",
   },
   {
@@ -519,7 +559,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { MASQUES: 18 },
     prerequis: ["epopee_de_soundiata"],
     bonus: { type: "ALLY_SLOTS", value: 1 },
-    description: "Les rituels initiatiques de nombreuses cultures africaines. +1 emplacement allié (max 2).",
+    description:
+      "Les rituels initiatiques de nombreuses cultures africaines. +1 emplacement allié (max 2).",
     visuel: "tablette",
   },
   {
@@ -530,7 +571,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { MASQUES: 20 },
     prerequis: ["contes_d_anansi"],
     bonus: { type: "STARTING_STRENGTH", value: 1 },
-    description: "Le masque du dieu carrefour Légba, maître des chemins. +1 Strength de départ.",
+    description:
+      "Le masque du dieu carrefour Légba, maître des chemins. +1 Strength de départ.",
     visuel: "tablette",
   },
   {
@@ -541,7 +583,8 @@ export const histoireDefinitions: Histoire[] = [
     cout: { MASQUES: 40, LAURIERS: 5 },
     prerequis: ["rites_de_passage", "masque_de_legba"],
     bonus: { type: "ALLY_SLOTS", value: 1 },
-    description: "La mémoire vivante de toutes les traditions africaines. +1 emplacement allié (max 3) et les alliés ont 25% de HP supplémentaires.",
+    description:
+      "La mémoire vivante de toutes les traditions africaines. +1 emplacement allié (max 3) et les alliés ont 25% de HP supplémentaires.",
     visuel: "grimoire",
   },
 ];

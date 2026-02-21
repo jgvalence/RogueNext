@@ -155,8 +155,8 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
 // src/lib/env.ts
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.string().url(),          // doit être une URL valide
-    NEXTAUTH_SECRET: z.string().min(32),     // min 32 caractères
+    DATABASE_URL: z.string().url(), // doit être une URL valide
+    NEXTAUTH_SECRET: z.string().min(32), // min 32 caractères
     GOOGLE_CLIENT_ID: z.string().optional(), // peut être absent
   },
   client: {
@@ -169,17 +169,17 @@ export const env = createEnv({
 
 ### Ce que tu dois apprendre avec Zod
 
-| Méthode | Usage |
-|---|---|
-| `z.object({})` | Valider un objet |
-| `z.string().min(n)` | String avec longueur min |
-| `z.string().email()` | Email valide |
-| `z.string().url()` | URL valide |
-| `z.enum(["A", "B"])` | Valeur parmi une liste |
-| `z.optional()` | Champ non obligatoire |
-| `.parse(data)` | Valide et lance une erreur si invalide |
-| `.safeParse(data)` | Valide et retourne `{ success, data, error }` |
-| `z.infer<typeof schema>` | Inférer le type TypeScript |
+| Méthode                  | Usage                                         |
+| ------------------------ | --------------------------------------------- |
+| `z.object({})`           | Valider un objet                              |
+| `z.string().min(n)`      | String avec longueur min                      |
+| `z.string().email()`     | Email valide                                  |
+| `z.string().url()`       | URL valide                                    |
+| `z.enum(["A", "B"])`     | Valeur parmi une liste                        |
+| `z.optional()`           | Champ non obligatoire                         |
+| `.parse(data)`           | Valide et lance une erreur si invalide        |
+| `.safeParse(data)`       | Valide et retourne `{ success, data, error }` |
+| `z.infer<typeof schema>` | Inférer le type TypeScript                    |
 
 ---
 
@@ -250,13 +250,13 @@ if (result.success) {
 
 ### Server Actions vs API Routes
 
-| | Server Action | API Route |
-|---|---|---|
-| Usage | Formulaires, mutations internes | Webhooks, endpoints publics, fichiers |
-| Appel | Fonction TypeScript directe | `fetch("/api/...")` |
-| CSRF | Protégé automatiquement | À gérer manuellement |
-| Type-safety | Totale (TypeScript end-to-end) | Partielle (côté client non typé) |
-| Revalidation | `revalidatePath()` intégré | Manuelle |
+|              | Server Action                   | API Route                             |
+| ------------ | ------------------------------- | ------------------------------------- |
+| Usage        | Formulaires, mutations internes | Webhooks, endpoints publics, fichiers |
+| Appel        | Fonction TypeScript directe     | `fetch("/api/...")`                   |
+| CSRF         | Protégé automatiquement         | À gérer manuellement                  |
+| Type-safety  | Totale (TypeScript end-to-end)  | Partielle (côté client non typé)      |
+| Revalidation | `revalidatePath()` intégré      | Manuelle                              |
 
 ---
 
@@ -272,9 +272,9 @@ React Query gère le **cache de l'état serveur** côté client. Sans React Quer
 // src/lib/query/client.ts
 const defaultOptions = {
   queries: {
-    staleTime: 60 * 1000,        // données "fraîches" pendant 1 minute
-    gcTime: 5 * 60 * 1000,       // supprimées du cache après 5 min inutilisées
-    retry: 1,                    // 1 retry en cas d'échec
+    staleTime: 60 * 1000, // données "fraîches" pendant 1 minute
+    gcTime: 5 * 60 * 1000, // supprimées du cache après 5 min inutilisées
+    retry: 1, // 1 retry en cas d'échec
     retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 30000), // backoff expo
     refetchOnWindowFocus: false, // pas de refetch quand on revient sur l'onglet
   },
@@ -282,6 +282,7 @@ const defaultOptions = {
 ```
 
 **Singleton browser vs serveur :**
+
 ```typescript
 export function getQueryClient() {
   if (typeof window === "undefined") {
@@ -425,10 +426,11 @@ export async function requireOwnership(resourceUserId: string) { ... }
 ```
 
 **Usage dans une Server Action :**
+
 ```typescript
-const user = await requireAuth();          // → UserObject ou throw 401
-await requireRole(UserRole.ADMIN);         // → UserObject ou throw 403
-await requireOwnership(run.userId);        // → UserObject ou throw 403
+const user = await requireAuth(); // → UserObject ou throw 401
+await requireRole(UserRole.ADMIN); // → UserObject ou throw 403
+await requireOwnership(run.userId); // → UserObject ou throw 403
 ```
 
 ### Module augmentation TypeScript
@@ -449,10 +451,10 @@ declare module "next-auth" {
 
 ### Deux types d'erreurs
 
-| Type | Exemples | `isOperational` | Comportement |
-|---|---|---|---|
-| **Opérationnelles** | 404, 403, validation | `true` | Message affiché à l'user |
-| **Techniques** | Bug, crash DB | `false` | Log Sentry, message générique |
+| Type                | Exemples             | `isOperational` | Comportement                  |
+| ------------------- | -------------------- | --------------- | ----------------------------- |
+| **Opérationnelles** | 404, 403, validation | `true`          | Message affiché à l'user      |
+| **Techniques**      | Bug, crash DB        | `false`         | Log Sentry, message générique |
 
 ### La hiérarchie des classes
 
@@ -551,8 +553,8 @@ const url = process.env.DATABASE_URL; // string | undefined
 // src/lib/env.ts
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.string().url(),       // URL valide requise
-    NEXTAUTH_SECRET: z.string().min(32),  // Min 32 chars
+    DATABASE_URL: z.string().url(), // URL valide requise
+    NEXTAUTH_SECRET: z.string().min(32), // Min 32 chars
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url(),
@@ -647,27 +649,33 @@ CardDefinition, EnemyDefinition, RelicDefinition, AllyDefinition
 ### Les patterns à maîtriser (dans l'ordre d'importance)
 
 **1. Server Action avec Zod + Auth + Error handling**
+
 ```
 zod.parse(input) → requireAuth() → logique métier → success() / handleServerActionError()
 ```
+
 Voir : [src/server/actions/run.ts](../src/server/actions/run.ts)
 
 **2. Lecture côté client avec React Query**
+
 ```
 useQuery({ queryKey, queryFn: serverAction }) → { data, isLoading, error }
 ```
 
 **3. Mutation avec React Query**
+
 ```
 useMutation({ mutationFn }) → { mutate, isPending }
 ```
 
 **4. Protection de route avec requireAuth()**
+
 ```
 const user = await requireAuth() // dans une action ou un Server Component
 ```
 
 **5. Variables d'env validées**
+
 ```
 import { env } from "@/lib/env" // jamais process.env directement
 ```
@@ -682,15 +690,15 @@ import { env } from "@/lib/env" // jamais process.env directement
 
 ### Fichiers de référence
 
-| Ce que tu veux apprendre | Fichier |
-|---|---|
-| Server Action complète | [src/server/actions/run.ts](../src/server/actions/run.ts) |
-| Modèle d'action à copier | [src/server/actions/example.ts](../src/server/actions/example.ts) |
-| Config NextAuth | [src/lib/auth/config.ts](../src/lib/auth/config.ts) |
-| Helpers d'auth (requireAuth...) | [src/lib/auth/helpers.ts](../src/lib/auth/helpers.ts) |
-| Classes d'erreurs | [src/lib/errors/types.ts](../src/lib/errors/types.ts) |
-| Handler d'erreurs | [src/lib/errors/handlers.ts](../src/lib/errors/handlers.ts) |
-| Config React Query | [src/lib/query/client.ts](../src/lib/query/client.ts) |
-| Validation env vars | [src/lib/env.ts](../src/lib/env.ts) |
-| Schéma DB | [prisma/schema.prisma](../prisma/schema.prisma) |
-| API Route exemple | [src/app/api/example/route.ts](../src/app/api/example/route.ts) |
+| Ce que tu veux apprendre        | Fichier                                                           |
+| ------------------------------- | ----------------------------------------------------------------- |
+| Server Action complète          | [src/server/actions/run.ts](../src/server/actions/run.ts)         |
+| Modèle d'action à copier        | [src/server/actions/example.ts](../src/server/actions/example.ts) |
+| Config NextAuth                 | [src/lib/auth/config.ts](../src/lib/auth/config.ts)               |
+| Helpers d'auth (requireAuth...) | [src/lib/auth/helpers.ts](../src/lib/auth/helpers.ts)             |
+| Classes d'erreurs               | [src/lib/errors/types.ts](../src/lib/errors/types.ts)             |
+| Handler d'erreurs               | [src/lib/errors/handlers.ts](../src/lib/errors/handlers.ts)       |
+| Config React Query              | [src/lib/query/client.ts](../src/lib/query/client.ts)             |
+| Validation env vars             | [src/lib/env.ts](../src/lib/env.ts)                               |
+| Schéma DB                       | [prisma/schema.prisma](../prisma/schema.prisma)                   |
+| API Route exemple               | [src/app/api/example/route.ts](../src/app/api/example/route.ts)   |

@@ -788,7 +788,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 34,
     speed: 2,
     abilities: [
-      { name: "Sand Crush", weight: 1, effects: [{ type: "DAMAGE", value: 11 }] },
+      {
+        name: "Sand Crush",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 11 }],
+      },
       { name: "Dune Wall", weight: 1, effects: [{ type: "BLOCK", value: 10 }] },
     ],
     isBoss: false,
@@ -810,7 +814,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
         ],
       },
-      { name: "Solar Lash", weight: 1, effects: [{ type: "DAMAGE", value: 9 }] },
+      {
+        name: "Solar Lash",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 9 }],
+      },
     ],
     isBoss: false,
     isElite: false,
@@ -831,7 +839,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
         ],
       },
-      { name: "Ancient Blade", weight: 1, effects: [{ type: "DAMAGE", value: 10 }] },
+      {
+        name: "Ancient Blade",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 10 }],
+      },
     ],
     isBoss: false,
     isElite: false,
@@ -853,7 +865,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         ],
       },
-      { name: "Desert Bulwark", weight: 1, effects: [{ type: "BLOCK", value: 14 }] },
+      {
+        name: "Desert Bulwark",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 14 }],
+      },
     ],
     isBoss: false,
     isElite: true,
@@ -866,7 +882,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 165,
     speed: 4,
     abilities: [
-      { name: "Sun Spear", weight: 1, effects: [{ type: "DAMAGE", value: 18 }] },
+      {
+        name: "Sun Spear",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 18 }],
+      },
       {
         name: "Blazing Decree",
         weight: 1,
@@ -875,7 +895,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
       },
-      { name: "Solar Barrier", weight: 1, effects: [{ type: "BLOCK", value: 18 }] },
+      {
+        name: "Solar Barrier",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 18 }],
+      },
       {
         name: "Divine Scorch",
         weight: 1,
@@ -900,7 +924,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 22,
     speed: 5,
     abilities: [
-      { name: "Ritual Cut", weight: 2, effects: [{ type: "DAMAGE", value: 7 }] },
+      {
+        name: "Ritual Cut",
+        weight: 2,
+        effects: [{ type: "DAMAGE", value: 7 }],
+      },
       {
         name: "Mind Fray",
         weight: 1,
@@ -942,7 +970,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 36,
     speed: 2,
     abilities: [
-      { name: "Amorphous Slam", weight: 1, effects: [{ type: "DAMAGE", value: 12 }] },
+      {
+        name: "Amorphous Slam",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 12 }],
+      },
       { name: "Absorb", weight: 1, effects: [{ type: "BLOCK", value: 9 }] },
     ],
     isBoss: false,
@@ -977,7 +1009,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 74,
     speed: 4,
     abilities: [
-      { name: "Rend Reality", weight: 1, effects: [{ type: "DAMAGE", value: 19 }] },
+      {
+        name: "Rend Reality",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 19 }],
+      },
       {
         name: "Mind Rot",
         weight: 1,
@@ -987,7 +1023,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
         ],
       },
-      { name: "Abyss Ward", weight: 1, effects: [{ type: "BLOCK", value: 15 }] },
+      {
+        name: "Abyss Ward",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 15 }],
+      },
     ],
     isBoss: false,
     isElite: true,
@@ -1000,7 +1040,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 168,
     speed: 5,
     abilities: [
-      { name: "Black Flame", weight: 1, effects: [{ type: "DAMAGE", value: 20 }] },
+      {
+        name: "Black Flame",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 20 }],
+      },
       {
         name: "Mad Prophecy",
         weight: 1,
@@ -1018,7 +1062,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "DRAIN_INK", value: 6 },
         ],
       },
-      { name: "Void Mantle", weight: 1, effects: [{ type: "BLOCK", value: 20 }] },
+      {
+        name: "Void Mantle",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 20 }],
+      },
     ],
     isBoss: true,
     isElite: false,
@@ -1098,8 +1146,16 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 40,
     speed: 1,
     abilities: [
-      { name: "Temple Slam", weight: 1, effects: [{ type: "DAMAGE", value: 13 }] },
-      { name: "Obsidian Carapace", weight: 1, effects: [{ type: "BLOCK", value: 12 }] },
+      {
+        name: "Temple Slam",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 13 }],
+      },
+      {
+        name: "Obsidian Carapace",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 12 }],
+      },
     ],
     isBoss: false,
     isElite: false,
@@ -1112,7 +1168,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 76,
     speed: 5,
     abilities: [
-      { name: "Solar Talon", weight: 1, effects: [{ type: "DAMAGE", value: 18 }] },
+      {
+        name: "Solar Talon",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 18 }],
+      },
       {
         name: "Rite of Fear",
         weight: 1,
@@ -1121,7 +1181,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         ],
       },
-      { name: "Golden Feathers", weight: 1, effects: [{ type: "BLOCK", value: 15 }] },
+      {
+        name: "Golden Feathers",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 15 }],
+      },
     ],
     isBoss: false,
     isElite: true,
@@ -1134,7 +1198,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 172,
     speed: 4,
     abilities: [
-      { name: "Mirror Slash", weight: 1, effects: [{ type: "DAMAGE", value: 19 }] },
+      {
+        name: "Mirror Slash",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 19 }],
+      },
       {
         name: "Dark Sun",
         weight: 1,
@@ -1152,7 +1220,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "DRAIN_INK", value: 5 },
         ],
       },
-      { name: "Night Mantle", weight: 1, effects: [{ type: "BLOCK", value: 20 }] },
+      {
+        name: "Night Mantle",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 20 }],
+      },
     ],
     isBoss: true,
     isElite: false,
@@ -1169,7 +1241,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 22,
     speed: 7,
     abilities: [
-      { name: "Glamour Cut", weight: 2, effects: [{ type: "DAMAGE", value: 7 }] },
+      {
+        name: "Glamour Cut",
+        weight: 2,
+        effects: [{ type: "DAMAGE", value: 7 }],
+      },
       {
         name: "Hexed Dart",
         weight: 1,
@@ -1190,7 +1266,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 38,
     speed: 2,
     abilities: [
-      { name: "Mire Slam", weight: 1, effects: [{ type: "DAMAGE", value: 12 }] },
+      {
+        name: "Mire Slam",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 12 }],
+      },
       {
         name: "Toxic Mud",
         weight: 1,
@@ -1225,7 +1305,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 24,
     speed: 8,
     abilities: [
-      { name: "Razor Fang", weight: 2, effects: [{ type: "DAMAGE", value: 8 }] },
+      {
+        name: "Razor Fang",
+        weight: 2,
+        effects: [{ type: "DAMAGE", value: 8 }],
+      },
       {
         name: "Howl",
         weight: 1,
@@ -1255,7 +1339,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
       },
-      { name: "Feather Guard", weight: 1, effects: [{ type: "BLOCK", value: 14 }] },
+      {
+        name: "Feather Guard",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 14 }],
+      },
     ],
     isBoss: false,
     isElite: true,
@@ -1268,7 +1356,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 166,
     speed: 3,
     abilities: [
-      { name: "Club of Ruin", weight: 1, effects: [{ type: "DAMAGE", value: 21 }] },
+      {
+        name: "Club of Ruin",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 21 }],
+      },
       {
         name: "Cauldron Steam",
         weight: 1,
@@ -1277,7 +1369,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 5, buff: "POISON" },
         ],
       },
-      { name: "Ancient Feast", weight: 1, effects: [{ type: "BLOCK", value: 20 }] },
+      {
+        name: "Ancient Feast",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 20 }],
+      },
       {
         name: "Famine Curse",
         weight: 1,
@@ -1323,7 +1419,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 34,
     speed: 3,
     abilities: [
-      { name: "Saber Slash", weight: 1, effects: [{ type: "DAMAGE", value: 11 }] },
+      {
+        name: "Saber Slash",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 11 }],
+      },
       { name: "Parry", weight: 1, effects: [{ type: "BLOCK", value: 10 }] },
     ],
     isBoss: false,
@@ -1345,7 +1445,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
         ],
       },
-      { name: "Snow Spike", weight: 1, effects: [{ type: "DAMAGE", value: 10 }] },
+      {
+        name: "Snow Spike",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 10 }],
+      },
     ],
     isBoss: false,
     isElite: false,
@@ -1358,7 +1462,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 30,
     speed: 4,
     abilities: [
-      { name: "Lance Thrust", weight: 1, effects: [{ type: "DAMAGE", value: 10 }] },
+      {
+        name: "Lance Thrust",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 10 }],
+      },
       {
         name: "War Cry",
         weight: 1,
@@ -1379,7 +1487,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 76,
     speed: 4,
     abilities: [
-      { name: "Bone Lance", weight: 1, effects: [{ type: "DAMAGE", value: 18 }] },
+      {
+        name: "Bone Lance",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 18 }],
+      },
       {
         name: "Death Whisper",
         weight: 1,
@@ -1388,7 +1500,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         ],
       },
-      { name: "Undying Guard", weight: 1, effects: [{ type: "BLOCK", value: 15 }] },
+      {
+        name: "Undying Guard",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 15 }],
+      },
     ],
     isBoss: false,
     isElite: true,
@@ -1401,7 +1517,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 170,
     speed: 3,
     abilities: [
-      { name: "Stomping Legs", weight: 1, effects: [{ type: "DAMAGE", value: 20 }] },
+      {
+        name: "Stomping Legs",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 20 }],
+      },
       {
         name: "Witchfire",
         weight: 1,
@@ -1410,7 +1530,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 5, buff: "POISON" },
         ],
       },
-      { name: "Bone Fence", weight: 1, effects: [{ type: "BLOCK", value: 19 }] },
+      {
+        name: "Bone Fence",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 19 }],
+      },
       {
         name: "Soul Stew",
         weight: 1,
@@ -1456,7 +1580,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 28,
     speed: 5,
     abilities: [
-      { name: "Spear Jab", weight: 1, effects: [{ type: "DAMAGE", value: 10 }] },
+      {
+        name: "Spear Jab",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 10 }],
+      },
       {
         name: "Ancestral Fear",
         weight: 1,
@@ -1477,8 +1605,16 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 40,
     speed: 1,
     abilities: [
-      { name: "Trunk Slam", weight: 1, effects: [{ type: "DAMAGE", value: 13 }] },
-      { name: "Root Armor", weight: 1, effects: [{ type: "BLOCK", value: 12 }] },
+      {
+        name: "Trunk Slam",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 13 }],
+      },
+      {
+        name: "Root Armor",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 12 }],
+      },
     ],
     isBoss: false,
     isElite: false,
@@ -1499,7 +1635,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 5, buff: "POISON" },
         ],
       },
-      { name: "Oracle Lash", weight: 1, effects: [{ type: "DAMAGE", value: 9 }] },
+      {
+        name: "Oracle Lash",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 9 }],
+      },
     ],
     isBoss: false,
     isElite: false,
@@ -1512,7 +1652,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 75,
     speed: 5,
     abilities: [
-      { name: "Crossroad Spear", weight: 1, effects: [{ type: "DAMAGE", value: 18 }] },
+      {
+        name: "Crossroad Spear",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 18 }],
+      },
       {
         name: "Gate Curse",
         weight: 1,
@@ -1521,7 +1665,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
       },
-      { name: "Mask Barrier", weight: 1, effects: [{ type: "BLOCK", value: 15 }] },
+      {
+        name: "Mask Barrier",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 15 }],
+      },
     ],
     isBoss: false,
     isElite: true,
@@ -1534,7 +1682,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
     maxHp: 169,
     speed: 4,
     abilities: [
-      { name: "Lion King's Blow", weight: 1, effects: [{ type: "DAMAGE", value: 20 }] },
+      {
+        name: "Lion King's Blow",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 20 }],
+      },
       {
         name: "Epic Command",
         weight: 1,
@@ -1543,7 +1695,11 @@ export const enemyDefinitions: EnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         ],
       },
-      { name: "Griot's Shield", weight: 1, effects: [{ type: "BLOCK", value: 20 }] },
+      {
+        name: "Griot's Shield",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 20 }],
+      },
       {
         name: "Royal Tribute",
         weight: 1,

@@ -14,20 +14,28 @@ interface LibraryClientProps {
   histoires: Histoire[];
 }
 
-function getSlotState(histoire: Histoire, progression: MetaProgress): SlotState {
+function getSlotState(
+  histoire: Histoire,
+  progression: MetaProgress
+): SlotState {
   if (progression.unlockedStoryIds.includes(histoire.id)) return "UNLOCKED";
   const prereqsMet = histoire.prerequis.every((id) =>
     progression.unlockedStoryIds.includes(id)
   );
   if (!prereqsMet) return "LOCKED_PREREQS";
   const canAfford = Object.entries(histoire.cout).every(
-    ([resource, cost]) => (progression.resources[resource] ?? 0) >= (cost as number)
+    ([resource, cost]) =>
+      (progression.resources[resource] ?? 0) >= (cost as number)
   );
   return canAfford ? "AVAILABLE" : "LOCKED_RESOURCES";
 }
 
-export function LibraryClient({ initialProgression, histoires }: LibraryClientProps) {
-  const [progression, setProgression] = useState<MetaProgress>(initialProgression);
+export function LibraryClient({
+  initialProgression,
+  histoires,
+}: LibraryClientProps) {
+  const [progression, setProgression] =
+    useState<MetaProgress>(initialProgression);
   const [selected, setSelected] = useState<Histoire | null>(null);
 
   const histoiresByBiome = BIOME_ORDER.reduce<Record<string, Histoire[]>>(
@@ -46,7 +54,7 @@ export function LibraryClient({ initialProgression, histoires }: LibraryClientPr
       {/* Background ambient glow */}
       <div className="pointer-events-none fixed inset-0">
         <div className="absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-900/10 blur-[128px]" />
-        <div className="absolute right-1/4 bottom-1/4 h-[400px] w-[400px] rounded-full bg-purple-900/10 blur-[128px]" />
+        <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] rounded-full bg-purple-900/10 blur-[128px]" />
       </div>
 
       {/* Header */}
@@ -81,8 +89,18 @@ export function LibraryClient({ initialProgression, histoires }: LibraryClientPr
               className="flex items-center gap-2 rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-purple-500 hover:shadow-[0_0_24px_rgba(147,51,234,0.4)]"
             >
               Commencer un Run
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
               </svg>
             </Link>
           </div>
