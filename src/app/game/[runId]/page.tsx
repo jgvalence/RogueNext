@@ -586,7 +586,7 @@ function GameContent({
         )}
 
         {phase === "VICTORY" && (
-          <div className="flex flex-col items-center gap-4 py-16">
+          <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
             <h2 className="text-4xl font-bold text-green-400">Victory!</h2>
             <p className="text-gray-400">
               You conquered all {state.floor} floors of the Forbidden Library!
@@ -641,7 +641,7 @@ function GameContent({
         )}
 
         {phase === "DEFEAT" && (
-          <div className="flex flex-col items-center gap-4 py-16">
+          <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
             <h2 className="text-4xl font-bold text-red-400">Defeat</h2>
             <p className="text-gray-400">Your story ends here...</p>
             <div className="space-y-1 text-sm text-gray-500">
