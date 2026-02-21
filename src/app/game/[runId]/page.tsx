@@ -283,7 +283,7 @@ function GameContent({
       }
       setPhase("DEFEAT");
     }
-  }, [state.combat?.phase]);
+  }, [state.combat?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // After rewards, go back to map — or biome select — or victory
   const handlePickCard = useCallback(

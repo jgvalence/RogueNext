@@ -120,7 +120,7 @@ export function generateCombatRewards(
   }
 
   // Boss only: 50% chance to offer +15 max HP as an alternative to a relic
-  const bossMaxHpBonus = isBoss && rng.nextFloat() < 0.5 ? 15 : null;
+  const bossMaxHpBonus = isBoss && rng.next() < 0.5 ? 15 : null;
 
   return {
     gold,
