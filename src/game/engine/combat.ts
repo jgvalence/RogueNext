@@ -29,6 +29,7 @@ export function initCombat(
   metaBonuses?: ComputedMetaBonuses
 ): CombatState {
   const floorEnemyHpMultiplier = 1 + (runState.floor - 1) * 0.15;
+  const enemyDamageScale = 1 + (runState.floor - 1) * 0.18;
 
   // Create enemy instances
   const enemies: EnemyState[] = enemyIds.map((id) => {
@@ -77,6 +78,8 @@ export function initCombat(
   const drawPile = shuffleDeck([...runState.deck], rng);
 
   const combat: CombatState = {
+    floor: runState.floor,
+    enemyDamageScale,
     turnNumber: 1,
     phase: "PLAYER_TURN",
     player: {

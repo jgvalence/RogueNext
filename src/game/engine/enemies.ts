@@ -256,13 +256,27 @@ export function resolveEnemyAbilityTarget(
     case "ALL_ENEMIES":
       return "player";
     case "PLAYER":
+      if (shouldPressureAllies(state, ability)) {
+        return pickAllyPriorityTarget(state);
+      }
       return "player";
     default: {
       const hasDamage = ability.effects.some((e) => e.type === "DAMAGE");
-      if (hasDamage) return "player";
+      if (hasDamage && shouldPressureAllies(state, ability)) {
+        return pickAllyPriorityTarget(state);
+      }
       return "player";
     }
   }
+}
+
+function shouldPressureAllies(state: CombatState, ability: EnemyAbility): boolean {
+  const hasDamage = ability.effects.some((e) => e.type === "DAMAGE");
+  const hasLivingAlly = state.allies.some((a) => a.currentHp > 0);
+  if (!hasDamage || !hasLivingAlly) return false;
+
+  // Deterministic pacing: every 4th turn, some attacks retarget allies.
+  return state.turnNumber % 4 === 0;
 }
 
 function maybeTriggerBossPhase(

@@ -55,6 +55,8 @@ import { relicDefinitions } from "../data/relics";
 
 function makeMinimalCombat(overrides?: Partial<CombatState>): CombatState {
   return {
+    floor: 1,
+    enemyDamageScale: 1,
     turnNumber: 1,
     phase: "PLAYER_TURN",
     player: {
@@ -759,6 +761,75 @@ describe("Combat flow", () => {
     const result = executeOneEnemyTurn(state, enemy, def, rng, enemyDefs);
     expect(result.player.currentHp).toBeLessThan(80);
     expect(result.allies[0]?.currentHp).toBe(8);
+  });
+
+  it("PLAYER-target enemy attacks can pressure allies on turn 4", () => {
+    const rng = createRNG("enemy-pressure-turn");
+    const state = makeMinimalCombat({
+      turnNumber: 4,
+      player: { ...makeMinimalCombat().player, currentHp: 80 },
+      allies: [
+        {
+          instanceId: "ally-1",
+          definitionId: "scribe_apprentice",
+          name: "Scribe Apprentice",
+          currentHp: 20,
+          maxHp: 24,
+          block: 0,
+          speed: 7,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+      enemies: [
+        {
+          instanceId: "e1",
+          definitionId: "ink_slime",
+          name: "Ink Slime",
+          currentHp: 14,
+          maxHp: 14,
+          block: 0,
+          speed: 2,
+          buffs: [],
+          intentIndex: 0, // Splatter targets PLAYER in data
+        },
+      ],
+    });
+    const enemy = state.enemies[0]!;
+    const def = enemyDefs.get(enemy.definitionId);
+    expect(def).toBeDefined();
+    if (!def) return;
+
+    const result = executeOneEnemyTurn(state, enemy, def, rng, enemyDefs);
+    expect(result.allies[0]?.currentHp).toBeLessThan(20);
+  });
+
+  it("enemy damage scales with floor multiplier", () => {
+    const rng = createRNG("enemy-dmg-scale");
+    const state = makeMinimalCombat({
+      enemyDamageScale: 1.36,
+      enemies: [
+        {
+          instanceId: "e1",
+          definitionId: "ink_slime",
+          name: "Ink Slime",
+          currentHp: 14,
+          maxHp: 14,
+          block: 0,
+          speed: 2,
+          buffs: [],
+          intentIndex: 0, // Splatter: 7 base
+        },
+      ],
+    });
+    const enemy = state.enemies[0]!;
+    const def = enemyDefs.get(enemy.definitionId);
+    expect(def).toBeDefined();
+    if (!def) return;
+
+    const result = executeOneEnemyTurn(state, enemy, def, rng, enemyDefs);
+    // 7 * 1.36 = 9.52 => round 10
+    expect(result.player.currentHp).toBe(70);
   });
 
   it("ally death is not permanent across combats", () => {

@@ -87,9 +87,13 @@ function applyDamageToTarget(
   source: EffectSource
 ): CombatState {
   const sourceStats = getSourceStats(state, source);
+  const scaledBaseDamage =
+    typeof source === "object" && source.type === "enemy"
+      ? Math.max(1, Math.round(baseDamage * (state.enemyDamageScale ?? 1)))
+      : baseDamage;
 
   if (target === "player") {
-    const rawDamage = calculateDamage(baseDamage, sourceStats, {
+    const rawDamage = calculateDamage(scaledBaseDamage, sourceStats, {
       buffs: state.player.buffs,
     });
     const canUseFirstHitReduction =
@@ -121,7 +125,7 @@ function applyDamageToTarget(
     let s = state;
     for (const enemy of state.enemies) {
       if (enemy.currentHp <= 0) continue;
-      const finalDmg = calculateDamage(baseDamage, sourceStats, {
+      const finalDmg = calculateDamage(scaledBaseDamage, sourceStats, {
         buffs: enemy.buffs,
       });
       const result = applyDamage(enemy, finalDmg);
@@ -137,7 +141,7 @@ function applyDamageToTarget(
   if (typeof target === "object" && target.type === "enemy") {
     const enemy = state.enemies.find((e) => e.instanceId === target.instanceId);
     if (!enemy || enemy.currentHp <= 0) return state;
-    const finalDmg = calculateDamage(baseDamage, sourceStats, {
+    const finalDmg = calculateDamage(scaledBaseDamage, sourceStats, {
       buffs: enemy.buffs,
     });
     const result = applyDamage(enemy, finalDmg);
@@ -152,7 +156,7 @@ function applyDamageToTarget(
     let s = state;
     for (const ally of state.allies) {
       if (ally.currentHp <= 0) continue;
-      const finalDmg = calculateDamage(baseDamage, sourceStats, {
+      const finalDmg = calculateDamage(scaledBaseDamage, sourceStats, {
         buffs: ally.buffs,
       });
       const result = applyDamage(ally, finalDmg);
@@ -168,7 +172,7 @@ function applyDamageToTarget(
   if (typeof target === "object" && target.type === "ally") {
     const ally = state.allies.find((a) => a.instanceId === target.instanceId);
     if (!ally || ally.currentHp <= 0) return state;
-    const finalDmg = calculateDamage(baseDamage, sourceStats, {
+    const finalDmg = calculateDamage(scaledBaseDamage, sourceStats, {
       buffs: ally.buffs,
     });
     const result = applyDamage(ally, finalDmg);

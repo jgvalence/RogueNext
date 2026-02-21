@@ -15,6 +15,8 @@ export const CombatPhase = z.enum([
 export type CombatPhase = z.infer<typeof CombatPhase>;
 
 export const CombatStateSchema = z.object({
+  floor: z.number().int().default(1),
+  enemyDamageScale: z.number().default(1),
   turnNumber: z.number().int().default(1),
   phase: CombatPhase.default("PLAYER_TURN"),
   player: PlayerStateSchema,

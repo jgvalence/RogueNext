@@ -57,21 +57,33 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
       allCardDefinitions
     );
 
-    const run = await prisma.run.create({
-      data: {
-        userId: user.id!,
-        seed,
-        state: runState as unknown as Prisma.InputJsonValue,
-        status: "IN_PROGRESS",
-      },
-    });
+    const now = new Date();
+    const run = await prisma.$transaction(async (tx) => {
+      // Ensure there is only one active run per user: close previous ones first.
+      await tx.run.updateMany({
+        where: { userId: user.id!, status: "IN_PROGRESS" },
+        data: { status: "ABANDONED", endedAt: now },
+      });
 
-    // Update runId in state to match DB id
-    const stateWithDbId: RunState = { ...runState, runId: run.id };
-    await prisma.run.update({
-      where: { id: run.id },
-      data: { state: stateWithDbId as unknown as Prisma.InputJsonValue },
+      const created = await tx.run.create({
+        data: {
+          userId: user.id!,
+          seed,
+          state: runState as unknown as Prisma.InputJsonValue,
+          status: "IN_PROGRESS",
+        },
+      });
+
+      // Update runId in state to match DB id.
+      const stateWithDbId: RunState = { ...runState, runId: created.id };
+      await tx.run.update({
+        where: { id: created.id },
+        data: { state: stateWithDbId as unknown as Prisma.InputJsonValue },
+      });
+
+      return created;
     });
+    const stateWithDbId: RunState = { ...runState, runId: run.id };
 
     revalidatePath("/game");
     return success({ runId: run.id, state: stateWithDbId });
@@ -100,6 +112,11 @@ export async function saveRunStateAction(
       throw new Error("Run not found or access denied");
     }
 
+    // Ignore stale auto-saves from ended/abandoned runs to avoid resurrecting old runs.
+    if (run.status !== "IN_PROGRESS") {
+      return success({ saved: false });
+    }
+
     const state = validated.state as RunState;
 
     await prisma.run.update({
@@ -109,7 +126,6 @@ export async function saveRunStateAction(
         floor: state.floor,
         room: state.currentRoom,
         gold: state.gold,
-        status: state.status,
       },
     });
 
@@ -243,7 +259,8 @@ export async function getActiveRunAction() {
     const [run, progression] = await Promise.all([
       prisma.run.findFirst({
         where: { userId: user.id!, status: "IN_PROGRESS" },
-        orderBy: { updatedAt: "desc" },
+        // Pick latest created run if duplicates exist for any reason.
+        orderBy: { createdAt: "desc" },
       }),
       prisma.userProgression.findUnique({ where: { userId: user.id! } }),
     ]);
