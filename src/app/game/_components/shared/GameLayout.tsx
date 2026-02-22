@@ -7,6 +7,7 @@ import { setMusicEnabled } from "@/lib/music";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { relicDefinitions } from "@/game/data/relics";
 import { DeckViewerModal } from "./DeckViewerModal";
+import { RulesModal } from "./RulesModal";
 
 interface GameLayoutProps {
   children: ReactNode;
@@ -17,6 +18,7 @@ export function GameLayout({ children }: GameLayoutProps) {
   const [muted, setMuted] = useState(false);
   const [showRelics, setShowRelics] = useState(false);
   const [showDeckViewer, setShowDeckViewer] = useState(false);
+  const [showRules, setShowRules] = useState(false);
 
   const ownedRelics = state.relicIds
     .map((id) => relicDefinitions.find((r) => r.id === id))
@@ -110,6 +112,15 @@ export function GameLayout({ children }: GameLayoutProps) {
             </span>
           </button>
 
+          <button
+            onClick={() => setShowRules(true)}
+            className="rounded border border-slate-600 px-2 py-1 text-xs font-semibold text-slate-300 transition hover:border-slate-400 hover:text-white"
+            title="Voir les règles"
+            type="button"
+          >
+            R&egrave;gles
+          </button>
+
           {state.relicIds.length > 0 && (
             <button
               onClick={() => setShowRelics((v) => !v)}
@@ -147,6 +158,8 @@ export function GameLayout({ children }: GameLayoutProps) {
           onClose={() => setShowDeckViewer(false)}
         />
       )}
+
+      {showRules && <RulesModal onClose={() => setShowRules(false)} />}
 
       {showRelics && (
         <div

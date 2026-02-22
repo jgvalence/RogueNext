@@ -60,6 +60,12 @@ export default async function HomePage() {
               >
                 Biblioth&egrave;que
               </Link>
+              <Link
+                href="/rules"
+                className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
+              >
+                R&egrave;gles
+              </Link>
               <LogoutButton className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white" />
             </div>
           ) : (
@@ -89,6 +95,12 @@ export default async function HomePage() {
                   className="rounded-lg border border-gray-700 px-8 py-4 text-lg font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
                 >
                   Se connecter
+                </Link>
+                <Link
+                  href="/rules"
+                  className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
+                >
+                  R&egrave;gles
                 </Link>
               </div>
               <span className="text-sm text-gray-500">
