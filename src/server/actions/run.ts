@@ -34,6 +34,7 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
     // Load meta-progression bonuses for this user
     const progression = await prisma.userProgression.findUnique({
       where: { userId: user.id! },
+      select: { resources: true, unlockedStoryIds: true },
     });
     const unlockedStoryIds = (progression?.unlockedStoryIds as string[]) ?? [];
     const resources = (progression?.resources as Record<string, number>) ?? {};
@@ -198,6 +199,7 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
     // Persist card unlock progression counters from run state.
     const progression = await prisma.userProgression.findUnique({
       where: { userId: user.id! },
+      select: { resources: true, unlockedStoryIds: true },
     });
     const currentResources =
       (progression?.resources as Record<string, number>) ?? {};
@@ -287,7 +289,10 @@ export async function getActiveRunAction() {
         // Pick latest created run if duplicates exist for any reason.
         orderBy: { createdAt: "desc" },
       }),
-      prisma.userProgression.findUnique({ where: { userId: user.id! } }),
+      prisma.userProgression.findUnique({
+        where: { userId: user.id! },
+        select: { unlockedStoryIds: true },
+      }),
     ]);
 
     if (!run) {
