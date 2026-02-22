@@ -443,7 +443,9 @@ function GameContent({
 
   return (
     <GameLayout>
-      <div className="flex h-full min-h-0 flex-col overflow-hidden">
+      <div
+        className={`flex min-h-0 flex-col${phase === "COMBAT" ? "h-full overflow-hidden" : ""}`}
+      >
         {phase === "MAP" && (
           <FloorMap
             map={state.map}
