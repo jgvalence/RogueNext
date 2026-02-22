@@ -64,6 +64,13 @@ export function FloorMap({
                   ? Math.round(baseResourceAmount * 1.5)
                   : baseResourceAmount;
               const primaryResource = BIOME_RESOURCE[currentBiome];
+              const enemyGoldBonus =
+                Math.max(0, enemyCount - 1) *
+                GAME_CONSTANTS.GOLD_PER_EXTRA_ENEMY;
+              const eliteGoldBonus = room.isElite
+                ? GAME_CONSTANTS.ELITE_GOLD_BONUS
+                : 0;
+              const displayedGoldBonus = enemyGoldBonus + eliteGoldBonus;
 
               return (
                 <button
@@ -99,8 +106,16 @@ export function FloorMap({
                     <div className="flex w-full flex-wrap items-center justify-center gap-1.5">
                       <span className="rounded-full border border-emerald-400/30 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-100">
                         +{guaranteedResourceAmount}{" "}
-                        {t(`reward.resources.${primaryResource}`, primaryResource)}
+                        {t(
+                          `reward.resources.${primaryResource}`,
+                          primaryResource
+                        )}
                       </span>
+                      {displayedGoldBonus > 0 && (
+                        <span className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-100">
+                          +{displayedGoldBonus} {t("reward.gold")}
+                        </span>
+                      )}
                       <span
                         title={t("map.combatPreview.resourcesBonusHint")}
                         className="rounded-full border border-cyan-300/20 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-100"
