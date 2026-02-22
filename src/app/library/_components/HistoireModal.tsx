@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { BIOME_THEMES, VISUEL_ICONS, TIER_LABELS } from "./constants";
 import type { SlotState } from "./constants";
 import type { Histoire, MetaBonus, MetaProgress } from "@/game/schemas/meta";
 import { unlockStoryAction } from "@/server/actions/progression";
+import {
+  localizeStoryAuthor,
+  localizeStoryDescription,
+  localizeStoryTitle,
+} from "@/lib/i18n/stories";
 
 interface HistoireModalProps {
   histoire: Histoire;
@@ -17,53 +23,53 @@ interface HistoireModalProps {
 function formatBonus(bonus: MetaBonus): string {
   switch (bonus.type) {
     case "EXTRA_DRAW":
-      return `+${bonus.value} carte piochée par tour`;
+      return `+${bonus.value} draw each turn`;
     case "EXTRA_ENERGY_MAX":
-      return `+${bonus.value} énergie max`;
+      return `+${bonus.value} max energy`;
     case "EXTRA_INK_MAX":
-      return `+${bonus.value} Ink max`;
+      return `+${bonus.value} max ink`;
     case "INK_PER_CARD_CHANCE":
-      return `+${bonus.value}% de chance de gagner de l'Ink en jouant une carte`;
+      return `+${bonus.value}% chance to gain ink on card play`;
     case "INK_PER_CARD_VALUE":
-      return `+${bonus.value} Ink gagné quand l'effet proc`;
+      return `+${bonus.value} ink when proc triggers`;
     case "STARTING_INK":
-      return `Commence chaque combat avec +${bonus.value} Ink`;
+      return `Start combat with +${bonus.value} ink`;
     case "STARTING_BLOCK":
-      return `+${bonus.value} Block au début de chaque combat`;
+      return `+${bonus.value} block at combat start`;
     case "STARTING_STRENGTH":
-      return `+${bonus.value} Force au début de chaque combat`;
+      return `+${bonus.value} strength at combat start`;
     case "STARTING_REGEN":
-      return `Récupère +${bonus.value} HP au début de chaque tour`;
+      return `Recover +${bonus.value} HP at turn start`;
     case "FIRST_HIT_DAMAGE_REDUCTION":
-      return `Premier coup subi: -${bonus.value}% dégâts`;
+      return `First hit taken: -${bonus.value}% damage`;
     case "EXTRA_HP":
-      return `+${bonus.value} HP max`;
+      return `+${bonus.value} max HP`;
     case "EXTRA_HAND_AT_START":
-      return `+${bonus.value} cartes en main au début du combat`;
+      return `+${bonus.value} cards in opening hand`;
     case "ATTACK_BONUS":
-      return `+${bonus.value} dégâts sur les cartes Attaque`;
+      return `+${bonus.value} attack card damage`;
     case "ALLY_SLOTS":
-      return `+${bonus.value} emplacement(s) allié`;
+      return `+${bonus.value} ally slot(s)`;
     case "STARTING_GOLD":
-      return `+${bonus.value} or de départ à chaque run`;
+      return `+${bonus.value} starting gold each run`;
     case "EXTRA_CARD_REWARD_CHOICES":
-      return `+${bonus.value} choix lors des récompenses de cartes`;
+      return `+${bonus.value} card reward choices`;
     case "RELIC_DISCOUNT":
-      return `${bonus.value}% de réduction sur les reliques`;
+      return `${bonus.value}% relic discount`;
     case "UNLOCK_INK_POWER":
-      return `Débloque le pouvoir d'Ink ${bonus.power}`;
+      return `Unlock ink power ${bonus.power}`;
     case "HEAL_AFTER_COMBAT":
-      return `Récupère ${bonus.value}% des HP max après chaque combat`;
+      return `Recover ${bonus.value}% max HP after combat`;
     case "EXHAUST_KEEP_CHANCE":
-      return `${bonus.value}% de chance de ne pas exhaustée une carte`;
+      return `${bonus.value}% chance to not exhaust a card`;
     case "SURVIVAL_ONCE":
-      return "Survit à 1 HP une fois par run";
+      return "Survive at 1 HP once per run";
     case "FREE_UPGRADE_PER_RUN":
-      return "Upgrade une carte gratuitement par run";
+      return "Upgrade one card for free each run";
     case "STARTING_RARE_CARD":
-      return "Commence chaque run avec une carte rare aléatoire";
+      return "Start each run with a random rare card";
     default:
-      return "Bonus permanent";
+      return "Permanent bonus";
   }
 }
 
@@ -74,9 +80,13 @@ export function HistoireModal({
   onClose,
   onUnlocked,
 }: HistoireModalProps) {
+  const { t } = useTranslation();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const theme = BIOME_THEMES[histoire.biome];
+  const storyTitle = localizeStoryTitle(histoire, t);
+  const storyAuthor = localizeStoryAuthor(histoire, t);
+  const storyDescription = localizeStoryDescription(histoire, t);
 
   async function handleUnlock() {
     setIsPending(true);
@@ -87,7 +97,6 @@ export function HistoireModal({
         setError(result.error.message);
         return;
       }
-      // Build updated progression for optimistic update
       const updatedResources = { ...progression.resources };
       for (const [resource, cost] of Object.entries(histoire.cout)) {
         updatedResources[resource] =
@@ -99,7 +108,7 @@ export function HistoireModal({
       });
       onClose();
     } catch {
-      setError("Une erreur est survenue.");
+      setError(t("library.genericError"));
     } finally {
       setIsPending(false);
     }
@@ -114,7 +123,6 @@ export function HistoireModal({
         className={`w-full max-w-md rounded-2xl border bg-slate-950 shadow-2xl ${theme.border}`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
         <div
           className={`rounded-t-2xl border-b px-5 py-4 ${theme.border} ${theme.bg}`}
         >
@@ -125,17 +133,18 @@ export function HistoireModal({
                   {VISUEL_ICONS[histoire.visuel]}
                 </span>
                 <span
-                  className={`rounded-sm px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${theme.accent} border ${theme.border}`}
+                  className={`rounded-sm border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${theme.accent} ${theme.border}`}
                 >
-                  {theme.name} · Tier {TIER_LABELS[histoire.tier]}
+                  {t(`biome.${histoire.biome}`)} - {t("library.tier")}{" "}
+                  {TIER_LABELS[histoire.tier]}
                 </span>
               </div>
               <h2 className="mt-1.5 text-lg font-bold leading-tight text-white">
-                {histoire.titre}
+                {storyTitle}
               </h2>
-              {histoire.auteur && (
+              {storyAuthor && (
                 <p className={`text-xs ${theme.accent} opacity-80`}>
-                  — {histoire.auteur}
+                  - {storyAuthor}
                 </p>
               )}
             </div>
@@ -143,36 +152,33 @@ export function HistoireModal({
               onClick={onClose}
               className="ml-3 flex-shrink-0 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-800 hover:text-white"
             >
-              ✕
+              x
             </button>
           </div>
         </div>
 
         <div className="space-y-4 px-5 py-4">
-          {/* Description */}
           <p className="text-sm leading-relaxed text-slate-300">
-            {histoire.description}
+            {storyDescription}
           </p>
 
-          {/* Bonus */}
           <div className={`rounded-lg border p-3 ${theme.border} ${theme.bg}`}>
             <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
-              Bonus permanent
+              {t("library.permanentBonus")}
             </p>
             <p className={`text-sm font-semibold ${theme.accent}`}>
               {formatBonus(histoire.bonus)}
             </p>
           </div>
 
-          {/* Coût */}
           <div>
             <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
-              Coût
+              {t("library.cost")}
             </p>
             <div className="flex flex-wrap gap-2">
               {Object.entries(histoire.cout).map(([resource, cost]) => {
                 const resTheme = Object.values(BIOME_THEMES).find(
-                  (t) => t.resource === resource
+                  (entry) => entry.resource === resource
                 );
                 const available = progression.resources[resource] ?? 0;
                 const canAfford = available >= (cost as number);
@@ -191,7 +197,7 @@ export function HistoireModal({
                       <span
                         className={`text-xs font-normal ${canAfford ? "text-slate-400" : "text-red-500"}`}
                       >
-                        ({available} disponibles)
+                        ({available} {t("library.availableAmount")})
                       </span>
                     </span>
                   </div>
@@ -200,11 +206,10 @@ export function HistoireModal({
             </div>
           </div>
 
-          {/* Prérequis */}
           {histoire.prerequis.length > 0 && (
             <div>
               <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
-                Prérequis
+                {t("library.prerequisites")}
               </p>
               <div className="flex flex-col gap-1">
                 {histoire.prerequis.map((prereqId) => {
@@ -217,7 +222,7 @@ export function HistoireModal({
                         unlocked ? "text-slate-400" : "text-red-400"
                       }`}
                     >
-                      <span>{unlocked ? "✓" : "✗"}</span>
+                      <span>{unlocked ? "v" : "x"}</span>
                       <span className="capitalize">
                         {prereqId.replace(/_/g, " ")}
                       </span>
@@ -228,19 +233,17 @@ export function HistoireModal({
             </div>
           )}
 
-          {/* Error */}
           {error && (
             <p className="rounded-lg border border-red-800 bg-red-950/50 px-3 py-2 text-sm text-red-400">
               {error}
             </p>
           )}
 
-          {/* CTA */}
           {slotState === "UNLOCKED" ? (
             <div
               className={`rounded-lg border p-3 text-center text-sm font-semibold ${theme.border} ${theme.accent}`}
             >
-              ✓ Histoire possédée
+              {t("library.ownedStory")}
             </div>
           ) : slotState === "AVAILABLE" ? (
             <button
@@ -248,13 +251,13 @@ export function HistoireModal({
               disabled={isPending}
               className={`w-full rounded-lg border py-3 text-sm font-bold transition ${theme.border} ${theme.bg} ${theme.accent} hover:brightness-125 disabled:opacity-50`}
             >
-              {isPending ? "Déblocage…" : "📚 Débloquer"}
+              {isPending ? t("library.unlocking") : t("library.unlock")}
             </button>
           ) : (
             <div className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-3 text-center text-sm text-slate-500">
               {slotState === "LOCKED_PREREQS"
-                ? "🔒 Prérequis manquants"
-                : "Ressources insuffisantes"}
+                ? t("library.missingPrereqs")
+                : t("library.insufficientResources")}
             </div>
           )}
         </div>

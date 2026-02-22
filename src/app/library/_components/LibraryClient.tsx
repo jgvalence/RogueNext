@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { BIOME_ORDER } from "./constants";
 import type { SlotState } from "./constants";
 import { ResourceBar } from "./ResourceBar";
@@ -34,6 +35,7 @@ export function LibraryClient({
   initialProgression,
   histoires,
 }: LibraryClientProps) {
+  const { t } = useTranslation();
   const [progression, setProgression] =
     useState<MetaProgress>(initialProgression);
   const [selected, setSelected] = useState<Histoire | null>(null);
@@ -51,13 +53,11 @@ export function LibraryClient({
 
   return (
     <div className="relative flex min-h-screen flex-col bg-gray-950 text-white">
-      {/* Background ambient glow */}
       <div className="pointer-events-none fixed inset-0">
         <div className="absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-900/10 blur-[128px]" />
         <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] rounded-full bg-purple-900/10 blur-[128px]" />
       </div>
 
-      {/* Header */}
       <header className="relative z-10 border-b border-slate-800 bg-gray-950/80 px-6 py-4 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <div className="flex items-center gap-4">
@@ -65,14 +65,17 @@ export function LibraryClient({
               href="/"
               className="flex items-center gap-1.5 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-400 transition hover:border-slate-500 hover:text-white"
             >
-              ← Accueil
+              {"<-"} {t("library.backHome")}
             </Link>
             <div>
               <h1 className="text-lg font-black tracking-tight text-white">
-                📚 Bibliothèque du Panlibrarium
+                {t("library.title")}
               </h1>
               <p className="text-[11px] text-slate-500">
-                {totalUnlocked}/{totalHistoires} histoires collectées
+                {t("library.collectedStories", {
+                  unlocked: totalUnlocked,
+                  total: totalHistoires,
+                })}
               </p>
             </div>
           </div>
@@ -82,13 +85,13 @@ export function LibraryClient({
               href="/library/collection"
               className="rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
             >
-              Collection
+              {t("library.collection")}
             </Link>
             <Link
               href="/game"
               className="flex items-center gap-2 rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-purple-500 hover:shadow-[0_0_24px_rgba(147,51,234,0.4)]"
             >
-              Commencer un Run
+              {t("library.startRun")}
               <svg
                 className="h-4 w-4"
                 fill="none"
@@ -107,14 +110,12 @@ export function LibraryClient({
         </div>
       </header>
 
-      {/* Resource bar */}
       <div className="relative z-10 border-b border-slate-800/50 px-6 py-3">
         <div className="mx-auto max-w-6xl">
           <ResourceBar resources={progression.resources} />
         </div>
       </div>
 
-      {/* Biome grid */}
       <main className="relative z-10 flex-1 px-6 py-6">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -135,7 +136,6 @@ export function LibraryClient({
         </div>
       </main>
 
-      {/* Modal */}
       {selected && (
         <HistoireModal
           histoire={selected}

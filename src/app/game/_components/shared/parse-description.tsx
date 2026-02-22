@@ -1,18 +1,20 @@
 import type { JSX } from "react";
 import { Tooltip } from "./Tooltip";
-import { buffMeta, buffLabelToKey } from "./buff-meta";
+import { buffMeta, getBuffLabelToKeyMap } from "./buff-meta";
 
-const labels = Object.keys(buffLabelToKey);
-const escapedLabels = labels.map((l) =>
-  l.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-);
-const buffRegex = new RegExp(`(${escapedLabels.join("|")})`, "g");
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
-/**
- * Parse a card description string and wrap recognized buff/debuff names
- * in Tooltip components showing their game effect.
- */
 export function parseDescriptionWithTooltips(description: string): JSX.Element {
+  const buffLabelToKey = getBuffLabelToKeyMap();
+  const labels = Object.keys(buffLabelToKey);
+
+  if (labels.length === 0) {
+    return <>{description}</>;
+  }
+
+  const buffRegex = new RegExp(`(${labels.map(escapeRegex).join("|")})`, "g");
   const parts = description.split(buffRegex);
 
   return (
@@ -24,14 +26,17 @@ export function parseDescriptionWithTooltips(description: string): JSX.Element {
         const meta = buffMeta[buffKey];
         if (!meta) return <span key={i}>{part}</span>;
 
+        const label = meta.label();
+        const helpText = meta.description(1);
+
         return (
           <Tooltip
             key={i}
             content={
               <span>
-                <span className="font-bold">{meta.label}</span>
+                <span className="font-bold">{label}</span>
                 <br />
-                {meta.description(1)}
+                {helpText}
               </span>
             }
           >

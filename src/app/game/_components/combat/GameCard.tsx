@@ -1,12 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import type { CardDefinition } from "@/game/schemas/cards";
-// TEMPORARY: centralized asset registry — swap paths in src/lib/assets.ts when real art is ready
 import { CARD_IMAGES } from "@/lib/assets";
 import { Tooltip } from "../shared/Tooltip";
 import { parseDescriptionWithTooltips } from "../shared/parse-description";
+import {
+  localizeCardDescription,
+  localizeCardName,
+  localizeCardType,
+  localizeInkedDescription,
+} from "@/lib/i18n/card-text";
 
 interface GameCardProps {
   definition: CardDefinition;
@@ -14,7 +20,7 @@ interface GameCardProps {
   canPlay?: boolean;
   canPlayInked?: boolean;
   isSelected?: boolean;
-  isPendingInked?: boolean; // card is selected and will be played as its inked variant
+  isPendingInked?: boolean;
   upgraded?: boolean;
   onClick?: () => void;
   onInkedClick?: () => void;
@@ -48,9 +54,9 @@ const rarityColors: Record<string, string> = {
 };
 
 const typeIcon: Record<string, string> = {
-  ATTACK: "⚔",
-  SKILL: "🛡",
-  POWER: "✦",
+  ATTACK: "*",
+  SKILL: "#",
+  POWER: "+",
 };
 
 export function GameCard({
@@ -65,6 +71,7 @@ export function GameCard({
   size = "md",
   className,
 }: GameCardProps) {
+  const { t } = useTranslation();
   const isMd = size === "md";
   const artH =
     isMd && isSelected
@@ -72,7 +79,6 @@ export function GameCard({
       : isMd
         ? "h-10 lg:h-14 xl:h-[72px]"
         : "h-9 lg:h-12 xl:h-14";
-  // Precomputed so the Tailwind linter sees a single string per branch (no false conflicts)
   const inkBtnVariant = isPendingInked
     ? "animate-pulse bg-cyan-500 text-white ring-1 ring-cyan-300"
     : "bg-cyan-800 text-cyan-200 hover:bg-cyan-700";
@@ -84,9 +90,12 @@ export function GameCard({
         : "w-[72px] lg:w-[96px] xl:w-[130px]"
       : "w-[64px] lg:w-[88px] xl:w-[104px]";
   const hideArtUntilSelectedOnMobile = size === "md" && !isSelected;
-  // TEMPORARY: track whether card art image loaded
   const [artFailed, setArtFailed] = useState(false);
   const artImageSrc = CARD_IMAGES[definition.id];
+  const localizedName = localizeCardName(definition);
+  const localizedDescription = localizeCardDescription(definition, t);
+  const localizedInkedDescription = localizeInkedDescription(definition, t);
+  const localizedType = localizeCardType(definition.type, t);
 
   return (
     <div
@@ -108,19 +117,16 @@ export function GameCard({
       )}
       onClick={canPlay ? onClick : undefined}
     >
-      {/* Energy cost orb */}
       <div className="absolute -left-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-900 bg-amber-500 text-[10px] font-black text-white shadow-md lg:-left-1.5 lg:-top-1.5 lg:h-7 lg:w-7 lg:text-sm">
         {definition.energyCost}
       </div>
 
-      {/* Upgraded star */}
       {upgraded && (
         <div className="absolute right-1 top-1 z-10 text-xs text-yellow-400">
-          ★
+          *
         </div>
       )}
 
-      {/* Art area — TEMPORARY: shows image if present, icon placeholder otherwise */}
       <div
         className={cn(
           "relative flex-shrink-0 items-center justify-center overflow-hidden bg-gradient-to-b",
@@ -129,32 +135,28 @@ export function GameCard({
           typeArtBg[definition.type] ?? "from-gray-800 to-gray-700"
         )}
       >
-        {/* Real art (hidden on error → falls back to icon below) */}
         {artImageSrc && !artFailed && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={artImageSrc}
-            alt={definition.name}
+            alt={localizedName}
             className="absolute inset-0 h-full w-full object-cover object-center"
             onError={() => setArtFailed(true)}
           />
         )}
 
-        {/* Icon placeholder — shown when image is missing */}
         {(!artImageSrc || artFailed) && (
           <span className="text-2xl opacity-30">
-            {typeIcon[definition.type] ?? "✦"}
+            {typeIcon[definition.type] ?? "+"}
           </span>
         )}
       </div>
 
-      {/* Card body */}
       <div
         className={cn(
           "flex flex-1 flex-col gap-0.5 px-1.5 pb-1.5 pt-1 lg:gap-1 lg:px-2 lg:pb-2 lg:pt-1.5"
         )}
       >
-        {/* Name */}
         <div
           className={cn(
             "font-bold leading-tight",
@@ -164,20 +166,18 @@ export function GameCard({
               : "text-[8px] lg:text-[9px] xl:text-[10px]"
           )}
         >
-          {definition.name}
+          {localizedName}
         </div>
 
-        {/* Type badge */}
         <span
           className={cn(
             "w-fit rounded px-1 py-px text-[8px] font-semibold uppercase tracking-wide lg:text-[9px]",
             typeBadge[definition.type] ?? "bg-gray-600 text-gray-100"
           )}
         >
-          {definition.type}
+          {localizedType}
         </span>
 
-        {/* Description — dimmed when inked variant is the active mode */}
         <div
           className={cn(
             "leading-snug transition-opacity",
@@ -188,12 +188,11 @@ export function GameCard({
           )}
         >
           {isPendingInked
-            ? definition.description
-            : parseDescriptionWithTooltips(definition.description)}
+            ? localizedDescription
+            : parseDescriptionWithTooltips(localizedDescription)}
         </div>
       </div>
 
-      {/* Inked variant — always shown when available; dim + disabled if not enough ink marks */}
       {definition.inkedVariant && (
         <Tooltip
           className="block px-1 pb-1 lg:px-1.5 lg:pb-1.5"
@@ -201,18 +200,19 @@ export function GameCard({
             <div className="space-y-2">
               <div>
                 <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
-                  Normal
+                  {t("gameCard.labels.normal")}
                 </p>
                 <p className="text-[11px] text-gray-200">
-                  {definition.description}
+                  {localizedDescription}
                 </p>
               </div>
               <div>
                 <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-cyan-400">
-                  ✦ Encré
+                  + {t("gameCard.labels.inked")}
                 </p>
                 <p className="text-[11px] text-cyan-200">
-                  {definition.inkedVariant.description}
+                  {localizedInkedDescription ??
+                    definition.inkedVariant.description}
                 </p>
               </div>
             </div>
@@ -229,23 +229,27 @@ export function GameCard({
                 onInkedClick?.();
               }}
             >
-              ✦ Ink ({definition.inkedVariant.inkMarkCost})
+              + {t("gameCard.labels.ink")} (
+              {definition.inkedVariant.inkMarkCost})
               <span
                 className={cn(
                   "mt-0.5 block text-[8px] font-normal leading-tight lg:text-[9px]",
                   inkDescVariant
                 )}
               >
-                {definition.inkedVariant.description}
+                {localizedInkedDescription ??
+                  definition.inkedVariant.description}
               </span>
             </button>
           ) : (
             <div className="rounded border border-gray-700/50 px-1 py-0.5 opacity-50 lg:px-1.5 lg:py-1">
               <p className="text-[8px] font-semibold text-gray-400 lg:text-[10px]">
-                ✦ Ink ({definition.inkedVariant.inkMarkCost})
+                + {t("gameCard.labels.ink")} (
+                {definition.inkedVariant.inkMarkCost})
               </p>
               <p className="mt-0.5 text-[8px] leading-tight text-gray-500 lg:text-[9px]">
-                {definition.inkedVariant.description}
+                {localizedInkedDescription ??
+                  definition.inkedVariant.description}
               </p>
             </div>
           )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import type { RoomNode } from "@/game/schemas/run-state";
 import { cn } from "@/lib/utils/cn";
 import { GAME_CONSTANTS } from "@/game/constants";
@@ -9,13 +10,6 @@ interface FloorMapProps {
   currentRoom: number;
   onSelectRoom: (choiceIndex: number) => void;
 }
-
-const roomIcons: Record<string, string> = {
-  COMBAT: "Combat",
-  MERCHANT: "Shop",
-  SPECIAL: "Événement",
-  PRE_BOSS: "Avant-Boss",
-};
 
 const roomEmojis: Record<string, string> = {
   COMBAT: "⚔",
@@ -32,21 +26,28 @@ const roomColors: Record<string, string> = {
 };
 
 export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col items-center gap-4 py-8">
-      <h2 className="text-xl font-bold text-white">Choose Your Path</h2>
+      <h2 className="text-xl font-bold text-white">{t("map.choosePath")}</h2>
 
-      {/* Show current room choices */}
       {currentRoom < map.length ? (
         <div className="space-y-4">
           <p className="text-center text-sm text-gray-400">
-            Room {currentRoom + 1} of {GAME_CONSTANTS.ROOMS_PER_FLOOR}
-            {currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX && " — BOSS"}
+            {t("map.roomOf", {
+              current: currentRoom + 1,
+              total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
+            })}
+            {currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX &&
+              ` - ${t("map.bossSuffix")}`}
           </p>
 
           <div className="flex gap-4">
             {map[currentRoom]?.map((room, i) => {
               const isBossRoom = currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
+              const enemyCount = room.enemyIds?.length ?? 0;
+
               return (
                 <button
                   key={`${room.index}-${i}`}
@@ -60,39 +61,39 @@ export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
                     {roomEmojis[room.type] ?? "✨"}
                   </span>
                   <span className="text-sm font-medium">
-                    {roomIcons[room.type] ?? room.type}
+                    {t(`map.roomType.${room.type}`, room.type)}
                   </span>
+
                   {room.type === "COMBAT" && room.isElite && (
                     <span className="rounded bg-orange-700/80 px-2 py-0.5 text-xs font-bold text-orange-100">
-                      ⚠ Elite
+                      {t("map.elite")}
                     </span>
                   )}
+
                   {room.type === "COMBAT" &&
                     !room.isElite &&
-                    room.enemyIds &&
-                    room.enemyIds.length > 0 && (
+                    enemyCount > 0 && (
                       <span className="text-xs text-gray-400">
-                        {room.enemyIds.length} enem
-                        {room.enemyIds.length > 1 ? "ies" : "y"}
+                        {t("map.enemyCount", { count: enemyCount })}
                       </span>
                     )}
-                  {/* Reward preview */}
+
                   {room.type === "COMBAT" && (
                     <div className="flex items-center gap-1.5 rounded bg-black/20 px-2 py-1 text-sm">
                       {isBossRoom ? (
                         <>
-                          <span title="Relique">💎</span>
-                          <span title="Allié">👤</span>
-                          <span title="PV Max">❤️</span>
+                          <span title={t("map.reward.relic")}>💎</span>
+                          <span title={t("map.reward.ally")}>👤</span>
+                          <span title={t("map.reward.maxHp")}>❤️</span>
                         </>
                       ) : room.isElite ? (
                         <>
-                          <span title="Carte">🃏</span>
-                          <span title="Relique">💎</span>
-                          <span title="Allié">👤</span>
+                          <span title={t("map.reward.card")}>🃏</span>
+                          <span title={t("map.reward.relic")}>💎</span>
+                          <span title={t("map.reward.ally")}>👤</span>
                         </>
                       ) : (
-                        <span title="Carte">🃏</span>
+                        <span title={t("map.reward.card")}>🃏</span>
                       )}
                     </div>
                   )}
@@ -102,14 +103,14 @@ export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
           </div>
         </div>
       ) : (
-        <p className="text-gray-400">Floor complete!</p>
+        <p className="text-gray-400">{t("map.floorComplete")}</p>
       )}
 
-      {/* Mini map preview */}
       <div className="mt-8 flex gap-2">
         {map.map((_, i) => {
           const isCompleted = i < currentRoom;
           const isCurrent = i === currentRoom;
+
           return (
             <div
               key={i}

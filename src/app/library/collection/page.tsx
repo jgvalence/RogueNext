@@ -44,7 +44,7 @@ export default async function CardCollectionPage() {
       energyCost: c.energyCost,
       description: c.description,
       unlocked: details[c.id]?.unlocked ?? true,
-      unlockCondition: details[c.id]?.condition ?? "Toujours debloquee",
+      unlockCondition: details[c.id]?.condition ?? "alwaysUnlocked",
       missingCondition: details[c.id]?.missingCondition ?? null,
       unlockProgress: details[c.id]?.progress ?? null,
     }));

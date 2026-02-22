@@ -1,49 +1,64 @@
-// Shared buff metadata used by BuffPill and parseDescriptionWithTooltips
+import { i18n } from "@/lib/i18n";
 
-export const buffMeta: Record<
-  string,
-  { label: string; color: string; description: (stacks: number) => string }
-> = {
+type BuffMetaEntry = {
+  color: string;
+  label: () => string;
+  description: (stacks: number) => string;
+};
+
+export const buffMeta: Record<string, BuffMetaEntry> = {
   POISON: {
-    label: "Poison",
     color: "bg-green-900 text-green-300",
-    description: (s) =>
-      `Deals ${s} damage at end of turn, then decreases by 1.`,
+    label: () => i18n.t("buff.POISON.label"),
+    description: (stacks) => i18n.t("buff.POISON.description", { stacks }),
   },
   WEAK: {
-    label: "Weak",
     color: "bg-yellow-900 text-yellow-300",
-    description: () => "Reduces damage dealt by 25%.",
+    label: () => i18n.t("buff.WEAK.label"),
+    description: (stacks) => i18n.t("buff.WEAK.description", { stacks }),
   },
   VULNERABLE: {
-    label: "Vulnerable",
     color: "bg-orange-900 text-orange-300",
-    description: () => "Increases damage taken by 50%.",
+    label: () => i18n.t("buff.VULNERABLE.label"),
+    description: (stacks) => i18n.t("buff.VULNERABLE.description", { stacks }),
   },
   STRENGTH: {
-    label: "Strength",
     color: "bg-red-900 text-red-300",
-    description: (s) => `Increases all damage dealt by ${s}.`,
+    label: () => i18n.t("buff.STRENGTH.label"),
+    description: (stacks) => i18n.t("buff.STRENGTH.description", { stacks }),
   },
   FOCUS: {
-    label: "Focus",
     color: "bg-blue-900 text-blue-300",
-    description: (s) => `Increases block gained by ${s}.`,
+    label: () => i18n.t("buff.FOCUS.label"),
+    description: (stacks) => i18n.t("buff.FOCUS.description", { stacks }),
   },
   THORNS: {
-    label: "Thorns",
     color: "bg-rose-900 text-rose-300",
-    description: (s) => `Deals ${s} damage to attackers.`,
+    label: () => i18n.t("buff.THORNS.label"),
+    description: (stacks) => i18n.t("buff.THORNS.description", { stacks }),
   },
 };
 
-// Maps display label names (as they appear in card descriptions) to buff keys.
-// Used by parseDescriptionWithTooltips to detect and wrap buff names with tooltips.
-export const buffLabelToKey: Record<string, string> = {
-  Poison: "POISON",
-  Vulnerable: "VULNERABLE",
-  Weak: "WEAK",
-  Strength: "STRENGTH",
-  Focus: "FOCUS",
-  Thorns: "THORNS",
-};
+export function getBuffLabelToKeyMap(): Record<string, string> {
+  const labels: Record<string, string> = {};
+
+  for (const [key, meta] of Object.entries(buffMeta)) {
+    const currentLabel = meta.label();
+    labels[currentLabel] = key;
+  }
+
+  // Ensure both FR and EN labels are recognized regardless of active language.
+  labels.Poison = "POISON";
+  labels.Poisonner = "POISON";
+  labels.Weak = "WEAK";
+  labels.Faible = "WEAK";
+  labels.Vulnerable = "VULNERABLE";
+  labels.Strength = "STRENGTH";
+  labels.Force = "STRENGTH";
+  labels.Focus = "FOCUS";
+  labels.Concentration = "FOCUS";
+  labels.Thorns = "THORNS";
+  labels.Epines = "THORNS";
+
+  return labels;
+}

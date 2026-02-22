@@ -1,8 +1,10 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { BIOME_THEMES, VISUEL_ICONS, TIER_LABELS } from "./constants";
 import type { SlotState } from "./constants";
 import type { Histoire } from "@/game/schemas/meta";
+import { localizeStoryTitle } from "@/lib/i18n/stories";
 
 interface HistoireSlotProps {
   histoire: Histoire;
@@ -11,14 +13,16 @@ interface HistoireSlotProps {
 }
 
 export function HistoireSlot({ histoire, state, onClick }: HistoireSlotProps) {
+  const { t } = useTranslation();
   const theme = BIOME_THEMES[histoire.biome];
   const isClickable = state !== "LOCKED_PREREQS";
+  const storyTitle = localizeStoryTitle(histoire, t);
 
   return (
     <button
       onClick={() => isClickable && onClick(histoire)}
       disabled={!isClickable}
-      title={histoire.titre}
+      title={storyTitle}
       className={[
         // Base
         "relative flex h-24 w-14 flex-col items-center justify-between rounded-md border p-1.5 text-left transition-all duration-200",
@@ -46,7 +50,7 @@ export function HistoireSlot({ histoire, state, onClick }: HistoireSlotProps) {
 
       {/* Title */}
       <span className="line-clamp-2 w-full text-center text-[7px] leading-tight text-white/70">
-        {histoire.titre}
+        {storyTitle}
       </span>
 
       {/* Unlocked checkmark */}

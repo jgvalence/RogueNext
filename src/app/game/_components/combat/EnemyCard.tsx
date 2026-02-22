@@ -284,11 +284,11 @@ function formatIntentEffects(effects: Effect[]): ReactNode[] {
       case "APPLY_BUFF": {
         const buffKey = effect.buff ?? "";
         const meta = buffMeta[buffKey];
-        const label = meta?.label ?? buffKey;
+        const label = meta?.label() ?? buffKey;
         const colorClass = meta?.color ?? "bg-purple-900 text-purple-300";
         const tooltipContent = meta ? (
           <span>
-            <span className="font-bold">{meta.label}</span>
+            <span className="font-bold">{meta.label()}</span>
             <br />
             {meta.description(effect.value ?? 1)}
           </span>

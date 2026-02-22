@@ -1,8 +1,8 @@
 "use client";
 
-"use client";
-
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { BiomeResource } from "@/game/schemas/enums";
 import type { RelicDefinitionData } from "@/game/data/relics";
@@ -13,18 +13,6 @@ import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
 } from "../shared/UpgradePreviewPortal";
-
-const RESOURCE_LABELS: Record<string, string> = {
-  PAGES: "Pages",
-  RUNES: "Runes",
-  LAURIERS: "Lauriers",
-  GLYPHES: "Glyphes",
-  FRAGMENTS: "Fragments",
-  OBSIDIENNE: "Obsidienne",
-  AMBRE: "Ambre",
-  SCEAUX: "Sceaux",
-  MASQUES: "Masques",
-};
 
 interface RewardScreenProps {
   gold: number;
@@ -57,9 +45,11 @@ export function RewardScreen({
   onPickMaxHp,
   onSkip,
 }: RewardScreenProps) {
+  const { t } = useTranslation();
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
   );
+
   const handleCardMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLDivElement>, card: CardDefinition) => {
       setHoverInfo({ definition: card, anchorEl: e.currentTarget });
@@ -80,9 +70,13 @@ export function RewardScreen({
 
   return (
     <div className="flex flex-col items-center gap-6 py-4 sm:py-8">
-      <h2 className="text-2xl font-bold text-green-400">Victory!</h2>
+      <h2 className="text-2xl font-bold text-green-400">
+        {t("reward.victory")}
+      </h2>
 
-      <div className="text-lg text-yellow-400">+{gold} Gold</div>
+      <div className="text-lg text-yellow-400">
+        +{gold} {t("reward.gold")}
+      </div>
 
       {resourceEntries.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2">
@@ -91,7 +85,7 @@ export function RewardScreen({
               key={key}
               className="rounded border border-amber-700/50 bg-amber-950/60 px-2.5 py-1 text-xs font-semibold text-amber-300"
             >
-              +{val} {RESOURCE_LABELS[key] ?? key}
+              +{val} {t(`reward.resources.${key}`, key)}
             </span>
           ))}
         </div>
@@ -100,7 +94,7 @@ export function RewardScreen({
       {isBoss && (relicChoices.length > 0 || bossMaxHpBonus) && (
         <>
           <p className="text-sm font-medium text-purple-400">
-            Choose a reward:
+            {t("reward.chooseReward")}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {relicChoices.map((relic) => (
@@ -115,13 +109,13 @@ export function RewardScreen({
                 className="flex w-36 flex-col items-center gap-2 rounded-xl border-2 border-red-700 bg-red-950/40 p-4 text-center transition hover:border-red-500 hover:bg-red-950/60"
               >
                 <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
-                  Vitality
+                  {t("reward.vitality")}
                 </span>
                 <span className="text-sm font-bold text-white">
-                  +{bossMaxHpBonus} Max HP
+                  +{bossMaxHpBonus} {t("reward.maxHp")}
                 </span>
                 <span className="text-xs text-red-200">
-                  Increase your maximum health permanently
+                  {t("reward.maxHpDescription")}
                 </span>
               </button>
             )}
@@ -133,14 +127,14 @@ export function RewardScreen({
         <>
           <p className="text-sm text-gray-400">
             {hasCardChoices && hasRelicChoices
-              ? "Choose your reward: card or relic"
+              ? t("reward.chooseRewardCardOrRelic")
               : hasCardChoices
-                ? "Choose your reward: card"
+                ? t("reward.chooseRewardCard")
                 : hasRelicChoices
-                  ? "Choose your reward: relic"
+                  ? t("reward.chooseRewardRelic")
                   : hasAllyChoices
-                    ? "Choose your reward: ally"
-                    : "No reward choices available."}
+                    ? t("reward.chooseRewardAlly")
+                    : t("reward.noRewardChoices")}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             {cardChoices.map((card) => (
@@ -169,7 +163,7 @@ export function RewardScreen({
               className="rounded-lg border border-gray-600 px-6 py-2 text-sm text-gray-400 transition hover:bg-gray-800"
               onClick={onSkip}
             >
-              Continue
+              {t("reward.continue")}
             </button>
           )}
         </>
@@ -177,9 +171,7 @@ export function RewardScreen({
 
       {!isBoss && !isElite && (
         <>
-          <p className="text-sm text-gray-400">
-            Choose a card to add to your deck:
-          </p>
+          <p className="text-sm text-gray-400">{t("reward.chooseCardToAdd")}</p>
           <div className="flex gap-4">
             {cardChoices.map((card) => (
               <div
@@ -200,7 +192,7 @@ export function RewardScreen({
             className="rounded-lg border border-gray-600 px-6 py-2 text-sm text-gray-400 transition hover:bg-gray-800"
             onClick={onSkip}
           >
-            Skip
+            {t("reward.skip")}
           </button>
         </>
       )}
@@ -216,13 +208,15 @@ function AllyCard({
   ally: AllyDefinition;
   onPick: (allyId: string) => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <button
       onClick={() => onPick(ally.id)}
       className="flex w-40 flex-col items-center gap-2 rounded-xl border-2 border-cyan-700 bg-cyan-950/40 p-4 text-center transition hover:border-cyan-500 hover:bg-cyan-950/60"
     >
       <span className="text-xs font-semibold uppercase tracking-widest text-cyan-300">
-        Ally
+        {t("reward.ally")}
       </span>
       <span className="text-sm font-bold text-white">{ally.name}</span>
       <span className="text-xs text-cyan-200">
@@ -238,7 +232,8 @@ function AllyCard({
               {ability.name}
             </div>
             <div className="text-[10px] text-cyan-300">
-              {formatTarget(ability.target)} - {formatEffects(ability.effects)}
+              {formatTarget(ability.target, t)} -{" "}
+              {formatEffects(ability.effects, t)}
             </div>
           </div>
         ))}
@@ -247,52 +242,61 @@ function AllyCard({
   );
 }
 
-function formatTarget(target?: string): string {
+function formatTarget(target: string | undefined, t: TFunction): string {
   switch (target) {
     case "ALL_ENEMIES":
-      return "all enemies";
+      return t("reward.target.allEnemies");
     case "LOWEST_HP_ENEMY":
-      return "lowest HP enemy";
+      return t("reward.target.lowestHpEnemy");
     case "ALLY_PRIORITY":
-      return "ally priority";
+      return t("reward.target.allyPriority");
     case "SELF":
-      return "self";
+      return t("reward.target.self");
     case "PLAYER":
     default:
-      return "player";
+      return t("reward.target.player");
   }
 }
 
-function formatEffects(effects: Effect[]): string {
-  return effects.map(formatEffect).join(", ");
+function formatEffects(effects: Effect[], t: TFunction): string {
+  return effects.map((effect) => formatEffect(effect, t)).join(", ");
 }
 
-function formatEffect(effect: Effect): string {
+function formatEffect(effect: Effect, t: TFunction): string {
   switch (effect.type) {
     case "DAMAGE":
-      return `damage ${effect.value}`;
+      return t("reward.effect.damage", { value: effect.value });
     case "HEAL":
-      return `heal ${effect.value}`;
+      return t("reward.effect.heal", { value: effect.value });
     case "BLOCK":
-      return `block ${effect.value}`;
+      return t("reward.effect.block", { value: effect.value });
     case "DRAW_CARDS":
-      return `draw ${effect.value}`;
+      return t("reward.effect.drawCards", { value: effect.value });
     case "GAIN_INK":
-      return `gain ${effect.value} ink`;
+      return t("reward.effect.gainInk", { value: effect.value });
     case "GAIN_ENERGY":
-      return `gain ${effect.value} energy`;
+      return t("reward.effect.gainEnergy", { value: effect.value });
     case "GAIN_FOCUS":
-      return `gain ${effect.value} focus`;
+      return t("reward.effect.gainFocus", { value: effect.value });
     case "GAIN_STRENGTH":
-      return `gain ${effect.value} strength`;
+      return t("reward.effect.gainStrength", { value: effect.value });
     case "APPLY_BUFF":
-      return `buff ${effect.buff ?? "status"} ${effect.value}`;
+      return t("reward.effect.applyBuff", {
+        buff: effect.buff ?? "status",
+        value: effect.value,
+      });
     case "APPLY_DEBUFF":
-      return `debuff ${effect.buff ?? "status"} ${effect.value}`;
+      return t("reward.effect.applyDebuff", {
+        buff: effect.buff ?? "status",
+        value: effect.value,
+      });
     case "DRAIN_INK":
-      return `drain ${effect.value} ink`;
+      return t("reward.effect.drainInk", { value: effect.value });
     default:
-      return `${effect.type.toLowerCase()} ${effect.value}`;
+      return t("reward.effect.fallback", {
+        type: effect.type.toLowerCase(),
+        value: effect.value,
+      });
   }
 }
 

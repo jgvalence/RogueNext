@@ -2,12 +2,18 @@
 
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { BiomeType, Rarity } from "@/game/schemas/enums";
 import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
 } from "@/app/game/_components/shared/UpgradePreviewPortal";
+import {
+  localizeCardDescription,
+  localizeCardName,
+  localizeCardType,
+} from "@/lib/i18n/card-text";
 
 type CollectionTypeFilter = "ALL" | "ATTACK" | "DEFENSE" | "POWER";
 type LockFilter = "ALL" | "UNLOCKED" | "LOCKED";
@@ -42,6 +48,7 @@ function matchesType(
 }
 
 export function CardCollectionClient({ cards }: CardCollectionClientProps) {
+  const { t } = useTranslation();
   const [biome, setBiome] = useState<BiomeType | "ALL">("ALL");
   const [type, setType] = useState<CollectionTypeFilter>("ALL");
   const [rarity, setRarity] = useState<Rarity | "ALL">("ALL");
@@ -50,12 +57,14 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
   );
+
   const handleCardMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLDivElement>, definition: CardDefinition) => {
       setHoverInfo({ definition, anchorEl: e.currentTarget });
     },
     []
   );
+
   const handleCardMouseLeave = useCallback(() => {
     setHoverInfo(null);
   }, []);
@@ -68,11 +77,11 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
       .filter((c) =>
         lock === "ALL" ? true : lock === "UNLOCKED" ? c.unlocked : !c.unlocked
       )
-      .filter((c) =>
-        query.trim().length === 0
-          ? true
-          : c.name.toLowerCase().includes(query.trim().toLowerCase())
-      );
+      .filter((c) => {
+        if (query.trim().length === 0) return true;
+        const localizedName = localizeCardName(c.definition).toLowerCase();
+        return localizedName.includes(query.trim().toLowerCase());
+      });
   }, [cards, biome, type, rarity, lock, query]);
 
   const unlockedCount = cards.filter((c) => c.unlocked).length;
@@ -82,9 +91,12 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
       <div className="mx-auto max-w-7xl space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-black">Card Collection</h1>
+            <h1 className="text-2xl font-black">{t("collection.title")}</h1>
             <p className="text-sm text-gray-400">
-              {unlockedCount}/{cards.length} unlocked
+              {t("collection.unlockedCount", {
+                unlocked: unlockedCount,
+                total: cards.length,
+              })}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -92,13 +104,13 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
               href="/library"
               className="rounded border border-gray-700 px-3 py-2 text-sm text-gray-300 hover:border-gray-500 hover:text-white"
             >
-              Back to Library
+              {t("collection.backToLibrary")}
             </Link>
             <Link
               href="/game"
               className="rounded bg-purple-600 px-4 py-2 text-sm font-bold text-white hover:bg-purple-500"
             >
-              Start Run
+              {t("collection.startRun")}
             </Link>
           </div>
         </div>
@@ -109,16 +121,16 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
             onChange={(e) => setBiome(e.target.value as BiomeType | "ALL")}
             className="rounded border border-gray-700 bg-gray-950 px-2 py-1.5 text-sm"
           >
-            <option value="ALL">All biomes</option>
-            <option value="LIBRARY">LIBRARY</option>
-            <option value="VIKING">VIKING</option>
-            <option value="GREEK">GREEK</option>
-            <option value="EGYPTIAN">EGYPTIAN</option>
-            <option value="LOVECRAFTIAN">LOVECRAFTIAN</option>
-            <option value="AZTEC">AZTEC</option>
-            <option value="CELTIC">CELTIC</option>
-            <option value="RUSSIAN">RUSSIAN</option>
-            <option value="AFRICAN">AFRICAN</option>
+            <option value="ALL">{t("collection.allBiomes")}</option>
+            <option value="LIBRARY">{t("biome.LIBRARY")}</option>
+            <option value="VIKING">{t("biome.VIKING")}</option>
+            <option value="GREEK">{t("biome.GREEK")}</option>
+            <option value="EGYPTIAN">{t("biome.EGYPTIAN")}</option>
+            <option value="LOVECRAFTIAN">{t("biome.LOVECRAFTIAN")}</option>
+            <option value="AZTEC">{t("biome.AZTEC")}</option>
+            <option value="CELTIC">{t("biome.CELTIC")}</option>
+            <option value="RUSSIAN">{t("biome.RUSSIAN")}</option>
+            <option value="AFRICAN">{t("biome.AFRICAN")}</option>
           </select>
 
           <select
@@ -126,10 +138,10 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
             onChange={(e) => setType(e.target.value as CollectionTypeFilter)}
             className="rounded border border-gray-700 bg-gray-950 px-2 py-1.5 text-sm"
           >
-            <option value="ALL">All types</option>
-            <option value="ATTACK">Attack</option>
-            <option value="DEFENSE">Defense (Skill)</option>
-            <option value="POWER">Power</option>
+            <option value="ALL">{t("collection.allTypes")}</option>
+            <option value="ATTACK">{t("collection.attack")}</option>
+            <option value="DEFENSE">{t("collection.defenseSkill")}</option>
+            <option value="POWER">{t("collection.power")}</option>
           </select>
 
           <select
@@ -137,11 +149,11 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
             onChange={(e) => setRarity(e.target.value as Rarity | "ALL")}
             className="rounded border border-gray-700 bg-gray-950 px-2 py-1.5 text-sm"
           >
-            <option value="ALL">All rarities</option>
-            <option value="COMMON">Common</option>
-            <option value="UNCOMMON">Uncommon</option>
-            <option value="RARE">Rare</option>
-            <option value="STARTER">Starter</option>
+            <option value="ALL">{t("collection.allRarities")}</option>
+            <option value="COMMON">{t("gameCard.rarity.COMMON")}</option>
+            <option value="UNCOMMON">{t("gameCard.rarity.UNCOMMON")}</option>
+            <option value="RARE">{t("gameCard.rarity.RARE")}</option>
+            <option value="STARTER">{t("gameCard.rarity.STARTER")}</option>
           </select>
 
           <select
@@ -149,65 +161,81 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
             onChange={(e) => setLock(e.target.value as LockFilter)}
             className="rounded border border-gray-700 bg-gray-950 px-2 py-1.5 text-sm"
           >
-            <option value="ALL">All states</option>
-            <option value="UNLOCKED">Unlocked</option>
-            <option value="LOCKED">Locked</option>
+            <option value="ALL">{t("collection.allStates")}</option>
+            <option value="UNLOCKED">{t("collection.unlocked")}</option>
+            <option value="LOCKED">{t("collection.locked")}</option>
           </select>
 
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search card name..."
+            placeholder={t("collection.searchPlaceholder")}
             className="rounded border border-gray-700 bg-gray-950 px-2 py-1.5 text-sm md:col-span-2"
           />
         </div>
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map((card) => (
-            <div
-              key={card.id}
-              onMouseEnter={(e) => handleCardMouseEnter(e, card.definition)}
-              onMouseLeave={handleCardMouseLeave}
-              className={`relative rounded-lg border p-3 ${
-                card.unlocked
-                  ? "border-emerald-700/50 bg-emerald-950/20"
-                  : "border-rose-800/50 bg-rose-950/20"
-              }`}
-            >
-              <div className="mb-1 flex items-center justify-between">
-                <p className="font-bold">{card.name}</p>
-                <span
-                  className={`rounded px-2 py-0.5 text-xs font-semibold ${
-                    card.unlocked
-                      ? "bg-emerald-900 text-emerald-300"
-                      : "bg-rose-900 text-rose-300"
-                  }`}
-                >
-                  {card.unlocked ? "UNLOCKED" : "LOCKED"}
-                </span>
-              </div>
-              <p className="text-xs text-gray-400">
-                {card.biome} • {card.type} • {card.rarity} • {card.energyCost}{" "}
-                energy
-              </p>
-              <p className="mt-2 text-sm text-gray-300">{card.description}</p>
+          {filtered.map((card) => {
+            const localizedName = localizeCardName(card.definition);
+            const localizedDescription = localizeCardDescription(
+              card.definition,
+              t
+            );
 
-              {!card.unlocked && (
-                <div className="mt-3 rounded border border-rose-900 bg-rose-950/30 p-2 text-xs text-rose-200">
-                  <p className="font-semibold">Pourquoi cette carte est lock</p>
-                  <p>
-                    Condition manquante:{" "}
-                    {card.missingCondition ?? card.unlockCondition}
-                  </p>
-                  {card.unlockProgress && (
-                    <p className="mt-1 text-rose-300">
-                      Progression: {card.unlockProgress}
-                    </p>
-                  )}
+            return (
+              <div
+                key={card.id}
+                onMouseEnter={(e) => handleCardMouseEnter(e, card.definition)}
+                onMouseLeave={handleCardMouseLeave}
+                className={`relative rounded-lg border p-3 ${
+                  card.unlocked
+                    ? "border-emerald-700/50 bg-emerald-950/20"
+                    : "border-rose-800/50 bg-rose-950/20"
+                }`}
+              >
+                <div className="mb-1 flex items-center justify-between">
+                  <p className="font-bold">{localizedName}</p>
+                  <span
+                    className={`rounded px-2 py-0.5 text-xs font-semibold ${
+                      card.unlocked
+                        ? "bg-emerald-900 text-emerald-300"
+                        : "bg-rose-900 text-rose-300"
+                    }`}
+                  >
+                    {card.unlocked
+                      ? t("collection.unlocked")
+                      : t("collection.locked")}
+                  </span>
                 </div>
-              )}
-            </div>
-          ))}
+                <p className="text-xs text-gray-400">
+                  {t(`biome.${card.biome}`)} - {localizeCardType(card.type, t)}{" "}
+                  - {t(`gameCard.rarity.${card.rarity}`)} - {card.energyCost}{" "}
+                  {t("collection.energy")}
+                </p>
+                <p className="mt-2 text-sm text-gray-300">
+                  {localizedDescription}
+                </p>
+
+                {!card.unlocked && (
+                  <div className="mt-3 rounded border border-rose-900 bg-rose-950/30 p-2 text-xs text-rose-200">
+                    <p className="font-semibold">{t("collection.whyLocked")}</p>
+                    <p>
+                      {t("collection.missingCondition")}:{" "}
+                      {card.missingCondition ??
+                        (card.unlockCondition === "alwaysUnlocked"
+                          ? t("collection.alwaysUnlocked")
+                          : card.unlockCondition)}
+                    </p>
+                    {card.unlockProgress && (
+                      <p className="mt-1 text-rose-300">
+                        {t("collection.progress")}: {card.unlockProgress}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
         <UpgradePreviewPortal info={hoverInfo} />
       </div>

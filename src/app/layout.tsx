@@ -4,6 +4,8 @@ import "./globals.css";
 import { QueryProvider } from "@/lib/query/provider";
 import { Toaster } from "sonner";
 import { env } from "@/lib/env";
+import { I18nProvider } from "@/components/providers/I18nProvider";
+import { GlobalLanguageDock } from "@/components/shared/GlobalLanguageDock";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,12 +42,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body className={inter.className}>
-        <QueryProvider>
-          {children}
-          <Toaster position="top-right" richColors />
-        </QueryProvider>
+        <I18nProvider>
+          <GlobalLanguageDock />
+          <QueryProvider>
+            {children}
+            <Toaster position="top-right" richColors />
+          </QueryProvider>
+        </I18nProvider>
       </body>
     </html>
   );

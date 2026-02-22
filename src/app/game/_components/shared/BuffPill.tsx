@@ -12,7 +12,7 @@ interface BuffPillProps {
 
 export function BuffPill({ buff, size = "sm" }: BuffPillProps) {
   const meta = buffMeta[buff.type];
-  const label = meta?.label ?? buff.type;
+  const label = meta?.label() ?? buff.type;
   const colorClass = meta?.color ?? "bg-gray-700 text-gray-300";
   const description = meta?.description(buff.stacks) ?? "";
   const durationNote =
