@@ -79,6 +79,11 @@ export const fr = {
     elite: "Elite",
     enemyCount_one: "{{count}} ennemi",
     enemyCount_other: "{{count}} ennemis",
+    combatPreview: {
+      resourcesLabel: "Ressources",
+      resourcesBonusHint: "Bonus aleatoire: +1 autre biome",
+      resourcesBonusShort: "+1?",
+    },
     floorComplete: "Etage termine !",
     roomType: {
       COMBAT: "Combat",

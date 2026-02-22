@@ -462,6 +462,8 @@ function GameContent({
           <FloorMap
             map={state.map}
             currentRoom={state.currentRoom}
+            floor={state.floor}
+            currentBiome={state.currentBiome}
             onSelectRoom={handleSelectRoom}
           />
         )}

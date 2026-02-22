@@ -2,12 +2,16 @@
 
 import { useTranslation } from "react-i18next";
 import type { RoomNode } from "@/game/schemas/run-state";
+import type { BiomeType } from "@/game/schemas/enums";
 import { cn } from "@/lib/utils/cn";
 import { GAME_CONSTANTS } from "@/game/constants";
+import { BIOME_RESOURCE } from "@/game/engine/meta";
 
 interface FloorMapProps {
   map: RoomNode[][];
   currentRoom: number;
+  floor: number;
+  currentBiome: BiomeType;
   onSelectRoom: (choiceIndex: number) => void;
 }
 
@@ -25,7 +29,13 @@ const roomColors: Record<string, string> = {
   PRE_BOSS: "border-amber-500 bg-amber-950/50 text-amber-400",
 };
 
-export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
+export function FloorMap({
+  map,
+  currentRoom,
+  floor,
+  currentBiome,
+  onSelectRoom,
+}: FloorMapProps) {
   const { t } = useTranslation();
 
   return (
@@ -47,6 +57,13 @@ export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
             {map[currentRoom]?.map((room, i) => {
               const isBossRoom = currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
               const enemyCount = room.enemyIds?.length ?? 0;
+              const baseResourceAmount = 1 + (floor - 1);
+              const guaranteedResourceAmount = isBossRoom
+                ? Math.round(baseResourceAmount * 3)
+                : room.isElite
+                  ? Math.round(baseResourceAmount * 1.5)
+                  : baseResourceAmount;
+              const primaryResource = BIOME_RESOURCE[currentBiome];
 
               return (
                 <button
@@ -77,6 +94,21 @@ export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
                         {t("map.enemyCount", { count: enemyCount })}
                       </span>
                     )}
+
+                  {room.type === "COMBAT" && (
+                    <div className="flex w-full flex-wrap items-center justify-center gap-1.5">
+                      <span className="rounded-full border border-emerald-400/30 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-100">
+                        +{guaranteedResourceAmount}{" "}
+                        {t(`reward.resources.${primaryResource}`, primaryResource)}
+                      </span>
+                      <span
+                        title={t("map.combatPreview.resourcesBonusHint")}
+                        className="rounded-full border border-cyan-300/20 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-100"
+                      >
+                        {t("map.combatPreview.resourcesBonusShort")}
+                      </span>
+                    </div>
+                  )}
 
                   {room.type === "COMBAT" && (
                     <div className="flex items-center gap-1.5 rounded bg-black/20 px-2 py-1 text-sm">
