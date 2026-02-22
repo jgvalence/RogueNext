@@ -88,7 +88,9 @@ export function CombatView({
   const discardBtnRef = useRef<HTMLButtonElement>(null);
   const enemyRowRef = useRef<HTMLDivElement>(null);
   const [playingCardId, setPlayingCardId] = useState<string | null>(null);
-  const prevEnemyIdsRef = useRef<string[]>(combat.enemies.map((e) => e.instanceId));
+  const prevEnemyIdsRef = useRef<string[]>(
+    combat.enemies.map((e) => e.instanceId)
+  );
   const summonHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const spawnClearTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -540,7 +542,10 @@ export function CombatView({
 
           {/* HP + buffs */}
           <div className="min-w-0 flex-1">
-            <PlayerStats player={combat.player} disruption={combat.playerDisruption} />
+            <PlayerStats
+              player={combat.player}
+              disruption={combat.playerDisruption}
+            />
           </div>
 
           {/* Ink gauge */}

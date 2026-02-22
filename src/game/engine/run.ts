@@ -363,10 +363,9 @@ function generateRoomEnemies(
       i === 0 && biome === "AFRICAN" && disruptionPool.length > 0;
     const preferSupportSlot =
       count > 1 && i > 0 && (biome === "AFRICAN" || biome === "LIBRARY");
-    const sourcePool =
-      preferDisruptionLead
-        ? disruptionPool
-        : preferSupportSlot && supportPool.length > 0
+    const sourcePool = preferDisruptionLead
+      ? disruptionPool
+      : preferSupportSlot && supportPool.length > 0
         ? supportPool
         : assaultPool.length > 0
           ? assaultPool
@@ -384,7 +383,10 @@ function generateRoomEnemies(
     .filter((enemy): enemy is EnemyDef => !!enemy);
 
   // Keep the encounter identity anchored in the chosen biome.
-  if (biome !== "LIBRARY" && !selectedDefs.some((enemy) => enemy.biome === biome)) {
+  if (
+    biome !== "LIBRARY" &&
+    !selectedDefs.some((enemy) => enemy.biome === biome)
+  ) {
     const biomePool = normalPool.filter((enemy) => enemy.biome === biome);
     if (biomePool.length > 0) {
       enemies[0] = weightedPick(

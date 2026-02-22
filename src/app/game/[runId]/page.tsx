@@ -454,7 +454,8 @@ function GameContent({
     if (!isDevBuild || !isAdmin || !state.combat) return null;
 
     const roomChoices = state.map[state.currentRoom];
-    const selectedRoom = roomChoices?.find((room) => room.completed) ?? roomChoices?.[0];
+    const selectedRoom =
+      roomChoices?.find((room) => room.completed) ?? roomChoices?.[0];
     const plannedEnemyIds = selectedRoom?.enemyIds ?? [];
     const activeEnemies = state.combat.enemies.map((enemy) => {
       const def = enemyDefs.get(enemy.definitionId);

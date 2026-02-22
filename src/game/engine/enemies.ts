@@ -107,7 +107,8 @@ export function executeOneEnemyTurn(
 
 function hasOffensivePressure(ability: EnemyAbility): boolean {
   return ability.effects.some(
-    (e) => e.type === "DAMAGE" || e.type === "DRAIN_INK" || e.type === "APPLY_DEBUFF"
+    (e) =>
+      e.type === "DAMAGE" || e.type === "DRAIN_INK" || e.type === "APPLY_DEBUFF"
   );
 }
 
@@ -345,7 +346,10 @@ export function resolveEnemyAbilityTarget(
   }
 }
 
-function shouldPressureAllies(state: CombatState, ability: EnemyAbility): boolean {
+function shouldPressureAllies(
+  state: CombatState,
+  ability: EnemyAbility
+): boolean {
   const hasDamage = ability.effects.some((e) => e.type === "DAMAGE");
   const hasLivingAlly = state.allies.some((a) => a.currentHp > 0);
   if (!hasDamage || !hasLivingAlly) return false;

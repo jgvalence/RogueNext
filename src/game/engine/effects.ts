@@ -264,7 +264,9 @@ function applyHealToTarget(
 
 function freezeCardsInHand(state: CombatState, count: number): CombatState {
   if (count <= 0) return state;
-  const alreadyFrozen = new Set(state.playerDisruption?.frozenHandCardIds ?? []);
+  const alreadyFrozen = new Set(
+    state.playerDisruption?.frozenHandCardIds ?? []
+  );
   const toFreeze = state.hand
     .filter((c) => !alreadyFrozen.has(c.instanceId))
     .slice(0, count)
@@ -292,9 +294,17 @@ function freezeCardsInHand(state: CombatState, count: number): CombatState {
   };
 }
 
-function forceDiscardRandom(state: CombatState, count: number, rng: RNG): CombatState {
+function forceDiscardRandom(
+  state: CombatState,
+  count: number,
+  rng: RNG
+): CombatState {
   if (count <= 0 || state.hand.length === 0) return state;
-  let current = { ...state, hand: [...state.hand], discardPile: [...state.discardPile] };
+  let current = {
+    ...state,
+    hand: [...state.hand],
+    discardPile: [...state.discardPile],
+  };
   let remaining = Math.min(count, current.hand.length);
   while (remaining > 0 && current.hand.length > 0) {
     const idx = rng.nextInt(0, current.hand.length - 1);
@@ -519,7 +529,10 @@ export function resolveEffect(
         playerDisruption: {
           ...state.playerDisruption,
           disabledInkPowers: Array.from(
-            new Set([...(state.playerDisruption.disabledInkPowers ?? []), power])
+            new Set([
+              ...(state.playerDisruption.disabledInkPowers ?? []),
+              power,
+            ])
           ),
         },
       };
@@ -570,7 +583,11 @@ export function resolveEffect(
       };
 
     case "FORCE_DISCARD_RANDOM":
-      return forceDiscardRandom(state, Math.max(0, Math.floor(effect.value)), rng);
+      return forceDiscardRandom(
+        state,
+        Math.max(0, Math.floor(effect.value)),
+        rng
+      );
 
     default:
       return state;

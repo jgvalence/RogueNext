@@ -1771,7 +1771,9 @@ function makeFallbackAbilityByBiome(
         name: "Sand Hex",
         weight: 1,
         target: "PLAYER",
-        effects: [{ type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 }],
+        effects: [
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
       };
     case "LOVECRAFTIAN":
       return {
@@ -1843,9 +1845,7 @@ const DISRUPTION_EFFECT_TYPES = new Set([
 function hasOffensivePressure(ability: EnemyAbility): boolean {
   return ability.effects.some(
     (e) =>
-      e.type === "DAMAGE" ||
-      e.type === "DRAIN_INK" ||
-      e.type === "APPLY_DEBUFF"
+      e.type === "DAMAGE" || e.type === "DRAIN_INK" || e.type === "APPLY_DEBUFF"
   );
 }
 
@@ -1858,8 +1858,7 @@ function inferRole(def: RawEnemyDefinition): EnemyRole {
   ).length;
   const supportCount = def.abilities.filter((a) =>
     a.effects.some(
-      (e) =>
-        e.type === "BLOCK" || e.type === "HEAL" || e.type === "APPLY_BUFF"
+      (e) => e.type === "BLOCK" || e.type === "HEAL" || e.type === "APPLY_BUFF"
     )
   ).length;
 
@@ -1870,7 +1869,9 @@ function inferRole(def: RawEnemyDefinition): EnemyRole {
   return "HYBRID";
 }
 
-function makeBiomeSignatureAbility(def: RawEnemyDefinition): EnemyAbility | null {
+function makeBiomeSignatureAbility(
+  def: RawEnemyDefinition
+): EnemyAbility | null {
   const role = inferRole(def);
   switch (def.biome) {
     case "LIBRARY":
@@ -1972,7 +1973,11 @@ function makeBiomeSignatureAbility(def: RawEnemyDefinition): EnemyAbility | null
         target: "PLAYER",
         effects: [
           { type: "DAMAGE", value: 5 },
-          { type: "DISABLE_INK_POWER_THIS_TURN", value: 1, inkPower: "REWRITE" },
+          {
+            type: "DISABLE_INK_POWER_THIS_TURN",
+            value: 1,
+            inkPower: "REWRITE",
+          },
         ],
       };
   }
@@ -2001,9 +2006,8 @@ function assignEnemyRoles(defs: RawEnemyDefinition[]): EnemyDefinition[] {
   return defs.map((def) => ({ ...def, role: inferRole(def) }));
 }
 
-export const enemyDefinitions: EnemyDefinition[] =
-  assignEnemyRoles(
-    ensureMinimumEnemyAbilityVariety(
-      applyBiomeCombatSignatures(baseEnemyDefinitions)
-    )
-  );
+export const enemyDefinitions: EnemyDefinition[] = assignEnemyRoles(
+  ensureMinimumEnemyAbilityVariety(
+    applyBiomeCombatSignatures(baseEnemyDefinitions)
+  )
+);

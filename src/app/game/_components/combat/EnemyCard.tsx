@@ -276,12 +276,11 @@ function formatIntentEffects(
 
   for (const effect of effects) {
     switch (effect.type) {
-      case "DAMAGE":
-        {
-          const scaledDamage = Math.max(
-            1,
-            Math.round(effect.value * enemyDamageScale)
-          );
+      case "DAMAGE": {
+        const scaledDamage = Math.max(
+          1,
+          Math.round(effect.value * enemyDamageScale)
+        );
         parts.push(
           <span
             key={`d-${parts.length}`}
@@ -291,7 +290,7 @@ function formatIntentEffects(
           </span>
         );
         break;
-        }
+      }
 
       case "BLOCK":
         parts.push(

@@ -21,7 +21,9 @@ export const TurnDisruptionSchema = z.object({
   drawsToDiscardRemaining: z.number().int().default(0),
   freezeNextDrawsRemaining: z.number().int().default(0),
   frozenHandCardIds: z.array(z.string()).default([]),
-  disabledInkPowers: z.array(z.union([InkPowerType, z.literal("ALL")])).default([]),
+  disabledInkPowers: z
+    .array(z.union([InkPowerType, z.literal("ALL")]))
+    .default([]),
 });
 export type TurnDisruption = z.infer<typeof TurnDisruptionSchema>;
 

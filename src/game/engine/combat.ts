@@ -196,7 +196,10 @@ export function startPlayerTurn(
   current = applyRelicsOnTurnStart(current, relicIds);
   current = drawCards(
     current,
-    Math.max(0, current.player.drawCount - (current.playerDisruption.drawPenalty ?? 0)),
+    Math.max(
+      0,
+      current.player.drawCount - (current.playerDisruption.drawPenalty ?? 0)
+    ),
     rng
   );
   return current;
