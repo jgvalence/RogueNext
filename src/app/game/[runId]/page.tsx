@@ -19,6 +19,8 @@ import { RewardScreen } from "../_components/rewards/RewardScreen";
 import { ShopView } from "../_components/merchant/ShopView";
 import { SpecialRoomView } from "../_components/special/SpecialRoomView";
 import { BiomeSelectScreen } from "../_components/biome/BiomeSelectScreen";
+import { RunDifficultySelectScreen } from "../_components/run-difficulty/RunDifficultySelectScreen";
+import { RunConditionSelectScreen } from "../_components/run-condition/RunConditionSelectScreen";
 import { PreBossRoomView } from "../_components/preboss/PreBossRoomView";
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
 import type { BiomeType } from "@/game/schemas/enums";
@@ -93,6 +95,8 @@ export default function RunPage() {
 }
 
 type GamePhase =
+  | "RUN_DIFFICULTY"
+  | "RUN_CONDITION"
   | "MAP"
   | "COMBAT"
   | "REWARDS"
@@ -116,7 +120,14 @@ function GameContent({
 }) {
   const { state, dispatch, rng } = useGame();
   const router = useRouter();
-  const [phase, setPhase] = useState<GamePhase>("MAP");
+  const [phase, setPhase] = useState<GamePhase>(() =>
+    state.selectedDifficultyLevel === null
+      ? "RUN_DIFFICULTY"
+      : state.selectedRunConditionId ||
+          (state.pendingRunConditionChoices?.length ?? 0) === 0
+        ? "MAP"
+        : "RUN_CONDITION"
+  );
   const [rewards, setRewards] = useState<CombatRewards | null>(null);
   const [isBossRewards, setIsBossRewards] = useState(false);
   const [isEliteRewards, setIsEliteRewards] = useState(false);
@@ -141,7 +152,9 @@ function GameContent({
       phase === "MERCHANT" ||
       phase === "SPECIAL" ||
       phase === "PRE_BOSS" ||
-      phase === "BIOME_SELECT"
+      phase === "BIOME_SELECT" ||
+      phase === "RUN_CONDITION" ||
+      phase === "RUN_DIFFICULTY"
     )
       startMusic("map");
     else stopMusic(); // VICTORY or DEFEAT
@@ -229,6 +242,26 @@ function GameContent({
     [currentRoomChoices, dispatch]
   );
 
+  const handlePickRunCondition = useCallback(
+    (conditionId: string) => {
+      dispatch({ type: "APPLY_RUN_CONDITION", payload: { conditionId } });
+      setPhase("MAP");
+    },
+    [dispatch]
+  );
+
+  const handlePickDifficulty = useCallback(
+    (difficultyLevel: number) => {
+      dispatch({ type: "APPLY_DIFFICULTY", payload: { difficultyLevel } });
+      if ((state.pendingRunConditionChoices?.length ?? 0) > 0) {
+        setPhase("RUN_CONDITION");
+      } else {
+        setPhase("MAP");
+      }
+    },
+    [dispatch, state.pendingRunConditionChoices]
+  );
+
   // Handle combat end
   useEffect(() => {
     if (!state.combat) return;
@@ -256,7 +289,8 @@ function GameContent({
         state.relicIds,
         state.unlockedCardIds,
         state.allyIds,
-        state.metaBonuses?.allySlots ?? 0
+        state.metaBonuses?.allySlots ?? 0,
+        state.unlockedDifficultyLevelSnapshot ?? 0
       );
       setRewards(combatRewards);
       setIsBossRewards(isBoss);
@@ -526,6 +560,20 @@ function GameContent({
           />
         )}
 
+        {phase === "RUN_DIFFICULTY" && (
+          <RunDifficultySelectScreen
+            unlockedLevels={state.pendingDifficultyLevels ?? [0]}
+            onSelect={handlePickDifficulty}
+          />
+        )}
+
+        {phase === "RUN_CONDITION" && (
+          <RunConditionSelectScreen
+            conditionIds={state.pendingRunConditionChoices ?? []}
+            onSelect={handlePickRunCondition}
+          />
+        )}
+
         {phase === "COMBAT" && state.combat && (
           <CombatView
             combat={state.combat}
@@ -588,6 +636,9 @@ function GameContent({
             gold={state.gold}
             relicIds={state.relicIds}
             unlockedCardIds={state.unlockedCardIds}
+            unlockedDifficultyLevelSnapshot={
+              state.unlockedDifficultyLevelSnapshot ?? 0
+            }
             cardDefs={cardDefs}
             rng={rng}
             deck={state.deck}
@@ -615,6 +666,7 @@ function GameContent({
             deck={state.deck}
             cardDefs={cardDefs}
             rng={rng}
+            difficultyLevel={state.selectedDifficultyLevel ?? 0}
             onHeal={handleHeal}
             onUpgrade={(cardInstanceId) => {
               dispatch({ type: "UPGRADE_CARD", payload: { cardInstanceId } });

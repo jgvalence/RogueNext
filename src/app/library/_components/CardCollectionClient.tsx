@@ -3,8 +3,10 @@
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { BiomeType, Rarity } from "@/game/schemas/enums";
+import type { RunConditionCollectionRow } from "@/game/engine/run-conditions";
 import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
@@ -35,6 +37,11 @@ export interface CollectionCardRow {
 
 interface CardCollectionClientProps {
   cards: CollectionCardRow[];
+  runConditionRows: RunConditionCollectionRow[];
+  runStats: {
+    totalRuns: number;
+    wonRuns: number;
+  };
 }
 
 function matchesType(
@@ -47,7 +54,11 @@ function matchesType(
   return card.type === "SKILL";
 }
 
-export function CardCollectionClient({ cards }: CardCollectionClientProps) {
+export function CardCollectionClient({
+  cards,
+  runConditionRows,
+  runStats,
+}: CardCollectionClientProps) {
   const { t } = useTranslation();
   const [biome, setBiome] = useState<BiomeType | "ALL">("ALL");
   const [type, setType] = useState<CollectionTypeFilter>("ALL");
@@ -114,6 +125,71 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
             </Link>
           </div>
         </div>
+
+        <section className="rounded-lg border border-gray-800 bg-gray-900/60 p-4">
+          <div className="mb-3 flex items-end justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-white">
+                {t("collection.runConditions.title")}
+              </h2>
+              <p className="text-xs text-gray-400">
+                {t("collection.runConditions.summary", {
+                  unlocked: runConditionRows.filter((row) => row.unlocked)
+                    .length,
+                  total: runConditionRows.length,
+                  runs: runStats.totalRuns,
+                  wins: runStats.wonRuns,
+                })}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {runConditionRows.map((row) => (
+              <div
+                key={row.id}
+                className={`rounded-lg border p-3 ${
+                  row.unlocked
+                    ? "border-emerald-700/50 bg-emerald-950/20"
+                    : "border-rose-800/50 bg-rose-950/20"
+                }`}
+              >
+                <div className="mb-1 flex items-center justify-between gap-2">
+                  <p className="font-bold text-white">
+                    {t(`runCondition.definitions.${row.id}.name`)}
+                  </p>
+                  <span
+                    className={`rounded px-2 py-0.5 text-xs font-semibold ${
+                      row.unlocked
+                        ? "bg-emerald-900 text-emerald-300"
+                        : "bg-rose-900 text-rose-300"
+                    }`}
+                  >
+                    {row.unlocked
+                      ? t("collection.unlocked")
+                      : t("collection.locked")}
+                  </span>
+                </div>
+
+                <p className="text-xs text-gray-400">
+                  {t(`runCondition.category.${row.category}`)}
+                </p>
+                <p className="mt-2 text-sm text-gray-300">
+                  {t(`runCondition.definitions.${row.id}.description`)}
+                </p>
+
+                {!row.unlocked && (
+                  <div className="mt-3 rounded border border-rose-900 bg-rose-950/30 p-2 text-xs text-rose-200">
+                    <p className="font-semibold">
+                      {t("collection.runConditions.unlockCondition")}
+                    </p>
+                    <p>{formatRunConditionUnlock(row, t)}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
 
         <div className="grid grid-cols-1 gap-2 rounded-lg border border-gray-800 bg-gray-900/60 p-3 md:grid-cols-6">
           <select
@@ -241,4 +317,25 @@ export function CardCollectionClient({ cards }: CardCollectionClientProps) {
       </div>
     </div>
   );
+}
+
+function formatRunConditionUnlock(
+  row: RunConditionCollectionRow,
+  t: TFunction
+): string {
+  const needsRuns = row.unlock.totalRuns ?? 0;
+  const needsWins = row.unlock.wonRuns ?? 0;
+  if (needsRuns === 0 && needsWins === 0) {
+    return t("collection.alwaysUnlocked");
+  }
+  if (needsRuns > 0 && needsWins > 0) {
+    return t("collection.runConditions.unlockRunsAndWins", {
+      runs: needsRuns,
+      wins: needsWins,
+    });
+  }
+  if (needsRuns > 0) {
+    return t("collection.runConditions.unlockRuns", { runs: needsRuns });
+  }
+  return t("collection.runConditions.unlockWins", { wins: needsWins });
 }

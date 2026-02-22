@@ -78,6 +78,112 @@ export const en = {
     missingCondition: "Missing condition",
     progress: "Progress",
     alwaysUnlocked: "Always unlocked",
+    runConditions: {
+      title: "Starting options",
+      summary:
+        "{{unlocked}}/{{total}} unlocked - Runs: {{runs}} - Wins: {{wins}}",
+      unlockCondition: "Unlock condition",
+      unlockRuns: "Complete at least {{runs}} run(s)",
+      unlockWins: "Win at least {{wins}} run(s)",
+      unlockRunsAndWins:
+        "Complete at least {{runs}} run(s) and win {{wins}} run(s)",
+    },
+  },
+  runCondition: {
+    select: {
+      kicker: "New run",
+      title: "Choose a starting option",
+      subtitle: "Pick 1 option among 3.",
+      pickAction: "Choose this option",
+    },
+    category: {
+      LIGHT_BOON: "Light boon",
+      BOON_WITH_DRAWBACK: "Boon + drawback",
+      BONUS_CARD: "Bonus card",
+      GOOD_BAD_CARD: "Good + bad card",
+      SPECIAL_RULE: "Special rule",
+      UNIQUE_MECHANIC: "Unique mechanic",
+    },
+    definitions: {
+      quiet_pockets: {
+        name: "Quiet Pockets",
+        description: "Start with +20 gold.",
+      },
+      tempered_flesh: {
+        name: "Tempered Flesh",
+        description: "Start with +12 max HP, but -15 gold.",
+      },
+      open_grimoire: {
+        name: "Open Grimoire",
+        description: "Add Fortify to your starting deck.",
+      },
+      inked_beginning: {
+        name: "Inked Beginning",
+        description: "Start each combat with +2 ink.",
+      },
+      battle_manual: {
+        name: "Battle Manual",
+        description: "Add Heavy Strike to your starting deck.",
+      },
+      packed_supplies: {
+        name: "Packed Supplies",
+        description: "Start with +12 gold and +6 max HP.",
+      },
+      forbidden_contract: {
+        name: "Forbidden Contract",
+        description:
+          "Add Mythic Blow and Haunting Regret to your starting deck.",
+      },
+      single_path: {
+        name: "Single Path",
+        description: "Only one room option at each step.",
+      },
+      eventful_routes: {
+        name: "Eventful Routes",
+        description: "No merchants, more special rooms.",
+      },
+      battle_rite: {
+        name: "Battle Rite",
+        description: "Start with +1 Strength, but heal 5% less after combat.",
+      },
+    },
+  },
+  runDifficulty: {
+    select: {
+      kicker: "Difficulty",
+      title: "Choose a level",
+      subtitle: "Clear a level to unlock the next one.",
+      pickAction: "Choose this difficulty",
+    },
+    levelLabel: "Level {{level}}",
+    levels: {
+      0: {
+        name: "Archivist",
+        description: "Standard difficulty: +0% enemy HP, +0% enemy damage.",
+      },
+      1: {
+        name: "Watcher",
+        description: "+12% enemy HP, +10% enemy damage.",
+      },
+      2: {
+        name: "Curator",
+        description: "+24% enemy HP, +20% enemy damage.",
+      },
+      3: {
+        name: "Censor",
+        description: "+36% enemy HP, +30% enemy damage.",
+      },
+      4: {
+        name: "Abyssal",
+        description:
+          "+48% enemy HP, +40% enemy damage, +8 points elite chance, special rooms: HEAL weight x0.5.",
+      },
+      5: {
+        name: "Mythic",
+        description:
+          "+60% enemy HP, +50% enemy damage, +16 points elite chance, special rooms: HEAL weight x0.25, enemy packs: +1 max size.",
+      },
+    },
   },
   map: {
     choosePath: "Choose Your Path",

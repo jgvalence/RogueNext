@@ -2,6 +2,10 @@ import type { RunState } from "../schemas/run-state";
 import type { CardDefinition } from "../schemas/cards";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
+import {
+  filterCardsByDifficulty,
+  isRelicUnlockedForDifficulty,
+} from "./difficulty";
 
 export interface ShopItem {
   id: string;
@@ -23,13 +27,14 @@ export function generateShopInventory(
   allCards: CardDefinition[],
   ownedRelicIds: string[],
   rng: RNG,
-  unlockedCardIds?: string[]
+  unlockedCardIds?: string[],
+  unlockedDifficultyLevelSnapshot = 0
 ): ShopItem[] {
   const items: ShopItem[] = [];
 
   // 3 random non-starter cards
   const lootable = rng.shuffle(
-    allCards.filter(
+    filterCardsByDifficulty(allCards, unlockedDifficultyLevelSnapshot).filter(
       (c) =>
         !c.isStarterCard &&
         c.isCollectible !== false &&
@@ -49,7 +54,9 @@ export function generateShopInventory(
 
   // 1 relic (if any available)
   const availableRelics = ALL_SHOP_RELICS.filter(
-    (r) => !ownedRelicIds.includes(r.id)
+    (r) =>
+      !ownedRelicIds.includes(r.id) &&
+      isRelicUnlockedForDifficulty(r.id, unlockedDifficultyLevelSnapshot)
   );
   if (availableRelics.length > 0) {
     const relic = rng.pick(availableRelics);

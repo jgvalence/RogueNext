@@ -35,6 +35,8 @@ import { applyRelicsOnCombatStart } from "@/game/engine/relics";
 import { drawCards } from "@/game/engine/deck";
 import {
   selectRoom,
+  applyDifficultyToRun,
+  applyRunConditionToRun,
   completeCombat,
   advanceFloor,
   applyHealRoom,
@@ -74,6 +76,8 @@ export type GameAction =
       payload: { power: InkPowerType; targetId: string | null };
     }
   | { type: "SELECT_ROOM"; payload: { choiceIndex: number } }
+  | { type: "APPLY_DIFFICULTY"; payload: { difficultyLevel: number } }
+  | { type: "APPLY_RUN_CONDITION"; payload: { conditionId: string } }
   | { type: "PICK_CARD_REWARD"; payload: { definitionId: string } }
   | { type: "SKIP_CARD_REWARD" }
   | {
@@ -245,6 +249,14 @@ function createGameReducer(deps: ReducerDeps) {
 
       case "SELECT_ROOM":
         return selectRoom(state, action.payload.choiceIndex);
+
+      case "APPLY_DIFFICULTY":
+        return applyDifficultyToRun(state, action.payload.difficultyLevel);
+
+      case "APPLY_RUN_CONDITION":
+        return applyRunConditionToRun(state, action.payload.conditionId, rng, [
+          ...cardDefs.values(),
+        ]);
 
       case "COMPLETE_COMBAT": {
         if (!state.combat) return state;

@@ -13,6 +13,7 @@ interface ShopViewProps {
   gold: number;
   relicIds: string[];
   unlockedCardIds: string[];
+  unlockedDifficultyLevelSnapshot: number;
   cardDefs: Map<string, CardDefinition>;
   rng: RNG;
   deck: CardInstance[];
@@ -38,6 +39,7 @@ export function ShopView({
   gold,
   relicIds,
   unlockedCardIds,
+  unlockedDifficultyLevelSnapshot,
   cardDefs,
   rng,
   deck,
@@ -57,9 +59,17 @@ export function ShopView({
         [...cardDefs.values()],
         relicIds,
         rng,
-        unlockedCardIds
+        unlockedCardIds,
+        unlockedDifficultyLevelSnapshot
       ),
-    [floor, cardDefs, relicIds, rng, unlockedCardIds]
+    [
+      floor,
+      cardDefs,
+      relicIds,
+      rng,
+      unlockedCardIds,
+      unlockedDifficultyLevelSnapshot,
+    ]
   );
 
   const handleBuy = (item: ShopItem) => {

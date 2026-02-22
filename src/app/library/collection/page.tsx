@@ -1,6 +1,9 @@
 import { auth } from "@/lib/auth/config";
 import { redirect } from "next/navigation";
-import { getProgressionAction } from "@/server/actions/progression";
+import {
+  getProgressionAction,
+  getRunConditionCollectionAction,
+} from "@/server/actions/progression";
 import { allCardDefinitions } from "@/game/data";
 import {
   getCardUnlockDetails,
@@ -16,10 +19,22 @@ export default async function CardCollectionPage() {
   const session = await auth();
   if (!session?.user) redirect("/auth/signin?callbackUrl=/library/collection");
 
-  const result = await getProgressionAction();
+  const [result, runConditionResult] = await Promise.all([
+    getProgressionAction(),
+    getRunConditionCollectionAction(),
+  ]);
+
   if (!result.success) {
     return (
       <LibraryLoadError scope="collection" message={result.error.message} />
+    );
+  }
+  if (!runConditionResult.success) {
+    return (
+      <LibraryLoadError
+        scope="collection"
+        message={runConditionResult.error.message}
+      />
     );
   }
 
@@ -54,5 +69,11 @@ export default async function CardCollectionPage() {
       unlockProgress: details[c.id]?.progress ?? null,
     }));
 
-  return <CardCollectionClient cards={cards} />;
+  return (
+    <CardCollectionClient
+      cards={cards}
+      runConditionRows={runConditionResult.data.conditions}
+      runStats={runConditionResult.data.runStats}
+    />
+  );
 }

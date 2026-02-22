@@ -79,6 +79,112 @@ export const fr = {
     missingCondition: "Condition manquante",
     progress: "Progression",
     alwaysUnlocked: "Toujours debloquee",
+    runConditions: {
+      title: "Options de depart",
+      summary:
+        "{{unlocked}}/{{total}} debloquees - Runs: {{runs}} - Victoires: {{wins}}",
+      unlockCondition: "Condition de debloquage",
+      unlockRuns: "Terminer au moins {{runs}} run(s)",
+      unlockWins: "Gagner au moins {{wins}} run(s)",
+      unlockRunsAndWins:
+        "Terminer au moins {{runs}} run(s) et gagner {{wins}} run(s)",
+    },
+  },
+  runCondition: {
+    select: {
+      kicker: "Nouveau run",
+      title: "Choisis une option de depart",
+      subtitle: "Choisis 1 option parmi 3.",
+      pickAction: "Choisir cette option",
+    },
+    category: {
+      LIGHT_BOON: "Petit avantage",
+      BOON_WITH_DRAWBACK: "Avantage + malus",
+      BONUS_CARD: "Carte bonus",
+      GOOD_BAD_CARD: "Bonne + mauvaise carte",
+      SPECIAL_RULE: "Regle speciale",
+      UNIQUE_MECHANIC: "Mecanique unique",
+    },
+    definitions: {
+      quiet_pockets: {
+        name: "Poches tranquilles",
+        description: "Commence avec +20 or.",
+      },
+      tempered_flesh: {
+        name: "Chair temperee",
+        description: "Commence avec +12 PV max, mais -15 or.",
+      },
+      open_grimoire: {
+        name: "Grimoire ouvert",
+        description: "Ajoute Fortify au deck de depart.",
+      },
+      inked_beginning: {
+        name: "Debut encre",
+        description: "Commence chaque combat avec +2 encre.",
+      },
+      battle_manual: {
+        name: "Manuel de bataille",
+        description: "Ajoute Heavy Strike au deck de depart.",
+      },
+      packed_supplies: {
+        name: "Ravitaillement",
+        description: "Commence avec +12 or et +6 PV max.",
+      },
+      forbidden_contract: {
+        name: "Contrat interdit",
+        description: "Ajoute Mythic Blow et Haunting Regret au deck de depart.",
+      },
+      single_path: {
+        name: "Chemin unique",
+        description: "Une seule option de salle a chaque etape.",
+      },
+      eventful_routes: {
+        name: "Routes agitees",
+        description: "Pas de marchands, plus de salles speciales.",
+      },
+      battle_rite: {
+        name: "Rite de guerre",
+        description:
+          "Commence avec +1 Force, mais soigne 5% de moins apres combat.",
+      },
+    },
+  },
+  runDifficulty: {
+    select: {
+      kicker: "Difficulte",
+      title: "Choisis un niveau",
+      subtitle: "Termine un niveau pour debloquer le suivant.",
+      pickAction: "Choisir cette difficulte",
+    },
+    levelLabel: "Niveau {{level}}",
+    levels: {
+      0: {
+        name: "Archiviste",
+        description: "Difficulte standard: +0% PV ennemis, +0% degats ennemis.",
+      },
+      1: {
+        name: "Veilleur",
+        description: "+12% PV ennemis, +10% degats ennemis.",
+      },
+      2: {
+        name: "Conservateur",
+        description: "+24% PV ennemis, +20% degats ennemis.",
+      },
+      3: {
+        name: "Censeur",
+        description: "+36% PV ennemis, +30% degats ennemis.",
+      },
+      4: {
+        name: "Abyssal",
+        description:
+          "+48% PV ennemis, +40% degats ennemis, +8 points de chance d'elite, salles speciales: poids HEAL x0.5.",
+      },
+      5: {
+        name: "Mythique",
+        description:
+          "+60% PV ennemis, +50% degats ennemis, +16 points de chance d'elite, salles speciales: poids HEAL x0.25, groupes ennemis: +1 taille max.",
+      },
+    },
   },
   map: {
     choosePath: "Choisis ton chemin",

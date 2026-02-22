@@ -8,6 +8,10 @@ import { getResourcesForCombat } from "./meta";
 import { relicDefinitions, type RelicDefinitionData } from "../data/relics";
 import { allyDefinitions } from "../data/allies";
 import type { AllyDefinition } from "../schemas/entities";
+import {
+  filterCardsByDifficulty,
+  filterRelicsByDifficulty,
+} from "./difficulty";
 
 export interface CombatRewards {
   gold: number;
@@ -37,7 +41,8 @@ export function generateCombatRewards(
   currentRelicIds: string[] = [],
   unlockedCardIds?: string[],
   currentAllyIds: string[] = [],
-  allySlotCount: number = 0
+  allySlotCount: number = 0,
+  unlockedDifficultyLevelSnapshot = 0
 ): CombatRewards {
   // Gold reward
   const baseGold = GAME_CONSTANTS.GOLD_REWARD_BASE;
@@ -49,7 +54,10 @@ export function generateCombatRewards(
   if (isBoss) gold *= GAME_CONSTANTS.BOSS_GOLD_MULTIPLIER;
 
   // Card reward
-  const lootableCards = allCards.filter(
+  const lootableCards = filterCardsByDifficulty(
+    allCards,
+    unlockedDifficultyLevelSnapshot
+  ).filter(
     (c) =>
       !c.isStarterCard &&
       c.isCollectible !== false &&
@@ -80,9 +88,10 @@ export function generateCombatRewards(
   );
 
   // Relic choices
-  const availableRelics = relicDefinitions.filter(
-    (r) => !currentRelicIds.includes(r.id)
-  );
+  const availableRelics = filterRelicsByDifficulty(
+    relicDefinitions,
+    unlockedDifficultyLevelSnapshot
+  ).filter((r) => !currentRelicIds.includes(r.id));
   let relicChoices: RelicDefinitionData[] = [];
 
   if (isBoss) {

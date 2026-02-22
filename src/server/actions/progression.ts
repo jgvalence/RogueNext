@@ -8,6 +8,10 @@ import { prisma } from "@/lib/db/prisma";
 import { computeMetaBonuses } from "@/game/engine/meta";
 import { histoireDefinitions } from "@/game/data/histoires";
 import type { MetaProgress } from "@/game/schemas/meta";
+import {
+  buildRunConditionCollectionRows,
+  type RunConditionCollectionRow,
+} from "@/game/engine/run-conditions";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -56,6 +60,32 @@ export async function getComputedBonusesAction() {
     const progression = await getOrCreateProgression(user.id!);
     const bonuses = computeMetaBonuses(progression.unlockedStoryIds);
     return success({ bonuses });
+  } catch (error) {
+    return handleServerActionError(error);
+  }
+}
+
+export async function getRunConditionCollectionAction() {
+  try {
+    const user = await requireAuth();
+    const row = await prisma.userProgression.findUnique({
+      where: { userId: user.id! },
+      select: { totalRuns: true, wonRuns: true },
+    });
+    const totalRuns = row?.totalRuns ?? 0;
+    const wonRuns = row?.wonRuns ?? 0;
+    const conditions: RunConditionCollectionRow[] =
+      buildRunConditionCollectionRows({
+        totalRuns,
+        wonRuns,
+      });
+    return success({
+      runStats: {
+        totalRuns,
+        wonRuns,
+      },
+      conditions,
+    });
   } catch (error) {
     return handleServerActionError(error);
   }

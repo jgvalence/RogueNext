@@ -36,6 +36,15 @@ export const RunStateSchema = z.object({
   combat: CombatStateSchema.nullable().default(null),
   currentBiome: BiomeType.default("LIBRARY"),
   pendingBiomeChoices: z.tuple([BiomeType, BiomeType]).nullable().default(null),
+  // Difficulty flow at run start: pick one unlocked level first
+  pendingDifficultyLevels: z.array(z.number().int().min(0)).default([]),
+  selectedDifficultyLevel: z.number().int().min(0).nullable().default(null),
+  // Snapshot of highest unlocked difficulty at run start (used for card/relic gates)
+  unlockedDifficultyLevelSnapshot: z.number().int().min(0).default(0),
+  // Start-of-run condition choices shown to the player (pick 1 among 3)
+  pendingRunConditionChoices: z.array(z.string()).default([]),
+  // Chosen condition applied to this run
+  selectedRunConditionId: z.string().nullable().default(null),
   // Resources accumulated during this run (flushed at endRun)
   earnedResources: z.record(z.string(), z.number().int()).default({}),
   // Meta bonuses computed at run creation

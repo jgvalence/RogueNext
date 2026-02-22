@@ -12,8 +12,17 @@ import {
   onEliteKilled,
   onEnterBiome,
 } from "./card-unlocks";
-import type { RNG } from "./rng";
+import { createRNG, type RNG } from "./rng";
 import { nanoid } from "nanoid";
+import {
+  applyRunConditionMetaBonuses,
+  buildConditionStarterCards,
+  drawRunConditionChoices,
+  getRunConditionById,
+  getRunConditionMapRules,
+} from "./run-conditions";
+import { filterCardIdsByDifficulty } from "./difficulty";
+import { getDifficultyModifiers } from "./difficulty";
 
 type EnemyDef = (typeof enemyDefinitions)[0];
 const DISRUPTION_EFFECT_TYPES = new Set([
@@ -88,7 +97,10 @@ export function createNewRun(
   metaBonuses?: ComputedMetaBonuses,
   unlockedStoryIdsSnapshot: string[] = [],
   initialUnlockProgress?: CardUnlockProgress,
-  allCards?: CardDefinition[]
+  allCards?: CardDefinition[],
+  unlockedRunConditionIds: string[] = [],
+  unlockedDifficultyLevels: number[] = [0],
+  unlockedDifficultyLevelMax = 0
 ): RunState {
   // Build starter deck instances
   const deck: CardInstance[] = starterCards.map((card) => ({
@@ -98,6 +110,10 @@ export function createNewRun(
   }));
 
   const map = generateFloorMap(1, rng, "LIBRARY");
+  const pendingRunConditionChoices = drawRunConditionChoices(
+    unlockedRunConditionIds,
+    createRNG(`${seed}-run-conditions`)
+  );
 
   const startingGold =
     GAME_CONSTANTS.STARTING_GOLD + (metaBonuses?.startingGold ?? 0);
@@ -108,9 +124,13 @@ export function createNewRun(
     eliteKillsByBiome: {},
     bossKillsByBiome: {},
   };
-  const unlockedCardIds = allCards
+  const unlockedCardIdsRaw = allCards
     ? computeUnlockedCardIds(allCards, unlockProgress, unlockedStoryIdsSnapshot)
     : [];
+  const unlockedCardIds = filterCardIdsByDifficulty(
+    unlockedCardIdsRaw,
+    unlockedDifficultyLevelMax
+  );
 
   return {
     runId,
@@ -128,6 +148,11 @@ export function createNewRun(
     combat: null,
     currentBiome: "LIBRARY",
     pendingBiomeChoices: null,
+    pendingDifficultyLevels: unlockedDifficultyLevels,
+    selectedDifficultyLevel: null,
+    unlockedDifficultyLevelSnapshot: unlockedDifficultyLevelMax,
+    pendingRunConditionChoices,
+    selectedRunConditionId: null,
     earnedResources: {},
     metaBonuses,
     unlockedStoryIdsSnapshot,
@@ -145,15 +170,22 @@ export function createNewRun(
 export function generateFloorMap(
   floor: number,
   rng: RNG,
-  biome: BiomeType
+  biome: BiomeType,
+  selectedRunConditionId?: string | null,
+  difficultyLevel = 0
 ): RoomNode[][] {
+  const mapRules = getRunConditionMapRules(selectedRunConditionId);
   // Build the sequence for rooms 1-7 (7 middle rooms): 1 shop, 1-2 events, rest combat
   // Room 8 is always PRE_BOSS; Room 9 is always BOSS
-  const numSpecial = rng.nextInt(1, 2);
+  const minSpecial = mapRules.extraSpecialRoom ? 2 : 1;
+  const maxSpecial = mapRules.extraSpecialRoom ? 3 : 2;
+  const numSpecial = rng.nextInt(minSpecial, maxSpecial);
   const middleTypes: Array<"COMBAT" | "MERCHANT" | "SPECIAL"> = [
-    "MERCHANT",
+    ...(mapRules.noMerchants ? [] : (["MERCHANT"] as const)),
     ...Array<"SPECIAL">(numSpecial).fill("SPECIAL"),
-    ...Array<"COMBAT">(6 - numSpecial).fill("COMBAT"),
+    ...Array<"COMBAT">(7 - (mapRules.noMerchants ? 0 : 1) - numSpecial).fill(
+      "COMBAT"
+    ),
   ];
   const shuffledMiddle = buildBalancedMiddleRooms(middleTypes, rng);
 
@@ -200,7 +232,7 @@ export function generateFloorMap(
     }
 
     const numChoices =
-      isBossRoom || isFirstRoom
+      mapRules.forceSingleChoice || isBossRoom || isFirstRoom
         ? 1
         : rng.nextInt(1, GAME_CONSTANTS.ROOM_CHOICES);
 
@@ -214,7 +246,14 @@ export function generateFloorMap(
 
       const enemyResult =
         type === "COMBAT"
-          ? generateRoomEnemies(floor, i, isBossRoom, biome, rng)
+          ? generateRoomEnemies(
+              floor,
+              i,
+              isBossRoom,
+              biome,
+              rng,
+              difficultyLevel
+            )
           : undefined;
 
       choices.push({
@@ -290,8 +329,10 @@ function generateRoomEnemies(
   room: number,
   isBoss: boolean,
   biome: BiomeType,
-  rng: RNG
+  rng: RNG,
+  difficultyLevel = 0
 ): { enemyIds: string[]; isElite: boolean } {
+  const difficultyModifiers = getDifficultyModifiers(difficultyLevel);
   const canAppear = (e: (typeof enemyDefinitions)[0]) =>
     e.biome === biome || e.biome === "LIBRARY";
 
@@ -311,7 +352,10 @@ function generateRoomEnemies(
     .filter((e) => e.isElite && canAppear(e))
     .map((e) => e.id);
   const eliteDefs = enemyDefinitions.filter((e) => elitePool.includes(e.id));
-  const eliteChance = Math.min(0.5, 0.25 + (floor - 1) * 0.05);
+  const eliteChance = Math.min(
+    0.8,
+    0.25 + (floor - 1) * 0.05 + difficultyModifiers.eliteChanceBonus
+  );
   if (room >= 3 && eliteDefs.length > 0 && rng.next() < eliteChance) {
     const elite = weightedPick(
       eliteDefs,
@@ -345,7 +389,10 @@ function generateRoomEnemies(
     GAME_CONSTANTS.MAX_ENEMIES,
     Math.max(
       1,
-      2 + Math.floor(floor / 2) + (biomeCountBonusByBiome[biome] ?? 0)
+      2 +
+        Math.floor(floor / 2) +
+        (biomeCountBonusByBiome[biome] ?? 0) +
+        difficultyModifiers.enemyPackSizeBonus
     )
   );
   const count = rng.nextInt(1, maxEnemyCount);
@@ -459,6 +506,79 @@ export function selectRoom(runState: RunState, choiceIndex: number): RunState {
   };
 }
 
+export function applyDifficultyToRun(
+  runState: RunState,
+  difficultyLevel: number
+): RunState {
+  if (runState.selectedDifficultyLevel !== null) return runState;
+  const pendingLevels = runState.pendingDifficultyLevels ?? [];
+  if (!pendingLevels.includes(difficultyLevel)) return runState;
+
+  return {
+    ...runState,
+    selectedDifficultyLevel: difficultyLevel,
+    pendingDifficultyLevels: [],
+  };
+}
+
+export function applyRunConditionToRun(
+  runState: RunState,
+  conditionId: string,
+  rng: RNG,
+  allCards: CardDefinition[]
+): RunState {
+  if (runState.selectedDifficultyLevel === null) return runState;
+  if (runState.selectedRunConditionId) return runState;
+  const pendingChoices = runState.pendingRunConditionChoices ?? [];
+  if (!pendingChoices.includes(conditionId)) return runState;
+
+  const condition = getRunConditionById(conditionId);
+  if (!condition) return runState;
+
+  const cardMap = new Map(allCards.map((card) => [card.id, card]));
+  const bonusCards = buildConditionStarterCards(conditionId, cardMap);
+  const bonusDeck: CardInstance[] = bonusCards.map((card) => ({
+    instanceId: nanoid(),
+    definitionId: card.id,
+    upgraded: false,
+  }));
+
+  const hpDelta = condition.effects.maxHpDelta ?? 0;
+  const goldDelta = condition.effects.startingGoldDelta ?? 0;
+  const nextMaxHp = Math.max(1, runState.playerMaxHp + hpDelta);
+  const nextCurrentHp = Math.max(
+    1,
+    Math.min(nextMaxHp, runState.playerCurrentHp + hpDelta)
+  );
+  const nextGold = Math.max(0, runState.gold + goldDelta);
+  const nextMetaBonuses = applyRunConditionMetaBonuses(
+    runState.metaBonuses,
+    conditionId
+  );
+  const hasMapRuleEffects = Boolean(condition.effects.mapRules);
+  const nextMap = hasMapRuleEffects
+    ? generateFloorMap(
+        runState.floor,
+        rng,
+        runState.currentBiome,
+        conditionId,
+        runState.selectedDifficultyLevel ?? 0
+      )
+    : runState.map;
+
+  return {
+    ...runState,
+    gold: nextGold,
+    playerMaxHp: nextMaxHp,
+    playerCurrentHp: nextCurrentHp,
+    deck: [...runState.deck, ...bonusDeck],
+    map: nextMap,
+    metaBonuses: nextMetaBonuses,
+    selectedRunConditionId: conditionId,
+    pendingRunConditionChoices: [],
+  };
+}
+
 /**
  * Complete a combat and update run state.
  * - Non-boss: advance room normally.
@@ -506,12 +626,9 @@ export function completeCombat(
 
   if (isBossRoom && !isFinalFloor) {
     if (runState.floor === 1) {
-      // First transition (floor 1 -> 2): offer 2 distinct non-LIBRARY biomes.
+      // First transition (floor 1 -> 2): keep LIBRARY as one safe option.
       const shuffled = rng.shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);
-      pendingBiomeChoices = [shuffled[0]!, shuffled[1]!] as [
-        BiomeType,
-        BiomeType,
-      ];
+      pendingBiomeChoices = ["LIBRARY", shuffled[0]!] as [BiomeType, BiomeType];
     } else {
       // Floors 2+: draw 2 distinct non-LIBRARY biomes.
       const shuffled = rng.shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);
@@ -546,10 +663,14 @@ export function completeCombat(
   if (isBossRoom) {
     unlockProgress = onBossKilled(unlockProgress, runState.currentBiome);
   }
-  const unlockedCardIds = computeUnlockedCardIds(
+  const unlockedCardIdsRaw = computeUnlockedCardIds(
     allCards ?? [],
     unlockProgress,
     runState.unlockedStoryIdsSnapshot ?? []
+  );
+  const unlockedCardIds = filterCardIdsByDifficulty(
+    unlockedCardIdsRaw,
+    runState.unlockedDifficultyLevelSnapshot ?? 0
   );
 
   return {
@@ -579,7 +700,13 @@ export function advanceFloor(
   allCards?: CardDefinition[]
 ): RunState {
   const newFloor = state.floor + 1;
-  const newMap = generateFloorMap(newFloor, rng, biome);
+  const newMap = generateFloorMap(
+    newFloor,
+    rng,
+    biome,
+    state.selectedRunConditionId,
+    state.selectedDifficultyLevel ?? 0
+  );
 
   const unlockProgress = onEnterBiome(
     state.cardUnlockProgress ?? {
@@ -590,10 +717,14 @@ export function advanceFloor(
     },
     biome
   );
-  const unlockedCardIds = computeUnlockedCardIds(
+  const unlockedCardIdsRaw = computeUnlockedCardIds(
     allCards ?? [],
     unlockProgress,
     state.unlockedStoryIdsSnapshot ?? []
+  );
+  const unlockedCardIds = filterCardIdsByDifficulty(
+    unlockedCardIdsRaw,
+    state.unlockedDifficultyLevelSnapshot ?? 0
   );
 
   return {
@@ -633,9 +764,21 @@ export function applyHealRoom(runState: RunState): RunState {
 export type SpecialRoomType = "HEAL" | "UPGRADE" | "EVENT";
 
 export function pickSpecialRoomType(rng: RNG): SpecialRoomType {
-  const roll = rng.next();
-  if (roll < 0.4) return "HEAL";
-  if (roll < 0.7) return "UPGRADE";
+  return pickSpecialRoomTypeWithDifficulty(rng, 0);
+}
+
+export function pickSpecialRoomTypeWithDifficulty(
+  rng: RNG,
+  difficultyLevel: number
+): SpecialRoomType {
+  const modifiers = getDifficultyModifiers(difficultyLevel);
+  const healWeight = 0.4 * modifiers.specialRoomHealWeightMultiplier;
+  const upgradeWeight = 0.3;
+  const eventWeight = 0.3 + modifiers.specialRoomEventWeightBonus;
+  const totalWeight = healWeight + upgradeWeight + eventWeight;
+  const roll = rng.next() * totalWeight;
+  if (roll < healWeight) return "HEAL";
+  if (roll < healWeight + upgradeWeight) return "UPGRADE";
   return "EVENT";
 }
 

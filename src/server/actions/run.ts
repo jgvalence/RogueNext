@@ -13,6 +13,15 @@ import { starterDeckComposition } from "@/game/data/starter-deck";
 import { allCardDefinitions, buildCardDefsMap } from "@/game/data";
 import type { RunState } from "@/game/schemas/run-state";
 import { computeMetaBonuses } from "@/game/engine/meta";
+import {
+  computeUnlockedRunConditionIds,
+  drawRunConditionChoices,
+} from "@/game/engine/run-conditions";
+import {
+  getUnlockedDifficultyLevels,
+  getUnlockedMaxDifficultyFromResources,
+  unlockNextDifficultyOnVictory,
+} from "@/game/engine/difficulty";
 import { addResourcesInternal, incrementRunStatsInternal } from "./progression";
 import {
   readUnlockProgressFromResources,
@@ -34,12 +43,24 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
     // Load meta-progression bonuses for this user
     const progression = await prisma.userProgression.findUnique({
       where: { userId: user.id! },
-      select: { resources: true, unlockedStoryIds: true },
+      select: {
+        resources: true,
+        unlockedStoryIds: true,
+        totalRuns: true,
+        wonRuns: true,
+      },
     });
     const unlockedStoryIds = (progression?.unlockedStoryIds as string[]) ?? [];
     const resources = (progression?.resources as Record<string, number>) ?? {};
     const initialUnlockProgress = readUnlockProgressFromResources(resources);
     const metaBonuses = computeMetaBonuses(unlockedStoryIds);
+    const unlockedDifficultyLevels = getUnlockedDifficultyLevels(resources);
+    const unlockedDifficultyLevelMax =
+      getUnlockedMaxDifficultyFromResources(resources);
+    const unlockedRunConditionIds = computeUnlockedRunConditionIds({
+      totalRuns: progression?.totalRuns ?? 0,
+      wonRuns: progression?.wonRuns ?? 0,
+    });
 
     // Build starter card definitions from composition
     const cardDefsMap = buildCardDefsMap();
@@ -55,7 +76,10 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
       metaBonuses,
       unlockedStoryIds,
       initialUnlockProgress,
-      allCardDefinitions
+      allCardDefinitions,
+      unlockedRunConditionIds,
+      unlockedDifficultyLevels,
+      unlockedDifficultyLevelMax
     );
 
     const now = new Date();
@@ -253,15 +277,25 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       currentResources,
       mergedUnlockProgress
     );
+    const selectedDifficultyLevel = runState.selectedDifficultyLevel ?? 0;
+    const resourcesWithDifficultyUnlock =
+      validated.status === "VICTORY"
+        ? unlockNextDifficultyOnVictory(
+            resourcesWithUnlocks,
+            selectedDifficultyLevel
+          )
+        : resourcesWithUnlocks;
     await prisma.userProgression.upsert({
       where: { userId: user.id! },
       create: {
         userId: user.id!,
-        resources: resourcesWithUnlocks as unknown as Prisma.InputJsonValue,
+        resources:
+          resourcesWithDifficultyUnlock as unknown as Prisma.InputJsonValue,
         unlockedStoryIds: (progression?.unlockedStoryIds as string[]) ?? [],
       },
       update: {
-        resources: resourcesWithUnlocks as unknown as Prisma.InputJsonValue,
+        resources:
+          resourcesWithDifficultyUnlock as unknown as Prisma.InputJsonValue,
       },
     });
 
@@ -291,7 +325,12 @@ export async function getActiveRunAction() {
       }),
       prisma.userProgression.findUnique({
         where: { userId: user.id! },
-        select: { unlockedStoryIds: true },
+        select: {
+          unlockedStoryIds: true,
+          totalRuns: true,
+          wonRuns: true,
+          resources: true,
+        },
       }),
     ]);
 
@@ -302,11 +341,45 @@ export async function getActiveRunAction() {
     // Recompute meta bonuses from current progression so that stories
     // unlocked after the run was created are still applied.
     const unlockedStoryIds = (progression?.unlockedStoryIds as string[]) ?? [];
+    const resources = (progression?.resources as Record<string, number>) ?? {};
     const freshMetaBonuses = computeMetaBonuses(unlockedStoryIds);
     const state = run.state as unknown as RunState;
+    const unlockedDifficultyLevels = getUnlockedDifficultyLevels(resources);
+    const unlockedDifficultyLevelMax =
+      getUnlockedMaxDifficultyFromResources(resources);
+    const selectedDifficultyLevel =
+      state.selectedDifficultyLevel ??
+      (state.floor > 1 || state.currentRoom > 0 || state.combat ? 0 : null);
+    const pendingDifficultyLevels =
+      selectedDifficultyLevel === null
+        ? unlockedDifficultyLevels
+        : (state.pendingDifficultyLevels ?? []);
+    const hasChosenRunCondition = Boolean(state.selectedRunConditionId);
+    const needsStartChoicesBackfill =
+      !hasChosenRunCondition &&
+      state.floor === 1 &&
+      state.currentRoom === 0 &&
+      (state.pendingRunConditionChoices?.length ?? 0) === 0;
+    const unlockedRunConditionIds = computeUnlockedRunConditionIds({
+      totalRuns: progression?.totalRuns ?? 0,
+      wonRuns: progression?.wonRuns ?? 0,
+    });
+    const backfilledRunConditionChoices = needsStartChoicesBackfill
+      ? drawRunConditionChoices(
+          unlockedRunConditionIds,
+          createRNG(`${state.seed}-run-conditions`)
+        )
+      : (state.pendingRunConditionChoices ?? []);
+
     const stateWithFreshBonuses: RunState = {
       ...state,
       metaBonuses: freshMetaBonuses,
+      pendingDifficultyLevels,
+      selectedDifficultyLevel,
+      unlockedDifficultyLevelSnapshot:
+        state.unlockedDifficultyLevelSnapshot ?? unlockedDifficultyLevelMax,
+      pendingRunConditionChoices: backfilledRunConditionChoices,
+      selectedRunConditionId: state.selectedRunConditionId ?? null,
     };
 
     return success({

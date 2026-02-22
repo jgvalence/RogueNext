@@ -13,6 +13,7 @@ import { drawCards, discardHand, shuffleDeck } from "./deck";
 import { executeAlliesTurn, executeEnemiesTurn } from "./enemies";
 import { applyMetaBonusesToCombat } from "./meta";
 import { applyRelicsOnTurnStart } from "./relics";
+import { getDifficultyModifiers } from "./difficulty";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 
@@ -60,8 +61,12 @@ export function initCombat(
   rng: RNG,
   metaBonuses?: ComputedMetaBonuses
 ): CombatState {
-  const floorEnemyHpMultiplier = 1 + (runState.floor - 1) * 0.15;
-  const enemyDamageScale = 1 + (runState.floor - 1) * 0.18;
+  const difficultyLevel = runState.selectedDifficultyLevel ?? 0;
+  const difficultyMods = getDifficultyModifiers(difficultyLevel);
+  const floorEnemyHpMultiplier =
+    (1 + (runState.floor - 1) * 0.15) * difficultyMods.enemyHpMultiplier;
+  const enemyDamageScale =
+    (1 + (runState.floor - 1) * 0.18) * difficultyMods.enemyDamageMultiplier;
   const enemySpawnCountByDef: Record<string, number> = {};
 
   // Create enemy instances

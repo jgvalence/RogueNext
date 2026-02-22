@@ -5,7 +5,7 @@ import type { CardDefinition } from "@/game/schemas/cards";
 import type { CardInstance } from "@/game/schemas/cards";
 import type { RNG } from "@/game/engine/rng";
 import {
-  pickSpecialRoomType,
+  pickSpecialRoomTypeWithDifficulty,
   pickEvent,
   type GameEvent,
 } from "@/game/engine/run";
@@ -24,6 +24,7 @@ interface SpecialRoomViewProps {
   deck: CardInstance[];
   cardDefs: Map<string, CardDefinition>;
   rng: RNG;
+  difficultyLevel: number;
   onHeal: () => void;
   onUpgrade: (cardInstanceId: string) => void;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
@@ -38,13 +39,17 @@ export function SpecialRoomView({
   deck,
   cardDefs,
   rng,
+  difficultyLevel,
   onHeal,
   onUpgrade,
   onEventChoice,
   onEventPurge,
   onSkip,
 }: SpecialRoomViewProps) {
-  const roomType = useMemo(() => pickSpecialRoomType(rng), [rng]);
+  const roomType = useMemo(
+    () => pickSpecialRoomTypeWithDifficulty(rng, difficultyLevel),
+    [rng, difficultyLevel]
+  );
 
   switch (roomType) {
     case "HEAL":
