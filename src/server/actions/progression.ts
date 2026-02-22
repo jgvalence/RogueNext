@@ -146,3 +146,36 @@ export async function addResourcesInternal(
     update: { resources: updated as Prisma.InputJsonValue },
   });
 }
+
+export async function incrementRunStatsInternal(
+  userId: string,
+  status: "VICTORY" | "DEFEAT" | "ABANDONED",
+  count = 1
+): Promise<void> {
+  if (count <= 0) return;
+
+  const row = await prisma.userProgression.findUnique({ where: { userId } });
+  const baseTotal = row?.totalRuns ?? 0;
+  const baseWon = row?.wonRuns ?? 0;
+  const baseLost = row?.lostRuns ?? 0;
+  const baseAbandoned = row?.abandonedRuns ?? 0;
+
+  await prisma.userProgression.upsert({
+    where: { userId },
+    create: {
+      userId,
+      resources: (row?.resources as Record<string, number>) ?? {},
+      unlockedStoryIds: (row?.unlockedStoryIds as string[]) ?? [],
+      totalRuns: count,
+      wonRuns: status === "VICTORY" ? count : 0,
+      lostRuns: status === "DEFEAT" ? count : 0,
+      abandonedRuns: status === "ABANDONED" ? count : 0,
+    },
+    update: {
+      totalRuns: baseTotal + count,
+      wonRuns: baseWon + (status === "VICTORY" ? count : 0),
+      lostRuns: baseLost + (status === "DEFEAT" ? count : 0),
+      abandonedRuns: baseAbandoned + (status === "ABANDONED" ? count : 0),
+    },
+  });
+}

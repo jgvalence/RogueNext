@@ -13,7 +13,7 @@ import { starterDeckComposition } from "@/game/data/starter-deck";
 import { allCardDefinitions, buildCardDefsMap } from "@/game/data";
 import type { RunState } from "@/game/schemas/run-state";
 import { computeMetaBonuses } from "@/game/engine/meta";
-import { addResourcesInternal } from "./progression";
+import { addResourcesInternal, incrementRunStatsInternal } from "./progression";
 import {
   readUnlockProgressFromResources,
   writeUnlockProgressToResources,
@@ -58,11 +58,18 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
     );
 
     const now = new Date();
+    let abandonedCount = 0;
     const run = await prisma.$transaction(async (tx) => {
       // Ensure there is only one active run per user: close previous ones first.
-      await tx.run.updateMany({
+      const abandoned = await tx.run.updateMany({
         where: { userId: user.id!, status: "IN_PROGRESS" },
         data: { status: "ABANDONED", endedAt: now },
+      });
+      abandonedCount = abandoned.count;
+
+      // Keep only the active run in DB.
+      await tx.run.deleteMany({
+        where: { userId: user.id!, status: { not: "IN_PROGRESS" } },
       });
 
       const created = await tx.run.create({
@@ -83,6 +90,10 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
 
       return created;
     });
+
+    if (abandonedCount > 0) {
+      await incrementRunStatsInternal(user.id!, "ABANDONED", abandonedCount);
+    }
     const stateWithDbId: RunState = { ...runState, runId: run.id };
 
     revalidatePath("/game");
@@ -154,13 +165,20 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       throw new Error("Run not found or access denied");
     }
 
-    await prisma.run.update({
-      where: { id: validated.runId },
+    const updated = await prisma.run.updateMany({
+      where: {
+        id: validated.runId,
+        userId: user.id!,
+        status: "IN_PROGRESS",
+      },
       data: {
         status: validated.status,
         endedAt: new Date(),
       },
     });
+    if (updated.count === 0) {
+      return success({ ended: false });
+    }
 
     // Prefer client-supplied earnedResources (always up-to-date, avoids auto-save race),
     // fall back to DB state for robustness
@@ -243,6 +261,13 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       update: {
         resources: resourcesWithUnlocks as unknown as Prisma.InputJsonValue,
       },
+    });
+
+    await incrementRunStatsInternal(user.id!, validated.status, 1);
+
+    // Keep only active runs persisted in DB.
+    await prisma.run.delete({
+      where: { id: validated.runId },
     });
 
     revalidatePath("/game");
