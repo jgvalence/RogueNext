@@ -23,6 +23,7 @@ import { PreBossRoomView } from "../_components/preboss/PreBossRoomView";
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
 import type { BiomeType } from "@/game/schemas/enums";
 import { GAME_CONSTANTS } from "@/game/constants";
+import { cn } from "@/lib/utils/cn";
 import { endRunAction } from "@/server/actions/run";
 import {
   generateCombatRewards,
@@ -444,7 +445,10 @@ function GameContent({
   return (
     <GameLayout>
       <div
-        className={`flex min-h-0 flex-col${phase === "COMBAT" ? "h-full overflow-hidden" : ""}`}
+        className={cn(
+          "flex min-h-0 flex-col",
+          phase === "COMBAT" && "h-full overflow-hidden"
+        )}
       >
         {phase === "MAP" && (
           <FloorMap
