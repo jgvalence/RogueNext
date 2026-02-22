@@ -49,6 +49,14 @@ export const en = {
     missingPrereqs: "Missing prerequisites",
     insufficientResources: "Insufficient resources",
     genericError: "An error occurred.",
+    loadErrorTitle: "Failed to load the library",
+    collectionLoadErrorTitle: "Failed to load the collection",
+  },
+  gameHub: {
+    loading: "Loading...",
+    retry: "Retry",
+    unknownError: "Unable to load game data.",
+    failedToStart: "Failed to start game: {{message}}",
   },
   collection: {
     title: "Card Collection",

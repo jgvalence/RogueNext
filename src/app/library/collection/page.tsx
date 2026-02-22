@@ -10,13 +10,18 @@ import {
   CardCollectionClient,
   type CollectionCardRow,
 } from "../_components/CardCollectionClient";
+import { LibraryLoadError } from "../_components/LibraryLoadError";
 
 export default async function CardCollectionPage() {
   const session = await auth();
   if (!session?.user) redirect("/auth/signin?callbackUrl=/library/collection");
 
   const result = await getProgressionAction();
-  if (!result.success) redirect("/");
+  if (!result.success) {
+    return (
+      <LibraryLoadError scope="collection" message={result.error.message} />
+    );
+  }
 
   const progression = result.data.progression;
   const unlockProgress = readUnlockProgressFromResources(progression.resources);

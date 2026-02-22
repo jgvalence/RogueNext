@@ -50,6 +50,14 @@ export const fr = {
     missingPrereqs: "Prerequis manquants",
     insufficientResources: "Ressources insuffisantes",
     genericError: "Une erreur est survenue.",
+    loadErrorTitle: "Impossible de charger la bibliotheque",
+    collectionLoadErrorTitle: "Impossible de charger la collection",
+  },
+  gameHub: {
+    loading: "Chargement...",
+    retry: "Reessayer",
+    unknownError: "Impossible de charger les donnees du jeu.",
+    failedToStart: "Impossible de lancer la partie : {{message}}",
   },
   collection: {
     title: "Collection de cartes",

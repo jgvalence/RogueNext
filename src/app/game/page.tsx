@@ -6,11 +6,20 @@ import { createRunAction } from "@/server/actions/run";
 import { useActiveRun } from "@/lib/query/hooks/use-game-data";
 import { gameKeys } from "@/lib/query/game-keys";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export default function GameHubPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: activeRun, isLoading, isFetching } = useActiveRun();
+  const {
+    data: activeRun,
+    isLoading,
+    isFetching,
+    isError: isActiveRunError,
+    error: activeRunError,
+    refetch: refetchActiveRun,
+  } = useActiveRun();
   const launched = useRef(false);
 
   const createRun = useMutation({
@@ -37,9 +46,34 @@ export default function GameHubPage() {
     }
   }, [isLoading, isFetching, activeRun]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  if (isActiveRunError || createRun.isError) {
+    const message =
+      (activeRunError as Error | null)?.message ??
+      (createRun.error as Error | null)?.message ??
+      t("gameHub.unknownError");
+
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-gray-900 px-6 text-white">
+        <p className="max-w-xl text-center text-red-300">
+          {t("gameHub.failedToStart", { message })}
+        </p>
+        <button
+          type="button"
+          className="rounded-lg border border-gray-600 px-4 py-2 text-sm text-gray-200 hover:border-gray-400"
+          onClick={async () => {
+            launched.current = false;
+            await refetchActiveRun();
+          }}
+        >
+          {t("gameHub.retry")}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
-      <p className="text-gray-400">Chargement…</p>
+      <p className="text-gray-400">{t("gameHub.loading")}</p>
     </div>
   );
 }
