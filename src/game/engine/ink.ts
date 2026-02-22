@@ -37,6 +37,9 @@ export function canUseInkPower(
   state: CombatState,
   power: InkPowerType
 ): boolean {
+  const disabled = state.playerDisruption?.disabledInkPowers ?? [];
+  if (disabled.includes("ALL") || disabled.includes(power)) return false;
+
   // Only one ink power per turn
   if (state.inkPowerUsedThisTurn) return false;
 
@@ -66,6 +69,8 @@ export function applyInkPower(
   _cardDefs: Map<string, CardDefinition>,
   rng: RNG
 ): CombatState {
+  if (!canUseInkPower(state, power)) return state;
+
   const cost = GAME_CONSTANTS.INK_POWER_COSTS[power];
   const afterSpend = spendInk(state, cost);
   if (!afterSpend) return state;

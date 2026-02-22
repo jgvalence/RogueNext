@@ -6,6 +6,16 @@ import { moveCardToDiscard, moveCardToExhaust } from "./deck";
 import { resolveEffects, type EffectTarget } from "./effects";
 import type { RNG } from "./rng";
 
+function getEffectiveCardEnergyCost(
+  definition: CardDefinition,
+  upgraded: boolean
+): number {
+  if (upgraded && definition.upgrade?.energyCost !== undefined) {
+    return definition.upgrade.energyCost;
+  }
+  return definition.energyCost;
+}
+
 export function canPlayCard(
   state: CombatState,
   instanceId: string,
@@ -17,8 +27,13 @@ export function canPlayCard(
   const def = cardDefs.get(cardInst.definitionId);
   if (!def) return false;
   if (def.type === "STATUS" || def.type === "CURSE") return false;
+  if (state.playerDisruption?.frozenHandCardIds?.includes(instanceId))
+    return false;
 
-  if (state.player.energyCurrent < def.energyCost) return false;
+  const effectiveEnergyCost =
+    getEffectiveCardEnergyCost(def, cardInst.upgraded) +
+    (state.playerDisruption?.extraCardCost ?? 0);
+  if (state.player.energyCurrent < effectiveEnergyCost) return false;
   if (def.inkCost > 0 && state.player.inkCurrent < def.inkCost) return false;
 
   return true;
@@ -80,16 +95,18 @@ export function playCard(
       : def.inkCost;
 
   // Apply upgrade: use card-specific upgrade if defined, else generic boost
-  let energyCost = def.energyCost;
+  let energyCost = getEffectiveCardEnergyCost(def, cardInst.upgraded);
   if (cardInst.upgraded) {
     if (def.upgrade) {
       effects = def.upgrade.effects;
-      if (def.upgrade.energyCost !== undefined)
-        energyCost = def.upgrade.energyCost;
     } else {
       effects = boostEffectsForUpgrade(effects);
     }
   }
+
+  energyCost += state.playerDisruption?.extraCardCost ?? 0;
+  if (state.playerDisruption?.frozenHandCardIds?.includes(instanceId))
+    return state;
 
   // Validate costs
   if (state.player.energyCurrent < energyCost) return state;

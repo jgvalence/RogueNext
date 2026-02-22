@@ -26,6 +26,9 @@ export function drawCards(
   let current = { ...state };
   const drawn: CardInstance[] = [...current.hand];
   let remaining = count;
+  const frozen = new Set(current.playerDisruption?.frozenHandCardIds ?? []);
+  let freezeRemaining = current.playerDisruption?.freezeNextDrawsRemaining ?? 0;
+  let drawsToDiscard = current.playerDisruption?.drawsToDiscardRemaining ?? 0;
 
   while (remaining > 0) {
     if (current.drawPile.length === 0 && current.discardPile.length === 0) {
@@ -39,7 +42,19 @@ export function drawCards(
     const card = current.drawPile[0];
     if (!card) break;
 
-    drawn.push(card);
+    if (drawsToDiscard > 0) {
+      drawsToDiscard--;
+      current = {
+        ...current,
+        discardPile: [...current.discardPile, card],
+      };
+    } else {
+      drawn.push(card);
+      if (freezeRemaining > 0) {
+        frozen.add(card.instanceId);
+        freezeRemaining--;
+      }
+    }
     current = {
       ...current,
       drawPile: current.drawPile.slice(1),
@@ -50,6 +65,12 @@ export function drawCards(
   return {
     ...current,
     hand: drawn,
+    playerDisruption: {
+      ...current.playerDisruption,
+      drawsToDiscardRemaining: drawsToDiscard,
+      freezeNextDrawsRemaining: freezeRemaining,
+      frozenHandCardIds: [...frozen],
+    },
   };
 }
 

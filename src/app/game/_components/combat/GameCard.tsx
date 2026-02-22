@@ -7,6 +7,7 @@ import type { CardDefinition } from "@/game/schemas/cards";
 import { CARD_IMAGES } from "@/lib/assets";
 import { Tooltip } from "../shared/Tooltip";
 import { parseDescriptionWithTooltips } from "../shared/parse-description";
+import { buildUpgradedCardDefinition } from "@/game/engine/card-upgrades";
 import {
   localizeCardDescription,
   localizeCardName,
@@ -21,6 +22,7 @@ interface GameCardProps {
   canPlayInked?: boolean;
   isSelected?: boolean;
   isPendingInked?: boolean;
+  isFrozen?: boolean;
   upgraded?: boolean;
   onClick?: () => void;
   onInkedClick?: () => void;
@@ -65,6 +67,7 @@ export function GameCard({
   canPlayInked = false,
   isSelected = false,
   isPendingInked = false,
+  isFrozen = false,
   upgraded = false,
   onClick,
   onInkedClick,
@@ -72,6 +75,9 @@ export function GameCard({
   className,
 }: GameCardProps) {
   const { t } = useTranslation();
+  const displayDefinition = upgraded
+    ? buildUpgradedCardDefinition(definition)
+    : definition;
   const isMd = size === "md";
   const artH =
     isMd && isSelected
@@ -91,22 +97,26 @@ export function GameCard({
       : "w-[64px] lg:w-[88px] xl:w-[104px]";
   const hideArtUntilSelectedOnMobile = size === "md" && !isSelected;
   const [artFailed, setArtFailed] = useState(false);
-  const artImageSrc = CARD_IMAGES[definition.id];
-  const localizedName = localizeCardName(definition);
-  const localizedDescription = localizeCardDescription(definition, t);
-  const localizedInkedDescription = localizeInkedDescription(definition, t);
-  const localizedType = localizeCardType(definition.type, t);
+  const artImageSrc = CARD_IMAGES[displayDefinition.id];
+  const localizedName = localizeCardName(displayDefinition);
+  const localizedDescription = localizeCardDescription(displayDefinition, t);
+  const localizedInkedDescription = localizeInkedDescription(
+    displayDefinition,
+    t
+  );
+  const localizedType = localizeCardType(displayDefinition.type, t);
 
   return (
     <div
       data-keep-selection="true"
       className={cn(
         "relative z-0 flex select-none flex-col overflow-hidden rounded-xl border-2 bg-gray-900 transition-all duration-150",
-        typeBorder[definition.type] ?? "border-gray-500",
+        typeBorder[displayDefinition.type] ?? "border-gray-500",
         cardW,
         canPlay
           ? "cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 lg:hover:-translate-y-3"
           : "cursor-not-allowed opacity-40",
+        isFrozen && "ring-2 ring-cyan-500/80 grayscale",
         isSelected &&
           "z-30 -translate-y-10 ring-2 ring-offset-1 ring-offset-gray-900 lg:-translate-y-3",
         isSelected &&
@@ -118,7 +128,7 @@ export function GameCard({
       onClick={canPlay ? onClick : undefined}
     >
       <div className="absolute -left-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-900 bg-amber-500 text-[10px] font-black text-white shadow-md lg:-left-1.5 lg:-top-1.5 lg:h-7 lg:w-7 lg:text-sm">
-        {definition.energyCost}
+        {displayDefinition.energyCost}
       </div>
 
       {upgraded && (
@@ -127,12 +137,18 @@ export function GameCard({
         </div>
       )}
 
+      {isFrozen && (
+        <div className="absolute left-1 top-1 z-10 rounded bg-cyan-900/80 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wide text-cyan-100">
+          Frozen
+        </div>
+      )}
+
       <div
         className={cn(
           "relative flex-shrink-0 items-center justify-center overflow-hidden bg-gradient-to-b",
           hideArtUntilSelectedOnMobile ? "hidden lg:flex" : "flex",
           artH,
-          typeArtBg[definition.type] ?? "from-gray-800 to-gray-700"
+          typeArtBg[displayDefinition.type] ?? "from-gray-800 to-gray-700"
         )}
       >
         {artImageSrc && !artFailed && (
@@ -147,7 +163,7 @@ export function GameCard({
 
         {(!artImageSrc || artFailed) && (
           <span className="text-2xl opacity-30">
-            {typeIcon[definition.type] ?? "+"}
+            {typeIcon[displayDefinition.type] ?? "+"}
           </span>
         )}
       </div>
@@ -160,7 +176,7 @@ export function GameCard({
         <div
           className={cn(
             "font-bold leading-tight",
-            rarityColors[definition.rarity] ?? "text-white",
+            rarityColors[displayDefinition.rarity] ?? "text-white",
             isMd
               ? "text-[8px] lg:text-[10px] xl:text-[11px]"
               : "text-[8px] lg:text-[9px] xl:text-[10px]"
@@ -172,7 +188,7 @@ export function GameCard({
         <span
           className={cn(
             "w-fit rounded px-1 py-px text-[8px] font-semibold uppercase tracking-wide lg:text-[9px]",
-            typeBadge[definition.type] ?? "bg-gray-600 text-gray-100"
+            typeBadge[displayDefinition.type] ?? "bg-gray-600 text-gray-100"
           )}
         >
           {localizedType}
@@ -193,7 +209,7 @@ export function GameCard({
         </div>
       </div>
 
-      {definition.inkedVariant && (
+      {displayDefinition.inkedVariant && (
         <Tooltip
           className="block px-1 pb-1 lg:px-1.5 lg:pb-1.5"
           content={
@@ -212,7 +228,7 @@ export function GameCard({
                 </p>
                 <p className="text-[11px] text-cyan-200">
                   {localizedInkedDescription ??
-                    definition.inkedVariant.description}
+                    displayDefinition.inkedVariant.description}
                 </p>
               </div>
             </div>
@@ -230,7 +246,7 @@ export function GameCard({
               }}
             >
               + {t("gameCard.labels.ink")} (
-              {definition.inkedVariant.inkMarkCost})
+              {displayDefinition.inkedVariant.inkMarkCost})
               <span
                 className={cn(
                   "mt-0.5 block text-[8px] font-normal leading-tight lg:text-[9px]",
@@ -238,18 +254,18 @@ export function GameCard({
                 )}
               >
                 {localizedInkedDescription ??
-                  definition.inkedVariant.description}
+                  displayDefinition.inkedVariant.description}
               </span>
             </button>
           ) : (
             <div className="rounded border border-gray-700/50 px-1 py-0.5 opacity-50 lg:px-1.5 lg:py-1">
               <p className="text-[8px] font-semibold text-gray-400 lg:text-[10px]">
                 + {t("gameCard.labels.ink")} (
-                {definition.inkedVariant.inkMarkCost})
+                {displayDefinition.inkedVariant.inkMarkCost})
               </p>
               <p className="mt-0.5 text-[8px] leading-tight text-gray-500 lg:text-[9px]">
                 {localizedInkedDescription ??
-                  definition.inkedVariant.description}
+                  displayDefinition.inkedVariant.description}
               </p>
             </div>
           )}

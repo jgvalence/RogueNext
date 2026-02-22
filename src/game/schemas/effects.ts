@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BuffType, EffectType } from "./enums";
+import { BuffType, EffectType, InkPowerType } from "./enums";
 
 export const EffectSchema = z.object({
   type: EffectType,
@@ -7,5 +7,6 @@ export const EffectSchema = z.object({
   buff: BuffType.optional(),
   duration: z.number().optional(),
   cardId: z.string().optional(),
+  inkPower: z.union([InkPowerType, z.literal("ALL")]).optional(),
 });
 export type Effect = z.infer<typeof EffectSchema>;

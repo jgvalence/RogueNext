@@ -450,6 +450,63 @@ function GameContent({
       .sort((a, b) => a.localeCompare(b));
   }, [state.initialUnlockedCardIds, state.unlockedCardIds, cardDefs]);
 
+  const debugEnemySelection = useMemo(() => {
+    if (!isDevBuild || !isAdmin || !state.combat) return null;
+
+    const roomChoices = state.map[state.currentRoom];
+    const selectedRoom = roomChoices?.find((room) => room.completed) ?? roomChoices?.[0];
+    const plannedEnemyIds = selectedRoom?.enemyIds ?? [];
+    const activeEnemies = state.combat.enemies.map((enemy) => {
+      const def = enemyDefs.get(enemy.definitionId);
+      const hasDisruption =
+        def?.abilities.some((ability) =>
+          ability.effects.some((effect) =>
+            [
+              "FREEZE_HAND_CARDS",
+              "NEXT_DRAW_TO_DISCARD_THIS_TURN",
+              "DISABLE_INK_POWER_THIS_TURN",
+              "INCREASE_CARD_COST_THIS_TURN",
+              "INCREASE_CARD_COST_NEXT_TURN",
+              "REDUCE_DRAW_THIS_TURN",
+              "REDUCE_DRAW_NEXT_TURN",
+              "FORCE_DISCARD_RANDOM",
+            ].includes(effect.type)
+          )
+        ) ?? false;
+      return {
+        instanceId: enemy.instanceId,
+        definitionId: enemy.definitionId,
+        biome: def?.biome ?? "UNKNOWN",
+        role: def?.role ?? "UNKNOWN",
+        hasDisruption,
+      };
+    });
+    const hasThematicUnit = activeEnemies.some(
+      (enemy) =>
+        enemy.hasDisruption ||
+        enemy.role === "SUPPORT" ||
+        enemy.role === "CONTROL" ||
+        enemy.role === "TANK"
+    );
+    return {
+      floor: state.floor,
+      room: state.currentRoom,
+      biome: state.currentBiome,
+      plannedEnemyIds,
+      activeEnemies,
+      hasThematicUnit,
+    };
+  }, [
+    isAdmin,
+    isDevBuild,
+    enemyDefs,
+    state.combat,
+    state.currentBiome,
+    state.currentRoom,
+    state.floor,
+    state.map,
+  ]);
+
   return (
     <GameLayout>
       <div
@@ -502,6 +559,7 @@ function GameContent({
             actingEnemyId={actingEnemyId}
             attackingEnemyId={attackingEnemyId}
             isDiscarding={isDiscarding}
+            debugEnemySelection={debugEnemySelection ?? undefined}
           />
         )}
 

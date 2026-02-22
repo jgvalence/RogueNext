@@ -38,6 +38,20 @@ interface CombatViewProps {
   attackingEnemyId?: string | null;
   unlockedInkPowers?: InkPowerType[];
   isDiscarding?: boolean;
+  debugEnemySelection?: {
+    floor: number;
+    room: number;
+    biome: string;
+    plannedEnemyIds: string[];
+    activeEnemies: Array<{
+      instanceId: string;
+      definitionId: string;
+      biome: string;
+      role: string;
+      hasDisruption: boolean;
+    }>;
+    hasThematicUnit: boolean;
+  };
 }
 
 export function CombatView({
@@ -53,6 +67,7 @@ export function CombatView({
   attackingEnemyId = null,
   unlockedInkPowers,
   isDiscarding = false,
+  debugEnemySelection,
 }: CombatViewProps) {
   type PileType = "draw" | "discard" | "exhaust";
 
@@ -63,10 +78,19 @@ export function CombatView({
     useState(false);
   const [isSelectingCheatKillTarget, setIsSelectingCheatKillTarget] =
     useState(false);
+  const [newlySummonedIds, setNewlySummonedIds] = useState<Set<string>>(
+    new Set()
+  );
+  const [summonAnnouncement, setSummonAnnouncement] = useState<string | null>(
+    null
+  );
 
   const discardBtnRef = useRef<HTMLButtonElement>(null);
   const enemyRowRef = useRef<HTMLDivElement>(null);
   const [playingCardId, setPlayingCardId] = useState<string | null>(null);
+  const prevEnemyIdsRef = useRef<string[]>(combat.enemies.map((e) => e.instanceId));
+  const summonHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const spawnClearTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   // Player hit flash + sound
   const prevPlayerHp = useRef(combat.player.currentHp);
@@ -81,6 +105,53 @@ export function CombatView({
     const t = setTimeout(() => setPlayerHit(false), 500);
     return () => clearTimeout(t);
   }, [combat.player.currentHp]);
+
+  useEffect(() => {
+    const prevIds = new Set(prevEnemyIdsRef.current);
+    const spawned = combat.enemies.filter((e) => !prevIds.has(e.instanceId));
+    prevEnemyIdsRef.current = combat.enemies.map((e) => e.instanceId);
+    if (spawned.length === 0) return;
+
+    setNewlySummonedIds((prev) => {
+      const next = new Set(prev);
+      for (const enemy of spawned) next.add(enemy.instanceId);
+      return next;
+    });
+
+    for (const enemy of spawned) {
+      const timer = setTimeout(() => {
+        setNewlySummonedIds((prev) => {
+          const next = new Set(prev);
+          next.delete(enemy.instanceId);
+          return next;
+        });
+      }, 650);
+      spawnClearTimersRef.current.push(timer);
+    }
+
+    if (summonHideTimerRef.current) clearTimeout(summonHideTimerRef.current);
+    const summonerName =
+      (actingEnemyId &&
+        combat.enemies.find((e) => e.instanceId === actingEnemyId)?.name) ||
+      "Enemy";
+    const spawnedNames = spawned.map((e) => e.name);
+    const announcement =
+      spawnedNames.length === 1
+        ? `${summonerName} summons ${spawnedNames[0]}!`
+        : `${summonerName} summons reinforcements!`;
+    setSummonAnnouncement(announcement);
+    summonHideTimerRef.current = setTimeout(
+      () => setSummonAnnouncement(null),
+      1200
+    );
+  }, [combat.enemies, actingEnemyId]);
+
+  useEffect(() => {
+    return () => {
+      if (summonHideTimerRef.current) clearTimeout(summonHideTimerRef.current);
+      for (const timer of spawnClearTimersRef.current) clearTimeout(timer);
+    };
+  }, []);
 
   // TEMPORARY: track whether background image loaded
   const [bgFailed, setBgFailed] = useState(false);
@@ -293,6 +364,37 @@ export function CombatView({
             {turnLabel}
           </span>
         </div>
+        {summonAnnouncement && (
+          <div className="pointer-events-none absolute left-1/2 top-2 z-20 -translate-x-1/2 rounded-full border border-orange-400/60 bg-orange-950/80 px-3 py-1 text-xs font-semibold text-orange-200 shadow-lg shadow-orange-900/50">
+            {summonAnnouncement}
+          </div>
+        )}
+        {debugEnemySelection && (
+          <div className="absolute right-2 top-2 z-20 w-[min(28rem,calc(100%-1rem))] rounded-md border border-cyan-500/40 bg-cyan-950/70 p-2 text-[10px] text-cyan-100 shadow-lg shadow-cyan-950/60 lg:text-xs">
+            <div className="mb-1 flex items-center justify-between font-semibold uppercase tracking-wide text-cyan-200">
+              <span>Enemy Spawn Debug</span>
+              <span>
+                F{debugEnemySelection.floor} R{debugEnemySelection.room + 1} ·{" "}
+                {debugEnemySelection.biome}
+              </span>
+            </div>
+            <p className="truncate text-cyan-100/90">
+              Planned: {debugEnemySelection.plannedEnemyIds.join(", ") || "-"}
+            </p>
+            <p className="mb-1 text-cyan-100/90">
+              Thematic unit present:{" "}
+              {debugEnemySelection.hasThematicUnit ? "YES" : "NO"}
+            </p>
+            <div className="max-h-24 space-y-0.5 overflow-auto pr-1">
+              {debugEnemySelection.activeEnemies.map((enemy) => (
+                <p key={enemy.instanceId} className="truncate text-cyan-50/90">
+                  {enemy.definitionId} [{enemy.biome}] role:{enemy.role}
+                  {enemy.hasDisruption ? " disruption" : ""}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Enemy row */}
         <div
@@ -307,6 +409,7 @@ export function CombatView({
                 key={enemy.instanceId}
                 enemy={enemy}
                 definition={def}
+                enemyDamageScale={combat.enemyDamageScale}
                 isTargeted={
                   selectingEnemyTarget &&
                   selectedCardId !== null &&
@@ -320,6 +423,7 @@ export function CombatView({
                 )}
                 isActing={actingEnemyId === enemy.instanceId}
                 isAttacking={attackingEnemyId === enemy.instanceId}
+                isNewlySummoned={newlySummonedIds.has(enemy.instanceId)}
                 onClick={() => handleEnemyClick(enemy.instanceId)}
               />
             );
@@ -436,7 +540,7 @@ export function CombatView({
 
           {/* HP + buffs */}
           <div className="min-w-0 flex-1">
-            <PlayerStats player={combat.player} />
+            <PlayerStats player={combat.player} disruption={combat.playerDisruption} />
           </div>
 
           {/* Ink gauge */}

@@ -262,6 +262,59 @@ function applyHealToTarget(
   return state;
 }
 
+function freezeCardsInHand(state: CombatState, count: number): CombatState {
+  if (count <= 0) return state;
+  const alreadyFrozen = new Set(state.playerDisruption?.frozenHandCardIds ?? []);
+  const toFreeze = state.hand
+    .filter((c) => !alreadyFrozen.has(c.instanceId))
+    .slice(0, count)
+    .map((c) => c.instanceId);
+  if (toFreeze.length === 0) {
+    return {
+      ...state,
+      playerDisruption: {
+        ...state.playerDisruption,
+        freezeNextDrawsRemaining:
+          (state.playerDisruption.freezeNextDrawsRemaining ?? 0) + count,
+      },
+    };
+  }
+
+  return {
+    ...state,
+    playerDisruption: {
+      ...state.playerDisruption,
+      frozenHandCardIds: [...alreadyFrozen, ...toFreeze],
+      freezeNextDrawsRemaining:
+        (state.playerDisruption.freezeNextDrawsRemaining ?? 0) +
+        (count - toFreeze.length),
+    },
+  };
+}
+
+function forceDiscardRandom(state: CombatState, count: number, rng: RNG): CombatState {
+  if (count <= 0 || state.hand.length === 0) return state;
+  let current = { ...state, hand: [...state.hand], discardPile: [...state.discardPile] };
+  let remaining = Math.min(count, current.hand.length);
+  while (remaining > 0 && current.hand.length > 0) {
+    const idx = rng.nextInt(0, current.hand.length - 1);
+    const [card] = current.hand.splice(idx, 1);
+    if (!card) break;
+    current.discardPile.push(card);
+    const frozen = new Set(current.playerDisruption?.frozenHandCardIds ?? []);
+    frozen.delete(card.instanceId);
+    current = {
+      ...current,
+      playerDisruption: {
+        ...current.playerDisruption,
+        frozenHandCardIds: [...frozen],
+      },
+    };
+    remaining--;
+  }
+  return current;
+}
+
 export function resolveEffect(
   state: CombatState,
   effect: Effect,
@@ -444,6 +497,80 @@ export function resolveEffect(
           },
         ],
       };
+
+    case "FREEZE_HAND_CARDS":
+      return freezeCardsInHand(state, Math.max(0, Math.floor(effect.value)));
+
+    case "NEXT_DRAW_TO_DISCARD_THIS_TURN":
+      return {
+        ...state,
+        playerDisruption: {
+          ...state.playerDisruption,
+          drawsToDiscardRemaining:
+            (state.playerDisruption.drawsToDiscardRemaining ?? 0) +
+            Math.max(0, Math.floor(effect.value)),
+        },
+      };
+
+    case "DISABLE_INK_POWER_THIS_TURN": {
+      const power = effect.inkPower ?? "ALL";
+      return {
+        ...state,
+        playerDisruption: {
+          ...state.playerDisruption,
+          disabledInkPowers: Array.from(
+            new Set([...(state.playerDisruption.disabledInkPowers ?? []), power])
+          ),
+        },
+      };
+    }
+
+    case "INCREASE_CARD_COST_THIS_TURN":
+      return {
+        ...state,
+        playerDisruption: {
+          ...state.playerDisruption,
+          extraCardCost:
+            (state.playerDisruption.extraCardCost ?? 0) +
+            Math.max(0, Math.floor(effect.value)),
+        },
+      };
+
+    case "INCREASE_CARD_COST_NEXT_TURN":
+      return {
+        ...state,
+        nextPlayerDisruption: {
+          ...state.nextPlayerDisruption,
+          extraCardCost:
+            (state.nextPlayerDisruption.extraCardCost ?? 0) +
+            Math.max(0, Math.floor(effect.value)),
+        },
+      };
+
+    case "REDUCE_DRAW_THIS_TURN":
+      return {
+        ...state,
+        playerDisruption: {
+          ...state.playerDisruption,
+          drawPenalty:
+            (state.playerDisruption.drawPenalty ?? 0) +
+            Math.max(0, Math.floor(effect.value)),
+        },
+      };
+
+    case "REDUCE_DRAW_NEXT_TURN":
+      return {
+        ...state,
+        nextPlayerDisruption: {
+          ...state.nextPlayerDisruption,
+          drawPenalty:
+            (state.nextPlayerDisruption.drawPenalty ?? 0) +
+            Math.max(0, Math.floor(effect.value)),
+        },
+      };
+
+    case "FORCE_DISCARD_RANDOM":
+      return forceDiscardRandom(state, Math.max(0, Math.floor(effect.value)), rng);
 
     default:
       return state;

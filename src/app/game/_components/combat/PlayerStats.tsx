@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { PlayerState } from "@/game/schemas/entities";
+import type { TurnDisruption } from "@/game/schemas/combat-state";
 import { HpBar } from "../shared/HpBar";
 import { EnergyOrb } from "../shared/EnergyOrb";
 import { DamageNumber } from "./DamageNumber";
@@ -10,9 +11,10 @@ import { Tooltip } from "../shared/Tooltip";
 
 interface PlayerStatsProps {
   player: PlayerState;
+  disruption?: TurnDisruption;
 }
 
-export function PlayerStats({ player }: PlayerStatsProps) {
+export function PlayerStats({ player, disruption }: PlayerStatsProps) {
   const prevHp = useRef(player.currentHp);
   const [dmgPopups, setDmgPopups] = useState<
     { id: number; value: number; type: "damage" | "heal" }[]
@@ -86,6 +88,26 @@ export function PlayerStats({ player }: PlayerStatsProps) {
           {player.buffs.map((b, i) => (
             <BuffPill key={`${b.type}-${i}`} buff={b} />
           ))}
+          {(disruption?.extraCardCost ?? 0) > 0 && (
+            <span className="rounded bg-amber-900 px-2 py-0.5 text-amber-200">
+              Cards +{disruption?.extraCardCost} cost
+            </span>
+          )}
+          {(disruption?.drawPenalty ?? 0) > 0 && (
+            <span className="rounded bg-slate-700 px-2 py-0.5 text-slate-200">
+              Draw -{disruption?.drawPenalty}
+            </span>
+          )}
+          {(disruption?.drawsToDiscardRemaining ?? 0) > 0 && (
+            <span className="rounded bg-purple-900 px-2 py-0.5 text-purple-200">
+              Next draw to discard
+            </span>
+          )}
+          {(disruption?.disabledInkPowers ?? []).length > 0 && (
+            <span className="rounded bg-cyan-900 px-2 py-0.5 text-cyan-200">
+              Ink power locked
+            </span>
+          )}
         </div>
       </div>
     </div>

@@ -16,6 +16,16 @@ import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 
 type EnemyDef = (typeof enemyDefinitions)[0];
+const DISRUPTION_EFFECT_TYPES = new Set([
+  "FREEZE_HAND_CARDS",
+  "NEXT_DRAW_TO_DISCARD_THIS_TURN",
+  "DISABLE_INK_POWER_THIS_TURN",
+  "INCREASE_CARD_COST_THIS_TURN",
+  "INCREASE_CARD_COST_NEXT_TURN",
+  "REDUCE_DRAW_THIS_TURN",
+  "REDUCE_DRAW_NEXT_TURN",
+  "FORCE_DISCARD_RANDOM",
+]);
 
 function weightedPick<T>(
   items: readonly T[],
@@ -34,12 +44,37 @@ function weightedPick<T>(
   return items[items.length - 1]!;
 }
 
-function getEnemySelectionWeight(enemy: EnemyDef, floor: number): number {
+function getEnemySelectionWeight(
+  enemy: EnemyDef,
+  floor: number,
+  currentBiome?: BiomeType
+): number {
   // Base weight by explicit tier ("difficulty level").
   const tierWeight = 1 + Math.max(0, enemy.tier - 1) * Math.max(0, floor - 1);
   // Extra bias by HP so stronger monsters inside a tier appear more on high floors.
   const hpWeight = 1 + (enemy.maxHp / 100) * Math.max(0, floor - 1);
-  return tierWeight * hpWeight;
+  let biomeWeight = 1;
+  if (currentBiome) {
+    if (enemy.biome === currentBiome) biomeWeight = 2.2;
+    else if (enemy.biome === "LIBRARY" && currentBiome !== "LIBRARY")
+      biomeWeight = 0.35;
+  }
+  return tierWeight * hpWeight * biomeWeight;
+}
+
+function hasDisruptionAbility(enemy: EnemyDef): boolean {
+  return enemy.abilities.some((ability) =>
+    ability.effects.some((effect) => DISRUPTION_EFFECT_TYPES.has(effect.type))
+  );
+}
+
+function isThematicEnemy(enemy: EnemyDef): boolean {
+  return (
+    hasDisruptionAbility(enemy) ||
+    enemy.role === "SUPPORT" ||
+    enemy.role === "CONTROL" ||
+    enemy.role === "TANK"
+  );
 }
 
 /**
@@ -148,7 +183,7 @@ export function generateFloorMap(
         eliteDefs.length > 0
           ? weightedPick(
               eliteDefs,
-              (e) => getEnemySelectionWeight(e, floor),
+              (e) => getEnemySelectionWeight(e, floor, biome),
               rng
             ).id
           : "ink_slime";
@@ -280,7 +315,7 @@ function generateRoomEnemies(
   if (room >= 3 && eliteDefs.length > 0 && rng.next() < eliteChance) {
     const elite = weightedPick(
       eliteDefs,
-      (e) => getEnemySelectionWeight(e, floor),
+      (e) => getEnemySelectionWeight(e, floor, biome),
       rng
     );
     return { enemyIds: [elite.id], isElite: true };
@@ -295,20 +330,107 @@ function generateRoomEnemies(
     return { enemyIds: ["ink_slime"], isElite: false };
   }
 
+  const biomeCountBonusByBiome: Record<BiomeType, number> = {
+    LIBRARY: 0,
+    VIKING: 0,
+    GREEK: 0,
+    EGYPTIAN: 0,
+    LOVECRAFTIAN: -1,
+    AZTEC: 0,
+    CELTIC: -1,
+    RUSSIAN: -1,
+    AFRICAN: 1,
+  };
   const maxEnemyCount = Math.min(
     GAME_CONSTANTS.MAX_ENEMIES,
-    2 + Math.floor(floor / 2)
+    Math.max(
+      1,
+      2 + Math.floor(floor / 2) + (biomeCountBonusByBiome[biome] ?? 0)
+    )
   );
   const count = rng.nextInt(1, maxEnemyCount);
   const enemies: string[] = [];
+  const assaultPool = normalPool.filter(
+    (e) => e.role === "ASSAULT" || e.role === "HYBRID"
+  );
+  const supportPool = normalPool.filter(
+    (e) => e.role === "SUPPORT" || e.role === "CONTROL" || e.role === "TANK"
+  );
+  const disruptionPool = normalPool.filter(hasDisruptionAbility);
+
   for (let i = 0; i < count; i++) {
+    const preferDisruptionLead =
+      i === 0 && biome === "AFRICAN" && disruptionPool.length > 0;
+    const preferSupportSlot =
+      count > 1 && i > 0 && (biome === "AFRICAN" || biome === "LIBRARY");
+    const sourcePool =
+      preferDisruptionLead
+        ? disruptionPool
+        : preferSupportSlot && supportPool.length > 0
+        ? supportPool
+        : assaultPool.length > 0
+          ? assaultPool
+          : normalPool;
     const picked = weightedPick(
-      normalPool,
-      (e) => getEnemySelectionWeight(e, floor),
+      sourcePool,
+      (e) => getEnemySelectionWeight(e, floor, biome),
       rng
     );
     enemies.push(picked.id);
   }
+
+  const selectedDefs = enemies
+    .map((enemyId) => normalPool.find((enemy) => enemy.id === enemyId))
+    .filter((enemy): enemy is EnemyDef => !!enemy);
+
+  // Keep the encounter identity anchored in the chosen biome.
+  if (biome !== "LIBRARY" && !selectedDefs.some((enemy) => enemy.biome === biome)) {
+    const biomePool = normalPool.filter((enemy) => enemy.biome === biome);
+    if (biomePool.length > 0) {
+      enemies[0] = weightedPick(
+        biomePool,
+        (enemy) => getEnemySelectionWeight(enemy, floor, biome),
+        rng
+      ).id;
+    }
+  }
+
+  // Ensure multi-enemy fights are not pure assault mirrors.
+  if (count > 1) {
+    const refreshedDefs = enemies
+      .map((enemyId) => normalPool.find((enemy) => enemy.id === enemyId))
+      .filter((enemy): enemy is EnemyDef => !!enemy);
+    const hasThematicUnit = refreshedDefs.some(isThematicEnemy);
+    if (!hasThematicUnit) {
+      const biomeThematicPool = normalPool.filter(
+        (enemy) => enemy.biome === biome && isThematicEnemy(enemy)
+      );
+      const fallbackThematicPool = normalPool.filter(isThematicEnemy);
+      const thematicPool =
+        biomeThematicPool.length > 0 ? biomeThematicPool : fallbackThematicPool;
+      if (thematicPool.length > 0) {
+        enemies[count - 1] = weightedPick(
+          thematicPool,
+          (enemy) => getEnemySelectionWeight(enemy, floor, biome),
+          rng
+        ).id;
+      }
+    }
+  }
+
+  // In larger packs, avoid full clone squads when alternatives exist.
+  if (count >= 3 && new Set(enemies).size === 1 && normalPool.length > 1) {
+    const cloneId = enemies[0]!;
+    const alternatives = normalPool.filter((enemy) => enemy.id !== cloneId);
+    if (alternatives.length > 0) {
+      enemies[count - 1] = weightedPick(
+        alternatives,
+        (enemy) => getEnemySelectionWeight(enemy, floor, biome),
+        rng
+      ).id;
+    }
+  }
+
   return { enemyIds: enemies, isElite: false };
 }
 
@@ -382,9 +504,12 @@ export function completeCombat(
 
   if (isBossRoom && !isFinalFloor) {
     if (runState.floor === 1) {
-      // First transition (floor 1 -> 2): always include LIBRARY.
-      const firstNonLibrary = rng.pick(GAME_CONSTANTS.AVAILABLE_BIOMES);
-      pendingBiomeChoices = ["LIBRARY", firstNonLibrary];
+      // First transition (floor 1 -> 2): offer 2 distinct non-LIBRARY biomes.
+      const shuffled = rng.shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);
+      pendingBiomeChoices = [shuffled[0]!, shuffled[1]!] as [
+        BiomeType,
+        BiomeType,
+      ];
     } else {
       // Floors 2+: draw 2 distinct non-LIBRARY biomes.
       const shuffled = rng.shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);

@@ -101,6 +101,22 @@ function makeMinimalCombat(overrides?: Partial<CombatState>): CombatState {
     exhaustPile: [],
     inkPowerUsedThisTurn: false,
     firstHitReductionUsed: false,
+    playerDisruption: {
+      extraCardCost: 0,
+      drawPenalty: 0,
+      drawsToDiscardRemaining: 0,
+      freezeNextDrawsRemaining: 0,
+      frozenHandCardIds: [],
+      disabledInkPowers: [],
+    },
+    nextPlayerDisruption: {
+      extraCardCost: 0,
+      drawPenalty: 0,
+      drawsToDiscardRemaining: 0,
+      freezeNextDrawsRemaining: 0,
+      frozenHandCardIds: [],
+      disabledInkPowers: [],
+    },
     ...overrides,
   };
 }
@@ -1574,6 +1590,97 @@ describe("Relics", () => {
     const state = makeMinimalCombat();
     const result = applyRelicsOnCombatStart(state, ["briar_codex"]);
     expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+  });
+});
+
+describe("Combat disruption effects", () => {
+  it("FREEZE_HAND_CARDS marks cards as frozen and prevents play", () => {
+    const rng = createRNG("freeze-effect");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "strike", upgraded: false }],
+      player: {
+        ...makeMinimalCombat().player,
+        energyCurrent: 3,
+      },
+    });
+
+    const result = resolveEffects(
+      state,
+      [{ type: "FREEZE_HAND_CARDS", value: 1 }],
+      { source: { type: "enemy", instanceId: "e1" }, target: "player" },
+      rng
+    );
+
+    expect(result.playerDisruption.frozenHandCardIds).toContain("c1");
+    expect(canPlayCard(result, "c1", cardDefs)).toBe(false);
+  });
+
+  it("NEXT_DRAW_TO_DISCARD_THIS_TURN sends the next drawn card to discard", () => {
+    const rng = createRNG("next-draw-discard");
+    const state = makeMinimalCombat({
+      hand: [],
+      drawPile: [{ instanceId: "c1", definitionId: "strike", upgraded: false }],
+      discardPile: [],
+    });
+
+    const disrupted = resolveEffects(
+      state,
+      [{ type: "NEXT_DRAW_TO_DISCARD_THIS_TURN", value: 1 }],
+      { source: { type: "enemy", instanceId: "e1" }, target: "player" },
+      rng
+    );
+    const afterDraw = drawCards(disrupted, 1, rng);
+
+    expect(afterDraw.hand).toHaveLength(0);
+    expect(afterDraw.discardPile.map((c) => c.instanceId)).toContain("c1");
+  });
+
+  it("support enemies use offensive fallback when alone", () => {
+    const supportDef = Array.from(enemyDefs.values()).find((def) => {
+      if (def.role !== "SUPPORT") return false;
+      const hasSupportAbility = def.abilities.some(
+        (a) => !a.effects.some((e) => e.type === "DAMAGE")
+      );
+      const hasDamageAbility = def.abilities.some((a) =>
+        a.effects.some((e) => e.type === "DAMAGE")
+      );
+      return hasSupportAbility && hasDamageAbility;
+    });
+    expect(supportDef).toBeDefined();
+    if (!supportDef) return;
+
+    const supportAbilityIndex = supportDef.abilities.findIndex(
+      (a) => !a.effects.some((e) => e.type === "DAMAGE")
+    );
+    expect(supportAbilityIndex).toBeGreaterThanOrEqual(0);
+    if (supportAbilityIndex < 0) return;
+
+    const enemy = {
+      instanceId: "support-1",
+      definitionId: supportDef.id,
+      name: supportDef.name,
+      currentHp: supportDef.maxHp,
+      maxHp: supportDef.maxHp,
+      block: 0,
+      speed: supportDef.speed,
+      buffs: [],
+      intentIndex: supportAbilityIndex,
+    };
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 80, maxHp: 80 },
+      enemies: [enemy],
+      allies: [],
+    });
+
+    const result = executeOneEnemyTurn(
+      state,
+      enemy,
+      supportDef,
+      createRNG("support-alone-fallback"),
+      enemyDefs
+    );
+
+    expect(result.player.currentHp).toBeLessThan(80);
   });
 });
 

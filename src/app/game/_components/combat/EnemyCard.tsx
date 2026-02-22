@@ -22,20 +22,24 @@ import { playSound } from "@/lib/sound";
 interface EnemyCardProps {
   enemy: EnemyState;
   definition: EnemyDefinition;
+  enemyDamageScale?: number;
   intentTargetLabel?: string | null;
   isTargeted?: boolean;
   isActing?: boolean;
   isAttacking?: boolean;
+  isNewlySummoned?: boolean;
   onClick?: () => void;
 }
 
 export function EnemyCard({
   enemy,
   definition,
+  enemyDamageScale = 1,
   intentTargetLabel = null,
   isTargeted = false,
   isActing = false,
   isAttacking = false,
+  isNewlySummoned = false,
   onClick,
 }: EnemyCardProps) {
   const isDead = enemy.currentHp <= 0;
@@ -101,6 +105,7 @@ export function EnemyCard({
       className={cn(
         "relative flex flex-col overflow-hidden rounded-xl border-2 bg-gray-900/95 shadow-md transition-all duration-150",
         isAttacking && "animate-enemy-attack",
+        isNewlySummoned && "animate-enemy-summon-enter",
         isDead && "opacity-30 grayscale",
         cardW,
         borderClass,
@@ -244,30 +249,49 @@ export function EnemyCard({
             </div>
             {/* Effect chips */}
             <div className="mt-1 flex flex-wrap items-center gap-1">
-              {formatIntentEffects(intent.effects)}
+              {formatIntentEffects(
+                intent.effects,
+                definition.id,
+                intent.name,
+                enemyDamageScale
+              )}
             </div>
           </div>
+        )}
+        {!isDead && definition.isBoss && (
+          <BossPhaseHint enemy={enemy} definition={definition} />
         )}
       </div>
     </div>
   );
 }
 
-function formatIntentEffects(effects: Effect[]): ReactNode[] {
+function formatIntentEffects(
+  effects: Effect[],
+  definitionId: string,
+  abilityName: string,
+  enemyDamageScale: number
+): ReactNode[] {
   const parts: ReactNode[] = [];
 
   for (const effect of effects) {
     switch (effect.type) {
       case "DAMAGE":
+        {
+          const scaledDamage = Math.max(
+            1,
+            Math.round(effect.value * enemyDamageScale)
+          );
         parts.push(
           <span
             key={`d-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-red-900/60 px-1.5 py-0.5 text-sm font-black text-red-300 lg:text-base"
           >
-            ⚔ {effect.value}
+            ⚔ {scaledDamage}
           </span>
         );
         break;
+        }
 
       case "BLOCK":
         parts.push(
@@ -338,8 +362,140 @@ function formatIntentEffects(effects: Effect[]): ReactNode[] {
           </span>
         );
         break;
+
+      case "FREEZE_HAND_CARDS":
+        parts.push(
+          <span
+            key={`freeze-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-cyan-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 lg:text-[11px]"
+          >
+            Freeze {effect.value}
+          </span>
+        );
+        break;
+
+      case "NEXT_DRAW_TO_DISCARD_THIS_TURN":
+        parts.push(
+          <span
+            key={`nd2d-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-purple-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-purple-200 lg:text-[11px]"
+          >
+            Next draw discard
+          </span>
+        );
+        break;
+
+      case "DISABLE_INK_POWER_THIS_TURN":
+        parts.push(
+          <span
+            key={`inklock-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-cyan-900/80 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-100 lg:text-[11px]"
+          >
+            Lock ink {effect.inkPower ?? "all"}
+          </span>
+        );
+        break;
+
+      case "INCREASE_CARD_COST_THIS_TURN":
+      case "INCREASE_CARD_COST_NEXT_TURN":
+        parts.push(
+          <span
+            key={`costup-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-amber-900/80 px-1.5 py-0.5 text-[10px] font-semibold text-amber-100 lg:text-[11px]"
+          >
+            Cards +{effect.value} cost
+          </span>
+        );
+        break;
+
+      case "REDUCE_DRAW_THIS_TURN":
+      case "REDUCE_DRAW_NEXT_TURN":
+        parts.push(
+          <span
+            key={`drawdown-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-slate-700 px-1.5 py-0.5 text-[10px] font-semibold text-slate-100 lg:text-[11px]"
+          >
+            Draw -{effect.value}
+          </span>
+        );
+        break;
+
+      case "FORCE_DISCARD_RANDOM":
+        parts.push(
+          <span
+            key={`forcediscard-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-rose-900/80 px-1.5 py-0.5 text-[10px] font-semibold text-rose-100 lg:text-[11px]"
+          >
+            Random discard {effect.value}
+          </span>
+        );
+        break;
     }
   }
 
+  const summonLabel = getSummonLabelFromBossAbility(definitionId, abilityName);
+  if (summonLabel) {
+    parts.push(
+      <span
+        key={`summon-${parts.length}`}
+        className="inline-flex items-center gap-0.5 rounded bg-orange-900/60 px-1.5 py-0.5 text-[10px] font-semibold text-orange-200 lg:text-[11px]"
+      >
+        Summon {summonLabel}
+      </span>
+    );
+  }
+
   return parts;
+}
+
+function getSummonLabelFromBossAbility(
+  definitionId: string,
+  abilityName: string
+): string | null {
+  const key = `${definitionId}:${abilityName}`;
+  switch (key) {
+    case "chapter_guardian:Page Storm":
+      return "Ink Slime";
+    case "fenrir:Pack Howl":
+      return "Draugr";
+    case "nyarlathotep_shard:Void Mantle":
+      return "Cultist Scribe";
+    default:
+      return null;
+  }
+}
+
+function BossPhaseHint({
+  enemy,
+  definition,
+}: {
+  enemy: EnemyState;
+  definition: EnemyDefinition;
+}) {
+  const label = getPhaseTwoSummonLabel(definition.id);
+  if (!label) return null;
+  const phaseKey = `${definition.id}_phase2`;
+  const alreadyTriggered = (enemy.mechanicFlags?.[phaseKey] ?? 0) > 0;
+  if (alreadyTriggered) return null;
+
+  return (
+    <div className="mt-1 rounded border border-amber-700/60 bg-amber-950/40 px-1.5 py-1 text-[9px] text-amber-200 lg:text-[10px]">
+      Phase 2 (&lt;50% HP): summons {label}
+    </div>
+  );
+}
+
+function getPhaseTwoSummonLabel(definitionId: string): string | null {
+  switch (definitionId) {
+    case "fenrir":
+      return "Draugr";
+    case "nyarlathotep_shard":
+      return "Void Tendril";
+    case "baba_yaga_hut":
+      return "Frost Witch";
+    case "soundiata_spirit":
+      return "Mask Hunter";
+    default:
+      return null;
+  }
 }

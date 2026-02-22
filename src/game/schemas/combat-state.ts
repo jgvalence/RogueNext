@@ -5,6 +5,7 @@ import {
   EnemyStateSchema,
   AllyStateSchema,
 } from "./entities";
+import { InkPowerType } from "./enums";
 
 export const CombatPhase = z.enum([
   "PLAYER_TURN",
@@ -13,6 +14,16 @@ export const CombatPhase = z.enum([
   "COMBAT_LOST",
 ]);
 export type CombatPhase = z.infer<typeof CombatPhase>;
+
+export const TurnDisruptionSchema = z.object({
+  extraCardCost: z.number().int().default(0),
+  drawPenalty: z.number().int().default(0),
+  drawsToDiscardRemaining: z.number().int().default(0),
+  freezeNextDrawsRemaining: z.number().int().default(0),
+  frozenHandCardIds: z.array(z.string()).default([]),
+  disabledInkPowers: z.array(z.union([InkPowerType, z.literal("ALL")])).default([]),
+});
+export type TurnDisruption = z.infer<typeof TurnDisruptionSchema>;
 
 export const CombatStateSchema = z.object({
   floor: z.number().int().default(1),
@@ -28,5 +39,7 @@ export const CombatStateSchema = z.object({
   exhaustPile: z.array(CardInstanceSchema).default([]),
   inkPowerUsedThisTurn: z.boolean().default(false),
   firstHitReductionUsed: z.boolean().default(false),
+  playerDisruption: TurnDisruptionSchema.default({}),
+  nextPlayerDisruption: TurnDisruptionSchema.default({}),
 });
 export type CombatState = z.infer<typeof CombatStateSchema>;

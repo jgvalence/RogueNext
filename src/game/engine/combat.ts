@@ -16,6 +16,38 @@ import { applyRelicsOnTurnStart } from "./relics";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 
+const EMPTY_DISRUPTION: CombatState["playerDisruption"] = {
+  extraCardCost: 0,
+  drawPenalty: 0,
+  drawsToDiscardRemaining: 0,
+  freezeNextDrawsRemaining: 0,
+  frozenHandCardIds: [],
+  disabledInkPowers: [],
+};
+
+function mergeDisruptions(
+  current: CombatState["playerDisruption"],
+  incoming: CombatState["nextPlayerDisruption"]
+): CombatState["playerDisruption"] {
+  return {
+    extraCardCost: (current.extraCardCost ?? 0) + (incoming.extraCardCost ?? 0),
+    drawPenalty: (current.drawPenalty ?? 0) + (incoming.drawPenalty ?? 0),
+    drawsToDiscardRemaining:
+      (current.drawsToDiscardRemaining ?? 0) +
+      (incoming.drawsToDiscardRemaining ?? 0),
+    freezeNextDrawsRemaining:
+      (current.freezeNextDrawsRemaining ?? 0) +
+      (incoming.freezeNextDrawsRemaining ?? 0),
+    frozenHandCardIds: [...(current.frozenHandCardIds ?? [])],
+    disabledInkPowers: Array.from(
+      new Set([
+        ...(current.disabledInkPowers ?? []),
+        ...(incoming.disabledInkPowers ?? []),
+      ])
+    ),
+  };
+}
+
 /**
  * Initialize a new combat encounter.
  */
@@ -30,11 +62,17 @@ export function initCombat(
 ): CombatState {
   const floorEnemyHpMultiplier = 1 + (runState.floor - 1) * 0.15;
   const enemyDamageScale = 1 + (runState.floor - 1) * 0.18;
+  const enemySpawnCountByDef: Record<string, number> = {};
 
   // Create enemy instances
   const enemies: EnemyState[] = enemyIds.map((id) => {
     const def = enemyDefs.get(id);
     if (!def) throw new Error(`Unknown enemy definition: ${id}`);
+    const spawnedCount = enemySpawnCountByDef[id] ?? 0;
+    enemySpawnCountByDef[id] = spawnedCount + 1;
+    const abilityCount = Math.max(1, def.abilities.length);
+    // Desync identical enemies so they don't mirror the exact same opening intent.
+    const initialIntentIndex = spawnedCount % abilityCount;
     const scaledHp = Math.max(
       1,
       Math.round(def.maxHp * floorEnemyHpMultiplier)
@@ -49,7 +87,7 @@ export function initCombat(
       mechanicFlags: {},
       speed: def.speed,
       buffs: [],
-      intentIndex: 0,
+      intentIndex: initialIntentIndex,
     };
   });
 
@@ -108,6 +146,8 @@ export function initCombat(
     exhaustPile: [],
     inkPowerUsedThisTurn: false,
     firstHitReductionUsed: false,
+    playerDisruption: { ...EMPTY_DISRUPTION },
+    nextPlayerDisruption: { ...EMPTY_DISRUPTION },
   };
 
   // Apply meta-progression bonuses if any
@@ -139,6 +179,11 @@ export function startPlayerTurn(
     phase: "PLAYER_TURN",
     turnNumber: state.turnNumber + 1,
     inkPowerUsedThisTurn: false,
+    playerDisruption: mergeDisruptions(
+      state.playerDisruption ?? { ...EMPTY_DISRUPTION },
+      state.nextPlayerDisruption ?? { ...EMPTY_DISRUPTION }
+    ),
+    nextPlayerDisruption: { ...EMPTY_DISRUPTION },
     player: {
       ...state.player,
       currentHp: Math.min(
@@ -149,7 +194,11 @@ export function startPlayerTurn(
   };
 
   current = applyRelicsOnTurnStart(current, relicIds);
-  current = drawCards(current, current.player.drawCount, rng);
+  current = drawCards(
+    current,
+    Math.max(0, current.player.drawCount - (current.playerDisruption.drawPenalty ?? 0)),
+    rng
+  );
   return current;
 }
 
@@ -161,6 +210,7 @@ export function endPlayerTurn(state: CombatState): CombatState {
   return {
     ...afterDiscard,
     phase: "ALLIES_ENEMIES_TURN",
+    playerDisruption: { ...EMPTY_DISRUPTION },
   };
 }
 

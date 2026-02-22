@@ -44,6 +44,14 @@ export const EffectType = z.enum([
   "DRAIN_INK",
   "ADD_CARD_TO_DRAW",
   "ADD_CARD_TO_DISCARD",
+  "FREEZE_HAND_CARDS",
+  "NEXT_DRAW_TO_DISCARD_THIS_TURN",
+  "DISABLE_INK_POWER_THIS_TURN",
+  "INCREASE_CARD_COST_THIS_TURN",
+  "INCREASE_CARD_COST_NEXT_TURN",
+  "REDUCE_DRAW_THIS_TURN",
+  "REDUCE_DRAW_NEXT_TURN",
+  "FORCE_DISCARD_RANDOM",
 ]);
 export type EffectType = z.infer<typeof EffectType>;
 
@@ -72,6 +80,15 @@ export const BiomeType = z.enum([
   "AFRICAN",
 ]);
 export type BiomeType = z.infer<typeof BiomeType>;
+
+export const EnemyRole = z.enum([
+  "ASSAULT",
+  "SUPPORT",
+  "CONTROL",
+  "TANK",
+  "HYBRID",
+]);
+export type EnemyRole = z.infer<typeof EnemyRole>;
 
 export const BiomeResource = z.enum([
   "PAGES",

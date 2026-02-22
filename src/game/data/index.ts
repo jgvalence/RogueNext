@@ -6,6 +6,11 @@ import { enemyDefinitions } from "./enemies";
 import { relicDefinitions } from "./relics";
 import { allyDefinitions } from "./allies";
 import { BIOME_METADATA } from "./biomes";
+import {
+  biomeCombatDoctrines,
+  enemyRolePrinciples,
+  disruptionEffectCatalog,
+} from "./combat-doctrine";
 import { histoireDefinitions, buildHistoireDefsMap } from "./histoires";
 
 export {
@@ -16,6 +21,9 @@ export {
   relicDefinitions,
   allyDefinitions,
   BIOME_METADATA,
+  biomeCombatDoctrines,
+  enemyRolePrinciples,
+  disruptionEffectCatalog,
   histoireDefinitions,
   buildHistoireDefsMap,
 };

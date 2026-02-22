@@ -14,14 +14,34 @@ import { nanoid } from "nanoid";
 
 /**
  * Determine which ability an enemy will use next.
- * MVP: cycle through abilities sequentially.
+ * Uses ability weights with a soft anti-repeat penalty.
  */
 export function getNextIntentIndex(
   enemy: EnemyState,
-  enemyDef: EnemyDefinition
+  enemyDef: EnemyDefinition,
+  rng: RNG
 ): number {
-  if (enemyDef.abilities.length === 0) return 0;
-  return (enemy.intentIndex + 1) % enemyDef.abilities.length;
+  const abilities = enemyDef.abilities;
+  if (abilities.length === 0) return 0;
+  if (abilities.length === 1) return 0;
+
+  const repeatPenalty = abilities.length >= 3 ? 0.2 : 0.6;
+  const weights = abilities.map((ability, index) => {
+    const base = Math.max(0.01, ability.weight ?? 1);
+    return index === enemy.intentIndex ? base * repeatPenalty : base;
+  });
+
+  const total = weights.reduce((sum, w) => sum + w, 0);
+  if (total <= 0) {
+    return (enemy.intentIndex + 1) % abilities.length;
+  }
+
+  let roll = rng.next() * total;
+  for (let i = 0; i < weights.length; i++) {
+    roll -= weights[i]!;
+    if (roll <= 0) return i;
+  }
+  return weights.length - 1;
 }
 
 /**
@@ -37,7 +57,11 @@ export function executeOneEnemyTurn(
   if (enemy.currentHp <= 0) return state;
   if (enemyDef.abilities.length === 0) return state;
 
-  const ability = enemyDef.abilities[enemy.intentIndex];
+  const { ability, usedIntentIndex } = pickAbilityForEnemyTurn(
+    state,
+    enemy,
+    enemyDef
+  );
   if (!ability) return state;
 
   // Resolve ability effects — enemy attacks target player by default
@@ -64,7 +88,11 @@ export function executeOneEnemyTurn(
     rng
   );
 
-  const nextIntent = getNextIntentIndex(freshEnemy, enemyDef);
+  const nextIntent = getNextIntentIndex(
+    { ...freshEnemy, intentIndex: usedIntentIndex },
+    enemyDef,
+    rng
+  );
   current = {
     ...current,
     enemies: current.enemies.map((e) =>
@@ -75,6 +103,53 @@ export function executeOneEnemyTurn(
   };
 
   return current;
+}
+
+function hasOffensivePressure(ability: EnemyAbility): boolean {
+  return ability.effects.some(
+    (e) => e.type === "DAMAGE" || e.type === "DRAIN_INK" || e.type === "APPLY_DEBUFF"
+  );
+}
+
+function hasOtherLivingEnemies(
+  state: CombatState,
+  selfInstanceId: string
+): boolean {
+  return state.enemies.some(
+    (e) => e.instanceId !== selfInstanceId && e.currentHp > 0
+  );
+}
+
+function pickAbilityForEnemyTurn(
+  state: CombatState,
+  enemy: EnemyState,
+  enemyDef: EnemyDefinition
+): { ability: EnemyAbility | null; usedIntentIndex: number } {
+  const defaultAbility = enemyDef.abilities[enemy.intentIndex] ?? null;
+  if (!defaultAbility) {
+    return { ability: null, usedIntentIndex: enemy.intentIndex };
+  }
+
+  if (enemyDef.role !== "SUPPORT") {
+    return { ability: defaultAbility, usedIntentIndex: enemy.intentIndex };
+  }
+
+  if (hasOtherLivingEnemies(state, enemy.instanceId)) {
+    return { ability: defaultAbility, usedIntentIndex: enemy.intentIndex };
+  }
+
+  if (hasOffensivePressure(defaultAbility)) {
+    return { ability: defaultAbility, usedIntentIndex: enemy.intentIndex };
+  }
+
+  const fallbackIndex = enemyDef.abilities.findIndex(hasOffensivePressure);
+  if (fallbackIndex < 0) {
+    return { ability: defaultAbility, usedIntentIndex: enemy.intentIndex };
+  }
+  return {
+    ability: enemyDef.abilities[fallbackIndex] ?? defaultAbility,
+    usedIntentIndex: fallbackIndex,
+  };
 }
 
 /**

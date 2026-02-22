@@ -86,6 +86,9 @@ export function HandArea({
           card.instanceId,
           cardDefs
         );
+        const isFrozen = (
+          combatState.playerDisruption?.frozenHandCardIds ?? []
+        ).includes(card.instanceId);
 
         const isPlaying = playingCardId === card.instanceId;
 
@@ -112,6 +115,8 @@ export function HandArea({
               isPendingInked={
                 selectedCardId === card.instanceId && pendingInked
               }
+              isFrozen={isFrozen}
+              upgraded={card.upgraded}
               onClick={() => {
                 // Always route through onPlayCard so handlePlayCard sets pendingInked correctly
                 onPlayCard(card.instanceId, false);

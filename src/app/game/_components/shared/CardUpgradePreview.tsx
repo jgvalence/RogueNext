@@ -2,7 +2,6 @@
 
 import { useTranslation } from "react-i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
-import { buildUpgradedCardDefinition } from "@/game/engine/card-upgrades";
 import { GameCard } from "../combat/GameCard";
 
 interface CardUpgradePreviewProps {
@@ -15,7 +14,6 @@ export function CardUpgradePreview({
   size = "sm",
 }: CardUpgradePreviewProps) {
   const { t } = useTranslation();
-  const upgradedDefinition = buildUpgradedCardDefinition(definition);
 
   return (
     <div className="flex items-start gap-3 rounded-xl border border-gray-600 bg-gray-950/95 p-3 shadow-2xl">
@@ -34,7 +32,7 @@ export function CardUpgradePreview({
         <p className="text-[9px] font-semibold uppercase tracking-wide text-yellow-400">
           {t("gameCard.labels.upgraded")}
         </p>
-        <GameCard definition={upgradedDefinition} upgraded size={size} />
+        <GameCard definition={definition} upgraded size={size} />
       </div>
     </div>
   );

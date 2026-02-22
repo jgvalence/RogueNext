@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BuffType, BiomeType } from "./enums";
+import { BuffType, BiomeType, EnemyRole } from "./enums";
 import { EffectSchema } from "./effects";
 
 export const BuffInstanceSchema = z.object({
@@ -47,6 +47,7 @@ export const EnemyDefinitionSchema = z.object({
   abilities: z.array(EnemyAbilitySchema),
   isBoss: z.boolean().default(false),
   isElite: z.boolean().default(false),
+  role: EnemyRole.default("HYBRID"),
   tier: z.number().int().default(1),
   biome: BiomeType.default("LIBRARY"),
 });

@@ -96,6 +96,12 @@ const config: Config = {
             transform: "translate(var(--tx, 0px), var(--ty, 60px)) scale(0.35)",
           },
         },
+        // Enemy summon: smooth arrival instead of hard pop
+        "enemy-summon-enter": {
+          "0%": { opacity: "0", transform: "translateY(-12px) scale(0.92)" },
+          "60%": { opacity: "1", transform: "translateY(2px) scale(1.03)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
       },
       animation: {
         "float-up": "float-up 0.8s ease-out forwards",
@@ -105,6 +111,7 @@ const config: Config = {
         "enemy-attack": "enemy-attack 0.35s ease-in-out forwards",
         "player-hit": "player-hit 0.5s ease-out forwards",
         "card-discard": "card-discard 0.35s ease-in forwards",
+        "enemy-summon-enter": "enemy-summon-enter 0.55s ease-out forwards",
       },
     },
   },

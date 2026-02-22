@@ -1,6 +1,9 @@
-import type { EnemyDefinition } from "../schemas/entities";
+import type { EnemyAbility, EnemyDefinition } from "../schemas/entities";
+import type { EnemyRole } from "../schemas/enums";
 
-export const enemyDefinitions: EnemyDefinition[] = [
+type RawEnemyDefinition = Omit<EnemyDefinition, "role">;
+
+const baseEnemyDefinitions: RawEnemyDefinition[] = [
   // =========================================================
   // LIBRARY biome — normal enemies
   // =========================================================
@@ -1737,3 +1740,270 @@ export const enemyDefinitions: EnemyDefinition[] = [
     biome: "AFRICAN",
   },
 ];
+
+function makeFallbackAbilityByBiome(
+  biome: RawEnemyDefinition["biome"]
+): EnemyAbility {
+  switch (biome) {
+    case "LIBRARY":
+      return {
+        name: "Shredding Volley",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 6 }],
+      };
+    case "VIKING":
+      return {
+        name: "War Cry",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "APPLY_BUFF", value: 1, buff: "STRENGTH" }],
+      };
+    case "GREEK":
+      return {
+        name: "Aegis Guard",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 8 }],
+      };
+    case "EGYPTIAN":
+      return {
+        name: "Sand Hex",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 }],
+      };
+    case "LOVECRAFTIAN":
+      return {
+        name: "Mind Fray",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 4 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        ],
+      };
+    case "AZTEC":
+      return {
+        name: "Blood Rite",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 6 }],
+      };
+    case "CELTIC":
+      return {
+        name: "Thorn Guard",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 8 }],
+      };
+    case "RUSSIAN":
+      return {
+        name: "Cold Snap",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 1 },
+        ],
+      };
+    case "AFRICAN":
+      return {
+        name: "Rallying Beat",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "APPLY_BUFF", value: 1, buff: "STRENGTH" }],
+      };
+  }
+}
+
+function ensureMinimumEnemyAbilityVariety(
+  defs: RawEnemyDefinition[]
+): RawEnemyDefinition[] {
+  return defs.map((def) => {
+    if (def.abilities.length >= 3) return def;
+    return {
+      ...def,
+      abilities: [...def.abilities, makeFallbackAbilityByBiome(def.biome)],
+    };
+  });
+}
+
+const DISRUPTION_EFFECT_TYPES = new Set([
+  "FREEZE_HAND_CARDS",
+  "NEXT_DRAW_TO_DISCARD_THIS_TURN",
+  "DISABLE_INK_POWER_THIS_TURN",
+  "INCREASE_CARD_COST_THIS_TURN",
+  "INCREASE_CARD_COST_NEXT_TURN",
+  "REDUCE_DRAW_THIS_TURN",
+  "REDUCE_DRAW_NEXT_TURN",
+  "FORCE_DISCARD_RANDOM",
+]);
+
+function hasOffensivePressure(ability: EnemyAbility): boolean {
+  return ability.effects.some(
+    (e) =>
+      e.type === "DAMAGE" ||
+      e.type === "DRAIN_INK" ||
+      e.type === "APPLY_DEBUFF"
+  );
+}
+
+function inferRole(def: RawEnemyDefinition): EnemyRole {
+  if (def.isBoss) return "HYBRID";
+
+  const offensiveCount = def.abilities.filter(hasOffensivePressure).length;
+  const controlCount = def.abilities.filter((a) =>
+    a.effects.some((e) => DISRUPTION_EFFECT_TYPES.has(e.type))
+  ).length;
+  const supportCount = def.abilities.filter((a) =>
+    a.effects.some(
+      (e) =>
+        e.type === "BLOCK" || e.type === "HEAL" || e.type === "APPLY_BUFF"
+    )
+  ).length;
+
+  if (controlCount >= 1 && offensiveCount >= 1) return "CONTROL";
+  if (supportCount >= 2 && offensiveCount <= 2) return "SUPPORT";
+  if (supportCount >= 1 && offensiveCount <= 1) return "TANK";
+  if (offensiveCount >= 3) return "ASSAULT";
+  return "HYBRID";
+}
+
+function makeBiomeSignatureAbility(def: RawEnemyDefinition): EnemyAbility | null {
+  const role = inferRole(def);
+  switch (def.biome) {
+    case "LIBRARY":
+      return role === "CONTROL" || role === "SUPPORT"
+        ? {
+            name: "Binding Footnote",
+            weight: 1,
+            target: "PLAYER",
+            effects: [
+              { type: "DAMAGE", value: 4 },
+              { type: "NEXT_DRAW_TO_DISCARD_THIS_TURN", value: 1 },
+            ],
+          }
+        : null;
+    case "VIKING":
+      return role === "ASSAULT"
+        ? {
+            name: "Berserk Tempo",
+            weight: 1,
+            target: "PLAYER",
+            effects: [
+              { type: "DAMAGE", value: 7 },
+              { type: "INCREASE_CARD_COST_THIS_TURN", value: 1 },
+            ],
+          }
+        : null;
+    case "GREEK":
+      return role === "TANK" || role === "HYBRID"
+        ? {
+            name: "Aegis Oath",
+            weight: 1,
+            target: "SELF",
+            effects: [
+              { type: "BLOCK", value: 8 },
+              { type: "INCREASE_CARD_COST_THIS_TURN", value: 1 },
+            ],
+          }
+        : null;
+    case "EGYPTIAN":
+      return role === "CONTROL" || role === "SUPPORT"
+        ? {
+            name: "Burden of Sand",
+            weight: 1,
+            target: "PLAYER",
+            effects: [
+              { type: "DAMAGE", value: 5 },
+              { type: "REDUCE_DRAW_THIS_TURN", value: 1 },
+            ],
+          }
+        : null;
+    case "LOVECRAFTIAN":
+      return {
+        name: "Mind Freeze",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 4 },
+          { type: "FREEZE_HAND_CARDS", value: 2 },
+        ],
+      };
+    case "AZTEC":
+      return role === "ASSAULT" || role === "HYBRID"
+        ? {
+            name: "Ritual Tax",
+            weight: 1,
+            target: "PLAYER",
+            effects: [
+              { type: "DAMAGE", value: 6 },
+              { type: "INCREASE_CARD_COST_THIS_TURN", value: 1 },
+            ],
+          }
+        : null;
+    case "CELTIC":
+      return role === "SUPPORT" || role === "TANK"
+        ? {
+            name: "Bramble Ward",
+            weight: 1,
+            target: "SELF",
+            effects: [
+              { type: "BLOCK", value: 9 },
+              { type: "APPLY_BUFF", value: 1, buff: "THORNS" },
+            ],
+          }
+        : null;
+    case "RUSSIAN":
+      return {
+        name: "Whiteout",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "REDUCE_DRAW_THIS_TURN", value: 1 },
+        ],
+      };
+    case "AFRICAN":
+      return {
+        name: "War Chorus",
+        weight: role === "SUPPORT" || role === "CONTROL" ? 2 : 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "DISABLE_INK_POWER_THIS_TURN", value: 1, inkPower: "REWRITE" },
+        ],
+      };
+  }
+}
+
+function applyBiomeCombatSignatures(
+  defs: RawEnemyDefinition[]
+): RawEnemyDefinition[] {
+  return defs.map((def) => {
+    const hasDisruption = def.abilities.some((ability) =>
+      ability.effects.some((e) => DISRUPTION_EFFECT_TYPES.has(e.type))
+    );
+    if (hasDisruption) return def;
+
+    const signature = makeBiomeSignatureAbility(def);
+    if (!signature) return def;
+
+    return {
+      ...def,
+      abilities: [...def.abilities, signature],
+    };
+  });
+}
+
+function assignEnemyRoles(defs: RawEnemyDefinition[]): EnemyDefinition[] {
+  return defs.map((def) => ({ ...def, role: inferRole(def) }));
+}
+
+export const enemyDefinitions: EnemyDefinition[] =
+  assignEnemyRoles(
+    ensureMinimumEnemyAbilityVariety(
+      applyBiomeCombatSignatures(baseEnemyDefinitions)
+    )
+  );
