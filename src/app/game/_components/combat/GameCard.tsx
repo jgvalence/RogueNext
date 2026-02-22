@@ -6,6 +6,7 @@ import type { CardDefinition } from "@/game/schemas/cards";
 // TEMPORARY: centralized asset registry — swap paths in src/lib/assets.ts when real art is ready
 import { CARD_IMAGES } from "@/lib/assets";
 import { Tooltip } from "../shared/Tooltip";
+import { parseDescriptionWithTooltips } from "../shared/parse-description";
 
 interface GameCardProps {
   definition: CardDefinition;
@@ -18,6 +19,7 @@ interface GameCardProps {
   onClick?: () => void;
   onInkedClick?: () => void;
   size?: "sm" | "md";
+  className?: string;
 }
 
 const typeBorder: Record<string, string> = {
@@ -61,6 +63,7 @@ export function GameCard({
   onClick,
   onInkedClick,
   size = "md",
+  className,
 }: GameCardProps) {
   const isMd = size === "md";
   const artH =
@@ -100,7 +103,8 @@ export function GameCard({
         isSelected &&
           (isPendingInked
             ? "shadow-lg shadow-cyan-500/40 ring-cyan-400"
-            : "ring-white")
+            : "ring-white"),
+        className
       )}
       onClick={canPlay ? onClick : undefined}
     >
@@ -174,7 +178,7 @@ export function GameCard({
         </span>
 
         {/* Description — dimmed when inked variant is the active mode */}
-        <p
+        <div
           className={cn(
             "leading-snug transition-opacity",
             isMd
@@ -183,8 +187,10 @@ export function GameCard({
             isPendingInked ? "text-gray-500 opacity-50" : "text-gray-300"
           )}
         >
-          {definition.description}
-        </p>
+          {isPendingInked
+            ? definition.description
+            : parseDescriptionWithTooltips(definition.description)}
+        </div>
       </div>
 
       {/* Inked variant — always shown when available; dim + disabled if not enough ink marks */}

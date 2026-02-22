@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 
 export interface ShopItem {
   id: string;
-  type: "card" | "relic" | "heal" | "max_hp";
+  type: "card" | "relic" | "heal" | "max_hp" | "purge";
   cardDef?: CardDefinition;
   relicId?: string;
   relicName?: string;
@@ -79,6 +79,13 @@ export function generateShopInventory(
     price: 75 + floor * 10,
   });
 
+  // 1 purge option (permanently remove a card from deck)
+  items.push({
+    id: nanoid(),
+    type: "purge",
+    price: 75 + floor * 10,
+  });
+
   return items;
 }
 
@@ -146,6 +153,11 @@ export function buyShopItem(
         playerMaxHp: state.playerMaxHp + bonus,
         playerCurrentHp: state.playerCurrentHp + bonus,
       };
+      break;
+    }
+    case "purge": {
+      // Gold is deducted above. Card removal is handled by the UI
+      // (opens CardPickerModal, then dispatches REMOVE_CARD_FROM_DECK).
       break;
     }
   }

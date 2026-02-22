@@ -3,9 +3,10 @@
 import { useState, useMemo } from "react";
 import type { ShopItem } from "@/game/engine/merchant";
 import { generateShopInventory } from "@/game/engine/merchant";
-import type { CardDefinition } from "@/game/schemas/cards";
+import type { CardDefinition, CardInstance } from "@/game/schemas/cards";
 import type { RNG } from "@/game/engine/rng";
 import { cn } from "@/lib/utils/cn";
+import { CardPickerModal } from "../shared/CardPickerModal";
 
 interface ShopViewProps {
   floor: number;
@@ -14,7 +15,9 @@ interface ShopViewProps {
   unlockedCardIds: string[];
   cardDefs: Map<string, CardDefinition>;
   rng: RNG;
+  deck: CardInstance[];
   onBuy: (item: ShopItem) => void;
+  onRemoveCard: (cardInstanceId: string) => void;
   onLeave: () => void;
 }
 
@@ -37,10 +40,15 @@ export function ShopView({
   unlockedCardIds,
   cardDefs,
   rng,
+  deck,
   onBuy,
+  onRemoveCard,
   onLeave,
 }: ShopViewProps) {
   const [soldIds, setSoldIds] = useState<Set<string>>(new Set());
+  const [pendingPurgeItemId, setPendingPurgeItemId] = useState<string | null>(
+    null
+  );
 
   const inventory = useMemo(
     () =>
@@ -57,7 +65,20 @@ export function ShopView({
   const handleBuy = (item: ShopItem) => {
     if (gold < item.price || soldIds.has(item.id)) return;
     onBuy(item);
-    setSoldIds((prev) => new Set(prev).add(item.id));
+    if (item.type === "purge") {
+      // Gold deducted by onBuy; now open picker so player selects a card to remove
+      setPendingPurgeItemId(item.id);
+    } else {
+      setSoldIds((prev) => new Set(prev).add(item.id));
+    }
+  };
+
+  const handlePurgePick = (cardInstanceId: string) => {
+    onRemoveCard(cardInstanceId);
+    if (pendingPurgeItemId) {
+      setSoldIds((prev) => new Set(prev).add(pendingPurgeItemId));
+    }
+    setPendingPurgeItemId(null);
   };
 
   return (
@@ -71,6 +92,8 @@ export function ShopView({
         {inventory.map((item) => {
           const isSold = soldIds.has(item.id);
           const canAfford = gold >= item.price;
+          const isPurge = item.type === "purge";
+          const isMaxHp = item.type === "max_hp";
 
           return (
             <button
@@ -89,7 +112,9 @@ export function ShopView({
                   (typeColors[item.cardDef.type] ??
                     "border-gray-500 bg-gray-800"),
                 item.type === "relic" && "border-amber-500 bg-amber-950/50",
-                item.type === "heal" && "border-green-500 bg-green-950/50"
+                item.type === "heal" && "border-green-500 bg-green-950/50",
+                isMaxHp && "border-red-500 bg-red-950/50",
+                isPurge && "border-rose-600 bg-rose-950/50"
               )}
             >
               {/* Icon */}
@@ -98,7 +123,11 @@ export function ShopView({
                   ? "📜"
                   : item.type === "relic"
                     ? "💎"
-                    : "❤️"}
+                    : item.type === "heal"
+                      ? "❤️"
+                      : item.type === "max_hp"
+                        ? "💗"
+                        : "✂"}
               </span>
 
               {/* Name */}
@@ -109,14 +138,22 @@ export function ShopView({
                     ? (rarityColors[item.cardDef.rarity] ?? "text-white")
                     : item.type === "relic"
                       ? "text-amber-300"
-                      : "text-green-300"
+                      : item.type === "heal"
+                        ? "text-green-300"
+                        : item.type === "max_hp"
+                          ? "text-red-300"
+                          : "text-rose-300"
                 )}
               >
                 {item.type === "card" && item.cardDef
                   ? item.cardDef.name
                   : item.type === "relic"
                     ? item.relicName
-                    : "Heal"}
+                    : item.type === "heal"
+                      ? "Heal"
+                      : item.type === "max_hp"
+                        ? "Max HP"
+                        : "Purge"}
               </span>
 
               {/* Description */}
@@ -125,7 +162,11 @@ export function ShopView({
                   ? item.cardDef.description
                   : item.type === "relic"
                     ? item.relicDescription
-                    : `Restore ${item.healAmount} HP`}
+                    : item.type === "heal"
+                      ? `Restore ${item.healAmount} HP`
+                      : item.type === "max_hp"
+                        ? `+${item.maxHpAmount ?? 10} Max HP`
+                        : "Remove 1 card from your deck permanently."}
               </span>
 
               {/* Card type badge */}
@@ -155,6 +196,16 @@ export function ShopView({
       >
         Leave Shop
       </button>
+
+      {pendingPurgeItemId && (
+        <CardPickerModal
+          title="Purge — Choisissez une carte à retirer"
+          subtitle="Cette carte sera définitivement supprimée de votre deck."
+          cards={deck}
+          cardDefs={cardDefs}
+          onPick={handlePurgePick}
+        />
+      )}
     </div>
   );
 }

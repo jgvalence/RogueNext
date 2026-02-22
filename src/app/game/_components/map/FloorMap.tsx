@@ -45,37 +45,60 @@ export function FloorMap({ map, currentRoom, onSelectRoom }: FloorMapProps) {
           </p>
 
           <div className="flex gap-4">
-            {map[currentRoom]?.map((room, i) => (
-              <button
-                key={`${room.index}-${i}`}
-                className={cn(
-                  "flex w-40 flex-col items-center gap-2 rounded-lg border-2 p-4 transition hover:scale-105",
-                  roomColors[room.type] ?? "border-gray-500 bg-gray-800"
-                )}
-                onClick={() => onSelectRoom(i)}
-              >
-                <span className="text-2xl">
-                  {roomEmojis[room.type] ?? "✨"}
-                </span>
-                <span className="text-sm font-medium">
-                  {roomIcons[room.type] ?? room.type}
-                </span>
-                {room.type === "COMBAT" && room.isElite && (
-                  <span className="rounded bg-orange-700/80 px-2 py-0.5 text-xs font-bold text-orange-100">
-                    ⚠ Elite
+            {map[currentRoom]?.map((room, i) => {
+              const isBossRoom = currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
+              return (
+                <button
+                  key={`${room.index}-${i}`}
+                  className={cn(
+                    "flex w-40 flex-col items-center gap-2 rounded-lg border-2 p-4 transition hover:scale-105",
+                    roomColors[room.type] ?? "border-gray-500 bg-gray-800"
+                  )}
+                  onClick={() => onSelectRoom(i)}
+                >
+                  <span className="text-2xl">
+                    {roomEmojis[room.type] ?? "✨"}
                   </span>
-                )}
-                {room.type === "COMBAT" &&
-                  !room.isElite &&
-                  room.enemyIds &&
-                  room.enemyIds.length > 0 && (
-                    <span className="text-xs text-gray-400">
-                      {room.enemyIds.length} enem
-                      {room.enemyIds.length > 1 ? "ies" : "y"}
+                  <span className="text-sm font-medium">
+                    {roomIcons[room.type] ?? room.type}
+                  </span>
+                  {room.type === "COMBAT" && room.isElite && (
+                    <span className="rounded bg-orange-700/80 px-2 py-0.5 text-xs font-bold text-orange-100">
+                      ⚠ Elite
                     </span>
                   )}
-              </button>
-            ))}
+                  {room.type === "COMBAT" &&
+                    !room.isElite &&
+                    room.enemyIds &&
+                    room.enemyIds.length > 0 && (
+                      <span className="text-xs text-gray-400">
+                        {room.enemyIds.length} enem
+                        {room.enemyIds.length > 1 ? "ies" : "y"}
+                      </span>
+                    )}
+                  {/* Reward preview */}
+                  {room.type === "COMBAT" && (
+                    <div className="flex items-center gap-1.5 rounded bg-black/20 px-2 py-1 text-sm">
+                      {isBossRoom ? (
+                        <>
+                          <span title="Relique">💎</span>
+                          <span title="Allié">👤</span>
+                          <span title="PV Max">❤️</span>
+                        </>
+                      ) : room.isElite ? (
+                        <>
+                          <span title="Carte">🃏</span>
+                          <span title="Relique">💎</span>
+                          <span title="Allié">👤</span>
+                        </>
+                      ) : (
+                        <span title="Carte">🃏</span>
+                      )}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       ) : (

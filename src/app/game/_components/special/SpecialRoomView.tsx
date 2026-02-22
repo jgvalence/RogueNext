@@ -15,6 +15,7 @@ import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
 } from "../shared/UpgradePreviewPortal";
+import { CardPickerModal } from "../shared/CardPickerModal";
 
 interface SpecialRoomViewProps {
   playerCurrentHp: number;
@@ -26,6 +27,7 @@ interface SpecialRoomViewProps {
   onHeal: () => void;
   onUpgrade: (cardInstanceId: string) => void;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
+  onEventPurge: (cardInstanceId: string) => void;
   onSkip: () => void;
 }
 
@@ -39,6 +41,7 @@ export function SpecialRoomView({
   onHeal,
   onUpgrade,
   onEventChoice,
+  onEventPurge,
   onSkip,
 }: SpecialRoomViewProps) {
   const roomType = useMemo(() => pickSpecialRoomType(rng), [rng]);
@@ -68,7 +71,10 @@ export function SpecialRoomView({
           gold={gold}
           playerCurrentHp={playerCurrentHp}
           playerMaxHp={playerMaxHp}
+          deck={deck}
+          cardDefs={cardDefs}
           onEventChoice={onEventChoice}
+          onEventPurge={onEventPurge}
         />
       );
   }
@@ -201,15 +207,30 @@ function EventRoom({
   gold,
   playerCurrentHp,
   playerMaxHp,
+  deck,
+  cardDefs,
   onEventChoice,
+  onEventPurge,
 }: {
   rng: RNG;
   gold: number;
   playerCurrentHp: number;
   playerMaxHp: number;
+  deck: CardInstance[];
+  cardDefs: Map<string, CardDefinition>;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
+  onEventPurge: (cardInstanceId: string) => void;
 }) {
   const event = useMemo(() => pickEvent(rng), [rng]);
+  const [showPurgePicker, setShowPurgePicker] = useState(false);
+
+  const handleChoice = (choiceIndex: number) => {
+    const choice = event.choices[choiceIndex];
+    onEventChoice(event, choiceIndex);
+    if (choice?.requiresPurge) {
+      setShowPurgePicker(true);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
@@ -224,7 +245,7 @@ function EventRoom({
         {event.choices.map((choice, i) => (
           <button
             key={i}
-            onClick={() => onEventChoice(event, i)}
+            onClick={() => handleChoice(i)}
             className="flex flex-col items-start gap-1 rounded-lg border-2 border-purple-700 bg-purple-950/40 px-6 py-3 text-left transition hover:border-purple-500 hover:bg-purple-950/60"
           >
             <span className="font-medium text-white">{choice.label}</span>
@@ -234,6 +255,19 @@ function EventRoom({
           </button>
         ))}
       </div>
+
+      {showPurgePicker && (
+        <CardPickerModal
+          title="Choisissez une carte à retirer"
+          subtitle="Cette carte sera définitivement supprimée de votre deck."
+          cards={deck}
+          cardDefs={cardDefs}
+          onPick={(cardInstanceId) => {
+            setShowPurgePicker(false);
+            onEventPurge(cardInstanceId);
+          }}
+        />
+      )}
     </div>
   );
 }

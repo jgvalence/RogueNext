@@ -49,10 +49,19 @@ const config: Config = {
           "25%": { transform: "translateX(-4px)" },
           "75%": { transform: "translateX(4px)" },
         },
+        // Card play: flies toward the enemy row. --tx / --ty set per-card via JS.
         "card-play": {
-          "0%": { opacity: "1", transform: "scale(1)" },
-          "50%": { opacity: "0.5", transform: "scale(1.1) translateY(-20px)" },
-          "100%": { opacity: "0", transform: "scale(0.8) translateY(-40px)" },
+          "0%": { opacity: "1", transform: "translate(0, 0) scale(1)" },
+          "55%": {
+            opacity: "0.7",
+            transform:
+              "translate(calc(var(--tx, 0px) * 0.55), calc(var(--ty, -40px) * 0.55)) scale(1.1)",
+          },
+          "100%": {
+            opacity: "0",
+            transform:
+              "translate(var(--tx, 0px), var(--ty, -40px)) scale(0.35)",
+          },
         },
         // Enemy acting: pulsing glow while the enemy prepares to attack
         "enemy-acting": {
@@ -78,14 +87,24 @@ const config: Config = {
           "20%": { boxShadow: "0 0 0 4px rgba(239,68,68,0.8)" },
           "100%": { boxShadow: "0 0 0 0 rgba(239,68,68,0)" },
         },
+        // Card discard: cards fly toward the discard pile button.
+        // --tx / --ty are set dynamically per card via JS (HandArea.tsx).
+        "card-discard": {
+          "0%": { opacity: "1", transform: "translate(0, 0) scale(1)" },
+          "100%": {
+            opacity: "0",
+            transform: "translate(var(--tx, 0px), var(--ty, 60px)) scale(0.35)",
+          },
+        },
       },
       animation: {
         "float-up": "float-up 0.8s ease-out forwards",
         shake: "shake 0.3s ease-in-out",
-        "card-play": "card-play 0.4s ease-out forwards",
+        "card-play": "card-play 0.28s ease-in forwards",
         "enemy-acting": "enemy-acting 0.7s ease-in-out infinite",
         "enemy-attack": "enemy-attack 0.35s ease-in-out forwards",
         "player-hit": "player-hit 0.5s ease-out forwards",
+        "card-discard": "card-discard 0.35s ease-in forwards",
       },
     },
   },

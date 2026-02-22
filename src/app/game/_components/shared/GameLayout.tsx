@@ -6,15 +6,17 @@ import { setSoundsEnabled } from "@/lib/sound";
 import { setMusicEnabled } from "@/lib/music";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { relicDefinitions } from "@/game/data/relics";
+import { DeckViewerModal } from "./DeckViewerModal";
 
 interface GameLayoutProps {
   children: ReactNode;
 }
 
 export function GameLayout({ children }: GameLayoutProps) {
-  const { state } = useGame();
+  const { state, cardDefs } = useGame();
   const [muted, setMuted] = useState(false);
   const [showRelics, setShowRelics] = useState(false);
+  const [showDeckViewer, setShowDeckViewer] = useState(false);
 
   const ownedRelics = state.relicIds
     .map((id) => relicDefinitions.find((r) => r.id === id))
@@ -97,12 +99,16 @@ export function GameLayout({ children }: GameLayoutProps) {
             </div>
           )}
 
-          <div className="hidden items-center gap-1.5 sm:flex">
+          <button
+            onClick={() => setShowDeckViewer(true)}
+            className="hidden items-center gap-1.5 rounded border border-slate-600/50 px-2 py-1 transition hover:border-slate-400 sm:flex"
+            title="Voir le deck"
+          >
             <span className="text-xs text-slate-500">Deck</span>
             <span className="text-sm font-semibold text-slate-200">
               {state.deck.length}
             </span>
-          </div>
+          </button>
 
           {state.relicIds.length > 0 && (
             <button
@@ -133,6 +139,14 @@ export function GameLayout({ children }: GameLayoutProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto">{children}</div>
+
+      {showDeckViewer && (
+        <DeckViewerModal
+          deck={state.deck}
+          cardDefs={cardDefs}
+          onClose={() => setShowDeckViewer(false)}
+        />
+      )}
 
       {showRelics && (
         <div

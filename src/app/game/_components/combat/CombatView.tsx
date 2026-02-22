@@ -37,6 +37,7 @@ interface CombatViewProps {
   actingEnemyId?: string | null;
   attackingEnemyId?: string | null;
   unlockedInkPowers?: InkPowerType[];
+  isDiscarding?: boolean;
 }
 
 export function CombatView({
@@ -51,6 +52,7 @@ export function CombatView({
   actingEnemyId = null,
   attackingEnemyId = null,
   unlockedInkPowers,
+  isDiscarding = false,
 }: CombatViewProps) {
   type PileType = "draw" | "discard" | "exhaust";
 
@@ -61,6 +63,10 @@ export function CombatView({
     useState(false);
   const [isSelectingCheatKillTarget, setIsSelectingCheatKillTarget] =
     useState(false);
+
+  const discardBtnRef = useRef<HTMLButtonElement>(null);
+  const enemyRowRef = useRef<HTMLDivElement>(null);
+  const [playingCardId, setPlayingCardId] = useState<string | null>(null);
 
   // Player hit flash + sound
   const prevPlayerHp = useRef(combat.player.currentHp);
@@ -98,6 +104,20 @@ export function CombatView({
       (e) => e.type === "HEAL" || e.type === "BLOCK" || e.type === "APPLY_BUFF"
     );
 
+  const triggerCardPlay = useCallback(
+    (instanceId: string, targetId: string | null, useInked: boolean) => {
+      playSound("CARD_PLAY", 0.6);
+      setPlayingCardId(instanceId);
+      setSelectedCardId(null);
+      setPendingInked(false);
+      setTimeout(() => {
+        onPlayCard(instanceId, targetId, useInked);
+        setPlayingCardId(null);
+      }, 280);
+    },
+    [onPlayCard]
+  );
+
   const handleEnemyClick = useCallback(
     (enemyInstanceId: string) => {
       if (isSelectingCheatKillTarget && onCheatKillEnemy) {
@@ -107,9 +127,7 @@ export function CombatView({
       }
 
       if (selectedCardId && selectingEnemyTarget) {
-        onPlayCard(selectedCardId, enemyInstanceId, pendingInked);
-        setSelectedCardId(null);
-        setPendingInked(false);
+        triggerCardPlay(selectedCardId, enemyInstanceId, pendingInked);
       }
     },
     [
@@ -118,7 +136,7 @@ export function CombatView({
       selectedCardId,
       selectingEnemyTarget,
       pendingInked,
-      onPlayCard,
+      triggerCardPlay,
     ]
   );
 
@@ -126,15 +144,13 @@ export function CombatView({
     (allyInstanceId: string) => {
       if (!selectedCardId || (!selectingAllyTarget && !selfCanRetargetToAlly))
         return;
-      onPlayCard(selectedCardId, allyInstanceId, pendingInked);
-      setSelectedCardId(null);
-      setPendingInked(false);
+      triggerCardPlay(selectedCardId, allyInstanceId, pendingInked);
     },
     [
       selectedCardId,
       selectingAllyTarget,
       selfCanRetargetToAlly,
-      onPlayCard,
+      triggerCardPlay,
       pendingInked,
     ]
   );
@@ -160,13 +176,9 @@ export function CombatView({
         return;
       }
 
-      // TEMPORARY: play card sound (file: /public/sounds/ui/card_play.ogg)
-      playSound("CARD_PLAY", 0.6);
-      onPlayCard(instanceId, null, useInked);
-      setSelectedCardId(null);
-      setPendingInked(false);
+      triggerCardPlay(instanceId, null, useInked);
     },
-    [combat.hand, cardDefs, onPlayCard, pendingInked, selectedCardId]
+    [combat.hand, cardDefs, triggerCardPlay, pendingInked, selectedCardId]
   );
 
   const isPlayerTurn = combat.phase === "PLAYER_TURN";
@@ -283,7 +295,10 @@ export function CombatView({
         </div>
 
         {/* Enemy row */}
-        <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center gap-2 py-1 lg:gap-6 lg:py-4">
+        <div
+          ref={enemyRowRef}
+          className="relative z-10 flex min-h-0 flex-1 items-center justify-center gap-2 py-1 lg:gap-6 lg:py-4"
+        >
           {combat.enemies.map((enemy) => {
             const def = enemyDefs.get(enemy.definitionId);
             if (!def) return null;
@@ -477,12 +492,20 @@ export function CombatView({
             selectedCardId={selectedCardId}
             pendingInked={pendingInked}
             onPlayCard={handlePlayCard}
+            isDiscarding={isDiscarding}
+            discardBtnRef={discardBtnRef}
+            playingCardId={playingCardId}
+            enemyRowRef={enemyRowRef}
           />
 
           {/* Pile counters */}
-          <div className="mt-1 flex justify-center gap-2 text-[10px] text-slate-600 lg:mt-2 lg:gap-6 lg:text-xs">
+          <div className="mt-1.5 flex justify-center gap-3 lg:mt-2 lg:gap-6">
+            {/* Pioche */}
             <button
-              className="rounded border border-slate-700/80 bg-slate-900/70 px-1.5 py-0.5 hover:border-slate-500 hover:text-slate-300 lg:px-2 lg:py-1"
+              style={{
+                boxShadow: "2px 2px 0 1px #334155, 4px 4px 0 1px #1e293b",
+              }}
+              className="flex w-14 flex-col items-center gap-0.5 rounded-lg border border-slate-500/70 bg-slate-800 py-1.5 transition hover:border-slate-300 lg:w-20 lg:py-2"
               onClick={() => {
                 setIsSelectingCheatKillTarget(false);
                 setIsSelectingRewriteTarget(false);
@@ -490,13 +513,21 @@ export function CombatView({
               }}
               type="button"
             >
-              Draw{" "}
-              <span className="font-semibold text-slate-400">
+              <span className="text-[8px] font-semibold uppercase tracking-wider text-slate-400 lg:text-[10px]">
+                Pioche
+              </span>
+              <span className="text-base font-black text-slate-100 lg:text-xl">
                 {combat.drawPile.length}
               </span>
             </button>
+
+            {/* Défausse */}
             <button
-              className="rounded border border-slate-700/80 bg-slate-900/70 px-1.5 py-0.5 hover:border-slate-500 hover:text-slate-300 lg:px-2 lg:py-1"
+              ref={discardBtnRef}
+              style={{
+                boxShadow: "2px 2px 0 1px #7f1d1d, 4px 4px 0 1px #450a0a",
+              }}
+              className="flex w-14 flex-col items-center gap-0.5 rounded-lg border border-red-700/60 bg-slate-800 py-1.5 transition hover:border-red-400 lg:w-20 lg:py-2"
               onClick={() => {
                 setIsSelectingCheatKillTarget(false);
                 setIsSelectingRewriteTarget(false);
@@ -504,14 +535,21 @@ export function CombatView({
               }}
               type="button"
             >
-              Discard{" "}
-              <span className="font-semibold text-slate-400">
+              <span className="text-[8px] font-semibold uppercase tracking-wider text-red-400/80 lg:text-[10px]">
+                Défausse
+              </span>
+              <span className="text-base font-black text-slate-100 lg:text-xl">
                 {combat.discardPile.length}
               </span>
             </button>
+
+            {/* Épuisé */}
             {combat.exhaustPile.length > 0 && (
               <button
-                className="rounded border border-slate-700/80 bg-slate-900/70 px-1.5 py-0.5 hover:border-slate-500 hover:text-slate-300 lg:px-2 lg:py-1"
+                style={{
+                  boxShadow: "2px 2px 0 1px #4c1d95, 4px 4px 0 1px #2e1065",
+                }}
+                className="flex w-14 flex-col items-center gap-0.5 rounded-lg border border-purple-700/60 bg-slate-800 py-1.5 transition hover:border-purple-400 lg:w-20 lg:py-2"
                 onClick={() => {
                   setIsSelectingCheatKillTarget(false);
                   setIsSelectingRewriteTarget(false);
@@ -519,8 +557,10 @@ export function CombatView({
                 }}
                 type="button"
               >
-                Exhaust{" "}
-                <span className="font-semibold text-slate-400">
+                <span className="text-[8px] font-semibold uppercase tracking-wider text-purple-400/80 lg:text-[10px]">
+                  Épuisé
+                </span>
+                <span className="text-base font-black text-slate-100 lg:text-xl">
                   {combat.exhaustPile.length}
                 </span>
               </button>

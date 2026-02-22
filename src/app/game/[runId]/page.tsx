@@ -122,6 +122,7 @@ function GameContent({
   const [isEliteRewards, setIsEliteRewards] = useState(false);
   const [actingEnemyId, setActingEnemyId] = useState<string | null>(null);
   const [attackingEnemyId, setAttackingEnemyId] = useState<string | null>(null);
+  const [isDiscarding, setIsDiscarding] = useState(false);
   const enemyTurnCancelledRef = useRef(false);
   const runEndedRef = useRef(false);
   // Always-current ref to avoid stale closures in callbacks
@@ -157,6 +158,13 @@ function GameContent({
 
     const sleep = (ms: number) =>
       new Promise<void>((res) => setTimeout(res, ms));
+
+    // Animate cards discarding before state update
+    if (state.combat.hand.length > 0) {
+      setIsDiscarding(true);
+      await sleep(350);
+      setIsDiscarding(false);
+    }
 
     // Collect living enemies in speed order (mirrors the engine logic)
     const sortedEnemies = [...state.combat.enemies]
@@ -491,6 +499,7 @@ function GameContent({
             }
             actingEnemyId={actingEnemyId}
             attackingEnemyId={attackingEnemyId}
+            isDiscarding={isDiscarding}
           />
         )}
 
@@ -520,8 +529,15 @@ function GameContent({
             unlockedCardIds={state.unlockedCardIds}
             cardDefs={cardDefs}
             rng={rng}
+            deck={state.deck}
             onBuy={(item) =>
               dispatch({ type: "BUY_SHOP_ITEM", payload: { item } })
+            }
+            onRemoveCard={(cardInstanceId) =>
+              dispatch({
+                type: "REMOVE_CARD_FROM_DECK",
+                payload: { cardInstanceId },
+              })
             }
             onLeave={() => {
               dispatch({ type: "ADVANCE_ROOM" });
@@ -548,6 +564,17 @@ function GameContent({
                 type: "APPLY_EVENT",
                 payload: { event, choiceIndex },
               });
+              // If choice requires a purge, stay on SPECIAL screen until card is picked
+              if (!event.choices[choiceIndex]?.requiresPurge) {
+                setPhase("MAP");
+              }
+            }}
+            onEventPurge={(cardInstanceId) => {
+              dispatch({
+                type: "REMOVE_CARD_FROM_DECK",
+                payload: { cardInstanceId },
+              });
+              dispatch({ type: "ADVANCE_ROOM" });
               setPhase("MAP");
             }}
             onSkip={() => {

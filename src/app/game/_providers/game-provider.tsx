@@ -39,6 +39,7 @@ import {
   advanceFloor,
   applyHealRoom,
   upgradeCardInDeck,
+  removeCardFromRunDeck,
   applyEventChoice,
   type GameEvent,
 } from "@/game/engine/run";
@@ -90,6 +91,7 @@ export type GameAction =
   | { type: "BUY_SHOP_ITEM"; payload: { item: ShopItem } }
   | { type: "CHEAT_KILL_ENEMY"; payload: { enemyInstanceId: string } }
   | { type: "UPGRADE_CARD"; payload: { cardInstanceId: string } }
+  | { type: "REMOVE_CARD_FROM_DECK"; payload: { cardInstanceId: string } }
   | { type: "APPLY_EVENT"; payload: { event: GameEvent; choiceIndex: number } }
   | { type: "CHOOSE_BIOME"; payload: { biome: BiomeType } };
 
@@ -305,6 +307,9 @@ function createGameReducer(deps: ReducerDeps) {
 
       case "UPGRADE_CARD":
         return upgradeCardInDeck(state, action.payload.cardInstanceId);
+
+      case "REMOVE_CARD_FROM_DECK":
+        return removeCardFromRunDeck(state, action.payload.cardInstanceId);
 
       case "APPLY_EVENT":
         return applyEventChoice(

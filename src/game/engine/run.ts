@@ -516,6 +516,19 @@ export function pickSpecialRoomType(rng: RNG): SpecialRoomType {
  * Upgrade a card in the deck — sets the upgraded flag.
  * Upgraded cards deal +50% damage/block values at play time.
  */
+export function removeCardFromRunDeck(
+  runState: RunState,
+  cardInstanceId: string
+): RunState {
+  const index = runState.deck.findIndex((c) => c.instanceId === cardInstanceId);
+  if (index === -1) return runState;
+
+  return {
+    ...runState,
+    deck: [...runState.deck.slice(0, index), ...runState.deck.slice(index + 1)],
+  };
+}
+
 export function upgradeCardInDeck(
   runState: RunState,
   cardInstanceId: string
@@ -552,6 +565,7 @@ export interface GameEvent {
 export interface EventChoice {
   label: string;
   description: string;
+  requiresPurge?: boolean;
   apply: (state: RunState) => RunState;
 }
 
@@ -710,6 +724,28 @@ const EVENTS: GameEvent[] = [
       {
         label: "Refuse",
         description: "Leave safely.",
+        apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
+      },
+    ],
+  },
+  {
+    id: "ruthless_scrivener",
+    title: "Ruthless Scrivener",
+    description:
+      "A haggard scribe offers to purge one of your cards — for a price carved in flesh.",
+    choices: [
+      {
+        label: "Pay with blood",
+        description: "Lose 10 HP. Permanently remove 1 card from your deck.",
+        requiresPurge: true,
+        apply: (s) => ({
+          ...s,
+          playerCurrentHp: Math.max(1, s.playerCurrentHp - 10),
+        }),
+      },
+      {
+        label: "Walk away",
+        description: "Nothing happens.",
         apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
       },
     ],
