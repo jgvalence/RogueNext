@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/lib/query/provider";
@@ -34,6 +34,17 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: env.NEXT_PUBLIC_APP_NAME,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#020617",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

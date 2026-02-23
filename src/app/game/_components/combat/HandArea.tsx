@@ -75,7 +75,7 @@ export function HandArea({
   }, [playingCardId, enemyRowRef, hand]);
 
   return (
-    <div className="flex h-[72px] items-end justify-center gap-1 overflow-visible py-0.5 lg:h-auto lg:gap-2 lg:py-2">
+    <div className="flex h-[72px] items-end justify-center gap-1 overflow-visible py-0.5 lg:h-auto lg:gap-2 lg:py-2 [@media(max-height:540px)]:h-[60px] [@media(max-height:540px)]:gap-0.5 [@media(max-height:540px)]:py-0">
       {hand.map((card, index) => {
         const def = cardDefs.get(card.definitionId);
         if (!def) return null;

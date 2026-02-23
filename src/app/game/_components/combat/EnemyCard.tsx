@@ -72,11 +72,11 @@ export function EnemyCard({
   }, []);
 
   const cardW = definition.isBoss
-    ? "w-28 lg:w-40 xl:w-56"
-    : "w-24 lg:w-36 xl:w-44";
+    ? "w-28 lg:w-40 xl:w-56 [@media(max-height:540px)]:w-36"
+    : "w-24 lg:w-36 xl:w-44 [@media(max-height:540px)]:w-28";
   const artH = definition.isBoss
-    ? "h-16 lg:h-28 xl:h-40"
-    : "h-14 lg:h-24 xl:h-32";
+    ? "h-16 lg:h-28 xl:h-40 [@media(max-height:540px)]:h-14"
+    : "h-14 lg:h-24 xl:h-32 [@media(max-height:540px)]:h-12";
 
   let borderClass = "border-gray-600/70";
   if (isDead) borderClass = "border-gray-700/40";
@@ -188,7 +188,7 @@ export function EnemyCard({
       </div>
 
       {/* ── Info area ── */}
-      <div className="flex flex-col gap-1 p-2 lg:gap-1.5 lg:p-2.5">
+      <div className="flex flex-col gap-1 p-2 lg:gap-1.5 lg:p-2.5 [@media(max-height:540px)]:gap-0.5 [@media(max-height:540px)]:p-1.5">
         {/* Name */}
         <div
           className={cn(
@@ -208,7 +208,7 @@ export function EnemyCard({
             max={enemy.maxHp}
             className="mb-0.5 w-full"
           />
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 [@media(max-height:540px)]:gap-0.5">
             <span className="text-xs font-bold tabular-nums text-white">
               {Math.max(0, enemy.currentHp)}
             </span>
@@ -235,14 +235,14 @@ export function EnemyCard({
 
         {/* Intent */}
         {!isDead && intent && (
-          <div className="mt-0.5 rounded-lg border border-gray-700/60 bg-gray-800/70 px-1.5 py-1 lg:px-2 lg:py-1.5">
+          <div className="mt-0.5 rounded-lg border border-gray-700/60 bg-gray-800/70 px-1.5 py-1 lg:px-2 lg:py-1.5 [@media(max-height:540px)]:px-1 [@media(max-height:540px)]:py-0.5">
             {/* Intent name + target */}
             <div className="flex items-start justify-between gap-1">
-              <span className="truncate text-[10px] font-semibold leading-tight text-gray-100 lg:text-[11px]">
+              <span className="truncate text-[10px] font-semibold leading-tight text-gray-100 lg:text-[11px] [@media(max-height:540px)]:text-[11px]">
                 {intent.name}
               </span>
               {intentTargetLabel && (
-                <span className="shrink-0 text-[9px] text-amber-300/90 lg:text-[10px]">
+                <span className="shrink-0 text-[9px] text-amber-300/90 lg:text-[10px] [@media(max-height:540px)]:text-[10px]">
                   → {intentTargetLabel}
                 </span>
               )}

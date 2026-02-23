@@ -337,7 +337,7 @@ export function CombatView({
       onClick={handleGlobalClick}
     >
       {/* ── BATTLEFIELD ─────────────────────────────────── */}
-      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-2 py-2 lg:px-6 lg:py-4">
+      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 px-2 py-2 lg:px-6 lg:py-4 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:py-1">
         {/* Background — TEMPORARY: shows image if present, CSS gradient otherwise */}
         {!bgFailed && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -353,7 +353,7 @@ export function CombatView({
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950 to-transparent" />
 
         {/* Turn indicator */}
-        <div className="relative z-10 flex items-center gap-1.5 self-start lg:gap-2">
+        <div className="relative z-10 flex items-center gap-1.5 self-start lg:gap-2 [@media(max-height:540px)]:hidden">
           <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-medium text-slate-500 lg:px-2 lg:text-xs">
             Turn {combat.turnNumber}
           </span>
@@ -401,7 +401,7 @@ export function CombatView({
         {/* Enemy row */}
         <div
           ref={enemyRowRef}
-          className="relative z-10 flex min-h-0 flex-1 items-center justify-center gap-2 py-1 lg:gap-6 lg:py-4"
+          className="relative z-10 flex min-h-0 w-full flex-1 items-center justify-center gap-2 overflow-x-auto py-1 lg:gap-6 lg:py-4 [@media(max-height:540px)]:gap-3 [@media(max-height:540px)]:py-0.5"
         >
           {combat.enemies.map((enemy) => {
             const def = enemyDefs.get(enemy.definitionId);
@@ -515,13 +515,13 @@ export function CombatView({
       </div>
 
       {/* ── PLAYER ZONE ──────────────────────────────────── */}
-      <div className="shrink-0 border-t border-slate-700/50 bg-slate-950">
+      <div className="shrink-0 border-t border-slate-700/50 bg-slate-950 [@media(max-height:540px)]:border-t-slate-800/70">
         {/* HUD row */}
-        <div className="flex items-center gap-1.5 px-2 py-1.5 lg:gap-3 lg:px-4 lg:py-3">
+        <div className="flex items-center gap-1.5 px-2 py-1.5 lg:gap-3 lg:px-4 lg:py-3 [@media(max-height:540px)]:gap-1 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:py-1">
           {/* Player avatar — TEMPORARY: shows image if present, ✦ otherwise */}
           <div
             className={cn(
-              "relative flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 bg-slate-800 text-xl transition-colors duration-100 lg:h-14 lg:w-14 lg:text-2xl",
+              "relative flex h-10 w-10 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border-2 bg-slate-800 text-xl transition-colors duration-100 lg:h-14 lg:w-14 lg:text-2xl [@media(max-height:540px)]:h-8 [@media(max-height:540px)]:w-8 [@media(max-height:540px)]:text-sm",
               playerHit
                 ? "animate-player-hit border-red-500 text-red-400"
                 : "border-slate-700 text-slate-600"
@@ -549,7 +549,7 @@ export function CombatView({
           </div>
 
           {/* Ink gauge */}
-          <div className="w-36 flex-shrink-0 lg:w-60">
+          <div className="w-36 flex-shrink-0 lg:w-60 [@media(max-height:540px)]:w-28">
             <InkGauge
               player={combat.player}
               combatState={combat}
@@ -561,7 +561,7 @@ export function CombatView({
           {/* End turn */}
           <button
             className={cn(
-              "flex-shrink-0 rounded-lg px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-all lg:px-5 lg:py-3 lg:text-sm",
+              "flex-shrink-0 rounded-lg px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-all lg:px-5 lg:py-3 lg:text-sm [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:py-1 [@media(max-height:540px)]:text-[9px]",
               endTurnClass
             )}
             disabled={!isPlayerTurn}
@@ -593,7 +593,7 @@ export function CombatView({
         </div>
 
         {/* Hand */}
-        <div className="border-t border-slate-800/60 px-2 pb-2 pt-1.5 lg:px-4 lg:pb-4 lg:pt-3">
+        <div className="border-t border-slate-800/60 px-2 pb-2 pt-1.5 lg:px-4 lg:pb-4 lg:pt-3 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:pb-1 [@media(max-height:540px)]:pt-1">
           <HandArea
             hand={combat.hand}
             combatState={combat}
@@ -608,13 +608,13 @@ export function CombatView({
           />
 
           {/* Pile counters */}
-          <div className="mt-1.5 flex justify-center gap-3 lg:mt-2 lg:gap-6">
+          <div className="mt-1.5 flex justify-center gap-3 lg:mt-2 lg:gap-6 [@media(max-height:540px)]:mt-1 [@media(max-height:540px)]:gap-2">
             {/* Pioche */}
             <button
               style={{
                 boxShadow: "2px 2px 0 1px #334155, 4px 4px 0 1px #1e293b",
               }}
-              className="flex w-14 flex-col items-center gap-0.5 rounded-lg border border-slate-500/70 bg-slate-800 py-1.5 transition hover:border-slate-300 lg:w-20 lg:py-2"
+              className="flex w-14 flex-col items-center gap-0.5 rounded-lg border border-slate-500/70 bg-slate-800 py-1.5 transition hover:border-slate-300 lg:w-20 lg:py-2 [@media(max-height:540px)]:w-12 [@media(max-height:540px)]:py-1"
               onClick={() => {
                 setIsSelectingCheatKillTarget(false);
                 setIsSelectingRewriteTarget(false);
@@ -636,7 +636,7 @@ export function CombatView({
               style={{
                 boxShadow: "2px 2px 0 1px #7f1d1d, 4px 4px 0 1px #450a0a",
               }}
-              className="flex w-14 flex-col items-center gap-0.5 rounded-lg border border-red-700/60 bg-slate-800 py-1.5 transition hover:border-red-400 lg:w-20 lg:py-2"
+              className="flex w-14 flex-col items-center gap-0.5 rounded-lg border border-red-700/60 bg-slate-800 py-1.5 transition hover:border-red-400 lg:w-20 lg:py-2 [@media(max-height:540px)]:w-12 [@media(max-height:540px)]:py-1"
               onClick={() => {
                 setIsSelectingCheatKillTarget(false);
                 setIsSelectingRewriteTarget(false);
@@ -658,7 +658,7 @@ export function CombatView({
                 style={{
                   boxShadow: "2px 2px 0 1px #4c1d95, 4px 4px 0 1px #2e1065",
                 }}
-                className="flex w-14 flex-col items-center gap-0.5 rounded-lg border border-purple-700/60 bg-slate-800 py-1.5 transition hover:border-purple-400 lg:w-20 lg:py-2"
+                className="flex w-14 flex-col items-center gap-0.5 rounded-lg border border-purple-700/60 bg-slate-800 py-1.5 transition hover:border-purple-400 lg:w-20 lg:py-2 [@media(max-height:540px)]:w-12 [@media(max-height:540px)]:py-1"
                 onClick={() => {
                   setIsSelectingCheatKillTarget(false);
                   setIsSelectingRewriteTarget(false);
