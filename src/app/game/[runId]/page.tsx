@@ -105,7 +105,8 @@ type GamePhase =
   | "PRE_BOSS"
   | "BIOME_SELECT"
   | "VICTORY"
-  | "DEFEAT";
+  | "DEFEAT"
+  | "ABANDONED";
 
 function GameContent({
   cardDefs,
@@ -465,7 +466,10 @@ function GameContent({
   }, [dispatch]);
 
   const handleEndRun = useCallback(
-    async (status: "VICTORY" | "DEFEAT" | "ABANDONED") => {
+    async (
+      status: "VICTORY" | "DEFEAT" | "ABANDONED",
+      redirectTo: string = "/game"
+    ) => {
       if (!runEndedRef.current) {
         runEndedRef.current = true;
         await endRunAction({
@@ -474,10 +478,25 @@ function GameContent({
           earnedResources: stateRef.current.earnedResources,
         });
       }
-      router.push("/game");
+      router.push(redirectTo);
     },
     [router]
   );
+
+  const handleAbandonRun = useCallback(async () => {
+    enemyTurnCancelledRef.current = true;
+    setActingEnemyId(null);
+    setAttackingEnemyId(null);
+    if (!runEndedRef.current) {
+      runEndedRef.current = true;
+      await endRunAction({
+        runId: stateRef.current.runId,
+        status: "ABANDONED",
+        earnedResources: stateRef.current.earnedResources,
+      });
+    }
+    setPhase("ABANDONED");
+  }, []);
 
   const earnedResourcesSummary = useMemo(
     () =>
@@ -554,7 +573,7 @@ function GameContent({
   ]);
 
   return (
-    <GameLayout>
+    <GameLayout onAbandonRun={handleAbandonRun}>
       <div
         className={cn(
           "flex min-h-0 flex-col",
@@ -846,6 +865,61 @@ function GameContent({
                 href="/library"
                 className="rounded-lg border border-amber-700 px-6 py-3 font-bold text-amber-400 hover:border-amber-500 hover:text-amber-300"
                 onClick={() => handleEndRun("DEFEAT")}
+              >
+                Biblioth&egrave;que
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {phase === "ABANDONED" && (
+          <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
+            <h2 className="text-4xl font-bold text-amber-400">Run terminée</h2>
+            <p className="text-gray-400">Vous avez quitté cette aventure.</p>
+            <div className="space-y-1 text-sm text-gray-500">
+              <p>
+                Progression atteinte: Room {state.currentRoom}/
+                {GAME_CONSTANTS.ROOMS_PER_FLOOR}
+              </p>
+              <p>Gold: {state.gold}</p>
+            </div>
+            <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
+              <div>
+                <p className="mb-1 font-semibold text-gray-300">
+                  Resources gained this run
+                </p>
+                {earnedResourcesSummary.length === 0 ? (
+                  <p className="text-gray-500">None</p>
+                ) : (
+                  <ul className="space-y-0.5 text-gray-400">
+                    {earnedResourcesSummary.map(([resource, amount]) => (
+                      <li key={resource}>
+                        {resource}: +{amount as number}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div>
+                <p className="mb-1 font-semibold text-gray-300">
+                  Cards unlocked this run
+                </p>
+                {newlyUnlockedCardNames.length === 0 ? (
+                  <p className="text-gray-500">None</p>
+                ) : (
+                  <ul className="space-y-0.5 text-gray-400">
+                    {newlyUnlockedCardNames.map((name) => (
+                      <li key={name}>{name}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Link
+                href="/library"
+                className="rounded-lg border border-amber-700 px-6 py-3 font-bold text-amber-400 hover:border-amber-500 hover:text-amber-300"
+                onClick={() => handleEndRun("ABANDONED", "/library")}
               >
                 Biblioth&egrave;que
               </Link>

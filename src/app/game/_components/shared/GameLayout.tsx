@@ -11,14 +11,16 @@ import { RulesModal } from "./RulesModal";
 
 interface GameLayoutProps {
   children: ReactNode;
+  onAbandonRun?: () => void | Promise<void>;
 }
 
-export function GameLayout({ children }: GameLayoutProps) {
+export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
   const { state, cardDefs } = useGame();
   const [muted, setMuted] = useState(false);
   const [showRelics, setShowRelics] = useState(false);
   const [showDeckViewer, setShowDeckViewer] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -134,16 +136,6 @@ export function GameLayout({ children }: GameLayoutProps) {
               {state.deck.length}
             </span>
           </button>
-
-          <button
-            onClick={() => setShowRules(true)}
-            className="rounded border border-slate-600 px-2 py-1 text-xs font-semibold text-slate-300 transition hover:border-slate-400 hover:text-white [@media(max-height:540px)]:hidden"
-            title="Voir les règles"
-            type="button"
-          >
-            R&egrave;gles
-          </button>
-
           <button
             onClick={toggleFullscreen}
             className="rounded border border-cyan-700/70 px-2 py-1 text-xs font-semibold text-cyan-200 transition hover:border-cyan-400 hover:text-white"
@@ -165,19 +157,14 @@ export function GameLayout({ children }: GameLayoutProps) {
               </span>
             </button>
           )}
-
           <button
-            onClick={toggleMute}
-            title={muted ? "Unmute" : "Mute"}
-            className="rounded border border-slate-600 px-2 py-1 text-xs font-semibold text-slate-300 transition hover:border-slate-400 hover:text-white [@media(max-height:540px)]:hidden"
+            onClick={() => setShowMenu(true)}
+            className="rounded border border-slate-600 px-2 py-1 text-xs font-semibold text-slate-300 transition hover:border-slate-400 hover:text-white"
+            title="Menu"
+            type="button"
           >
-            {muted ? "Unmute" : "Mute"}
+            Menu
           </button>
-
-          <LogoutButton
-            label="Logout"
-            className="rounded border border-slate-600 px-2 py-1 text-xs font-semibold text-slate-300 transition hover:border-slate-400 hover:text-white [@media(max-height:540px)]:hidden"
-          />
         </div>
       </div>
 
@@ -192,6 +179,72 @@ export function GameLayout({ children }: GameLayoutProps) {
       )}
 
       {showRules && <RulesModal onClose={() => setShowRules(false)} />}
+
+      {showMenu && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
+          onClick={() => setShowMenu(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-xl border border-slate-700 bg-slate-900 p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-slate-100">Menu</h3>
+              <button
+                onClick={() => setShowMenu(false)}
+                className="rounded border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:border-slate-400"
+                type="button"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  setShowRules(true);
+                  setShowMenu(false);
+                }}
+                className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
+                type="button"
+              >
+                R&egrave;gles
+              </button>
+
+              <button
+                onClick={toggleMute}
+                className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
+                type="button"
+              >
+                {muted ? "Unmute" : "Mute"}
+              </button>
+
+              {onAbandonRun && (
+                <button
+                  onClick={() => {
+                    const confirmed = window.confirm(
+                      "Terminer la run maintenant ?"
+                    );
+                    if (!confirmed) return;
+                    setShowMenu(false);
+                    void onAbandonRun();
+                  }}
+                  className="w-full rounded border border-red-700 px-3 py-2 text-sm font-semibold text-red-300 hover:border-red-500 hover:text-red-200"
+                  type="button"
+                >
+                  Terminer la run
+                </button>
+              )}
+
+              <LogoutButton
+                label="Logout"
+                className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {showRelics && (
         <div
