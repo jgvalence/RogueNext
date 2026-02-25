@@ -103,56 +103,72 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   berserker_charge: { type: "BIOME_FIRST_ENTRY", biome: "VIKING" },
   shield_wall: { type: "BIOME_FIRST_ENTRY", biome: "VIKING" },
   rune_strike: { type: "BIOME_ELITE_KILLS", biome: "VIKING", count: 1 },
+  rune_carve: { type: "BIOME_ELITE_KILLS", biome: "VIKING", count: 2 },
   mjolnir_echo: { type: "BIOME_BOSS_KILLS", biome: "VIKING", count: 1 },
+  valkyries_dive: { type: "BIOME_BOSS_KILLS", biome: "VIKING", count: 2 },
   saga_of_blood: { type: "STORY_UNLOCK", storyId: "saga_de_ragnar" },
 
   // GREEK
   olympian_guard: { type: "BIOME_FIRST_ENTRY", biome: "GREEK" },
   lightning_bolt: { type: "BIOME_FIRST_ENTRY", biome: "GREEK" },
   gorgons_gaze: { type: "BIOME_ELITE_KILLS", biome: "GREEK", count: 1 },
+  heros_challenge: { type: "BIOME_ELITE_KILLS", biome: "GREEK", count: 2 },
   icarus_wings: { type: "BIOME_BOSS_KILLS", biome: "GREEK", count: 1 },
+  olympian_cleave: { type: "BIOME_BOSS_KILLS", biome: "GREEK", count: 2 },
   labyrinth: { type: "STORY_UNLOCK", storyId: "l_odyssee" },
 
   // EGYPTIAN
   anubis_strike: { type: "BIOME_FIRST_ENTRY", biome: "EGYPTIAN" },
   canopic_ward: { type: "BIOME_FIRST_ENTRY", biome: "EGYPTIAN" },
   pharaohs_curse: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 1 },
+  sand_whip: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 2 },
   eye_of_ra: { type: "BIOME_BOSS_KILLS", biome: "EGYPTIAN", count: 1 },
+  solar_hymn: { type: "BIOME_BOSS_KILLS", biome: "EGYPTIAN", count: 2 },
   mummies_wrath: { type: "STORY_UNLOCK", storyId: "livre_des_morts" },
 
   // LOVECRAFTIAN
   eldritch_blast: { type: "BIOME_FIRST_ENTRY", biome: "LOVECRAFTIAN" },
   forbidden_whisper: { type: "BIOME_FIRST_ENTRY", biome: "LOVECRAFTIAN" },
   madness_spike: { type: "BIOME_ELITE_KILLS", biome: "LOVECRAFTIAN", count: 1 },
+  void_touch: { type: "BIOME_ELITE_KILLS", biome: "LOVECRAFTIAN", count: 2 },
   void_shield: { type: "BIOME_BOSS_KILLS", biome: "LOVECRAFTIAN", count: 1 },
+  eldritch_pact: { type: "BIOME_BOSS_KILLS", biome: "LOVECRAFTIAN", count: 2 },
   starborn_omen: { type: "STORY_UNLOCK", storyId: "necronomicon_fragment" },
 
   // AZTEC
   obsidian_jab: { type: "BIOME_FIRST_ENTRY", biome: "AZTEC" },
   sun_ritual: { type: "BIOME_FIRST_ENTRY", biome: "AZTEC" },
   blood_offering: { type: "BIOME_ELITE_KILLS", biome: "AZTEC", count: 1 },
+  sacred_jade: { type: "BIOME_ELITE_KILLS", biome: "AZTEC", count: 2 },
   jaguar_pounce: { type: "BIOME_BOSS_KILLS", biome: "AZTEC", count: 1 },
+  jaguars_blood: { type: "BIOME_BOSS_KILLS", biome: "AZTEC", count: 2 },
   eclipse_vow: { type: "BIOME_RUNS_COMPLETED", biome: "AZTEC", count: 2 },
 
   // CELTIC
   thorn_slash: { type: "BIOME_FIRST_ENTRY", biome: "CELTIC" },
   oak_guard: { type: "BIOME_FIRST_ENTRY", biome: "CELTIC" },
   druids_breath: { type: "BIOME_ELITE_KILLS", biome: "CELTIC", count: 1 },
+  faerie_fire: { type: "BIOME_ELITE_KILLS", biome: "CELTIC", count: 2 },
   stag_charge: { type: "BIOME_BOSS_KILLS", biome: "CELTIC", count: 1 },
+  wild_gale: { type: "BIOME_BOSS_KILLS", biome: "CELTIC", count: 2 },
   ancient_grove: { type: "STORY_UNLOCK", storyId: "mabinogion" },
 
   // RUSSIAN
   frost_nail: { type: "BIOME_FIRST_ENTRY", biome: "RUSSIAN" },
   iron_samovar: { type: "BIOME_FIRST_ENTRY", biome: "RUSSIAN" },
   winter_ballad: { type: "BIOME_ELITE_KILLS", biome: "RUSSIAN", count: 1 },
+  bear_claw: { type: "BIOME_ELITE_KILLS", biome: "RUSSIAN", count: 2 },
   wolf_hunt: { type: "BIOME_BOSS_KILLS", biome: "RUSSIAN", count: 1 },
+  permafrost_ward: { type: "BIOME_BOSS_KILLS", biome: "RUSSIAN", count: 2 },
   firebird_feather: { type: "STORY_UNLOCK", storyId: "byliny_de_ilya" },
 
   // AFRICAN
   lion_claw: { type: "BIOME_FIRST_ENTRY", biome: "AFRICAN" },
   mask_dance: { type: "BIOME_FIRST_ENTRY", biome: "AFRICAN" },
   ancestral_drum: { type: "BIOME_ELITE_KILLS", biome: "AFRICAN", count: 1 },
+  spirit_drum: { type: "BIOME_ELITE_KILLS", biome: "AFRICAN", count: 2 },
   trickster_snare: { type: "BIOME_BOSS_KILLS", biome: "AFRICAN", count: 1 },
+  anansis_web: { type: "BIOME_BOSS_KILLS", biome: "AFRICAN", count: 2 },
   griot_legacy: { type: "BIOME_RUNS_COMPLETED", biome: "AFRICAN", count: 2 },
 };
 

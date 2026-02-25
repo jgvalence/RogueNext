@@ -240,4 +240,61 @@ export const relicDefinitions: RelicDefinitionData[] = [
     rarity: "BOSS",
     sourceBossId: "anansi_weaver",
   },
+
+  // ── Relics with recurring / reactive mechanics ────────────────────────
+  // Turn-start
+  {
+    id: "thorn_mantle",
+    name: "Thorn Mantle",
+    description: "Gain 1 Thorn at the start of each turn.",
+    rarity: "UNCOMMON",
+  },
+  {
+    id: "spectral_inkwell",
+    name: "Spectral Inkwell",
+    description: "Gain 1 Ink at the start of each turn.",
+    rarity: "UNCOMMON",
+  },
+  {
+    id: "fading_grimoire",
+    name: "Fading Grimoire",
+    description: "Gain 1 Strength at the start of each turn.",
+    rarity: "RARE",
+  },
+
+  // Turn-end
+  {
+    id: "iron_codex",
+    name: "Iron Codex",
+    description:
+      "At the end of your turn, gain 1 Block per card still in hand.",
+    rarity: "RARE",
+  },
+  {
+    id: "resonant_quill",
+    name: "Resonant Quill",
+    description:
+      "At the end of your turn, gain 1 Ink per unplayed card (max 3).",
+    rarity: "UNCOMMON",
+  },
+  {
+    id: "ember_seal",
+    name: "Ember Seal",
+    description: "At the end of your turn, gain 3 Block per unspent Energy.",
+    rarity: "RARE",
+  },
+
+  // Card-played
+  {
+    id: "scholars_stone",
+    name: "Scholar's Stone",
+    description: "Each Attack card played grants 1 Ink.",
+    rarity: "UNCOMMON",
+  },
+  {
+    id: "reactive_binding",
+    name: "Reactive Binding",
+    description: "Each Skill card played grants 1 Block.",
+    rarity: "UNCOMMON",
+  },
 ];

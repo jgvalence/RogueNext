@@ -12,7 +12,7 @@ import { GAME_CONSTANTS } from "../constants";
 import { drawCards, discardHand, shuffleDeck } from "./deck";
 import { executeAlliesTurn, executeEnemiesTurn } from "./enemies";
 import { applyMetaBonusesToCombat } from "./meta";
-import { applyRelicsOnTurnStart } from "./relics";
+import { applyRelicsOnTurnStart, applyRelicsOnTurnEnd } from "./relics";
 import { getDifficultyModifiers } from "./difficulty";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
@@ -211,10 +211,14 @@ export function startPlayerTurn(
 }
 
 /**
- * End the player's turn: discard hand, transition to enemy phase.
+ * End the player's turn: apply turn-end relic effects, discard hand, transition to enemy phase.
  */
-export function endPlayerTurn(state: CombatState): CombatState {
-  const afterDiscard = discardHand(state);
+export function endPlayerTurn(
+  state: CombatState,
+  relicIds: string[] = []
+): CombatState {
+  const afterRelics = applyRelicsOnTurnEnd(state, relicIds);
+  const afterDiscard = discardHand(afterRelics);
   return {
     ...afterDiscard,
     phase: "ALLIES_ENEMIES_TURN",

@@ -31,7 +31,10 @@ import {
   finalizeEnemyRound,
 } from "@/game/engine/enemies";
 import { applyInkPower } from "@/game/engine/ink";
-import { applyRelicsOnCombatStart } from "@/game/engine/relics";
+import {
+  applyRelicsOnCombatStart,
+  applyRelicsOnCardPlayed,
+} from "@/game/engine/relics";
 import { drawCards } from "@/game/engine/deck";
 import {
   selectRoom,
@@ -157,6 +160,12 @@ function createGameReducer(deps: ReducerDeps) {
 
       case "PLAY_CARD": {
         if (!state.combat || state.combat.phase !== "PLAYER_TURN") return state;
+        const playedInstance = state.combat.hand.find(
+          (c) => c.instanceId === action.payload.instanceId
+        );
+        const playedCardDef = playedInstance
+          ? cardDefs.get(playedInstance.definitionId)
+          : undefined;
         let combat = playCard(
           state.combat,
           action.payload.instanceId,
@@ -165,13 +174,20 @@ function createGameReducer(deps: ReducerDeps) {
           cardDefs,
           rng
         );
+        if (playedCardDef && state.relicIds.length > 0) {
+          combat = applyRelicsOnCardPlayed(
+            combat,
+            state.relicIds,
+            playedCardDef.type
+          );
+        }
         combat = checkCombatEnd(combat);
         return { ...state, combat };
       }
 
       case "END_TURN": {
         if (!state.combat || state.combat.phase !== "PLAYER_TURN") return state;
-        let combat = endPlayerTurn(state.combat);
+        let combat = endPlayerTurn(state.combat, state.relicIds);
         combat = executeAlliesEnemiesTurn(combat, enemyDefs, allyDefs, rng);
 
         if (combat.phase !== "COMBAT_WON" && combat.phase !== "COMBAT_LOST") {
@@ -184,7 +200,7 @@ function createGameReducer(deps: ReducerDeps) {
       // ── Step-by-step enemy turn (for animations) ──────────────────
       case "BEGIN_ENEMY_TURN": {
         if (!state.combat || state.combat.phase !== "PLAYER_TURN") return state;
-        let combat = endPlayerTurn(state.combat);
+        let combat = endPlayerTurn(state.combat, state.relicIds);
         // Reset enemy blocks at start of their turn
         combat = {
           ...combat,

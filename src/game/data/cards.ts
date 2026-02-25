@@ -561,6 +561,212 @@ export const lootableCardDefinitions: CardDefinition[] = [
   },
 
   // =========================================================
+  // LIBRARY biome — new ALWAYS cards
+  // =========================================================
+  {
+    id: "rough_tome",
+    name: "Rough Tome",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 9 damage.",
+    effects: [{ type: "DAMAGE", value: 9 }],
+    inkedVariant: {
+      description: "Deal 13 damage.",
+      effects: [{ type: "DAMAGE", value: 13 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 13 damage.",
+      effects: [{ type: "DAMAGE", value: 13 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+  {
+    id: "quick_recovery",
+    name: "Quick Recovery",
+    type: "SKILL",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 5 block.",
+    effects: [{ type: "BLOCK", value: 5 }],
+    inkedVariant: {
+      description: "Gain 8 block.",
+      effects: [{ type: "BLOCK", value: 8 }],
+      inkMarkCost: 1,
+    },
+    upgrade: {
+      description: "Gain 8 block.",
+      effects: [{ type: "BLOCK", value: 8 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+  {
+    id: "inked_sweep",
+    name: "Inked Sweep",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description: "Deal 3 damage to ALL enemies. Gain 1 Ink.",
+    effects: [
+      { type: "DAMAGE", value: 3 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Deal 5 damage to ALL enemies. Gain 2 Ink.",
+      effects: [
+        { type: "DAMAGE", value: 5 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 5 damage to ALL enemies. Gain 1 Ink.",
+      effects: [
+        { type: "DAMAGE", value: 5 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+  {
+    id: "brace",
+    name: "Brace",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 6 block. Draw 1 card.",
+    effects: [
+      { type: "BLOCK", value: 6 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 9 block. Draw 2 cards.",
+      effects: [
+        { type: "BLOCK", value: 9 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 8 block. Draw 1 card.",
+      effects: [
+        { type: "BLOCK", value: 8 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+  {
+    id: "ink_surge",
+    name: "Ink Surge",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 3 Ink. Draw 1 card.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 5 Ink. Draw 2 cards.",
+      effects: [
+        { type: "GAIN_INK", value: 5 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 3 Ink. Draw 2 cards.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+  {
+    id: "exploit_weakness",
+    name: "Exploit Weakness",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 5 damage. Apply 2 Weak. Apply 1 Vulnerable.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 8 damage. Apply 2 Weak. Apply 2 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 8 damage. Apply 2 Weak. Apply 2 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+  {
+    id: "iron_will",
+    name: "Iron Will",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 10 block. Exhaust.",
+    effects: [
+      { type: "BLOCK", value: 10 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Gain 15 block. Exhaust.",
+      effects: [
+        { type: "BLOCK", value: 15 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 15 block. Exhaust.",
+      effects: [
+        { type: "BLOCK", value: 15 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+
+  // =========================================================
   // VIKING biome — cards
   // =========================================================
   {
@@ -691,6 +897,69 @@ export const lootableCardDefinitions: CardDefinition[] = [
       effects: [
         { type: "DRAW_CARDS", value: 3 },
         { type: "GAIN_ENERGY", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+  },
+
+  {
+    id: "rune_carve",
+    name: "Rune Carve",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 8 damage. Apply 1 Vulnerable.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 11 damage. Apply 2 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 11 damage. Apply 2 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+  },
+  {
+    id: "valkyries_dive",
+    name: "Valkyrie's Dive",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 10 damage. Apply 2 Bleed.",
+    effects: [
+      { type: "DAMAGE", value: 10 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 3 },
+    ],
+    inkedVariant: {
+      description: "Deal 14 damage. Apply 3 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 14 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 3 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 14 damage. Apply 3 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 14 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 3 },
       ],
     },
     isStarterCard: false,
@@ -839,6 +1108,69 @@ export const lootableCardDefinitions: CardDefinition[] = [
     biome: "GREEK",
   },
 
+  {
+    id: "heros_challenge",
+    name: "Hero's Challenge",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 6 damage. Gain 4 block.",
+    effects: [
+      { type: "DAMAGE", value: 6 },
+      { type: "BLOCK", value: 4 },
+    ],
+    inkedVariant: {
+      description: "Deal 8 damage. Gain 6 block.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "BLOCK", value: 6 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 8 damage. Gain 6 block.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "BLOCK", value: 6 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+  },
+  {
+    id: "olympian_cleave",
+    name: "Olympian Cleave",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Deal 8 damage to ALL enemies. Apply 1 Weak to ALL.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 12 damage to ALL. Apply 2 Weak to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 12 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 12 damage to ALL. Apply 2 Weak to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 12 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+  },
+
   // =========================================================
   // EGYPTIAN biome — cards
   // =========================================================
@@ -971,6 +1303,63 @@ export const lootableCardDefinitions: CardDefinition[] = [
       effects: [
         { type: "DAMAGE", value: 27 },
         { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+  },
+
+  {
+    id: "sand_whip",
+    name: "Sand Whip",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description: "Deal 5 damage to ALL enemies.",
+    effects: [{ type: "DAMAGE", value: 5 }],
+    inkedVariant: {
+      description: "Deal 8 damage to ALL enemies.",
+      effects: [{ type: "DAMAGE", value: 8 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 8 damage to ALL enemies.",
+      effects: [{ type: "DAMAGE", value: 8 }],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+  },
+  {
+    id: "solar_hymn",
+    name: "Solar Hymn",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Heal 4. Gain 3 Ink. Draw 1 card.",
+    effects: [
+      { type: "HEAL", value: 4 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Heal 6. Gain 5 Ink. Draw 1 card.",
+      effects: [
+        { type: "HEAL", value: 6 },
+        { type: "GAIN_INK", value: 5 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Heal 6. Gain 3 Ink. Draw 1 card.",
+      effects: [
+        { type: "HEAL", value: 6 },
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 1 },
       ],
     },
     isStarterCard: false,
@@ -1111,6 +1500,72 @@ export const lootableCardDefinitions: CardDefinition[] = [
     biome: "LOVECRAFTIAN",
   },
 
+  {
+    id: "void_touch",
+    name: "Void Touch",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 6 damage. Apply 2 Vulnerable.",
+    effects: [
+      { type: "DAMAGE", value: 6 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 9 damage. Apply 3 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 9 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 9 damage. Apply 2 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 9 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+  },
+  {
+    id: "eldritch_pact",
+    name: "Eldritch Pact",
+    type: "SKILL",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 2 Ink. Draw 1 card. Exhaust.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Gain 3 Ink. Draw 2 cards. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 1,
+    },
+    upgrade: {
+      description: "Gain 3 Ink. Draw 2 cards. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+  },
+
   // =========================================================
   // AZTEC biome — cards
   // =========================================================
@@ -1238,6 +1693,69 @@ export const lootableCardDefinitions: CardDefinition[] = [
       effects: [
         { type: "GAIN_STRENGTH", value: 2 },
         { type: "BLOCK", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+  },
+
+  {
+    id: "sacred_jade",
+    name: "Sacred Jade",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 7 block. Gain 1 Ink.",
+    effects: [
+      { type: "BLOCK", value: 7 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 10 block. Gain 2 Ink.",
+      effects: [
+        { type: "BLOCK", value: 10 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 10 block. Gain 2 Ink.",
+      effects: [
+        { type: "BLOCK", value: 10 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+  },
+  {
+    id: "jaguars_blood",
+    name: "Jaguar's Blood",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 7 damage. Apply 3 Bleed.",
+    effects: [
+      { type: "DAMAGE", value: 7 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description: "Deal 10 damage. Apply 4 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 10 damage. Apply 4 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
       ],
     },
     isStarterCard: false,
@@ -1377,6 +1895,60 @@ export const lootableCardDefinitions: CardDefinition[] = [
     biome: "CELTIC",
   },
 
+  {
+    id: "faerie_fire",
+    name: "Faerie Fire",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description: "Apply 2 Poison to ALL enemies.",
+    effects: [{ type: "APPLY_DEBUFF", value: 2, buff: "POISON" }],
+    inkedVariant: {
+      description: "Apply 4 Poison to ALL enemies.",
+      effects: [{ type: "APPLY_DEBUFF", value: 4, buff: "POISON" }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Apply 3 Poison to ALL enemies.",
+      effects: [{ type: "APPLY_DEBUFF", value: 3, buff: "POISON" }],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+  },
+  {
+    id: "wild_gale",
+    name: "Wild Gale",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Draw 2 cards. Gain 2 Thorns.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "APPLY_BUFF", value: 2, buff: "THORNS" },
+    ],
+    inkedVariant: {
+      description: "Draw 3 cards. Gain 3 Thorns.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "APPLY_BUFF", value: 3, buff: "THORNS" },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Draw 3 cards. Gain 3 Thorns.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "APPLY_BUFF", value: 3, buff: "THORNS" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+  },
+
   // =========================================================
   // RUSSIAN biome — cards
   // =========================================================
@@ -1489,6 +2061,69 @@ export const lootableCardDefinitions: CardDefinition[] = [
       energyCost: 1,
       description: "Gain 2 Strength.",
       effects: [{ type: "GAIN_STRENGTH", value: 2 }],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+  },
+
+  {
+    id: "bear_claw",
+    name: "Bear Claw",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 8 damage. Gain 1 Strength.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "GAIN_STRENGTH", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Deal 12 damage. Gain 2 Strength.",
+      effects: [
+        { type: "DAMAGE", value: 12 },
+        { type: "GAIN_STRENGTH", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 11 damage. Gain 2 Strength.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "GAIN_STRENGTH", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+  },
+  {
+    id: "permafrost_ward",
+    name: "Permafrost Ward",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Gain 12 block. Apply 1 Weak.",
+    effects: [
+      { type: "BLOCK", value: 12 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Gain 16 block. Apply 2 Weak.",
+      effects: [
+        { type: "BLOCK", value: 16 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 16 block. Apply 2 Weak.",
+      effects: [
+        { type: "BLOCK", value: 16 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
     },
     isStarterCard: false,
     biome: "RUSSIAN",
@@ -1623,6 +2258,68 @@ export const lootableCardDefinitions: CardDefinition[] = [
       effects: [
         { type: "GAIN_STRENGTH", value: 2 },
         { type: "DRAW_CARDS", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+  },
+  {
+    id: "spirit_drum",
+    name: "Spirit Drum",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Draw 2 cards. Gain 2 block.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "BLOCK", value: 2 },
+    ],
+    inkedVariant: {
+      description: "Draw 2 cards. Gain 5 block.",
+      effects: [
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "BLOCK", value: 5 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Draw 2 cards. Gain 4 block.",
+      effects: [
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "BLOCK", value: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+  },
+  {
+    id: "anansis_web",
+    name: "Anansi's Web",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Apply 2 Vulnerable to ALL enemies. Draw 1 card.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Apply 3 Vulnerable to ALL enemies. Draw 2 cards.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Apply 3 Vulnerable to ALL enemies. Draw 1 card.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
       ],
     },
     isStarterCard: false,

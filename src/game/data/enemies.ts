@@ -548,6 +548,73 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
   },
 
   // =========================================================
+  // VIKING biome — new normal enemies
+  // =========================================================
+  {
+    id: "rune_shaman",
+    name: "Rune Shaman",
+    maxHp: 22,
+    speed: 4,
+    abilities: [
+      {
+        name: "Frost Hex",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+      },
+      {
+        name: "Runic Mark",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 1 },
+        ],
+      },
+      {
+        name: "Ice Chant",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 8 }],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "VIKING",
+  },
+  {
+    id: "einherjar",
+    name: "Einherjar",
+    maxHp: 32,
+    speed: 3,
+    abilities: [
+      {
+        name: "Chosen Strike",
+        weight: 2,
+        effects: [{ type: "DAMAGE", value: 9 }],
+      },
+      {
+        name: "Shield Hold",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 9 }],
+      },
+      {
+        name: "War Oath",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "BLOCK", value: 5 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "VIKING",
+  },
+
+  // =========================================================
   // VIKING biome — elite
   // =========================================================
   {
@@ -579,6 +646,48 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
       },
       {
         name: "Wing Shield",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 12 }],
+      },
+    ],
+    isBoss: false,
+    isElite: true,
+    tier: 2,
+    biome: "VIKING",
+  },
+
+  {
+    id: "jormungandr_spawn",
+    name: "Jormungandr Spawn",
+    maxHp: 66,
+    speed: 3,
+    abilities: [
+      {
+        name: "Serpent Crush",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 15 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Venom Fang",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 10 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+        ],
+      },
+      {
+        name: "Coil Squeeze",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        ],
+      },
+      {
+        name: "Scale Guard",
         weight: 1,
         effects: [{ type: "BLOCK", value: 12 }],
       },
@@ -874,6 +983,68 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
   },
 
   // =========================================================
+  // GREEK biome — new normal enemies
+  // =========================================================
+  {
+    id: "lamia",
+    name: "Lamia",
+    maxHp: 20,
+    speed: 6,
+    abilities: [
+      {
+        name: "Constrict",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Serpent Kiss",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "APPLY_DEBUFF", value: 3, buff: "POISON", duration: 0 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "GREEK",
+  },
+  {
+    id: "bronze_automaton",
+    name: "Bronze Automaton",
+    maxHp: 38,
+    speed: 1,
+    abilities: [
+      {
+        name: "Bronze Fist",
+        weight: 2,
+        effects: [{ type: "DAMAGE", value: 12 }],
+      },
+      {
+        name: "Talos Shield",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 11 }],
+      },
+      {
+        name: "Rivet Barrage",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 6 },
+          { type: "DAMAGE", value: 6 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "GREEK",
+  },
+
+  // =========================================================
   // GREEK biome — elite
   // =========================================================
   {
@@ -901,6 +1072,49 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         effects: [
           { type: "DAMAGE", value: 12 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: true,
+    tier: 2,
+    biome: "GREEK",
+  },
+
+  {
+    id: "lernaean_broodling",
+    name: "Lernaean Broodling",
+    maxHp: 68,
+    speed: 3,
+    abilities: [
+      {
+        name: "Acid Spew",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 11 },
+          { type: "APPLY_DEBUFF", value: 6, buff: "POISON", duration: 0 },
+        ],
+      },
+      {
+        name: "Multi-Head Strike",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "DAMAGE", value: 7 },
+        ],
+      },
+      {
+        name: "Regenerate",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 14 }],
+      },
+      {
+        name: "Venomous Overwhelm",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 13 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+          { type: "APPLY_DEBUFF", value: 3, buff: "POISON", duration: 0 },
         ],
       },
     ],
@@ -1169,6 +1383,64 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     biome: "EGYPTIAN",
   },
   {
+    id: "desert_cobra",
+    name: "Desert Cobra",
+    maxHp: 22,
+    speed: 7,
+    abilities: [
+      {
+        name: "Venom Strike",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 6 },
+          { type: "APPLY_DEBUFF", value: 5, buff: "POISON", duration: 0 },
+        ],
+      },
+      {
+        name: "Sand Spit",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 4 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "EGYPTIAN",
+  },
+  {
+    id: "ushabti_servant",
+    name: "Ushabti Servant",
+    maxHp: 32,
+    speed: 2,
+    abilities: [
+      {
+        name: "Stone Fist",
+        weight: 2,
+        effects: [{ type: "DAMAGE", value: 10 }],
+      },
+      {
+        name: "Funerary Ward",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 9 }],
+      },
+      {
+        name: "Servant's Burden",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "EGYPTIAN",
+  },
+  {
     id: "anubis_champion",
     name: "Anubis Champion",
     maxHp: 72,
@@ -1187,6 +1459,47 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Desert Bulwark",
         weight: 1,
         effects: [{ type: "BLOCK", value: 14 }],
+      },
+    ],
+    isBoss: false,
+    isElite: true,
+    tier: 2,
+    biome: "EGYPTIAN",
+  },
+  {
+    id: "sekhmet_chosen",
+    name: "Sekhmet's Chosen",
+    maxHp: 72,
+    speed: 4,
+    abilities: [
+      {
+        name: "Lioness Charge",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 18 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Solar Fury",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "DRAIN_INK", value: 4 },
+        ],
+      },
+      {
+        name: "Sun's Wrath",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+      },
+      {
+        name: "Bloodlust",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 13 }],
       },
     ],
     isBoss: false,
@@ -1422,6 +1735,56 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     biome: "LOVECRAFTIAN",
   },
   {
+    id: "star_spawn",
+    name: "Star Spawn",
+    maxHp: 28,
+    speed: 4,
+    abilities: [
+      {
+        name: "Alien Claw",
+        weight: 2,
+        effects: [{ type: "DAMAGE", value: 9 }],
+      },
+      {
+        name: "Mind Fracture",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "LOVECRAFTIAN",
+  },
+  {
+    id: "byakhee",
+    name: "Byakhee",
+    maxHp: 22,
+    speed: 7,
+    abilities: [
+      {
+        name: "Wing Buffet",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+      },
+      {
+        name: "Piercing Dive",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 10 }],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "LOVECRAFTIAN",
+  },
+  {
     id: "elder_hybrid",
     name: "Elder Hybrid",
     maxHp: 74,
@@ -1445,6 +1808,48 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Abyss Ward",
         weight: 1,
         effects: [{ type: "BLOCK", value: 15 }],
+      },
+    ],
+    isBoss: false,
+    isElite: true,
+    tier: 2,
+    biome: "LOVECRAFTIAN",
+  },
+  {
+    id: "mi_go_surgeon",
+    name: "Mi-Go Surgeon",
+    maxHp: 72,
+    speed: 3,
+    abilities: [
+      {
+        name: "Brain Extract",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "DRAIN_INK", value: 5 },
+        ],
+      },
+      {
+        name: "Fungal Spores",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 9 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+        ],
+      },
+      {
+        name: "Alien Carapace",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 16 }],
+      },
+      {
+        name: "Psychic Scalpel",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        ],
       },
     ],
     isBoss: false,
@@ -1682,6 +2087,61 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     biome: "AZTEC",
   },
   {
+    id: "blood_cultist",
+    name: "Blood Cultist",
+    maxHp: 22,
+    speed: 5,
+    abilities: [
+      {
+        name: "Sacrificial Slash",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 3 },
+        ],
+      },
+      {
+        name: "Ritual Dagger",
+        weight: 1,
+        effects: [{ type: "DAMAGE", value: 9 }],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "AZTEC",
+  },
+  {
+    id: "tzitzimitl",
+    name: "Tzitzimitl",
+    maxHp: 28,
+    speed: 3,
+    abilities: [
+      {
+        name: "Star Blade",
+        weight: 2,
+        effects: [{ type: "DAMAGE", value: 10 }],
+      },
+      {
+        name: "Eclipse Cover",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 9 }],
+      },
+      {
+        name: "Stellar Crash",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "AZTEC",
+  },
+  {
     id: "quetzal_harbinger",
     name: "Quetzal Harbinger",
     maxHp: 76,
@@ -1704,6 +2164,48 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Golden Feathers",
         weight: 1,
         effects: [{ type: "BLOCK", value: 15 }],
+      },
+    ],
+    isBoss: false,
+    isElite: true,
+    tier: 2,
+    biome: "AZTEC",
+  },
+  {
+    id: "huitzilopochtli_enforcer",
+    name: "Huitzilopochtli's Enforcer",
+    maxHp: 74,
+    speed: 4,
+    abilities: [
+      {
+        name: "Sun Cleave",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 18 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Blood Offering",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+        ],
+      },
+      {
+        name: "War God's Favor",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 14 }],
+      },
+      {
+        name: "Sacrificial Rush",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 3 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
       },
     ],
     isBoss: false,
@@ -1946,6 +2448,67 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     biome: "CELTIC",
   },
   {
+    id: "morrigan_wisp",
+    name: "Morrigan's Wisp",
+    maxHp: 18,
+    speed: 8,
+    abilities: [
+      {
+        name: "Cursed Flicker",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+      },
+      {
+        name: "Soul Drain",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 6 },
+          { type: "DRAIN_INK", value: 2 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "CELTIC",
+  },
+  {
+    id: "briar_beast",
+    name: "Briar Beast",
+    maxHp: 34,
+    speed: 2,
+    abilities: [
+      {
+        name: "Thorned Slam",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 10 },
+          { type: "APPLY_BUFF", value: 2, buff: "THORNS" },
+        ],
+      },
+      {
+        name: "Root Cage",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Bark Armor",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 10 }],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "CELTIC",
+  },
+  {
     id: "morrigan_chosen",
     name: "Morrigan's Chosen",
     maxHp: 74,
@@ -1964,6 +2527,47 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Feather Guard",
         weight: 1,
         effects: [{ type: "BLOCK", value: 14 }],
+      },
+    ],
+    isBoss: false,
+    isElite: true,
+    tier: 2,
+    biome: "CELTIC",
+  },
+  {
+    id: "wild_hunt_hound",
+    name: "Wild Hunt Hound",
+    maxHp: 70,
+    speed: 6,
+    abilities: [
+      {
+        name: "Hunt Strike",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 17 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+        ],
+      },
+      {
+        name: "Fae Howl",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 11 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        ],
+      },
+      {
+        name: "Phantom Dash",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 13 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Ethereal Fur",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 13 }],
       },
     ],
     isBoss: false,
@@ -2202,6 +2806,62 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     biome: "RUSSIAN",
   },
   {
+    id: "kikimora",
+    name: "Kikimora",
+    maxHp: 24,
+    speed: 5,
+    abilities: [
+      {
+        name: "Nightmare Scratch",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+      },
+      {
+        name: "Bad Omen",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "RUSSIAN",
+  },
+  {
+    id: "rusalka",
+    name: "Rusalka",
+    maxHp: 20,
+    speed: 6,
+    abilities: [
+      {
+        name: "Drowning Grasp",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Siren Song",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "RUSSIAN",
+  },
+  {
     id: "koschei_herald",
     name: "Koschei Herald",
     maxHp: 76,
@@ -2224,6 +2884,45 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Undying Guard",
         weight: 1,
         effects: [{ type: "BLOCK", value: 15 }],
+      },
+    ],
+    isBoss: false,
+    isElite: true,
+    tier: 2,
+    biome: "RUSSIAN",
+  },
+  {
+    id: "domovoi_titan",
+    name: "Domovoi Titan",
+    maxHp: 78,
+    speed: 2,
+    abilities: [
+      {
+        name: "Hearth Smash",
+        weight: 2,
+        effects: [{ type: "DAMAGE", value: 18 }],
+      },
+      {
+        name: "Frost Stomp",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Guardian's Wall",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 16 }],
+      },
+      {
+        name: "Winter's Grasp",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "DRAIN_INK", value: 4 },
+        ],
       },
     ],
     isBoss: false,
@@ -2459,6 +3158,62 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     biome: "AFRICAN",
   },
   {
+    id: "impundulu",
+    name: "Impundulu",
+    maxHp: 20,
+    speed: 8,
+    abilities: [
+      {
+        name: "Lightning Dive",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Storm Talon",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 6 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 1 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "AFRICAN",
+  },
+  {
+    id: "tokoloshe",
+    name: "Tokoloshe",
+    maxHp: 26,
+    speed: 5,
+    abilities: [
+      {
+        name: "Night Terror",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+      },
+      {
+        name: "Creeping Dread",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "AFRICAN",
+  },
+  {
     id: "legba_emissary",
     name: "Legba Emissary",
     maxHp: 75,
@@ -2481,6 +3236,47 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Mask Barrier",
         weight: 1,
         effects: [{ type: "BLOCK", value: 15 }],
+      },
+    ],
+    isBoss: false,
+    isElite: true,
+    tier: 2,
+    biome: "AFRICAN",
+  },
+  {
+    id: "oya_harbinger",
+    name: "Oya's Harbinger",
+    maxHp: 76,
+    speed: 5,
+    abilities: [
+      {
+        name: "Storm Spear",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 17 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+      {
+        name: "Winds of Change",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        ],
+      },
+      {
+        name: "Tempest Shield",
+        weight: 1,
+        effects: [{ type: "BLOCK", value: 15 }],
+      },
+      {
+        name: "Lightning Surge",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "DRAIN_INK", value: 4 },
+        ],
       },
     ],
     isBoss: false,

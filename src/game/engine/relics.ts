@@ -414,7 +414,7 @@ export function applyRelicsOnTurnStart(
     ? state.player.energyCurrent + state.player.energyMax
     : state.player.energyMax;
 
-  return {
+  let current: CombatState = {
     ...state,
     player: {
       ...state.player,
@@ -422,6 +422,158 @@ export function applyRelicsOnTurnStart(
       energyCurrent,
     },
   };
+
+  for (const relicId of relicIds) {
+    switch (relicId) {
+      case "thorn_mantle": {
+        const existingThorns = current.player.buffs.find(
+          (b) => b.type === "THORNS"
+        );
+        if (existingThorns) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              buffs: current.player.buffs.map((b) =>
+                b.type === "THORNS" ? { ...b, stacks: b.stacks + 1 } : b
+              ),
+            },
+          };
+        } else {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              buffs: [
+                ...current.player.buffs,
+                { type: "THORNS" as const, stacks: 1 },
+              ],
+            },
+          };
+        }
+        break;
+      }
+
+      case "spectral_inkwell":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + 1
+            ),
+          },
+        };
+        break;
+
+      case "fading_grimoire":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            strength: current.player.strength + 1,
+          },
+        };
+        break;
+    }
+  }
+
+  return current;
+}
+
+/**
+ * Apply relic effects at the end of the player's turn (before discarding hand).
+ */
+export function applyRelicsOnTurnEnd(
+  state: CombatState,
+  relicIds: string[]
+): CombatState {
+  let current = state;
+
+  for (const relicId of relicIds) {
+    switch (relicId) {
+      case "iron_codex":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            block: current.player.block + current.hand.length,
+          },
+        };
+        break;
+
+      case "resonant_quill":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + Math.min(current.hand.length, 3)
+            ),
+          },
+        };
+        break;
+
+      case "ember_seal":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            block: current.player.block + current.player.energyCurrent * 3,
+          },
+        };
+        break;
+    }
+  }
+
+  return current;
+}
+
+/**
+ * Apply relic effects when a card is played.
+ * cardType is the type field of the card definition (e.g. "ATTACK", "SKILL", "POWER").
+ */
+export function applyRelicsOnCardPlayed(
+  state: CombatState,
+  relicIds: string[],
+  cardType: string
+): CombatState {
+  let current = state;
+
+  for (const relicId of relicIds) {
+    switch (relicId) {
+      case "scholars_stone":
+        if (cardType === "ATTACK") {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              inkCurrent: Math.min(
+                current.player.inkMax,
+                current.player.inkCurrent + 1
+              ),
+            },
+          };
+        }
+        break;
+
+      case "reactive_binding":
+        if (cardType === "SKILL") {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              block: current.player.block + 1,
+            },
+          };
+        }
+        break;
+    }
+  }
+
+  return current;
 }
 
 /**
