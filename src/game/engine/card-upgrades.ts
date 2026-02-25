@@ -26,25 +26,46 @@ export function boostEffectsForUpgrade(effects: Effect[]): Effect[] {
 }
 
 function buildUpgradedDescriptionFromEffects(def: CardDefinition): string {
-  const boostedEffects = boostEffectsForUpgrade(def.effects);
-  let description = def.description;
+  return replaceValuesInDescription(
+    def.description,
+    def.effects,
+    boostEffectsForUpgrade(def.effects)
+  );
+}
 
-  for (let i = 0; i < def.effects.length; i += 1) {
-    const base = def.effects[i];
-    const boosted = boostedEffects[i];
+function replaceValuesInDescription(
+  description: string,
+  baseEffects: Effect[],
+  upgradedEffects: Effect[]
+): string {
+  let nextDescription = description;
+  for (let i = 0; i < baseEffects.length; i += 1) {
+    const base = baseEffects[i];
+    const boosted = upgradedEffects[i];
     if (!base || !boosted || base.value === boosted.value) continue;
-    description = description.replace(
+    nextDescription = nextDescription.replace(
       new RegExp(`\\b${base.value}\\b`),
       String(boosted.value)
     );
   }
-
-  return description;
+  return nextDescription;
 }
 
 export function buildUpgradedCardDefinition(
   def: CardDefinition
 ): CardDefinition {
+  const upgradedInkedVariant = def.inkedVariant
+    ? {
+        ...def.inkedVariant,
+        effects: boostEffectsForUpgrade(def.inkedVariant.effects),
+        description: replaceValuesInDescription(
+          def.inkedVariant.description,
+          def.inkedVariant.effects,
+          boostEffectsForUpgrade(def.inkedVariant.effects)
+        ),
+      }
+    : null;
+
   if (def.upgrade) {
     return {
       ...def,
@@ -54,6 +75,7 @@ export function buildUpgradedCardDefinition(
           ? def.upgrade.energyCost
           : def.energyCost,
       effects: def.upgrade.effects,
+      inkedVariant: upgradedInkedVariant,
     };
   }
 
@@ -61,5 +83,6 @@ export function buildUpgradedCardDefinition(
     ...def,
     description: buildUpgradedDescriptionFromEffects(def),
     effects: boostEffectsForUpgrade(def.effects),
+    inkedVariant: upgradedInkedVariant,
   };
 }

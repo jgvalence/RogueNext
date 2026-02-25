@@ -120,12 +120,21 @@ function GameContent({
 }) {
   const { state, dispatch, rng } = useGame();
   const router = useRouter();
+  const hasOpeningBiomeChoice =
+    state.floor === 1 &&
+    state.currentRoom === 0 &&
+    state.combat === null &&
+    state.pendingBiomeChoices !== null;
   const [phase, setPhase] = useState<GamePhase>(() =>
     state.selectedDifficultyLevel === null
       ? "RUN_DIFFICULTY"
       : state.selectedRunConditionId ||
           (state.pendingRunConditionChoices?.length ?? 0) === 0
-        ? "MAP"
+        ? state.floor === 1 &&
+          state.currentRoom === 0 &&
+          state.pendingBiomeChoices !== null
+          ? "BIOME_SELECT"
+          : "MAP"
         : "RUN_CONDITION"
   );
   const [rewards, setRewards] = useState<CombatRewards | null>(null);
@@ -245,9 +254,9 @@ function GameContent({
   const handlePickRunCondition = useCallback(
     (conditionId: string) => {
       dispatch({ type: "APPLY_RUN_CONDITION", payload: { conditionId } });
-      setPhase("MAP");
+      setPhase(hasOpeningBiomeChoice ? "BIOME_SELECT" : "MAP");
     },
-    [dispatch]
+    [dispatch, hasOpeningBiomeChoice]
   );
 
   const handlePickDifficulty = useCallback(
@@ -255,11 +264,13 @@ function GameContent({
       dispatch({ type: "APPLY_DIFFICULTY", payload: { difficultyLevel } });
       if ((state.pendingRunConditionChoices?.length ?? 0) > 0) {
         setPhase("RUN_CONDITION");
+      } else if (hasOpeningBiomeChoice) {
+        setPhase("BIOME_SELECT");
       } else {
         setPhase("MAP");
       }
     },
-    [dispatch, state.pendingRunConditionChoices]
+    [dispatch, hasOpeningBiomeChoice, state.pendingRunConditionChoices]
   );
 
   // Handle combat end
@@ -667,6 +678,7 @@ function GameContent({
             cardDefs={cardDefs}
             rng={rng}
             difficultyLevel={state.selectedDifficultyLevel ?? 0}
+            forceEventWithRelic={state.floor === 1 && state.currentRoom === 2}
             onHeal={handleHeal}
             onUpgrade={(cardInstanceId) => {
               dispatch({ type: "UPGRADE_CARD", payload: { cardInstanceId } });

@@ -87,17 +87,19 @@ export function playCard(
   const def = cardDefs.get(cardInst.definitionId);
   if (!def) return state;
 
-  let effects =
-    useInked && def.inkedVariant ? def.inkedVariant.effects : def.effects;
-  const inkCost =
-    useInked && def.inkedVariant
-      ? def.inkCost + def.inkedVariant.inkMarkCost
-      : def.inkCost;
+  const isUsingInkedVariant = Boolean(useInked && def.inkedVariant);
+  let effects = isUsingInkedVariant ? def.inkedVariant!.effects : def.effects;
+  const inkCost = isUsingInkedVariant
+    ? def.inkCost + def.inkedVariant!.inkMarkCost
+    : def.inkCost;
 
   // Apply upgrade: use card-specific upgrade if defined, else generic boost
   let energyCost = getEffectiveCardEnergyCost(def, cardInst.upgraded);
   if (cardInst.upgraded) {
-    if (def.upgrade) {
+    if (isUsingInkedVariant) {
+      // Inked branch should also benefit from upgrades.
+      effects = boostEffectsForUpgrade(effects);
+    } else if (def.upgrade) {
       effects = def.upgrade.effects;
     } else {
       effects = boostEffectsForUpgrade(effects);

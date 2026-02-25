@@ -276,25 +276,25 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
   // =========================================================
   // LIBRARY biome — boss
   // =========================================================
-  // Cycle (6 turns): 20 + 12 + 18 + 16 + 20 + 14 = 100 raw damage.
+  // Cycle (6 turns): 18 + 10 + 14 + 16 + 18 + 12 = 88 raw damage.
   {
     id: "chapter_guardian",
     name: "Chapter Guardian",
-    maxHp: 160,
+    maxHp: 145,
     speed: 5,
     abilities: [
       {
         name: "Heavy Slam",
         weight: 1,
         target: "PLAYER",
-        effects: [{ type: "DAMAGE", value: 20 }],
+        effects: [{ type: "DAMAGE", value: 18 }],
       },
       {
         name: "Page Storm",
         weight: 1,
         target: "LOWEST_HP_ENEMY",
         effects: [
-          { type: "DAMAGE", value: 12 },
+          { type: "DAMAGE", value: 10 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
       },
@@ -302,7 +302,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Fortify Binding",
         weight: 1,
         effects: [
-          { type: "BLOCK", value: 18 },
+          { type: "BLOCK", value: 14 },
           { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
         ],
       },
@@ -319,16 +319,16 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Crushing Verdict",
         weight: 1,
         target: "PLAYER",
-        effects: [{ type: "DAMAGE", value: 20 }],
+        effects: [{ type: "DAMAGE", value: 18 }],
       },
       {
         name: "Binding Curse",
         weight: 1,
         target: "ALLY_PRIORITY",
         effects: [
-          { type: "DAMAGE", value: 14 },
-          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 3 },
-          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 3 },
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
           { type: "ADD_CARD_TO_DRAW", value: 1, cardId: "haunting_regret" },
         ],
       },

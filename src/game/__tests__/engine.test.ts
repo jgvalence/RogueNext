@@ -29,10 +29,12 @@ import {
   checkCombatEnd,
 } from "../engine/combat";
 import {
+  createGuaranteedRelicEvent,
   createNewRun,
   generateFloorMap,
   selectRoom,
   completeCombat,
+  advanceFloor,
 } from "../engine/run";
 import { generateCombatRewards, addCardToRunDeck } from "../engine/rewards";
 import { applyRelicsOnCombatStart } from "../engine/relics";
@@ -516,6 +518,23 @@ describe("Card playing", () => {
     expect(result.enemies[0]?.currentHp).toBe(14 - 18);
     // Ink spent: 2 (inkMarkCost) then +1 (ink per card played)
     expect(result.player.inkCurrent).toBe(5 - 2 + 1);
+  });
+
+  it("playCard upgraded also boosts inked variant effects", () => {
+    const rng = createRNG("inked-upgraded-test");
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "c1", definitionId: "heavy_strike", upgraded: true },
+      ],
+      player: {
+        ...makeMinimalCombat().player,
+        inkCurrent: 5,
+      },
+    });
+    const result = playCard(state, "c1", "e1", true, cardDefs, rng);
+
+    // Heavy Strike inked is 18; upgraded inked uses boosted effects => 27.
+    expect(result.enemies[0]?.currentHp).toBe(14 - 27);
   });
 
   it("playCard exhausts POWER cards for the rest of combat", () => {
@@ -1165,9 +1184,30 @@ describe("Run management", () => {
     expect(run.status).toBe("IN_PROGRESS");
     expect(run.floor).toBe(1);
     expect(run.currentRoom).toBe(0);
-    expect(run.playerCurrentHp).toBe(80);
+    expect(run.playerCurrentHp).toBe(60);
     expect(run.deck).toHaveLength(starterCards.length);
     expect(run.map).toHaveLength(10);
+  });
+
+  it("createNewRun can expose opening biome choices", () => {
+    const rng = createRNG("new-run-opening-biome-choice");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-1",
+      "new-run-opening-biome-choice",
+      starterCards,
+      rng,
+      undefined,
+      [],
+      undefined,
+      undefined,
+      [],
+      [0],
+      0,
+      ["LIBRARY", "VIKING"]
+    );
+
+    expect(run.pendingBiomeChoices).toEqual(["LIBRARY", "VIKING"]);
   });
 
   it("generateFloorMap creates 10 room slots", () => {
@@ -1214,6 +1254,19 @@ describe("Run management", () => {
     }
   });
 
+  it("generateFloorMap forces room 3 to SPECIAL on floor 1", () => {
+    const seeds = [
+      "room3-special-1",
+      "room3-special-2",
+      "room3-special-3",
+      "room3-special-4",
+    ];
+    for (const seed of seeds) {
+      const map = generateFloorMap(1, createRNG(seed), "LIBRARY");
+      expect(map[2]?.[0]?.type).toBe("SPECIAL");
+    }
+  });
+
   it("selectRoom marks room as completed", () => {
     const rng = createRNG("select-room");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
@@ -1235,7 +1288,7 @@ describe("Run management", () => {
     });
 
     const result = completeCombat(run, combatResult, 0, rng, { PAGES: 2 });
-    expect(result.playerCurrentHp).toBe(58); // 50 + 10% of 80
+    expect(result.playerCurrentHp).toBe(56); // 50 + 10% of 60
   });
 
   it("completeCombat offers LIBRARY as a guaranteed option after floor 1 boss", () => {
@@ -1287,6 +1340,54 @@ describe("Run management", () => {
     expect(choices[0]).not.toBe(choices[1]);
     expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(choices[0]);
     expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(choices[1]);
+  });
+
+  it("advanceFloor keeps floor 1 when resolving opening biome choice", () => {
+    const rng = createRNG("opening-biome-choice");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-1",
+      "opening-biome-choice",
+      starterCards,
+      rng,
+      undefined,
+      [],
+      undefined,
+      [...cardDefs.values()],
+      [],
+      [0],
+      0,
+      ["LIBRARY", "VIKING"]
+    );
+
+    const result = advanceFloor(
+      { ...run, pendingBiomeChoices: ["LIBRARY", "VIKING"] },
+      "VIKING",
+      createRNG("opening-biome-choice-select"),
+      [...cardDefs.values()]
+    );
+
+    expect(result.floor).toBe(1);
+    expect(result.currentRoom).toBe(0);
+    expect(result.currentBiome).toBe("VIKING");
+    expect(result.pendingBiomeChoices).toBeNull();
+    expect(result.map).toHaveLength(10);
+  });
+
+  it("guaranteed relic event grants a relic and advances room", () => {
+    const rng = createRNG("guaranteed-relic-event");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-1",
+      "guaranteed-relic-event",
+      starterCards,
+      rng
+    );
+    const event = createGuaranteedRelicEvent();
+    const result = event.choices[0]!.apply(run);
+
+    expect(result.currentRoom).toBe(run.currentRoom + 1);
+    expect(result.relicIds.length).toBe(run.relicIds.length + 1);
   });
 });
 

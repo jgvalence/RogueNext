@@ -14,9 +14,13 @@ export function BuffPill({ buff, size = "sm" }: BuffPillProps) {
   const meta = buffMeta[buff.type];
   const label = meta?.label() ?? buff.type;
   const colorClass = meta?.color ?? "bg-gray-700 text-gray-300";
+  const useDurationCounter =
+    buff.duration !== undefined &&
+    (buff.type === "WEAK" || buff.type === "VULNERABLE");
+  const visibleValue = useDurationCounter ? buff.duration : buff.stacks;
   const description = meta?.description(buff.stacks) ?? "";
   const durationNote =
-    buff.duration !== undefined
+    buff.duration !== undefined && !useDurationCounter
       ? ` Lasts ${buff.duration} turn${buff.duration !== 1 ? "s" : ""}.`
       : "";
 
@@ -27,7 +31,7 @@ export function BuffPill({ buff, size = "sm" }: BuffPillProps) {
       content={
         <span>
           <span className="font-bold">
-            {label} {buff.stacks}
+            {label} {visibleValue}
           </span>
           {description && (
             <>
@@ -46,7 +50,7 @@ export function BuffPill({ buff, size = "sm" }: BuffPillProps) {
           colorClass
         )}
       >
-        {label} {buff.stacks}
+        {label} {visibleValue}
       </span>
     </Tooltip>
   );

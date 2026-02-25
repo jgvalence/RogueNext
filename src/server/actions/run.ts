@@ -9,9 +9,11 @@ import { revalidatePath } from "next/cache";
 import { nanoid } from "nanoid";
 import { createNewRun } from "@/game/engine/run";
 import { createRNG } from "@/game/engine/rng";
+import { GAME_CONSTANTS } from "@/game/constants";
 import { starterDeckComposition } from "@/game/data/starter-deck";
 import { allCardDefinitions, buildCardDefsMap } from "@/game/data";
 import type { RunState } from "@/game/schemas/run-state";
+import type { BiomeType } from "@/game/schemas/enums";
 import { computeMetaBonuses } from "@/game/engine/meta";
 import {
   computeUnlockedRunConditionIds,
@@ -61,6 +63,15 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
       totalRuns: progression?.totalRuns ?? 0,
       wonRuns: progression?.wonRuns ?? 0,
     });
+    const startingBiomeChoices: [BiomeType, BiomeType] | null =
+      (progression?.totalRuns ?? 0) > 0
+        ? ([
+            "LIBRARY",
+            createRNG(`${seed}-opening-biome`).pick(
+              GAME_CONSTANTS.AVAILABLE_BIOMES
+            ),
+          ] as [BiomeType, BiomeType])
+        : null;
 
     // Build starter card definitions from composition
     const cardDefsMap = buildCardDefsMap();
@@ -79,7 +90,8 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
       allCardDefinitions,
       unlockedRunConditionIds,
       unlockedDifficultyLevels,
-      unlockedDifficultyLevelMax
+      unlockedDifficultyLevelMax,
+      startingBiomeChoices
     );
 
     const now = new Date();

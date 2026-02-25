@@ -5,6 +5,7 @@ import type { CardDefinition } from "@/game/schemas/cards";
 import type { CardInstance } from "@/game/schemas/cards";
 import type { RNG } from "@/game/engine/rng";
 import {
+  createGuaranteedRelicEvent,
   pickSpecialRoomTypeWithDifficulty,
   pickEvent,
   type GameEvent,
@@ -25,6 +26,7 @@ interface SpecialRoomViewProps {
   cardDefs: Map<string, CardDefinition>;
   rng: RNG;
   difficultyLevel: number;
+  forceEventWithRelic?: boolean;
   onHeal: () => void;
   onUpgrade: (cardInstanceId: string) => void;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
@@ -40,15 +42,20 @@ export function SpecialRoomView({
   cardDefs,
   rng,
   difficultyLevel,
+  forceEventWithRelic = false,
   onHeal,
   onUpgrade,
   onEventChoice,
   onEventPurge,
   onSkip,
 }: SpecialRoomViewProps) {
-  const roomType = useMemo(
-    () => pickSpecialRoomTypeWithDifficulty(rng, difficultyLevel),
-    [rng, difficultyLevel]
+  const roomType = useMemo(() => {
+    if (forceEventWithRelic) return "EVENT" as const;
+    return pickSpecialRoomTypeWithDifficulty(rng, difficultyLevel);
+  }, [forceEventWithRelic, rng, difficultyLevel]);
+  const forcedEvent = useMemo(
+    () => (forceEventWithRelic ? createGuaranteedRelicEvent() : null),
+    [forceEventWithRelic]
   );
 
   switch (roomType) {
@@ -73,6 +80,7 @@ export function SpecialRoomView({
       return (
         <EventRoom
           rng={rng}
+          forcedEvent={forcedEvent}
           gold={gold}
           playerCurrentHp={playerCurrentHp}
           playerMaxHp={playerMaxHp}
@@ -209,6 +217,7 @@ function UpgradeRoom({
 
 function EventRoom({
   rng,
+  forcedEvent,
   gold,
   playerCurrentHp,
   playerMaxHp,
@@ -218,6 +227,7 @@ function EventRoom({
   onEventPurge,
 }: {
   rng: RNG;
+  forcedEvent: GameEvent | null;
   gold: number;
   playerCurrentHp: number;
   playerMaxHp: number;
@@ -226,7 +236,10 @@ function EventRoom({
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
   onEventPurge: (cardInstanceId: string) => void;
 }) {
-  const event = useMemo(() => pickEvent(rng), [rng]);
+  const event = useMemo(
+    () => forcedEvent ?? pickEvent(rng),
+    [forcedEvent, rng]
+  );
   const [showPurgePicker, setShowPurgePicker] = useState(false);
 
   const handleChoice = (choiceIndex: number) => {

@@ -5,6 +5,7 @@ import type { BiomeType, BiomeResource } from "../schemas/enums";
 import type { ComputedMetaBonuses } from "../schemas/meta";
 import { GAME_CONSTANTS } from "../constants";
 import { enemyDefinitions } from "../data/enemies";
+import { relicDefinitions } from "../data/relics";
 import type { CardUnlockProgress } from "./card-unlocks";
 import {
   computeUnlockedCardIds,
@@ -100,7 +101,8 @@ export function createNewRun(
   allCards?: CardDefinition[],
   unlockedRunConditionIds: string[] = [],
   unlockedDifficultyLevels: number[] = [0],
-  unlockedDifficultyLevelMax = 0
+  unlockedDifficultyLevelMax = 0,
+  startingBiomeChoices: [BiomeType, BiomeType] | null = null
 ): RunState {
   // Build starter deck instances
   const deck: CardInstance[] = starterCards.map((card) => ({
@@ -147,7 +149,7 @@ export function createNewRun(
     map,
     combat: null,
     currentBiome: "LIBRARY",
-    pendingBiomeChoices: null,
+    pendingBiomeChoices: startingBiomeChoices,
     pendingDifficultyLevels: unlockedDifficultyLevels,
     selectedDifficultyLevel: null,
     unlockedDifficultyLevelSnapshot: unlockedDifficultyLevelMax,
@@ -188,6 +190,15 @@ export function generateFloorMap(
     ),
   ];
   const shuffledMiddle = buildBalancedMiddleRooms(middleTypes, rng);
+  if (floor === 1 && shuffledMiddle[1] !== "SPECIAL") {
+    const specialIndex = shuffledMiddle.findIndex((type) => type === "SPECIAL");
+    if (specialIndex >= 0) {
+      [shuffledMiddle[1], shuffledMiddle[specialIndex]] = [
+        shuffledMiddle[specialIndex]!,
+        shuffledMiddle[1]!,
+      ];
+    }
+  }
 
   const PRE_BOSS_ROOM_INDEX = GAME_CONSTANTS.BOSS_ROOM_INDEX - 1; // 8
 
@@ -699,7 +710,9 @@ export function advanceFloor(
   rng: RNG,
   allCards?: CardDefinition[]
 ): RunState {
-  const newFloor = state.floor + 1;
+  const isOpeningBiomeChoice =
+    state.floor === 1 && state.currentRoom === 0 && state.combat === null;
+  const newFloor = isOpeningBiomeChoice ? state.floor : state.floor + 1;
   const newMap = generateFloorMap(
     newFloor,
     rng,
@@ -730,7 +743,7 @@ export function advanceFloor(
   return {
     ...state,
     floor: newFloor,
-    currentRoom: 0,
+    currentRoom: isOpeningBiomeChoice ? state.currentRoom : 0,
     map: newMap,
     currentBiome: biome,
     pendingBiomeChoices: null,
@@ -848,6 +861,41 @@ function addDeckCard(state: RunState, definitionId: string): RunState {
         instanceId: nanoid(),
         definitionId,
         upgraded: false,
+      },
+    ],
+  };
+}
+
+function addRelicToRun(state: RunState, relicId: string): RunState {
+  if (state.relicIds.includes(relicId)) return state;
+  return {
+    ...state,
+    relicIds: [...state.relicIds, relicId],
+  };
+}
+
+export function pickGuaranteedEventRelicId(state: RunState): string | null {
+  const nonBossPool = relicDefinitions.filter((r) => r.rarity !== "BOSS");
+  const available = nonBossPool.find((r) => !state.relicIds.includes(r.id));
+  return available?.id ?? nonBossPool[0]?.id ?? null;
+}
+
+export function createGuaranteedRelicEvent(): GameEvent {
+  return {
+    id: "sealed_reliquary",
+    title: "Sealed Reliquary",
+    description:
+      "A dust-covered reliquary hums with ink. One relic answers your touch.",
+    choices: [
+      {
+        label: "Claim the relic",
+        description: "Gain 1 relic.",
+        apply: (s) => {
+          const relicId = pickGuaranteedEventRelicId(s);
+          if (!relicId) return { ...s, currentRoom: s.currentRoom + 1 };
+          const withRelic = addRelicToRun(s, relicId);
+          return { ...withRelic, currentRoom: withRelic.currentRoom + 1 };
+        },
       },
     ],
   };

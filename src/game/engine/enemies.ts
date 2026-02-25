@@ -372,7 +372,7 @@ function maybeTriggerBossPhase(
 
   switch (enemy.definitionId) {
     case "chapter_guardian":
-      current = healEnemy(current, enemy.instanceId, 24);
+      current = healEnemy(current, enemy.instanceId, 16);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
       current = addCardsToDrawPile(current, "haunting_regret", 2);
       return current;
