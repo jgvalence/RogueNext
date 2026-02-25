@@ -5,6 +5,8 @@ export interface RelicDefinitionData {
   name: string;
   description: string;
   rarity: RelicRarity;
+  /** If set, this relic is guaranteed as a choice when this boss is defeated. */
+  sourceBossId?: string;
 }
 
 export const relicDefinitions: RelicDefinitionData[] = [
@@ -92,5 +94,150 @@ export const relicDefinitions: RelicDefinitionData[] = [
     description:
       "Gain 1 max HP per normal enemy killed, 2 per elite, 5 per boss.",
     rarity: "BOSS",
+  },
+
+  // ── Boss-specific relics (one per boss, guaranteed drop) ──────────────
+  // LIBRARY bosses
+  {
+    id: "guardians_seal",
+    name: "Guardian's Seal",
+    description: "+2 max ink. Start each combat with 2 ink.",
+    rarity: "BOSS",
+    sourceBossId: "chapter_guardian",
+  },
+  {
+    id: "archivists_lens",
+    name: "Archivist's Lens",
+    description: "+2 max ink. Start each combat with 2 Focus.",
+    rarity: "BOSS",
+    sourceBossId: "the_archivist",
+  },
+
+  // VIKING bosses
+  {
+    id: "wolf_fang",
+    name: "Wolf Fang",
+    description: "Start each combat with 2 Strength.",
+    rarity: "BOSS",
+    sourceBossId: "fenrir",
+  },
+  {
+    id: "hels_crown",
+    name: "Hel's Crown",
+    description: "Start each combat with 2 Strength and 4 Thorns.",
+    rarity: "BOSS",
+    sourceBossId: "hel_queen",
+  },
+
+  // GREEK bosses
+  {
+    id: "stone_pendant",
+    name: "Stone Pendant",
+    description: "Start each combat with 1 Strength and 1 Focus.",
+    rarity: "BOSS",
+    sourceBossId: "medusa",
+  },
+  {
+    id: "hydra_scale",
+    name: "Hydra Scale",
+    description: "Start each combat with 1 Strength and 5 Thorns.",
+    rarity: "BOSS",
+    sourceBossId: "hydra_aspect",
+  },
+
+  // EGYPTIAN bosses
+  {
+    id: "solar_disc",
+    name: "Solar Disc",
+    description: "+1 max energy. Start each combat with 2 ink.",
+    rarity: "BOSS",
+    sourceBossId: "ra_avatar",
+  },
+  {
+    id: "eye_of_maat",
+    name: "Eye of Maat",
+    description: "+1 max energy. Start each combat with 1 Focus.",
+    rarity: "BOSS",
+    sourceBossId: "osiris_eye",
+  },
+
+  // LOVECRAFTIAN bosses
+  {
+    id: "void_shard",
+    name: "Void Shard",
+    description: "Start each combat with 2 Focus.",
+    rarity: "BOSS",
+    sourceBossId: "nyarlathotep_shard",
+  },
+  {
+    id: "shub_idol",
+    name: "Shub Idol",
+    description: "Start each combat with 2 Strength and 3 ink.",
+    rarity: "BOSS",
+    sourceBossId: "shub_spawn",
+  },
+
+  // AZTEC bosses
+  {
+    id: "obsidian_mirror",
+    name: "Obsidian Mirror",
+    description: "Start each combat with 3 Strength.",
+    rarity: "BOSS",
+    sourceBossId: "tezcatlipoca_echo",
+  },
+  {
+    id: "quetzal_feather",
+    name: "Quetzal Feather",
+    description: "Start each combat with 1 Strength, 1 Focus, and 1 energy.",
+    rarity: "BOSS",
+    sourceBossId: "quetzalcoatl_wrath",
+  },
+
+  // CELTIC bosses
+  {
+    id: "dagdas_club",
+    name: "Dagda's Club",
+    description: "Start each combat with 6 Thorns.",
+    rarity: "BOSS",
+    sourceBossId: "dagda_shadow",
+  },
+  {
+    id: "cernunnos_horn",
+    name: "Cernunnos's Horn",
+    description: "Start each combat with 6 Thorns and 1 extra draw.",
+    rarity: "BOSS",
+    sourceBossId: "cernunnos_shade",
+  },
+
+  // RUSSIAN bosses
+  {
+    id: "yaga_skull",
+    name: "Yaga's Skull",
+    description: "Start each combat with 1 extra draw and 3 Thorns.",
+    rarity: "BOSS",
+    sourceBossId: "baba_yaga_hut",
+  },
+  {
+    id: "deathless_bone",
+    name: "Deathless Bone",
+    description: "+1 max energy. Start each combat with 10 Block.",
+    rarity: "BOSS",
+    sourceBossId: "koschei_deathless",
+  },
+
+  // AFRICAN bosses
+  {
+    id: "griot_drum",
+    name: "Griot's Drum",
+    description: "Start each combat with 6 Block and 1 Strength.",
+    rarity: "BOSS",
+    sourceBossId: "soundiata_spirit",
+  },
+  {
+    id: "weavers_thread",
+    name: "Weaver's Thread",
+    description: "Start each combat with 1 extra draw and 2 Focus.",
+    rarity: "BOSS",
+    sourceBossId: "anansi_weaver",
   },
 ];

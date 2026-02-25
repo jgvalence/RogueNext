@@ -29,6 +29,25 @@ export const PlayerStateSchema = z.object({
 });
 export type PlayerState = z.infer<typeof PlayerStateSchema>;
 
+const AbilityConditionSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("PLAYER_HP_BELOW_PCT"), threshold: z.number() }),
+  z.object({ type: z.literal("ENEMY_HP_BELOW_PCT"), threshold: z.number() }),
+  z.object({ type: z.literal("PLAYER_HAS_DEBUFF"), buff: z.string() }),
+  z.object({ type: z.literal("PLAYER_INK_ABOVE"), value: z.number() }),
+  z.object({ type: z.literal("PLAYER_INK_BELOW"), value: z.number() }),
+  z.object({ type: z.literal("TURN_MULTIPLE"), n: z.number() }),
+  z.object({ type: z.literal("ENEMY_HAS_NO_BLOCK") }),
+  z.object({ type: z.literal("ALLY_ALIVE") }),
+  z.object({ type: z.literal("NO_OTHER_ENEMIES") }),
+]);
+export type AbilityCondition = z.infer<typeof AbilityConditionSchema>;
+
+const ConditionalWeightSchema = z.object({
+  condition: AbilityConditionSchema,
+  weightMultiplier: z.number(),
+});
+export type ConditionalWeight = z.infer<typeof ConditionalWeightSchema>;
+
 export const EnemyAbilitySchema = z.object({
   name: z.string(),
   weight: z.number().default(1),
@@ -36,6 +55,7 @@ export const EnemyAbilitySchema = z.object({
     .enum(["PLAYER", "LOWEST_HP_ENEMY", "ALL_ENEMIES", "SELF", "ALLY_PRIORITY"])
     .optional(),
   effects: z.array(EffectSchema),
+  conditionalWeights: z.array(ConditionalWeightSchema).optional(),
 });
 export type EnemyAbility = z.infer<typeof EnemyAbilitySchema>;
 

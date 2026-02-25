@@ -288,6 +288,7 @@ function GameContent({
       const enemyCount = selectedRoom?.enemyIds?.length ?? 1;
       const isElite = selectedRoom?.isElite ?? false;
 
+      const defeatedBossId = isBoss ? selectedRoom?.enemyIds?.[0] : undefined;
       const combatRng = createRNG(state.seed + "-rewards-" + state.currentRoom);
       const combatRewards = generateCombatRewards(
         state.floor,
@@ -302,7 +303,8 @@ function GameContent({
         state.unlockedCardIds,
         state.allyIds,
         state.metaBonuses?.allySlots ?? 0,
-        state.unlockedDifficultyLevelSnapshot ?? 0
+        state.unlockedDifficultyLevelSnapshot ?? 0,
+        defeatedBossId
       );
       setRewards(combatRewards);
       setIsBossRewards(isBoss);

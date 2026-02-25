@@ -10,7 +10,7 @@ Mécanique signature : **Jauge d’Encre** + cartes **Marquées à l’encre** (
 
 ## 1) Structure d’un run
 
-- Un run est composé de `N_FLOORS` étages (MVP: 3).
+- Un run est composé de `N_FLOORS` étages (**implémenté : 5**).
 - Chaque étage comporte `ROOMS_PER_FLOOR = 10` salles.
 - La salle 10 est toujours un **Boss**.
 - Après avoir terminé une salle, le joueur choisit la prochaine salle parmi `1..3` options (sauf transitions spéciales).
@@ -96,11 +96,13 @@ Le combat continue tant que :
 
 ## 4) Cartes — Types et règles
 
-### 4.1 Types de cartes (MVP)
+### 4.1 Types de cartes (implémentés)
 
 - `ATTACK` : dégâts
 - `SKILL` : armure, pioche, énergie, soin, buffs
-- `POWER` : effets persistants (optionnel MVP)
+- `POWER` : effets persistants
+- `STATUS` : cartes négatives appliquées par ennemis ou événements (ex: Haunting Regret, Hexed Parchment)
+- `CURSE` : malédictions (ajoutées via événements/reliques)
 
 ### 4.2 Champs d’une carte (structure)
 
@@ -168,14 +170,15 @@ Le combat continue tant que :
 
 ### 6.3 Artefacts
 
-- Obtenus via boss (toujours) et parfois événements.
+- Obtenus via boss, événements, shop, ou récompenses de combat.
 - Effets passifs persistants sur le run :
   - +1 énergie max
   - +1 pioche
   - 1 carte marquée gratuite par combat
   - +inkMax
   - +ink gain par carte jouée
-- MVP : 5-10 artefacts simples.
+  - conservation partielle du block, énergie non dépensée conservée, etc.
+- **Implémenté : 14 reliques** (Ancient Quill, Energy Crystal, Bookmark, Ink Stamp, Iron Binding, Blighted Compass, Cursed Diacrit, Runic Bulwark, Eternal Hourglass, Briar Codex, Warded Ribbon, Inkwell Reservoir, Battle Lexicon, Blood Grimoire).
 
 ---
 
@@ -233,28 +236,29 @@ Le combat continue tant que :
 
 ---
 
-## 9) MVP — Scope concret
+## 9) État actuel — Ce qui est implémenté
 
-Objectif MVP : "1 run jouable basique"
+> Le MVP initial est dépassé. Voici l’état réel du jeu.
 
-- 1 étage de 10 salles
-- 6-10 cartes de base + 10-20 cartes lootables
-- 5 ennemis types + 1 boss
-- 0-2 alliés simples (ou alliés désactivés en MVP si besoin)
-- Jauge d’encre + 2 pouvoirs d’encre + 3 cartes marquées
-- 5 artefacts simples
-- UI minimal : combat, choix de salles, récompenses
+- **5 étages** de 10 salles chacun
+- **73 cartes** : 4 starters + 21 commons + 27 uncommons + 21 rares
+- **57 ennemis** répartis sur 9 biomes (normaux + élites + boss)
+- **3 alliés** (Scribe Apprentice, Ward Knight, Ink Familiar)
+- **14 reliques** avec effets passifs variés
+- **6 événements** aléatoires en salles spéciales
+- **10 Run Conditions** (modificateurs de run) avec unlock progressif
+- **4 niveaux de difficulté** débloqués par les victoires
+- Jauge d’encre + 3 pouvoirs d’encre (REWRITE, LOST_CHAPTER, SEAL)
+- UI complète : combat, carte, shop, événements, menu in-game, mobile
 
----
+## 10) Décisions tranchées (v0.2+)
 
-## 10) Questions à trancher (pour verrouiller v0.2)
-
-- Pioche : `drawCount` fixe par tour OU "piocher jusqu’à handSize" ?
-- Initiative : joueur agit toujours avant phase initiative, ou initiative complète inclut joueur ?
-- Block : disparaît fin du tour joueur ou fin de round ?
-- Marqué à l’encre : choix à chaque play OU limité (1 fois par tour / par combat) ?
-- Alliés : MVP dès le début, ou v1 après ?
-- Sauvegarde run : snapshots DB ou state côté client ?
+- Pioche : `drawCount` fixe par tour (5 cartes)
+- Initiative : joueur agit AVANT la phase ennemis/alliés
+- Block : disparaît en début de tour joueur
+- Marqué à l’encre : choix à chaque play (payer le coût ink)
+- Alliés : implémentés dès le début
+- Sauvegarde run : auto-save DB via server action + state React côté client
 
 ---
 

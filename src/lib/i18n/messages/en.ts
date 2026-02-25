@@ -511,6 +511,11 @@ export const en = {
       label: "Thorns",
       description: "Deals {{stacks}} damage to attackers.",
     },
+    BLEED: {
+      label: "Bleed",
+      description:
+        "Deals {{stacks}} damage at end of round (does not decrease, expires by duration).",
+    },
   },
   reward: {
     victory: "Victory!",

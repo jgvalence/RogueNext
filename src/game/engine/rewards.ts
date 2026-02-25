@@ -42,7 +42,8 @@ export function generateCombatRewards(
   unlockedCardIds?: string[],
   currentAllyIds: string[] = [],
   allySlotCount: number = 0,
-  unlockedDifficultyLevelSnapshot = 0
+  unlockedDifficultyLevelSnapshot = 0,
+  defeatedBossId?: string
 ): CombatRewards {
   // Gold reward
   const baseGold = GAME_CONSTANTS.GOLD_REWARD_BASE;
@@ -99,9 +100,19 @@ export function generateCombatRewards(
       (r) =>
         r.rarity === "UNCOMMON" || r.rarity === "RARE" || r.rarity === "BOSS"
     );
-    relicChoices = rng
-      .shuffle(pool.length >= 3 ? pool : availableRelics)
-      .slice(0, 3);
+    const shuffled = rng.shuffle(pool.length >= 3 ? pool : availableRelics);
+
+    // Guarantee the boss-specific relic as a choice if available and not owned
+    const bossRelic = defeatedBossId
+      ? availableRelics.find((r) => r.sourceBossId === defeatedBossId)
+      : undefined;
+
+    if (bossRelic) {
+      const rest = shuffled.filter((r) => r.id !== bossRelic.id).slice(0, 2);
+      relicChoices = [bossRelic, ...rest];
+    } else {
+      relicChoices = shuffled.slice(0, 3);
+    }
   } else if (isElite) {
     const pool = availableRelics.filter((r) => r.rarity !== "BOSS");
     relicChoices = rng

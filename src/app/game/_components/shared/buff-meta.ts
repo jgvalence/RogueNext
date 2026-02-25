@@ -37,6 +37,11 @@ export const buffMeta: Record<string, BuffMetaEntry> = {
     label: () => i18n.t("buff.THORNS.label"),
     description: (stacks) => i18n.t("buff.THORNS.description", { stacks }),
   },
+  BLEED: {
+    color: "bg-red-950 text-red-400",
+    label: () => i18n.t("buff.BLEED.label"),
+    description: (stacks) => i18n.t("buff.BLEED.description", { stacks }),
+  },
 };
 
 export function getBuffLabelToKeyMap(): Record<string, string> {
@@ -59,6 +64,8 @@ export function getBuffLabelToKeyMap(): Record<string, string> {
   labels.Concentration = "FOCUS";
   labels.Thorns = "THORNS";
   labels.Epines = "THORNS";
+  labels.Bleed = "BLEED";
+  labels.Saignement = "BLEED";
 
   return labels;
 }

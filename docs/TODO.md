@@ -23,7 +23,10 @@
 
 - [x] Cartes lootables pour tous les biomes (LIBRARY + 8 biomes)
 - [x] Ennemis pour tous les biomes (normaux + elite + boss)
-- [x] Multi-boss (un boss par biome)
+- [x] Multi-boss (deux boss par biome, choix aleatoire)
+- [x] Relique unique par boss (18 reliques boss-specifiques, garanties en recompense)
+- [x] IA boss conditionnelle (poids conditionnels par situation, phase 2 differenciee)
+- [x] Buff BLEED (saignement, expire par duree uniquement, distinct du POISON)
 
 ### Meta progression (Bibliotheque)
 
@@ -46,11 +49,31 @@
 - [x] Rewards cartes filtrees par cartes debloquees
 - [x] Shop cartes filtre selon cartes debloquees
 
+### Difficulte et Run Conditions
+
+- [x] 4 niveaux de difficulte (0-3), debloquables apres 1/3/5 victoires
+- [x] Difficulte filtre cartes/reliques disponibles
+- [x] 10 Run Conditions (modificateurs de run) avec unlock progressif
+- [x] Conditions modifient: or de depart, HP max, cartes de depart, regles de map
+
+### Systeme audio
+
+- [x] Musique de fond par zone
+- [x] SFX (jouer carte, hit, victoire...)
+- [x] Toggle mute
+
 ### UI / admin / divers
 
 - [x] Bouton `Dev Kill` visible uniquement pour role `ADMIN`
-- [x] Ecran biome select entre floors
+- [x] Ecran biome select entre floors + transitions
+- [x] Choix de biome a l'ouverture du run (LIBRARY + 1 aleatoire)
+- [x] Evenement relic garanti une fois par run (Sealed Reliquary)
 - [x] HUD rewards ressources
+- [x] Menu in-game (abandon run, mute, regles, logout)
+- [x] Support mobile + fullscreen (detection orientation, prompt rotation)
+- [x] Modal inspection deck complet
+- [x] Systeme tooltips (descriptions buffs au survol)
+- [x] Apercu upgrade carte au survol
 
 ## A faire
 
@@ -62,7 +85,7 @@
 
 ### Contenu cartes/enemies
 
-- [ ] Ajouter des cartes statut/malediction
+- [ ] Enrichir le pool de cartes STATUS/CURSE (types implementes, peu de cartes)
 - [ ] Enrichir les patterns conditionnels de boss (IA plus contextuelle)
 - [ ] Ajouter des synergies inter-biomes plus marquees
 

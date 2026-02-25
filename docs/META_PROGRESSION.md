@@ -31,10 +31,38 @@ Bonus notables maintenant actifs:
   - `INK_PER_CARD_CHANCE`
   - `INK_PER_CARD_VALUE`
 
-## Difficulte et floors
+## Difficulte de run (entre runs)
+
+Systeme de difficulte progressif entre runs:
+
+- 4 niveaux (0-3), niveau 0 toujours disponible
+- Unlock: niveau 1 apres 1 victoire, niveau 2 apres 3 victoires, niveau 3 apres 5 victoires
+- La difficulte choisie filtre les cartes et reliques disponibles pendant le run
+- Fichier: `src/game/engine/difficulty.ts`
+
+## Run Conditions (modificateurs de run)
+
+10 conditions selectionnables au debut d'un run, avec unlock progressif:
+
+| Condition          | Disponible   | Effet                                             |
+| ------------------ | ------------ | ------------------------------------------------- |
+| Quiet Pockets      | toujours     | +20 or de depart                                  |
+| Tempered Flesh     | toujours     | +12 HP max, -15 or                                |
+| Open Grimoire      | toujours     | +1 carte en main de depart                        |
+| Inked Beginning    | toujours     | +5 ink de depart                                  |
+| Battle Manual      | toujours     | +1 force de depart                                |
+| Packed Supplies    | toujours     | +1 soin supplementaire en salles speciales        |
+| Forbidden Contract | 2+ runs      | +30 or, -10 HP max                                |
+| Single Path        | 3+ runs      | Pas de choix de salle (chemin force)              |
+| Battle Rite        | 2+ victoires | Pas de marchands, ennemis donnent +50% ressources |
+| Eventful Routes    | 5+ runs      | Plus d'evenements, moins de marchands             |
+
+Fichier: `src/game/engine/run-conditions.ts`
+
+## Floors et difficulte en combat
 
 - 5 floors (`MAX_FLOORS = 5`)
-- Difficulte croissante:
+- Difficulte croissante par floor:
   - HP ennemis scale avec le floor
   - chance elite augmente avec le floor
   - taille max des packs augmente avec le floor
@@ -76,6 +104,8 @@ Etat actuel:
 - Rewards: `src/game/engine/rewards.ts`
 - Shop: `src/game/engine/merchant.ts`
 - Unlock cartes: `src/game/engine/card-unlocks.ts`
+- Difficulte: `src/game/engine/difficulty.ts`
+- Run Conditions: `src/game/engine/run-conditions.ts`
 - Schemas run/meta: `src/game/schemas/run-state.ts`, `src/game/schemas/meta.ts`
 - Server actions progression/run: `src/server/actions/progression.ts`, `src/server/actions/run.ts`
 

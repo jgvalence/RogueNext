@@ -5,21 +5,75 @@ import type {
   AllyDefinition,
   AllyState,
   EnemyAbility,
+  AbilityCondition,
 } from "../schemas/entities";
 import { resolveEffects } from "./effects";
 import type { EffectTarget } from "./effects";
-import { applyPoison, tickBuffs, applyBuff } from "./buffs";
+import { applyPoison, applyBleed, tickBuffs, applyBuff } from "./buffs";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
+
+function evaluateCondition(
+  condition: AbilityCondition,
+  state: CombatState,
+  enemy: EnemyState
+): boolean {
+  switch (condition.type) {
+    case "PLAYER_HP_BELOW_PCT":
+      return (
+        (state.player.currentHp / state.player.maxHp) * 100 <
+        condition.threshold
+      );
+    case "ENEMY_HP_BELOW_PCT":
+      return (enemy.currentHp / enemy.maxHp) * 100 < condition.threshold;
+    case "PLAYER_HAS_DEBUFF":
+      return state.player.buffs.some(
+        (b) => b.type === condition.buff && b.stacks > 0
+      );
+    case "PLAYER_INK_ABOVE":
+      return state.player.inkCurrent > condition.value;
+    case "PLAYER_INK_BELOW":
+      return state.player.inkCurrent < condition.value;
+    case "TURN_MULTIPLE":
+      return state.turnNumber % condition.n === 0;
+    case "ENEMY_HAS_NO_BLOCK":
+      return enemy.block <= 0;
+    case "ALLY_ALIVE":
+      return state.allies.some((a) => a.currentHp > 0);
+    case "NO_OTHER_ENEMIES":
+      return !state.enemies.some(
+        (e) => e.instanceId !== enemy.instanceId && e.currentHp > 0
+      );
+    default:
+      return false;
+  }
+}
+
+function getEffectiveWeight(
+  ability: EnemyAbility,
+  state: CombatState,
+  enemy: EnemyState
+): number {
+  let weight = Math.max(0.01, ability.weight ?? 1);
+  if (!ability.conditionalWeights) return weight;
+  for (const cw of ability.conditionalWeights) {
+    if (evaluateCondition(cw.condition, state, enemy)) {
+      weight *= cw.weightMultiplier;
+    }
+  }
+  return Math.max(0.01, weight);
+}
 
 /**
  * Determine which ability an enemy will use next.
  * Uses ability weights with a soft anti-repeat penalty.
+ * If state is provided, conditional weights are applied for contextual AI.
  */
 export function getNextIntentIndex(
   enemy: EnemyState,
   enemyDef: EnemyDefinition,
-  rng: RNG
+  rng: RNG,
+  state?: CombatState
 ): number {
   const abilities = enemyDef.abilities;
   if (abilities.length === 0) return 0;
@@ -27,7 +81,9 @@ export function getNextIntentIndex(
 
   const repeatPenalty = abilities.length >= 3 ? 0.2 : 0.6;
   const weights = abilities.map((ability, index) => {
-    const base = Math.max(0.01, ability.weight ?? 1);
+    const base = state
+      ? getEffectiveWeight(ability, state, enemy)
+      : Math.max(0.01, ability.weight ?? 1);
     return index === enemy.intentIndex ? base * repeatPenalty : base;
   });
 
@@ -91,7 +147,8 @@ export function executeOneEnemyTurn(
   const nextIntent = getNextIntentIndex(
     { ...freshEnemy, intentIndex: usedIntentIndex },
     enemyDef,
-    rng
+    rng,
+    current
   );
   current = {
     ...current,
@@ -182,36 +239,39 @@ export function executeEnemiesTurn(
     current = executeOneEnemyTurn(current, freshEnemy, def, rng, enemyDefs);
   }
 
-  // End of round: apply poison and tick buffs for all enemies
+  // End of round: apply poison, bleed and tick buffs for all enemies
   current = {
     ...current,
     enemies: current.enemies.map((e) => {
       if (e.currentHp <= 0) return e;
       const afterPoison = applyPoison(e);
+      const afterBleed = applyBleed(afterPoison);
       return {
         ...e,
-        currentHp: afterPoison.currentHp,
-        buffs: tickBuffs(afterPoison.buffs),
+        currentHp: afterBleed.currentHp,
+        buffs: tickBuffs(afterBleed.buffs),
       };
     }),
   };
 
-  // Apply poison and tick buffs for player
+  // Apply poison, bleed and tick buffs for player and allies
   const playerAfterPoison = applyPoison(current.player);
+  const playerAfterBleed = applyBleed(playerAfterPoison);
   current = {
     ...current,
     player: {
       ...current.player,
-      currentHp: playerAfterPoison.currentHp,
-      buffs: tickBuffs(playerAfterPoison.buffs),
+      currentHp: playerAfterBleed.currentHp,
+      buffs: tickBuffs(playerAfterBleed.buffs),
     },
     allies: current.allies.map((a) => {
       if (a.currentHp <= 0) return a;
       const afterPoison = applyPoison(a);
+      const afterBleed = applyBleed(afterPoison);
       return {
         ...a,
-        currentHp: afterPoison.currentHp,
-        buffs: tickBuffs(afterPoison.buffs),
+        currentHp: afterBleed.currentHp,
+        buffs: tickBuffs(afterBleed.buffs),
       };
     }),
   };
@@ -220,42 +280,45 @@ export function executeEnemiesTurn(
 }
 
 /**
- * Apply end-of-round effects only (poison + buff ticks).
+ * Apply end-of-round effects only (poison + bleed + buff ticks).
  * Used in the step-by-step animation flow after all enemies have acted.
  */
 export function finalizeEnemyRound(state: CombatState): CombatState {
   let current = state;
 
-  // Apply poison and tick buffs for all enemies
+  // Apply poison, bleed and tick buffs for all enemies
   current = {
     ...current,
     enemies: current.enemies.map((e) => {
       if (e.currentHp <= 0) return e;
       const afterPoison = applyPoison(e);
+      const afterBleed = applyBleed(afterPoison);
       return {
         ...e,
-        currentHp: afterPoison.currentHp,
-        buffs: tickBuffs(afterPoison.buffs),
+        currentHp: afterBleed.currentHp,
+        buffs: tickBuffs(afterBleed.buffs),
       };
     }),
   };
 
-  // Apply poison and tick buffs for player
+  // Apply poison, bleed and tick buffs for player and allies
   const playerAfterPoison = applyPoison(current.player);
+  const playerAfterBleed = applyBleed(playerAfterPoison);
   current = {
     ...current,
     player: {
       ...current.player,
-      currentHp: playerAfterPoison.currentHp,
-      buffs: tickBuffs(playerAfterPoison.buffs),
+      currentHp: playerAfterBleed.currentHp,
+      buffs: tickBuffs(playerAfterBleed.buffs),
     },
     allies: current.allies.map((a) => {
       if (a.currentHp <= 0) return a;
       const afterPoison = applyPoison(a);
+      const afterBleed = applyBleed(afterPoison);
       return {
         ...a,
-        currentHp: afterPoison.currentHp,
-        buffs: tickBuffs(afterPoison.buffs),
+        currentHp: afterBleed.currentHp,
+        buffs: tickBuffs(afterBleed.buffs),
       };
     }),
   };
@@ -372,50 +435,139 @@ function maybeTriggerBossPhase(
 
   switch (enemy.definitionId) {
     case "chapter_guardian":
+      // Ink Overload: floods deck with curses + raises card costs next turn
       current = healEnemy(current, enemy.instanceId, 16);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
       current = addCardsToDrawPile(current, "haunting_regret", 2);
+      current = applyNextTurnCardCostIncrease(current, 1);
       return current;
     case "fenrir":
+      // Pack Surge: summons reinforcement and inflicts bleed
       current = healEnemy(current, enemy.instanceId, 18);
       current = grantEnemyStrength(current, enemy.instanceId, 3);
       current = summonEnemyIfPossible(current, "draugr", enemyDefs);
+      current = applyBuffToPlayer(current, "BLEED", 3, 4);
       return current;
     case "medusa":
+      // Full Petrification: debuffs player heavily and adds dazed to hand
       current = healEnemy(current, enemy.instanceId, 16);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
-      current = grantEnemyBlock(current, enemy.instanceId, 20);
+      current = applyBuffToPlayer(current, "VULNERABLE", 3, 3);
+      current = applyBuffToPlayer(current, "WEAK", 2, 3);
+      current = addCardsToDiscardPile(current, "dazed", 2);
       return current;
     case "ra_avatar":
+      // Solar Judgment: drains all ink and weakens player
       current = healEnemy(current, enemy.instanceId, 20);
-      current = grantEnemyStrength(current, enemy.instanceId, 2);
-      current = applyBuffToPlayer(current, "VULNERABLE", 1, 2);
+      current = grantEnemyStrength(current, enemy.instanceId, 3);
+      current = drainAllPlayerInk(current);
+      current = applyBuffToPlayer(current, "VULNERABLE", 2, 3);
       return current;
     case "nyarlathotep_shard":
+      // Unraveling: floods hand with curses + freezes cards
       current = healEnemy(current, enemy.instanceId, 15);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
       current = summonEnemyIfPossible(current, "void_tendril", enemyDefs);
-      current = addCardsToDrawPile(current, "haunting_regret", 1);
+      current = addCardsToDrawPile(current, "haunting_regret", 2);
+      current = freezePlayerHandCards(current, 2);
       return current;
     case "tezcatlipoca_echo":
-      current = healEnemy(current, enemy.instanceId, 18);
-      current = grantEnemyStrength(current, enemy.instanceId, 2);
-      current = addCardsToDrawPile(current, "ink_burn", 1);
+      // Blood Sacrifice: deals self-damage for massive strength burst
+      current = damageSelf(current, enemy.instanceId, 20);
+      current = grantEnemyStrength(current, enemy.instanceId, 6);
+      current = addCardsToDrawPile(current, "ink_burn", 2);
       return current;
     case "dagda_shadow":
-      current = healEnemy(current, enemy.instanceId, 20);
+      // Eternal Regeneration: heavy self-heal + thorns + hexed parchment
+      current = healEnemy(current, enemy.instanceId, 25);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
+      current = grantEnemyThorns(current, enemy.instanceId, 8);
       current = addCardsToDiscardPile(current, "hexed_parchment", 1);
       return current;
     case "baba_yaga_hut":
+      // Winter Curse: summons witch + freezes player cards
       current = healEnemy(current, enemy.instanceId, 18);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
       current = summonEnemyIfPossible(current, "frost_witch", enemyDefs);
+      current = freezePlayerHandCards(current, 2);
       return current;
     case "soundiata_spirit":
+      // Royal Command: buffs all living allies and summons
+      current = healEnemy(current, enemy.instanceId, 18);
+      current = grantEnemyStrength(current, enemy.instanceId, 3);
+      current = summonEnemyIfPossible(current, "mask_hunter", enemyDefs);
+      current = grantStrengthToAllEnemies(current, 2);
+      return current;
+    case "the_archivist":
+      // Archive Corruption: drain all ink + freeze cards + flood deck
+      current = healEnemy(current, enemy.instanceId, 12);
+      current = grantEnemyStrength(current, enemy.instanceId, 2);
+      current = drainAllPlayerInk(current);
+      current = freezePlayerHandCards(current, 2);
+      current = addCardsToDrawPile(current, "haunting_regret", 2);
+      return current;
+    case "hel_queen":
+      // Realm of the Dead: summon draugr + heavy BLEED + Weak
+      current = healEnemy(current, enemy.instanceId, 18);
+      current = grantEnemyStrength(current, enemy.instanceId, 3);
+      current = summonEnemyIfPossible(current, "draugr", enemyDefs);
+      current = applyBuffToPlayer(current, "BLEED", 3, 5);
+      current = applyBuffToPlayer(current, "WEAK", 2, 3);
+      return current;
+    case "hydra_aspect":
+      // Hydra Surge: heal + strength + summon gorgon + VULNERABLE
+      current = healEnemy(current, enemy.instanceId, 15);
+      current = grantEnemyStrength(current, enemy.instanceId, 3);
+      current = summonEnemyIfPossible(current, "gorgon", enemyDefs);
+      current = applyBuffToPlayer(current, "VULNERABLE", 3, 3);
+      return current;
+    case "osiris_eye":
+      // Divine Judgment: drain all ink + heavy debuffs + big heal
+      current = healEnemy(current, enemy.instanceId, 20);
+      current = grantEnemyStrength(current, enemy.instanceId, 3);
+      current = drainAllPlayerInk(current);
+      current = applyBuffToPlayer(current, "WEAK", 2, 3);
+      current = applyBuffToPlayer(current, "VULNERABLE", 2, 3);
+      return current;
+    case "shub_spawn":
+      // Dark Gestation: summon + POISON flood + dazed
+      current = healEnemy(current, enemy.instanceId, 15);
+      current = grantEnemyStrength(current, enemy.instanceId, 2);
+      current = summonEnemyIfPossible(current, "shoggoth_spawn", enemyDefs);
+      current = applyBuffToPlayer(current, "POISON", 6, undefined);
+      current = addCardsToDiscardPile(current, "dazed", 2);
+      return current;
+    case "quetzalcoatl_wrath":
+      // Serpent's Fury: BLEED + VULNERABLE + ink_burn flood
+      current = healEnemy(current, enemy.instanceId, 15);
+      current = grantEnemyStrength(current, enemy.instanceId, 3);
+      current = applyBuffToPlayer(current, "BLEED", 3, 5);
+      current = applyBuffToPlayer(current, "VULNERABLE", 2, 3);
+      current = addCardsToDrawPile(current, "ink_burn", 2);
+      return current;
+    case "cernunnos_shade":
+      // Nature's Fury: massive THORNS + summon amber hound + BLEED
       current = healEnemy(current, enemy.instanceId, 18);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
-      current = summonEnemyIfPossible(current, "mask_hunter", enemyDefs);
+      current = grantEnemyThorns(current, enemy.instanceId, 10);
+      current = summonEnemyIfPossible(current, "amber_hound", enemyDefs);
+      current = applyBuffToPlayer(current, "BLEED", 2, 4);
+      return current;
+    case "koschei_deathless":
+      // Immortal Resurgence: massive heal + summon + card cost increase
+      current = healEnemy(current, enemy.instanceId, 30);
+      current = grantEnemyStrength(current, enemy.instanceId, 3);
+      current = summonEnemyIfPossible(current, "koschei_herald", enemyDefs);
+      current = applyNextTurnCardCostIncrease(current, 2);
+      return current;
+    case "anansi_weaver":
+      // Trickster's Finale: WEAK + VULNERABLE + freeze + hexed parchment
+      current = healEnemy(current, enemy.instanceId, 14);
+      current = grantEnemyStrength(current, enemy.instanceId, 2);
+      current = applyBuffToPlayer(current, "WEAK", 2, 3);
+      current = applyBuffToPlayer(current, "VULNERABLE", 2, 3);
+      current = freezePlayerHandCards(current, 2);
+      current = addCardsToDiscardPile(current, "hexed_parchment", 2);
       return current;
     default:
       return current;
@@ -532,6 +684,116 @@ function applyBossAbilityMechanics(
         current = grantBlockToAllEnemies(current, 8);
       }
       return current;
+    case "the_archivist":
+      if (ability.name === "Corrupted Index") {
+        current = addCardsToDrawPile(current, "haunting_regret", 1);
+      }
+      if (ability.name === "Void Library") {
+        if (current.player.inkCurrent <= 1) {
+          current = applyFlatBonusDamage(
+            current,
+            enemy.instanceId,
+            target,
+            rng,
+            6
+          );
+        }
+      }
+      return current;
+    case "hel_queen":
+      if (ability.name === "Death's Reckoning") {
+        current = applyBonusDamageIfPlayerDebuffed(
+          current,
+          enemy.instanceId,
+          target,
+          rng,
+          8
+        );
+      }
+      return current;
+    case "hydra_aspect":
+      if (ability.name === "Necrotic Snap") {
+        current = addCardsToDiscardPile(current, "dazed", 1);
+      }
+      return current;
+    case "osiris_eye":
+      if (ability.name === "Anubis Seal") {
+        current = healEnemy(current, enemy.instanceId, 12);
+      }
+      if (ability.name === "Soul Drain" && current.player.inkCurrent <= 2) {
+        current = applyFlatBonusDamage(
+          current,
+          enemy.instanceId,
+          target,
+          rng,
+          8
+        );
+      }
+      return current;
+    case "shub_spawn":
+      if (ability.name === "Spawn Eruption") {
+        current = summonEnemyIfPossible(current, "shoggoth_spawn", enemyDefs);
+      }
+      if (ability.name === "Dark Young Stomp") {
+        current = applyBonusDamageIfPlayerDebuffed(
+          current,
+          enemy.instanceId,
+          target,
+          rng,
+          6
+        );
+      }
+      return current;
+    case "quetzalcoatl_wrath":
+      if (ability.name === "Solar Dive") {
+        current = applyFlatBonusDamage(
+          current,
+          enemy.instanceId,
+          target,
+          rng,
+          8
+        );
+      }
+      return current;
+    case "cernunnos_shade":
+      if (ability.name === "Ancient Wrath") {
+        current = applyBonusDamageIfPlayerDebuffed(
+          current,
+          enemy.instanceId,
+          target,
+          rng,
+          6
+        );
+      }
+      return current;
+    case "koschei_deathless":
+      if (ability.name === "Deathless Blow") {
+        current = applyBonusDamageIfPlayerDebuffed(
+          current,
+          enemy.instanceId,
+          target,
+          rng,
+          10
+        );
+      }
+      if (ability.name === "Immortal Ward") {
+        current = healEnemy(current, enemy.instanceId, 15);
+      }
+      return current;
+    case "anansi_weaver":
+      if (ability.name === "Web Trap") {
+        current = addCardsToDrawPile(current, "hexed_parchment", 1);
+      }
+      if (ability.name === "Story's End") {
+        current = applyBonusDamageIfPlayerDebuffed(
+          current,
+          enemy.instanceId,
+          target,
+          rng,
+          8
+        );
+      }
+      return current;
     default:
       return current;
   }
@@ -627,7 +889,7 @@ function grantEnemyStrength(
   };
 }
 
-function grantEnemyBlock(
+function grantEnemyThorns(
   state: CombatState,
   enemyInstanceId: string,
   amount: number
@@ -635,8 +897,60 @@ function grantEnemyBlock(
   return {
     ...state,
     enemies: state.enemies.map((e) =>
-      e.instanceId === enemyInstanceId ? { ...e, block: e.block + amount } : e
+      e.instanceId === enemyInstanceId
+        ? { ...e, buffs: applyBuff(e.buffs, "THORNS", amount) }
+        : e
     ),
+  };
+}
+
+function damageSelf(
+  state: CombatState,
+  enemyInstanceId: string,
+  amount: number
+): CombatState {
+  return {
+    ...state,
+    enemies: state.enemies.map((e) =>
+      e.instanceId === enemyInstanceId
+        ? { ...e, currentHp: Math.max(1, e.currentHp - amount) }
+        : e
+    ),
+  };
+}
+
+function drainAllPlayerInk(state: CombatState): CombatState {
+  return {
+    ...state,
+    player: { ...state.player, inkCurrent: 0 },
+  };
+}
+
+function freezePlayerHandCards(state: CombatState, count: number): CombatState {
+  const toFreeze = state.hand.slice(0, count).map((c) => c.instanceId);
+  if (toFreeze.length === 0) return state;
+  return {
+    ...state,
+    playerDisruption: {
+      ...state.playerDisruption,
+      frozenHandCardIds: [
+        ...(state.playerDisruption?.frozenHandCardIds ?? []),
+        ...toFreeze,
+      ],
+    },
+  };
+}
+
+function applyNextTurnCardCostIncrease(
+  state: CombatState,
+  amount: number
+): CombatState {
+  return {
+    ...state,
+    nextPlayerDisruption: {
+      ...state.nextPlayerDisruption,
+      extraCardCost: (state.nextPlayerDisruption?.extraCardCost ?? 0) + amount,
+    },
   };
 }
 
@@ -719,7 +1033,7 @@ function applyBonusDamageIfPlayerDebuffed(
 
 function applyBuffToPlayer(
   state: CombatState,
-  buff: "WEAK" | "VULNERABLE" | "POISON",
+  buff: "WEAK" | "VULNERABLE" | "POISON" | "BLEED",
   stacks: number,
   duration?: number
 ): CombatState {

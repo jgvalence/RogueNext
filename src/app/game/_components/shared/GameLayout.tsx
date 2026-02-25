@@ -148,7 +148,7 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           {state.relicIds.length > 0 && (
             <button
               onClick={() => setShowRelics((v) => !v)}
-              className="flex items-center gap-1.5 rounded border border-purple-700/50 px-2 py-1 hover:border-purple-500/70 [@media(max-height:540px)]:hidden"
+              className="flex items-center gap-1.5 rounded border border-purple-700/50 px-2 py-1 hover:border-purple-500/70"
               title="Show relics"
             >
               <span className="text-xs text-purple-400">Relics</span>
@@ -201,6 +201,19 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
             </div>
 
             <div className="space-y-2">
+              {state.relicIds.length > 0 && (
+                <button
+                  onClick={() => {
+                    setShowRelics(true);
+                    setShowMenu(false);
+                  }}
+                  className="w-full rounded border border-purple-700/60 px-3 py-2 text-sm font-semibold text-purple-300 hover:border-purple-500 hover:text-purple-200"
+                  type="button"
+                >
+                  Relics ({state.relicIds.length})
+                </button>
+              )}
+
               <button
                 onClick={() => {
                   setShowRules(true);

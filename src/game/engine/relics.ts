@@ -152,6 +152,248 @@ export function applyRelicsOnCombatStart(
           },
         };
         break;
+
+      // ── Boss-specific relics ───────────────────────────────────────────
+      case "guardians_seal":
+        // +2 max ink, start with 2 ink
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            inkMax: current.player.inkMax + 2,
+            inkCurrent: Math.min(
+              current.player.inkMax + 2,
+              current.player.inkCurrent + 2
+            ),
+          },
+        };
+        break;
+
+      case "archivists_lens":
+        // +2 max ink, start with 2 Focus
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            inkMax: current.player.inkMax + 2,
+            focus: current.player.focus + 2,
+          },
+        };
+        break;
+
+      case "wolf_fang":
+        // Start with 2 Strength
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            strength: current.player.strength + 2,
+          },
+        };
+        break;
+
+      case "hels_crown":
+        // Start with 2 Strength and 4 Thorns
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            strength: current.player.strength + 2,
+            buffs: [
+              ...current.player.buffs,
+              { type: "THORNS" as const, stacks: 4 },
+            ],
+          },
+        };
+        break;
+
+      case "stone_pendant":
+        // Start with 1 Strength and 1 Focus
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            strength: current.player.strength + 1,
+            focus: current.player.focus + 1,
+          },
+        };
+        break;
+
+      case "hydra_scale":
+        // Start with 1 Strength and 5 Thorns
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            strength: current.player.strength + 1,
+            buffs: [
+              ...current.player.buffs,
+              { type: "THORNS" as const, stacks: 5 },
+            ],
+          },
+        };
+        break;
+
+      case "solar_disc":
+        // +1 max energy, start with 2 ink
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            energyMax: current.player.energyMax + 1,
+            energyCurrent: current.player.energyCurrent + 1,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + 2
+            ),
+          },
+        };
+        break;
+
+      case "eye_of_maat":
+        // +1 max energy, start with 1 Focus
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            energyMax: current.player.energyMax + 1,
+            energyCurrent: current.player.energyCurrent + 1,
+            focus: current.player.focus + 1,
+          },
+        };
+        break;
+
+      case "void_shard":
+        // Start with 2 Focus
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            focus: current.player.focus + 2,
+          },
+        };
+        break;
+
+      case "shub_idol":
+        // Start with 2 Strength and 3 ink
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            strength: current.player.strength + 2,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + 3
+            ),
+          },
+        };
+        break;
+
+      case "obsidian_mirror":
+        // Start with 3 Strength
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            strength: current.player.strength + 3,
+          },
+        };
+        break;
+
+      case "quetzal_feather":
+        // Start with 1 Strength, 1 Focus, and 1 energy
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            strength: current.player.strength + 1,
+            focus: current.player.focus + 1,
+            energyMax: current.player.energyMax + 1,
+            energyCurrent: current.player.energyCurrent + 1,
+          },
+        };
+        break;
+
+      case "dagdas_club":
+        // Start with 6 Thorns
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            buffs: [
+              ...current.player.buffs,
+              { type: "THORNS" as const, stacks: 6 },
+            ],
+          },
+        };
+        break;
+
+      case "cernunnos_horn":
+        // Start with 6 Thorns and 1 extra draw
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            drawCount: current.player.drawCount + 1,
+            buffs: [
+              ...current.player.buffs,
+              { type: "THORNS" as const, stacks: 6 },
+            ],
+          },
+        };
+        break;
+
+      case "yaga_skull":
+        // Start with 1 extra draw and 3 Thorns
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            drawCount: current.player.drawCount + 1,
+            buffs: [
+              ...current.player.buffs,
+              { type: "THORNS" as const, stacks: 3 },
+            ],
+          },
+        };
+        break;
+
+      case "deathless_bone":
+        // +1 max energy, start with 10 Block
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            energyMax: current.player.energyMax + 1,
+            energyCurrent: current.player.energyCurrent + 1,
+            block: current.player.block + 10,
+          },
+        };
+        break;
+
+      case "griot_drum":
+        // Start with 6 Block and 1 Strength
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            block: current.player.block + 6,
+            strength: current.player.strength + 1,
+          },
+        };
+        break;
+
+      case "weavers_thread":
+        // Start with 1 extra draw and 2 Focus
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            drawCount: current.player.drawCount + 1,
+            focus: current.player.focus + 2,
+          },
+        };
+        break;
     }
   }
 

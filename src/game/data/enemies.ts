@@ -305,6 +305,12 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "BLOCK", value: 14 },
           { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 60 },
+            weightMultiplier: 2.5,
+          },
+        ],
       },
       {
         name: "Ink Devour",
@@ -314,12 +320,24 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 16 },
           { type: "DRAIN_INK", value: 6 },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 4,
+          },
+        ],
       },
       {
         name: "Crushing Verdict",
         weight: 1,
         target: "PLAYER",
         effects: [{ type: "DAMAGE", value: 18 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2,
+          },
+        ],
       },
       {
         name: "Binding Curse",
@@ -330,6 +348,71 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
           { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
           { type: "ADD_CARD_TO_DRAW", value: 1, cardId: "haunting_regret" },
+        ],
+      },
+    ],
+    isBoss: true,
+    isElite: false,
+    tier: 1,
+    biome: "LIBRARY",
+  },
+
+  // =========================================================
+  // LIBRARY biome — alternate boss
+  // =========================================================
+  // The Corrupted Archivist: fast, ink-draining, hand-disruption specialist.
+  {
+    id: "the_archivist",
+    name: "The Corrupted Archivist",
+    maxHp: 140,
+    speed: 7,
+    abilities: [
+      {
+        name: "Spectral Strike",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 15 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Ink Erasure",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 10 },
+          { type: "DRAIN_INK", value: 5 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 4,
+          },
+        ],
+      },
+      {
+        name: "Corrupted Index",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+        ],
+        conditionalWeights: [
+          { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2.5 },
+        ],
+      },
+      {
+        name: "Void Library",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "NEXT_DRAW_TO_DISCARD_THIS_TURN", value: 1 },
         ],
       },
     ],
@@ -528,6 +611,9 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 10 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         ],
+        conditionalWeights: [
+          { condition: { type: "NO_OTHER_ENEMIES" }, weightMultiplier: 3 },
+        ],
       },
       {
         name: "Lunge",
@@ -541,11 +627,23 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 16 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "VULNERABLE" },
+            weightMultiplier: 0.3,
+          },
+        ],
       },
       {
         name: "Ragnarok Bite",
         weight: 1,
         effects: [{ type: "DAMAGE", value: 24 }],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 3,
+          },
+        ],
       },
       {
         name: "World's End",
@@ -554,6 +652,90 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 21 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 3 },
           { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 3 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+    ],
+    isBoss: true,
+    isElite: false,
+    tier: 1,
+    biome: "VIKING",
+  },
+
+  // =========================================================
+  // VIKING biome — alternate boss
+  // =========================================================
+  // Hel, Queen of Niflheim: BLEED master, death domain.
+  {
+    id: "hel_queen",
+    name: "Hel, Queen of Niflheim",
+    maxHp: 175,
+    speed: 3,
+    abilities: [
+      {
+        name: "Half-World Strike",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 16 }],
+      },
+      {
+        name: "Death's Grasp",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 5 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "BLEED" },
+            weightMultiplier: 0.3,
+          },
+        ],
+      },
+      {
+        name: "Niflheim Surge",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "BLEED" },
+            weightMultiplier: 3,
+          },
+        ],
+      },
+      {
+        name: "Realm Wall",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 18 }],
+        conditionalWeights: [
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Death's Reckoning",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 24 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 35 },
+            weightMultiplier: 3,
+          },
         ],
       },
     ],
@@ -745,6 +927,16 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "VULNERABLE" },
+            weightMultiplier: 0.3,
+          },
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "WEAK" },
+            weightMultiplier: 0.3,
+          },
+        ],
       },
       {
         name: "Serpent Bite",
@@ -753,11 +945,27 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 16 },
           { type: "APPLY_DEBUFF", value: 6, buff: "POISON" },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "POISON" },
+            weightMultiplier: 0.5,
+          },
+        ],
       },
       {
         name: "Stone Crush",
         weight: 1,
         effects: [{ type: "DAMAGE", value: 22 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "VULNERABLE" },
+            weightMultiplier: 4,
+          },
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "WEAK" },
+            weightMultiplier: 3,
+          },
+        ],
       },
       {
         name: "Viper Lash",
@@ -774,6 +982,91 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 18 },
           { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 3 },
           { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 3 },
+        ],
+      },
+    ],
+    isBoss: true,
+    isElite: false,
+    tier: 1,
+    biome: "GREEK",
+  },
+
+  // =========================================================
+  // GREEK biome — alternate boss
+  // =========================================================
+  // Aspect of the Hydra: multi-hit, POISON accumulation.
+  {
+    id: "hydra_aspect",
+    name: "Aspect of the Hydra",
+    maxHp: 155,
+    speed: 4,
+    abilities: [
+      {
+        name: "Triple Fang",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "DAMAGE", value: 7 },
+          { type: "DAMAGE", value: 7 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "VULNERABLE" },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Venom Surge",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 10 },
+          { type: "APPLY_DEBUFF", value: 6, buff: "POISON" },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "POISON" },
+            weightMultiplier: 0.5,
+          },
+        ],
+      },
+      {
+        name: "Hydra's Wrath",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 20 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Regeneration",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 15 }],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 3,
+          },
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+        ],
+      },
+      {
+        name: "Necrotic Snap",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+        conditionalWeights: [
+          { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2 },
         ],
       },
     ],
@@ -924,6 +1217,13 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Solar Barrier",
         weight: 1,
         effects: [{ type: "BLOCK", value: 18 }],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 3,
+          },
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+        ],
       },
       {
         name: "Divine Scorch",
@@ -931,6 +1231,99 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         effects: [
           { type: "DAMAGE", value: 22 },
           { type: "DRAIN_INK", value: 4 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 4,
+          },
+        ],
+      },
+    ],
+    isBoss: true,
+    isElite: false,
+    tier: 2,
+    biome: "EGYPTIAN",
+  },
+
+  // =========================================================
+  // EGYPTIAN biome — alternate boss
+  // =========================================================
+  // Eye of Osiris: block-heavy judgment, ink punishment.
+  {
+    id: "osiris_eye",
+    name: "Eye of Osiris",
+    maxHp: 170,
+    speed: 2,
+    abilities: [
+      {
+        name: "Feather Judgment",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 15 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Maat's Decree",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "WEAK" },
+            weightMultiplier: 3,
+          },
+        ],
+      },
+      {
+        name: "Anubis Seal",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 20 }],
+        conditionalWeights: [
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 3 },
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Soul Drain",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 18 },
+          { type: "DRAIN_INK", value: 4 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 4,
+          },
+        ],
+      },
+      {
+        name: "Weighing Strike",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 22 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 3,
+          },
         ],
       },
     ],
@@ -1069,6 +1462,12 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Black Flame",
         weight: 1,
         effects: [{ type: "DAMAGE", value: 20 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2.5,
+          },
+        ],
       },
       {
         name: "Mad Prophecy",
@@ -1078,6 +1477,9 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
           { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
         ],
+        conditionalWeights: [
+          { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2.5 },
+        ],
       },
       {
         name: "Cosmic Drain",
@@ -1086,11 +1488,103 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 16 },
           { type: "DRAIN_INK", value: 6 },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 4,
+          },
+        ],
       },
       {
         name: "Void Mantle",
         weight: 1,
         effects: [{ type: "BLOCK", value: 20 }],
+        conditionalWeights: [
+          { condition: { type: "NO_OTHER_ENEMIES" }, weightMultiplier: 3 },
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+        ],
+      },
+    ],
+    isBoss: true,
+    isElite: false,
+    tier: 2,
+    biome: "LOVECRAFTIAN",
+  },
+
+  // =========================================================
+  // LOVECRAFTIAN biome — alternate boss
+  // =========================================================
+  // Shub-Niggurath's Spawn: POISON + summoning + attrition.
+  {
+    id: "shub_spawn",
+    name: "Shub-Niggurath's Spawn",
+    maxHp: 175,
+    speed: 4,
+    abilities: [
+      {
+        name: "Dark Young Stomp",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 18 }],
+        conditionalWeights: [
+          { condition: { type: "NO_OTHER_ENEMIES" }, weightMultiplier: 2 },
+        ],
+      },
+      {
+        name: "Spore Cloud",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 10 },
+          { type: "APPLY_DEBUFF", value: 8, buff: "POISON" },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "POISON" },
+            weightMultiplier: 0.3,
+          },
+        ],
+      },
+      {
+        name: "Spawn Eruption",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+        ],
+        conditionalWeights: [
+          { condition: { type: "TURN_MULTIPLE", n: 4 }, weightMultiplier: 2.5 },
+        ],
+      },
+      {
+        name: "Eldritch Veil",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 18 }],
+        conditionalWeights: [
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 3,
+          },
+        ],
+      },
+      {
+        name: "Festering Touch",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 5, buff: "POISON" },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "POISON" },
+            weightMultiplier: 0.3,
+          },
+        ],
       },
     ],
     isBoss: true,
@@ -1227,6 +1721,9 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Mirror Slash",
         weight: 1,
         effects: [{ type: "DAMAGE", value: 19 }],
+        conditionalWeights: [
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+        ],
       },
       {
         name: "Dark Sun",
@@ -1236,6 +1733,9 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
           { type: "ADD_CARD_TO_DRAW", value: 1, cardId: "ink_burn" },
         ],
+        conditionalWeights: [
+          { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2 },
+        ],
       },
       {
         name: "Obsidian Hunger",
@@ -1244,11 +1744,107 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 17 },
           { type: "DRAIN_INK", value: 5 },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 4,
+          },
+        ],
       },
       {
         name: "Night Mantle",
         weight: 1,
         effects: [{ type: "BLOCK", value: 20 }],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 3,
+          },
+        ],
+      },
+    ],
+    isBoss: true,
+    isElite: false,
+    tier: 2,
+    biome: "AZTEC",
+  },
+
+  // =========================================================
+  // AZTEC biome — alternate boss
+  // =========================================================
+  // Quetzalcoatl's Wrath: fast, BLEED, punishes low HP.
+  {
+    id: "quetzalcoatl_wrath",
+    name: "Quetzalcoatl's Wrath",
+    maxHp: 162,
+    speed: 6,
+    abilities: [
+      {
+        name: "Sky Strike",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 16 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Feathered Slash",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "BLEED" },
+            weightMultiplier: 0.3,
+          },
+        ],
+      },
+      {
+        name: "Wind Scorch",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "BLEED" },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Serpent Coil",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 16 }],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 3,
+          },
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+        ],
+      },
+      {
+        name: "Solar Dive",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 22 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 30 },
+            weightMultiplier: 3,
+          },
+        ],
       },
     ],
     isBoss: true,
@@ -1393,11 +1989,24 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 13 },
           { type: "APPLY_DEBUFF", value: 5, buff: "POISON" },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "POISON" },
+            weightMultiplier: 0.4,
+          },
+        ],
       },
       {
         name: "Ancient Feast",
         weight: 1,
         effects: [{ type: "BLOCK", value: 20 }],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 3,
+          },
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+        ],
       },
       {
         name: "Famine Curse",
@@ -1405,6 +2014,92 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         effects: [
           { type: "DAMAGE", value: 16 },
           { type: "DRAIN_INK", value: 4 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 4,
+          },
+        ],
+      },
+    ],
+    isBoss: true,
+    isElite: false,
+    tier: 2,
+    biome: "CELTIC",
+  },
+
+  // =========================================================
+  // CELTIC biome — alternate boss
+  // =========================================================
+  // Cernunnos's Shade: THORNS + BLEED, nature fury.
+  {
+    id: "cernunnos_shade",
+    name: "Cernunnos's Shade",
+    maxHp: 168,
+    speed: 4,
+    abilities: [
+      {
+        name: "Antler Gore",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 17 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Wild Thorns",
+        weight: 1,
+        target: "SELF",
+        effects: [
+          { type: "APPLY_BUFF", value: 5, buff: "THORNS" },
+          { type: "BLOCK", value: 10 },
+        ],
+        conditionalWeights: [
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2.5 },
+        ],
+      },
+      {
+        name: "Primal Roar",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 13 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+        conditionalWeights: [
+          { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2 },
+        ],
+      },
+      {
+        name: "Forest Mist",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 11 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "BLEED" },
+            weightMultiplier: 0.4,
+          },
+        ],
+      },
+      {
+        name: "Ancient Wrath",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 21 }],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 2,
+          },
         ],
       },
     ],
@@ -1546,6 +2241,12 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Stomping Legs",
         weight: 1,
         effects: [{ type: "DAMAGE", value: 20 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2.5,
+          },
+        ],
       },
       {
         name: "Witchfire",
@@ -1554,11 +2255,20 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 14 },
           { type: "APPLY_DEBUFF", value: 5, buff: "POISON" },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "POISON" },
+            weightMultiplier: 0.4,
+          },
+        ],
       },
       {
         name: "Bone Fence",
         weight: 1,
         effects: [{ type: "BLOCK", value: 19 }],
+        conditionalWeights: [
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 3 },
+        ],
       },
       {
         name: "Soul Stew",
@@ -1566,6 +2276,83 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         effects: [
           { type: "DAMAGE", value: 17 },
           { type: "DRAIN_INK", value: 5 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 4,
+          },
+        ],
+      },
+    ],
+    isBoss: true,
+    isElite: false,
+    tier: 2,
+    biome: "RUSSIAN",
+  },
+
+  // =========================================================
+  // RUSSIAN biome — alternate boss
+  // =========================================================
+  // Koschei the Deathless: hard to kill, heavy hits, bone army.
+  {
+    id: "koschei_deathless",
+    name: "Koschei the Deathless",
+    maxHp: 180,
+    speed: 2,
+    abilities: [
+      {
+        name: "Deathless Blow",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 22 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2.5,
+          },
+        ],
+      },
+      {
+        name: "Bone Chain",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+          { type: "INCREASE_CARD_COST_NEXT_TURN", value: 1 },
+        ],
+        conditionalWeights: [
+          { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2 },
+        ],
+      },
+      {
+        name: "Immortal Ward",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 22 }],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 4,
+          },
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+        ],
+      },
+      {
+        name: "Frozen Soul",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 16 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+          { type: "DRAIN_INK", value: 4 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 3,
+          },
         ],
       },
     ],
@@ -1711,6 +2498,9 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Lion King's Blow",
         weight: 1,
         effects: [{ type: "DAMAGE", value: 20 }],
+        conditionalWeights: [
+          { condition: { type: "NO_OTHER_ENEMIES" }, weightMultiplier: 2.5 },
+        ],
       },
       {
         name: "Epic Command",
@@ -1719,11 +2509,18 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 14 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         ],
+        conditionalWeights: [
+          { condition: { type: "ALLY_ALIVE" }, weightMultiplier: 4 },
+        ],
       },
       {
         name: "Griot's Shield",
         weight: 1,
         effects: [{ type: "BLOCK", value: 20 }],
+        conditionalWeights: [
+          { condition: { type: "ALLY_ALIVE" }, weightMultiplier: 3 },
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+        ],
       },
       {
         name: "Royal Tribute",
@@ -1731,6 +2528,99 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         effects: [
           { type: "DAMAGE", value: 16 },
           { type: "DRAIN_INK", value: 5 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 3.5,
+          },
+        ],
+      },
+    ],
+    isBoss: true,
+    isElite: false,
+    tier: 2,
+    biome: "AFRICAN",
+  },
+  // =========================================================
+  // AFRICAN biome — alternate boss
+  // =========================================================
+  // Anansi the Weaver: traps, curses, hand disruption, multi-debuff.
+  {
+    id: "anansi_weaver",
+    name: "Anansi the Weaver",
+    maxHp: 162,
+    speed: 6,
+    abilities: [
+      {
+        name: "Web Trap",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 9 },
+          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "hexed_parchment" },
+        ],
+        conditionalWeights: [
+          { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2.5 },
+        ],
+      },
+      {
+        name: "Silk Snare",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 11 },
+          { type: "FREEZE_HAND_CARDS", value: 1 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Trickster's Bite",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2,
+          },
+        ],
+      },
+      {
+        name: "Ancestral Weave",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 12 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+          { type: "DRAIN_INK", value: 3 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_ABOVE", value: 3 },
+            weightMultiplier: 3,
+          },
+        ],
+      },
+      {
+        name: "Story's End",
+        weight: 1,
+        target: "PLAYER",
+        effects: [{ type: "DAMAGE", value: 20 }],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 35 },
+            weightMultiplier: 3,
+          },
+          { condition: { type: "NO_OTHER_ENEMIES" }, weightMultiplier: 2 },
         ],
       },
     ],

@@ -287,6 +287,11 @@ export const fr = {
       label: "Epines",
       description: "Inflige {{stacks}} degats aux attaquants.",
     },
+    BLEED: {
+      label: "Saignement",
+      description:
+        "Inflige {{stacks}} degats en fin de tour (ne diminue pas, expire par duree).",
+    },
   },
   reward: {
     victory: "Victoire!",

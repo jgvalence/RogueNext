@@ -49,6 +49,23 @@ export function tickBuffs(buffs: BuffInstance[]): BuffInstance[] {
 }
 
 /**
+ * Apply bleed damage: deal stacks damage each round.
+ * Unlike poison, stacks do NOT decrease — bleed expires via duration only.
+ */
+export function applyBleed(entity: {
+  currentHp: number;
+  buffs: BuffInstance[];
+}): { currentHp: number; buffs: BuffInstance[] } {
+  const bleedStacks = getBuffStacks(entity.buffs, "BLEED");
+  if (bleedStacks <= 0) return entity;
+
+  return {
+    currentHp: entity.currentHp - bleedStacks,
+    buffs: entity.buffs,
+  };
+}
+
+/**
  * Apply poison damage: deal stacks damage, then reduce stacks by 1.
  * Returns updated entity HP and buffs.
  */
