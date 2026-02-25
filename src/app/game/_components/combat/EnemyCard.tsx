@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   useEffect,
@@ -15,7 +15,7 @@ import { DamageNumber } from "./DamageNumber";
 import { BuffPill } from "../shared/BuffPill";
 import { Tooltip } from "../shared/Tooltip";
 import { buffMeta } from "../shared/buff-meta";
-// TEMPORARY: centralized asset registry — swap paths in src/lib/assets.ts when real art is ready
+// TEMPORARY: centralized asset registry - swap paths in src/lib/assets.ts when real art is ready
 import { ENEMY_IMAGES } from "@/lib/assets";
 import { playSound } from "@/lib/sound";
 
@@ -123,7 +123,7 @@ export function EnemyCard({
         />
       ))}
 
-      {/* Art area — TEMPORARY: shows image if present, emoji placeholder otherwise */}
+      {/* Art area - TEMPORARY: shows image if present, emoji placeholder otherwise */}
       <div
         className={cn(
           "relative flex flex-shrink-0 items-center justify-center overflow-hidden bg-gradient-to-b",
@@ -133,7 +133,7 @@ export function EnemyCard({
             : "from-gray-800 to-gray-900"
         )}
       >
-        {/* Real art (hidden on error → falls back to emoji below) */}
+        {/* Real art (hidden on error -> falls back to emoji below) */}
         {artImageSrc && !artFailed && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -144,7 +144,7 @@ export function EnemyCard({
           />
         )}
 
-        {/* Emoji placeholder — shown when image is missing */}
+        {/* Emoji placeholder - shown when image is missing */}
         {(!artImageSrc || artFailed) && (
           <span
             className={cn(
@@ -154,7 +154,7 @@ export function EnemyCard({
                 : "text-4xl text-gray-400"
             )}
           >
-            {definition.isBoss ? "☽" : "◈"}
+            {definition.isBoss ? "*" : "*"}
           </span>
         )}
 
@@ -174,7 +174,7 @@ export function EnemyCard({
         {isActing && !isDead && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="animate-bounce rounded-full bg-orange-500/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
-              ▶ Acting
+              {" > "}Acting
             </div>
           </div>
         )}
@@ -182,12 +182,12 @@ export function EnemyCard({
         {/* Block overlay badge */}
         {enemy.block > 0 && (
           <div className="absolute bottom-1.5 right-1.5 flex items-center gap-0.5 rounded-full bg-blue-900/90 px-1.5 py-0.5 text-[10px] font-bold text-blue-200 shadow">
-            🛡 {enemy.block}
+            BLK {enemy.block}
           </div>
         )}
       </div>
 
-      {/* ── Info area ── */}
+      {/* -- Info area -- */}
       <div className="flex flex-col gap-1 p-2 lg:gap-1.5 lg:p-2.5 [@media(max-height:540px)]:gap-0.5 [@media(max-height:540px)]:p-1.5">
         {/* Name */}
         <div
@@ -215,7 +215,7 @@ export function EnemyCard({
             <span className="text-[10px] text-slate-500">/ {enemy.maxHp}</span>
             {enemy.block > 0 && (
               <div className="ml-auto flex items-center gap-0.5 rounded bg-blue-900/80 px-1.5 py-0.5">
-                <span className="text-[10px]">🛡</span>
+                <span className="text-[10px]">BLK</span>
                 <span className="text-[10px] font-bold text-blue-200">
                   {enemy.block}
                 </span>
@@ -243,7 +243,8 @@ export function EnemyCard({
               </span>
               {intentTargetLabel && (
                 <span className="shrink-0 text-[9px] text-amber-300/90 lg:text-[10px] [@media(max-height:540px)]:text-[10px]">
-                  → {intentTargetLabel}
+                  {"-> "}
+                  {intentTargetLabel}
                 </span>
               )}
             </div>
@@ -286,7 +287,7 @@ function formatIntentEffects(
             key={`d-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-red-900/60 px-1.5 py-0.5 text-sm font-black text-red-300 lg:text-base"
           >
-            ⚔ {scaledDamage}
+            DMG {scaledDamage}
           </span>
         );
         break;
@@ -298,7 +299,7 @@ function formatIntentEffects(
             key={`b-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-blue-900/60 px-1.5 py-0.5 text-sm font-black text-blue-300 lg:text-base"
           >
-            🛡 {effect.value}
+            BLK {effect.value}
           </span>
         );
         break;
@@ -309,11 +310,16 @@ function formatIntentEffects(
         const meta = buffMeta[buffKey];
         const label = meta?.label() ?? buffKey;
         const colorClass = meta?.color ?? "bg-purple-900 text-purple-300";
+        const durationText =
+          typeof effect.duration === "number" && effect.duration > 0
+            ? ` (${effect.duration}t)`
+            : "";
         const tooltipContent = meta ? (
           <span>
             <span className="font-bold">{meta.label()}</span>
             <br />
             {meta.description(effect.value ?? 1)}
+            {durationText}
           </span>
         ) : null;
 
@@ -323,7 +329,12 @@ function formatIntentEffects(
           >
             {label}
             {(effect.value ?? 0) > 1 && (
-              <span className="font-black">×{effect.value}</span>
+              <span className="font-black">x{effect.value}</span>
+            )}
+            {durationText && (
+              <span className="text-[10px] font-medium opacity-90">
+                {durationText}
+              </span>
             )}
           </span>
         );
@@ -346,7 +357,7 @@ function formatIntentEffects(
             key={`h-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-green-900/60 px-1.5 py-0.5 text-[10px] font-semibold text-green-300 lg:text-[11px]"
           >
-            ❤ {effect.value}
+            HP {effect.value}
           </span>
         );
         break;
@@ -357,7 +368,7 @@ function formatIntentEffects(
             key={`i-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-cyan-900/60 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-300 lg:text-[11px]"
           >
-            ✦ -{effect.value}
+            INK -{effect.value}
           </span>
         );
         break;

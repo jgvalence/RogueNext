@@ -13,10 +13,12 @@ import {
 import { GameProvider, useGame } from "../_providers/game-provider";
 import { useAutoSave } from "../_hooks/use-auto-save";
 import { GameLayout } from "../_components/shared/GameLayout";
+import { CardPickerModal } from "../_components/shared/CardPickerModal";
 import { CombatView } from "../_components/combat/CombatView";
 import { FloorMap } from "../_components/map/FloorMap";
 import { RewardScreen } from "../_components/rewards/RewardScreen";
 import { ShopView } from "../_components/merchant/ShopView";
+import { StartMerchantView } from "../_components/merchant/StartMerchantView";
 import { SpecialRoomView } from "../_components/special/SpecialRoomView";
 import { BiomeSelectScreen } from "../_components/biome/BiomeSelectScreen";
 import { RunDifficultySelectScreen } from "../_components/run-difficulty/RunDifficultySelectScreen";
@@ -35,6 +37,7 @@ import { createRNG } from "@/game/engine/rng";
 import type { CardDefinition } from "@/game/schemas/cards";
 import { playSound } from "@/lib/sound";
 import { startMusic, stopMusic } from "@/lib/music";
+import { getUsableItemDefinitionsMap } from "@/game/engine/items";
 
 export default function RunPage() {
   const params = useParams<{ runId: string }>();
@@ -96,7 +99,9 @@ export default function RunPage() {
 
 type GamePhase =
   | "RUN_DIFFICULTY"
+  | "START_MERCHANT"
   | "RUN_CONDITION"
+  | "RUN_FREE_UPGRADE"
   | "MAP"
   | "COMBAT"
   | "REWARDS"
@@ -126,17 +131,31 @@ function GameContent({
     state.currentRoom === 0 &&
     state.combat === null &&
     state.pendingBiomeChoices !== null;
+  const canOfferFreeUpgradeAtStart =
+    Boolean(state.metaBonuses?.freeUpgradePerRun) &&
+    !state.freeUpgradeUsed &&
+    state.floor === 1 &&
+    state.currentRoom === 0 &&
+    state.combat === null &&
+    state.deck.some((card) => !card.upgraded);
   const [phase, setPhase] = useState<GamePhase>(() =>
     state.selectedDifficultyLevel === null
       ? "RUN_DIFFICULTY"
-      : state.selectedRunConditionId ||
-          (state.pendingRunConditionChoices?.length ?? 0) === 0
-        ? state.floor === 1 &&
+      : !state.startMerchantCompleted &&
+          state.floor === 1 &&
           state.currentRoom === 0 &&
-          state.pendingBiomeChoices !== null
-          ? "BIOME_SELECT"
-          : "MAP"
-        : "RUN_CONDITION"
+          state.combat === null
+        ? "START_MERCHANT"
+        : state.selectedRunConditionId ||
+            (state.pendingRunConditionChoices?.length ?? 0) === 0
+          ? canOfferFreeUpgradeAtStart
+            ? "RUN_FREE_UPGRADE"
+            : state.floor === 1 &&
+                state.currentRoom === 0 &&
+                state.pendingBiomeChoices !== null
+              ? "BIOME_SELECT"
+              : "MAP"
+          : "RUN_CONDITION"
   );
   const [rewards, setRewards] = useState<CombatRewards | null>(null);
   const [isBossRewards, setIsBossRewards] = useState(false);
@@ -150,6 +169,7 @@ function GameContent({
   const stateRef = useRef(state);
   stateRef.current = state;
   const isDevBuild = process.env.NODE_ENV !== "production";
+  const usableItemDefs = useMemo(() => getUsableItemDefinitionsMap(), []);
 
   useAutoSave(state);
 
@@ -164,6 +184,7 @@ function GameContent({
       phase === "PRE_BOSS" ||
       phase === "BIOME_SELECT" ||
       phase === "RUN_CONDITION" ||
+      phase === "START_MERCHANT" ||
       phase === "RUN_DIFFICULTY"
     )
       startMusic("map");
@@ -255,24 +276,58 @@ function GameContent({
   const handlePickRunCondition = useCallback(
     (conditionId: string) => {
       dispatch({ type: "APPLY_RUN_CONDITION", payload: { conditionId } });
-      setPhase(hasOpeningBiomeChoice ? "BIOME_SELECT" : "MAP");
+      setPhase(
+        canOfferFreeUpgradeAtStart
+          ? "RUN_FREE_UPGRADE"
+          : hasOpeningBiomeChoice
+            ? "BIOME_SELECT"
+            : "MAP"
+      );
     },
-    [dispatch, hasOpeningBiomeChoice]
+    [dispatch, hasOpeningBiomeChoice, canOfferFreeUpgradeAtStart]
   );
 
   const handlePickDifficulty = useCallback(
     (difficultyLevel: number) => {
       dispatch({ type: "APPLY_DIFFICULTY", payload: { difficultyLevel } });
-      if ((state.pendingRunConditionChoices?.length ?? 0) > 0) {
+      if (!state.startMerchantCompleted) {
+        setPhase("START_MERCHANT");
+      } else if ((state.pendingRunConditionChoices?.length ?? 0) > 0) {
         setPhase("RUN_CONDITION");
+      } else if (canOfferFreeUpgradeAtStart) {
+        setPhase("RUN_FREE_UPGRADE");
       } else if (hasOpeningBiomeChoice) {
         setPhase("BIOME_SELECT");
       } else {
         setPhase("MAP");
       }
     },
-    [dispatch, hasOpeningBiomeChoice, state.pendingRunConditionChoices]
+    [
+      dispatch,
+      hasOpeningBiomeChoice,
+      canOfferFreeUpgradeAtStart,
+      state.startMerchantCompleted,
+      state.pendingRunConditionChoices,
+    ]
   );
+
+  const handleCompleteStartMerchant = useCallback(() => {
+    dispatch({ type: "COMPLETE_START_MERCHANT" });
+    if ((state.pendingRunConditionChoices?.length ?? 0) > 0) {
+      setPhase("RUN_CONDITION");
+    } else if (canOfferFreeUpgradeAtStart) {
+      setPhase("RUN_FREE_UPGRADE");
+    } else if (hasOpeningBiomeChoice) {
+      setPhase("BIOME_SELECT");
+    } else {
+      setPhase("MAP");
+    }
+  }, [
+    dispatch,
+    state.pendingRunConditionChoices,
+    canOfferFreeUpgradeAtStart,
+    hasOpeningBiomeChoice,
+  ]);
 
   // Handle combat end
   useEffect(() => {
@@ -304,7 +359,9 @@ function GameContent({
         state.allyIds,
         state.metaBonuses?.allySlots ?? 0,
         state.unlockedDifficultyLevelSnapshot ?? 0,
-        defeatedBossId
+        defeatedBossId,
+        state.metaBonuses?.extraCardRewardChoices ?? 0,
+        state.metaBonuses?.lootLuck ?? 0
       );
       setRewards(combatRewards);
       setIsBossRewards(isBoss);
@@ -317,6 +374,7 @@ function GameContent({
         payload: {
           goldReward: combatRewards.gold,
           biomeResources: combatRewards.biomeResources,
+          usableItemDropDefinitionId: combatRewards.usableItemDropDefinitionId,
         },
       });
       setPhase("REWARDS");
@@ -336,6 +394,8 @@ function GameContent({
           runId: stateRef.current.runId,
           status: "DEFEAT",
           earnedResources: stateRef.current.earnedResources,
+          startMerchantSpentResources:
+            stateRef.current.startMerchantSpentResources ?? {},
         });
       }
       setPhase("DEFEAT");
@@ -358,6 +418,8 @@ function GameContent({
             runId: stateRef.current.runId,
             status: "VICTORY",
             earnedResources: stateRef.current.earnedResources,
+            startMerchantSpentResources:
+              stateRef.current.startMerchantSpentResources ?? {},
           });
         }
         setPhase("VICTORY");
@@ -380,6 +442,8 @@ function GameContent({
           runId: stateRef.current.runId,
           status: "VICTORY",
           earnedResources: stateRef.current.earnedResources,
+          startMerchantSpentResources:
+            stateRef.current.startMerchantSpentResources ?? {},
         });
       }
       setPhase("VICTORY");
@@ -401,6 +465,8 @@ function GameContent({
             runId: stateRef.current.runId,
             status: "VICTORY",
             earnedResources: stateRef.current.earnedResources,
+            startMerchantSpentResources:
+              stateRef.current.startMerchantSpentResources ?? {},
           });
         }
         setPhase("VICTORY");
@@ -424,6 +490,8 @@ function GameContent({
             runId: stateRef.current.runId,
             status: "VICTORY",
             earnedResources: stateRef.current.earnedResources,
+            startMerchantSpentResources:
+              stateRef.current.startMerchantSpentResources ?? {},
           });
         }
         setPhase("VICTORY");
@@ -445,6 +513,8 @@ function GameContent({
             runId: stateRef.current.runId,
             status: "VICTORY",
             earnedResources: stateRef.current.earnedResources,
+            startMerchantSpentResources:
+              stateRef.current.startMerchantSpentResources ?? {},
           });
         }
         setPhase("VICTORY");
@@ -470,7 +540,7 @@ function GameContent({
   const handleEndRun = useCallback(
     async (
       status: "VICTORY" | "DEFEAT" | "ABANDONED",
-      redirectTo: string = "/game"
+      redirectTo: string = "/library"
     ) => {
       if (!runEndedRef.current) {
         runEndedRef.current = true;
@@ -478,6 +548,8 @@ function GameContent({
           runId: stateRef.current.runId,
           status,
           earnedResources: stateRef.current.earnedResources,
+          startMerchantSpentResources:
+            stateRef.current.startMerchantSpentResources ?? {},
         });
       }
       router.push(redirectTo);
@@ -495,6 +567,8 @@ function GameContent({
         runId: stateRef.current.runId,
         status: "ABANDONED",
         earnedResources: stateRef.current.earnedResources,
+        startMerchantSpentResources:
+          stateRef.current.startMerchantSpentResources ?? {},
       });
     }
     setPhase("ABANDONED");
@@ -606,6 +680,38 @@ function GameContent({
           />
         )}
 
+        {phase === "START_MERCHANT" && (
+          <StartMerchantView
+            runState={state}
+            cardDefs={cardDefs}
+            allyDefs={allyDefs}
+            onBuy={(offer) =>
+              dispatch({ type: "BUY_START_MERCHANT_OFFER", payload: { offer } })
+            }
+            onContinue={handleCompleteStartMerchant}
+          />
+        )}
+
+        {phase === "RUN_FREE_UPGRADE" && (
+          <CardPickerModal
+            title="Upgrade gratuit (Manuel de Revision)"
+            subtitle="Choisis une carte non amelioree. Survole une carte pour voir son upgrade."
+            cards={state.deck.filter((card) => !card.upgraded)}
+            cardDefs={cardDefs}
+            showUpgradePreview
+            onPick={(cardInstanceId) => {
+              dispatch({
+                type: "APPLY_FREE_UPGRADE",
+                payload: { cardInstanceId },
+              });
+              setPhase(hasOpeningBiomeChoice ? "BIOME_SELECT" : "MAP");
+            }}
+            onCancel={() => {
+              setPhase(hasOpeningBiomeChoice ? "BIOME_SELECT" : "MAP");
+            }}
+          />
+        )}
+
         {phase === "COMBAT" && state.combat && (
           <CombatView
             combat={state.combat}
@@ -619,12 +725,20 @@ function GameContent({
               })
             }
             onEndTurn={handleEndTurn}
+            onUseItem={(itemInstanceId, targetId) =>
+              dispatch({
+                type: "USE_USABLE_ITEM",
+                payload: { itemInstanceId, targetId },
+              })
+            }
             onUseInkPower={(power, targetId) =>
               dispatch({
                 type: "USE_INK_POWER",
                 payload: { power, targetId },
               })
             }
+            usableItems={state.usableItems ?? []}
+            usableItemDefs={usableItemDefs}
             unlockedInkPowers={
               state.metaBonuses?.unlockedInkPowers ?? ["REWRITE"]
             }
@@ -671,9 +785,14 @@ function GameContent({
             unlockedDifficultyLevelSnapshot={
               state.unlockedDifficultyLevelSnapshot ?? 0
             }
+            relicDiscount={state.metaBonuses?.relicDiscount ?? 0}
             cardDefs={cardDefs}
             rng={rng}
             deck={state.deck}
+            usableItems={state.usableItems ?? []}
+            usableItemCapacity={
+              state.usableItemCapacity ?? GAME_CONSTANTS.MAX_USABLE_ITEMS
+            }
             onBuy={(item) =>
               dispatch({ type: "BUY_SHOP_ITEM", payload: { item } })
             }
@@ -811,7 +930,10 @@ function GameContent({
               <Link
                 href="/library"
                 className="rounded-lg border border-amber-700 px-6 py-3 font-bold text-amber-400 hover:border-amber-500 hover:text-amber-300"
-                onClick={() => handleEndRun("VICTORY")}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  await handleEndRun("VICTORY");
+                }}
               >
                 Biblioth&egrave;que
               </Link>
@@ -866,7 +988,10 @@ function GameContent({
               <Link
                 href="/library"
                 className="rounded-lg border border-amber-700 px-6 py-3 font-bold text-amber-400 hover:border-amber-500 hover:text-amber-300"
-                onClick={() => handleEndRun("DEFEAT")}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  await handleEndRun("DEFEAT");
+                }}
               >
                 Biblioth&egrave;que
               </Link>
@@ -921,7 +1046,10 @@ function GameContent({
               <Link
                 href="/library"
                 className="rounded-lg border border-amber-700 px-6 py-3 font-bold text-amber-400 hover:border-amber-500 hover:text-amber-300"
-                onClick={() => handleEndRun("ABANDONED", "/library")}
+                onClick={async (e) => {
+                  e.preventDefault();
+                  await handleEndRun("ABANDONED", "/library");
+                }}
               >
                 Biblioth&egrave;que
               </Link>

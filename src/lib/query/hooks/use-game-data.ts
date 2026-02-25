@@ -79,5 +79,7 @@ export function useActiveRun() {
       if (!result.success) throw new Error(result.error.message);
       return result.data.run;
     },
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 }

@@ -89,6 +89,19 @@ export const relicDefinitions: RelicDefinitionData[] = [
     rarity: "UNCOMMON",
   },
   {
+    id: "omens_compass",
+    name: "Omen's Compass",
+    description:
+      "Boss rewards are more likely to include an additional Boss relic option.",
+    rarity: "RARE",
+  },
+  {
+    id: "lucky_charm",
+    name: "Lucky Charm",
+    description: "Increases loot luck for better rarity rolls.",
+    rarity: "UNCOMMON",
+  },
+  {
     id: "blood_grimoire",
     name: "Blood Grimoire",
     description:

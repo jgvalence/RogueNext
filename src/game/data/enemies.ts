@@ -2603,7 +2603,11 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
       {
         name: "Ancient Feast",
         weight: 1,
-        effects: [{ type: "BLOCK", value: 20 }],
+        target: "SELF",
+        effects: [
+          { type: "BLOCK", value: 20 },
+          { type: "HEAL", value: 12 },
+        ],
         conditionalWeights: [
           {
             condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },

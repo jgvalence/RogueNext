@@ -11,11 +11,16 @@ import type {
   EnemyAbility,
 } from "@/game/schemas/entities";
 import type { InkPowerType } from "@/game/schemas/enums";
+import type {
+  UsableItemDefinition,
+  UsableItemInstance,
+} from "@/game/schemas/items";
 import { EnemyCard } from "./EnemyCard";
 import { GameCard } from "./GameCard";
 import { HandArea } from "./HandArea";
 import { PlayerStats } from "./PlayerStats";
 import { InkGauge } from "./InkGauge";
+import { Tooltip } from "../shared/Tooltip";
 // TEMPORARY: centralized asset registry — swap paths in src/lib/assets.ts when real art is ready
 import { BACKGROUNDS, PLAYER_AVATAR } from "@/lib/assets";
 import { playSound } from "@/lib/sound";
@@ -32,7 +37,10 @@ interface CombatViewProps {
     useInked: boolean
   ) => void;
   onEndTurn: () => void;
+  onUseItem: (itemInstanceId: string, targetId: string | null) => void;
   onUseInkPower: (power: InkPowerType, targetId: string | null) => void;
+  usableItems: UsableItemInstance[];
+  usableItemDefs: Map<string, UsableItemDefinition>;
   onCheatKillEnemy?: (enemyInstanceId: string) => void;
   actingEnemyId?: string | null;
   attackingEnemyId?: string | null;
@@ -61,7 +69,10 @@ export function CombatView({
   allyDefs,
   onPlayCard,
   onEndTurn,
+  onUseItem,
   onUseInkPower,
+  usableItems,
+  usableItemDefs,
   onCheatKillEnemy,
   actingEnemyId = null,
   attackingEnemyId = null,
@@ -72,6 +83,9 @@ export function CombatView({
   type PileType = "draw" | "discard" | "exhaust";
 
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [selectedUsableItemId, setSelectedUsableItemId] = useState<
+    string | null
+  >(null);
   const [pendingInked, setPendingInked] = useState(false);
   const [openPile, setOpenPile] = useState<PileType | null>(null);
   const [isSelectingRewriteTarget, setIsSelectingRewriteTarget] =
@@ -149,9 +163,10 @@ export function CombatView({
   }, [combat.enemies, actingEnemyId]);
 
   useEffect(() => {
+    const spawnTimers = spawnClearTimersRef.current;
     return () => {
       if (summonHideTimerRef.current) clearTimeout(summonHideTimerRef.current);
-      for (const timer of spawnClearTimersRef.current) clearTimeout(timer);
+      for (const timer of spawnTimers) clearTimeout(timer);
     };
   }, []);
 
@@ -169,6 +184,14 @@ export function CombatView({
   const needsTarget =
     selectedDef?.targeting === "SINGLE_ENEMY" ||
     selectedDef?.targeting === "SINGLE_ALLY";
+  const selectedUsableItem = selectedUsableItemId
+    ? usableItems.find((item) => item.instanceId === selectedUsableItemId)
+    : null;
+  const selectedUsableItemDef = selectedUsableItem
+    ? usableItemDefs.get(selectedUsableItem.definitionId)
+    : null;
+  const needsItemEnemyTarget =
+    selectedUsableItemDef?.targeting === "SINGLE_ENEMY";
   const selectingEnemyTarget = selectedDef?.targeting === "SINGLE_ENEMY";
   const selectingAllyTarget = selectedDef?.targeting === "SINGLE_ALLY";
   const selfCanRetargetToAlly =
@@ -201,6 +224,12 @@ export function CombatView({
 
       if (selectedCardId && selectingEnemyTarget) {
         triggerCardPlay(selectedCardId, enemyInstanceId, pendingInked);
+        return;
+      }
+
+      if (selectedUsableItemId && needsItemEnemyTarget) {
+        onUseItem(selectedUsableItemId, enemyInstanceId);
+        setSelectedUsableItemId(null);
       }
     },
     [
@@ -210,6 +239,9 @@ export function CombatView({
       selectingEnemyTarget,
       pendingInked,
       triggerCardPlay,
+      selectedUsableItemId,
+      needsItemEnemyTarget,
+      onUseItem,
     ]
   );
 
@@ -241,6 +273,7 @@ export function CombatView({
       // Mobile-friendly flow: first tap selects, second tap confirms.
       if (!sameSelection) {
         setSelectedCardId(instanceId);
+        setSelectedUsableItemId(null);
         setPendingInked(useInked);
         return;
       }
@@ -252,6 +285,30 @@ export function CombatView({
       triggerCardPlay(instanceId, null, useInked);
     },
     [combat.hand, cardDefs, triggerCardPlay, pendingInked, selectedCardId]
+  );
+
+  const handleUseItemClick = useCallback(
+    (itemInstanceId: string) => {
+      if (combat.phase !== "PLAYER_TURN") return;
+      const item = usableItems.find(
+        (entry) => entry.instanceId === itemInstanceId
+      );
+      if (!item) return;
+      const def = usableItemDefs.get(item.definitionId);
+      if (!def) return;
+
+      setSelectedCardId(null);
+      setPendingInked(false);
+
+      if (def.targeting === "SINGLE_ENEMY") {
+        setSelectedUsableItemId(itemInstanceId);
+        return;
+      }
+
+      onUseItem(itemInstanceId, null);
+      setSelectedUsableItemId(null);
+    },
+    [combat.phase, onUseItem, usableItemDefs, usableItems]
   );
 
   const isPlayerTurn = combat.phase === "PLAYER_TURN";
@@ -322,13 +379,14 @@ export function CombatView({
 
   const handleGlobalClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      if (!selectedCardId) return;
+      if (!selectedCardId && !selectedUsableItemId) return;
       const target = event.target as HTMLElement;
       if (target.closest('[data-keep-selection="true"]')) return;
       setSelectedCardId(null);
+      setSelectedUsableItemId(null);
       setPendingInked(false);
     },
-    [selectedCardId]
+    [selectedCardId, selectedUsableItemId]
   );
 
   return (
@@ -448,6 +506,12 @@ export function CombatView({
               : "Tap the selected card again to play it"}
           </div>
         )}
+        {needsItemEnemyTarget && selectedUsableItemDef && (
+          <div className="relative z-10 animate-bounce pb-1 text-xs font-semibold text-orange-300 lg:text-sm">
+            Choose an enemy for{" "}
+            <span className="text-white">{selectedUsableItemDef.name}</span>
+          </div>
+        )}
         {combat.allies.length > 0 && (
           <div className="relative z-10 mb-1 flex w-full max-w-4xl flex-wrap items-stretch justify-center gap-2 lg:mb-2">
             {combat.allies.map((ally) => {
@@ -547,6 +611,37 @@ export function CombatView({
               disruption={combat.playerDisruption}
             />
           </div>
+
+          {usableItems.length > 0 && (
+            <div
+              data-keep-selection="true"
+              className="flex flex-shrink-0 flex-wrap items-center justify-end gap-1 lg:max-w-72"
+            >
+              {usableItems.map((item) => {
+                const def = usableItemDefs.get(item.definitionId);
+                if (!def) return null;
+                const isSelected = selectedUsableItemId === item.instanceId;
+                return (
+                  <Tooltip key={item.instanceId} content={def.description}>
+                    <button
+                      type="button"
+                      onClick={() => handleUseItemClick(item.instanceId)}
+                      className={cn(
+                        "rounded border px-2 py-1 text-[9px] font-semibold uppercase tracking-wide transition lg:text-[10px]",
+                        isSelected
+                          ? "border-orange-400 bg-orange-900/60 text-orange-100"
+                          : "border-orange-700/70 bg-slate-900 text-orange-200 hover:border-orange-400",
+                        !isPlayerTurn && "cursor-not-allowed opacity-50"
+                      )}
+                      disabled={!isPlayerTurn}
+                    >
+                      {def.name}
+                    </button>
+                  </Tooltip>
+                );
+              })}
+            </div>
+          )}
 
           {/* Ink gauge */}
           <div className="w-36 flex-shrink-0 lg:w-60 [@media(max-height:540px)]:w-28">

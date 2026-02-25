@@ -140,6 +140,9 @@ function applyBonusToComputed(
     case "RELIC_DISCOUNT":
       result.relicDiscount += bonus.value;
       break;
+    case "LOOT_LUCK":
+      result.lootLuck += bonus.value;
+      break;
     case "UNLOCK_INK_POWER":
       inkPowers.add(bonus.power);
       break;

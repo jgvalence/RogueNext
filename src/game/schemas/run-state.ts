@@ -3,6 +3,7 @@ import { RoomType, RunStatus, BiomeType } from "./enums";
 import { CombatStateSchema } from "./combat-state";
 import { CardInstanceSchema } from "./cards";
 import { ComputedMetaBonusesSchema } from "./meta";
+import { UsableItemInstanceSchema } from "./items";
 
 const CardUnlockProgressSchema = z.object({
   enteredBiomes: z.record(z.string(), z.number().int()).default({}),
@@ -32,6 +33,10 @@ export const RunStateSchema = z.object({
   deck: z.array(CardInstanceSchema),
   allyIds: z.array(z.string()).default([]),
   relicIds: z.array(z.string()).default([]),
+  usableItems: z.array(UsableItemInstanceSchema).default([]),
+  usableItemCapacity: z.number().int().min(0).default(3),
+  freeUpgradeUsed: z.boolean().default(false),
+  survivalOnceUsed: z.boolean().optional(),
   map: z.array(z.array(RoomNodeSchema)),
   combat: CombatStateSchema.nullable().default(null),
   currentBiome: BiomeType.default("LIBRARY"),
@@ -47,6 +52,13 @@ export const RunStateSchema = z.object({
   selectedRunConditionId: z.string().nullable().default(null),
   // Resources accumulated during this run (flushed at endRun)
   earnedResources: z.record(z.string(), z.number().int()).default({}),
+  // Optional start-of-run merchant flow state
+  startMerchantResourcePool: z.record(z.string(), z.number().int()).optional(),
+  startMerchantSpentResources: z
+    .record(z.string(), z.number().int())
+    .optional(),
+  startMerchantPurchasedOfferIds: z.array(z.string()).optional(),
+  startMerchantCompleted: z.boolean().optional(),
   // Meta bonuses computed at run creation
   metaBonuses: ComputedMetaBonusesSchema.optional(),
   // Snapshot of unlocked stories for card unlock logic

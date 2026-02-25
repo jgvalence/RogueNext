@@ -24,6 +24,8 @@ import {
 } from "./run-conditions";
 import { filterCardIdsByDifficulty } from "./difficulty";
 import { getDifficultyModifiers } from "./difficulty";
+import { createUsableItemInstance } from "./items";
+import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 
 type EnemyDef = (typeof enemyDefinitions)[0];
 const DISRUPTION_EFFECT_TYPES = new Set([
@@ -102,7 +104,8 @@ export function createNewRun(
   unlockedRunConditionIds: string[] = [],
   unlockedDifficultyLevels: number[] = [0],
   unlockedDifficultyLevelMax = 0,
-  startingBiomeChoices: [BiomeType, BiomeType] | null = null
+  startingBiomeChoices: [BiomeType, BiomeType] | null = null,
+  startMerchantResourcePool: Record<string, number> = {}
 ): RunState {
   // Build starter deck instances
   const deck: CardInstance[] = starterCards.map((card) => ({
@@ -110,6 +113,22 @@ export function createNewRun(
     definitionId: card.id,
     upgraded: false,
   }));
+  if (metaBonuses?.startingRareCard && allCards && allCards.length > 0) {
+    const rarePool = allCards.filter(
+      (card) =>
+        card.rarity === "RARE" &&
+        !card.isStarterCard &&
+        card.isCollectible !== false
+    );
+    if (rarePool.length > 0) {
+      const rareCard = rng.pick(rarePool);
+      deck.push({
+        instanceId: nanoid(),
+        definitionId: rareCard.id,
+        upgraded: false,
+      });
+    }
+  }
 
   const map = generateFloorMap(1, rng, "LIBRARY");
   const pendingRunConditionChoices = drawRunConditionChoices(
@@ -146,6 +165,10 @@ export function createNewRun(
     deck,
     allyIds: [],
     relicIds: [],
+    usableItems: [],
+    usableItemCapacity: GAME_CONSTANTS.MAX_USABLE_ITEMS,
+    freeUpgradeUsed: false,
+    survivalOnceUsed: false,
     map,
     combat: null,
     currentBiome: "LIBRARY",
@@ -156,6 +179,10 @@ export function createNewRun(
     pendingRunConditionChoices,
     selectedRunConditionId: null,
     earnedResources: {},
+    startMerchantResourcePool,
+    startMerchantSpentResources: {},
+    startMerchantPurchasedOfferIds: [],
+    startMerchantCompleted: false,
     metaBonuses,
     unlockedStoryIdsSnapshot,
     unlockedCardIds,
@@ -263,7 +290,8 @@ export function generateFloorMap(
               isBossRoom,
               biome,
               rng,
-              difficultyLevel
+              difficultyLevel,
+              j > 0 && numChoices > 1 ? 2 : 1
             )
           : undefined;
 
@@ -341,7 +369,8 @@ function generateRoomEnemies(
   isBoss: boolean,
   biome: BiomeType,
   rng: RNG,
-  difficultyLevel = 0
+  difficultyLevel = 0,
+  minEnemyCount = 1
 ): { enemyIds: string[]; isElite: boolean } {
   const difficultyModifiers = getDifficultyModifiers(difficultyLevel);
   const canAppear = (e: (typeof enemyDefinitions)[0]) =>
@@ -406,7 +435,11 @@ function generateRoomEnemies(
         difficultyModifiers.enemyPackSizeBonus
     )
   );
-  const count = rng.nextInt(1, maxEnemyCount);
+  const clampedMinEnemyCount = Math.max(
+    1,
+    Math.min(minEnemyCount, maxEnemyCount)
+  );
+  const count = rng.nextInt(clampedMinEnemyCount, maxEnemyCount);
   const enemies: string[] = [];
   const assaultPool = normalPool.filter(
     (e) => e.role === "ASSAULT" || e.role === "HYBRID"
@@ -603,7 +636,8 @@ export function completeCombat(
   rng: RNG,
   biomeResources?: Partial<Record<BiomeResource, number>>,
   allCards?: CardDefinition[],
-  relicIds?: string[]
+  relicIds?: string[],
+  usableItemDropDefinitionId?: string | null
 ): RunState {
   const isBossRoom = runState.currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
   const isFinalFloor = runState.floor >= GAME_CONSTANTS.MAX_FLOORS;
@@ -683,6 +717,17 @@ export function completeCombat(
     unlockedCardIdsRaw,
     runState.unlockedDifficultyLevelSnapshot ?? 0
   );
+  const usableItemCapacity =
+    runState.usableItemCapacity ?? GAME_CONSTANTS.MAX_USABLE_ITEMS;
+  const hasUsableItemSlot =
+    (runState.usableItems?.length ?? 0) < usableItemCapacity;
+  const nextUsableItems =
+    usableItemDropDefinitionId && hasUsableItemSlot
+      ? [
+          ...(runState.usableItems ?? []),
+          createUsableItemInstance(usableItemDropDefinitionId),
+        ]
+      : (runState.usableItems ?? []);
 
   return {
     ...runState,
@@ -697,6 +742,8 @@ export function completeCombat(
     unlockedCardIds:
       unlockedCardIds.length > 0 ? unlockedCardIds : runState.unlockedCardIds,
     cardUnlockProgress: unlockProgress,
+    usableItems: nextUsableItems,
+    usableItemCapacity,
   };
 }
 
@@ -834,6 +881,31 @@ export function upgradeCardInDeck(
   };
 }
 
+export function applyFreeUpgradeInDeck(
+  runState: RunState,
+  cardInstanceId: string
+): RunState {
+  if (runState.freeUpgradeUsed) return runState;
+  const cardIndex = runState.deck.findIndex(
+    (c) => c.instanceId === cardInstanceId
+  );
+  if (cardIndex === -1) return runState;
+
+  const card = runState.deck[cardIndex]!;
+  if (card.upgraded) {
+    return { ...runState, freeUpgradeUsed: true };
+  }
+
+  const newDeck = [...runState.deck];
+  newDeck[cardIndex] = { ...card, upgraded: true };
+
+  return {
+    ...runState,
+    deck: newDeck,
+    freeUpgradeUsed: true,
+  };
+}
+
 // ============================
 // Random Events
 // ============================
@@ -876,8 +948,18 @@ function addRelicToRun(state: RunState, relicId: string): RunState {
 
 export function pickGuaranteedEventRelicId(state: RunState): string | null {
   const nonBossPool = relicDefinitions.filter((r) => r.rarity !== "BOSS");
-  const available = nonBossPool.find((r) => !state.relicIds.includes(r.id));
-  return available?.id ?? nonBossPool[0]?.id ?? null;
+  const available = nonBossPool.filter((r) => !state.relicIds.includes(r.id));
+  if (available.length === 0) {
+    return nonBossPool[0]?.id ?? null;
+  }
+  const rng = createRNG(
+    `${state.seed}-guaranteed-relic-${state.floor}-${state.currentRoom}-${state.relicIds.length}`
+  );
+  const lootLuck = getTotalLootLuck(
+    state.relicIds,
+    state.metaBonuses?.lootLuck ?? 0
+  );
+  return weightedSampleByRarity(available, 1, rng, lootLuck)[0]?.id ?? null;
 }
 
 export function createGuaranteedRelicEvent(): GameEvent {
@@ -1032,12 +1114,19 @@ const EVENTS: GameEvent[] = [
       },
       {
         label: "Push your luck",
-        description: "Gain 140 gold. Add Haunting Regret to your deck.",
-        apply: (s) => ({
-          ...addDeckCard(s, "haunting_regret"),
-          gold: s.gold + 140,
-          currentRoom: s.currentRoom + 1,
-        }),
+        description: "Gain 140 gold. Add 2 Haunting Regret to your deck.",
+        apply: (s) => {
+          const withFirstRegret = addDeckCard(s, "haunting_regret");
+          const withSecondRegret = addDeckCard(
+            withFirstRegret,
+            "haunting_regret"
+          );
+          return {
+            ...withSecondRegret,
+            gold: s.gold + 140,
+            currentRoom: s.currentRoom + 1,
+          };
+        },
       },
       {
         label: "Refuse",

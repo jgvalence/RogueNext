@@ -38,6 +38,7 @@ export const MetaBonusSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("ATTACK_BONUS"), value: z.number().int() }),
   z.object({ type: z.literal("ALLY_SLOTS"), value: z.number().int() }),
   z.object({ type: z.literal("RELIC_DISCOUNT"), value: z.number() }),
+  z.object({ type: z.literal("LOOT_LUCK"), value: z.number().int() }),
   z.object({ type: z.literal("STARTING_RARE_CARD") }),
 ]);
 export type MetaBonus = z.infer<typeof MetaBonusSchema>;
@@ -95,6 +96,7 @@ export const ComputedMetaBonusesSchema = z.object({
   startingGold: z.number().int().default(0),
   extraCardRewardChoices: z.number().int().default(0),
   relicDiscount: z.number().default(0),
+  lootLuck: z.number().int().default(0),
   // Ink powers — REWRITE toujours présent, SEAL et LOST_CHAPTER à débloquer
   unlockedInkPowers: z.array(InkPowerType).default(["REWRITE"]),
   // Complex bonuses

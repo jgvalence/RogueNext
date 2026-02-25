@@ -79,7 +79,8 @@ export function playCard(
   targetId: string | null,
   useInked: boolean,
   cardDefs: Map<string, CardDefinition>,
-  rng: RNG
+  rng: RNG,
+  metaBonuses?: { attackBonus?: number; exhaustKeepChance?: number }
 ): CombatState {
   const cardInst = state.hand.find((c) => c.instanceId === instanceId);
   if (!cardInst) return state;
@@ -104,6 +105,15 @@ export function playCard(
     } else {
       effects = boostEffectsForUpgrade(effects);
     }
+  }
+  const attackBonus =
+    def.type === "ATTACK" ? Math.max(0, metaBonuses?.attackBonus ?? 0) : 0;
+  if (attackBonus > 0) {
+    effects = effects.map((effect) =>
+      effect.type === "DAMAGE"
+        ? { ...effect, value: effect.value + attackBonus }
+        : effect
+    );
   }
 
   energyCost += state.playerDisruption?.extraCardCost ?? 0;
@@ -155,7 +165,14 @@ export function playCard(
   const shouldExhaust =
     def.type === "POWER" || effects.some((e) => e.type === "EXHAUST");
   if (shouldExhaust) {
-    current = moveCardToExhaust(current, instanceId);
+    const keepChance = Math.min(
+      100,
+      Math.max(0, metaBonuses?.exhaustKeepChance ?? 0)
+    );
+    const keepCard = keepChance > 0 && rng.next() * 100 < keepChance;
+    current = keepCard
+      ? moveCardToDiscard(current, instanceId)
+      : moveCardToExhaust(current, instanceId);
   } else {
     current = moveCardToDiscard(current, instanceId);
   }

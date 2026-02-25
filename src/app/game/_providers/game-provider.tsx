@@ -44,13 +44,21 @@ import {
   advanceFloor,
   applyHealRoom,
   upgradeCardInDeck,
+  applyFreeUpgradeInDeck,
   removeCardFromRunDeck,
   applyEventChoice,
   type GameEvent,
 } from "@/game/engine/run";
 import { addCardToRunDeck } from "@/game/engine/rewards";
 import type { CombatRewards } from "@/game/engine/rewards";
-import { buyShopItem, type ShopItem } from "@/game/engine/merchant";
+import {
+  applyStartMerchantOffer,
+  buyShopItem,
+  completeStartMerchant,
+  type ShopItem,
+  type StartMerchantOffer,
+} from "@/game/engine/merchant";
+import { applyUsableItem } from "@/game/engine/items";
 
 // ============================
 // Types
@@ -71,6 +79,10 @@ export type GameAction =
       };
     }
   | { type: "END_TURN" }
+  | {
+      type: "USE_USABLE_ITEM";
+      payload: { itemInstanceId: string; targetId: string | null };
+    }
   | { type: "BEGIN_ENEMY_TURN" }
   | { type: "EXECUTE_ENEMY_STEP"; payload: { enemyInstanceId: string } }
   | { type: "FINALIZE_ENEMY_TURN" }
@@ -88,6 +100,7 @@ export type GameAction =
       payload: {
         goldReward: number;
         biomeResources?: Partial<Record<BiomeResource, number>>;
+        usableItemDropDefinitionId?: string | null;
       };
     }
   | { type: "PICK_RELIC_REWARD"; payload: { relicId: string } }
@@ -96,8 +109,12 @@ export type GameAction =
   | { type: "APPLY_HEAL_ROOM" }
   | { type: "ADVANCE_ROOM" }
   | { type: "BUY_SHOP_ITEM"; payload: { item: ShopItem } }
+  | { type: "BUY_START_MERCHANT_OFFER"; payload: { offer: StartMerchantOffer } }
+  | { type: "COMPLETE_START_MERCHANT" }
   | { type: "CHEAT_KILL_ENEMY"; payload: { enemyInstanceId: string } }
   | { type: "UPGRADE_CARD"; payload: { cardInstanceId: string } }
+  | { type: "APPLY_FREE_UPGRADE"; payload: { cardInstanceId: string } }
+  | { type: "MARK_FREE_UPGRADE_USED" }
   | { type: "REMOVE_CARD_FROM_DECK"; payload: { cardInstanceId: string } }
   | { type: "APPLY_EVENT"; payload: { event: GameEvent; choiceIndex: number } }
   | { type: "CHOOSE_BIOME"; payload: { biome: BiomeType } };
@@ -127,6 +144,28 @@ interface ReducerDeps {
 }
 
 function createGameReducer(deps: ReducerDeps) {
+  const applySurvivalOnceIfNeeded = (state: RunState, rng: RNG): RunState => {
+    if (!state.combat || state.combat.phase !== "COMBAT_LOST") return state;
+    if (!state.metaBonuses?.survivalOnce || state.survivalOnceUsed)
+      return state;
+
+    const revivedBase = {
+      ...state.combat,
+      phase: "ALLIES_ENEMIES_TURN" as const,
+      player: {
+        ...state.combat.player,
+        currentHp: 1,
+        block: 0,
+      },
+    };
+    const revivedCombat = startPlayerTurn(revivedBase, rng, state.relicIds);
+    return {
+      ...state,
+      survivalOnceUsed: true,
+      combat: revivedCombat,
+    };
+  };
+
   return function gameReducer(state: RunState, action: GameAction): RunState {
     const { cardDefs, enemyDefs, allyDefs, rng } = deps;
 
@@ -155,7 +194,7 @@ function createGameReducer(deps: ReducerDeps) {
           );
         }
 
-        return { ...state, combat };
+        return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
 
       case "PLAY_CARD": {
@@ -172,7 +211,11 @@ function createGameReducer(deps: ReducerDeps) {
           action.payload.targetId,
           action.payload.useInked,
           cardDefs,
-          rng
+          rng,
+          {
+            attackBonus: state.metaBonuses?.attackBonus ?? 0,
+            exhaustKeepChance: state.metaBonuses?.exhaustKeepChance ?? 0,
+          }
         );
         if (playedCardDef && state.relicIds.length > 0) {
           combat = applyRelicsOnCardPlayed(
@@ -182,8 +225,19 @@ function createGameReducer(deps: ReducerDeps) {
           );
         }
         combat = checkCombatEnd(combat);
-        return { ...state, combat };
+        return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
+
+      case "USE_USABLE_ITEM":
+        return applySurvivalOnceIfNeeded(
+          applyUsableItem(
+            state,
+            action.payload.itemInstanceId,
+            action.payload.targetId,
+            rng
+          ),
+          rng
+        );
 
       case "END_TURN": {
         if (!state.combat || state.combat.phase !== "PLAYER_TURN") return state;
@@ -194,7 +248,7 @@ function createGameReducer(deps: ReducerDeps) {
           combat = startPlayerTurn(combat, rng, state.relicIds);
         }
 
-        return { ...state, combat };
+        return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
 
       // ── Step-by-step enemy turn (for animations) ──────────────────
@@ -208,7 +262,7 @@ function createGameReducer(deps: ReducerDeps) {
         };
         combat = executeAlliesTurn(combat, allyDefs, rng);
         combat = checkCombatEnd(combat);
-        return { ...state, combat };
+        return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
 
       case "EXECUTE_ENEMY_STEP": {
@@ -233,7 +287,7 @@ function createGameReducer(deps: ReducerDeps) {
           enemyDefs
         );
         combat = checkCombatEnd(combat);
-        return { ...state, combat };
+        return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
 
       case "FINALIZE_ENEMY_TURN": {
@@ -248,7 +302,7 @@ function createGameReducer(deps: ReducerDeps) {
         if (combat.phase !== "COMBAT_WON" && combat.phase !== "COMBAT_LOST") {
           combat = startPlayerTurn(combat, rng, state.relicIds);
         }
-        return { ...state, combat };
+        return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
 
       case "USE_INK_POWER": {
@@ -260,7 +314,7 @@ function createGameReducer(deps: ReducerDeps) {
           cardDefs,
           rng
         );
-        return { ...state, combat };
+        return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
 
       case "SELECT_ROOM":
@@ -283,7 +337,8 @@ function createGameReducer(deps: ReducerDeps) {
           rng,
           action.payload.biomeResources,
           [...cardDefs.values()],
-          state.relicIds
+          state.relicIds,
+          action.payload.usableItemDropDefinitionId
         );
       }
 
@@ -311,6 +366,12 @@ function createGameReducer(deps: ReducerDeps) {
         return result ?? state;
       }
 
+      case "BUY_START_MERCHANT_OFFER":
+        return applyStartMerchantOffer(state, action.payload.offer);
+
+      case "COMPLETE_START_MERCHANT":
+        return completeStartMerchant(state);
+
       case "CHEAT_KILL_ENEMY": {
         if (process.env.NODE_ENV === "production") return state;
         if (!state.combat) return state;
@@ -330,11 +391,17 @@ function createGameReducer(deps: ReducerDeps) {
           ),
         });
 
-        return { ...state, combat };
+        return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
 
       case "UPGRADE_CARD":
         return upgradeCardInDeck(state, action.payload.cardInstanceId);
+
+      case "APPLY_FREE_UPGRADE":
+        return applyFreeUpgradeInDeck(state, action.payload.cardInstanceId);
+
+      case "MARK_FREE_UPGRADE_USED":
+        return { ...state, freeUpgradeUsed: true };
 
       case "REMOVE_CARD_FROM_DECK":
         return removeCardFromRunDeck(state, action.payload.cardInstanceId);

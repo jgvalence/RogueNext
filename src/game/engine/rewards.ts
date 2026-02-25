@@ -12,6 +12,8 @@ import {
   filterCardsByDifficulty,
   filterRelicsByDifficulty,
 } from "./difficulty";
+import { pickRandomUsableItemDefinitionId } from "./items";
+import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 
 export interface CombatRewards {
   gold: number;
@@ -20,6 +22,7 @@ export interface CombatRewards {
   relicChoices: RelicDefinitionData[];
   allyChoices: AllyDefinition[];
   bossMaxHpBonus: number | null;
+  usableItemDropDefinitionId: string | null;
 }
 
 /**
@@ -43,8 +46,12 @@ export function generateCombatRewards(
   currentAllyIds: string[] = [],
   allySlotCount: number = 0,
   unlockedDifficultyLevelSnapshot = 0,
-  defeatedBossId?: string
+  defeatedBossId?: string,
+  extraCardRewardChoices = 0,
+  metaLootLuckBonus = 0
 ): CombatRewards {
+  const lootLuck = getTotalLootLuck(currentRelicIds, metaLootLuckBonus);
+  const hasOmensCompass = currentRelicIds.includes("omens_compass");
   // Gold reward
   const baseGold = GAME_CONSTANTS.GOLD_REWARD_BASE;
   const variance = rng.nextInt(0, GAME_CONSTANTS.GOLD_REWARD_VARIANCE);
@@ -67,6 +74,7 @@ export function generateCombatRewards(
   );
   const shuffledCards = rng.shuffle(lootableCards);
 
+  const extraChoices = Math.max(0, Math.floor(extraCardRewardChoices));
   let cardChoices: CardDefinition[];
   if (isBoss) {
     cardChoices = []; // Boss: no card choice
@@ -74,9 +82,16 @@ export function generateCombatRewards(
     // Elite: 1 rare card option
     const rareCards = shuffledCards.filter((c) => c.rarity === "RARE");
     cardChoices =
-      rareCards.length > 0 ? [rareCards[0]!] : shuffledCards.slice(0, 1);
+      rareCards.length > 0
+        ? rareCards.slice(0, Math.max(1, 1 + extraChoices))
+        : shuffledCards.slice(0, Math.max(1, 1 + extraChoices));
   } else {
-    cardChoices = shuffledCards.slice(0, GAME_CONSTANTS.CARD_REWARD_CHOICES);
+    cardChoices = weightedSampleByRarity(
+      shuffledCards,
+      GAME_CONSTANTS.CARD_REWARD_CHOICES + extraChoices,
+      rng,
+      lootLuck
+    );
   }
 
   // Biome resources (25% cross-biome chance via rng)
@@ -96,28 +111,55 @@ export function generateCombatRewards(
   let relicChoices: RelicDefinitionData[] = [];
 
   if (isBoss) {
-    const pool = availableRelics.filter(
-      (r) =>
-        r.rarity === "UNCOMMON" || r.rarity === "RARE" || r.rarity === "BOSS"
+    const nonBossRelics = availableRelics.filter((r) => r.rarity !== "BOSS");
+    const bossRelics = availableRelics.filter((r) => r.rarity === "BOSS");
+    const pool = nonBossRelics.filter(
+      (r) => r.rarity === "UNCOMMON" || r.rarity === "RARE"
     );
-    const shuffled = rng.shuffle(pool.length >= 3 ? pool : availableRelics);
+    const nonBossChoices = weightedSampleByRarity(
+      pool.length >= 3 ? pool : nonBossRelics,
+      3,
+      rng,
+      lootLuck
+    );
 
     // Guarantee the boss-specific relic as a choice if available and not owned
     const bossRelic = defeatedBossId
       ? availableRelics.find((r) => r.sourceBossId === defeatedBossId)
       : undefined;
 
+    const bonusBossRelic =
+      hasOmensCompass && bossRelics.length > 0
+        ? (() => {
+            const candidatePool = bossRelics.filter(
+              (r) => r.id !== bossRelic?.id
+            );
+            return rng.pick(
+              candidatePool.length > 0 ? candidatePool : bossRelics
+            );
+          })()
+        : undefined;
+
     if (bossRelic) {
-      const rest = shuffled.filter((r) => r.id !== bossRelic.id).slice(0, 2);
-      relicChoices = [bossRelic, ...rest];
+      const rest = nonBossChoices.filter((r) => r.id !== bossRelic.id);
+      if (bonusBossRelic) {
+        relicChoices = [bossRelic, bonusBossRelic, ...rest].slice(0, 3);
+      } else {
+        relicChoices = [bossRelic, ...rest].slice(0, 3);
+      }
+    } else if (bonusBossRelic) {
+      relicChoices = [bonusBossRelic, ...nonBossChoices].slice(0, 3);
     } else {
-      relicChoices = shuffled.slice(0, 3);
+      relicChoices = nonBossChoices.slice(0, 3);
     }
   } else if (isElite) {
     const pool = availableRelics.filter((r) => r.rarity !== "BOSS");
-    relicChoices = rng
-      .shuffle(pool.length > 0 ? pool : availableRelics)
-      .slice(0, 1);
+    relicChoices = weightedSampleByRarity(
+      pool.length > 0 ? pool : availableRelics,
+      1,
+      rng,
+      lootLuck
+    );
     if (relicChoices.length === 0) {
       const rareCards = shuffledCards.filter((c) => c.rarity === "RARE");
       const existingCardIds = new Set(cardChoices.map((c) => c.id));
@@ -141,6 +183,15 @@ export function generateCombatRewards(
 
   // Boss only: 50% chance to offer +15 max HP as an alternative to a relic
   const bossMaxHpBonus = isBoss && rng.next() < 0.5 ? 15 : null;
+  const usableItemDropChanceBase = isBoss ? 0.2 : isElite ? 0.15 : 0.08;
+  const usableItemDropChance = Math.min(
+    0.6,
+    usableItemDropChanceBase * (1 + lootLuck * 0.08)
+  );
+  const usableItemDropDefinitionId =
+    rng.next() < usableItemDropChance
+      ? pickRandomUsableItemDefinitionId(rng)
+      : null;
 
   return {
     gold,
@@ -149,6 +200,7 @@ export function generateCombatRewards(
     relicChoices,
     allyChoices,
     bossMaxHpBonus,
+    usableItemDropDefinitionId,
   };
 }
 

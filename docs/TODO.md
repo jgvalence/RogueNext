@@ -27,6 +27,10 @@
 - [x] Relique unique par boss (18 reliques boss-specifiques, garanties en recompense)
 - [x] IA boss conditionnelle (poids conditionnels par situation, phase 2 differenciee)
 - [x] Buff BLEED (saignement, expire par duree uniquement, distinct du POISON)
+- [x] 24 nouveaux ennemis (2 normaux + 1 elite par biome hors LIBRARY)
+- [x] 23 nouvelles cartes (7 ALWAYS LIBRARY + 8 COMMON biome + 8 UNCOMMON biome)
+- [x] Unlocks progressifs tier 2 (BIOME_ELITE_KILLS count:2, BIOME_BOSS_KILLS count:2)
+- [x] 8 nouvelles reliques a mecaniques reactives (turn-start, turn-end, card-played)
 
 ### Meta progression (Bibliotheque)
 

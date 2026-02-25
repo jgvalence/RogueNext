@@ -661,9 +661,6 @@ function applyBossAbilityMechanics(
       }
       return current;
     case "dagda_shadow":
-      if (ability.name === "Ancient Feast") {
-        current = healEnemy(current, enemy.instanceId, 12);
-      }
       if (ability.name === "Cauldron Steam") {
         current = addCardsToDiscardPile(current, "hexed_parchment", 1);
       }

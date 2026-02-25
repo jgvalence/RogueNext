@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
 import { GameCard } from "../combat/GameCard";
+import {
+  UpgradePreviewPortal,
+  type UpgradePreviewHoverInfo,
+} from "./UpgradePreviewPortal";
 
 interface CardPickerModalProps {
   title: string;
@@ -12,6 +16,7 @@ interface CardPickerModalProps {
   cardDefs: Map<string, CardDefinition>;
   onPick: (cardInstanceId: string) => void;
   onCancel?: () => void;
+  showUpgradePreview?: boolean;
 }
 
 export function CardPickerModal({
@@ -21,7 +26,11 @@ export function CardPickerModal({
   cardDefs,
   onPick,
   onCancel,
+  showUpgradePreview = false,
 }: CardPickerModalProps) {
+  const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
+    null
+  );
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape" && onCancel) onCancel();
@@ -29,6 +38,17 @@ export function CardPickerModal({
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [onCancel]);
+  const handleCardMouseEnter = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>, def: CardDefinition) => {
+      if (!showUpgradePreview) return;
+      setHoverInfo({ definition: def, anchorEl: e.currentTarget });
+    },
+    [showUpgradePreview]
+  );
+  const handleCardMouseLeave = useCallback(() => {
+    if (!showUpgradePreview) return;
+    setHoverInfo(null);
+  }, [showUpgradePreview]);
 
   const modal = (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4">
@@ -70,6 +90,8 @@ export function CardPickerModal({
                     key={card.instanceId}
                     className="flex cursor-pointer justify-center rounded-lg ring-2 ring-transparent transition hover:ring-rose-500 focus:outline-none focus:ring-rose-400"
                     onClick={() => onPick(card.instanceId)}
+                    onMouseEnter={(e) => handleCardMouseEnter(e, def)}
+                    onMouseLeave={handleCardMouseLeave}
                     type="button"
                   >
                     <GameCard
@@ -86,6 +108,7 @@ export function CardPickerModal({
           )}
         </div>
       </div>
+      {showUpgradePreview && <UpgradePreviewPortal info={hoverInfo} />}
     </div>
   );
 

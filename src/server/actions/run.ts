@@ -39,7 +39,7 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
     const validated = createRunSchema.parse(input);
     const user = await requireAuth();
 
-    const seed = validated.seed ?? nanoid();
+    const seed = validated.seed ?? `${Date.now()}-${nanoid()}`;
     const rng = createRNG(seed);
 
     // Load meta-progression bonuses for this user
@@ -91,7 +91,8 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
       unlockedRunConditionIds,
       unlockedDifficultyLevels,
       unlockedDifficultyLevelMax,
-      startingBiomeChoices
+      startingBiomeChoices,
+      resources
     );
 
     const now = new Date();
@@ -187,6 +188,7 @@ const endRunSchema = z.object({
   runId: z.string(),
   status: z.enum(["VICTORY", "DEFEAT", "ABANDONED"]),
   earnedResources: z.record(z.string(), z.number()).optional(),
+  startMerchantSpentResources: z.record(z.string(), z.number()).optional(),
 });
 
 export async function endRunAction(input: z.infer<typeof endRunSchema>) {
@@ -237,8 +239,22 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       where: { userId: user.id! },
       select: { resources: true, unlockedStoryIds: true },
     });
-    const currentResources =
+    const currentResourcesBase =
       (progression?.resources as Record<string, number>) ?? {};
+    const startMerchantSpentResources =
+      validated.startMerchantSpentResources ??
+      runState.startMerchantSpentResources ??
+      {};
+    const currentResources = { ...currentResourcesBase };
+    for (const [resource, spent] of Object.entries(
+      startMerchantSpentResources
+    )) {
+      const safeSpent = Math.max(0, Math.floor(spent ?? 0));
+      currentResources[resource] = Math.max(
+        0,
+        (currentResources[resource] ?? 0) - safeSpent
+      );
+    }
     const currentUnlockProgress =
       readUnlockProgressFromResources(currentResources);
     const runUnlockProgress = runState.cardUnlockProgress ?? {
@@ -386,12 +402,28 @@ export async function getActiveRunAction() {
     const stateWithFreshBonuses: RunState = {
       ...state,
       metaBonuses: freshMetaBonuses,
+      freeUpgradeUsed: state.freeUpgradeUsed ?? false,
+      survivalOnceUsed: state.survivalOnceUsed ?? false,
       pendingDifficultyLevels,
       selectedDifficultyLevel,
       unlockedDifficultyLevelSnapshot:
         state.unlockedDifficultyLevelSnapshot ?? unlockedDifficultyLevelMax,
       pendingRunConditionChoices: backfilledRunConditionChoices,
       selectedRunConditionId: state.selectedRunConditionId ?? null,
+      startMerchantResourcePool:
+        state.startMerchantResourcePool ??
+        (progression?.resources as Record<string, number>) ??
+        {},
+      startMerchantSpentResources: state.startMerchantSpentResources ?? {},
+      startMerchantPurchasedOfferIds:
+        state.startMerchantPurchasedOfferIds ?? [],
+      startMerchantCompleted:
+        state.startMerchantCompleted ??
+        !(
+          state.floor === 1 &&
+          state.currentRoom === 0 &&
+          state.combat === null
+        ),
     };
 
     return success({
