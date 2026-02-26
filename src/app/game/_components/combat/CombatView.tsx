@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { cn } from "@/lib/utils/cn";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type {
   EnemyDefinition,
   AllyDefinition,
-  EnemyState,
   EnemyAbility,
 } from "@/game/schemas/entities";
 import type { InkPowerType } from "@/game/schemas/enums";
@@ -15,6 +14,7 @@ import type {
   UsableItemDefinition,
   UsableItemInstance,
 } from "@/game/schemas/items";
+import type { Effect } from "@/game/schemas/effects";
 import { EnemyCard } from "./EnemyCard";
 import { GameCard } from "./GameCard";
 import { HandArea } from "./HandArea";
@@ -25,6 +25,9 @@ import { Tooltip } from "../shared/Tooltip";
 import { BACKGROUNDS, PLAYER_AVATAR } from "@/lib/assets";
 import { playSound } from "@/lib/sound";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
+import { boostEffectsForUpgrade } from "@/game/engine/card-upgrades";
+import { calculateDamage } from "@/game/engine/damage";
+import { applyBuff } from "@/game/engine/buffs";
 
 interface CombatViewProps {
   combat: CombatState;
@@ -46,6 +49,7 @@ interface CombatViewProps {
   attackingEnemyId?: string | null;
   unlockedInkPowers?: InkPowerType[];
   isDiscarding?: boolean;
+  attackBonus?: number;
   debugEnemySelection?: {
     floor: number;
     room: number;
@@ -78,6 +82,7 @@ export function CombatView({
   attackingEnemyId = null,
   unlockedInkPowers,
   isDiscarding = false,
+  attackBonus = 0,
   debugEnemySelection,
 }: CombatViewProps) {
   type PileType = "draw" | "discard" | "exhaust";
@@ -178,8 +183,8 @@ export function CombatView({
   const selectedCard = selectedCardId
     ? combat.hand.find((c) => c.instanceId === selectedCardId)
     : null;
-  const selectedDef = selectedCard
-    ? cardDefs.get(selectedCard.definitionId)
+  const selectedDef: CardDefinition | null = selectedCard
+    ? (cardDefs.get(selectedCard.definitionId) ?? null)
     : null;
   const needsTarget =
     selectedDef?.targeting === "SINGLE_ENEMY" ||
@@ -199,6 +204,28 @@ export function CombatView({
     selectedDef.effects.some(
       (e) => e.type === "HEAL" || e.type === "BLOCK" || e.type === "APPLY_BUFF"
     );
+  const previewEffects = useMemo(
+    () =>
+      selectedDef && selectedCard
+        ? getPreviewEffectsForSelectedCard(
+            selectedDef,
+            selectedCard.upgraded,
+            pendingInked,
+            attackBonus
+          )
+        : [],
+    [selectedDef, selectedCard, pendingInked, attackBonus]
+  );
+  const incomingDamageByEnemyId = useMemo(
+    () =>
+      buildIncomingDamagePreviewMap(
+        combat,
+        selectedDef,
+        previewEffects,
+        selectedCardId
+      ),
+    [combat, selectedDef, previewEffects, selectedCardId]
+  );
 
   const triggerCardPlay = useCallback(
     (instanceId: string, targetId: string | null, useInked: boolean) => {
@@ -267,11 +294,21 @@ export function CombatView({
       const def = cardDefs.get(card.definitionId);
       if (!def) return;
 
-      const sameSelection =
-        selectedCardId === instanceId && pendingInked === useInked;
+      const isSameCardSelected = selectedCardId === instanceId;
+      const sameSelection = isSameCardSelected && pendingInked === useInked;
 
       // Mobile-friendly flow: first tap selects, second tap confirms.
       if (!sameSelection) {
+        if (
+          isSameCardSelected &&
+          def.targeting !== "SINGLE_ENEMY" &&
+          def.targeting !== "SINGLE_ALLY"
+        ) {
+          // For no-target cards, avoid accidental downgrade from inked -> normal
+          // when the second tap lands on card body instead of the ink button.
+          triggerCardPlay(instanceId, null, pendingInked || useInked);
+          return;
+        }
         setSelectedCardId(instanceId);
         setSelectedUsableItemId(null);
         setPendingInked(useInked);
@@ -464,12 +501,21 @@ export function CombatView({
           {combat.enemies.map((enemy) => {
             const def = enemyDefs.get(enemy.definitionId);
             if (!def) return null;
+            const ability = def.abilities[enemy.intentIndex];
+            const resolvedTarget = ability
+              ? resolveEnemyAbilityTarget(combat, enemy, ability)
+              : "player";
             return (
               <EnemyCard
                 key={enemy.instanceId}
                 enemy={enemy}
                 definition={def}
                 enemyDamageScale={combat.enemyDamageScale}
+                playerBuffs={combat.player.buffs}
+                intentTargetsPlayer={resolvedTarget === "player"}
+                incomingDamagePreview={
+                  incomingDamageByEnemyId.get(enemy.instanceId) ?? null
+                }
                 isTargeted={
                   selectingEnemyTarget &&
                   selectedCardId !== null &&
@@ -478,8 +524,7 @@ export function CombatView({
                 }
                 intentTargetLabel={resolveEnemyIntentTargetLabel(
                   combat,
-                  enemy,
-                  def.abilities[enemy.intentIndex]
+                  resolvedTarget
                 )}
                 isActing={actingEnemyId === enemy.instanceId}
                 isAttacking={attackingEnemyId === enemy.instanceId}
@@ -897,13 +942,127 @@ function formatAllyIntent(ability: EnemyAbility): string {
   return `${targetLabel}: ${effects.join(", ")}`;
 }
 
+function getPreviewEffectsForSelectedCard(
+  definition: CardDefinition,
+  upgraded: boolean,
+  useInked: boolean,
+  attackBonus: number
+): Effect[] {
+  const isUsingInkedVariant = Boolean(useInked && definition.inkedVariant);
+  let effects = isUsingInkedVariant
+    ? definition.inkedVariant!.effects
+    : definition.effects;
+
+  if (upgraded) {
+    if (isUsingInkedVariant) {
+      effects = boostEffectsForUpgrade(effects);
+    } else if (definition.upgrade) {
+      effects = definition.upgrade.effects;
+    } else {
+      effects = boostEffectsForUpgrade(effects);
+    }
+  }
+
+  const effectiveAttackBonus = definition.type === "ATTACK" ? attackBonus : 0;
+  if (effectiveAttackBonus <= 0) {
+    return effects;
+  }
+
+  return effects.map((effect) =>
+    effect.type === "DAMAGE"
+      ? { ...effect, value: effect.value + effectiveAttackBonus }
+      : effect
+  );
+}
+
+function buildIncomingDamagePreviewMap(
+  combat: CombatState,
+  definition: CardDefinition | null,
+  effects: Effect[],
+  selectedCardId: string | null
+): Map<string, number> {
+  const result = new Map<string, number>();
+  if (!selectedCardId || !definition) return result;
+  if (
+    definition.targeting !== "SINGLE_ENEMY" &&
+    definition.targeting !== "ALL_ENEMIES"
+  ) {
+    return result;
+  }
+  if (!effects.some((e) => e.type === "DAMAGE")) return result;
+
+  for (const enemy of combat.enemies) {
+    if (enemy.currentHp <= 0) continue;
+    result.set(
+      enemy.instanceId,
+      computeIncomingDamageAgainstEnemy(
+        effects,
+        combat.player.strength,
+        combat.player.buffs,
+        enemy.block,
+        enemy.buffs
+      )
+    );
+  }
+
+  return result;
+}
+
+function computeIncomingDamageAgainstEnemy(
+  effects: Effect[],
+  attackerStrength: number,
+  attackerBuffs: CombatState["player"]["buffs"],
+  targetBlock: number,
+  targetBuffs: CombatState["enemies"][number]["buffs"]
+): number {
+  let totalHpLoss = 0;
+  let tempBlock = Math.max(0, targetBlock);
+  let tempStrength = attackerStrength;
+  let tempTargetBuffs = targetBuffs;
+
+  for (const effect of effects) {
+    if (effect.type === "GAIN_STRENGTH") {
+      tempStrength += effect.value;
+      continue;
+    }
+
+    if (
+      (effect.type === "APPLY_DEBUFF" || effect.type === "APPLY_BUFF") &&
+      effect.buff
+    ) {
+      tempTargetBuffs = applyBuff(
+        tempTargetBuffs,
+        effect.buff,
+        effect.value,
+        effect.duration
+      );
+      continue;
+    }
+
+    if (effect.type === "DAMAGE") {
+      const rawDamage = calculateDamage(
+        effect.value,
+        { strength: tempStrength, buffs: attackerBuffs },
+        { buffs: tempTargetBuffs }
+      );
+      const blocked = Math.min(tempBlock, rawDamage);
+      tempBlock -= blocked;
+      totalHpLoss += Math.max(0, rawDamage - blocked);
+    }
+  }
+
+  return Math.max(0, totalHpLoss);
+}
+
 function resolveEnemyIntentTargetLabel(
   combat: CombatState,
-  enemy: EnemyState,
-  ability: EnemyAbility | undefined
+  target:
+    | "player"
+    | "all_enemies"
+    | "all_allies"
+    | { type: "enemy"; instanceId: string }
+    | { type: "ally"; instanceId: string }
 ): string | null {
-  if (!ability) return null;
-  const target = resolveEnemyAbilityTarget(combat, enemy, ability);
   if (target === "player") return "You";
   if (target === "all_enemies") return "All enemies";
   if (target === "all_allies") return "All allies";

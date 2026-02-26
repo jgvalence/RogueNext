@@ -754,6 +754,7 @@ function GameContent({
             actingEnemyId={actingEnemyId}
             attackingEnemyId={attackingEnemyId}
             isDiscarding={isDiscarding}
+            attackBonus={state.metaBonuses?.attackBonus ?? 0}
             debugEnemySelection={debugEnemySelection ?? undefined}
           />
         )}

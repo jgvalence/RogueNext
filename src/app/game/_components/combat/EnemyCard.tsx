@@ -8,8 +8,13 @@ import {
   type ReactNode,
 } from "react";
 import { cn } from "@/lib/utils/cn";
-import type { EnemyState, EnemyDefinition } from "@/game/schemas/entities";
+import type {
+  EnemyState,
+  EnemyDefinition,
+  BuffInstance,
+} from "@/game/schemas/entities";
 import type { Effect } from "@/game/schemas/effects";
+import { getBuffStacks } from "@/game/engine/buffs";
 import { HpBar } from "../shared/HpBar";
 import { DamageNumber } from "./DamageNumber";
 import { BuffPill } from "../shared/BuffPill";
@@ -23,6 +28,9 @@ interface EnemyCardProps {
   enemy: EnemyState;
   definition: EnemyDefinition;
   enemyDamageScale?: number;
+  playerBuffs?: BuffInstance[];
+  intentTargetsPlayer?: boolean;
+  incomingDamagePreview?: number | null;
   intentTargetLabel?: string | null;
   isTargeted?: boolean;
   isActing?: boolean;
@@ -35,6 +43,9 @@ export function EnemyCard({
   enemy,
   definition,
   enemyDamageScale = 1,
+  playerBuffs = [],
+  intentTargetsPlayer = true,
+  incomingDamagePreview = null,
   intentTargetLabel = null,
   isTargeted = false,
   isActing = false,
@@ -232,6 +243,11 @@ export function EnemyCard({
             ))}
           </div>
         )}
+        {!isDead && incomingDamagePreview !== null && (
+          <div className="rounded border border-red-700/60 bg-red-950/50 px-1.5 py-1 text-[10px] font-semibold text-red-200 lg:text-[11px]">
+            Incoming {incomingDamagePreview}
+          </div>
+        )}
 
         {/* Intent */}
         {!isDead && intent && (
@@ -254,7 +270,10 @@ export function EnemyCard({
                 intent.effects,
                 definition.id,
                 intent.name,
-                enemyDamageScale
+                enemyDamageScale,
+                enemy.buffs,
+                playerBuffs,
+                intentTargetsPlayer
               )}
             </div>
           </div>
@@ -271,24 +290,63 @@ function formatIntentEffects(
   effects: Effect[],
   definitionId: string,
   abilityName: string,
-  enemyDamageScale: number
+  enemyDamageScale: number,
+  enemyBuffs: BuffInstance[],
+  playerBuffs: BuffInstance[],
+  intentTargetsPlayer: boolean
 ): ReactNode[] {
   const parts: ReactNode[] = [];
 
   for (const effect of effects) {
     switch (effect.type) {
       case "DAMAGE": {
-        const scaledDamage = Math.max(
+        const baseScaledDamage = Math.max(
           1,
           Math.round(effect.value * enemyDamageScale)
         );
-        parts.push(
+        let scaledDamage = baseScaledDamage;
+        const modifiers: string[] = [];
+        if (getBuffStacks(enemyBuffs, "WEAK") > 0) {
+          scaledDamage = Math.floor(scaledDamage * 0.75);
+          modifiers.push("WEAK");
+        }
+        if (
+          intentTargetsPlayer &&
+          getBuffStacks(playerBuffs, "VULNERABLE") > 0
+        ) {
+          scaledDamage = Math.floor(scaledDamage * 1.5);
+          modifiers.push("VULN");
+        }
+        scaledDamage = Math.max(0, scaledDamage);
+        const isModified = scaledDamage !== baseScaledDamage;
+        const dmgBadge = (
           <span
-            key={`d-${parts.length}`}
-            className="inline-flex items-center gap-0.5 rounded bg-red-900/60 px-1.5 py-0.5 text-sm font-black text-red-300 lg:text-base"
+            className={cn(
+              "inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-sm font-black lg:text-base",
+              isModified
+                ? "bg-amber-900/70 text-amber-200 ring-1 ring-amber-400/50"
+                : "bg-red-900/60 text-red-300"
+            )}
           >
             DMG {scaledDamage}
+            {isModified && (
+              <span className="ml-0.5 text-[10px] font-bold uppercase lg:text-[11px]">
+                *
+              </span>
+            )}
           </span>
+        );
+        parts.push(
+          isModified ? (
+            <Tooltip
+              key={`d-${parts.length}`}
+              content={`Calculated: ${baseScaledDamage} -> ${scaledDamage} (${modifiers.join(" + ")})`}
+            >
+              {dmgBadge}
+            </Tooltip>
+          ) : (
+            <span key={`d-${parts.length}`}>{dmgBadge}</span>
+          )
         );
         break;
       }
