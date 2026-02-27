@@ -7,6 +7,7 @@ import { compare } from "bcryptjs";
 import { prisma } from "@/lib/db/prisma";
 import { env } from "@/lib/env";
 import { UserRole } from "@prisma/client";
+import { assertRateLimit } from "@/lib/security/rate-limit";
 
 /**
  * Module augmentation for NextAuth types
@@ -57,9 +58,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
+        const email = String(credentials.email).trim().toLowerCase();
+        assertRateLimit({
+          key: `auth:signin:${email}`,
+          max: 10,
+          windowMs: 60_000,
+        });
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
+          where: { email },
         });
 
         if (!user || !user.password) {

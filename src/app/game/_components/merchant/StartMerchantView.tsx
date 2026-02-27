@@ -16,7 +16,7 @@ interface StartMerchantViewProps {
   runState: RunState;
   cardDefs: Map<string, CardDefinition>;
   allyDefs: Map<string, AllyDefinition>;
-  onBuy: (offer: StartMerchantOffer) => void;
+  onBuy: (offerId: string) => void;
   onContinue: () => void;
 }
 
@@ -116,7 +116,7 @@ export function StartMerchantView({
               key={offer.id}
               type="button"
               disabled={alreadyBought || !affordable}
-              onClick={() => onBuy(offer)}
+              onClick={() => onBuy(offer.id)}
               className="flex h-full flex-col gap-3 rounded-xl border border-emerald-800/40 bg-slate-900/85 p-5 text-left transition-all duration-200 enabled:hover:border-emerald-500/70 enabled:hover:bg-slate-800/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <span className="w-fit rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">

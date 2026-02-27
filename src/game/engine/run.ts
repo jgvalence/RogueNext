@@ -184,6 +184,8 @@ export function createNewRun(
     startMerchantSpentResources: {},
     startMerchantPurchasedOfferIds: [],
     startMerchantCompleted: false,
+    shopSoldItemIds: [],
+    pendingRewardRoomIndex: null,
     metaBonuses,
     unlockedStoryIdsSnapshot,
     unlockedCardIds,
@@ -745,6 +747,7 @@ export function completeCombat(
     cardUnlockProgress: unlockProgress,
     usableItems: nextUsableItems,
     usableItemCapacity,
+    pendingRewardRoomIndex: runState.currentRoom,
   };
 }
 

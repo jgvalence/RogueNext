@@ -21,8 +21,8 @@ interface ShopViewProps {
   deck: CardInstance[];
   usableItems: UsableItemInstance[];
   usableItemCapacity: number;
-  onBuy: (item: ShopItem) => void;
-  onRemoveCard: (cardInstanceId: string) => void;
+  soldItemIds: string[];
+  onBuy: (itemId: string, purgeCardInstanceId?: string) => void;
   onLeave: () => void;
 }
 
@@ -50,11 +50,11 @@ export function ShopView({
   deck,
   usableItems,
   usableItemCapacity,
+  soldItemIds,
   onBuy,
-  onRemoveCard,
   onLeave,
 }: ShopViewProps) {
-  const [soldIds, setSoldIds] = useState<Set<string>>(new Set());
+  const soldIds = useMemo(() => new Set(soldItemIds), [soldItemIds]);
   const [pendingPurgeItemId, setPendingPurgeItemId] = useState<string | null>(
     null
   );
@@ -87,20 +87,15 @@ export function ShopView({
 
   const handleBuy = (item: ShopItem) => {
     if (gold < item.price || soldIds.has(item.id)) return;
-    onBuy(item);
     if (item.type === "purge") {
-      // Gold deducted by onBuy; now open picker so player selects a card to remove
       setPendingPurgeItemId(item.id);
     } else {
-      setSoldIds((prev) => new Set(prev).add(item.id));
+      onBuy(item.id);
     }
   };
 
   const handlePurgePick = (cardInstanceId: string) => {
-    onRemoveCard(cardInstanceId);
-    if (pendingPurgeItemId) {
-      setSoldIds((prev) => new Set(prev).add(pendingPurgeItemId));
-    }
+    if (pendingPurgeItemId) onBuy(pendingPurgeItemId, cardInstanceId);
     setPendingPurgeItemId(null);
   };
 

@@ -29,8 +29,7 @@ interface SpecialRoomViewProps {
   forceEventWithRelic?: boolean;
   onHeal: () => void;
   onUpgrade: (cardInstanceId: string) => void;
-  onEventChoice: (event: GameEvent, choiceIndex: number) => void;
-  onEventPurge: (cardInstanceId: string) => void;
+  onEventChoice: (choiceIndex: number, purgeCardInstanceId?: string) => void;
   onSkip: () => void;
 }
 
@@ -46,7 +45,6 @@ export function SpecialRoomView({
   onHeal,
   onUpgrade,
   onEventChoice,
-  onEventPurge,
   onSkip,
 }: SpecialRoomViewProps) {
   const roomType = useMemo(() => {
@@ -88,7 +86,6 @@ export function SpecialRoomView({
           deck={deck}
           cardDefs={cardDefs}
           onEventChoice={onEventChoice}
-          onEventPurge={onEventPurge}
         />
       );
   }
@@ -226,7 +223,6 @@ function EventRoom({
   deck,
   cardDefs,
   onEventChoice,
-  onEventPurge,
 }: {
   rng: RNG;
   difficultyLevel: number;
@@ -236,21 +232,25 @@ function EventRoom({
   playerMaxHp: number;
   deck: CardInstance[];
   cardDefs: Map<string, CardDefinition>;
-  onEventChoice: (event: GameEvent, choiceIndex: number) => void;
-  onEventPurge: (cardInstanceId: string) => void;
+  onEventChoice: (choiceIndex: number, purgeCardInstanceId?: string) => void;
 }) {
   const event = useMemo(
     () => forcedEvent ?? pickEvent(rng, difficultyLevel),
     [forcedEvent, rng, difficultyLevel]
   );
   const [showPurgePicker, setShowPurgePicker] = useState(false);
+  const [pendingChoiceIndex, setPendingChoiceIndex] = useState<number | null>(
+    null
+  );
 
   const handleChoice = (choiceIndex: number) => {
     const choice = event.choices[choiceIndex];
-    onEventChoice(event, choiceIndex);
     if (choice?.requiresPurge) {
+      setPendingChoiceIndex(choiceIndex);
       setShowPurgePicker(true);
+      return;
     }
+    onEventChoice(choiceIndex);
   };
 
   return (
@@ -285,7 +285,10 @@ function EventRoom({
           cardDefs={cardDefs}
           onPick={(cardInstanceId) => {
             setShowPurgePicker(false);
-            onEventPurge(cardInstanceId);
+            if (pendingChoiceIndex !== null) {
+              onEventChoice(pendingChoiceIndex, cardInstanceId);
+              setPendingChoiceIndex(null);
+            }
           }}
         />
       )}

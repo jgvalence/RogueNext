@@ -349,11 +349,14 @@ function createGameReducer(deps: ReducerDeps) {
 
       case "PICK_CARD_REWARD":
         deps.setRewards(null);
-        return addCardToRunDeck(state, action.payload.definitionId);
+        return {
+          ...addCardToRunDeck(state, action.payload.definitionId),
+          pendingRewardRoomIndex: null,
+        };
 
       case "SKIP_CARD_REWARD":
         deps.setRewards(null);
-        return state;
+        return { ...state, pendingRewardRoomIndex: null };
 
       case "APPLY_HEAL_ROOM":
         return applyHealRoom(state);
@@ -417,6 +420,7 @@ function createGameReducer(deps: ReducerDeps) {
         return {
           ...state,
           relicIds: [...state.relicIds, action.payload.relicId],
+          pendingRewardRoomIndex: null,
         };
 
       case "GAIN_MAX_HP":
@@ -424,6 +428,7 @@ function createGameReducer(deps: ReducerDeps) {
           ...state,
           playerMaxHp: state.playerMaxHp + action.payload.amount,
           playerCurrentHp: state.playerCurrentHp + action.payload.amount,
+          pendingRewardRoomIndex: null,
         };
 
       case "PICK_ALLY_REWARD": {
@@ -436,6 +441,7 @@ function createGameReducer(deps: ReducerDeps) {
         return {
           ...state,
           allyIds: [...state.allyIds, action.payload.allyId],
+          pendingRewardRoomIndex: null,
         };
       }
 

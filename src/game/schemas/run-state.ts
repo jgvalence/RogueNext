@@ -60,6 +60,9 @@ export const RunStateSchema = z.object({
     .optional(),
   startMerchantPurchasedOfferIds: z.array(z.string()).optional(),
   startMerchantCompleted: z.boolean().optional(),
+  shopSoldItemIds: z.array(z.string()).default([]),
+  // Room index waiting for a reward claim after a won combat.
+  pendingRewardRoomIndex: z.number().int().nullable().default(null),
   // Meta bonuses computed at run creation
   metaBonuses: ComputedMetaBonusesSchema.optional(),
   // Snapshot of unlocked stories for card unlock logic
