@@ -159,29 +159,30 @@ export const en = {
     levels: {
       0: {
         name: "Archivist",
-        description: "Standard difficulty: +0% enemy HP, +0% enemy damage.",
+        description: "Standard experience, ideal for learning the game.",
       },
       1: {
         name: "Watcher",
-        description: "+12% enemy HP, +10% enemy damage.",
+        description: "Enemies are a bit more dangerous.",
       },
       2: {
         name: "Curator",
-        description: "+24% enemy HP, +20% enemy damage.",
+        description: "Pressure rises and fights require cleaner play.",
       },
       3: {
         name: "Censor",
-        description: "+36% enemy HP, +30% enemy damage.",
+        description:
+          "Elites and bosses become less predictable, and bosses break through your defense more easily.",
       },
       4: {
         name: "Abyssal",
         description:
-          "+48% enemy HP, +40% enemy damage, +8 points elite chance, special rooms: HEAL weight x0.5.",
+          "Elite and boss fights become much more aggressive, and events are riskier.",
       },
       5: {
         name: "Mythic",
         description:
-          "+60% enemy HP, +50% enemy damage, +16 points elite chance, special rooms: HEAL weight x0.25, enemy packs: +1 max size.",
+          "Ultimate mode: more elites, relentless enemies, and less reliable rewards.",
       },
     },
   },

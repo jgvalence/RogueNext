@@ -77,6 +77,8 @@ export const EnemyStateSchema = z.object({
   instanceId: z.string(),
   definitionId: z.string(),
   name: z.string(),
+  isBoss: z.boolean().optional(),
+  isElite: z.boolean().optional(),
   currentHp: z.number().int(),
   maxHp: z.number().int(),
   block: z.number().int().default(0),

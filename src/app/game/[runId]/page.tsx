@@ -361,7 +361,8 @@ function GameContent({
         state.unlockedDifficultyLevelSnapshot ?? 0,
         defeatedBossId,
         state.metaBonuses?.extraCardRewardChoices ?? 0,
-        state.metaBonuses?.lootLuck ?? 0
+        state.metaBonuses?.lootLuck ?? 0,
+        state.selectedDifficultyLevel ?? 0
       );
       setRewards(combatRewards);
       setIsBossRewards(isBoss);

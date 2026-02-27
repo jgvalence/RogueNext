@@ -11,6 +11,7 @@ import type { AllyDefinition } from "../schemas/entities";
 import {
   filterCardsByDifficulty,
   filterRelicsByDifficulty,
+  eliteCanDropRelic,
 } from "./difficulty";
 import { pickRandomUsableItemDefinitionId } from "./items";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
@@ -48,7 +49,8 @@ export function generateCombatRewards(
   unlockedDifficultyLevelSnapshot = 0,
   defeatedBossId?: string,
   extraCardRewardChoices = 0,
-  metaLootLuckBonus = 0
+  metaLootLuckBonus = 0,
+  selectedDifficultyLevel = 0
 ): CombatRewards {
   const lootLuck = getTotalLootLuck(currentRelicIds, metaLootLuckBonus);
   const hasOmensCompass = currentRelicIds.includes("omens_compass");
@@ -153,13 +155,17 @@ export function generateCombatRewards(
       relicChoices = nonBossChoices.slice(0, 3);
     }
   } else if (isElite) {
-    const pool = availableRelics.filter((r) => r.rarity !== "BOSS");
-    relicChoices = weightedSampleByRarity(
-      pool.length > 0 ? pool : availableRelics,
-      1,
-      rng,
-      lootLuck
-    );
+    if (eliteCanDropRelic(selectedDifficultyLevel, rng.next())) {
+      const pool = availableRelics.filter((r) => r.rarity !== "BOSS");
+      relicChoices = weightedSampleByRarity(
+        pool.length > 0 ? pool : availableRelics,
+        1,
+        rng,
+        lootLuck
+      );
+    } else {
+      relicChoices = [];
+    }
     if (relicChoices.length === 0) {
       const rareCards = shuffledCards.filter((c) => c.rarity === "RARE");
       const existingCardIds = new Set(cardChoices.map((c) => c.id));

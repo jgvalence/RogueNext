@@ -30,6 +30,7 @@ interface EnemyCardProps {
   enemyDamageScale?: number;
   playerBuffs?: BuffInstance[];
   intentTargetsPlayer?: boolean;
+  hideIntent?: boolean;
   incomingDamagePreview?: number | null;
   intentTargetLabel?: string | null;
   isTargeted?: boolean;
@@ -45,6 +46,7 @@ export function EnemyCard({
   enemyDamageScale = 1,
   playerBuffs = [],
   intentTargetsPlayer = true,
+  hideIntent = false,
   incomingDamagePreview = null,
   intentTargetLabel = null,
   isTargeted = false,
@@ -252,30 +254,38 @@ export function EnemyCard({
         {/* Intent */}
         {!isDead && intent && (
           <div className="mt-0.5 rounded-lg border border-gray-700/60 bg-gray-800/70 px-1.5 py-1 lg:px-2 lg:py-1.5 [@media(max-height:540px)]:px-1 [@media(max-height:540px)]:py-0.5">
-            {/* Intent name + target */}
-            <div className="flex items-start justify-between gap-1">
-              <span className="truncate text-[10px] font-semibold leading-tight text-gray-100 lg:text-[11px] [@media(max-height:540px)]:text-[11px]">
-                {intent.name}
-              </span>
-              {intentTargetLabel && (
-                <span className="shrink-0 text-[9px] text-amber-300/90 lg:text-[10px] [@media(max-height:540px)]:text-[10px]">
-                  {"-> "}
-                  {intentTargetLabel}
-                </span>
-              )}
-            </div>
-            {/* Effect chips */}
-            <div className="mt-1 flex flex-wrap items-center gap-1">
-              {formatIntentEffects(
-                intent.effects,
-                definition.id,
-                intent.name,
-                enemyDamageScale,
-                enemy.buffs,
-                playerBuffs,
-                intentTargetsPlayer
-              )}
-            </div>
+            {hideIntent ? (
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-300 lg:text-[11px]">
+                Intent Hidden
+              </div>
+            ) : (
+              <>
+                {/* Intent name + target */}
+                <div className="flex items-start justify-between gap-1">
+                  <span className="truncate text-[10px] font-semibold leading-tight text-gray-100 lg:text-[11px] [@media(max-height:540px)]:text-[11px]">
+                    {intent.name}
+                  </span>
+                  {intentTargetLabel && (
+                    <span className="shrink-0 text-[9px] text-amber-300/90 lg:text-[10px] [@media(max-height:540px)]:text-[10px]">
+                      {"-> "}
+                      {intentTargetLabel}
+                    </span>
+                  )}
+                </div>
+                {/* Effect chips */}
+                <div className="mt-1 flex flex-wrap items-center gap-1">
+                  {formatIntentEffects(
+                    intent.effects,
+                    definition.id,
+                    intent.name,
+                    enemyDamageScale,
+                    enemy.buffs,
+                    playerBuffs,
+                    intentTargetsPlayer
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
         {!isDead && definition.isBoss && (

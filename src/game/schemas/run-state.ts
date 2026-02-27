@@ -25,6 +25,7 @@ export const RunStateSchema = z.object({
   runId: z.string(),
   seed: z.string(),
   status: RunStatus,
+  runStartedAtMs: z.number().int().nonnegative().default(0),
   floor: z.number().int().default(1),
   currentRoom: z.number().int().default(0),
   gold: z.number().int().default(0),

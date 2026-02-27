@@ -80,6 +80,7 @@ export function SpecialRoomView({
       return (
         <EventRoom
           rng={rng}
+          difficultyLevel={difficultyLevel}
           forcedEvent={forcedEvent}
           gold={gold}
           playerCurrentHp={playerCurrentHp}
@@ -217,6 +218,7 @@ function UpgradeRoom({
 
 function EventRoom({
   rng,
+  difficultyLevel,
   forcedEvent,
   gold,
   playerCurrentHp,
@@ -227,6 +229,7 @@ function EventRoom({
   onEventPurge,
 }: {
   rng: RNG;
+  difficultyLevel: number;
   forcedEvent: GameEvent | null;
   gold: number;
   playerCurrentHp: number;
@@ -237,8 +240,8 @@ function EventRoom({
   onEventPurge: (cardInstanceId: string) => void;
 }) {
   const event = useMemo(
-    () => forcedEvent ?? pickEvent(rng),
-    [forcedEvent, rng]
+    () => forcedEvent ?? pickEvent(rng, difficultyLevel),
+    [forcedEvent, rng, difficultyLevel]
   );
   const [showPurgePicker, setShowPurgePicker] = useState(false);
 

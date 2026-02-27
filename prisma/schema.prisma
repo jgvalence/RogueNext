@@ -192,6 +192,10 @@ model UserProgression {
   wonRuns          Int      @default(0)
   lostRuns         Int      @default(0)
   abandonedRuns    Int      @default(0)
+  // Record<difficultyLevel, victories>
+  winsByDifficulty Json     @default("{}")
+  // Record<difficultyLevel, best completion time in ms>
+  bestTimeByDifficultyMs Json @default("{}")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

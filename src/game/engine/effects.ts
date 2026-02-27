@@ -4,6 +4,7 @@ import type { PlayerState, EnemyState, AllyState } from "../schemas/entities";
 import { calculateDamage, applyDamage, applyBlock } from "./damage";
 import { applyBuff, getBuffStacks } from "./buffs";
 import { drawCards } from "./deck";
+import { enemyDebuffsBypassBlock, getBossDebuffBonus } from "./difficulty";
 import { nanoid } from "nanoid";
 import type { RNG } from "./rng";
 
@@ -396,16 +397,22 @@ export function resolveEffect(
     case "APPLY_BUFF":
     case "APPLY_DEBUFF": {
       if (!effect.buff) return state;
+      const sourceEnemy =
+        typeof ctx.source === "object" && ctx.source.type === "enemy"
+          ? state.enemies.find((e) => e.instanceId === ctx.source.instanceId)
+          : null;
+      const bossDebuffBonus =
+        effect.type === "APPLY_DEBUFF" &&
+        sourceEnemy?.isBoss &&
+        ctx.target === "player"
+          ? getBossDebuffBonus(state.difficultyLevel ?? 0)
+          : 0;
+      const effectValue = effect.value + bossDebuffBonus;
 
       if (ctx.target === "player") {
         return updatePlayer(state, (p) => ({
           ...p,
-          buffs: applyBuff(
-            p.buffs,
-            effect.buff!,
-            effect.value,
-            effect.duration
-          ),
+          buffs: applyBuff(p.buffs, effect.buff!, effectValue, effect.duration),
         }));
       }
 
@@ -418,7 +425,7 @@ export function resolveEffect(
             buffs: applyBuff(
               e.buffs,
               effect.buff!,
-              effect.value,
+              effectValue,
               effect.duration
             ),
           }));
@@ -429,12 +436,7 @@ export function resolveEffect(
       if (typeof ctx.target === "object" && ctx.target.type === "enemy") {
         return updateEnemy(state, ctx.target.instanceId, (e) => ({
           ...e,
-          buffs: applyBuff(
-            e.buffs,
-            effect.buff!,
-            effect.value,
-            effect.duration
-          ),
+          buffs: applyBuff(e.buffs, effect.buff!, effectValue, effect.duration),
         }));
       }
 
@@ -447,7 +449,7 @@ export function resolveEffect(
             buffs: applyBuff(
               a.buffs,
               effect.buff!,
-              effect.value,
+              effectValue,
               effect.duration
             ),
           }));
@@ -458,12 +460,7 @@ export function resolveEffect(
       if (typeof ctx.target === "object" && ctx.target.type === "ally") {
         return updateAlly(state, ctx.target.instanceId, (a) => ({
           ...a,
-          buffs: applyBuff(
-            a.buffs,
-            effect.buff!,
-            effect.value,
-            effect.duration
-          ),
+          buffs: applyBuff(a.buffs, effect.buff!, effectValue, effect.duration),
         }));
       }
 
@@ -602,12 +599,20 @@ export function resolveEffects(
 ): CombatState {
   let current = state;
   let damageFullyBlocked = false;
+  const sourceEnemy =
+    typeof ctx.source === "object" && ctx.source.type === "enemy"
+      ? state.enemies.find((e) => e.instanceId === ctx.source.instanceId)
+      : null;
+  const sourceDebuffsBypassBlock =
+    sourceEnemy != null &&
+    enemyDebuffsBypassBlock(state.difficultyLevel ?? 0, sourceEnemy);
 
   for (const effect of effects) {
     // When an enemy attacks the player and damage was fully blocked,
     // skip debuffs and ink drain — they only apply if damage gets through
     if (
       damageFullyBlocked &&
+      !sourceDebuffsBypassBlock &&
       ctx.target === "player" &&
       typeof ctx.source === "object" &&
       ctx.source.type === "enemy" &&

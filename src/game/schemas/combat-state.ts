@@ -29,6 +29,7 @@ export type TurnDisruption = z.infer<typeof TurnDisruptionSchema>;
 
 export const CombatStateSchema = z.object({
   floor: z.number().int().default(1),
+  difficultyLevel: z.number().int().min(0).optional(),
   enemyDamageScale: z.number().default(1),
   turnNumber: z.number().int().default(1),
   phase: CombatPhase.default("PLAYER_TURN"),

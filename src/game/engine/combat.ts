@@ -13,7 +13,7 @@ import { drawCards, discardHand, shuffleDeck } from "./deck";
 import { executeAlliesTurn, executeEnemiesTurn } from "./enemies";
 import { applyMetaBonusesToCombat } from "./meta";
 import { applyRelicsOnTurnStart, applyRelicsOnTurnEnd } from "./relics";
-import { getDifficultyModifiers } from "./difficulty";
+import { getDifficultyModifiers, getEnemyStartingBlock } from "./difficulty";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 
@@ -61,6 +61,7 @@ export function initCombat(
   rng: RNG,
   metaBonuses?: ComputedMetaBonuses
 ): CombatState {
+  const bonuses = metaBonuses ?? runState.metaBonuses;
   const difficultyLevel = runState.selectedDifficultyLevel ?? 0;
   const difficultyMods = getDifficultyModifiers(difficultyLevel);
   const floorEnemyHpMultiplier =
@@ -82,13 +83,23 @@ export function initCombat(
       1,
       Math.round(def.maxHp * floorEnemyHpMultiplier)
     );
+    const startingBlock = getEnemyStartingBlock(
+      difficultyLevel,
+      runState.floor,
+      {
+        isBoss: def.isBoss,
+        isElite: def.isElite,
+      }
+    );
     return {
       instanceId: nanoid(),
       definitionId: id,
       name: def.name,
+      isBoss: def.isBoss,
+      isElite: def.isElite,
       currentHp: scaledHp,
       maxHp: scaledHp,
-      block: 0,
+      block: startingBlock,
       mechanicFlags: {},
       speed: def.speed,
       buffs: [],
@@ -99,29 +110,37 @@ export function initCombat(
   // Create allied instances from run recruits (capped by unlocked slots)
   const maxAllies = Math.min(
     GAME_CONSTANTS.MAX_ALLIES,
-    Math.max(0, runState.metaBonuses?.allySlots ?? 0)
+    Math.max(0, bonuses?.allySlots ?? 0)
   );
   const allyIds = (runState.allyIds ?? []).slice(0, maxAllies);
   const allies: AllyState[] = allyIds
     .map((id) => allyDefs.get(id))
     .filter((a): a is AllyDefinition => a != null)
-    .map((def) => ({
-      instanceId: nanoid(),
-      definitionId: def.id,
-      name: def.name,
-      currentHp: def.maxHp,
-      maxHp: def.maxHp,
-      block: 0,
-      speed: def.speed,
-      buffs: [],
-      intentIndex: 0,
-    }));
+    .map((def) => {
+      const allyHpPercent = Math.max(0, bonuses?.allyHpPercent ?? 0);
+      const scaledMaxHp = Math.max(
+        1,
+        Math.round(def.maxHp * (1 + allyHpPercent / 100))
+      );
+      return {
+        instanceId: nanoid(),
+        definitionId: def.id,
+        name: def.name,
+        currentHp: scaledMaxHp,
+        maxHp: scaledMaxHp,
+        block: 0,
+        speed: def.speed,
+        buffs: [],
+        intentIndex: 0,
+      };
+    });
 
   // Build draw pile from run deck
   const drawPile = shuffleDeck([...runState.deck], rng);
 
   const combat: CombatState = {
     floor: runState.floor,
+    difficultyLevel,
     enemyDamageScale,
     turnNumber: 1,
     phase: "PLAYER_TURN",
@@ -156,7 +175,6 @@ export function initCombat(
   };
 
   // Apply meta-progression bonuses if any
-  const bonuses = metaBonuses ?? runState.metaBonuses;
   const combatWithMeta = bonuses
     ? applyMetaBonusesToCombat(combat, bonuses)
     : combat;

@@ -59,7 +59,7 @@ export function getDifficultyModifiers(level: number): {
   enemyPackSizeBonus: number;
 } {
   const l = clampDifficulty(level);
-  const eliteChanceBonus = l >= 5 ? 0.16 : l >= 4 ? 0.08 : 0;
+  const eliteChanceBonus = l >= 5 ? 0.24 : l >= 4 ? 0.08 : 0;
   const specialRoomHealWeightMultiplier = l >= 5 ? 0.25 : l >= 4 ? 0.5 : 1;
   const specialRoomEventWeightBonus = l >= 5 ? 0.2 : l >= 4 ? 0.12 : 0;
   const enemyPackSizeBonus = l >= 5 ? 1 : 0;
@@ -71,6 +71,51 @@ export function getDifficultyModifiers(level: number): {
     specialRoomEventWeightBonus,
     enemyPackSizeBonus,
   };
+}
+
+export function enemyDebuffsBypassBlock(
+  level: number,
+  source: { isBoss?: boolean; isElite?: boolean }
+): boolean {
+  const l = clampDifficulty(level);
+  if (l >= 5) return true;
+  if (l >= 4) return Boolean(source.isBoss || source.isElite);
+  if (l >= 3) return Boolean(source.isBoss);
+  return false;
+}
+
+export function shouldHideEnemyIntent(
+  level: number,
+  turnNumber: number,
+  source: { isBoss?: boolean; isElite?: boolean }
+): boolean {
+  const l = clampDifficulty(level);
+  if (l < 3) return false;
+  if (!source.isBoss && !source.isElite) return false;
+  return turnNumber % 3 === 0;
+}
+
+export function getEnemyStartingBlock(
+  level: number,
+  floor: number,
+  source: { isBoss?: boolean; isElite?: boolean }
+): number {
+  const l = clampDifficulty(level);
+  if (l < 3) return 0;
+  if (source.isBoss) return Math.max(0, floor) * 5;
+  if (l >= 4 && source.isElite) return Math.max(0, floor) * 5;
+  return 0;
+}
+
+export function getBossDebuffBonus(level: number): number {
+  const l = clampDifficulty(level);
+  return l >= 4 ? 1 : 0;
+}
+
+export function eliteCanDropRelic(level: number, rngRoll: number): boolean {
+  const l = clampDifficulty(level);
+  if (l < 5) return true;
+  return rngRoll >= 0.5;
 }
 
 function getCardDifficultyRequirement(cardId: string): number {

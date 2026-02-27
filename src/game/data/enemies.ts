@@ -3692,12 +3692,112 @@ function applyBiomeCombatSignatures(
   });
 }
 
+const SPLIT_ASSAULT_NAME = "Split Assault";
+const PREDATOR_FORMATION_NAME = "Predator Formation";
+const DOMINION_SWEEP_NAME = "Dominion Sweep";
+const ALLY_RECKONING_NAME = "Ally Reckoning";
+
+function hasAbilityNamed(def: RawEnemyDefinition, name: string): boolean {
+  return def.abilities.some((a) => a.name === name);
+}
+
+function makeSplitAssaultAbility(): EnemyAbility {
+  return {
+    name: SPLIT_ASSAULT_NAME,
+    weight: 1,
+    target: "PLAYER",
+    effects: [{ type: "DAMAGE", value: 7 }],
+  };
+}
+
+function makePredatorFormationAbility(): EnemyAbility {
+  return {
+    name: PREDATOR_FORMATION_NAME,
+    weight: 1,
+    target: "PLAYER",
+    effects: [
+      { type: "DAMAGE", value: 11 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 1 },
+    ],
+  };
+}
+
+function makeDominionSweepAbility(): EnemyAbility {
+  return {
+    name: DOMINION_SWEEP_NAME,
+    weight: 1,
+    target: "PLAYER",
+    effects: [
+      { type: "DAMAGE", value: 16 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+  };
+}
+
+function makeAllyReckoningAbility(): EnemyAbility {
+  return {
+    name: ALLY_RECKONING_NAME,
+    weight: 1,
+    target: "PLAYER",
+    effects: [
+      { type: "DAMAGE", value: 12 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+    ],
+  };
+}
+
+function applyAllyCounterplayAbilities(
+  defs: RawEnemyDefinition[]
+): RawEnemyDefinition[] {
+  const normalByBiome = new Set<RawEnemyDefinition["biome"]>();
+  const eliteByBiome = new Set<RawEnemyDefinition["biome"]>();
+
+  return defs.map((def) => {
+    const role = inferRole(def);
+    const nextAbilities = [...def.abilities];
+
+    if (
+      !def.isBoss &&
+      !def.isElite &&
+      !normalByBiome.has(def.biome) &&
+      role !== "SUPPORT" &&
+      !hasAbilityNamed(def, SPLIT_ASSAULT_NAME)
+    ) {
+      nextAbilities.push(makeSplitAssaultAbility());
+      normalByBiome.add(def.biome);
+    }
+
+    if (
+      def.isElite &&
+      !eliteByBiome.has(def.biome) &&
+      role !== "SUPPORT" &&
+      !hasAbilityNamed(def, PREDATOR_FORMATION_NAME)
+    ) {
+      nextAbilities.push(makePredatorFormationAbility());
+      eliteByBiome.add(def.biome);
+    }
+
+    if (def.isBoss) {
+      if (!hasAbilityNamed(def, DOMINION_SWEEP_NAME)) {
+        nextAbilities.push(makeDominionSweepAbility());
+      }
+      if (!hasAbilityNamed(def, ALLY_RECKONING_NAME)) {
+        nextAbilities.push(makeAllyReckoningAbility());
+      }
+    }
+
+    return { ...def, abilities: nextAbilities };
+  });
+}
+
 function assignEnemyRoles(defs: RawEnemyDefinition[]): EnemyDefinition[] {
   return defs.map((def) => ({ ...def, role: inferRole(def) }));
 }
 
 export const enemyDefinitions: EnemyDefinition[] = assignEnemyRoles(
   ensureMinimumEnemyAbilityVariety(
-    applyBiomeCombatSignatures(baseEnemyDefinitions)
+    applyAllyCounterplayAbilities(
+      applyBiomeCombatSignatures(baseEnemyDefinitions)
+    )
   )
 );

@@ -79,6 +79,11 @@ export function computeMetaBonuses(
     applyBonusToComputed(result, histoire.bonus, inkPowers);
   }
 
+  // Story-specific passive described in "Le Griot Immortel".
+  if (unlockedStoryIds.includes("le_griot_immortel")) {
+    result.allyHpPercent += 25;
+  }
+
   result.unlockedInkPowers = Array.from(inkPowers);
   return result;
 }

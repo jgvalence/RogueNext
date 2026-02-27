@@ -9,6 +9,18 @@ import { relicDefinitions } from "@/game/data/relics";
 import { DeckViewerModal } from "./DeckViewerModal";
 import { RulesModal } from "./RulesModal";
 
+function formatRunDuration(totalMs: number): string {
+  const totalSeconds = Math.max(0, Math.floor(totalMs / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const hh = String(hours).padStart(2, "0");
+  const mm = String(minutes).padStart(2, "0");
+  const ss = String(seconds).padStart(2, "0");
+  return `${hh}:${mm}:${ss}`;
+}
+
 interface GameLayoutProps {
   children: ReactNode;
   onAbandonRun?: () => void | Promise<void>;
@@ -22,6 +34,9 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
   const [showRules, setShowRules] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [elapsedMs, setElapsedMs] = useState(() =>
+    Math.max(0, Date.now() - (state.runStartedAtMs ?? Date.now()))
+  );
 
   useEffect(() => {
     const syncFullscreenState = () => {
@@ -32,6 +47,15 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
     return () =>
       document.removeEventListener("fullscreenchange", syncFullscreenState);
   }, []);
+
+  useEffect(() => {
+    const runStart = state.runStartedAtMs ?? Date.now();
+    const updateElapsed = () =>
+      setElapsedMs(Math.max(0, Date.now() - runStart));
+    updateElapsed();
+    const interval = window.setInterval(updateElapsed, 1000);
+    return () => window.clearInterval(interval);
+  }, [state.runStartedAtMs]);
 
   const ownedRelics = state.relicIds
     .map((id) => relicDefinitions.find((r) => r.id === id))
@@ -78,6 +102,10 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
               {state.currentRoom + 1}
             </span>
             <span className="text-slate-600">/{state.map.length}</span>
+          </span>
+          <span className="text-xs text-slate-500 sm:text-sm">|</span>
+          <span className="text-xs font-semibold text-cyan-300 sm:text-sm">
+            Time {formatRunDuration(elapsedMs)}
           </span>
         </div>
 

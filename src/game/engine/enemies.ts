@@ -13,6 +13,11 @@ import { applyPoison, applyBleed, tickBuffs, applyBuff } from "./buffs";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 
+const SPLIT_ASSAULT_NAME = "Split Assault";
+const PREDATOR_FORMATION_NAME = "Predator Formation";
+const DOMINION_SWEEP_NAME = "Dominion Sweep";
+const ALLY_RECKONING_NAME = "Ally Reckoning";
+
 function evaluateCondition(
   condition: AbilityCondition,
   state: CombatState,
@@ -134,6 +139,8 @@ export function executeOneEnemyTurn(
     },
     rng
   );
+
+  current = applyCounterplayAbilityMechanics(current, freshEnemy, ability, rng);
 
   current = applyBossAbilityMechanics(
     current,
@@ -414,11 +421,75 @@ function shouldPressureAllies(
   ability: EnemyAbility
 ): boolean {
   const hasDamage = ability.effects.some((e) => e.type === "DAMAGE");
-  const hasLivingAlly = state.allies.some((a) => a.currentHp > 0);
-  if (!hasDamage || !hasLivingAlly) return false;
+  const livingAllies = state.allies.filter((a) => a.currentHp > 0).length;
+  if (!hasDamage || livingAllies === 0) return false;
 
-  // Deterministic pacing: every 4th turn, some attacks retarget allies.
-  return state.turnNumber % 4 === 0;
+  // More ally pressure when the player fields multiple companions.
+  if (livingAllies >= 2) return state.turnNumber % 2 === 0;
+  return state.turnNumber % 3 === 0;
+}
+
+function applyCounterplayAbilityMechanics(
+  state: CombatState,
+  enemy: EnemyState,
+  ability: EnemyAbility,
+  rng: RNG
+): CombatState {
+  const source = { type: "enemy", instanceId: enemy.instanceId } as const;
+
+  if (ability.name === SPLIT_ASSAULT_NAME) {
+    return resolveEffects(
+      state,
+      [{ type: "DAMAGE", value: 4 }],
+      { source, target: "all_allies" },
+      rng
+    );
+  }
+
+  if (ability.name === PREDATOR_FORMATION_NAME) {
+    return resolveEffects(
+      state,
+      [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 1 },
+      ],
+      { source, target: "all_allies" },
+      rng
+    );
+  }
+
+  if (ability.name === DOMINION_SWEEP_NAME) {
+    return resolveEffects(
+      state,
+      [
+        { type: "DAMAGE", value: 8 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 1 },
+      ],
+      { source, target: "all_allies" },
+      rng
+    );
+  }
+
+  if (ability.name === ALLY_RECKONING_NAME) {
+    const livingAllies = state.allies.filter((a) => a.currentHp > 0).length;
+    if (livingAllies <= 0) return state;
+    return resolveEffects(
+      state,
+      [
+        { type: "DAMAGE", value: livingAllies * 3 },
+        {
+          type: "APPLY_DEBUFF",
+          value: Math.min(2, livingAllies),
+          buff: "VULNERABLE",
+          duration: 2,
+        },
+      ],
+      { source, target: "player" },
+      rng
+    );
+  }
+
+  return state;
 }
 
 function maybeTriggerBossPhase(

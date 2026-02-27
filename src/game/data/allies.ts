@@ -4,21 +4,21 @@ export const allyDefinitions: AllyDefinition[] = [
   {
     id: "scribe_apprentice",
     name: "Scribe Apprentice",
-    maxHp: 24,
+    maxHp: 20,
     speed: 7,
     abilities: [
       {
         name: "Paper Volley",
         weight: 1,
         target: "ALL_ENEMIES",
-        effects: [{ type: "DAMAGE", value: 5 }],
+        effects: [{ type: "DAMAGE", value: 4 }],
       },
       {
         name: "Ink Advice",
         weight: 1,
         target: "PLAYER",
         effects: [
-          { type: "HEAL", value: 4 },
+          { type: "HEAL", value: 2 },
           { type: "GAIN_INK", value: 1 },
         ],
       },
@@ -27,14 +27,14 @@ export const allyDefinitions: AllyDefinition[] = [
   {
     id: "ward_knight",
     name: "Ward Knight",
-    maxHp: 34,
+    maxHp: 28,
     speed: 3,
     abilities: [
       {
         name: "Shielded Slash",
         weight: 1,
         target: "LOWEST_HP_ENEMY",
-        effects: [{ type: "DAMAGE", value: 9 }],
+        effects: [{ type: "DAMAGE", value: 6 }],
       },
       {
         name: "Battle Lesson",
@@ -47,14 +47,14 @@ export const allyDefinitions: AllyDefinition[] = [
   {
     id: "ink_familiar",
     name: "Ink Familiar",
-    maxHp: 18,
+    maxHp: 14,
     speed: 9,
     abilities: [
       {
         name: "Nibble",
         weight: 1,
         target: "LOWEST_HP_ENEMY",
-        effects: [{ type: "DAMAGE", value: 6 }],
+        effects: [{ type: "DAMAGE", value: 4 }],
       },
       {
         name: "Quick Notes",

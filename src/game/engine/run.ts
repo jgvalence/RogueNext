@@ -157,6 +157,7 @@ export function createNewRun(
     runId,
     seed,
     status: "IN_PROGRESS",
+    runStartedAtMs: Date.now(),
     floor: 1,
     currentRoom: 0,
     gold: startingGold,
@@ -924,6 +925,13 @@ export interface EventChoice {
   apply: (state: RunState) => RunState;
 }
 
+const RISKY_EVENT_IDS = new Set([
+  "mysterious_tome",
+  "ancient_sarcophagus",
+  "whispering_idol",
+  "ruthless_scrivener",
+]);
+
 function addDeckCard(state: RunState, definitionId: string): RunState {
   return {
     ...state,
@@ -1159,8 +1167,13 @@ const EVENTS: GameEvent[] = [
   },
 ];
 
-export function pickEvent(rng: RNG): GameEvent {
-  return rng.pick(EVENTS);
+export function pickEvent(rng: RNG, difficultyLevel = 0): GameEvent {
+  const riskyPool = EVENTS.filter((event) => RISKY_EVENT_IDS.has(event.id));
+  const safePool = EVENTS.filter((event) => !RISKY_EVENT_IDS.has(event.id));
+  if (difficultyLevel >= 4 && riskyPool.length > 0 && rng.next() < 0.7) {
+    return rng.pick(riskyPool);
+  }
+  return rng.pick(safePool.length > 0 ? safePool : EVENTS);
 }
 
 export function applyEventChoice(

@@ -306,6 +306,7 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       mergedUnlockProgress
     );
     const selectedDifficultyLevel = runState.selectedDifficultyLevel ?? 0;
+    const runDurationMs = Math.max(0, Date.now() - run.createdAt.getTime());
     const resourcesWithDifficultyUnlock =
       validated.status === "VICTORY"
         ? unlockNextDifficultyOnVictory(
@@ -327,7 +328,10 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       },
     });
 
-    await incrementRunStatsInternal(user.id!, validated.status, 1);
+    await incrementRunStatsInternal(user.id!, validated.status, 1, {
+      difficultyLevel: selectedDifficultyLevel,
+      runDurationMs,
+    });
 
     // Keep only active runs persisted in DB.
     await prisma.run.delete({
@@ -401,6 +405,10 @@ export async function getActiveRunAction() {
 
     const stateWithFreshBonuses: RunState = {
       ...state,
+      runStartedAtMs:
+        state.runStartedAtMs && state.runStartedAtMs > 0
+          ? state.runStartedAtMs
+          : run.createdAt.getTime(),
       metaBonuses: freshMetaBonuses,
       freeUpgradeUsed: state.freeUpgradeUsed ?? false,
       survivalOnceUsed: state.survivalOnceUsed ?? false,

@@ -28,6 +28,7 @@ import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { boostEffectsForUpgrade } from "@/game/engine/card-upgrades";
 import { calculateDamage } from "@/game/engine/damage";
 import { applyBuff } from "@/game/engine/buffs";
+import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
 
 interface CombatViewProps {
   combat: CombatState;
@@ -505,6 +506,11 @@ export function CombatView({
             const resolvedTarget = ability
               ? resolveEnemyAbilityTarget(combat, enemy, ability)
               : "player";
+            const hideIntent = shouldHideEnemyIntent(
+              combat.difficultyLevel ?? 0,
+              combat.turnNumber,
+              enemy
+            );
             return (
               <EnemyCard
                 key={enemy.instanceId}
@@ -513,6 +519,7 @@ export function CombatView({
                 enemyDamageScale={combat.enemyDamageScale}
                 playerBuffs={combat.player.buffs}
                 intentTargetsPlayer={resolvedTarget === "player"}
+                hideIntent={hideIntent}
                 incomingDamagePreview={
                   incomingDamageByEnemyId.get(enemy.instanceId) ?? null
                 }

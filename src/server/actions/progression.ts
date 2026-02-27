@@ -20,18 +20,32 @@ import {
 async function getOrCreateProgression(userId: string): Promise<MetaProgress> {
   const row = await prisma.userProgression.findUnique({
     where: { userId },
-    select: { resources: true, unlockedStoryIds: true },
+    select: {
+      resources: true,
+      unlockedStoryIds: true,
+      winsByDifficulty: true,
+      bestTimeByDifficultyMs: true,
+    },
   });
   if (row) {
     return {
       resources: (row.resources as Record<string, number>) ?? {},
       unlockedStoryIds: (row.unlockedStoryIds as string[]) ?? [],
+      winsByDifficulty: normalizeDifficultyMap(row.winsByDifficulty),
+      bestTimeByDifficultyMs: normalizeDifficultyMap(
+        row.bestTimeByDifficultyMs
+      ),
     };
   }
   await prisma.userProgression.create({
     data: { userId, resources: {}, unlockedStoryIds: [] },
   });
-  return { resources: {}, unlockedStoryIds: [] };
+  return {
+    resources: {},
+    unlockedStoryIds: [],
+    winsByDifficulty: {},
+    bestTimeByDifficultyMs: {},
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -183,10 +197,29 @@ export async function addResourcesInternal(
   });
 }
 
+function normalizeDifficultyMap(input: unknown): Record<string, number> {
+  if (!input || typeof input !== "object" || Array.isArray(input)) return {};
+  const out: Record<string, number> = {};
+  for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
+    if (!/^\d+$/.test(key)) continue;
+    if (typeof value !== "number" || !Number.isFinite(value)) continue;
+    out[key] = Math.max(0, Math.floor(value));
+  }
+  return out;
+}
+
+function normalizeDifficultyLevel(level: number): number {
+  return Math.max(0, Math.floor(level));
+}
+
 export async function incrementRunStatsInternal(
   userId: string,
   status: "VICTORY" | "DEFEAT" | "ABANDONED",
-  count = 1
+  count = 1,
+  options?: {
+    difficultyLevel?: number;
+    runDurationMs?: number;
+  }
 ): Promise<void> {
   if (count <= 0) return;
   try {
@@ -214,6 +247,54 @@ export async function incrementRunStatsInternal(
         abandonedRuns: baseAbandoned + (status === "ABANDONED" ? count : 0),
       },
     });
+
+    const canTrackDifficultyStats =
+      status === "VICTORY" && options?.difficultyLevel != null;
+    if (!canTrackDifficultyStats) return;
+
+    const difficultyLevel = normalizeDifficultyLevel(options.difficultyLevel!);
+    const difficultyKey = String(difficultyLevel);
+    const durationMs = Math.max(0, Math.floor(options?.runDurationMs ?? 0));
+
+    try {
+      const difficultyRow = await prisma.userProgression.findUnique({
+        where: { userId },
+        select: { winsByDifficulty: true, bestTimeByDifficultyMs: true },
+      });
+
+      const winsByDifficulty = normalizeDifficultyMap(
+        difficultyRow?.winsByDifficulty
+      );
+      const bestTimeByDifficultyMs = normalizeDifficultyMap(
+        difficultyRow?.bestTimeByDifficultyMs
+      );
+      winsByDifficulty[difficultyKey] =
+        (winsByDifficulty[difficultyKey] ?? 0) + count;
+
+      if (durationMs > 0 && count === 1) {
+        const currentBest = bestTimeByDifficultyMs[difficultyKey];
+        if (currentBest == null || durationMs < currentBest) {
+          bestTimeByDifficultyMs[difficultyKey] = durationMs;
+        }
+      }
+
+      await prisma.userProgression.update({
+        where: { userId },
+        data: {
+          winsByDifficulty: winsByDifficulty as Prisma.InputJsonValue,
+          bestTimeByDifficultyMs:
+            bestTimeByDifficultyMs as Prisma.InputJsonValue,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2022"
+      ) {
+        return;
+      }
+      throw error;
+    }
   } catch (error) {
     // Backward compatibility during rollout: if run stats columns are missing
     // in the database, skip stat increments but keep gameplay functional.

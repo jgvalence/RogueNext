@@ -160,29 +160,31 @@ export const fr = {
     levels: {
       0: {
         name: "Archiviste",
-        description: "Difficulte standard: +0% PV ennemis, +0% degats ennemis.",
+        description: "Experience standard, ideale pour decouvrir le jeu.",
       },
       1: {
         name: "Veilleur",
-        description: "+12% PV ennemis, +10% degats ennemis.",
+        description: "Les ennemis deviennent un peu plus menacants.",
       },
       2: {
         name: "Conservateur",
-        description: "+24% PV ennemis, +20% degats ennemis.",
+        description:
+          "La pression monte: les combats demandent plus de rigueur.",
       },
       3: {
         name: "Censeur",
-        description: "+36% PV ennemis, +30% degats ennemis.",
+        description:
+          "Les elites et boss deviennent plus imprevisibles, et les boss percent mieux votre defense.",
       },
       4: {
         name: "Abyssal",
         description:
-          "+48% PV ennemis, +40% degats ennemis, +8 points de chance d'elite, salles speciales: poids HEAL x0.5.",
+          "Les combats elites et boss deviennent nettement plus agressifs, et les evenements sont plus risqués.",
       },
       5: {
         name: "Mythique",
         description:
-          "+60% PV ennemis, +50% degats ennemis, +16 points de chance d'elite, salles speciales: poids HEAL x0.25, groupes ennemis: +1 taille max.",
+          "Mode ultime: plus d'elites, des ennemis impitoyables, et des recompenses moins garanties.",
       },
     },
   },

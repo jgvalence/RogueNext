@@ -267,7 +267,7 @@ describe("Deck operations", () => {
           definitionId: "scribe_apprentice",
           name: "Scribe Apprentice",
           currentHp: 10,
-          maxHp: 24,
+          maxHp: 20,
           block: 0,
           speed: 7,
           buffs: [],
@@ -301,8 +301,8 @@ describe("Deck operations", () => {
           instanceId: "a1",
           definitionId: "scribe_apprentice",
           name: "Scribe Apprentice",
-          currentHp: 24,
-          maxHp: 24,
+          currentHp: 20,
+          maxHp: 20,
           block: 0,
           speed: 7,
           buffs: [],
@@ -537,6 +537,43 @@ describe("Card playing", () => {
     expect(result.enemies[0]?.currentHp).toBe(14 - 27);
   });
 
+  it("playCard inked lightning_bolt applies Vulnerable to all surviving enemies", () => {
+    const rng = createRNG("inked-lightning-bolt-test");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "c1", definitionId: "lightning_bolt", upgraded: false },
+      ],
+      player: {
+        ...base.player,
+        inkCurrent: 5,
+      },
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          instanceId: "e1",
+          currentHp: 30,
+          maxHp: 30,
+          buffs: [],
+        },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 28,
+          maxHp: 28,
+          buffs: [],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, true, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(18);
+    expect(result.enemies[1]?.currentHp).toBe(16);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(1);
+  });
+
   it("playCard exhausts POWER cards for the rest of combat", () => {
     const rng = createRNG("power-exhaust-test");
     const state = makeMinimalCombat({
@@ -672,6 +709,50 @@ describe("Combat flow", () => {
     expect(combat.allies[0]?.definitionId).toBe("scribe_apprentice");
   });
 
+  it("at difficulty 3, bosses start combat with +5 block per floor", () => {
+    const rng = createRNG("combat-boss-start-block");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const runState = {
+      ...createNewRun("run-1", "combat-boss-start-block", starterCards, rng),
+      floor: 2,
+      selectedDifficultyLevel: 3,
+    };
+
+    const combat = initCombat(
+      runState,
+      ["chapter_guardian"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("combat-boss-start-block-2")
+    );
+
+    expect(combat.enemies[0]?.isBoss).toBe(true);
+    expect(combat.enemies[0]?.block).toBe(10);
+  });
+
+  it("at difficulty 4, elites also start combat with +5 block per floor", () => {
+    const rng = createRNG("combat-elite-start-block");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const runState = {
+      ...createNewRun("run-1", "combat-elite-start-block", starterCards, rng),
+      floor: 3,
+      selectedDifficultyLevel: 4,
+    };
+
+    const combat = initCombat(
+      runState,
+      ["ink_archon"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("combat-elite-start-block-2")
+    );
+
+    expect(combat.enemies[0]?.isElite).toBe(true);
+    expect(combat.enemies[0]?.block).toBe(15);
+  });
+
   it("endPlayerTurn discards hand and changes phase", () => {
     const state = makeMinimalCombat({
       hand: [
@@ -720,7 +801,7 @@ describe("Combat flow", () => {
           definitionId: "scribe_apprentice",
           name: "Scribe Apprentice",
           currentHp: 8,
-          maxHp: 24,
+          maxHp: 20,
           block: 0,
           speed: 7,
           buffs: [],
@@ -767,7 +848,7 @@ describe("Combat flow", () => {
           definitionId: "scribe_apprentice",
           name: "Scribe Apprentice",
           currentHp: 8,
-          maxHp: 24,
+          maxHp: 20,
           block: 0,
           speed: 7,
           buffs: [],
@@ -798,10 +879,10 @@ describe("Combat flow", () => {
     expect(result.allies[0]?.currentHp).toBe(8);
   });
 
-  it("PLAYER-target enemy attacks can pressure allies on turn 4", () => {
+  it("PLAYER-target enemy attacks can pressure allies on turn 3", () => {
     const rng = createRNG("enemy-pressure-turn");
     const state = makeMinimalCombat({
-      turnNumber: 4,
+      turnNumber: 3,
       player: { ...makeMinimalCombat().player, currentHp: 80 },
       allies: [
         {
@@ -809,7 +890,7 @@ describe("Combat flow", () => {
           definitionId: "scribe_apprentice",
           name: "Scribe Apprentice",
           currentHp: 20,
-          maxHp: 24,
+          maxHp: 20,
           block: 0,
           speed: 7,
           buffs: [],
@@ -837,6 +918,92 @@ describe("Combat flow", () => {
 
     const result = executeOneEnemyTurn(state, enemy, def, rng, enemyDefs);
     expect(result.allies[0]?.currentHp).toBeLessThan(20);
+  });
+
+  it("boss Ally Reckoning scales damage and debuff with living allies", () => {
+    const rng = createRNG("boss-ally-reckoning");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 80, block: 0 },
+      allies: [
+        {
+          instanceId: "ally-1",
+          definitionId: "scribe_apprentice",
+          name: "Scribe Apprentice",
+          currentHp: 20,
+          maxHp: 20,
+          block: 0,
+          speed: 7,
+          buffs: [],
+          intentIndex: 0,
+        },
+        {
+          instanceId: "ally-2",
+          definitionId: "ink_familiar",
+          name: "Ink Familiar",
+          currentHp: 14,
+          maxHp: 14,
+          block: 0,
+          speed: 9,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+      enemies: [
+        {
+          instanceId: "boss-1",
+          definitionId: "chapter_guardian",
+          name: "Chapter Guardian",
+          isBoss: true,
+          currentHp: 145,
+          maxHp: 145,
+          block: 0,
+          speed: 5,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+    const customBossDef = {
+      ...(enemyDefs.get("chapter_guardian") ?? {
+        id: "chapter_guardian",
+        name: "Chapter Guardian",
+        maxHp: 145,
+        speed: 5,
+        abilities: [],
+        isBoss: true,
+        isElite: false,
+        role: "HYBRID" as const,
+        tier: 1,
+        biome: "LIBRARY" as const,
+      }),
+      abilities: [
+        {
+          name: "Ally Reckoning",
+          weight: 1,
+          target: "PLAYER" as const,
+          effects: [
+            { type: "DAMAGE" as const, value: 12 },
+            {
+              type: "APPLY_DEBUFF" as const,
+              value: 1,
+              buff: "WEAK" as const,
+              duration: 2,
+            },
+          ],
+        },
+      ],
+    };
+    const result = executeOneEnemyTurn(
+      state,
+      state.enemies[0]!,
+      customBossDef,
+      rng,
+      enemyDefs
+    );
+
+    // Base 12 + (2 allies * 3) bonus damage.
+    expect(result.player.currentHp).toBe(62);
+    expect(getBuffStacks(result.player.buffs, "VULNERABLE")).toBe(2);
   });
 
   it("enemy damage scales with floor multiplier", () => {
@@ -886,7 +1053,7 @@ describe("Combat flow", () => {
       cardDefs,
       createRNG("run-ally-reset-1")
     );
-    expect(firstCombat.allies[0]?.currentHp).toBe(24);
+    expect(firstCombat.allies[0]?.currentHp).toBe(20);
 
     // Simulate ally death during a combat snapshot; run master state keeps only ally ids.
     const deadCombatRun = { ...runState, combat: firstCombat };
@@ -900,7 +1067,7 @@ describe("Combat flow", () => {
       cardDefs,
       createRNG("run-ally-reset-2")
     );
-    expect(nextCombat.allies[0]?.currentHp).toBe(24);
+    expect(nextCombat.allies[0]?.currentHp).toBe(20);
   });
 
   it("chapter guardian triggers phase 2 once at half HP", () => {
@@ -1055,7 +1222,10 @@ describe("Combat flow", () => {
       },
       {
         id: "medusa",
-        check: (r) => expect(r.enemies[0]?.block ?? 0).toBeGreaterThan(0),
+        check: (r) =>
+          expect(r.discardPile.some((c) => c.definitionId === "dazed")).toBe(
+            true
+          ),
       },
       {
         id: "ra_avatar",
@@ -1184,6 +1354,7 @@ describe("Run management", () => {
     expect(run.status).toBe("IN_PROGRESS");
     expect(run.floor).toBe(1);
     expect(run.currentRoom).toBe(0);
+    expect(run.runStartedAtMs).toBeGreaterThan(0);
     expect(run.playerCurrentHp).toBe(60);
     expect(run.deck).toHaveLength(starterCards.length);
     expect(run.map).toHaveLength(10);
@@ -1532,6 +1703,34 @@ describe("Legacy run robustness (missing fields from old DB records)", () => {
     expect(combat.player.drawCount).toBe(5); // base 4 + 1 extraDraw
     expect(combat.player.energyMax).toBe(4); // base 3 + 1 extraEnergyMax
   });
+
+  it("initCombat applies allyHpPercent bonus to recruited allies", () => {
+    const bonuses = {
+      ...DEFAULT_META_BONUSES,
+      allySlots: 1,
+      allyHpPercent: 25,
+    };
+    const bonusRun = createNewRun(
+      "run-meta-ally-hp",
+      "meta-ally-hp",
+      starterCards,
+      createRNG("meta-ally-1"),
+      bonuses
+    );
+    bonusRun.allyIds = ["scribe_apprentice"];
+    const combat = initCombat(
+      bonusRun,
+      ["ink_slime"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("meta-ally-2")
+    );
+
+    // Scribe Apprentice base HP is 20, with +25% => 25.
+    expect(combat.allies[0]?.maxHp).toBe(25);
+    expect(combat.allies[0]?.currentHp).toBe(25);
+  });
 });
 
 // ============================
@@ -1599,6 +1798,38 @@ describe("Rewards", () => {
 
     expect(rewards.relicChoices).toHaveLength(0);
     expect(rewards.cardChoices.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("at difficulty 5, elite rewards can roll no relic", () => {
+    const allCards = [...cardDefs.values()];
+    const deterministicNoRelicRng = {
+      seed: "elite-no-relic-diff5",
+      next: () => 0.1,
+      nextInt: (min: number) => min,
+      shuffle: <T>(arr: readonly T[]) => [...arr],
+      pick: <T>(arr: readonly T[]) => arr[0]!,
+    };
+    const rewards = generateCombatRewards(
+      1,
+      4,
+      false,
+      true,
+      1,
+      allCards,
+      deterministicNoRelicRng,
+      "LIBRARY",
+      [],
+      undefined,
+      [],
+      1,
+      0,
+      undefined,
+      0,
+      0,
+      5
+    );
+
+    expect(rewards.relicChoices).toHaveLength(0);
   });
 
   it("addCardToRunDeck adds a new card instance", () => {
@@ -1852,6 +2083,109 @@ describe("Debuff blocked by armor", () => {
     const result = resolveEffects(state, effects, playerCtx, rng);
     // Player self-effects should still apply debuffs regardless
     expect(getBuffStacks(result.player.buffs, "WEAK")).toBe(3);
+  });
+
+  it("at difficulty 3, boss debuffs bypass block", () => {
+    const state = makeMinimalCombat({
+      difficultyLevel: 3,
+      player: { ...makeMinimalCombat().player, block: 10 },
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          instanceId: "boss-1",
+          isBoss: true,
+        },
+      ],
+    });
+    const effects: Effect[] = [
+      { type: "DAMAGE", value: 4 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+    ];
+    const result = resolveEffects(
+      state,
+      effects,
+      { source: { type: "enemy", instanceId: "boss-1" }, target: "player" },
+      rng
+    );
+    expect(result.player.currentHp).toBe(state.player.currentHp);
+    expect(getBuffStacks(result.player.buffs, "WEAK")).toBe(2);
+  });
+
+  it("at difficulty 4, elite debuffs bypass block", () => {
+    const state = makeMinimalCombat({
+      difficultyLevel: 4,
+      player: { ...makeMinimalCombat().player, block: 10 },
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          instanceId: "elite-1",
+          isElite: true,
+        },
+      ],
+    });
+    const effects: Effect[] = [
+      { type: "DAMAGE", value: 4 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+    ];
+    const result = resolveEffects(
+      state,
+      effects,
+      { source: { type: "enemy", instanceId: "elite-1" }, target: "player" },
+      rng
+    );
+    expect(result.player.currentHp).toBe(state.player.currentHp);
+    expect(getBuffStacks(result.player.buffs, "POISON")).toBe(3);
+  });
+
+  it("at difficulty 4, boss debuffs gain +1 stack", () => {
+    const state = makeMinimalCombat({
+      difficultyLevel: 4,
+      player: { ...makeMinimalCombat().player, block: 0 },
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          instanceId: "boss-1",
+          isBoss: true,
+        },
+      ],
+    });
+    const effects: Effect[] = [
+      { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+    ];
+    const result = resolveEffects(
+      state,
+      effects,
+      { source: { type: "enemy", instanceId: "boss-1" }, target: "player" },
+      rng
+    );
+    expect(getBuffStacks(result.player.buffs, "POISON")).toBe(3);
+  });
+
+  it("at difficulty 5, normal enemy debuffs bypass block", () => {
+    const state = makeMinimalCombat({
+      difficultyLevel: 5,
+      player: { ...makeMinimalCombat().player, block: 10 },
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          instanceId: "normal-1",
+          isBoss: false,
+          isElite: false,
+        },
+      ],
+    });
+    const effects: Effect[] = [
+      { type: "DAMAGE", value: 3 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ];
+    const result = resolveEffects(
+      state,
+      effects,
+      { source: { type: "enemy", instanceId: "normal-1" }, target: "player" },
+      rng
+    );
+    expect(result.player.currentHp).toBe(state.player.currentHp);
+    expect(getBuffStacks(result.player.buffs, "VULNERABLE")).toBe(1);
   });
 
   it("first hit damage reduction applies once per combat", () => {

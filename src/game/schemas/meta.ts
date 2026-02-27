@@ -68,6 +68,8 @@ export type Histoire = z.infer<typeof HistoireSchema>;
 export const MetaProgressSchema = z.object({
   resources: z.record(z.string(), z.number().int()).default({}),
   unlockedStoryIds: z.array(z.string()).default([]),
+  winsByDifficulty: z.record(z.string(), z.number().int()).optional(),
+  bestTimeByDifficultyMs: z.record(z.string(), z.number().int()).optional(),
 });
 export type MetaProgress = z.infer<typeof MetaProgressSchema>;
 
@@ -92,6 +94,7 @@ export const ComputedMetaBonusesSchema = z.object({
   extraHandAtStart: z.number().int().default(0),
   attackBonus: z.number().int().default(0),
   allySlots: z.number().int().default(0),
+  allyHpPercent: z.number().int().default(0),
   // Run init bonuses
   startingGold: z.number().int().default(0),
   extraCardRewardChoices: z.number().int().default(0),
