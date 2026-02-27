@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { getActiveRunAction } from "@/server/actions/run";
 import {
   useAllyDefinitions,
@@ -40,6 +41,7 @@ import { startMusic, stopMusic } from "@/lib/music";
 import { getUsableItemDefinitionsMap } from "@/game/engine/items";
 
 export default function RunPage() {
+  const { t } = useTranslation();
   const params = useParams<{ runId: string }>();
   const { data: cardDefsMap, isLoading: cardsLoading } = useCardDefsMap();
   const { data: enemyList, isLoading: enemiesLoading } = useEnemyDefinitions();
@@ -67,7 +69,7 @@ export default function RunPage() {
   if (cardsLoading || enemiesLoading || alliesLoading || runLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
-        <p>Loading game...</p>
+        <p>{t("run.loading")}</p>
       </div>
     );
   }
@@ -75,7 +77,7 @@ export default function RunPage() {
   if (!runData?.run || !cardDefsMap || cardDefsMap.size === 0) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
-        <p>Run not found</p>
+        <p>{t("run.notFound")}</p>
       </div>
     );
   }
@@ -124,6 +126,7 @@ function GameContent({
   allyDefs: Map<string, AllyDefinition>;
   isAdmin: boolean;
 }) {
+  const { t } = useTranslation();
   const { state, dispatch, rng } = useGame();
   const router = useRouter();
   const hasOpeningBiomeChoice =
@@ -695,8 +698,8 @@ function GameContent({
 
         {phase === "RUN_FREE_UPGRADE" && (
           <CardPickerModal
-            title="Upgrade gratuit (Manuel de Revision)"
-            subtitle="Choisis une carte non amelioree. Survole une carte pour voir son upgrade."
+            title={t("run.freeUpgradeTitle")}
+            subtitle={t("run.freeUpgradeSubtitle")}
             cards={state.deck.filter((card) => !card.upgraded)}
             cardDefs={cardDefs}
             showUpgradePreview
@@ -890,22 +893,24 @@ function GameContent({
 
         {phase === "VICTORY" && (
           <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
-            <h2 className="text-4xl font-bold text-green-400">Victory!</h2>
+            <h2 className="text-4xl font-bold text-green-400">
+              {t("run.victoryTitle")}
+            </h2>
             <p className="text-gray-400">
-              You conquered all {state.floor} floors of the Forbidden Library!
+              {t("run.victorySubtitle", { floor: state.floor })}
             </p>
             <div className="space-y-1 text-sm text-gray-500">
-              <p>Gold earned: {state.gold}</p>
-              <p>Deck size: {state.deck.length} cards</p>
-              <p>Relics: {state.relicIds.length}</p>
+              <p>{t("run.goldEarned", { gold: state.gold })}</p>
+              <p>{t("run.deckSize", { count: state.deck.length })}</p>
+              <p>{t("run.relicCount", { count: state.relicIds.length })}</p>
             </div>
             <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
               <div>
                 <p className="mb-1 font-semibold text-gray-300">
-                  Resources gained this run
+                  {t("run.resourcesGained")}
                 </p>
                 {earnedResourcesSummary.length === 0 ? (
-                  <p className="text-gray-500">None</p>
+                  <p className="text-gray-500">{t("run.none")}</p>
                 ) : (
                   <ul className="space-y-0.5 text-gray-400">
                     {earnedResourcesSummary.map(([resource, amount]) => (
@@ -918,10 +923,10 @@ function GameContent({
               </div>
               <div>
                 <p className="mb-1 font-semibold text-gray-300">
-                  Cards unlocked this run
+                  {t("run.cardsUnlocked")}
                 </p>
                 {newlyUnlockedCardNames.length === 0 ? (
-                  <p className="text-gray-500">None</p>
+                  <p className="text-gray-500">{t("run.none")}</p>
                 ) : (
                   <ul className="space-y-0.5 text-gray-400">
                     {newlyUnlockedCardNames.map((name) => (
@@ -940,7 +945,7 @@ function GameContent({
                   await handleEndRun("VICTORY");
                 }}
               >
-                Biblioth&egrave;que
+                {t("run.backToLibrary")}
               </Link>
             </div>
           </div>
@@ -948,22 +953,26 @@ function GameContent({
 
         {phase === "DEFEAT" && (
           <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
-            <h2 className="text-4xl font-bold text-red-400">Defeat</h2>
-            <p className="text-gray-400">Your story ends here...</p>
+            <h2 className="text-4xl font-bold text-red-400">
+              {t("run.defeatTitle")}
+            </h2>
+            <p className="text-gray-400">{t("run.defeatSubtitle")}</p>
             <div className="space-y-1 text-sm text-gray-500">
               <p>
-                Reached: Room {state.currentRoom}/
-                {GAME_CONSTANTS.ROOMS_PER_FLOOR}
+                {t("run.reachedRoom", {
+                  room: state.currentRoom,
+                  total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
+                })}
               </p>
-              <p>Gold: {state.gold}</p>
+              <p>{t("run.goldSimple", { gold: state.gold })}</p>
             </div>
             <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
               <div>
                 <p className="mb-1 font-semibold text-gray-300">
-                  Resources gained this run
+                  {t("run.resourcesGained")}
                 </p>
                 {earnedResourcesSummary.length === 0 ? (
-                  <p className="text-gray-500">None</p>
+                  <p className="text-gray-500">{t("run.none")}</p>
                 ) : (
                   <ul className="space-y-0.5 text-gray-400">
                     {earnedResourcesSummary.map(([resource, amount]) => (
@@ -976,10 +985,10 @@ function GameContent({
               </div>
               <div>
                 <p className="mb-1 font-semibold text-gray-300">
-                  Cards unlocked this run
+                  {t("run.cardsUnlocked")}
                 </p>
                 {newlyUnlockedCardNames.length === 0 ? (
-                  <p className="text-gray-500">None</p>
+                  <p className="text-gray-500">{t("run.none")}</p>
                 ) : (
                   <ul className="space-y-0.5 text-gray-400">
                     {newlyUnlockedCardNames.map((name) => (
@@ -998,7 +1007,7 @@ function GameContent({
                   await handleEndRun("DEFEAT");
                 }}
               >
-                Biblioth&egrave;que
+                {t("run.backToLibrary")}
               </Link>
             </div>
           </div>
@@ -1006,22 +1015,26 @@ function GameContent({
 
         {phase === "ABANDONED" && (
           <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
-            <h2 className="text-4xl font-bold text-amber-400">Run terminée</h2>
-            <p className="text-gray-400">Vous avez quitté cette aventure.</p>
+            <h2 className="text-4xl font-bold text-amber-400">
+              {t("run.abandonedTitle")}
+            </h2>
+            <p className="text-gray-400">{t("run.abandonedSubtitle")}</p>
             <div className="space-y-1 text-sm text-gray-500">
               <p>
-                Progression atteinte: Room {state.currentRoom}/
-                {GAME_CONSTANTS.ROOMS_PER_FLOOR}
+                {t("run.reachedRoom", {
+                  room: state.currentRoom,
+                  total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
+                })}
               </p>
-              <p>Gold: {state.gold}</p>
+              <p>{t("run.goldSimple", { gold: state.gold })}</p>
             </div>
             <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
               <div>
                 <p className="mb-1 font-semibold text-gray-300">
-                  Resources gained this run
+                  {t("run.resourcesGained")}
                 </p>
                 {earnedResourcesSummary.length === 0 ? (
-                  <p className="text-gray-500">None</p>
+                  <p className="text-gray-500">{t("run.none")}</p>
                 ) : (
                   <ul className="space-y-0.5 text-gray-400">
                     {earnedResourcesSummary.map(([resource, amount]) => (
@@ -1034,10 +1047,10 @@ function GameContent({
               </div>
               <div>
                 <p className="mb-1 font-semibold text-gray-300">
-                  Cards unlocked this run
+                  {t("run.cardsUnlocked")}
                 </p>
                 {newlyUnlockedCardNames.length === 0 ? (
-                  <p className="text-gray-500">None</p>
+                  <p className="text-gray-500">{t("run.none")}</p>
                 ) : (
                   <ul className="space-y-0.5 text-gray-400">
                     {newlyUnlockedCardNames.map((name) => (
@@ -1056,7 +1069,7 @@ function GameContent({
                   await handleEndRun("ABANDONED", "/library");
                 }}
               >
-                Biblioth&egrave;que
+                {t("run.backToLibrary")}
               </Link>
             </div>
           </div>

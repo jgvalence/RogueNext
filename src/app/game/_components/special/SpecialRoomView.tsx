@@ -17,6 +17,7 @@ import {
   type UpgradePreviewHoverInfo,
 } from "../shared/UpgradePreviewPortal";
 import { CardPickerModal } from "../shared/CardPickerModal";
+import { useTranslation } from "react-i18next";
 
 interface SpecialRoomViewProps {
   playerCurrentHp: number;
@@ -103,21 +104,26 @@ function HealRoom({
   playerMaxHp: number;
   onHeal: () => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col items-center gap-4 py-8">
-      <h2 className="text-2xl font-bold text-green-400">Healing Spring</h2>
+      <h2 className="text-2xl font-bold text-green-400">
+        {t("special.healTitle")}
+      </h2>
       <p className="text-gray-400">
-        Restore {Math.floor(GAME_CONSTANTS.HEAL_ROOM_PERCENT * 100)}% of your
-        max HP
+        {t("special.healDesc", {
+          percent: Math.floor(GAME_CONSTANTS.HEAL_ROOM_PERCENT * 100),
+        })}
       </p>
       <p className="text-sm text-gray-500">
-        Current: {playerCurrentHp}/{playerMaxHp}
+        {t("special.currentHp", { current: playerCurrentHp, max: playerMaxHp })}
       </p>
       <button
         className="rounded-lg bg-green-700 px-6 py-2 text-white hover:bg-green-600"
         onClick={onHeal}
       >
-        Heal
+        {t("special.healAction")}
       </button>
     </div>
   );
@@ -134,6 +140,7 @@ function UpgradeRoom({
   onUpgrade: (cardInstanceId: string) => void;
   onSkip: () => void;
 }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<string | null>(null);
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
@@ -156,8 +163,10 @@ function UpgradeRoom({
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
-      <h2 className="text-2xl font-bold text-blue-400">Enchanted Anvil</h2>
-      <p className="text-gray-400">Hover a card to preview the upgrade</p>
+      <h2 className="text-2xl font-bold text-blue-400">
+        {t("special.upgradeTitle")}
+      </h2>
+      <p className="text-gray-400">{t("special.upgradeHint")}</p>
 
       <div className="flex max-w-2xl flex-wrap justify-center gap-3">
         {upgradable.map((card) => {
@@ -202,13 +211,13 @@ function UpgradeRoom({
               : "cursor-not-allowed bg-gray-700 text-gray-500"
           )}
         >
-          Upgrade
+          {t("special.upgradeAction")}
         </button>
         <button
           className="rounded-lg bg-gray-700 px-6 py-2 text-white hover:bg-gray-600"
           onClick={onSkip}
         >
-          Skip
+          {t("reward.skip")}
         </button>
       </div>
       <UpgradePreviewPortal info={hoverInfo} />
@@ -239,6 +248,7 @@ function EventRoom({
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
   onEventPurge: (cardInstanceId: string) => void;
 }) {
+  const { t } = useTranslation();
   const event = useMemo(
     () => forcedEvent ?? pickEvent(rng, difficultyLevel),
     [forcedEvent, rng, difficultyLevel]
@@ -259,7 +269,11 @@ function EventRoom({
       <p className="max-w-md text-center text-gray-400">{event.description}</p>
 
       <div className="text-xs text-gray-500">
-        HP: {playerCurrentHp}/{playerMaxHp} - Gold: {gold}
+        {t("special.eventStats", {
+          current: playerCurrentHp,
+          max: playerMaxHp,
+          gold,
+        })}
       </div>
 
       <div className="flex flex-col gap-3">
@@ -279,8 +293,8 @@ function EventRoom({
 
       {showPurgePicker && (
         <CardPickerModal
-          title="Choisissez une carte à retirer"
-          subtitle="Cette carte sera définitivement supprimée de votre deck."
+          title={t("special.purgePickerTitle")}
+          subtitle={t("special.purgePickerSubtitle")}
           cards={deck}
           cardDefs={cardDefs}
           onPick={(cardInstanceId) => {

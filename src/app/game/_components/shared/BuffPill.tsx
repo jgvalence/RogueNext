@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils/cn";
 import { Tooltip } from "./Tooltip";
 import type { BuffInstance } from "@/game/schemas/entities";
 import { buffMeta } from "./buff-meta";
+import { useTranslation } from "react-i18next";
 
 interface BuffPillProps {
   buff: BuffInstance;
@@ -11,6 +12,7 @@ interface BuffPillProps {
 }
 
 export function BuffPill({ buff, size = "sm" }: BuffPillProps) {
+  const { t } = useTranslation();
   const meta = buffMeta[buff.type];
   const label = meta?.label() ?? buff.type;
   const colorClass = meta?.color ?? "bg-gray-700 text-gray-300";
@@ -21,7 +23,7 @@ export function BuffPill({ buff, size = "sm" }: BuffPillProps) {
   const description = meta?.description(buff.stacks) ?? "";
   const durationNote =
     buff.duration !== undefined && !useDurationCounter
-      ? ` Lasts ${buff.duration} turn${buff.duration !== 1 ? "s" : ""}.`
+      ? ` ${t("buff.durationNote", { count: buff.duration })}`
       : "";
 
   const textSize = size === "sm" ? "text-[10px]" : "text-xs";

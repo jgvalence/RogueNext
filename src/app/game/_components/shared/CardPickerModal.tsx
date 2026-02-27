@@ -8,6 +8,7 @@ import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
 } from "./UpgradePreviewPortal";
+import { useTranslation } from "react-i18next";
 
 interface CardPickerModalProps {
   title: string;
@@ -28,6 +29,7 @@ export function CardPickerModal({
   onCancel,
   showUpgradePreview = false,
 }: CardPickerModalProps) {
+  const { t } = useTranslation();
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
   );
@@ -69,7 +71,7 @@ export function CardPickerModal({
               onClick={onCancel}
               className="rounded border border-slate-600 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:border-slate-400 hover:text-white"
             >
-              Annuler
+              {t("cardPicker.cancel")}
             </button>
           )}
         </div>
@@ -78,7 +80,7 @@ export function CardPickerModal({
         <div className="overflow-y-auto p-4">
           {cards.length === 0 ? (
             <p className="py-8 text-center text-sm text-slate-500">
-              Aucune carte disponible.
+              {t("cardPicker.noCards")}
             </p>
           ) : (
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">

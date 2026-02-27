@@ -12,7 +12,19 @@ import type { CardDefinition, CardInstance } from "@/game/schemas/cards";
 import type { UsableItemInstance } from "@/game/schemas/items";
 import type { RNG } from "@/game/engine/rng";
 import { cn } from "@/lib/utils/cn";
+import {
+  localizeCardDescription,
+  localizeCardName,
+  localizeCardType,
+} from "@/lib/i18n/card-text";
+import {
+  localizeRelicDescription,
+  localizeRelicName,
+  localizeUsableItemDescription,
+  localizeUsableItemName,
+} from "@/lib/i18n/entity-text";
 import { CardPickerModal } from "../shared/CardPickerModal";
+import { useTranslation } from "react-i18next";
 
 interface ShopViewProps {
   floor: number;
@@ -65,6 +77,7 @@ export function ShopView({
   onRemoveCard,
   onLeave,
 }: ShopViewProps) {
+  const { t } = useTranslation();
   const [soldIds, setSoldIds] = useState<Set<string>>(new Set());
   const [autoRestockChargesLeft, setAutoRestockChargesLeft] = useState(
     getMerchantAutoRestockCharges(relicIds)
@@ -174,9 +187,10 @@ export function ShopView({
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
-      <h2 className="text-2xl font-bold text-yellow-400">Merchant</h2>
+      <h2 className="text-2xl font-bold text-yellow-400">{t("shop.title")}</h2>
       <p className="text-sm text-gray-400">
-        Gold: <span className="font-bold text-yellow-300">{gold}</span>
+        {t("shop.gold")}:{" "}
+        <span className="font-bold text-yellow-300">{gold}</span>
       </p>
 
       <div className="flex flex-wrap justify-center gap-4">
@@ -249,35 +263,49 @@ export function ShopView({
                 )}
               >
                 {item.type === "card" && item.cardDef
-                  ? item.cardDef.name
+                  ? localizeCardName(item.cardDef, t)
                   : item.type === "relic"
-                    ? item.relicName
+                    ? localizeRelicName(item.relicId, item.relicName)
                     : item.type === "heal"
-                      ? "Heal"
+                      ? t("shop.itemName.heal")
                       : item.type === "max_hp"
-                        ? "Max HP"
+                        ? t("shop.itemName.maxHp")
                         : item.type === "purge"
-                          ? "Purge"
-                          : item.usableItemDef?.name}
+                          ? t("shop.itemName.purge")
+                          : localizeUsableItemName(
+                              item.usableItemDef?.id,
+                              item.usableItemDef?.name
+                            )}
               </span>
 
               <span className="text-center text-xs text-gray-400">
                 {item.type === "card" && item.cardDef
-                  ? item.cardDef.description
+                  ? localizeCardDescription(item.cardDef, t)
                   : item.type === "relic"
-                    ? item.relicDescription
+                    ? localizeRelicDescription(
+                        item.relicId,
+                        item.relicDescription
+                      )
                     : item.type === "heal"
-                      ? `Restore ${item.healAmount} HP`
+                      ? t("shop.itemDescription.heal", {
+                          amount: item.healAmount,
+                        })
                       : item.type === "max_hp"
-                        ? `+${item.maxHpAmount ?? 10} Max HP`
+                        ? t("shop.itemDescription.maxHp", {
+                            amount: item.maxHpAmount ?? 10,
+                          })
                         : item.type === "purge"
-                          ? "Remove 1 card from your deck permanently."
-                          : item.usableItemDef?.description}
+                          ? t("shop.itemDescription.purge")
+                          : localizeUsableItemDescription(
+                              item.usableItemDef?.id,
+                              item.usableItemDef?.description
+                            )}
               </span>
 
               {item.type === "card" && item.cardDef && (
                 <span className="rounded bg-gray-700 px-1.5 py-0.5 text-[10px] text-gray-300">
-                  {item.cardDef.type} - {item.cardDef.energyCost} energy
+                  {localizeCardType(item.cardDef.type, t)} -{" "}
+                  {t("shop.energyCost", { cost: item.cardDef.energyCost })}
                 </span>
               )}
 
@@ -288,16 +316,18 @@ export function ShopView({
                 )}
               >
                 {isSold
-                  ? "SOLD"
+                  ? t("shop.sold")
                   : purgeSoldOut
-                    ? "SOLD OUT"
+                    ? t("shop.soldOut")
                     : isUsableItem && isUsableInventoryFull
-                      ? "Inventory full"
-                      : `${item.price} gold`}
+                      ? t("shop.inventoryFull")
+                      : t("shop.priceGold", { price: item.price })}
               </span>
               {isPurge && (
                 <span className="text-[10px] text-rose-300/80">
-                  Purges left: {Math.max(0, purgeUsesPerVisit - purgeUses)}
+                  {t("shop.purgesLeft", {
+                    count: Math.max(0, purgeUsesPerVisit - purgeUses),
+                  })}
                 </span>
               )}
             </button>
@@ -315,12 +345,11 @@ export function ShopView({
         disabled={!canReroll}
         onClick={handleReroll}
       >
-        Reroll Shop ({rerollPrice} gold)
+        {t("shop.reroll", { price: rerollPrice })}
       </button>
       {autoRestockChargesLeft > 0 && (
         <p className="text-xs text-amber-300">
-          Haggler&apos;s Satchel: auto-restock {autoRestockChargesLeft} charge
-          left.
+          {t("shop.autoRestock", { count: autoRestockChargesLeft })}
         </p>
       )}
 
@@ -328,13 +357,13 @@ export function ShopView({
         className="mt-4 rounded-lg bg-gray-700 px-8 py-2.5 font-medium text-white transition hover:bg-gray-600"
         onClick={onLeave}
       >
-        Leave Shop
+        {t("shop.leave")}
       </button>
 
       {pendingPurgeItemId && (
         <CardPickerModal
-          title="Purge - Choisissez une carte a retirer"
-          subtitle="Cette carte sera definitivement supprimee de votre deck."
+          title={t("shop.purgePickerTitle")}
+          subtitle={t("shop.purgePickerSubtitle")}
           cards={deck}
           cardDefs={cardDefs}
           onPick={handlePurgePick}

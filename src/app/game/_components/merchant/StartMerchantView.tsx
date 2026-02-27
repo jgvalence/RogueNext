@@ -7,6 +7,16 @@ import type { AllyDefinition } from "@/game/schemas/entities";
 import type { RunState } from "@/game/schemas/run-state";
 import { createRNG } from "@/game/engine/rng";
 import {
+  localizeCardDescription,
+  localizeCardName,
+} from "@/lib/i18n/card-text";
+import {
+  localizeRelicDescription,
+  localizeRelicName,
+  localizeUsableItemDescription,
+  localizeUsableItemName,
+} from "@/lib/i18n/entity-text";
+import {
   generateStartMerchantOffers,
   getRemainingStartMerchantResources,
   type StartMerchantOffer,
@@ -32,19 +42,19 @@ function canAfford(
 function getOfferTypeLabel(type: StartMerchantOffer["type"]): string {
   switch (type) {
     case "CARD":
-      return "Carte";
+      return "startMerchant.offerType.CARD";
     case "RELIC":
-      return "Relique";
+      return "startMerchant.offerType.RELIC";
     case "USABLE_ITEM":
-      return "Consommable";
+      return "startMerchant.offerType.USABLE_ITEM";
     case "ALLY":
-      return "Allie";
+      return "startMerchant.offerType.ALLY";
     case "BONUS_GOLD":
-      return "Bonus or";
+      return "startMerchant.offerType.BONUS_GOLD";
     case "BONUS_MAX_HP":
-      return "Bonus PV max";
+      return "startMerchant.offerType.BONUS_MAX_HP";
     default:
-      return "Offre";
+      return "startMerchant.offerType.default";
   }
 }
 
@@ -77,24 +87,73 @@ export function StartMerchantView({
     ([, amount]) => amount > 0
   );
 
+  const getOfferName = (offer: StartMerchantOffer): string => {
+    switch (offer.type) {
+      case "CARD": {
+        const card = offer.cardId ? cardDefs.get(offer.cardId) : undefined;
+        return card ? localizeCardName(card, t) : offer.name;
+      }
+      case "RELIC":
+        return localizeRelicName(offer.relicId, offer.name);
+      case "USABLE_ITEM":
+        return localizeUsableItemName(offer.usableItemId, offer.name);
+      case "ALLY":
+        return offer.name;
+      case "BONUS_GOLD":
+        return t("startMerchant.bonusGoldName");
+      case "BONUS_MAX_HP":
+        return t("startMerchant.bonusMaxHpName");
+      default:
+        return offer.name;
+    }
+  };
+
+  const getOfferDescription = (offer: StartMerchantOffer): string => {
+    switch (offer.type) {
+      case "CARD": {
+        const card = offer.cardId ? cardDefs.get(offer.cardId) : undefined;
+        return card ? localizeCardDescription(card, t) : offer.description;
+      }
+      case "RELIC":
+        return localizeRelicDescription(offer.relicId, offer.description);
+      case "USABLE_ITEM":
+        return localizeUsableItemDescription(
+          offer.usableItemId,
+          offer.description
+        );
+      case "ALLY":
+        return offer.description;
+      case "BONUS_GOLD":
+        return t("startMerchant.bonusGoldDescription", {
+          amount: offer.goldAmount ?? 0,
+        });
+      case "BONUS_MAX_HP":
+        return t("startMerchant.bonusMaxHpDescription", {
+          amount: offer.maxHpAmount ?? 0,
+        });
+      default:
+        return offer.description;
+    }
+  };
+
   return (
     <div className="flex min-h-[calc(100vh-3rem)] flex-col items-center gap-6 px-4 py-10">
       <div className="text-center">
         <p className="text-sm font-medium uppercase tracking-widest text-emerald-400/70">
-          Pre-run
+          {t("startMerchant.kicker")}
         </p>
         <h2 className="mt-1 text-3xl font-bold text-emerald-100">
-          Marchand des Origines
+          {t("startMerchant.title")}
         </h2>
         <p className="mt-2 text-sm text-slate-400">
-          Echange tes ressources de bibliotheque contre des bonus de run.
+          {t("startMerchant.subtitle")}
         </p>
       </div>
 
       <div className="flex flex-wrap justify-center gap-2">
         {resources.length === 0 && (
           <span className="rounded border border-slate-700 bg-slate-900/70 px-3 py-1 text-xs text-slate-300">
-            Aucune ressource disponible
+            {t("startMerchant.noResources")}
           </span>
         )}
         {resources.map(([resource, amount]) => (
@@ -120,14 +179,16 @@ export function StartMerchantView({
               className="flex h-full flex-col gap-3 rounded-xl border border-emerald-800/40 bg-slate-900/85 p-5 text-left transition-all duration-200 enabled:hover:border-emerald-500/70 enabled:hover:bg-slate-800/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <span className="w-fit rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
-                {getOfferTypeLabel(offer.type)}
+                {t(getOfferTypeLabel(offer.type))}
               </span>
               <h3 className="text-base font-bold text-emerald-100">
-                {offer.name}
+                {getOfferName(offer)}
               </h3>
-              <p className="text-xs text-slate-400">{offer.description}</p>
+              <p className="text-xs text-slate-400">
+                {getOfferDescription(offer)}
+              </p>
               <p className="text-xs text-slate-300">
-                Cout:{" "}
+                {t("startMerchant.cost")}:{" "}
                 {Object.entries(offer.cost)
                   .map(
                     ([resource, amount]) =>
@@ -137,10 +198,10 @@ export function StartMerchantView({
               </p>
               <div className="mt-auto text-xs font-semibold uppercase tracking-wide text-emerald-400">
                 {alreadyBought
-                  ? "Achete"
+                  ? t("startMerchant.bought")
                   : affordable
-                    ? "Echanger"
-                    : "Ressources insuffisantes"}
+                    ? t("startMerchant.trade")
+                    : t("startMerchant.insufficient")}
               </div>
             </button>
           );
@@ -152,7 +213,7 @@ export function StartMerchantView({
         className="rounded-lg bg-slate-700 px-8 py-2.5 font-medium text-white transition hover:bg-slate-600"
         onClick={onContinue}
       >
-        Continuer l&apos;aventure
+        {t("startMerchant.continue")}
       </button>
     </div>
   );

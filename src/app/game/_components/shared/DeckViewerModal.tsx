@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import type { CardInstance } from "@/game/schemas/cards";
 import type { CardDefinition } from "@/game/schemas/cards";
 import { GameCard } from "../combat/GameCard";
+import { useTranslation } from "react-i18next";
 
 interface DeckViewerModalProps {
   deck: CardInstance[];
@@ -25,6 +26,7 @@ export function DeckViewerModal({
   cardDefs,
   onClose,
 }: DeckViewerModalProps) {
+  const { t } = useTranslation();
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -61,8 +63,10 @@ export function DeckViewerModal({
         <div className="flex shrink-0 items-center justify-between border-b border-slate-700/60 px-4 py-3">
           <div className="flex items-center gap-3">
             <h3 className="text-base font-bold text-slate-100">
-              Votre Deck{" "}
-              <span className="text-slate-400">({deck.length} cartes)</span>
+              {t("deckViewer.title")}{" "}
+              <span className="text-slate-400">
+                ({t("deckViewer.cardsCount", { count: deck.length })})
+              </span>
             </h3>
             <div className="flex gap-1.5">
               {Object.entries(breakdown).map(([type, count]) => (
@@ -79,7 +83,7 @@ export function DeckViewerModal({
             onClick={onClose}
             className="rounded border border-slate-600 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:border-slate-400 hover:text-white"
           >
-            Fermer
+            {t("common.close")}
           </button>
         </div>
 

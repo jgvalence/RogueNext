@@ -8,6 +8,7 @@ import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
 } from "../shared/UpgradePreviewPortal";
+import { useTranslation } from "react-i18next";
 
 interface PreBossRoomViewProps {
   playerCurrentHp: number;
@@ -28,6 +29,7 @@ export function PreBossRoomView({
   onUpgrade,
   onFight,
 }: PreBossRoomViewProps) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<"CHOOSE" | "UPGRADE">("CHOOSE");
 
   if (mode === "UPGRADE") {
@@ -37,6 +39,7 @@ export function PreBossRoomView({
         cardDefs={cardDefs}
         onUpgrade={onUpgrade}
         onBack={() => setMode("CHOOSE")}
+        t={t}
       />
     );
   }
@@ -44,13 +47,13 @@ export function PreBossRoomView({
   return (
     <div className="flex flex-col items-center gap-6 py-8">
       <h2 className="text-2xl font-bold text-amber-400">
-        Room Before The Boss
+        {t("preBoss.title")}
       </h2>
       <p className="max-w-md text-center text-gray-400">
-        A moment of respite before the final challenge. Choose how to prepare.
+        {t("preBoss.subtitle")}
       </p>
       <p className="text-sm text-gray-500">
-        HP: {playerCurrentHp}/{playerMaxHp}
+        {t("preBoss.hp", { current: playerCurrentHp, max: playerMaxHp })}
       </p>
 
       <div className="flex w-full max-w-xs flex-col gap-3">
@@ -58,10 +61,11 @@ export function PreBossRoomView({
           onClick={onHeal}
           className="rounded-lg border-2 border-green-700 bg-green-950/40 px-6 py-4 text-left transition hover:border-green-500 hover:bg-green-950/60"
         >
-          <p className="font-medium text-green-300">Healing Shrine</p>
+          <p className="font-medium text-green-300">{t("preBoss.healTitle")}</p>
           <p className="text-sm text-green-600">
-            Restore {Math.floor(GAME_CONSTANTS.HEAL_ROOM_PERCENT * 100)}% of
-            your max HP
+            {t("preBoss.healDesc", {
+              percent: Math.floor(GAME_CONSTANTS.HEAL_ROOM_PERCENT * 100),
+            })}
           </p>
         </button>
 
@@ -69,18 +73,20 @@ export function PreBossRoomView({
           onClick={() => setMode("UPGRADE")}
           className="rounded-lg border-2 border-blue-700 bg-blue-950/40 px-6 py-4 text-left transition hover:border-blue-500 hover:bg-blue-950/60"
         >
-          <p className="font-medium text-blue-300">Enchanted Anvil</p>
-          <p className="text-sm text-blue-600">Upgrade a card in your deck</p>
+          <p className="font-medium text-blue-300">
+            {t("preBoss.upgradeTitle")}
+          </p>
+          <p className="text-sm text-blue-600">{t("preBoss.upgradeDesc")}</p>
         </button>
 
         <button
           onClick={onFight}
           className="rounded-lg border-2 border-purple-700 bg-purple-950/40 px-6 py-4 text-left transition hover:border-purple-500 hover:bg-purple-950/60"
         >
-          <p className="font-medium text-purple-300">Hunt for a Relic</p>
-          <p className="text-sm text-purple-600">
-            Defeat a guardian, win a relic or a rare card
+          <p className="font-medium text-purple-300">
+            {t("preBoss.huntTitle")}
           </p>
+          <p className="text-sm text-purple-600">{t("preBoss.huntDesc")}</p>
         </button>
       </div>
     </div>
@@ -92,11 +98,13 @@ function UpgradeSubView({
   cardDefs,
   onUpgrade,
   onBack,
+  t,
 }: {
   deck: CardInstance[];
   cardDefs: Map<string, CardDefinition>;
   onUpgrade: (cardInstanceId: string) => void;
   onBack: () => void;
+  t: (key: string, params?: Record<string, unknown>) => string;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
@@ -122,8 +130,10 @@ function UpgradeSubView({
 
   return (
     <div className="flex flex-col items-center gap-6 py-8">
-      <h2 className="text-2xl font-bold text-blue-400">Enchanted Anvil</h2>
-      <p className="text-gray-400">Hover a card to preview the upgrade</p>
+      <h2 className="text-2xl font-bold text-blue-400">
+        {t("preBoss.upgradeTitle")}
+      </h2>
+      <p className="text-gray-400">{t("preBoss.upgradeHint")}</p>
 
       <div className="flex max-w-2xl flex-wrap justify-center gap-3">
         {upgradable.map((card) => {
@@ -163,13 +173,13 @@ function UpgradeSubView({
               : "cursor-not-allowed bg-gray-700 text-gray-500"
           )}
         >
-          Upgrade
+          {t("preBoss.upgradeAction")}
         </button>
         <button
           className="rounded-lg bg-gray-700 px-6 py-2 text-white hover:bg-gray-600"
           onClick={onBack}
         >
-          Back
+          {t("common.back")}
         </button>
       </div>
 

@@ -8,6 +8,10 @@ import type { BiomeResource } from "@/game/schemas/enums";
 import type { RelicDefinitionData } from "@/game/data/relics";
 import type { AllyDefinition } from "@/game/schemas/entities";
 import type { Effect } from "@/game/schemas/effects";
+import {
+  localizeRelicDescription,
+  localizeRelicName,
+} from "@/lib/i18n/entity-text";
 import { GameCard } from "../combat/GameCard";
 import {
   UpgradePreviewPortal,
@@ -307,16 +311,22 @@ function RelicCard({
   relic: RelicDefinitionData;
   onPick: (relicId: string) => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <button
       onClick={() => onPick(relic.id)}
       className="flex w-36 flex-col items-center gap-2 rounded-xl border-2 border-purple-700 bg-purple-950/40 p-4 text-center transition hover:border-purple-500 hover:bg-purple-950/60"
     >
       <span className="text-xs font-semibold uppercase tracking-widest text-purple-400">
-        {relic.rarity}
+        {t(`gameCard.rarity.${relic.rarity}`, relic.rarity)}
       </span>
-      <span className="text-sm font-bold text-white">{relic.name}</span>
-      <span className="text-xs text-purple-200">{relic.description}</span>
+      <span className="text-sm font-bold text-white">
+        {localizeRelicName(relic.id, relic.name)}
+      </span>
+      <span className="text-xs text-purple-200">
+        {localizeRelicDescription(relic.id, relic.description)}
+      </span>
     </button>
   );
 }

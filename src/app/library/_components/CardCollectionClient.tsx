@@ -90,10 +90,10 @@ export function CardCollectionClient({
       )
       .filter((c) => {
         if (query.trim().length === 0) return true;
-        const localizedName = localizeCardName(c.definition).toLowerCase();
+        const localizedName = localizeCardName(c.definition, t).toLowerCase();
         return localizedName.includes(query.trim().toLowerCase());
       });
-  }, [cards, biome, type, rarity, lock, query]);
+  }, [cards, biome, type, rarity, lock, query, t]);
 
   const unlockedCount = cards.filter((c) => c.unlocked).length;
 
@@ -252,7 +252,7 @@ export function CardCollectionClient({
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map((card) => {
-            const localizedName = localizeCardName(card.definition);
+            const localizedName = localizeCardName(card.definition, t);
             const localizedDescription = localizeCardDescription(
               card.definition,
               t

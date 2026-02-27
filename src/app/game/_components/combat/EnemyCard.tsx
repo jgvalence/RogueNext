@@ -23,6 +23,7 @@ import { buffMeta } from "../shared/buff-meta";
 // TEMPORARY: centralized asset registry - swap paths in src/lib/assets.ts when real art is ready
 import { ENEMY_IMAGES } from "@/lib/assets";
 import { playSound } from "@/lib/sound";
+import { useTranslation } from "react-i18next";
 
 interface EnemyCardProps {
   enemy: EnemyState;
@@ -55,6 +56,7 @@ export function EnemyCard({
   isNewlySummoned = false,
   onClick,
 }: EnemyCardProps) {
+  const { t } = useTranslation();
   const isDead = enemy.currentHp <= 0;
   const intent = definition.abilities[enemy.intentIndex];
   const prevHp = useRef(enemy.currentHp);
@@ -85,11 +87,11 @@ export function EnemyCard({
   }, []);
 
   const cardW = definition.isBoss
-    ? "w-28 lg:w-40 xl:w-56 [@media(max-height:540px)]:w-36"
-    : "w-24 lg:w-36 xl:w-44 [@media(max-height:540px)]:w-28";
+    ? "w-32 lg:w-48 xl:w-64 [@media(max-height:540px)]:w-40"
+    : "w-28 lg:w-44 xl:w-52 [@media(max-height:540px)]:w-32";
   const artH = definition.isBoss
-    ? "h-16 lg:h-28 xl:h-40 [@media(max-height:540px)]:h-14"
-    : "h-14 lg:h-24 xl:h-32 [@media(max-height:540px)]:h-12";
+    ? "h-20 lg:h-32 xl:h-44 [@media(max-height:540px)]:h-16"
+    : "h-16 lg:h-28 xl:h-36 [@media(max-height:540px)]:h-14";
 
   let borderClass = "border-gray-600/70";
   if (isDead) borderClass = "border-gray-700/40";
@@ -174,12 +176,12 @@ export function EnemyCard({
         {/* Boss / Elite badge */}
         {definition.isBoss && (
           <div className="absolute left-1/2 top-2 -translate-x-1/2 rounded-full bg-yellow-600/80 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-yellow-100">
-            Boss
+            {t("enemyCard.boss")}
           </div>
         )}
         {definition.isElite && (
           <div className="absolute left-1/2 top-2 -translate-x-1/2 rounded-full bg-orange-600/80 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-orange-100">
-            Elite
+            {t("enemyCard.elite")}
           </div>
         )}
 
@@ -187,15 +189,9 @@ export function EnemyCard({
         {isActing && !isDead && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="animate-bounce rounded-full bg-orange-500/90 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white shadow-lg">
-              {" > "}Acting
+              {" > "}
+              {t("enemyCard.acting")}
             </div>
-          </div>
-        )}
-
-        {/* Block overlay badge */}
-        {enemy.block > 0 && (
-          <div className="absolute bottom-1.5 right-1.5 flex items-center gap-0.5 rounded-full bg-blue-900/90 px-1.5 py-0.5 text-[10px] font-bold text-blue-200 shadow">
-            BLK {enemy.block}
           </div>
         )}
       </div>
@@ -219,6 +215,7 @@ export function EnemyCard({
           <HpBar
             current={Math.max(0, enemy.currentHp)}
             max={enemy.maxHp}
+            showText={false}
             className="mb-0.5 w-full"
           />
           <div className="flex items-center gap-1 [@media(max-height:540px)]:gap-0.5">
@@ -228,7 +225,7 @@ export function EnemyCard({
             <span className="text-[10px] text-slate-500">/ {enemy.maxHp}</span>
             {enemy.block > 0 && (
               <div className="ml-auto flex items-center gap-0.5 rounded bg-blue-900/80 px-1.5 py-0.5">
-                <span className="text-[10px]">BLK</span>
+                <span className="text-[10px]">{t("enemyCard.blk")}</span>
                 <span className="text-[10px] font-bold text-blue-200">
                   {enemy.block}
                 </span>
@@ -247,7 +244,7 @@ export function EnemyCard({
         )}
         {!isDead && incomingDamagePreview !== null && (
           <div className="rounded border border-red-700/60 bg-red-950/50 px-1.5 py-1 text-[10px] font-semibold text-red-200 lg:text-[11px]">
-            Incoming {incomingDamagePreview}
+            {t("enemyCard.incoming")} {incomingDamagePreview}
           </div>
         )}
 
@@ -256,7 +253,7 @@ export function EnemyCard({
           <div className="mt-0.5 rounded-lg border border-gray-700/60 bg-gray-800/70 px-1.5 py-1 lg:px-2 lg:py-1.5 [@media(max-height:540px)]:px-1 [@media(max-height:540px)]:py-0.5">
             {hideIntent ? (
               <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-300 lg:text-[11px]">
-                Intent Hidden
+                {t("enemyCard.intentHidden")}
               </div>
             ) : (
               <>
@@ -281,7 +278,8 @@ export function EnemyCard({
                     enemyDamageScale,
                     enemy.buffs,
                     playerBuffs,
-                    intentTargetsPlayer
+                    intentTargetsPlayer,
+                    t
                   )}
                 </div>
               </>
@@ -303,7 +301,8 @@ function formatIntentEffects(
   enemyDamageScale: number,
   enemyBuffs: BuffInstance[],
   playerBuffs: BuffInstance[],
-  intentTargetsPlayer: boolean
+  intentTargetsPlayer: boolean,
+  t: (key: string, options?: Record<string, unknown>) => string
 ): ReactNode[] {
   const parts: ReactNode[] = [];
 
@@ -338,7 +337,7 @@ function formatIntentEffects(
                 : "bg-red-900/60 text-red-300"
             )}
           >
-            DMG {scaledDamage}
+            {t("enemyCard.dmg")} {scaledDamage}
             {isModified && (
               <span className="ml-0.5 text-[10px] font-bold uppercase lg:text-[11px]">
                 *
@@ -350,7 +349,11 @@ function formatIntentEffects(
           isModified ? (
             <Tooltip
               key={`d-${parts.length}`}
-              content={`Calculated: ${baseScaledDamage} -> ${scaledDamage} (${modifiers.join(" + ")})`}
+              content={t("enemyCard.calculated", {
+                from: baseScaledDamage,
+                to: scaledDamage,
+                modifiers: modifiers.join(" + "),
+              })}
             >
               {dmgBadge}
             </Tooltip>
@@ -367,7 +370,7 @@ function formatIntentEffects(
             key={`b-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-blue-900/60 px-1.5 py-0.5 text-sm font-black text-blue-300 lg:text-base"
           >
-            BLK {effect.value}
+            {t("enemyCard.blk")} {effect.value}
           </span>
         );
         break;
@@ -447,7 +450,7 @@ function formatIntentEffects(
             key={`freeze-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-cyan-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 lg:text-[11px]"
           >
-            Freeze {effect.value}
+            {t("enemyCard.freeze")} {effect.value}
           </span>
         );
         break;
@@ -458,7 +461,7 @@ function formatIntentEffects(
             key={`nd2d-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-purple-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-purple-200 lg:text-[11px]"
           >
-            Next draw discard
+            {t("enemyCard.nextDrawDiscard")}
           </span>
         );
         break;
@@ -469,7 +472,7 @@ function formatIntentEffects(
             key={`inklock-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-cyan-900/80 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-100 lg:text-[11px]"
           >
-            Lock ink {effect.inkPower ?? "all"}
+            {t("enemyCard.lockInk", { power: effect.inkPower ?? "all" })}
           </span>
         );
         break;
@@ -481,7 +484,7 @@ function formatIntentEffects(
             key={`costup-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-amber-900/80 px-1.5 py-0.5 text-[10px] font-semibold text-amber-100 lg:text-[11px]"
           >
-            Cards +{effect.value} cost
+            {t("enemyCard.cardCostUp", { value: effect.value })}
           </span>
         );
         break;
@@ -493,7 +496,7 @@ function formatIntentEffects(
             key={`drawdown-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-slate-700 px-1.5 py-0.5 text-[10px] font-semibold text-slate-100 lg:text-[11px]"
           >
-            Draw -{effect.value}
+            {t("enemyCard.drawDown", { value: effect.value })}
           </span>
         );
         break;
@@ -504,7 +507,7 @@ function formatIntentEffects(
             key={`forcediscard-${parts.length}`}
             className="inline-flex items-center gap-0.5 rounded bg-rose-900/80 px-1.5 py-0.5 text-[10px] font-semibold text-rose-100 lg:text-[11px]"
           >
-            Random discard {effect.value}
+            {t("enemyCard.randomDiscard", { value: effect.value })}
           </span>
         );
         break;
@@ -518,7 +521,7 @@ function formatIntentEffects(
         key={`summon-${parts.length}`}
         className="inline-flex items-center gap-0.5 rounded bg-orange-900/60 px-1.5 py-0.5 text-[10px] font-semibold text-orange-200 lg:text-[11px]"
       >
-        Summon {summonLabel}
+        {t("enemyCard.summon")} {summonLabel}
       </span>
     );
   }
@@ -550,6 +553,7 @@ function BossPhaseHint({
   enemy: EnemyState;
   definition: EnemyDefinition;
 }) {
+  const { t } = useTranslation();
   const label = getPhaseTwoSummonLabel(definition.id);
   if (!label) return null;
   const phaseKey = `${definition.id}_phase2`;
@@ -558,7 +562,7 @@ function BossPhaseHint({
 
   return (
     <div className="mt-1 rounded border border-amber-700/60 bg-amber-950/40 px-1.5 py-1 text-[9px] text-amber-200 lg:text-[10px]">
-      Phase 2 (&lt;50% HP): summons {label}
+      {t("enemyCard.phase2Summon", { label })}
     </div>
   );
 }

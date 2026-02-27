@@ -5,8 +5,10 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { signUpAction } from "@/server/actions/auth";
+import { useTranslation } from "react-i18next";
 
 function SignUpForm() {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/game";
@@ -43,7 +45,7 @@ function SignUpForm() {
     setLoading(false);
 
     if (signInResult?.error) {
-      setError("Compte cree, mais connexion impossible. Reessayez.");
+      setError(t("auth.signup.autoSigninError"));
       return;
     }
 
@@ -75,7 +77,7 @@ function SignUpForm() {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Retour
+          {t("auth.back")}
         </Link>
 
         <div className="mb-8 text-center">
@@ -83,7 +85,7 @@ function SignUpForm() {
             Panlibrarium
           </h1>
           <p className="mt-2 text-sm text-gray-500">
-            Creez votre compte pour jouer
+            {t("auth.signup.subtitle")}
           </p>
         </div>
 
@@ -93,7 +95,7 @@ function SignUpForm() {
               htmlFor="name"
               className="mb-1.5 block text-sm font-medium text-gray-400"
             >
-              Nom (optionnel)
+              {t("auth.signup.nameOptional")}
             </label>
             <input
               id="name"
@@ -101,7 +103,7 @@ function SignUpForm() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full rounded-lg border border-gray-800 bg-gray-900 px-4 py-2.5 text-white placeholder-gray-600 outline-none transition focus:border-purple-600 focus:ring-1 focus:ring-purple-600"
-              placeholder="Explorateur"
+              placeholder={t("auth.signup.namePlaceholder")}
             />
           </div>
 
@@ -128,7 +130,7 @@ function SignUpForm() {
               htmlFor="password"
               className="mb-1.5 block text-sm font-medium text-gray-400"
             >
-              Mot de passe
+              {t("auth.password")}
             </label>
             <input
               id="password"
@@ -138,7 +140,7 @@ function SignUpForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-lg border border-gray-800 bg-gray-900 px-4 py-2.5 text-white placeholder-gray-600 outline-none transition focus:border-purple-600 focus:ring-1 focus:ring-purple-600"
-              placeholder="6 caracteres minimum"
+              placeholder={t("auth.signup.passwordPlaceholder")}
             />
           </div>
 
@@ -153,17 +155,17 @@ function SignUpForm() {
             disabled={loading}
             className="mt-2 rounded-lg bg-purple-600 py-3 font-bold text-white transition hover:bg-purple-500 disabled:opacity-50"
           >
-            {loading ? "Inscription..." : "S'inscrire"}
+            {loading ? t("auth.signup.loading") : t("auth.signup.submit")}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-500">
-          Deja un compte ?{" "}
+          {t("auth.signup.hasAccount")}{" "}
           <Link
             href="/auth/signin"
             className="text-purple-400 hover:text-purple-300"
           >
-            Se connecter
+            {t("auth.signup.goSignin")}
           </Link>
         </p>
       </div>
@@ -172,11 +174,12 @@ function SignUpForm() {
 }
 
 export default function SignUpPage() {
+  const { t } = useTranslation();
   return (
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-gray-950 text-white">
-          Chargement...
+          {t("gameHub.loading")}
         </div>
       }
     >

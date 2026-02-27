@@ -139,6 +139,7 @@ export function LibraryClient({
       {selected && (
         <HistoireModal
           histoire={selected}
+          histoires={histoires}
           progression={progression}
           slotState={getSlotState(selected, progression)}
           onClose={() => setSelected(null)}

@@ -79,26 +79,22 @@ export function GameCard({
     ? buildUpgradedCardDefinition(definition)
     : definition;
   const isMd = size === "md";
-  const artH =
-    isMd && isSelected
-      ? "h-14 lg:h-14 xl:h-[72px]"
-      : isMd
-        ? "h-10 lg:h-14 xl:h-[72px]"
-        : "h-9 lg:h-12 xl:h-14";
+  const artH = isMd ? "h-9 lg:h-14 xl:h-[72px]" : "h-8 lg:h-12 xl:h-14";
   const inkBtnVariant = isPendingInked
     ? "animate-pulse bg-cyan-500 text-white ring-1 ring-cyan-300"
     : "bg-cyan-800 text-cyan-200 hover:bg-cyan-700";
   const inkDescVariant = isPendingInked ? "text-white/80" : "text-cyan-300/70";
   const cardW =
     size === "md"
-      ? isSelected
-        ? "w-[96px] lg:w-[96px] xl:w-[130px]"
-        : "w-[72px] lg:w-[96px] xl:w-[130px]"
-      : "w-[64px] lg:w-[88px] xl:w-[104px]";
-  const hideArtUntilSelectedOnMobile = size === "md" && !isSelected;
+      ? "w-[84px] lg:w-[112px] xl:w-[148px]"
+      : "w-[66px] lg:w-[96px] xl:w-[118px]";
+  const cardH =
+    size === "md"
+      ? "h-[154px] lg:h-[220px] xl:h-[266px]"
+      : "h-[142px] lg:h-[194px] xl:h-[228px]";
   const [artFailed, setArtFailed] = useState(false);
   const artImageSrc = CARD_IMAGES[displayDefinition.id];
-  const localizedName = localizeCardName(displayDefinition);
+  const localizedName = localizeCardName(displayDefinition, t);
   const localizedDescription = localizeCardDescription(displayDefinition, t);
   const localizedInkedDescription = localizeInkedDescription(
     displayDefinition,
@@ -113,12 +109,13 @@ export function GameCard({
         "relative z-0 flex select-none flex-col overflow-hidden rounded-xl border-2 bg-gray-900 transition-all duration-150",
         typeBorder[displayDefinition.type] ?? "border-gray-500",
         cardW,
+        cardH,
         canPlay
-          ? "cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 lg:hover:-translate-y-3"
+          ? "cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 lg:hover:-translate-y-2"
           : "cursor-not-allowed opacity-40",
         isFrozen && "ring-2 ring-cyan-500/80 grayscale",
         isSelected &&
-          "z-30 -translate-y-10 ring-2 ring-offset-1 ring-offset-gray-900 lg:-translate-y-3",
+          "z-30 -translate-y-2 ring-2 ring-offset-1 ring-offset-gray-900 lg:-translate-y-3",
         isSelected &&
           (isPendingInked
             ? "shadow-lg shadow-cyan-500/40 ring-cyan-400"
@@ -146,7 +143,7 @@ export function GameCard({
       <div
         className={cn(
           "relative flex-shrink-0 items-center justify-center overflow-hidden bg-gradient-to-b",
-          hideArtUntilSelectedOnMobile ? "hidden lg:flex" : "flex",
+          "flex",
           artH,
           typeArtBg[displayDefinition.type] ?? "from-gray-800 to-gray-700"
         )}
@@ -170,7 +167,7 @@ export function GameCard({
 
       <div
         className={cn(
-          "flex flex-1 flex-col gap-0.5 px-1.5 pb-1.5 pt-1 lg:gap-1 lg:px-2 lg:pb-2 lg:pt-1.5"
+          "flex min-h-0 flex-1 flex-col gap-0.5 px-1.5 pb-1.5 pt-1 lg:gap-1 lg:px-2 lg:pb-2 lg:pt-1.5"
         )}
       >
         <div
@@ -196,7 +193,7 @@ export function GameCard({
 
         <div
           className={cn(
-            "leading-snug transition-opacity",
+            "min-h-0 overflow-hidden leading-snug transition-opacity",
             isMd
               ? "text-[8px] lg:text-[9px] xl:text-[10px]"
               : "text-[8px] lg:text-[9px]",
@@ -209,7 +206,7 @@ export function GameCard({
         </div>
       </div>
 
-      {displayDefinition.inkedVariant && (
+      {displayDefinition.inkedVariant ? (
         <Tooltip
           className="block px-1 pb-1 lg:px-1.5 lg:pb-1.5"
           content={
@@ -270,6 +267,10 @@ export function GameCard({
             </div>
           )}
         </Tooltip>
+      ) : (
+        <div className="px-1 pb-1 lg:px-1.5 lg:pb-1.5">
+          <div className="h-[24px] lg:h-[38px]" />
+        </div>
       )}
     </div>
   );

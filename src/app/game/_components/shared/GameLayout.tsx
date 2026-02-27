@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useGame } from "../../_providers/game-provider";
 import { setSoundsEnabled } from "@/lib/sound";
 import { setMusicEnabled } from "@/lib/music";
@@ -8,6 +9,10 @@ import { LogoutButton } from "@/components/auth/LogoutButton";
 import { relicDefinitions } from "@/game/data/relics";
 import { DeckViewerModal } from "./DeckViewerModal";
 import { RulesModal } from "./RulesModal";
+import {
+  localizeRelicDescription,
+  localizeRelicName,
+} from "@/lib/i18n/entity-text";
 
 function formatRunDuration(totalMs: number): string {
   const totalSeconds = Math.max(0, Math.floor(totalMs / 1000));
@@ -27,6 +32,7 @@ interface GameLayoutProps {
 }
 
 export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
+  const { t } = useTranslation();
   const { state, cardDefs } = useGame();
   const [muted, setMuted] = useState(false);
   const [showRelics, setShowRelics] = useState(false);
@@ -83,21 +89,23 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
   return (
     <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-slate-950 text-white">
       <div className="fixed inset-0 z-50 hidden flex-col items-center justify-center gap-6 bg-slate-950 sm:hidden portrait:flex">
-        <div className="text-5xl font-black tracking-[0.2em]">ROTATE</div>
-        <p className="text-xl font-bold text-white">Rotate your device</p>
-        <p className="text-sm text-slate-400">
-          Panlibrarium requires landscape mode
+        <div className="text-5xl font-black tracking-[0.2em]">
+          {t("layout.rotate")}
+        </div>
+        <p className="text-xl font-bold text-white">
+          {t("layout.rotateDevice")}
         </p>
+        <p className="text-sm text-slate-400">{t("layout.rotateHint")}</p>
       </div>
 
       <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/90 px-2 py-1.5 backdrop-blur-sm sm:px-5 sm:py-2.5 [@media(max-height:540px)]:gap-2 [@media(max-height:540px)]:px-2 [@media(max-height:540px)]:py-1">
         <div className="flex items-center gap-2">
           <span className="rounded bg-slate-700 px-2.5 py-1 text-xs font-semibold uppercase tracking-widest text-slate-300">
-            Floor {state.floor}
+            {t("layout.floor", { floor: state.floor })}
           </span>
           <span className="text-xs text-slate-500 sm:text-sm">|</span>
           <span className="text-xs text-slate-400 sm:text-sm">
-            Room{" "}
+            {t("layout.room")}{" "}
             <span className="font-semibold text-slate-200">
               {state.currentRoom + 1}
             </span>
@@ -105,7 +113,7 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           </span>
           <span className="text-xs text-slate-500 sm:text-sm">|</span>
           <span className="text-xs font-semibold text-cyan-300 sm:text-sm">
-            Time {formatRunDuration(elapsedMs)}
+            {t("layout.time", { value: formatRunDuration(elapsedMs) })}
           </span>
         </div>
 
@@ -115,7 +123,7 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
 
         <div className="flex items-center gap-3 [@media(max-height:540px)]:gap-1.5">
           <div className="hidden items-center gap-1.5 sm:flex [@media(max-height:540px)]:hidden">
-            <span className="text-sm text-red-400">HP</span>
+            <span className="text-sm text-red-400">{t("layout.hp")}</span>
             <span
               className={`text-sm font-bold ${
                 state.playerCurrentHp / state.playerMaxHp <= 0.3
@@ -131,7 +139,9 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           </div>
 
           <div className="flex items-center gap-1.5 [@media(max-height:540px)]:hidden">
-            <span className="text-xs text-amber-400 sm:text-sm">Gold</span>
+            <span className="text-xs text-amber-400 sm:text-sm">
+              {t("layout.gold")}
+            </span>
             <span className="text-xs font-bold text-amber-300 sm:text-sm">
               {state.gold}
             </span>
@@ -157,9 +167,9 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           <button
             onClick={() => setShowDeckViewer(true)}
             className="hidden items-center gap-1.5 rounded border border-slate-600/50 px-2 py-1 transition hover:border-slate-400 sm:flex [@media(max-height:540px)]:hidden"
-            title="Voir le deck"
+            title={t("layout.viewDeck")}
           >
-            <span className="text-xs text-slate-500">Deck</span>
+            <span className="text-xs text-slate-500">{t("layout.deck")}</span>
             <span className="text-sm font-semibold text-slate-200">
               {state.deck.length}
             </span>
@@ -167,19 +177,21 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           <button
             onClick={toggleFullscreen}
             className="rounded border border-cyan-700/70 px-2 py-1 text-xs font-semibold text-cyan-200 transition hover:border-cyan-400 hover:text-white"
-            title="Plein écran"
+            title={t("layout.fullscreen")}
             type="button"
           >
-            {isFullscreen ? "Quitter plein écran" : "Plein écran"}
+            {isFullscreen ? t("layout.exitFullscreen") : t("layout.fullscreen")}
           </button>
 
           {state.relicIds.length > 0 && (
             <button
               onClick={() => setShowRelics((v) => !v)}
               className="flex items-center gap-1.5 rounded border border-purple-700/50 px-2 py-1 hover:border-purple-500/70"
-              title="Show relics"
+              title={t("layout.showRelics")}
             >
-              <span className="text-xs text-purple-400">Relics</span>
+              <span className="text-xs text-purple-400">
+                {t("layout.relics")}
+              </span>
               <span className="text-sm font-semibold text-purple-300">
                 {state.relicIds.length}
               </span>
@@ -188,10 +200,10 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           <button
             onClick={() => setShowMenu(true)}
             className="rounded border border-slate-600 px-2 py-1 text-xs font-semibold text-slate-300 transition hover:border-slate-400 hover:text-white"
-            title="Menu"
+            title={t("layout.menu")}
             type="button"
           >
-            Menu
+            {t("layout.menu")}
           </button>
         </div>
       </div>
@@ -218,13 +230,15 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-slate-100">Menu</h3>
+              <h3 className="text-lg font-semibold text-slate-100">
+                {t("layout.menu")}
+              </h3>
               <button
                 onClick={() => setShowMenu(false)}
                 className="rounded border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:border-slate-400"
                 type="button"
               >
-                Close
+                {t("common.close")}
               </button>
             </div>
 
@@ -238,7 +252,7 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
                   className="w-full rounded border border-purple-700/60 px-3 py-2 text-sm font-semibold text-purple-300 hover:border-purple-500 hover:text-purple-200"
                   type="button"
                 >
-                  Relics ({state.relicIds.length})
+                  {t("layout.relics")} ({state.relicIds.length})
                 </button>
               )}
 
@@ -250,7 +264,7 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
                 className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
                 type="button"
               >
-                R&egrave;gles
+                {t("home.rules")}
               </button>
 
               <button
@@ -258,14 +272,14 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
                 className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
                 type="button"
               >
-                {muted ? "Unmute" : "Mute"}
+                {muted ? t("layout.unmute") : t("layout.mute")}
               </button>
 
               {onAbandonRun && (
                 <button
                   onClick={() => {
                     const confirmed = window.confirm(
-                      "Terminer la run maintenant ?"
+                      t("layout.abandonConfirm")
                     );
                     if (!confirmed) return;
                     setShowMenu(false);
@@ -274,12 +288,12 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
                   className="w-full rounded border border-red-700 px-3 py-2 text-sm font-semibold text-red-300 hover:border-red-500 hover:text-red-200"
                   type="button"
                 >
-                  Terminer la run
+                  {t("layout.abandonRun")}
                 </button>
               )}
 
               <LogoutButton
-                label="Logout"
+                label={t("home.logout")}
                 className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
               />
             </div>
@@ -298,18 +312,20 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           >
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-lg font-semibold text-slate-100">
-                Your Relics
+                {t("layout.yourRelics")}
               </h3>
               <button
                 onClick={() => setShowRelics(false)}
                 className="rounded border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:border-slate-400"
               >
-                Close
+                {t("common.close")}
               </button>
             </div>
 
             {ownedRelics.length === 0 ? (
-              <p className="text-sm text-slate-400">No relics yet.</p>
+              <p className="text-sm text-slate-400">
+                {t("layout.noRelicsYet")}
+              </p>
             ) : (
               <div className="space-y-2">
                 {ownedRelics.map((relic) => (
@@ -318,13 +334,13 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
                     className="rounded border border-slate-700 bg-slate-950/60 p-3"
                   >
                     <p className="text-sm font-semibold text-slate-100">
-                      {relic.name}{" "}
+                      {localizeRelicName(relic.id, relic.name)}{" "}
                       <span className="ml-1 text-xs uppercase tracking-wide text-slate-400">
                         {relic.rarity}
                       </span>
                     </p>
                     <p className="text-sm text-slate-300">
-                      {relic.description}
+                      {localizeRelicDescription(relic.id, relic.description)}
                     </p>
                   </div>
                 ))}

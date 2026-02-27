@@ -14,69 +14,78 @@ import {
 
 interface HistoireModalProps {
   histoire: Histoire;
+  histoires: Histoire[];
   progression: MetaProgress;
   slotState: SlotState;
   onClose: () => void;
   onUnlocked: (updatedProgression: MetaProgress) => void;
 }
 
-function formatBonus(bonus: MetaBonus): string {
+function formatBonus(
+  bonus: MetaBonus,
+  t: (key: string, options?: Record<string, unknown>) => string
+): string {
   switch (bonus.type) {
     case "EXTRA_DRAW":
-      return `+${bonus.value} draw each turn`;
+      return t("library.bonus.extraDraw", { value: bonus.value });
     case "EXTRA_ENERGY_MAX":
-      return `+${bonus.value} max energy`;
+      return t("library.bonus.extraEnergyMax", { value: bonus.value });
     case "EXTRA_INK_MAX":
-      return `+${bonus.value} max ink`;
+      return t("library.bonus.extraInkMax", { value: bonus.value });
     case "INK_PER_CARD_CHANCE":
-      return `+${bonus.value}% chance to gain ink on card play`;
+      return t("library.bonus.inkPerCardChance", { value: bonus.value });
     case "INK_PER_CARD_VALUE":
-      return `+${bonus.value} ink when proc triggers`;
+      return t("library.bonus.inkPerCardValue", { value: bonus.value });
     case "STARTING_INK":
-      return `Start combat with +${bonus.value} ink`;
+      return t("library.bonus.startingInk", { value: bonus.value });
     case "STARTING_BLOCK":
-      return `+${bonus.value} block at combat start`;
+      return t("library.bonus.startingBlock", { value: bonus.value });
     case "STARTING_STRENGTH":
-      return `+${bonus.value} strength at combat start`;
+      return t("library.bonus.startingStrength", { value: bonus.value });
     case "STARTING_REGEN":
-      return `Recover +${bonus.value} HP at turn start`;
+      return t("library.bonus.startingRegen", { value: bonus.value });
     case "FIRST_HIT_DAMAGE_REDUCTION":
-      return `First hit taken: -${bonus.value}% damage`;
+      return t("library.bonus.firstHitDamageReduction", { value: bonus.value });
     case "EXTRA_HP":
-      return `+${bonus.value} max HP`;
+      return t("library.bonus.extraHp", { value: bonus.value });
     case "EXTRA_HAND_AT_START":
-      return `+${bonus.value} cards in opening hand`;
+      return t("library.bonus.extraHandAtStart", { value: bonus.value });
     case "ATTACK_BONUS":
-      return `+${bonus.value} attack card damage`;
+      return t("library.bonus.attackBonus", { value: bonus.value });
     case "ALLY_SLOTS":
-      return `+${bonus.value} ally slot(s)`;
+      return t("library.bonus.allySlots", { value: bonus.value });
     case "STARTING_GOLD":
-      return `+${bonus.value} starting gold each run`;
+      return t("library.bonus.startingGold", { value: bonus.value });
     case "EXTRA_CARD_REWARD_CHOICES":
-      return `+${bonus.value} card reward choices`;
+      return t("library.bonus.extraCardRewardChoices", { value: bonus.value });
     case "RELIC_DISCOUNT":
-      return `${bonus.value}% relic discount`;
+      return t("library.bonus.relicDiscount", { value: bonus.value });
     case "UNLOCK_INK_POWER":
-      return `Unlock ink power ${bonus.power}`;
+      return t("library.bonus.unlockInkPower", {
+        power: t(`inkGauge.powers.${bonus.power}.label`, {
+          defaultValue: bonus.power,
+        }),
+      });
     case "HEAL_AFTER_COMBAT":
-      return `Recover ${bonus.value}% max HP after combat`;
+      return t("library.bonus.healAfterCombat", { value: bonus.value });
     case "HEAL_AFTER_COMBAT_FLAT":
-      return `Recover ${bonus.value} HP after combat`;
+      return t("library.bonus.healAfterCombatFlat", { value: bonus.value });
     case "EXHAUST_KEEP_CHANCE":
-      return `${bonus.value}% chance to not exhaust a card`;
+      return t("library.bonus.exhaustKeepChance", { value: bonus.value });
     case "SURVIVAL_ONCE":
-      return "Survive at 1 HP once per run";
+      return t("library.bonus.survivalOnce");
     case "FREE_UPGRADE_PER_RUN":
-      return "Upgrade one card for free each run";
+      return t("library.bonus.freeUpgradePerRun");
     case "STARTING_RARE_CARD":
-      return "Start each run with a random rare card";
+      return t("library.bonus.startingRareCard");
     default:
-      return "Permanent bonus";
+      return t("library.permanentBonus");
   }
 }
 
 export function HistoireModal({
   histoire,
+  histoires,
   progression,
   slotState,
   onClose,
@@ -86,6 +95,7 @@ export function HistoireModal({
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const theme = BIOME_THEMES[histoire.biome];
+  const storyById = new Map(histoires.map((h) => [h.id, h]));
   const storyTitle = localizeStoryTitle(histoire, t);
   const storyAuthor = localizeStoryAuthor(histoire, t);
   const storyDescription = localizeStoryDescription(histoire, t);
@@ -169,7 +179,7 @@ export function HistoireModal({
               {t("library.permanentBonus")}
             </p>
             <p className={`text-sm font-semibold ${theme.accent}`}>
-              {formatBonus(histoire.bonus)}
+              {formatBonus(histoire.bonus, t)}
             </p>
           </div>
 
@@ -217,6 +227,10 @@ export function HistoireModal({
                 {histoire.prerequis.map((prereqId) => {
                   const unlocked =
                     progression.unlockedStoryIds.includes(prereqId);
+                  const prereqStory = storyById.get(prereqId);
+                  const prereqLabel = prereqStory
+                    ? localizeStoryTitle(prereqStory, t)
+                    : prereqId.replace(/_/g, " ");
                   return (
                     <div
                       key={prereqId}
@@ -225,9 +239,7 @@ export function HistoireModal({
                       }`}
                     >
                       <span>{unlocked ? "v" : "x"}</span>
-                      <span className="capitalize">
-                        {prereqId.replace(/_/g, " ")}
-                      </span>
+                      <span>{prereqLabel}</span>
                     </div>
                   );
                 })}

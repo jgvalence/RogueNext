@@ -89,6 +89,36 @@ function isThematicEnemy(enemy: EnemyDef): boolean {
   );
 }
 
+function getMaxEnemyCountForRoom(
+  floor: number,
+  biome: BiomeType,
+  difficultyLevel: number
+): number {
+  const difficultyModifiers = getDifficultyModifiers(difficultyLevel);
+  const biomeCountBonusByBiome: Record<BiomeType, number> = {
+    LIBRARY: 0,
+    VIKING: 0,
+    GREEK: 0,
+    EGYPTIAN: 0,
+    LOVECRAFTIAN: -1,
+    AZTEC: 0,
+    CELTIC: -1,
+    RUSSIAN: -1,
+    AFRICAN: 1,
+  };
+
+  return Math.min(
+    GAME_CONSTANTS.MAX_ENEMIES,
+    Math.max(
+      1,
+      2 +
+        Math.floor(floor / 2) +
+        (biomeCountBonusByBiome[biome] ?? 0) +
+        difficultyModifiers.enemyPackSizeBonus
+    )
+  );
+}
+
 /**
  * Create a new run with starter deck and generated map.
  */
@@ -271,13 +301,23 @@ export function generateFloorMap(
       continue;
     }
 
-    const numChoices =
+    const requestedChoices =
       mapRules.forceSingleChoice || isBossRoom || isFirstRoom
         ? 1
         : rng.nextInt(1, GAME_CONSTANTS.ROOM_CHOICES);
 
     const baseType: "COMBAT" | "MERCHANT" | "SPECIAL" =
       isBossRoom || isFirstRoom ? "COMBAT" : shuffledMiddle[i - 1]!;
+
+    const maxEnemyCount = getMaxEnemyCountForRoom(
+      floor,
+      biome,
+      difficultyLevel
+    );
+    const numChoices =
+      baseType === "COMBAT"
+        ? Math.min(requestedChoices, Math.max(1, maxEnemyCount))
+        : requestedChoices;
 
     const choices: RoomNode[] = [];
     for (let j = 0; j < numChoices; j++) {
@@ -293,7 +333,7 @@ export function generateFloorMap(
               biome,
               rng,
               difficultyLevel,
-              j > 0 && numChoices > 1 ? 2 : 1
+              numChoices > 1 ? j + 1 : 1
             )
           : undefined;
 
@@ -416,27 +456,7 @@ function generateRoomEnemies(
     return { enemyIds: ["ink_slime"], isElite: false };
   }
 
-  const biomeCountBonusByBiome: Record<BiomeType, number> = {
-    LIBRARY: 0,
-    VIKING: 0,
-    GREEK: 0,
-    EGYPTIAN: 0,
-    LOVECRAFTIAN: -1,
-    AZTEC: 0,
-    CELTIC: -1,
-    RUSSIAN: -1,
-    AFRICAN: 1,
-  };
-  const maxEnemyCount = Math.min(
-    GAME_CONSTANTS.MAX_ENEMIES,
-    Math.max(
-      1,
-      2 +
-        Math.floor(floor / 2) +
-        (biomeCountBonusByBiome[biome] ?? 0) +
-        difficultyModifiers.enemyPackSizeBonus
-    )
-  );
+  const maxEnemyCount = getMaxEnemyCountForRoom(floor, biome, difficultyLevel);
   const clampedMinEnemyCount = Math.max(
     1,
     Math.min(minEnemyCount, maxEnemyCount)

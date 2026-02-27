@@ -1438,6 +1438,28 @@ describe("Run management", () => {
     }
   });
 
+  it("generateFloorMap avoids multi-choice pure combat slots when packs are capped to 1 enemy", () => {
+    const seeds = [
+      "russian-pack-cap-1",
+      "russian-pack-cap-2",
+      "russian-pack-cap-3",
+      "russian-pack-cap-4",
+      "russian-pack-cap-5",
+      "russian-pack-cap-6",
+    ];
+
+    for (const seed of seeds) {
+      const map = generateFloorMap(1, createRNG(seed), "RUSSIAN");
+      for (let roomIndex = 1; roomIndex < 8; roomIndex++) {
+        const slot = map[roomIndex] ?? [];
+        const baseType = slot[0]?.type;
+        if (baseType === "COMBAT") {
+          expect(slot).toHaveLength(1);
+        }
+      }
+    }
+  });
+
   it("selectRoom marks room as completed", () => {
     const rng = createRNG("select-room");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);

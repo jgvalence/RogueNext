@@ -4,8 +4,10 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function SignInForm() {
+  const { t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/game";
@@ -29,7 +31,7 @@ function SignInForm() {
     setLoading(false);
 
     if (result?.error) {
-      setError("Email ou mot de passe incorrect");
+      setError(t("auth.signin.invalidCredentials"));
     } else {
       router.push(callbackUrl);
     }
@@ -61,7 +63,7 @@ function SignInForm() {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Retour
+          {t("auth.back")}
         </Link>
 
         {/* Title */}
@@ -70,7 +72,7 @@ function SignInForm() {
             Panlibrarium
           </h1>
           <p className="mt-2 text-sm text-gray-500">
-            Connectez-vous pour continuer
+            {t("auth.signin.subtitle")}
           </p>
         </div>
 
@@ -99,7 +101,7 @@ function SignInForm() {
               htmlFor="password"
               className="mb-1.5 block text-sm font-medium text-gray-400"
             >
-              Mot de passe
+              {t("auth.password")}
             </label>
             <input
               id="password"
@@ -123,17 +125,17 @@ function SignInForm() {
             disabled={loading}
             className="mt-2 rounded-lg bg-purple-600 py-3 font-bold text-white transition hover:bg-purple-500 disabled:opacity-50"
           >
-            {loading ? "Connexion..." : "Se connecter"}
+            {loading ? t("auth.signin.loading") : t("auth.signin.submit")}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-500">
-          Pas encore de compte ?{" "}
+          {t("auth.signin.noAccount")}{" "}
           <Link
             href="/auth/signup"
             className="text-purple-400 hover:text-purple-300"
           >
-            S&apos;inscrire
+            {t("auth.signin.goSignup")}
           </Link>
           {/* test deploy */}
         </p>
@@ -143,11 +145,13 @@ function SignInForm() {
 }
 
 export default function SignInPage() {
+  const { t } = useTranslation();
+
   return (
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-gray-950 text-white">
-          Chargement...
+          {t("gameHub.loading")}
         </div>
       }
     >

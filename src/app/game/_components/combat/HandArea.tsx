@@ -1,11 +1,13 @@
 "use client";
 
-import { useRef, useLayoutEffect } from "react";
+import { useRef, useLayoutEffect, useMemo, useState, useEffect } from "react";
 import type { RefObject } from "react";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
 import type { CombatState } from "@/game/schemas/combat-state";
 import { canPlayCard, canPlayCardInked } from "@/game/engine/cards";
 import { GameCard } from "./GameCard";
+import { useTranslation } from "react-i18next";
+import { localizeCardName } from "@/lib/i18n/card-text";
 
 interface HandAreaProps {
   hand: CardInstance[];
@@ -32,12 +34,28 @@ export function HandArea({
   playingCardId = null,
   enemyRowRef,
 }: HandAreaProps) {
-  // One wrapper ref per card slot — used to set per-card CSS vars for the
-  // discard animation so each card flies toward the discard pile button,
-  // and for the play animation so the card flies toward the enemy row.
+  const { t } = useTranslation();
+  const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
+  const [mobilePreviewCardId, setMobilePreviewCardId] = useState<string | null>(
+    null
+  );
+  const hoveredIndex = useMemo(
+    () => hand.findIndex((c) => c.instanceId === hoveredCardId),
+    [hand, hoveredCardId]
+  );
+
+  const mobilePreviewCard = hand.find(
+    (c) => c.instanceId === mobilePreviewCardId
+  );
+  const mobilePreviewDef = mobilePreviewCard
+    ? cardDefs.get(mobilePreviewCard.definitionId)
+    : null;
+  const mobilePreviewNeedsTarget =
+    mobilePreviewDef?.targeting === "SINGLE_ENEMY" ||
+    mobilePreviewDef?.targeting === "SINGLE_ALLY";
+
   const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Discard animation: calculate per-card trajectories toward the discard button.
   useLayoutEffect(() => {
     if (!isDiscarding || !discardBtnRef?.current) return;
 
@@ -55,7 +73,6 @@ export function HandArea({
     });
   }, [isDiscarding, discardBtnRef]);
 
-  // Play animation: set CSS vars so the played card flies toward the enemy row.
   useLayoutEffect(() => {
     if (!playingCardId || !enemyRowRef?.current) return;
 
@@ -74,64 +91,215 @@ export function HandArea({
     el.style.setProperty("--ty", `${enemyCy - cardCy}px`);
   }, [playingCardId, enemyRowRef, hand]);
 
+  useEffect(() => {
+    if (
+      mobilePreviewCardId &&
+      !hand.some((c) => c.instanceId === mobilePreviewCardId)
+    ) {
+      setMobilePreviewCardId(null);
+    }
+  }, [hand, mobilePreviewCardId]);
+
+  useEffect(() => {
+    if (!selectedCardId) setMobilePreviewCardId(null);
+  }, [selectedCardId]);
+
   return (
-    <div className="flex h-[72px] items-end justify-center gap-1 overflow-visible py-0.5 lg:h-auto lg:gap-2 lg:py-2 [@media(max-height:540px)]:h-[60px] [@media(max-height:540px)]:gap-0.5 [@media(max-height:540px)]:py-0">
-      {hand.map((card, index) => {
-        const def = cardDefs.get(card.definitionId);
-        if (!def) return null;
+    <>
+      <div
+        data-keep-selection="true"
+        className="flex h-[40px] items-center gap-1 overflow-x-auto pb-0.5 lg:hidden"
+      >
+        {hand.map((card) => {
+          const def = cardDefs.get(card.definitionId);
+          if (!def) return null;
+          const canPlay = canPlayCard(combatState, card.instanceId, cardDefs);
+          const isSelected = selectedCardId === card.instanceId;
+          const cardName = localizeCardName(def, t);
 
-        const canPlay = canPlayCard(combatState, card.instanceId, cardDefs);
-        const canInked = canPlayCardInked(
-          combatState,
-          card.instanceId,
-          cardDefs
-        );
-        const isFrozen = (
-          combatState.playerDisruption?.frozenHandCardIds ?? []
-        ).includes(card.instanceId);
-
-        const isPlaying = playingCardId === card.instanceId;
-
-        return (
-          <div
-            key={card.instanceId}
-            ref={(el) => {
-              wrapperRefs.current[index] = el;
-            }}
-            className={
-              isPlaying
-                ? "animate-card-play"
-                : isDiscarding
-                  ? "animate-card-discard"
-                  : undefined
-            }
-          >
-            <GameCard
-              instanceId={card.instanceId}
-              definition={def}
-              canPlay={canPlay}
-              canPlayInked={canInked}
-              isSelected={selectedCardId === card.instanceId}
-              isPendingInked={
-                selectedCardId === card.instanceId && pendingInked
-              }
-              isFrozen={isFrozen}
-              upgraded={card.upgraded}
+          return (
+            <button
+              key={`mobile-chip-${card.instanceId}`}
+              type="button"
+              data-keep-selection="true"
               onClick={() => {
-                // Always route through onPlayCard so handlePlayCard sets pendingInked correctly
                 onPlayCard(card.instanceId, false);
+                setMobilePreviewCardId(card.instanceId);
               }}
-              onInkedClick={() => {
-                // Always pass useInked=true — handlePlayCard handles targeting
-                onPlayCard(card.instanceId, true);
+              disabled={!canPlay}
+              className={[
+                "h-8 min-w-[78px] shrink-0 rounded-md border px-1.5 text-left transition",
+                canPlay
+                  ? "border-slate-600 bg-slate-900/80 text-slate-100"
+                  : "cursor-not-allowed border-slate-800 bg-slate-900/40 text-slate-500",
+                isSelected ? "border-cyan-400 ring-1 ring-cyan-300/70" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            >
+              <p className="truncate text-[8px] font-bold">{cardName}</p>
+              <p className="text-[10px] font-black">{def.energyCost}</p>
+            </button>
+          );
+        })}
+        {hand.length === 0 && (
+          <p className="text-xs text-gray-500">{t("combat.noCardsInHand")}</p>
+        )}
+      </div>
+
+      <div className="hidden h-auto items-end justify-center gap-0 overflow-visible py-2 lg:flex">
+        {hand.map((card, index) => {
+          const def = cardDefs.get(card.definitionId);
+          if (!def) return null;
+
+          const canPlay = canPlayCard(combatState, card.instanceId, cardDefs);
+          const canInked = canPlayCardInked(
+            combatState,
+            card.instanceId,
+            cardDefs
+          );
+          const isFrozen = (
+            combatState.playerDisruption?.frozenHandCardIds ?? []
+          ).includes(card.instanceId);
+
+          const isPlaying = playingCardId === card.instanceId;
+          const isSelected = selectedCardId === card.instanceId;
+          const isHovered = hoveredCardId === card.instanceId;
+
+          const fanSpreadClass =
+            hoveredIndex === -1 || isDiscarding || isPlaying
+              ? ""
+              : index < hoveredIndex
+                ? "lg:-mr-1"
+                : index > hoveredIndex
+                  ? "lg:ml-1"
+                  : "lg:mx-2";
+
+          const stackClass = isSelected
+            ? "z-[70]"
+            : isHovered
+              ? "z-[60]"
+              : "z-10";
+
+          const animationClass = isPlaying
+            ? "animate-card-play"
+            : isDiscarding
+              ? "animate-card-discard"
+              : "";
+
+          return (
+            <div
+              key={card.instanceId}
+              ref={(el) => {
+                wrapperRefs.current[index] = el;
               }}
-            />
+              className={[
+                "relative shrink-0 transition-all duration-200",
+                index > 0 && "ml-0 lg:-ml-10 xl:-ml-12",
+                !isPlaying &&
+                  !isDiscarding &&
+                  (isHovered ? "-translate-y-3 lg:-translate-y-5" : ""),
+                fanSpreadClass,
+                stackClass,
+                animationClass,
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              onMouseEnter={() => setHoveredCardId(card.instanceId)}
+              onMouseLeave={() =>
+                setHoveredCardId((current) =>
+                  current === card.instanceId ? null : current
+                )
+              }
+            >
+              <GameCard
+                instanceId={card.instanceId}
+                definition={def}
+                canPlay={canPlay}
+                canPlayInked={canInked}
+                isSelected={isSelected}
+                isPendingInked={isSelected && pendingInked}
+                isFrozen={isFrozen}
+                upgraded={card.upgraded}
+                onClick={() => onPlayCard(card.instanceId, false)}
+                onInkedClick={() => onPlayCard(card.instanceId, true)}
+              />
+            </div>
+          );
+        })}
+        {hand.length === 0 && (
+          <p className="text-sm text-gray-500">{t("combat.noCardsInHand")}</p>
+        )}
+      </div>
+
+      {mobilePreviewCardId && mobilePreviewCard && mobilePreviewDef && (
+        <div
+          data-keep-selection="true"
+          className="fixed inset-0 z-[95] flex items-center justify-center bg-black/65 p-2 lg:hidden"
+          onClick={() => setMobilePreviewCardId(null)}
+        >
+          <div
+            data-keep-selection="true"
+            className="bg-slate-950/96 w-full max-w-[300px] rounded-xl border border-slate-600 p-3 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex flex-col items-center gap-2">
+              <div className="shrink-0">
+                <GameCard
+                  instanceId={mobilePreviewCard.instanceId}
+                  definition={mobilePreviewDef}
+                  canPlay={canPlayCard(
+                    combatState,
+                    mobilePreviewCard.instanceId,
+                    cardDefs
+                  )}
+                  canPlayInked={canPlayCardInked(
+                    combatState,
+                    mobilePreviewCard.instanceId,
+                    cardDefs
+                  )}
+                  isSelected={selectedCardId === mobilePreviewCard.instanceId}
+                  isPendingInked={
+                    selectedCardId === mobilePreviewCard.instanceId &&
+                    pendingInked
+                  }
+                  upgraded={mobilePreviewCard.upgraded}
+                  onClick={() =>
+                    onPlayCard(mobilePreviewCard.instanceId, false)
+                  }
+                  onInkedClick={() =>
+                    onPlayCard(mobilePreviewCard.instanceId, true)
+                  }
+                />
+              </div>
+              <button
+                type="button"
+                data-keep-selection="true"
+                className="w-full rounded-lg border border-emerald-300/30 bg-emerald-600 px-2 py-2 text-xs font-black uppercase tracking-wide text-white"
+                onClick={() => {
+                  if (mobilePreviewNeedsTarget) {
+                    setMobilePreviewCardId(null);
+                    return;
+                  }
+                  onPlayCard(mobilePreviewCard.instanceId, pendingInked);
+                }}
+              >
+                {mobilePreviewNeedsTarget
+                  ? t("combat.chooseTargetCta")
+                  : t("combat.playCardCta")}
+              </button>
+              <button
+                type="button"
+                data-keep-selection="true"
+                className="w-full rounded-lg border border-slate-600 px-2 py-1.5 text-xs font-semibold text-slate-200"
+                onClick={() => setMobilePreviewCardId(null)}
+              >
+                {t("common.close")}
+              </button>
+            </div>
           </div>
-        );
-      })}
-      {hand.length === 0 && (
-        <p className="text-sm text-gray-500">No cards in hand</p>
+        </div>
       )}
-    </div>
+    </>
   );
 }

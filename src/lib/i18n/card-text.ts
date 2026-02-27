@@ -2,6 +2,7 @@ import type { TFunction } from "i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { BuffType, EffectType, Targeting } from "@/game/schemas/enums";
 import type { Effect } from "@/game/schemas/effects";
+import { getCurrentLocale, i18n } from "@/lib/i18n";
 
 function effectHasAllEnemyTarget(targeting: Targeting): boolean {
   return targeting === "ALL_ENEMIES";
@@ -69,6 +70,28 @@ function formatEffect(
       return t("gameCard.effect.addToDraw");
     case "ADD_CARD_TO_DISCARD":
       return t("gameCard.effect.addToDiscard");
+    case "FREEZE_HAND_CARDS":
+      return t("gameCard.effect.freezeHandCards", { value: effect.value });
+    case "NEXT_DRAW_TO_DISCARD_THIS_TURN":
+      return t("gameCard.effect.nextDrawToDiscardThisTurn");
+    case "DISABLE_INK_POWER_THIS_TURN":
+      return t("gameCard.effect.disableInkPowerThisTurn", {
+        power: effect.inkPower ?? "ALL",
+      });
+    case "INCREASE_CARD_COST_THIS_TURN":
+      return t("gameCard.effect.increaseCardCostThisTurn", {
+        value: effect.value,
+      });
+    case "INCREASE_CARD_COST_NEXT_TURN":
+      return t("gameCard.effect.increaseCardCostNextTurn", {
+        value: effect.value,
+      });
+    case "REDUCE_DRAW_THIS_TURN":
+      return t("gameCard.effect.reduceDrawThisTurn", { value: effect.value });
+    case "REDUCE_DRAW_NEXT_TURN":
+      return t("gameCard.effect.reduceDrawNextTurn", { value: effect.value });
+    case "FORCE_DISCARD_RANDOM":
+      return t("gameCard.effect.forceDiscardRandom", { value: effect.value });
     default:
       return `${effect.type as EffectType} ${effect.value}`;
   }
@@ -100,7 +123,19 @@ function buildFromEffects(
   return `${parts.join(". ")}.`;
 }
 
-export function localizeCardName(definition: CardDefinition): string {
+export function localizeCardName(
+  definition: CardDefinition,
+  _t: TFunction
+): string {
+  const locale = getCurrentLocale();
+  const localizedName = i18n.getResource(
+    locale,
+    "translation",
+    `cards.${definition.id}.name`
+  );
+  if (typeof localizedName === "string" && localizedName.trim().length > 0) {
+    return localizedName;
+  }
   return definition.name;
 }
 
