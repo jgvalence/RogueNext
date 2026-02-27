@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="shadow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#1a0a2e"/>
+      <stop offset="100%" stop-color="#050208"/>
+    </radialGradient>
+    <radialGradient id="obsidian" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#312244"/>
+      <stop offset="100%" stop-color="#0d0618"/>
+    </radialGradient>
+  </defs>
+  <!-- Smoke tendrils radiating outward -->
+  <path d="M40 55 Q20 48 8 58" stroke="#1a0a2e" stroke-width="8" fill="none" opacity="0.7" stroke-linecap="round"/>
+  <path d="M40 55 Q60 48 72 58" stroke="#1a0a2e" stroke-width="8" fill="none" opacity="0.7" stroke-linecap="round"/>
+  <path d="M40 60 Q25 65 15 74" stroke="#1a0a2e" stroke-width="6" fill="none" opacity="0.5"/>
+  <path d="M40 60 Q55 65 65 74" stroke="#1a0a2e" stroke-width="6" fill="none" opacity="0.5"/>
+  <path d="M32 48 Q18 38 10 28" stroke="#1a0a2e" stroke-width="5" fill="none" opacity="0.6"/>
+  <path d="M48 48 Q62 38 70 28" stroke="#1a0a2e" stroke-width="5" fill="none" opacity="0.6"/>
+  <!-- Jaguar spots (barely visible through shadow) -->
+  <circle cx="24" cy="46" r="3" fill="#2d1b4e" opacity="0.5"/>
+  <circle cx="56" cy="46" r="3" fill="#2d1b4e" opacity="0.5"/>
+  <circle cx="32" cy="56" r="2.5" fill="#2d1b4e" opacity="0.4"/>
+  <circle cx="48" cy="56" r="2.5" fill="#2d1b4e" opacity="0.4"/>
+  <!-- Main shadow body -->
+  <ellipse cx="40" cy="50" rx="26" ry="22" fill="url(#shadow)"/>
+  <ellipse cx="40" cy="38" rx="20" ry="24" fill="url(#shadow)"/>
+  <!-- Smoking mirror (obsidian disc on chest) -->
+  <circle cx="40" cy="50" r="9" fill="url(#obsidian)"/>
+  <circle cx="40" cy="50" r="7" fill="#0d0618"/>
+  <circle cx="40" cy="50" r="5" fill="#1a0a2e" opacity="0.8"/>
+  <!-- Mirror reflection shards -->
+  <line x1="38" y1="46" x2="34" y2="44" stroke="#6d28d9" stroke-width="0.8" opacity="0.6"/>
+  <line x1="42" y1="46" x2="46" y2="44" stroke="#6d28d9" stroke-width="0.8" opacity="0.6"/>
+  <line x1="40" y1="44" x2="40" y2="41" stroke="#6d28d9" stroke-width="0.8" opacity="0.6"/>
+  <circle cx="40" cy="50" r="2" fill="#4c1d95" opacity="0.9"/>
+  <!-- Upper body / torso -->
+  <ellipse cx="40" cy="36" rx="16" ry="18" fill="url(#shadow)"/>
+  <!-- Head -->
+  <circle cx="40" cy="20" r="14" fill="url(#shadow)"/>
+  <!-- Glowing predator eyes -->
+  <ellipse cx="34" cy="19" rx="5" ry="4" fill="#1a0a2e"/>
+  <ellipse cx="46" cy="19" rx="5" ry="4" fill="#1a0a2e"/>
+  <ellipse cx="34" cy="19" rx="3" ry="2.5" fill="#6d28d9"/>
+  <ellipse cx="46" cy="19" rx="3" ry="2.5" fill="#6d28d9"/>
+  <ellipse cx="34" cy="19" rx="1.5" ry="1.5" fill="#a78bfa"/>
+  <ellipse cx="46" cy="19" rx="1.5" ry="1.5" fill="#a78bfa"/>
+  <circle cx="34" cy="18" r="0.7" fill="white" opacity="0.8"/>
+  <circle cx="46" cy="18" r="0.7" fill="white" opacity="0.8"/>
+  <!-- Shadow crown / headdress wisps -->
+  <path d="M30 10 Q28 4 32 2" stroke="#4c1d95" stroke-width="2" fill="none" opacity="0.7"/>
+  <path d="M40 8 Q40 2 40 0" stroke="#4c1d95" stroke-width="2" fill="none" opacity="0.7"/>
+  <path d="M50 10 Q52 4 48 2" stroke="#4c1d95" stroke-width="2" fill="none" opacity="0.7"/>
+</svg>

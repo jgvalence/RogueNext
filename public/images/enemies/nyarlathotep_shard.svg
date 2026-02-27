@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="aura" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#99f6e4" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#99f6e4" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#115e59"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="40" cy="43" rx="33" ry="31" fill="url(#aura)"/>
+  
+<path d="M16 78 L14 46 Q18 36 40 34 Q62 36 66 46 L64 78 Z" fill="url(#body)"/>
+<path d="M16 78 L20 59 L40 63 L60 59 L64 78" stroke="#5eead4" stroke-width="1.4" fill="none"/>
+<ellipse cx="40" cy="18" rx="14" ry="12" fill="#022c22"/>
+<ellipse cx="34" cy="18" rx="4" ry="3.2" fill="#5eead4"/><ellipse cx="46" cy="18" rx="4" ry="3.2" fill="#5eead4"/>
+<path d="M32 26 Q40 31 48 26" stroke="#5eead4" stroke-width="1.4" fill="none"/>
+<path d="M24 18 Q12 8 8 18 Q14 28 26 25" fill="#115e59"/><path d="M56 18 Q68 8 72 18 Q66 28 54 25" fill="#115e59"/>
+<polygon points="40,4 45,10 40,16 35,10" fill="#5eead4" opacity="0.8"/>
+<path d="M28 52 Q34 62 40 58 Q46 62 52 52" stroke="#115e59" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M28 14 L31 8 L36 13 L40 6 L44 13 L49 8 L52 14" fill="none" stroke="#5eead4" stroke-width="1.8" stroke-linecap="round"/><circle cx="40" cy="42" r="24" fill="none" stroke="#5eead4" stroke-opacity="0.3" stroke-width="1.1"/>
+</svg>

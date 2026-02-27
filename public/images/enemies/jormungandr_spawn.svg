@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="scale" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#166534"/>
+      <stop offset="100%" stop-color="#052e16"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#4ade80" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Ocean aura -->
+  <ellipse cx="40" cy="44" rx="36" ry="34" fill="url(#glow)"/>
+  <!-- Serpent coiled body -->
+  <path d="M10 60 Q4 44 14 32 Q24 20 40 22 Q56 20 66 32 Q76 44 70 60 Q60 72 50 68 Q40 72 30 68 Q20 72 10 60 Z" fill="url(#scale)" opacity="0.85"/>
+  <!-- Coil inner -->
+  <path d="M16 56 Q12 44 20 34 Q30 24 40 26 Q50 24 60 34 Q68 44 64 56 Q56 64 48 62 Q40 66 32 62 Q24 64 16 56 Z" fill="#052e16" opacity="0.7"/>
+  <!-- Scale pattern -->
+  <path d="M20 44 Q30 40 40 44 Q50 40 60 44" stroke="#166534" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M22 52 Q32 48 40 52 Q48 48 58 52" stroke="#166534" stroke-width="1" fill="none" opacity="0.4"/>
+  <!-- Head (front-facing) -->
+  <ellipse cx="40" cy="30" rx="18" ry="16" fill="url(#scale)"/>
+  <!-- Forehead scales -->
+  <path d="M28 24 Q40 20 52 24" stroke="#15803d" stroke-width="1" fill="none" opacity="0.5"/>
+  <!-- Serpent eyes (yellow, slit) -->
+  <ellipse cx="32" cy="28" rx="5.5" ry="5" fill="#1c0a00"/>
+  <ellipse cx="48" cy="28" rx="5.5" ry="5" fill="#1c0a00"/>
+  <ellipse cx="32" cy="28" rx="3.5" ry="3.5" fill="#ca8a04"/>
+  <ellipse cx="48" cy="28" rx="3.5" ry="3.5" fill="#ca8a04"/>
+  <ellipse cx="32" cy="28" rx="1" ry="3" fill="#1c0a00"/>
+  <ellipse cx="48" cy="28" rx="1" ry="3" fill="#1c0a00"/>
+  <circle cx="31" cy="26" r="1" fill="#fde68a" opacity="0.8"/>
+  <circle cx="47" cy="26" r="1" fill="#fde68a" opacity="0.8"/>
+  <!-- Nose (flat serpentine) -->
+  <ellipse cx="40" cy="34" rx="3" ry="2" fill="#052e16"/>
+  <!-- Open jaw with fangs -->
+  <path d="M28 38 Q40 46 52 38" fill="#0a1a08"/>
+  <rect x="35" y="37" width="2.5" height="5" rx="0.5" fill="#e2e8f0"/>
+  <rect x="42" y="37" width="2.5" height="5" rx="0.5" fill="#e2e8f0"/>
+  <!-- Forked tongue -->
+  <line x1="40" y1="44" x2="37" y2="50" stroke="#ef4444" stroke-width="2"/>
+  <line x1="40" y1="44" x2="43" y2="50" stroke="#ef4444" stroke-width="2"/>
+  <!-- Tail tip -->
+  <path d="M60 64 Q70 62 74 56" stroke="#166534" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M20 64 Q10 62 6 56" stroke="#166534" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="aura" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#bef264" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#bef264" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#15803d"/>
+      <stop offset="100%" stop-color="#166534"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="40" cy="43" rx="33" ry="31" fill="url(#aura)"/>
+  
+<path d="M40 7 C23 7 14 19 14 33 C14 49 18 59 22 65 C25 69 20 76 24 77 C27 78 29 72 32 74 C34 76 36 72 38 74 C40 76 42 72 44 74 C46 76 48 72 50 74 C53 76 55 72 58 74 C61 76 56 69 59 65 C63 59 66 49 66 33 C66 19 57 7 40 7 Z" fill="url(#body)" opacity="0.93"/>
+<ellipse cx="40" cy="35" rx="25" ry="28" fill="#bef264" opacity="0.2"/>
+<ellipse cx="40" cy="27" rx="16" ry="13" fill="#052e16" opacity="0.82"/>
+<ellipse cx="34" cy="27" rx="4.5" ry="3.8" fill="#84cc16"/>
+<ellipse cx="46" cy="27" rx="4.5" ry="3.8" fill="#84cc16"/>
+<path d="M33 38 Q40 43 47 38" stroke="#84cc16" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+
+  
+</svg>

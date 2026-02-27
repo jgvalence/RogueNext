@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="robe" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#166534"/>
+      <stop offset="100%" stop-color="#052e16"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </radialGradient>
+  </defs>
+  <!-- Robe body (wide, floor-length) -->
+  <path d="M20 38 L16 76 Q28 80 40 78 Q52 80 64 76 L60 38 Z" fill="url(#robe)"/>
+  <!-- Robe hem fold -->
+  <path d="M18 70 Q40 74 62 70" stroke="#052e16" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <!-- Oak leaf emblem on robe -->
+  <path d="M36 52 Q38 48 40 50 Q42 48 44 52 Q42 56 40 54 Q38 56 36 52 Z" fill="#15803d" opacity="0.6"/>
+  <!-- Robe belt (rope) -->
+  <path d="M24 50 Q40 54 56 50" stroke="#78350f" stroke-width="2" fill="none"/>
+  <circle cx="40" cy="52" r="2" fill="#78350f"/>
+  <!-- Sleeves / arms -->
+  <path d="M22 40 Q10 48 8 56" stroke="#166534" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M58 40 Q70 48 72 56" stroke="#166534" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <!-- Hand holding staff (right) -->
+  <circle cx="72" cy="57" r="4" fill="#c4a882"/>
+  <!-- Staff -->
+  <line x1="72" y1="16" x2="72" y2="70" stroke="#78350f" stroke-width="3" stroke-linecap="round"/>
+  <!-- Staff orb glow -->
+  <circle cx="72" cy="14" r="6" fill="url(#orb)" opacity="0.9"/>
+  <circle cx="72" cy="14" r="4" fill="#86efac"/>
+  <circle cx="70" cy="12" r="2" fill="white" opacity="0.7"/>
+  <!-- Staff branches -->
+  <path d="M72 20 Q68 16 64 18" stroke="#78350f" stroke-width="1.5" fill="none"/>
+  <path d="M72 22 Q76 18 78 20" stroke="#78350f" stroke-width="1.5" fill="none"/>
+  <!-- Left hand gesture -->
+  <circle cx="9" cy="57" r="4" fill="#c4a882"/>
+  <!-- Small nature particle from left hand -->
+  <circle cx="4" cy="52" r="1.5" fill="#86efac" opacity="0.7"/>
+  <circle cx="2" cy="55" r="1" fill="#86efac" opacity="0.5"/>
+  <!-- Hood -->
+  <path d="M22 34 Q22 20 40 16 Q58 20 58 34 Q50 28 40 28 Q30 28 22 34 Z" fill="url(#robe)"/>
+  <!-- Face (partially in shadow of hood) -->
+  <circle cx="40" cy="28" r="11" fill="#c4a882"/>
+  <!-- Shadow from hood -->
+  <ellipse cx="40" cy="24" rx="11" ry="6" fill="#052e16" opacity="0.3"/>
+  <!-- Young eyes (curious, green) -->
+  <ellipse cx="35" cy="28" rx="3.5" ry="3" fill="#052e16"/>
+  <ellipse cx="45" cy="28" rx="3.5" ry="3" fill="#052e16"/>
+  <ellipse cx="35" cy="28" rx="2" ry="2" fill="#16a34a"/>
+  <ellipse cx="45" cy="28" rx="2" ry="2" fill="#16a34a"/>
+  <circle cx="36" cy="27" r="0.9" fill="white" opacity="0.8"/>
+  <circle cx="46" cy="27" r="0.9" fill="white" opacity="0.8"/>
+  <!-- Nose (small) -->
+  <circle cx="40" cy="31" r="1" fill="#b07a48"/>
+  <!-- Gentle mouth (slight smile) -->
+  <path d="M36 34 Q40 37 44 34" stroke="#7a4a28" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <!-- Oak leaf on hood -->
+  <path d="M34 20 Q36 16 38 18 Q36 22 34 20Z" fill="#16a34a" opacity="0.7"/>
+  <path d="M42 20 Q44 16 46 18 Q44 22 42 20Z" fill="#16a34a" opacity="0.7"/>
+</svg>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c4a882"/>
+      <stop offset="100%" stop-color="#a07850"/>
+    </linearGradient>
+    <linearGradient id="fur" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+  </defs>
+  <!-- Goat legs (hairy) -->
+  <ellipse cx="32" cy="68" rx="9" ry="10" fill="url(#fur)"/>
+  <ellipse cx="48" cy="68" rx="9" ry="10" fill="url(#fur)"/>
+  <!-- Hooves -->
+  <ellipse cx="30" cy="76" rx="6" ry="3" fill="#1c0a00"/>
+  <ellipse cx="50" cy="76" rx="6" ry="3" fill="#1c0a00"/>
+  <!-- Fur texture legs -->
+  <line x1="28" y1="60" x2="25" y2="72" stroke="#451a03" stroke-width="1.2" opacity="0.6"/>
+  <line x1="32" y1="58" x2="30" y2="72" stroke="#451a03" stroke-width="1.2" opacity="0.6"/>
+  <line x1="48" y1="58" x2="50" y2="72" stroke="#451a03" stroke-width="1.2" opacity="0.6"/>
+  <line x1="52" y1="60" x2="55" y2="72" stroke="#451a03" stroke-width="1.2" opacity="0.6"/>
+  <!-- Waist / hip fur band -->
+  <ellipse cx="40" cy="56" rx="16" ry="8" fill="url(#fur)"/>
+  <!-- Torso (human upper) -->
+  <ellipse cx="40" cy="42" rx="15" ry="17" fill="url(#skin)"/>
+  <!-- Chest muscle lines -->
+  <path d="M34 36 Q40 40 46 36" stroke="#a07850" stroke-width="1.2" fill="none" opacity="0.5"/>
+  <!-- Arms -->
+  <path d="M26 40 Q16 50 18 58" stroke="#c4a882" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M54 40 Q64 50 62 58" stroke="#c4a882" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <!-- Hands -->
+  <circle cx="18" cy="59" r="4" fill="#a07850"/>
+  <circle cx="62" cy="59" r="4" fill="#a07850"/>
+  <!-- Beard -->
+  <path d="M34 30 Q40 36 46 30" fill="#78350f"/>
+  <path d="M36 30 Q40 38 44 30 Q42 34 40 36 Q38 34 36 30" fill="#5a2a0a"/>
+  <!-- Head -->
+  <circle cx="40" cy="22" r="15" fill="url(#skin)"/>
+  <!-- Ears (pointy goat-like) -->
+  <path d="M25 18 L20 10 L28 16" fill="#c4a882"/>
+  <path d="M55 18 L60 10 L52 16" fill="#c4a882"/>
+  <!-- Goat horns (curved) -->
+  <path d="M30 14 Q22 4 28 2 Q32 6 34 14" fill="none" stroke="#451a03" stroke-width="4" stroke-linecap="round"/>
+  <path d="M50 14 Q58 4 52 2 Q48 6 46 14" fill="none" stroke="#451a03" stroke-width="4" stroke-linecap="round"/>
+  <!-- Eyes (mischievous, amber) -->
+  <ellipse cx="34" cy="21" rx="4.5" ry="4" fill="#92400e"/>
+  <ellipse cx="46" cy="21" rx="4.5" ry="4" fill="#92400e"/>
+  <ellipse cx="34" cy="21" rx="2.5" ry="2.5" fill="#1c1917"/>
+  <ellipse cx="46" cy="21" rx="2.5" ry="2.5" fill="#1c1917"/>
+  <circle cx="35" cy="20" r="1" fill="white" opacity="0.8"/>
+  <circle cx="47" cy="20" r="1" fill="white" opacity="0.8"/>
+  <!-- Nose (broad) -->
+  <ellipse cx="40" cy="26" rx="3" ry="2" fill="#a07850"/>
+  <!-- Wide grin -->
+  <path d="M33 29 Q40 35 47 29" stroke="#5a2a0a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M35 29 Q36 32 38 30" fill="#5a2a0a"/>
+  <path d="M42 30 Q44 32 45 29" fill="#5a2a0a"/>
+</svg>

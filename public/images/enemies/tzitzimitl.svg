@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="void" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#1e1028"/>
+      <stop offset="100%" stop-color="#080410"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#dc2626" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#dc2626" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Void aura -->
+  <ellipse cx="40" cy="42" rx="34" ry="36" fill="url(#glow)"/>
+  <!-- Star spines (8-pointed star frame) -->
+  <polygon points="40,4 43,16 55,12 46,22 58,26 46,28 52,40 40,34 28,40 34,28 22,26 34,22 25,12 37,16" fill="#4a0404" opacity="0.8"/>
+  <!-- Skeletal torso -->
+  <rect x="30" y="30" width="20" height="22" rx="3" fill="url(#void)"/>
+  <!-- Rib cage lines -->
+  <path d="M33 35 Q40 37 47 35" stroke="#7f1d1d" stroke-width="1.2" fill="none"/>
+  <path d="M33 39 Q40 41 47 39" stroke="#7f1d1d" stroke-width="1.2" fill="none"/>
+  <path d="M33 43 Q40 45 47 43" stroke="#7f1d1d" stroke-width="1.2" fill="none"/>
+  <!-- Skeletal arm left -->
+  <line x1="30" y1="32" x2="12" y2="44" stroke="#4a0404" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="10" cy="46" rx="4" ry="3" fill="#2d0101"/>
+  <!-- Clawed fingers left -->
+  <line x1="8" y1="44" x2="5" y2="42" stroke="#7f1d1d" stroke-width="1.2"/>
+  <line x1="10" y1="43" x2="8" y2="40" stroke="#7f1d1d" stroke-width="1.2"/>
+  <line x1="12" y1="45" x2="11" y2="42" stroke="#7f1d1d" stroke-width="1.2"/>
+  <!-- Skeletal arm right -->
+  <line x1="50" y1="32" x2="68" y2="44" stroke="#4a0404" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="70" cy="46" rx="4" ry="3" fill="#2d0101"/>
+  <!-- Clawed fingers right -->
+  <line x1="72" y1="44" x2="75" y2="42" stroke="#7f1d1d" stroke-width="1.2"/>
+  <line x1="70" y1="43" x2="72" y2="40" stroke="#7f1d1d" stroke-width="1.2"/>
+  <line x1="68" y1="45" x2="69" y2="42" stroke="#7f1d1d" stroke-width="1.2"/>
+  <!-- Pelvis/legs -->
+  <rect x="28" y="50" width="10" height="16" rx="2" fill="url(#void)"/>
+  <rect x="42" y="50" width="10" height="16" rx="2" fill="url(#void)"/>
+  <!-- Skull head -->
+  <ellipse cx="40" cy="20" rx="13" ry="14" fill="url(#void)"/>
+  <ellipse cx="40" cy="18" rx="10" ry="11" fill="#1e1028"/>
+  <!-- Star headdress -->
+  <polygon points="40,6 42,12 48,10 44,15 50,16 44,17 46,23 40,19 34,23 36,17 30,16 36,15 32,10 38,12" fill="#7f1d1d"/>
+  <!-- Glowing skull eyes -->
+  <ellipse cx="34" cy="20" rx="5" ry="4" fill="#7f1d1d"/>
+  <ellipse cx="46" cy="20" rx="5" ry="4" fill="#7f1d1d"/>
+  <ellipse cx="34" cy="20" rx="3" ry="2.5" fill="#ef4444"/>
+  <ellipse cx="46" cy="20" rx="3" ry="2.5" fill="#ef4444"/>
+  <circle cx="34" cy="20" r="1.2" fill="#fca5a5"/>
+  <circle cx="46" cy="20" r="1.2" fill="#fca5a5"/>
+  <!-- Nasal cavity -->
+  <ellipse cx="40" cy="24" rx="2" ry="1.5" fill="#080410"/>
+  <!-- Teeth -->
+  <rect x="35" y="27" width="2.5" height="3" rx="0.5" fill="#e2e8f0"/>
+  <rect x="38.5" y="27" width="3" height="3.5" rx="0.5" fill="#e2e8f0"/>
+  <rect x="42.5" y="27" width="2.5" height="3" rx="0.5" fill="#e2e8f0"/>
+</svg>

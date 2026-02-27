@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="fur" cx="45%" cy="38%" r="60%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#0891b2" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#0891b2" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="40" cy="42" rx="36" ry="34" fill="url(#glow)"/>
+  <ellipse cx="40" cy="64" rx="30" ry="15" fill="#0f172a"/>
+  <ellipse cx="18" cy="72" rx="11" ry="6" fill="#0f172a"/>
+  <ellipse cx="62" cy="72" rx="11" ry="6" fill="#0f172a"/>
+  <rect x="26" y="46" width="28" height="20" rx="6" fill="url(#fur)"/>
+  <ellipse cx="40" cy="32" rx="26" ry="22" fill="url(#fur)"/>
+  <polygon points="14,24 20,2 30,24" fill="#0f172a"/>
+  <polygon points="16,24 21,6 29,24" fill="#1e3a5f"/>
+  <polygon points="50,24 60,2 66,24" fill="#0f172a"/>
+  <polygon points="51,24 59,6 64,24" fill="#1e3a5f"/>
+  <ellipse cx="40" cy="44" rx="16" ry="11" fill="#1e293b"/>
+  <ellipse cx="40" cy="36" rx="8" ry="5" fill="#0f172a"/>
+  <path d="M24 46 Q40 54 56 46" fill="#020617"/>
+  <polygon points="29,46 27,57 32,46" fill="#e2e8f0"/>
+  <polygon points="36,46 34,59 38,46" fill="#f1f5f9"/>
+  <polygon points="42,46 40,59 44,46" fill="#f1f5f9"/>
+  <polygon points="49,46 47,57 52,46" fill="#e2e8f0"/>
+  <polygon points="30,46 32,40 34,46" fill="#e2e8f0"/>
+  <polygon points="38,46 40,39 42,46" fill="#e2e8f0"/>
+  <polygon points="46,46 48,40 50,46" fill="#e2e8f0"/>
+  <ellipse cx="28" cy="26" rx="8" ry="6" fill="#0c4a6e"/>
+  <ellipse cx="52" cy="26" rx="8" ry="6" fill="#0c4a6e"/>
+  <ellipse cx="28" cy="26" rx="5" ry="4" fill="#38bdf8"/>
+  <ellipse cx="52" cy="26" rx="5" ry="4" fill="#38bdf8"/>
+  <ellipse cx="28" cy="26" rx="2.5" ry="2" fill="#e0f2fe"/>
+  <ellipse cx="52" cy="26" rx="2.5" ry="2" fill="#e0f2fe"/>
+  <circle cx="29" cy="25" r="1" fill="white" opacity="0.9"/>
+  <circle cx="53" cy="25" r="1" fill="white" opacity="0.9"/>
+  <line x1="14" y1="44" x2="6" y2="50" stroke="#7dd3fc" stroke-width="1.5" opacity="0.5"/>
+  <line x1="10" y1="47" x2="4" y2="43" stroke="#7dd3fc" stroke-width="1" opacity="0.4"/>
+  <line x1="66" y1="44" x2="74" y2="50" stroke="#7dd3fc" stroke-width="1.5" opacity="0.5"/>
+  <line x1="70" y1="47" x2="76" y2="43" stroke="#7dd3fc" stroke-width="1" opacity="0.4"/>
+  <line x1="38" y1="14" x2="42" y2="14" stroke="#38bdf8" stroke-width="1.2" opacity="0.6"/>
+  <line x1="40" y1="12" x2="40" y2="18" stroke="#38bdf8" stroke-width="1.2" opacity="0.6"/>
+  <line x1="37" y1="17" x2="43" y2="17" stroke="#38bdf8" stroke-width="1" opacity="0.4"/>
+</svg>

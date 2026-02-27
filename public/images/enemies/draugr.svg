@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7f8ea3"/>
+      <stop offset="100%" stop-color="#2e3d50"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#0891b2" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0891b2" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="40" cy="42" rx="34" ry="30" fill="url(#glow)"/>
+  <!-- Legs -->
+  <rect x="25" y="60" width="10" height="17" rx="2" fill="#2e3d50"/>
+  <rect x="45" y="60" width="10" height="17" rx="2" fill="#2e3d50"/>
+  <!-- Tattered cape/cloak -->
+  <path d="M18 38 Q14 52 16 68 L24 68 Q22 54 26 42 Z" fill="#1e293b" opacity="0.85"/>
+  <path d="M62 38 Q66 52 64 68 L56 68 Q58 54 54 42 Z" fill="#1e293b" opacity="0.85"/>
+  <!-- Body -->
+  <rect x="24" y="34" width="32" height="28" rx="4" fill="url(#skin)"/>
+  <!-- Rust/decay stains on armour -->
+  <rect x="30" y="40" width="20" height="14" rx="2" fill="#374151" opacity="0.6"/>
+  <line x1="27" y1="46" x2="53" y2="46" stroke="#1e293b" stroke-width="1" opacity="0.5"/>
+  <!-- Arms -->
+  <rect x="8" y="34" width="17" height="9" rx="3" fill="#2e3d50"/>
+  <rect x="55" y="34" width="17" height="9" rx="3" fill="#2e3d50"/>
+  <!-- Sword (right arm) -->
+  <rect x="66" y="18" width="5" height="32" rx="2" fill="#94a3b8"/>
+  <rect x="62" y="29" width="13" height="3" rx="1" fill="#64748b"/>
+  <!-- Helmet -->
+  <path d="M22 34 L22 20 Q22 10 40 10 Q58 10 58 20 L58 34 Z" fill="url(#skin)"/>
+  <!-- Helm nasal guard -->
+  <rect x="37" y="18" width="6" height="14" rx="2" fill="#2e3d50"/>
+  <!-- Dead glowing eyes (pale blue) -->
+  <rect x="26" y="22" width="10" height="5" rx="2" fill="#0f172a"/>
+  <rect x="44" y="22" width="10" height="5" rx="2" fill="#0f172a"/>
+  <rect x="28" y="23" width="7" height="3" rx="1" fill="#7dd3fc" opacity="0.8"/>
+  <rect x="46" y="23" width="7" height="3" rx="1" fill="#7dd3fc" opacity="0.8"/>
+  <!-- Decayed mouth (open) -->
+  <rect x="32" y="29" width="16" height="4" rx="2" fill="#0f172a"/>
+  <rect x="34" y="30" width="5" height="2" rx="1" fill="#94a3b8" opacity="0.5"/>
+  <rect x="41" y="30" width="5" height="2" rx="1" fill="#94a3b8" opacity="0.5"/>
+</svg>

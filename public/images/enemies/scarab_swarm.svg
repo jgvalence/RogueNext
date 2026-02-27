@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="aura" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#fde047" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#fde047" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a16207"/>
+      <stop offset="100%" stop-color="#854d0e"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="40" cy="43" rx="33" ry="31" fill="url(#aura)"/>
+  
+<ellipse cx="40" cy="43" rx="10" ry="12" fill="url(#body)"/>
+<ellipse cx="40" cy="30" rx="8" ry="7" fill="#854d0e"/>
+<ellipse cx="40" cy="55" rx="12" ry="9" fill="#854d0e"/>
+<line x1="30" y1="38" x2="17" y2="31" stroke="#a16207" stroke-width="2" stroke-linecap="round"/>
+<line x1="30" y1="46" x2="15" y2="46" stroke="#a16207" stroke-width="2" stroke-linecap="round"/>
+<line x1="30" y1="53" x2="17" y2="60" stroke="#a16207" stroke-width="2" stroke-linecap="round"/>
+<line x1="50" y1="38" x2="63" y2="31" stroke="#a16207" stroke-width="2" stroke-linecap="round"/>
+<line x1="50" y1="46" x2="65" y2="46" stroke="#a16207" stroke-width="2" stroke-linecap="round"/>
+<line x1="50" y1="53" x2="63" y2="60" stroke="#a16207" stroke-width="2" stroke-linecap="round"/>
+<circle cx="23" cy="24" r="5" fill="#a16207"/><circle cx="57" cy="24" r="5" fill="#a16207"/><circle cx="22" cy="62" r="4" fill="#854d0e"/><circle cx="58" cy="62" r="4" fill="#854d0e"/>
+<ellipse cx="36" cy="29" rx="2.8" ry="2.3" fill="#facc15"/><ellipse cx="44" cy="29" rx="2.8" ry="2.3" fill="#facc15"/>
+  
+</svg>

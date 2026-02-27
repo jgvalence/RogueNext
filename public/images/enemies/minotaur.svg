@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="hide" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#57534e"/>
+      <stop offset="100%" stop-color="#1c1917"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#b45309" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="40" cy="42" rx="34" ry="32" fill="url(#glow)"/>
+  <!-- Legs -->
+  <rect x="24" y="62" width="12" height="16" rx="3" fill="#1c1917"/>
+  <rect x="44" y="62" width="12" height="16" rx="3" fill="#1c1917"/>
+  <!-- Body (massive torso) -->
+  <ellipse cx="40" cy="54" rx="26" ry="16" fill="url(#hide)"/>
+  <!-- Labyrinth markings on chest -->
+  <path d="M30 50 L36 50 L36 56 L44 56 L44 50 L50 50" fill="none" stroke="#78716c" stroke-width="1" opacity="0.5"/>
+  <!-- Arms (huge, raised) -->
+  <ellipse cx="8" cy="42" rx="14" ry="9" fill="#292524" transform="rotate(-20 8 42)"/>
+  <ellipse cx="72" cy="42" rx="14" ry="9" fill="#292524" transform="rotate(20 72 42)"/>
+  <!-- Fists/knuckles -->
+  <ellipse cx="4" cy="52" rx="9" ry="7" fill="#3c3532"/>
+  <ellipse cx="76" cy="52" rx="9" ry="7" fill="#3c3532"/>
+  <!-- Neck (bull-thick) -->
+  <ellipse cx="40" cy="40" rx="18" ry="10" fill="url(#hide)"/>
+  <!-- BULL HEAD -->
+  <ellipse cx="40" cy="24" rx="22" ry="18" fill="url(#hide)"/>
+  <!-- HORNS (wide, curved) -->
+  <path d="M18 18 Q8 6 14 2 Q20 4 22 14" fill="#3c3532" stroke="#1c1917" stroke-width="1"/>
+  <path d="M62 18 Q72 6 66 2 Q60 4 58 14" fill="#3c3532" stroke="#1c1917" stroke-width="1"/>
+  <!-- Horn tips (sharp) -->
+  <circle cx="14" cy="2" r="3" fill="#78716c"/>
+  <circle cx="66" cy="2" r="3" fill="#78716c"/>
+  <!-- Snout (bull muzzle) -->
+  <ellipse cx="40" cy="32" rx="14" ry="10" fill="#292524"/>
+  <!-- Nostrils -->
+  <circle cx="35" cy="31" r="3" fill="#1c1917"/>
+  <circle cx="45" cy="31" r="3" fill="#1c1917"/>
+  <!-- Eyes (red, angry) -->
+  <ellipse cx="29" cy="21" rx="6" ry="5" fill="#1c1917"/>
+  <ellipse cx="51" cy="21" rx="6" ry="5" fill="#1c1917"/>
+  <circle cx="29" cy="21" r="3.5" fill="#b91c1c"/>
+  <circle cx="51" cy="21" r="3.5" fill="#b91c1c"/>
+  <circle cx="30" cy="20" r="1.2" fill="white" opacity="0.6"/>
+  <circle cx="52" cy="20" r="1.2" fill="white" opacity="0.6"/>
+  <!-- Mouth / snort -->
+  <path d="M30 37 Q40 42 50 37" fill="none" stroke="#1c1917" stroke-width="2" stroke-linecap="round"/>
+</svg>

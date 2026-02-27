@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="petrify" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#4ade80" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="scale" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#166534"/>
+      <stop offset="100%" stop-color="#052e16"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4d7c5f"/>
+      <stop offset="100%" stop-color="#1a4731"/>
+    </linearGradient>
+  </defs>
+  <!-- Petrifying aura glow -->
+  <ellipse cx="40" cy="36" rx="36" ry="34" fill="url(#petrify)"/>
+  <!-- Snake hair (many serpent heads radiating outward) -->
+  <!-- Snake 1 (top-left) -->
+  <path d="M32 16 Q24 8 16 4" stroke="#166534" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="15" cy="3" rx="3" ry="2" fill="#166534"/>
+  <ellipse cx="13" cy="2" rx="1.5" ry="1" fill="#052e16"/>
+  <!-- Snake 2 (top) -->
+  <path d="M38 14 Q38 6 38 2" stroke="#15803d" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="38" cy="1" rx="2" ry="1.5" fill="#15803d"/>
+  <!-- Snake 3 (top-right) -->
+  <path d="M48 16 Q56 8 64 4" stroke="#166534" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="65" cy="3" rx="3" ry="2" fill="#166534"/>
+  <ellipse cx="67" cy="2" rx="1.5" ry="1" fill="#052e16"/>
+  <!-- Snake 4 (left) -->
+  <path d="M26 22 Q16 18 8 16" stroke="#15803d" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="7" cy="15" rx="2.5" ry="1.5" fill="#15803d"/>
+  <!-- Snake 5 (right) -->
+  <path d="M54 22 Q64 18 72 16" stroke="#15803d" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="73" cy="15" rx="2.5" ry="1.5" fill="#15803d"/>
+  <!-- Snake 6 (top-left 2) -->
+  <path d="M29 18 Q20 12 14 8" stroke="#166534" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="13" cy="7" rx="2" ry="1.5" fill="#166534"/>
+  <!-- Snake 7 (top-right 2) -->
+  <path d="M51 18 Q60 12 66 8" stroke="#166534" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="67" cy="7" rx="2" ry="1.5" fill="#166534"/>
+  <!-- Snake tongues -->
+  <line x1="13" y1="2" x2="11" y2="0" stroke="#ef4444" stroke-width="1"/>
+  <line x1="13" y1="2" x2="15" y2="0" stroke="#ef4444" stroke-width="1"/>
+  <line x1="65" y1="3" x2="63" y2="1" stroke="#ef4444" stroke-width="1"/>
+  <line x1="65" y1="3" x2="67" y2="1" stroke="#ef4444" stroke-width="1"/>
+  <!-- Torso / shoulders -->
+  <ellipse cx="40" cy="54" rx="18" ry="14" fill="url(#scale)"/>
+  <!-- Scale pattern on body -->
+  <path d="M28 50 Q40 54 52 50" stroke="#15803d" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M26 56 Q40 60 54 56" stroke="#15803d" stroke-width="1" fill="none" opacity="0.5"/>
+  <!-- Snake-like lower body -->
+  <path d="M32 64 Q28 72 30 78" stroke="#166534" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M48 64 Q52 72 50 78" stroke="#166534" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <!-- Face (green-tinged, fierce) -->
+  <circle cx="40" cy="32" r="16" fill="url(#skin)"/>
+  <!-- Scale texture on face -->
+  <path d="M28 30 Q40 32 52 30" stroke="#166534" stroke-width="0.8" fill="none" opacity="0.4"/>
+  <!-- Petrifying eyes (blazing gold) -->
+  <ellipse cx="33" cy="30" rx="5.5" ry="5" fill="#052e16"/>
+  <ellipse cx="47" cy="30" rx="5.5" ry="5" fill="#052e16"/>
+  <ellipse cx="33" cy="30" rx="3.5" ry="3.5" fill="#ca8a04"/>
+  <ellipse cx="47" cy="30" rx="3.5" ry="3.5" fill="#ca8a04"/>
+  <!-- Slit pupils (reptile) -->
+  <ellipse cx="33" cy="30" rx="1" ry="3" fill="#1c0a00"/>
+  <ellipse cx="47" cy="30" rx="1" ry="3" fill="#1c0a00"/>
+  <circle cx="32" cy="28" r="1" fill="#fde68a" opacity="0.7"/>
+  <circle cx="46" cy="28" r="1" fill="#fde68a" opacity="0.7"/>
+  <!-- Nose (flat serpentine) -->
+  <ellipse cx="40" cy="35" rx="2" ry="1.5" fill="#166534"/>
+  <!-- Fanged mouth (open snarl) -->
+  <path d="M32 39 Q40 44 48 39" fill="#052e16"/>
+  <path d="M32 39 Q40 44 48 39" stroke="#052e16" stroke-width="1" fill="none"/>
+  <rect x="36" y="38" width="2" height="4" rx="0.5" fill="#e2e8f0"/>
+  <rect x="42" y="38" width="2" height="4" rx="0.5" fill="#e2e8f0"/>
+  <!-- Tongue -->
+  <line x1="40" y1="43" x2="38" y2="46" stroke="#ef4444" stroke-width="1.5"/>
+  <line x1="40" y1="43" x2="42" y2="46" stroke="#ef4444" stroke-width="1.5"/>
+</svg>

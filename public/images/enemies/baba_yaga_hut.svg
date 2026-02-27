@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="aura" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#bfdbfe" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#bfdbfe" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="40" cy="43" rx="33" ry="31" fill="url(#aura)"/>
+  
+<rect x="18" y="26" width="44" height="34" rx="3" fill="url(#body)"/>
+<path d="M14 30 L40 10 L66 30" stroke="#1d4ed8" stroke-width="6" fill="none" stroke-linecap="round"/>
+<rect x="26" y="38" width="10" height="10" rx="2" fill="#172554"/>
+<rect x="44" y="38" width="10" height="10" rx="2" fill="#172554"/>
+<path d="M32 54 Q40 60 48 54" stroke="#172554" stroke-width="2" fill="none"/>
+<path d="M24 60 Q20 68 24 74" stroke="#172554" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M56 60 Q60 68 56 74" stroke="#172554" stroke-width="4" fill="none" stroke-linecap="round"/>
+<circle cx="30" cy="43" r="2" fill="#93c5fd"/><circle cx="50" cy="43" r="2" fill="#93c5fd"/>
+  
+</svg>

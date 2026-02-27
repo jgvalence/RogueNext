@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="aura" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#99f6e4" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#99f6e4" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#115e59"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="40" cy="43" rx="33" ry="31" fill="url(#aura)"/>
+  
+<ellipse cx="40" cy="45" rx="18" ry="16" fill="url(#body)"/>
+<ellipse cx="40" cy="30" rx="14" ry="12" fill="#115e59"/>
+<path d="M22 45 Q14 40 12 49 Q17 49 22 53" fill="#115e59"/>
+<path d="M58 45 Q66 40 68 49 Q63 49 58 53" fill="#115e59"/>
+<path d="M30 60 L26 70 L34 63" fill="#115e59"/><path d="M50 60 L54 70 L46 63" fill="#115e59"/>
+<ellipse cx="34" cy="29" rx="3.5" ry="2.8" fill="#5eead4"/><ellipse cx="46" cy="29" rx="3.5" ry="2.8" fill="#5eead4"/>
+<path d="M33 38 Q40 44 47 38" stroke="#ccfbf1" stroke-width="1.1" fill="none"/>
+  
+</svg>

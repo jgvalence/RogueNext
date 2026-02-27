@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="dark_aura" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#14532d" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#14532d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shadow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a2e1a"/>
+      <stop offset="100%" stop-color="#061206"/>
+    </linearGradient>
+  </defs>
+  <!-- Ancient power aura -->
+  <ellipse cx="40" cy="40" rx="38" ry="38" fill="url(#dark_aura)"/>
+  <!-- Shadow tendrils at base -->
+  <path d="M30 68 Q20 72 12 76" stroke="#0a1a0a" stroke-width="6" fill="none" opacity="0.7" stroke-linecap="round"/>
+  <path d="M50 68 Q60 72 68 76" stroke="#0a1a0a" stroke-width="6" fill="none" opacity="0.7" stroke-linecap="round"/>
+  <path d="M40 70 Q38 75 36 78" stroke="#0a1a0a" stroke-width="4" fill="none" opacity="0.5"/>
+  <path d="M40 70 Q42 75 44 78" stroke="#0a1a0a" stroke-width="4" fill="none" opacity="0.5"/>
+  <!-- Massive club (Great Lorg Mór) held right -->
+  <rect x="60" y="10" width="10" height="48" rx="4" fill="#2d1a00"/>
+  <ellipse cx="65" cy="10" rx="7" ry="9" fill="#3d2400"/>
+  <!-- Club knot details -->
+  <path d="M60 20 Q65 18 70 20" stroke="#5a3800" stroke-width="1.5" fill="none"/>
+  <path d="M60 28 Q65 26 70 28" stroke="#5a3800" stroke-width="1.5" fill="none"/>
+  <!-- Cauldron motif on chest -->
+  <path d="M28 50 Q26 58 32 62 Q40 66 48 62 Q54 58 52 50 Z" fill="#1a2e1a"/>
+  <path d="M28 50 L52 50" stroke="#14532d" stroke-width="1.5"/>
+  <circle cx="40" cy="58" r="4" fill="#052e16"/>
+  <circle cx="40" cy="58" r="2.5" fill="#14532d" opacity="0.8"/>
+  <!-- Massive body (great father god — enormous) -->
+  <ellipse cx="40" cy="48" rx="22" ry="20" fill="url(#shadow)"/>
+  <!-- Shadow cloak -->
+  <path d="M18 40 Q10 52 14 68 Q20 66 22 58 L28 48 Z" fill="#0a1a0a"/>
+  <path d="M62 40 Q70 52 66 68 Q60 66 58 58 L52 48 Z" fill="#0a1a0a"/>
+  <!-- Left massive arm -->
+  <path d="M18 44 Q6 50 4 60" stroke="#1a2e1a" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <circle cx="5" cy="62" r="6" fill="#1a2e1a"/>
+  <!-- Head (huge, shadowy) -->
+  <circle cx="40" cy="24" r="18" fill="url(#shadow)"/>
+  <!-- Ancient beard (massive) -->
+  <path d="M26 32 Q28 44 40 48 Q52 44 54 32" fill="#061206"/>
+  <path d="M28 36 Q32 42 40 44 Q48 42 52 36" fill="#0a1a0a"/>
+  <line x1="32" y1="38" x2="34" y2="44" stroke="#14532d" stroke-width="1" opacity="0.5"/>
+  <line x1="36" y1="38" x2="37" y2="45" stroke="#14532d" stroke-width="1" opacity="0.5"/>
+  <line x1="40" y1="38" x2="40" y2="45" stroke="#14532d" stroke-width="1" opacity="0.5"/>
+  <line x1="44" y1="38" x2="43" y2="45" stroke="#14532d" stroke-width="1" opacity="0.5"/>
+  <line x1="48" y1="38" x2="46" y2="44" stroke="#14532d" stroke-width="1" opacity="0.5"/>
+  <!-- Ancient eyes (glowing green-gold) -->
+  <ellipse cx="33" cy="22" rx="5.5" ry="5" fill="#061206"/>
+  <ellipse cx="47" cy="22" rx="5.5" ry="5" fill="#061206"/>
+  <ellipse cx="33" cy="22" rx="3.5" ry="3.5" fill="#15803d"/>
+  <ellipse cx="47" cy="22" rx="3.5" ry="3.5" fill="#15803d"/>
+  <ellipse cx="33" cy="22" rx="2" ry="2" fill="#4ade80"/>
+  <ellipse cx="47" cy="22" rx="2" ry="2" fill="#4ade80"/>
+  <circle cx="34" cy="21" r="0.9" fill="white" opacity="0.9"/>
+  <circle cx="48" cy="21" r="0.9" fill="white" opacity="0.9"/>
+  <!-- Crown / antlers suggestion -->
+  <path d="M32 10 Q28 4 24 2 Q26 8 30 12" fill="none" stroke="#14532d" stroke-width="2.5"/>
+  <path d="M26 6 Q22 2 20 4" stroke="#14532d" stroke-width="1.5" fill="none"/>
+  <path d="M48 10 Q52 4 56 2 Q54 8 50 12" fill="none" stroke="#14532d" stroke-width="2.5"/>
+  <path d="M54 6 Q58 2 60 4" stroke="#14532d" stroke-width="1.5" fill="none"/>
+</svg>

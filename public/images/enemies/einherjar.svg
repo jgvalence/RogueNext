@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="armor" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4d8e0"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <radialGradient id="valhalla" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Valhalla golden aura -->
+  <ellipse cx="40" cy="38" rx="34" ry="34" fill="url(#valhalla)"/>
+  <!-- Legs -->
+  <rect x="27" y="58" width="11" height="18" rx="2" fill="#475569"/>
+  <rect x="42" y="58" width="11" height="18" rx="2" fill="#475569"/>
+  <!-- Boot cuffs -->
+  <rect x="26" y="72" width="13" height="4" rx="1" fill="#334155"/>
+  <rect x="41" y="72" width="13" height="4" rx="1" fill="#334155"/>
+  <!-- Body armor (ornate) -->
+  <rect x="20" y="34" width="40" height="26" rx="4" fill="url(#armor)"/>
+  <!-- Chest knotwork -->
+  <path d="M32 40 Q40 36 48 40 Q44 46 40 44 Q36 46 32 40 Z" fill="#ca8a04" opacity="0.6"/>
+  <circle cx="40" cy="42" r="3" fill="#ca8a04"/>
+  <!-- Chainmail shoulder guards -->
+  <ellipse cx="16" cy="38" rx="9" ry="8" fill="#64748b"/>
+  <ellipse cx="64" cy="38" rx="9" ry="8" fill="#64748b"/>
+  <!-- Round shield left arm -->
+  <circle cx="10" cy="46" r="10" fill="#334155"/>
+  <circle cx="10" cy="46" r="7" fill="#1e3a8a"/>
+  <circle cx="10" cy="46" r="4" fill="#2563eb"/>
+  <line x1="10" y1="36" x2="10" y2="56" stroke="#93c5fd" stroke-width="1.2"/>
+  <line x1="0" y1="46" x2="20" y2="46" stroke="#93c5fd" stroke-width="1.2"/>
+  <!-- Axe right arm -->
+  <line x1="62" y1="16" x2="62" y2="66" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+  <path d="M62 22 Q72 18 74 26 Q72 34 62 32 Z" fill="url(#armor)"/>
+  <!-- Winged helmet -->
+  <path d="M22 34 L22 18 Q22 8 40 8 Q58 8 58 18 L58 34 Z" fill="url(#armor)"/>
+  <!-- Helmet visor -->
+  <rect x="26" y="22" width="28" height="5" rx="2" fill="#1e293b"/>
+  <!-- Golden eyes through visor -->
+  <rect x="30" y="23" width="8" height="3" rx="1" fill="#fbbf24" opacity="0.9"/>
+  <rect x="42" y="23" width="8" height="3" rx="1" fill="#fbbf24" opacity="0.9"/>
+  <!-- Wings on helmet -->
+  <path d="M22 18 Q14 12 10 8 Q14 16 18 20" fill="#e2e8f0"/>
+  <path d="M22 20 Q12 16 8 14 Q12 20 16 22" fill="#d4d8e0"/>
+  <path d="M58 18 Q66 12 70 8 Q66 16 62 20" fill="#e2e8f0"/>
+  <path d="M58 20 Q68 16 72 14 Q68 20 64 22" fill="#d4d8e0"/>
+  <!-- Helmet crest (gold) -->
+  <rect x="37" y="4" width="6" height="10" rx="3" fill="#ca8a04"/>
+  <!-- Rune tattoo on chest -->
+  <path d="M36 48 L38 52 L40 48 L42 52 L44 48" stroke="#1d4ed8" stroke-width="1" fill="none" opacity="0.6"/>
+</svg>

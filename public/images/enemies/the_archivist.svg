@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="ta_robe" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <radialGradient id="ta_aura" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ta_pages" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fef9e7"/>
+      <stop offset="100%" stop-color="#d4c89a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="40" cy="42" r="34" fill="url(#ta_aura)"/>
+  <path d="M12 79 L11 47 Q14 37 40 35 Q66 37 69 47 L68 79 Z" fill="url(#ta_robe)"/>
+  <path d="M12 79 L16 59 L40 63 L64 59 L68 79" stroke="#f59e0b" stroke-width="1.4" fill="none"/>
+  <rect x="21" y="50" width="38" height="5" rx="1" fill="#334155" opacity="0.85"/>
+  <rect x="25" y="58" width="30" height="4" rx="1" fill="#334155" opacity="0.7"/>
+  <rect x="26" y="25" width="28" height="16" rx="4" fill="#1f2937"/>
+  <circle cx="40" cy="33" r="7.6" fill="none" stroke="#f59e0b" stroke-width="1.3"/>
+  <path d="M32 33 L36 29 L40 33 L44 29 L48 33 L44 37 L40 33 L36 37 Z" fill="none" stroke="#f59e0b" stroke-width="1"/>
+  <path d="M26 31 L8 45 L12 50 L30 38" fill="#1f2937"/>
+  <path d="M54 31 L72 45 L68 50 L50 38" fill="#1f2937"/>
+  <rect x="1" y="45" width="14" height="9" rx="2" fill="#78350f"/>
+  <rect x="3" y="47" width="10" height="5" rx="1" fill="url(#ta_pages)"/>
+  <line x1="4" y1="49" x2="12" y2="49" stroke="#b8a860" stroke-width="0.7"/>
+  <rect x="65" y="45" width="14" height="9" rx="2" fill="#78350f"/>
+  <rect x="67" y="47" width="10" height="5" rx="1" fill="url(#ta_pages)"/>
+  <line x1="68" y1="49" x2="76" y2="49" stroke="#b8a860" stroke-width="0.7"/>
+  <rect x="24" y="4" width="32" height="22" rx="6" fill="#111827"/>
+  <path d="M24 14 Q24 4 40 2 Q56 4 56 14" fill="#334155"/>
+  <rect x="20" y="8" width="6" height="12" rx="3" fill="url(#ta_pages)"/>
+  <rect x="54" y="8" width="6" height="12" rx="3" fill="url(#ta_pages)"/>
+  <ellipse cx="40" cy="17" rx="12" ry="8" fill="#0f172a"/>
+  <ellipse cx="34" cy="16" rx="4" ry="3.2" fill="#818cf8"/>
+  <ellipse cx="46" cy="16" rx="4" ry="3.2" fill="#818cf8"/>
+  <ellipse cx="34" cy="16" rx="2" ry="1.5" fill="#e0e7ff"/>
+  <ellipse cx="46" cy="16" rx="2" ry="1.5" fill="#e0e7ff"/>
+  <path d="M33 22 Q40 26 47 22" stroke="#6366f1" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <rect x="6" y="18" width="10" height="3.8" rx="1" fill="#6366f1" opacity="0.55"/>
+  <rect x="64" y="18" width="10" height="3.8" rx="1" fill="#6366f1" opacity="0.55"/>
+</svg>

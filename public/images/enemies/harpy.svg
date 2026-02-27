@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <linearGradient id="dark_feather" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#374151"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4a574"/>
+      <stop offset="100%" stop-color="#b07a48"/>
+    </linearGradient>
+  </defs>
+  <!-- Left wing (large, dark) -->
+  <path d="M30 36 Q16 22 4 20 Q2 28 8 34 Q16 30 22 38 Q10 38 6 46 Q14 52 22 44 Q12 52 16 62 Q22 64 28 54 Z" fill="url(#dark_feather)"/>
+  <!-- Left wing feather details -->
+  <path d="M30 36 Q18 24 8 22" stroke="#6b7280" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M28 42 Q16 38 8 42" stroke="#6b7280" stroke-width="1" fill="none" opacity="0.4"/>
+  <path d="M26 50 Q18 48 12 54" stroke="#6b7280" stroke-width="1" fill="none" opacity="0.4"/>
+  <!-- Right wing (large, dark) -->
+  <path d="M50 36 Q64 22 76 20 Q78 28 72 34 Q64 30 58 38 Q70 38 74 46 Q66 52 58 44 Q68 52 64 62 Q58 64 52 54 Z" fill="url(#dark_feather)"/>
+  <!-- Right wing feather details -->
+  <path d="M50 36 Q62 24 72 22" stroke="#6b7280" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M52 42 Q64 38 72 42" stroke="#6b7280" stroke-width="1" fill="none" opacity="0.4"/>
+  <path d="M54 50 Q62 48 68 54" stroke="#6b7280" stroke-width="1" fill="none" opacity="0.4"/>
+  <!-- Bird lower body / talons -->
+  <path d="M34 58 Q30 66 26 72" stroke="#374151" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M46 58 Q50 66 54 72" stroke="#374151" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <!-- Talons left -->
+  <line x1="24" y1="72" x2="20" y2="76" stroke="#374151" stroke-width="2"/>
+  <line x1="26" y1="73" x2="24" y2="78" stroke="#374151" stroke-width="2"/>
+  <line x1="28" y1="72" x2="28" y2="77" stroke="#374151" stroke-width="2"/>
+  <!-- Talons right -->
+  <line x1="56" y1="72" x2="60" y2="76" stroke="#374151" stroke-width="2"/>
+  <line x1="54" y1="73" x2="56" y2="78" stroke="#374151" stroke-width="2"/>
+  <line x1="52" y1="72" x2="52" y2="77" stroke="#374151" stroke-width="2"/>
+  <!-- Human torso -->
+  <ellipse cx="40" cy="46" rx="12" ry="14" fill="url(#skin)"/>
+  <!-- Chest wrap / top -->
+  <path d="M28 44 Q40 50 52 44 L52 50 Q40 56 28 50 Z" fill="#374151"/>
+  <!-- Neck -->
+  <rect x="36" y="30" width="8" height="8" rx="3" fill="url(#skin)"/>
+  <!-- Human head -->
+  <circle cx="40" cy="24" r="13" fill="url(#skin)"/>
+  <!-- Wild hair (dark, flowing back) -->
+  <path d="M28 18 Q22 10 26 4 Q32 8 30 16" fill="#111827"/>
+  <path d="M34 14 Q32 6 36 2 Q40 8 38 14" fill="#1f2937"/>
+  <path d="M52 18 Q58 10 54 4 Q48 8 50 16" fill="#111827"/>
+  <!-- Fierce eyes (yellow predator) -->
+  <ellipse cx="34" cy="22" rx="4.5" ry="4" fill="#ca8a04"/>
+  <ellipse cx="46" cy="22" rx="4.5" ry="4" fill="#ca8a04"/>
+  <ellipse cx="34" cy="22" rx="2.5" ry="2.5" fill="#1c1917"/>
+  <ellipse cx="46" cy="22" rx="2.5" ry="2.5" fill="#1c1917"/>
+  <circle cx="35" cy="21" r="1" fill="white" opacity="0.8"/>
+  <circle cx="47" cy="21" r="1" fill="white" opacity="0.8"/>
+  <!-- Nose (human) -->
+  <path d="M38 26 Q40 29 42 26" stroke="#b07a48" stroke-width="1" fill="none"/>
+  <!-- Screaming mouth -->
+  <path d="M33 30 Q40 35 47 30" stroke="#7f1d1d" stroke-width="1.5" fill="none"/>
+  <ellipse cx="40" cy="31" rx="5" ry="3" fill="#7f1d1d"/>
+  <rect x="37" y="29" width="2" height="2.5" rx="0.5" fill="#e2e8f0"/>
+  <rect x="41" y="29" width="2" height="2.5" rx="0.5" fill="#e2e8f0"/>
+</svg>

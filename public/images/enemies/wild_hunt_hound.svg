@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="fur" cx="45%" cy="36%" r="58%">
+      <stop offset="0%" stop-color="#f1f5f9"/>
+      <stop offset="100%" stop-color="#cbd5e1" stop-opacity="0.9"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="44%" r="50%">
+      <stop offset="0%" stop-color="#166534" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#166534" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Spectral green glow -->
+  <ellipse cx="40" cy="44" rx="34" ry="30" fill="url(#glow)"/>
+  <ellipse cx="40" cy="64" rx="25" ry="12" fill="#e2e8f0" opacity="0.8"/>
+  <ellipse cx="19" cy="71" rx="10" ry="5" fill="#cbd5e1" opacity="0.85"/>
+  <ellipse cx="61" cy="71" rx="10" ry="5" fill="#cbd5e1" opacity="0.85"/>
+  <rect x="28" y="48" width="24" height="18" rx="5" fill="url(#fur)" opacity="0.9"/>
+  <ellipse cx="40" cy="32" rx="23" ry="19" fill="url(#fur)" opacity="0.92"/>
+  <!-- RED EARS (Cwn Annwn — hounds of the underworld have red ears) -->
+  <polygon points="17,22 23,3 31,22" fill="#b91c1c"/>
+  <polygon points="19,22 24,7 30,22" fill="#ef4444" opacity="0.75"/>
+  <polygon points="49,22 57,3 63,22" fill="#b91c1c"/>
+  <polygon points="51,22 56,7 62,22" fill="#ef4444" opacity="0.75"/>
+  <ellipse cx="40" cy="41" rx="13" ry="9" fill="#e2e8f0" opacity="0.9"/>
+  <ellipse cx="40" cy="34" rx="5.5" ry="4" fill="#94a3b8" opacity="0.85"/>
+  <path d="M30 43 Q40 48 50 43" fill="none" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round" opacity="0.8"/>
+  <polygon points="34,43 33,50 37,43" fill="white" opacity="0.95"/>
+  <polygon points="43,43 42,50 46,43" fill="white" opacity="0.95"/>
+  <!-- Glowing green eyes (spectral) -->
+  <ellipse cx="30" cy="27" rx="7" ry="5.5" fill="#16a34a"/>
+  <ellipse cx="50" cy="27" rx="7" ry="5.5" fill="#16a34a"/>
+  <ellipse cx="30" cy="27" rx="4.5" ry="3.5" fill="#4ade80"/>
+  <ellipse cx="50" cy="27" rx="4.5" ry="3.5" fill="#4ade80"/>
+  <circle cx="31" cy="26" r="1.5" fill="white" opacity="0.9"/>
+  <circle cx="51" cy="26" r="1.5" fill="white" opacity="0.9"/>
+  <!-- Spectral wisps -->
+  <path d="M14 52 Q10 57 12 63" fill="none" stroke="#4ade80" stroke-width="1.2" opacity="0.4" stroke-linecap="round"/>
+  <path d="M66 52 Q70 57 68 63" fill="none" stroke="#4ade80" stroke-width="1.2" opacity="0.4" stroke-linecap="round"/>
+  <circle cx="10" cy="45" r="2" fill="#4ade80" opacity="0.35"/>
+  <circle cx="70" cy="47" r="1.5" fill="#4ade80" opacity="0.3"/>
+</svg>

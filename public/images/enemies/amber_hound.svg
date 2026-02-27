@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="fur" cx="45%" cy="36%" r="58%">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="44%" r="50%">
+      <stop offset="0%" stop-color="#d97706" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#d97706" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="40" cy="44" rx="34" ry="30" fill="url(#glow)"/>
+  <ellipse cx="40" cy="64" rx="25" ry="12" fill="#78350f"/>
+  <ellipse cx="19" cy="71" rx="10" ry="5" fill="#6b2d0f"/>
+  <ellipse cx="61" cy="71" rx="10" ry="5" fill="#6b2d0f"/>
+  <rect x="28" y="48" width="24" height="18" rx="5" fill="url(#fur)"/>
+  <ellipse cx="40" cy="32" rx="23" ry="19" fill="url(#fur)"/>
+  <polygon points="17,22 23,3 31,22" fill="#78350f"/>
+  <polygon points="19,22 24,7 30,22" fill="#b45309" opacity="0.85"/>
+  <polygon points="49,22 57,3 63,22" fill="#78350f"/>
+  <polygon points="51,22 56,7 62,22" fill="#b45309" opacity="0.85"/>
+  <ellipse cx="40" cy="41" rx="13" ry="9" fill="#b45309"/>
+  <ellipse cx="40" cy="34" rx="5.5" ry="4" fill="#6b2d0f"/>
+  <path d="M30 43 Q40 48 50 43" fill="none" stroke="#6b2d0f" stroke-width="1.8" stroke-linecap="round"/>
+  <polygon points="34,43 33,50 37,43" fill="#fef9e7"/>
+  <polygon points="43,43 42,50 46,43" fill="#fef9e7"/>
+  <!-- Celtic rune markings -->
+  <line x1="20" y1="50" x2="20" y2="58" stroke="#fbbf24" stroke-width="1.2" opacity="0.55"/>
+  <line x1="17" y1="54" x2="23" y2="54" stroke="#fbbf24" stroke-width="1.2" opacity="0.55"/>
+  <line x1="60" y1="50" x2="60" y2="58" stroke="#fbbf24" stroke-width="1.2" opacity="0.55"/>
+  <line x1="57" y1="54" x2="63" y2="54" stroke="#fbbf24" stroke-width="1.2" opacity="0.55"/>
+  <!-- Bright amber eyes -->
+  <ellipse cx="30" cy="27" rx="7" ry="5.5" fill="#fbbf24"/>
+  <ellipse cx="50" cy="27" rx="7" ry="5.5" fill="#fbbf24"/>
+  <circle cx="30" cy="27" r="3.5" fill="#78350f"/>
+  <circle cx="50" cy="27" r="3.5" fill="#78350f"/>
+  <circle cx="31" cy="26" r="1.4" fill="white" opacity="0.85"/>
+  <circle cx="51" cy="26" r="1.4" fill="white" opacity="0.85"/>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="body" cx="45%" cy="40%" r="58%">
+      <stop offset="0%" stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#022c22"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#059669" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#059669" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="40" cy="48" rx="36" ry="26" fill="url(#glow)"/>
+  <!-- Bog water pool at base -->
+  <ellipse cx="40" cy="72" rx="32" ry="8" fill="#011a13" opacity="0.9"/>
+  <!-- Main body blob (emerges from bog) -->
+  <path d="M40 8 C20 8 10 22 10 38 C10 54 16 64 24 68 C28 70 18 76 22 77 C26 78 28 72 32 73 C35 74 38 70 40 70 C42 70 45 74 48 73 C52 72 54 78 58 77 C62 76 52 70 56 68 C64 64 70 54 70 38 C70 22 60 8 40 8 Z" fill="url(#body)" opacity="0.95"/>
+  <!-- Lumpy protrusions -->
+  <circle cx="18" cy="34" r="9" fill="#065f46"/>
+  <circle cx="62" cy="32" r="8" fill="#065f46"/>
+  <circle cx="14" cy="50" r="7" fill="#034d3a"/>
+  <circle cx="66" cy="48" r="6" fill="#034d3a"/>
+  <!-- Dripping bog water -->
+  <path d="M22 68 Q20 75 22 78" fill="none" stroke="#011a13" stroke-width="4" stroke-linecap="round"/>
+  <path d="M50 70 Q52 76 50 79" fill="none" stroke="#011a13" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- Face area (slightly recessed) -->
+  <ellipse cx="40" cy="32" rx="19" ry="15" fill="#034d3a" opacity="0.85"/>
+  <!-- Sickly yellow-green eyes -->
+  <ellipse cx="31" cy="28" rx="7" ry="5.5" fill="#16a34a"/>
+  <ellipse cx="49" cy="28" rx="7" ry="5.5" fill="#16a34a"/>
+  <ellipse cx="31" cy="28" rx="4.5" ry="3.5" fill="#bbf7d0"/>
+  <ellipse cx="49" cy="28" rx="4.5" ry="3.5" fill="#bbf7d0"/>
+  <circle cx="31" cy="27" r="2" fill="#011a13"/>
+  <circle cx="49" cy="27" r="2" fill="#011a13"/>
+  <!-- Wide wet mouth -->
+  <path d="M24 40 Q40 50 56 40" fill="#011a13" stroke="#022c22" stroke-width="1"/>
+  <!-- Mossy teeth -->
+  <polygon points="29,40 28,47 32,40" fill="#4d7a4a"/>
+  <polygon points="37,40 36,48 39,40" fill="#4d7a4a"/>
+  <polygon points="41,40 40,48 44,40" fill="#4d7a4a"/>
+  <polygon points="49,40 48,47 52,40" fill="#4d7a4a"/>
+</svg>

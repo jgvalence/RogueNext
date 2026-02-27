@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="core" cx="45%" cy="38%" r="55%">
+      <stop offset="0%" stop-color="#3d1f0a"/>
+      <stop offset="100%" stop-color="#0f0700"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#16a34a" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#16a34a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="40" cy="42" rx="34" ry="32" fill="url(#glow)"/>
+  <!-- Root tendrils at base -->
+  <path d="M26 70 Q20 76 18 80" fill="none" stroke="#1c0f07" stroke-width="6" stroke-linecap="round"/>
+  <path d="M40 72 Q40 77 40 80" fill="none" stroke="#1c0f07" stroke-width="5" stroke-linecap="round"/>
+  <path d="M54 70 Q60 76 62 80" fill="none" stroke="#1c0f07" stroke-width="6" stroke-linecap="round"/>
+  <!-- Lower body -->
+  <ellipse cx="40" cy="62" rx="22" ry="13" fill="url(#core)"/>
+  <!-- Thorny vine arms -->
+  <path d="M18 44 Q8 36 6 26" fill="none" stroke="#2d1606" stroke-width="9" stroke-linecap="round"/>
+  <path d="M18 44 Q8 50 6 58" fill="none" stroke="#2d1606" stroke-width="7" stroke-linecap="round"/>
+  <path d="M62 44 Q72 36 74 26" fill="none" stroke="#2d1606" stroke-width="9" stroke-linecap="round"/>
+  <path d="M62 44 Q72 50 74 58" fill="none" stroke="#2d1606" stroke-width="7" stroke-linecap="round"/>
+  <!-- Upper body -->
+  <ellipse cx="40" cy="46" rx="22" ry="18" fill="url(#core)"/>
+  <!-- HEAD -->
+  <ellipse cx="40" cy="26" rx="20" ry="17" fill="url(#core)"/>
+  <!-- Thorns (green spikes) -->
+  <polygon points="18,48 12,42 16,50" fill="#166534"/>
+  <polygon points="62,48 68,42 64,50" fill="#166534"/>
+  <polygon points="20,36 13,31 18,38" fill="#166534"/>
+  <polygon points="60,36 67,31 62,38" fill="#166534"/>
+  <polygon points="26,18 20,14 24,20" fill="#166534"/>
+  <polygon points="54,18 60,14 56,20" fill="#166534"/>
+  <!-- Arm thorns -->
+  <polygon points="10,32 5,28 8,34" fill="#166534"/>
+  <polygon points="70,32 75,28 72,34" fill="#166534"/>
+  <!-- Vine texture on body -->
+  <path d="M22 42 Q30 38 36 44" fill="none" stroke="#2d1606" stroke-width="2.2" opacity="0.7"/>
+  <path d="M44 42 Q52 38 58 44" fill="none" stroke="#2d1606" stroke-width="2.2" opacity="0.7"/>
+  <path d="M28 56 Q36 52 44 56" fill="none" stroke="#2d1606" stroke-width="2" opacity="0.6"/>
+  <!-- Hollow dark face -->
+  <ellipse cx="40" cy="24" rx="14" ry="11" fill="#0f0700" opacity="0.85"/>
+  <!-- Glowing green eyes -->
+  <ellipse cx="33" cy="22" rx="5.5" ry="4.5" fill="#15803d"/>
+  <ellipse cx="47" cy="22" rx="5.5" ry="4.5" fill="#15803d"/>
+  <ellipse cx="33" cy="22" rx="3.5" ry="3" fill="#4ade80"/>
+  <ellipse cx="47" cy="22" rx="3.5" ry="3" fill="#4ade80"/>
+  <circle cx="34" cy="21" r="1.2" fill="white" opacity="0.75"/>
+  <circle cx="48" cy="21" r="1.2" fill="white" opacity="0.75"/>
+  <!-- Jagged thorny mouth -->
+  <path d="M30 30 L33 34 L36 30 L39 34 L42 30 L45 34 L50 30" fill="none" stroke="#166534" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

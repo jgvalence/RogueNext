@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <defs>
+    <radialGradient id="tw_glow" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#a5b4fc" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#a5b4fc" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tw_body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#312e81"/>
+      <stop offset="55%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="tw_pages" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="40" cy="42" rx="28" ry="30" fill="url(#tw_glow)"/>
+  <path d="M40 7 C22 7 14 19 14 33 C14 47 18 58 22 64 C25 69 20 76 24 77 C27 78 29 72 32 74 C34 76 36 72 38 74 C40 76 42 72 44 74 C46 76 48 72 50 74 C53 76 55 72 58 74 C61 76 56 69 59 64 C63 58 66 47 66 33 C66 19 58 7 40 7 Z" fill="url(#tw_body)" opacity="0.95"/>
+  <rect x="23" y="19" width="34" height="23" rx="3" fill="#1f2937"/>
+  <rect x="25" y="21" width="28" height="19" rx="2" fill="#0f172a"/>
+  <rect x="53" y="21" width="4" height="19" rx="1" fill="url(#tw_pages)"/>
+  <line x1="54" y1="24" x2="56" y2="24" stroke="#94a3b8" stroke-width="0.6"/>
+  <line x1="54" y1="27" x2="56" y2="27" stroke="#94a3b8" stroke-width="0.6"/>
+  <line x1="54" y1="30" x2="56" y2="30" stroke="#94a3b8" stroke-width="0.6"/>
+  <line x1="54" y1="33" x2="56" y2="33" stroke="#94a3b8" stroke-width="0.6"/>
+  <line x1="54" y1="36" x2="56" y2="36" stroke="#94a3b8" stroke-width="0.6"/>
+  <circle cx="34" cy="30" r="5" fill="#818cf8"/>
+  <circle cx="46" cy="30" r="5" fill="#818cf8"/>
+  <circle cx="34" cy="30" r="2.5" fill="#e0e7ff"/>
+  <circle cx="46" cy="30" r="2.5" fill="#e0e7ff"/>
+  <path d="M32 38 Q40 43 48 38" stroke="#818cf8" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M31 49 L36 55 L31 61" stroke="#6366f1" stroke-width="1.4" fill="none" opacity="0.65"/>
+  <path d="M49 49 L44 55 L49 61" stroke="#6366f1" stroke-width="1.4" fill="none" opacity="0.65"/>
+</svg>
