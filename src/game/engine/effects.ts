@@ -595,6 +595,39 @@ export function resolveEffect(
   }
 }
 
+function getEnemyThornsRetaliationDamage(
+  state: CombatState,
+  target: EffectTarget
+): number {
+  if (target === "all_enemies") {
+    return state.enemies.reduce((sum, enemy) => {
+      if (enemy.currentHp <= 0) return sum;
+      return sum + Math.max(0, getBuffStacks(enemy.buffs, "THORNS"));
+    }, 0);
+  }
+
+  if (typeof target === "object" && target.type === "enemy") {
+    const enemy = state.enemies.find((e) => e.instanceId === target.instanceId);
+    if (!enemy || enemy.currentHp <= 0) return 0;
+    return Math.max(0, getBuffStacks(enemy.buffs, "THORNS"));
+  }
+
+  return 0;
+}
+
+function applyThornsRetaliationToPlayer(
+  state: CombatState,
+  retaliationDamage: number
+): CombatState {
+  if (retaliationDamage <= 0 || state.player.currentHp <= 0) return state;
+  const result = applyDamage(state.player, retaliationDamage);
+  return updatePlayer(state, (p) => ({
+    ...p,
+    currentHp: result.currentHp,
+    block: result.block,
+  }));
+}
+
 export function resolveEffects(
   state: CombatState,
   effects: Effect[],
@@ -655,6 +688,19 @@ export function resolveEffects(
           }));
         }
       }
+    } else if (
+      effect.type === "DAMAGE" &&
+      ctx.source === "player" &&
+      (ctx.target === "all_enemies" ||
+        (typeof ctx.target === "object" && ctx.target.type === "enemy"))
+    ) {
+      // Enemy thorns retaliate when the player deals direct damage.
+      const retaliationDamage = getEnemyThornsRetaliationDamage(
+        current,
+        ctx.target
+      );
+      current = resolveEffect(current, effect, ctx, rng);
+      current = applyThornsRetaliationToPlayer(current, retaliationDamage);
     } else {
       current = resolveEffect(current, effect, ctx, rng);
     }

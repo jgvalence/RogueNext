@@ -2258,4 +2258,54 @@ describe("Debuff blocked by armor", () => {
     const result = resolveEffects(state, effects, thornsEnemyCtx, rng);
     expect(result.enemies[0]?.currentHp).toBe(12);
   });
+
+  it("enemy thorns retaliates against player attacks", () => {
+    const state = makeMinimalCombat({
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0],
+          buffs: [{ type: "THORNS", stacks: 3 }],
+        },
+      ],
+    });
+    const effects: Effect[] = [{ type: "DAMAGE", value: 6 }];
+    const result = resolveEffects(
+      state,
+      effects,
+      { source: "player", target: { type: "enemy", instanceId: "e1" } },
+      rng
+    );
+    expect(result.player.currentHp).toBe(77);
+    expect(result.enemies[0]?.currentHp).toBe(8);
+  });
+
+  it("enemy thorns retaliation stacks across all targeted enemies", () => {
+    const state = makeMinimalCombat({
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0],
+          buffs: [{ type: "THORNS", stacks: 2 }],
+        },
+        {
+          instanceId: "e2",
+          definitionId: "ink_slime",
+          name: "Ink Slime",
+          currentHp: 10,
+          maxHp: 10,
+          block: 0,
+          speed: 2,
+          buffs: [{ type: "THORNS", stacks: 1 }],
+          intentIndex: 0,
+        },
+      ],
+    });
+    const effects: Effect[] = [{ type: "DAMAGE", value: 1 }];
+    const result = resolveEffects(
+      state,
+      effects,
+      { source: "player", target: "all_enemies" },
+      rng
+    );
+    expect(result.player.currentHp).toBe(77);
+  });
 });
