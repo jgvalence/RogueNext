@@ -397,9 +397,13 @@ export function resolveEffect(
     case "APPLY_BUFF":
     case "APPLY_DEBUFF": {
       if (!effect.buff) return state;
-      const sourceEnemy =
+      const sourceEnemyId =
         typeof ctx.source === "object" && ctx.source.type === "enemy"
-          ? state.enemies.find((e) => e.instanceId === ctx.source.instanceId)
+          ? ctx.source.instanceId
+          : null;
+      const sourceEnemy =
+        sourceEnemyId != null
+          ? state.enemies.find((e) => e.instanceId === sourceEnemyId)
           : null;
       const bossDebuffBonus =
         effect.type === "APPLY_DEBUFF" &&
@@ -599,9 +603,13 @@ export function resolveEffects(
 ): CombatState {
   let current = state;
   let damageFullyBlocked = false;
-  const sourceEnemy =
+  const sourceEnemyId =
     typeof ctx.source === "object" && ctx.source.type === "enemy"
-      ? state.enemies.find((e) => e.instanceId === ctx.source.instanceId)
+      ? ctx.source.instanceId
+      : null;
+  const sourceEnemy =
+    sourceEnemyId != null
+      ? state.enemies.find((e) => e.instanceId === sourceEnemyId)
       : null;
   const sourceDebuffsBypassBlock =
     sourceEnemy != null &&
