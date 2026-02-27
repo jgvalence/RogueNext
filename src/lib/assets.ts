@@ -37,6 +37,20 @@ export const BACKGROUNDS = {
   map: "/images/backgrounds/map.svg",
 } as const;
 
+import type { BiomeType } from "@/game/schemas/enums";
+
+export const COMBAT_BACKGROUNDS: Record<BiomeType, string> = {
+  LIBRARY: "/images/backgrounds/combat.svg",
+  VIKING: "/images/backgrounds/combat_viking.svg",
+  GREEK: "/images/backgrounds/combat_greek.svg",
+  EGYPTIAN: "/images/backgrounds/combat_egyptian.svg",
+  LOVECRAFTIAN: "/images/backgrounds/combat_lovecraftian.svg",
+  AZTEC: "/images/backgrounds/combat_aztec.svg",
+  CELTIC: "/images/backgrounds/combat_celtic.svg",
+  RUSSIAN: "/images/backgrounds/combat_russian.svg",
+  AFRICAN: "/images/backgrounds/combat_african.svg",
+};
+
 // ─── Player ───────────────────────────────────────────────────────────────────
 
 export const PLAYER_AVATAR = "/images/player/avatar.svg";

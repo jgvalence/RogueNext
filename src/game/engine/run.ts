@@ -260,6 +260,9 @@ export function generateFloorMap(
   }
 
   const PRE_BOSS_ROOM_INDEX = GAME_CONSTANTS.BOSS_ROOM_INDEX - 1; // 8
+  const maxRandomEliteRoomsForFloor =
+    floor === 1 ? 1 : Number.POSITIVE_INFINITY;
+  let randomEliteRoomsGenerated = 0;
 
   const map: RoomNode[][] = [];
 
@@ -333,9 +336,14 @@ export function generateFloorMap(
               biome,
               rng,
               difficultyLevel,
-              numChoices > 1 ? j + 1 : 1
+              numChoices > 1 ? j + 1 : 1,
+              randomEliteRoomsGenerated < maxRandomEliteRoomsForFloor
             )
           : undefined;
+
+      if (enemyResult?.isElite) {
+        randomEliteRoomsGenerated += 1;
+      }
 
       choices.push({
         index: i,
@@ -412,7 +420,8 @@ function generateRoomEnemies(
   biome: BiomeType,
   rng: RNG,
   difficultyLevel = 0,
-  minEnemyCount = 1
+  minEnemyCount = 1,
+  allowElite = true
 ): { enemyIds: string[]; isElite: boolean } {
   const difficultyModifiers = getDifficultyModifiers(difficultyLevel);
   const canAppear = (e: (typeof enemyDefinitions)[0]) =>
@@ -438,7 +447,12 @@ function generateRoomEnemies(
     0.8,
     0.25 + (floor - 1) * 0.05 + difficultyModifiers.eliteChanceBonus
   );
-  if (room >= 3 && eliteDefs.length > 0 && rng.next() < eliteChance) {
+  if (
+    allowElite &&
+    room >= 3 &&
+    eliteDefs.length > 0 &&
+    rng.next() < eliteChance
+  ) {
     const elite = weightedPick(
       eliteDefs,
       (e) => getEnemySelectionWeight(e, floor, biome),

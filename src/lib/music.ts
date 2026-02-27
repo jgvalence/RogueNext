@@ -1,15 +1,17 @@
 /**
  * BACKGROUND MUSIC — Web Audio API synthesis
  *
- * Two procedural themes generated at runtime — no audio files needed.
- * - "combat"  : dark drone + rhythmic bass pulse + sparse melody
- * - "map"     : slow ambient pad swell + occasional soft notes
+ * Procedural themes generated at runtime — no audio files needed.
+ * - "combat"  : standard fights
+ * - "elite"   : higher tension variant
+ * - "boss"    : heavy, cinematic pressure
+ * - "map"     : ambient exploration
  *
  * To globally disable music, set MUSIC_ENABLED = false.
  */
 
 export let MUSIC_ENABLED = true;
-export type MusicTheme = "combat" | "map";
+export type MusicTheme = "combat" | "elite" | "boss" | "map";
 
 // ── AudioContext (lazy singleton, separate from sound.ts) ─────────────────────
 
@@ -142,6 +144,115 @@ function runCombat(c: AudioContext, s: Session): void {
   tick();
 }
 
+// Elite theme: faster pulse and brighter tension layers.
+const ELITE_BEAT = 60 / 92;
+const ELITE_NOTES = [220, 246.94, 277.18, 329.63, 369.99, 440];
+
+function runElite(c: AudioContext, s: Session): void {
+  drone(c, s, s.masterGain, 55, "sine", 0.04);
+  drone(c, s, s.masterGain, 110, "triangle", 0.022);
+  drone(c, s, s.masterGain, 164.81, "sawtooth", 0.01);
+
+  let beat = 0;
+  let next = c.currentTime + 0.08;
+
+  const tick = () => {
+    if (s.cancelled) return;
+
+    while (next < c.currentTime + 0.15) {
+      const b = beat % 8;
+
+      // Denser pulse than regular combat.
+      if (b % 2 === 0) {
+        const strong = b === 0 || b === 4;
+        hit(
+          c,
+          s.masterGain,
+          65.41,
+          "sine",
+          next,
+          0.28,
+          strong ? 0.22 : 0.14,
+          36
+        );
+        hit(c, s.masterGain, strong ? 320 : 260, "square", next, 0.035, 0.05);
+      }
+
+      if ((b === 2 || b === 6) && Math.random() < 0.65) {
+        const freq =
+          ELITE_NOTES[Math.floor(Math.random() * ELITE_NOTES.length)] ??
+          ELITE_NOTES[0]!;
+        hit(
+          c,
+          s.masterGain,
+          freq,
+          "triangle",
+          next + ELITE_BEAT * 0.35,
+          0.42,
+          0.03
+        );
+      }
+
+      next += ELITE_BEAT;
+      beat++;
+    }
+
+    setTimeout(tick, 22);
+  };
+
+  tick();
+}
+
+// Boss theme: slow and heavy pulse with ritual-like high accents.
+const BOSS_BEAT = 60 / 68;
+const BOSS_NOTES = [110, 130.81, 146.83, 174.61, 196, 220];
+
+function runBoss(c: AudioContext, s: Session): void {
+  drone(c, s, s.masterGain, 41.2, "sine", 0.05);
+  drone(c, s, s.masterGain, 55, "triangle", 0.03);
+  drone(c, s, s.masterGain, 82.41, "sawtooth", 0.012);
+
+  let beat = 0;
+  let next = c.currentTime + 0.1;
+
+  const tick = () => {
+    if (s.cancelled) return;
+
+    while (next < c.currentTime + 0.2) {
+      const b = beat % 4;
+
+      if (b === 0) {
+        hit(c, s.masterGain, 49, "sine", next, 0.9, 0.26, 24);
+        hit(c, s.masterGain, 98, "square", next, 0.08, 0.06);
+      } else if (b === 2) {
+        hit(c, s.masterGain, 55, "triangle", next, 0.6, 0.16, 28);
+      }
+
+      if ((b === 1 || b === 3) && Math.random() < 0.55) {
+        const freq =
+          BOSS_NOTES[Math.floor(Math.random() * BOSS_NOTES.length)] ??
+          BOSS_NOTES[0]!;
+        hit(
+          c,
+          s.masterGain,
+          freq * 2,
+          "sine",
+          next + BOSS_BEAT * 0.15,
+          1.2,
+          0.02
+        );
+      }
+
+      next += BOSS_BEAT;
+      beat++;
+    }
+
+    setTimeout(tick, 28);
+  };
+
+  tick();
+}
+
 // ── Map / exploration theme ───────────────────────────────────────────────────
 // Slow pad swells in A minor — atmospheric, mysterious
 
@@ -238,6 +349,8 @@ export function startMusic(theme: MusicTheme): void {
   _session = { cancelled: false, masterGain: master, oscs: [] };
 
   if (theme === "combat") runCombat(c, _session);
+  else if (theme === "elite") runElite(c, _session);
+  else if (theme === "boss") runBoss(c, _session);
   else runMap(c, _session);
 }
 

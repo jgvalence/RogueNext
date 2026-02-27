@@ -178,8 +178,12 @@ function GameContent({
 
   // Music — start/stop based on phase, clean up on unmount
   useEffect(() => {
-    if (phase === "COMBAT") startMusic("combat");
-    else if (
+    if (phase === "COMBAT") {
+      const enemies = state.combat?.enemies ?? [];
+      const hasBoss = enemies.some((enemy) => enemy.isBoss);
+      const hasElite = enemies.some((enemy) => enemy.isElite);
+      startMusic(hasBoss ? "boss" : hasElite ? "elite" : "combat");
+    } else if (
       phase === "MAP" ||
       phase === "REWARDS" ||
       phase === "MERCHANT" ||
@@ -192,7 +196,7 @@ function GameContent({
     )
       startMusic("map");
     else stopMusic(); // VICTORY or DEFEAT
-  }, [phase]);
+  }, [phase, state.combat?.enemies]);
 
   useEffect(() => () => stopMusic(0.3), []);
 
@@ -759,6 +763,7 @@ function GameContent({
             attackingEnemyId={attackingEnemyId}
             isDiscarding={isDiscarding}
             attackBonus={state.metaBonuses?.attackBonus ?? 0}
+            biome={state.currentBiome}
             debugEnemySelection={debugEnemySelection ?? undefined}
           />
         )}

@@ -24,7 +24,16 @@
       "Bash(npx next build:*)",
       "Bash(python3:*)",
       "Bash(node -e:*)",
-      "Bash(npx prisma migrate dev:*)"
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(git push:*)",
+      "Bash(head:*)",
+      "Bash(wc:*)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(xargs:*)",
+      "Bash(npx prisma db execute:*)",
+      "Bash(for biome in LIBRARY VIKING GREEK EGYPTIAN LOVECRAFTIAN AZTEC CELTIC RUSSIAN AFRICAN)",
+      "Bash(do echo \"=== $biome ===\")",
+      "Bash(done)"
     ]
   }
 }

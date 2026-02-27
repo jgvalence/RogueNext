@@ -19,7 +19,7 @@ import type {
   BuffInstance,
   PlayerState,
 } from "@/game/schemas/entities";
-import type { InkPowerType } from "@/game/schemas/enums";
+import type { InkPowerType, BiomeType } from "@/game/schemas/enums";
 import type {
   UsableItemDefinition,
   UsableItemInstance,
@@ -33,7 +33,7 @@ import { Tooltip } from "../shared/Tooltip";
 import { HpBar } from "../shared/HpBar";
 import { buffMeta } from "../shared/buff-meta";
 // TEMPORARY: centralized asset registry Ã¢â‚¬â€ swap paths in src/lib/assets.ts when real art is ready
-import { BACKGROUNDS, PLAYER_AVATAR } from "@/lib/assets";
+import { COMBAT_BACKGROUNDS, PLAYER_AVATAR } from "@/lib/assets";
 import { playSound } from "@/lib/sound";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { boostEffectsForUpgrade } from "@/game/engine/card-upgrades";
@@ -41,6 +41,10 @@ import { calculateDamage } from "@/game/engine/damage";
 import { applyBuff } from "@/game/engine/buffs";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
 import { useTranslation } from "react-i18next";
+import {
+  getBonusDamageIfPlayerDebuffed,
+  hasPlayerDebuffForEnemyBonus,
+} from "@/game/engine/enemy-intent-preview";
 
 interface CombatViewProps {
   combat: CombatState;
@@ -63,6 +67,7 @@ interface CombatViewProps {
   unlockedInkPowers?: InkPowerType[];
   isDiscarding?: boolean;
   attackBonus?: number;
+  biome?: BiomeType;
   debugEnemySelection?: {
     floor: number;
     room: number;
@@ -112,6 +117,7 @@ export function CombatView({
   unlockedInkPowers,
   isDiscarding = false,
   attackBonus = 0,
+  biome = "LIBRARY",
   debugEnemySelection: _debugEnemySelection,
 }: CombatViewProps) {
   const { t } = useTranslation();
@@ -601,7 +607,7 @@ export function CombatView({
         {!bgFailed && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={BACKGROUNDS.combat}
+            src={COMBAT_BACKGROUNDS[biome]}
             alt=""
             aria-hidden
             className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
@@ -760,12 +766,18 @@ export function CombatView({
               {combat.enemies.map((enemy) => {
                 const def = enemyDefs.get(enemy.definitionId);
                 const ability = def?.abilities[enemy.intentIndex];
+                const resolvedTarget = ability
+                  ? resolveEnemyAbilityTarget(combat, enemy, ability)
+                  : "player";
                 const hideIntent = shouldHideEnemyIntent(
                   combat.difficultyLevel ?? 0,
                   combat.turnNumber,
                   enemy
                 );
                 const intentChips = buildMobileEnemyIntentChips(
+                  combat,
+                  enemy,
+                  resolvedTarget,
                   ability,
                   hideIntent,
                   t
@@ -885,6 +897,14 @@ export function CombatView({
                           {t("combat.noAbility")}
                         </p>
                       )}
+                      {ally.buffs.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="font-semibold text-slate-100">
+                            {t("combat.activeEffects")}
+                          </p>
+                          {renderBuffTooltipDetails(ally.buffs)}
+                        </div>
+                      )}
                     </div>
                   }
                 >
@@ -950,6 +970,14 @@ export function CombatView({
                     Energy {combat.player.energyCurrent}/
                     {combat.player.energyMax}
                   </p>
+                  <div className="space-y-1">
+                    <p className="font-semibold text-slate-100">
+                      {t("combat.activeEffects")}
+                    </p>
+                    {renderBuffTooltipDetails(
+                      buildPlayerMarkerBuffs(combat.player)
+                    )}
+                  </div>
                 </div>
               }
             >
@@ -1053,13 +1081,27 @@ export function CombatView({
                             )}
                           </p>
                           <div className="mt-1 flex flex-wrap gap-1">
-                            {renderEnemyIntentEffects(ability.effects, t)}
+                            {renderEnemyIntentEffects(
+                              ability.effects,
+                              t,
+                              combat,
+                              enemy,
+                              resolvedTarget
+                            )}
                           </div>
                         </div>
                       ) : (
                         <p className="text-slate-300">
                           {hideIntent ? t("enemyCard.intentHidden") : "-"}
                         </p>
+                      )}
+                      {enemy.buffs.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="font-semibold text-slate-100">
+                            {t("combat.activeEffects")}
+                          </p>
+                          {renderBuffTooltipDetails(enemy.buffs)}
+                        </div>
                       )}
                     </div>
                   }
@@ -1098,16 +1140,21 @@ export function CombatView({
                       {enemy.name}
                     </p>
                     <div className="mt-1 flex min-h-5 flex-wrap gap-0.5">
-                      {buildMobileEnemyIntentChips(ability, hideIntent, t).map(
-                        (chip, idx) => (
-                          <span
-                            key={`${enemy.instanceId}-desktop-intent-${idx}`}
-                            className="rounded border border-rose-800/70 bg-rose-950/70 px-1 py-0.5 text-[8px] font-semibold text-rose-100"
-                          >
-                            {chip}
-                          </span>
-                        )
-                      )}
+                      {buildMobileEnemyIntentChips(
+                        combat,
+                        enemy,
+                        resolvedTarget,
+                        ability,
+                        hideIntent,
+                        t
+                      ).map((chip, idx) => (
+                        <span
+                          key={`${enemy.instanceId}-desktop-intent-${idx}`}
+                          className="rounded border border-rose-800/70 bg-rose-950/70 px-1 py-0.5 text-[8px] font-semibold text-rose-100"
+                        >
+                          {chip}
+                        </span>
+                      ))}
                     </div>
                     <HpBar
                       current={Math.max(0, enemy.currentHp)}
@@ -1579,7 +1626,13 @@ export function CombatView({
                           )}
                         </p>
                         <div className="mt-1 flex flex-wrap gap-1">
-                          {renderEnemyIntentEffects(ability.effects, t)}
+                          {renderEnemyIntentEffects(
+                            ability.effects,
+                            t,
+                            combat,
+                            mobileInfoEnemy,
+                            resolvedTarget
+                          )}
                         </div>
                       </div>
                     ) : (
@@ -1764,6 +1817,32 @@ function renderCompactBuffs(buffs: BuffInstance[]): ReactNode {
   );
 }
 
+function renderBuffTooltipDetails(buffs: BuffInstance[]): ReactNode {
+  return (
+    <div className="space-y-0.5">
+      {buffs.map((buff, index) => {
+        const meta = buffMeta[buff.type];
+        const label = meta?.label() ?? buff.type;
+        const description = meta?.description(buff.stacks) ?? "";
+        return (
+          <p
+            key={`${buff.type}-${index}`}
+            className="text-[11px] text-slate-200"
+          >
+            <span
+              className={cn("font-semibold", meta?.color ?? "text-slate-200")}
+            >
+              {label}
+              {buff.stacks > 1 ? ` x${buff.stacks}` : ""}
+            </span>
+            {description ? ` - ${description}` : ""}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 function buildPlayerMarkerBuffs(player: PlayerState): BuffInstance[] {
   const markers: BuffInstance[] = [...player.buffs];
   if (player.strength > 0) {
@@ -1777,7 +1856,15 @@ function buildPlayerMarkerBuffs(player: PlayerState): BuffInstance[] {
 
 function renderEnemyIntentEffects(
   effects: Effect[],
-  t: (key: string, options?: Record<string, unknown>) => string
+  t: (key: string, options?: Record<string, unknown>) => string,
+  combat: CombatState,
+  enemy: CombatState["enemies"][number],
+  resolvedTarget:
+    | "player"
+    | "all_enemies"
+    | "all_allies"
+    | { type: "enemy"; instanceId: string }
+    | { type: "ally"; instanceId: string }
 ): ReactNode[] {
   return effects.map((effect, index) => {
     let label = "";
@@ -1785,7 +1872,12 @@ function renderEnemyIntentEffects(
 
     switch (effect.type) {
       case "DAMAGE":
-        label = `${t("enemyCard.dmg")} ${effect.value}`;
+        label = `${t("enemyCard.dmg")} ${computeEnemyDamagePreview(
+          combat,
+          enemy,
+          resolvedTarget,
+          effect.value
+        )}`;
         colorClass = "bg-red-900/70 text-red-200";
         break;
       case "HEAL":
@@ -1898,18 +1990,33 @@ function formatAllyIntent(
 }
 
 function buildMobileEnemyIntentChips(
+  combat: CombatState,
+  enemy: CombatState["enemies"][number],
+  resolvedTarget:
+    | "player"
+    | "all_enemies"
+    | "all_allies"
+    | { type: "enemy"; instanceId: string }
+    | { type: "ally"; instanceId: string },
   ability: EnemyAbility | undefined,
   hideIntent: boolean,
-  t: (key: string, options?: Record<string, unknown>) => string
+  t?: (key: string, options?: Record<string, unknown>) => string
 ): string[] {
-  if (!ability || hideIntent) return [t("enemyCard.intentHidden")];
+  const translate = typeof t === "function" ? t : (key: string) => key;
+  if (!ability || hideIntent) return [translate("enemyCard.intentHidden")];
 
-  return ability.effects.map((effect) => {
+  const chips = ability.effects.map((effect) => {
     switch (effect.type) {
       case "DAMAGE":
-        return `${t("enemyCard.dmg")} ${effect.value}`;
+        return `${translate("enemyCard.dmg")} ${computeEnemyDamagePreview(
+          combat,
+          enemy,
+          resolvedTarget,
+          effect.value,
+          ability
+        )}`;
       case "BLOCK":
-        return `${t("enemyCard.blk")} ${effect.value}`;
+        return `${translate("enemyCard.blk")} ${effect.value}`;
       case "HEAL":
         return `HEAL ${effect.value}`;
       case "APPLY_DEBUFF":
@@ -1922,6 +2029,94 @@ function buildMobileEnemyIntentChips(
         return `${effect.type.slice(0, 3)} ${effect.value}`;
     }
   });
+
+  const bonusIfPlayerDebuffed = getBonusDamageIfPlayerDebuffed(
+    enemy.definitionId,
+    ability.name
+  );
+  if (bonusIfPlayerDebuffed) {
+    chips.push(
+      translate("enemyCard.conditionalBonusVsDebuffed", {
+        bonus: bonusIfPlayerDebuffed,
+      })
+    );
+  }
+
+  return chips;
+}
+
+function computeEnemyDamagePreview(
+  combat: CombatState,
+  enemy: CombatState["enemies"][number],
+  resolvedTarget:
+    | "player"
+    | "all_enemies"
+    | "all_allies"
+    | { type: "enemy"; instanceId: string }
+    | { type: "ally"; instanceId: string },
+  baseDamage: number,
+  ability?: EnemyAbility
+): number {
+  let effectiveBaseDamage = baseDamage;
+  if (ability && resolvedTarget === "player") {
+    const bonusIfPlayerDebuffed = getBonusDamageIfPlayerDebuffed(
+      enemy.definitionId,
+      ability.name
+    );
+    if (
+      bonusIfPlayerDebuffed &&
+      hasPlayerDebuffForEnemyBonus(combat.player.buffs)
+    ) {
+      effectiveBaseDamage += bonusIfPlayerDebuffed;
+    }
+  }
+
+  const targetBuffs = resolveEnemyIntentTargetBuffs(combat, resolvedTarget);
+  return calculateDamage(
+    effectiveBaseDamage,
+    { strength: getStrengthFromBuffs(enemy.buffs), buffs: enemy.buffs },
+    { buffs: targetBuffs }
+  );
+}
+
+function resolveEnemyIntentTargetBuffs(
+  combat: CombatState,
+  resolvedTarget:
+    | "player"
+    | "all_enemies"
+    | "all_allies"
+    | { type: "enemy"; instanceId: string }
+    | { type: "ally"; instanceId: string }
+): BuffInstance[] {
+  if (resolvedTarget === "player") return combat.player.buffs;
+
+  if (resolvedTarget === "all_enemies") {
+    return combat.player.buffs;
+  }
+
+  if (resolvedTarget === "all_allies") {
+    return combat.enemies.find((entry) => entry.currentHp > 0)?.buffs ?? [];
+  }
+
+  if (resolvedTarget.type === "ally") {
+    return (
+      combat.allies.find(
+        (entry) => entry.instanceId === resolvedTarget.instanceId
+      )?.buffs ?? []
+    );
+  }
+
+  return (
+    combat.enemies.find(
+      (entry) => entry.instanceId === resolvedTarget.instanceId
+    )?.buffs ?? []
+  );
+}
+
+function getStrengthFromBuffs(buffs: BuffInstance[]): number {
+  return buffs
+    .filter((buff) => buff.type === "STRENGTH")
+    .reduce((total, buff) => total + buff.stacks, 0);
 }
 
 function getPreviewEffectsForSelectedCard(

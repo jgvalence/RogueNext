@@ -879,6 +879,7 @@ export const en = {
     spd: "SPD",
     block: "Block",
     noAbility: "No ability",
+    activeEffects: "Active effects",
     next: "Next",
     devChooseEnemy: "DEV: choose an enemy to kill",
     player: "Player",
@@ -916,6 +917,7 @@ export const en = {
     drawDown: "Draw -{{value}}",
     randomDiscard: "Random discard {{value}}",
     summon: "Summon",
+    conditionalBonusVsDebuffed: "+{{bonus}} if player is debuffed",
     phase2Summon: "Phase 2 (<50% HP): summons {{label}}",
   },
   playerStats: {

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f0200"/>
+      <stop offset="60%" stop-color="#1a0500"/>
+      <stop offset="100%" stop-color="#2d0a00"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2d0a00"/>
+      <stop offset="100%" stop-color="#080100"/>
+    </linearGradient>
+    <radialGradient id="fire" cx="50%" cy="60%" r="25%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="torch1" cx="21%" cy="55%" r="20%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="torch2" cx="79%" cy="55%" r="20%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Sky / interior -->
+  <rect width="800" height="450" fill="url(#sky)"/>
+  <!-- Obsidian step pyramid left -->
+  <rect x="0" y="220" width="240" height="80" fill="#0f0300" opacity="0.8"/>
+  <rect x="0" y="180" width="200" height="42" fill="#0f0300" opacity="0.7"/>
+  <rect x="0" y="145" width="160" height="37" fill="#0f0300" opacity="0.65"/>
+  <rect x="0" y="115" width="120" height="32" fill="#0f0300" opacity="0.6"/>
+  <rect x="0" y="90" width="80" height="27" fill="#0f0300" opacity="0.55"/>
+  <!-- Step edges left (orange highlight) -->
+  <line x1="240" y1="220" x2="240" y2="300" stroke="#b45309" stroke-width="1" opacity="0.4"/>
+  <line x1="0" y1="220" x2="240" y2="220" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+  <line x1="200" y1="180" x2="200" y2="220" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+  <line x1="0" y1="180" x2="200" y2="180" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+  <line x1="160" y1="145" x2="160" y2="180" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+  <line x1="0" y1="145" x2="160" y2="145" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+  <!-- Obsidian step pyramid right (mirror) -->
+  <rect x="560" y="220" width="240" height="80" fill="#0f0300" opacity="0.8"/>
+  <rect x="600" y="180" width="200" height="42" fill="#0f0300" opacity="0.7"/>
+  <rect x="640" y="145" width="160" height="37" fill="#0f0300" opacity="0.65"/>
+  <rect x="680" y="115" width="120" height="32" fill="#0f0300" opacity="0.6"/>
+  <rect x="720" y="90" width="80" height="27" fill="#0f0300" opacity="0.55"/>
+  <!-- Step edges right -->
+  <line x1="560" y1="220" x2="560" y2="300" stroke="#b45309" stroke-width="1" opacity="0.4"/>
+  <line x1="560" y1="220" x2="800" y2="220" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+  <line x1="600" y1="180" x2="600" y2="220" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+  <line x1="600" y1="180" x2="800" y2="180" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+  <line x1="640" y1="145" x2="640" y2="180" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+  <line x1="640" y1="145" x2="800" y2="145" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+  <!-- Ritual fire glow -->
+  <rect width="800" height="450" fill="url(#fire)"/>
+  <!-- Fire pit -->
+  <ellipse cx="400" cy="290" rx="30" ry="10" fill="#7c2d12" opacity="0.6"/>
+  <ellipse cx="400" cy="284" rx="18" ry="20" fill="#ea580c" opacity="0.7"/>
+  <ellipse cx="400" cy="276" rx="12" ry="16" fill="#f97316" opacity="0.8"/>
+  <ellipse cx="400" cy="268" rx="6" ry="10" fill="#fbbf24" opacity="0.7"/>
+  <!-- Torch left -->
+  <rect x="152" y="222" width="6" height="18" rx="2" fill="#44180f"/>
+  <ellipse cx="155" cy="220" rx="5" ry="7" fill="#ea580c" opacity="0.9"/>
+  <circle cx="155" cy="218" r="2.5" fill="#fbbf24"/>
+  <rect width="800" height="450" fill="url(#torch1)"/>
+  <!-- Torch right -->
+  <rect x="642" y="222" width="6" height="18" rx="2" fill="#44180f"/>
+  <ellipse cx="645" cy="220" rx="5" ry="7" fill="#ea580c" opacity="0.9"/>
+  <circle cx="645" cy="218" r="2.5" fill="#fbbf24"/>
+  <rect width="800" height="450" fill="url(#torch2)"/>
+  <!-- Floor (obsidian) -->
+  <rect x="0" y="300" width="800" height="150" fill="url(#floor)"/>
+  <line x1="0" y1="300" x2="800" y2="300" stroke="#7c2d12" stroke-width="2"/>
+  <line x1="0" y1="330" x2="800" y2="330" stroke="#7c2d12" stroke-width="1" opacity="0.5"/>
+  <line x1="0" y1="360" x2="800" y2="360" stroke="#7c2d12" stroke-width="1" opacity="0.3"/>
+  <line x1="200" y1="300" x2="200" y2="450" stroke="#7c2d12" stroke-width="1" opacity="0.4"/>
+  <line x1="400" y1="300" x2="400" y2="450" stroke="#7c2d12" stroke-width="1" opacity="0.4"/>
+  <line x1="600" y1="300" x2="600" y2="450" stroke="#7c2d12" stroke-width="1" opacity="0.4"/>
+  <!-- Sun calendar on floor -->
+  <circle cx="400" cy="370" r="45" fill="none" stroke="#b45309" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="400" cy="370" r="32" fill="none" stroke="#b45309" stroke-width="1" opacity="0.3"/>
+  <circle cx="400" cy="370" r="18" fill="none" stroke="#ea580c" stroke-width="1" opacity="0.3"/>
+  <!-- Calendar cardinal marks -->
+  <line x1="400" y1="325" x2="400" y2="315" stroke="#b45309" stroke-width="1.5" opacity="0.4"/>
+  <line x1="400" y1="415" x2="400" y2="425" stroke="#b45309" stroke-width="1.5" opacity="0.4"/>
+  <line x1="355" y1="370" x2="345" y2="370" stroke="#b45309" stroke-width="1.5" opacity="0.4"/>
+  <line x1="445" y1="370" x2="455" y2="370" stroke="#b45309" stroke-width="1.5" opacity="0.4"/>
+  <line x1="368" y1="338" x2="362" y2="332" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+  <line x1="432" y1="338" x2="438" y2="332" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+  <line x1="368" y1="402" x2="362" y2="408" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+  <line x1="432" y1="402" x2="438" y2="408" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+</svg>

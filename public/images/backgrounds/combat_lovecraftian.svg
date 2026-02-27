@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="void" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#000005"/>
+      <stop offset="50%" stop-color="#010008"/>
+      <stop offset="100%" stop-color="#00050a"/>
+    </linearGradient>
+    <radialGradient id="eye" cx="50%" cy="50%" r="40%">
+      <stop offset="0%" stop-color="#065f46" stop-opacity="0.15"/>
+      <stop offset="60%" stop-color="#064e3b" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#064e3b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="purp" cx="50%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#4c1d95" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#4c1d95" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Void -->
+  <rect width="800" height="450" fill="url(#void)"/>
+  <!-- Eldritch glow -->
+  <rect width="800" height="450" fill="url(#eye)"/>
+  <rect width="800" height="450" fill="url(#purp)"/>
+  <!-- Strange stars (irregular) -->
+  <circle cx="50" cy="25" r="1.2" fill="#6ee7b7" opacity="0.5"/>
+  <circle cx="80" cy="60" r="0.8" fill="#a78bfa" opacity="0.6"/>
+  <circle cx="180" cy="18" r="1.5" fill="#6ee7b7" opacity="0.4"/>
+  <circle cx="250" cy="45" r="0.8" fill="#c4b5fd" opacity="0.5"/>
+  <circle cx="350" cy="8" r="1" fill="#6ee7b7" opacity="0.6"/>
+  <circle cx="420" cy="35" r="1.2" fill="#a78bfa" opacity="0.45"/>
+  <circle cx="550" cy="20" r="0.9" fill="#6ee7b7" opacity="0.5"/>
+  <circle cx="650" cy="50" r="1.3" fill="#c4b5fd" opacity="0.4"/>
+  <circle cx="730" cy="15" r="1" fill="#6ee7b7" opacity="0.6"/>
+  <circle cx="770" cy="40" r="0.8" fill="#a78bfa" opacity="0.5"/>
+  <!-- Non-euclidean columns (warped) -->
+  <path d="M0 60 Q30 150 20 300 L0 300 Z" fill="#040015" opacity="0.7"/>
+  <path d="M130 90 Q160 190 150 300 L130 300 Z" fill="#040015" opacity="0.55"/>
+  <path d="M670 90 Q660 190 650 300 L670 300 Z" fill="#040015" opacity="0.55"/>
+  <path d="M800 60 Q770 150 780 300 L800 300 Z" fill="#040015" opacity="0.7"/>
+  <!-- Tentacle curves -->
+  <path d="M0 200 Q80 180 120 250 Q160 300 100 350" fill="none" stroke="#064e3b" stroke-width="2" opacity="0.3"/>
+  <path d="M800 220 Q720 200 680 270 Q640 320 700 370" fill="none" stroke="#064e3b" stroke-width="2" opacity="0.3"/>
+  <path d="M0 350 Q60 310 110 340 Q160 370 120 420" fill="none" stroke="#064e3b" stroke-width="1.5" opacity="0.2"/>
+  <path d="M800 350 Q740 310 690 340 Q640 370 680 420" fill="none" stroke="#064e3b" stroke-width="1.5" opacity="0.2"/>
+  <!-- Void gate -->
+  <path d="M240 300 L260 90 Q400 20 540 90 L560 300 Z" fill="#000008" opacity="0.6"/>
+  <path d="M260 300 L278 100 Q400 38 522 100 L540 300 Z" fill="none" stroke="#6d28d9" stroke-width="1.5" opacity="0.4"/>
+  <!-- Floor (void) -->
+  <rect x="0" y="300" width="800" height="150" fill="#000005"/>
+  <line x1="0" y1="300" x2="800" y2="300" stroke="#4c1d95" stroke-width="1" opacity="0.4"/>
+  <!-- Void cracks -->
+  <path d="M100 310 L180 370 M180 370 L220 360" fill="none" stroke="#065f46" stroke-width="0.8" opacity="0.3"/>
+  <path d="M600 320 L680 365 M680 365 L710 355" fill="none" stroke="#065f46" stroke-width="0.8" opacity="0.3"/>
+  <!-- Elder sign on floor -->
+  <circle cx="400" cy="340" r="55" fill="none" stroke="#4c1d95" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="400" cy="340" r="40" fill="none" stroke="#6d28d9" stroke-width="1" opacity="0.4"/>
+  <circle cx="400" cy="340" r="25" fill="none" stroke="#7c3aed" stroke-width="1" opacity="0.3"/>
+  <!-- Eye of chaos -->
+  <ellipse cx="400" cy="340" rx="20" ry="10" fill="none" stroke="#059669" stroke-width="1" opacity="0.5"/>
+  <ellipse cx="400" cy="340" rx="8" ry="8" fill="#047857" opacity="0.3"/>
+  <!-- Star lines -->
+  <line x1="400" y1="285" x2="400" y2="395" stroke="#4c1d95" stroke-width="0.8" opacity="0.4"/>
+  <line x1="345" y1="340" x2="455" y2="340" stroke="#4c1d95" stroke-width="0.8" opacity="0.4"/>
+  <line x1="361" y1="301" x2="439" y2="379" stroke="#4c1d95" stroke-width="0.8" opacity="0.4"/>
+  <line x1="439" y1="301" x2="361" y2="379" stroke="#4c1d95" stroke-width="0.8" opacity="0.4"/>
+</svg>

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f0500"/>
+      <stop offset="40%" stop-color="#1a0800"/>
+      <stop offset="100%" stop-color="#2d1000"/>
+    </linearGradient>
+    <linearGradient id="horizon" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7c2d12" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#7c2d12" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2d1000"/>
+      <stop offset="100%" stop-color="#0a0300"/>
+    </linearGradient>
+    <radialGradient id="spirit1" cx="35%" cy="55%" r="8%">
+      <stop offset="0%" stop-color="#fb923c" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#fb923c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="spirit2" cx="65%" cy="60%" r="6%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="spirit3" cx="50%" cy="45%" r="5%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Deep amber sky -->
+  <rect width="800" height="450" fill="url(#sky)"/>
+  <!-- Horizon spirit glow -->
+  <rect x="0" y="200" width="800" height="250" fill="url(#horizon)"/>
+  <!-- Stars (upper sky) -->
+  <circle cx="50" cy="20" r="1" fill="#fed7aa" opacity="0.6"/>
+  <circle cx="160" cy="35" r="0.8" fill="#fed7aa" opacity="0.5"/>
+  <circle cx="290" cy="15" r="1.2" fill="#fed7aa" opacity="0.4"/>
+  <circle cx="440" cy="28" r="0.9" fill="#fed7aa" opacity="0.55"/>
+  <circle cx="580" cy="10" r="1" fill="#fed7aa" opacity="0.5"/>
+  <circle cx="700" cy="40" r="0.8" fill="#fed7aa" opacity="0.45"/>
+  <circle cx="770" cy="22" r="1.1" fill="#fed7aa" opacity="0.5"/>
+  <!-- Baobab left (thick trunk + spreading branches) -->
+  <rect x="10" y="160" width="45" height="140" rx="8" fill="#0a0200" opacity="0.9"/>
+  <path d="M32 160 Q20 130 0 120" fill="none" stroke="#0a0200" stroke-width="12" stroke-linecap="round" opacity="0.9"/>
+  <path d="M32 160 Q15 140 10 115" fill="none" stroke="#0a0200" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+  <path d="M32 160 Q50 125 80 110" fill="none" stroke="#0a0200" stroke-width="10" stroke-linecap="round" opacity="0.9"/>
+  <path d="M32 160 Q60 140 90 135" fill="none" stroke="#0a0200" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+  <path d="M32 160 Q45 145 50 120" fill="none" stroke="#0a0200" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+  <path d="M0 120 Q-10 105 -5 95" fill="none" stroke="#0a0200" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+  <path d="M80 110 Q95 95 90 80" fill="none" stroke="#0a0200" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+  <!-- Baobab right (mirror) -->
+  <rect x="745" y="160" width="45" height="140" rx="8" fill="#0a0200" opacity="0.9"/>
+  <path d="M768 160 Q780 130 800 120" fill="none" stroke="#0a0200" stroke-width="12" stroke-linecap="round" opacity="0.9"/>
+  <path d="M768 160 Q785 140 790 115" fill="none" stroke="#0a0200" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+  <path d="M768 160 Q750 125 720 110" fill="none" stroke="#0a0200" stroke-width="10" stroke-linecap="round" opacity="0.9"/>
+  <path d="M768 160 Q740 140 710 135" fill="none" stroke="#0a0200" stroke-width="6" stroke-linecap="round" opacity="0.8"/>
+  <path d="M768 160 Q755 145 750 120" fill="none" stroke="#0a0200" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+  <path d="M800 120 Q810 105 805 95" fill="none" stroke="#0a0200" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+  <path d="M720 110 Q705 95 710 80" fill="none" stroke="#0a0200" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+  <!-- Smaller baobabs mid -->
+  <rect x="130" y="220" width="20" height="80" rx="4" fill="#0a0200" opacity="0.7"/>
+  <path d="M140 220 Q128 200 115 192" fill="none" stroke="#0a0200" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M140 220 Q153 198 168 193" fill="none" stroke="#0a0200" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+  <rect x="650" y="220" width="20" height="80" rx="4" fill="#0a0200" opacity="0.7"/>
+  <path d="M660 220 Q648 200 635 192" fill="none" stroke="#0a0200" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+  <path d="M660 220 Q673 198 688 193" fill="none" stroke="#0a0200" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+  <!-- Spirit lights -->
+  <rect width="800" height="450" fill="url(#spirit1)"/>
+  <rect width="800" height="450" fill="url(#spirit2)"/>
+  <rect width="800" height="450" fill="url(#spirit3)"/>
+  <!-- Spirit orb particles -->
+  <circle cx="280" cy="220" r="3" fill="#fb923c" opacity="0.45"/>
+  <circle cx="350" cy="195" r="2" fill="#fbbf24" opacity="0.4"/>
+  <circle cx="530" cy="230" r="2.5" fill="#fb923c" opacity="0.4"/>
+  <circle cx="460" cy="200" r="2" fill="#fbbf24" opacity="0.38"/>
+  <!-- Savanna opening -->
+  <path d="M240 300 L240 100 Q400 60 560 100 L560 300 Z" fill="#0f0500" opacity="0.45"/>
+  <!-- Floor (savanna earth) -->
+  <rect x="0" y="300" width="800" height="150" fill="url(#floor)"/>
+  <line x1="0" y1="300" x2="800" y2="300" stroke="#7c2d12" stroke-width="2"/>
+  <line x1="0" y1="325" x2="800" y2="325" stroke="#7c2d12" stroke-width="0.8" opacity="0.4"/>
+  <!-- Grass blades at horizon -->
+  <line x1="80" y1="300" x2="75" y2="288" stroke="#92400e" stroke-width="1" opacity="0.4"/>
+  <line x1="160" y1="300" x2="163" y2="287" stroke="#92400e" stroke-width="1" opacity="0.4"/>
+  <line x1="320" y1="300" x2="316" y2="289" stroke="#92400e" stroke-width="1" opacity="0.4"/>
+  <line x1="480" y1="300" x2="484" y2="288" stroke="#92400e" stroke-width="1" opacity="0.4"/>
+  <line x1="640" y1="300" x2="636" y2="289" stroke="#92400e" stroke-width="1" opacity="0.4"/>
+  <line x1="720" y1="300" x2="724" y2="288" stroke="#92400e" stroke-width="1" opacity="0.4"/>
+  <!-- Ancestral circle on earth -->
+  <circle cx="400" cy="345" r="50" fill="none" stroke="#b45309" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="400" cy="345" r="35" fill="none" stroke="#92400e" stroke-width="1" opacity="0.3"/>
+  <circle cx="400" cy="345" r="15" fill="none" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+  <!-- Adinkra-inspired symbol -->
+  <line x1="400" y1="322" x2="400" y2="368" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+  <line x1="377" y1="345" x2="423" y2="345" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+  <line x1="389" y1="334" x2="411" y2="356" stroke="#d97706" stroke-width="1" opacity="0.35"/>
+  <line x1="411" y1="334" x2="389" y2="356" stroke="#d97706" stroke-width="1" opacity="0.35"/>
+</svg>

@@ -24,6 +24,10 @@ import { buffMeta } from "../shared/buff-meta";
 import { ENEMY_IMAGES } from "@/lib/assets";
 import { playSound } from "@/lib/sound";
 import { useTranslation } from "react-i18next";
+import {
+  getBonusDamageIfPlayerDebuffed,
+  hasPlayerDebuffForEnemyBonus,
+} from "@/game/engine/enemy-intent-preview";
 
 interface EnemyCardProps {
   enemy: EnemyState;
@@ -522,6 +526,29 @@ function formatIntentEffects(
         className="inline-flex items-center gap-0.5 rounded bg-orange-900/60 px-1.5 py-0.5 text-[10px] font-semibold text-orange-200 lg:text-[11px]"
       >
         {t("enemyCard.summon")} {summonLabel}
+      </span>
+    );
+  }
+
+  const bonusIfPlayerDebuffed = getBonusDamageIfPlayerDebuffed(
+    definitionId,
+    abilityName
+  );
+  if (bonusIfPlayerDebuffed) {
+    const hasDebuff = hasPlayerDebuffForEnemyBonus(playerBuffs);
+    parts.push(
+      <span
+        key={`cond-${parts.length}`}
+        className={cn(
+          "inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-semibold lg:text-[11px]",
+          hasDebuff
+            ? "bg-amber-800/70 text-amber-100 ring-1 ring-amber-300/50"
+            : "bg-gray-700/80 text-gray-200"
+        )}
+      >
+        {t("enemyCard.conditionalBonusVsDebuffed", {
+          bonus: bonusIfPlayerDebuffed,
+        })}
       </span>
     );
   }

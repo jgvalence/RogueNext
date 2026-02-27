@@ -770,6 +770,7 @@ export const fr = {
     spd: "VIT",
     block: "Armure",
     noAbility: "Aucune capacite",
+    activeEffects: "Effets actifs",
     next: "Suivant",
     devChooseEnemy: "DEV : choisissez un ennemi a tuer",
     player: "Joueur",
@@ -807,6 +808,7 @@ export const fr = {
     drawDown: "Pioche -{{value}}",
     randomDiscard: "Defausse aleatoire {{value}}",
     summon: "Invoque",
+    conditionalBonusVsDebuffed: "+{{bonus}} si le joueur est affaibli",
     phase2Summon: "Phase 2 (<50% PV) : invoque {{label}}",
   },
   playerStats: {

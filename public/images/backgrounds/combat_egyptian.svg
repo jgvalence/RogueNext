@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#100700"/>
+      <stop offset="60%" stop-color="#1e0e00"/>
+      <stop offset="100%" stop-color="#2d1800"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2d1800"/>
+      <stop offset="100%" stop-color="#0a0400"/>
+    </linearGradient>
+    <radialGradient id="torch1" cx="21%" cy="53%" r="20%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="torch2" cx="79%" cy="53%" r="20%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="center" cx="50%" cy="60%" r="30%">
+      <stop offset="0%" stop-color="#92400e" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#92400e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="450" fill="url(#sky)"/>
+  <!-- Sandstone wall blocks -->
+  <rect x="0" y="60" width="130" height="240" fill="#1a0e00" opacity="0.65"/>
+  <rect x="130" y="90" width="120" height="210" fill="#1a0e00" opacity="0.5"/>
+  <rect x="550" y="90" width="120" height="210" fill="#1a0e00" opacity="0.5"/>
+  <rect x="670" y="60" width="130" height="240" fill="#1a0e00" opacity="0.65"/>
+  <!-- Stone block lines (horizontal) -->
+  <line x1="0" y1="110" x2="130" y2="110" stroke="#3d1f00" stroke-width="1.5"/>
+  <line x1="0" y1="160" x2="130" y2="160" stroke="#3d1f00" stroke-width="1.5"/>
+  <line x1="0" y1="210" x2="130" y2="210" stroke="#3d1f00" stroke-width="1.5"/>
+  <line x1="0" y1="260" x2="130" y2="260" stroke="#3d1f00" stroke-width="1.5"/>
+  <line x1="670" y1="110" x2="800" y2="110" stroke="#3d1f00" stroke-width="1.5"/>
+  <line x1="670" y1="160" x2="800" y2="160" stroke="#3d1f00" stroke-width="1.5"/>
+  <line x1="670" y1="210" x2="800" y2="210" stroke="#3d1f00" stroke-width="1.5"/>
+  <line x1="670" y1="260" x2="800" y2="260" stroke="#3d1f00" stroke-width="1.5"/>
+  <!-- Hieroglyph panel dividers -->
+  <line x1="65" y1="80" x2="65" y2="295" stroke="#3d1f00" stroke-width="1" opacity="0.6"/>
+  <line x1="735" y1="80" x2="735" y2="295" stroke="#3d1f00" stroke-width="1" opacity="0.6"/>
+  <!-- Obelisk silhouettes -->
+  <polygon points="155,300 165,300 163,90 157,85 151,90" fill="#240e00" opacity="0.4"/>
+  <polygon points="635,300 645,300 643,90 637,85 631,90" fill="#240e00" opacity="0.4"/>
+  <!-- Egyptian gate (trapezoidal) -->
+  <path d="M240 300 L260 80 L540 80 L560 300 Z" fill="#060200" opacity="0.5"/>
+  <path d="M255 300 L273 92 L527 92 L545 300 Z" fill="none" stroke="#92400e" stroke-width="2" opacity="0.4"/>
+  <!-- Winged disk above gate -->
+  <ellipse cx="400" cy="88" rx="60" ry="8" fill="none" stroke="#b45309" stroke-width="1" opacity="0.4"/>
+  <line x1="340" y1="88" x2="290" y2="80" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+  <line x1="340" y1="88" x2="290" y2="96" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+  <line x1="460" y1="88" x2="510" y2="80" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+  <line x1="460" y1="88" x2="510" y2="96" stroke="#b45309" stroke-width="1" opacity="0.35"/>
+  <!-- Torch left (golden) -->
+  <rect x="152" y="220" width="6" height="20" rx="2" fill="#78350f"/>
+  <ellipse cx="155" cy="218" rx="6" ry="8" fill="#f59e0b" opacity="0.9"/>
+  <circle cx="155" cy="216" r="3" fill="#fde68a"/>
+  <rect width="800" height="450" fill="url(#torch1)"/>
+  <!-- Torch right -->
+  <rect x="642" y="220" width="6" height="20" rx="2" fill="#78350f"/>
+  <ellipse cx="645" cy="218" rx="6" ry="8" fill="#f59e0b" opacity="0.9"/>
+  <circle cx="645" cy="216" r="3" fill="#fde68a"/>
+  <rect width="800" height="450" fill="url(#torch2)"/>
+  <rect width="800" height="450" fill="url(#center)"/>
+  <!-- Floor -->
+  <rect x="0" y="300" width="800" height="150" fill="url(#floor)"/>
+  <line x1="0" y1="300" x2="800" y2="300" stroke="#3d1f00" stroke-width="2"/>
+  <line x1="0" y1="330" x2="800" y2="330" stroke="#3d1f00" stroke-width="1" opacity="0.5"/>
+  <line x1="0" y1="360" x2="800" y2="360" stroke="#3d1f00" stroke-width="1" opacity="0.3"/>
+  <line x1="100" y1="300" x2="100" y2="450" stroke="#3d1f00" stroke-width="1" opacity="0.4"/>
+  <line x1="200" y1="300" x2="200" y2="450" stroke="#3d1f00" stroke-width="1" opacity="0.4"/>
+  <line x1="300" y1="300" x2="300" y2="450" stroke="#3d1f00" stroke-width="1" opacity="0.4"/>
+  <line x1="400" y1="300" x2="400" y2="450" stroke="#3d1f00" stroke-width="1" opacity="0.4"/>
+  <line x1="500" y1="300" x2="500" y2="450" stroke="#3d1f00" stroke-width="1" opacity="0.4"/>
+  <line x1="600" y1="300" x2="600" y2="450" stroke="#3d1f00" stroke-width="1" opacity="0.4"/>
+  <line x1="700" y1="300" x2="700" y2="450" stroke="#3d1f00" stroke-width="1" opacity="0.4"/>
+  <!-- Ankh on floor -->
+  <circle cx="400" cy="325" r="15" fill="none" stroke="#b45309" stroke-width="1.5" opacity="0.5"/>
+  <line x1="400" y1="340" x2="400" y2="370" stroke="#b45309" stroke-width="1.5" opacity="0.5"/>
+  <line x1="385" y1="352" x2="415" y2="352" stroke="#b45309" stroke-width="1.5" opacity="0.4"/>
+  <!-- Outer ring -->
+  <circle cx="400" cy="340" r="50" fill="none" stroke="#92400e" stroke-width="1" opacity="0.35"/>
+</svg>

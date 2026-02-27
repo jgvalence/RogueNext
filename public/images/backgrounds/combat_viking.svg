@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#030810"/>
+      <stop offset="60%" stop-color="#071020"/>
+      <stop offset="100%" stop-color="#0d1f38"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0d1f38"/>
+      <stop offset="100%" stop-color="#040810"/>
+    </linearGradient>
+    <radialGradient id="aurora" cx="50%" cy="0%" r="70%">
+      <stop offset="0%" stop-color="#064e3b" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#064e3b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="torch1" cx="21%" cy="53%" r="20%">
+      <stop offset="0%" stop-color="#93c5fd" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#93c5fd" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="torch2" cx="79%" cy="53%" r="20%">
+      <stop offset="0%" stop-color="#93c5fd" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#93c5fd" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Sky -->
+  <rect width="800" height="450" fill="url(#sky)"/>
+  <!-- Aurora borealis -->
+  <rect width="800" height="450" fill="url(#aurora)"/>
+  <!-- Stars -->
+  <circle cx="50" cy="30" r="1" fill="#dbeafe" opacity="0.6"/>
+  <circle cx="130" cy="15" r="1.5" fill="#dbeafe" opacity="0.5"/>
+  <circle cx="210" cy="45" r="1" fill="#dbeafe" opacity="0.7"/>
+  <circle cx="340" cy="12" r="1.2" fill="#dbeafe" opacity="0.4"/>
+  <circle cx="470" cy="28" r="1" fill="#dbeafe" opacity="0.6"/>
+  <circle cx="600" cy="8" r="1.3" fill="#dbeafe" opacity="0.5"/>
+  <circle cx="690" cy="38" r="0.8" fill="#dbeafe" opacity="0.6"/>
+  <circle cx="760" cy="18" r="1.1" fill="#dbeafe" opacity="0.4"/>
+  <!-- Stone/ice wall blocks -->
+  <rect x="0" y="60" width="130" height="240" fill="#06111f" opacity="0.7"/>
+  <rect x="130" y="90" width="120" height="210" fill="#06111f" opacity="0.55"/>
+  <rect x="550" y="90" width="120" height="210" fill="#06111f" opacity="0.55"/>
+  <rect x="670" y="60" width="130" height="240" fill="#06111f" opacity="0.7"/>
+  <!-- Ice veins in stone -->
+  <line x1="20" y1="120" x2="90" y2="200" stroke="#93c5fd" stroke-width="1" opacity="0.2"/>
+  <line x1="710" y1="110" x2="770" y2="190" stroke="#93c5fd" stroke-width="1" opacity="0.2"/>
+  <!-- Stone mortar lines -->
+  <line x1="0" y1="160" x2="130" y2="160" stroke="#1e3a5f" stroke-width="1.5"/>
+  <line x1="130" y1="185" x2="250" y2="185" stroke="#1e3a5f" stroke-width="1.5"/>
+  <line x1="550" y1="185" x2="670" y2="185" stroke="#1e3a5f" stroke-width="1.5"/>
+  <line x1="670" y1="160" x2="800" y2="160" stroke="#1e3a5f" stroke-width="1.5"/>
+  <!-- Viking arch -->
+  <path d="M240 300 L240 120 Q240 40 400 40 Q560 40 560 120 L560 300 Z" fill="#020608" opacity="0.5"/>
+  <path d="M258 300 L258 128 Q258 58 400 58 Q542 58 542 128 L542 300 Z" fill="none" stroke="#1d4ed8" stroke-width="2" opacity="0.45"/>
+  <!-- Blue flame torch left -->
+  <rect x="150" y="222" width="6" height="18" rx="2" fill="#374151"/>
+  <ellipse cx="153" cy="220" rx="5" ry="7" fill="#93c5fd" opacity="0.85"/>
+  <circle cx="153" cy="218" r="2.5" fill="#eff6ff"/>
+  <rect width="800" height="450" fill="url(#torch1)"/>
+  <!-- Blue flame torch right -->
+  <rect x="644" y="222" width="6" height="18" rx="2" fill="#374151"/>
+  <ellipse cx="647" cy="220" rx="5" ry="7" fill="#93c5fd" opacity="0.85"/>
+  <circle cx="647" cy="218" r="2.5" fill="#eff6ff"/>
+  <rect width="800" height="450" fill="url(#torch2)"/>
+  <!-- Floor -->
+  <rect x="0" y="300" width="800" height="150" fill="url(#floor)"/>
+  <line x1="0" y1="300" x2="800" y2="300" stroke="#1e3a5f" stroke-width="2"/>
+  <line x1="0" y1="330" x2="800" y2="330" stroke="#1e3a5f" stroke-width="1" opacity="0.5"/>
+  <line x1="0" y1="360" x2="800" y2="360" stroke="#1e3a5f" stroke-width="1" opacity="0.3"/>
+  <!-- Ice cracks on floor -->
+  <path d="M150 310 L200 350 L230 340" fill="none" stroke="#93c5fd" stroke-width="0.8" opacity="0.3"/>
+  <path d="M580 325 L620 360 L640 350" fill="none" stroke="#93c5fd" stroke-width="0.8" opacity="0.25"/>
+  <!-- Nordic rune circle on floor -->
+  <circle cx="400" cy="340" r="50" fill="none" stroke="#1d4ed8" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="400" cy="340" r="35" fill="none" stroke="#1d4ed8" stroke-width="1" opacity="0.3"/>
+  <!-- Viking rune (Uruz) -->
+  <line x1="400" y1="318" x2="400" y2="362" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+  <line x1="400" y1="322" x2="414" y2="332" stroke="#3b82f6" stroke-width="2" opacity="0.5"/>
+  <line x1="400" y1="346" x2="414" y2="356" stroke="#3b82f6" stroke-width="2" opacity="0.4"/>
+</svg>

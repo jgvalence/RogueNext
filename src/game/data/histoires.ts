@@ -62,7 +62,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Codex Infini",
     biome: "LIBRARY",
     tier: 3,
-    cout: { PAGES: 40, LAURIERS: 5 },
+    cout: { PAGES: 55, LAURIERS: 8 },
     prerequis: ["grimoire_des_index", "manuel_de_revision"],
     bonus: { type: "EXTRA_DRAW", value: 1 },
     description:
@@ -126,7 +126,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Poème de Beowulf",
     biome: "VIKING",
     tier: 3,
-    cout: { RUNES: 40, PAGES: 5 },
+    cout: { RUNES: 55, PAGES: 8 },
     prerequis: ["chant_de_skald", "runes_du_valhalla"],
     bonus: { type: "STARTING_STRENGTH", value: 2 },
     description:
@@ -194,7 +194,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Platon",
     biome: "GREEK",
     tier: 3,
-    cout: { LAURIERS: 40, PAGES: 5 },
+    cout: { LAURIERS: 55, PAGES: 8 },
     prerequis: ["les_travaux_d_heracles", "hymnes_homeriques"],
     bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
     description:
@@ -258,7 +258,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Rituel du Soleil",
     biome: "EGYPTIAN",
     tier: 3,
-    cout: { GLYPHES: 40, PAGES: 5 },
+    cout: { GLYPHES: 55, PAGES: 8 },
     prerequis: ["textes_des_pyramides", "papyrus_d_ani"],
     bonus: { type: "UNLOCK_INK_POWER", power: "SEAL" },
     description:
@@ -322,7 +322,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Sacrifice Cosmique",
     biome: "AZTEC",
     tier: 3,
-    cout: { OBSIDIENNE: 40, RUNES: 5 },
+    cout: { OBSIDIENNE: 55, RUNES: 8 },
     prerequis: ["chant_de_quetzalcoatl", "rite_du_soleil_noir"],
     bonus: { type: "EXTRA_HP", value: 10 },
     description:
@@ -388,7 +388,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Signe des Anciens",
     biome: "LOVECRAFTIAN",
     tier: 3,
-    cout: { FRAGMENTS: 40, GLYPHES: 5 },
+    cout: { FRAGMENTS: 55, GLYPHES: 8 },
     prerequis: ["cultes_innommables", "mondes_sans_nom"],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 20 },
     description:
@@ -418,9 +418,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { AMBRE: 10 },
     prerequis: [],
-    bonus: { type: "STARTING_REGEN", value: 2 },
+    bonus: { type: "STARTING_REGEN", value: 1 },
     description:
-      "Les épopées du héros Cú Chulainn, champion de l'Ulster. Récupère 2 HP au début de chaque tour.",
+      "Les épopées du héros Cú Chulainn, champion de l'Ulster. Récupère 1 HP au début de chaque tour.",
     visuel: "parchemin",
   },
   {
@@ -452,7 +452,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Chaudron de Dagda",
     biome: "CELTIC",
     tier: 3,
-    cout: { AMBRE: 40, OBSIDIENNE: 5 },
+    cout: { AMBRE: 55, OBSIDIENNE: 8 },
     prerequis: ["taliesin", "les_triades_galloises"],
     bonus: { type: "STARTING_BLOCK", value: 4 },
     description:
@@ -516,7 +516,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Grand Livre des Sorts",
     biome: "RUSSIAN",
     tier: 3,
-    cout: { SCEAUX: 40, AMBRE: 5 },
+    cout: { SCEAUX: 55, AMBRE: 8 },
     prerequis: ["l_oiseau_de_feu", "domovoi"],
     bonus: { type: "EXTRA_ENERGY_MAX", value: 1 },
     description:
@@ -580,7 +580,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Griot Immortel",
     biome: "AFRICAN",
     tier: 3,
-    cout: { MASQUES: 40, LAURIERS: 5 },
+    cout: { MASQUES: 55, LAURIERS: 8 },
     prerequis: ["rites_de_passage", "masque_de_legba"],
     bonus: { type: "ALLY_SLOTS", value: 1 },
     description:

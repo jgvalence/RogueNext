@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#060c18"/>
+      <stop offset="50%" stop-color="#0e1c30"/>
+      <stop offset="100%" stop-color="#1a2e4a"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1a2e4a"/>
+      <stop offset="100%" stop-color="#070e1a"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="5%" r="35%">
+      <stop offset="0%" stop-color="#d97706" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#d97706" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="torch1" cx="22%" cy="52%" r="18%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="torch2" cx="78%" cy="52%" r="18%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Sky -->
+  <rect width="800" height="450" fill="url(#sky)"/>
+  <!-- Sun glow -->
+  <rect width="800" height="450" fill="url(#sun)"/>
+  <!-- Marble columns left (outer) -->
+  <rect x="30" y="50" width="28" height="260" fill="#e8f0f8" opacity="0.1"/>
+  <line x1="37" y1="50" x2="37" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.2"/>
+  <line x1="44" y1="50" x2="44" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.2"/>
+  <line x1="51" y1="50" x2="51" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.2"/>
+  <rect x="22" y="43" width="44" height="9" fill="#cbd5e1" opacity="0.15"/>
+  <rect x="26" y="307" width="36" height="6" fill="#cbd5e1" opacity="0.12"/>
+  <!-- Column 2 left -->
+  <rect x="100" y="78" width="26" height="232" fill="#e8f0f8" opacity="0.08"/>
+  <line x1="107" y1="78" x2="107" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.18"/>
+  <line x1="114" y1="78" x2="114" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.18"/>
+  <rect x="93" y="71" width="40" height="9" fill="#cbd5e1" opacity="0.12"/>
+  <!-- Marble columns right (outer) -->
+  <rect x="742" y="50" width="28" height="260" fill="#e8f0f8" opacity="0.1"/>
+  <line x1="749" y1="50" x2="749" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.2"/>
+  <line x1="756" y1="50" x2="756" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.2"/>
+  <line x1="763" y1="50" x2="763" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.2"/>
+  <rect x="734" y="43" width="44" height="9" fill="#cbd5e1" opacity="0.15"/>
+  <rect x="738" y="307" width="36" height="6" fill="#cbd5e1" opacity="0.12"/>
+  <!-- Column 2 right -->
+  <rect x="674" y="78" width="26" height="232" fill="#e8f0f8" opacity="0.08"/>
+  <line x1="681" y1="78" x2="681" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.18"/>
+  <line x1="688" y1="78" x2="688" y2="310" stroke="#94a3b8" stroke-width="0.5" opacity="0.18"/>
+  <rect x="667" y="71" width="40" height="9" fill="#cbd5e1" opacity="0.12"/>
+  <!-- Entablature frieze -->
+  <rect x="0" y="38" width="800" height="14" fill="#1e2d40" opacity="0.5"/>
+  <rect x="0" y="38" width="800" height="14" fill="none" stroke="#475569" stroke-width="0.5" opacity="0.3"/>
+  <!-- Pediment (triangle) -->
+  <path d="M120 38 L400 0 L680 38" fill="none" stroke="#475569" stroke-width="1" opacity="0.35"/>
+  <!-- Arch / passage -->
+  <rect x="240" y="80" width="320" height="220" fill="#030710" opacity="0.45"/>
+  <rect x="240" y="80" width="320" height="220" fill="none" stroke="#d97706" stroke-width="1.5" opacity="0.3"/>
+  <!-- Torch left (golden) -->
+  <rect x="154" y="222" width="6" height="18" rx="2" fill="#78350f"/>
+  <ellipse cx="157" cy="220" rx="5" ry="7" fill="#f97316" opacity="0.9"/>
+  <circle cx="157" cy="218" r="2.5" fill="#fbbf24"/>
+  <rect width="800" height="450" fill="url(#torch1)"/>
+  <!-- Torch right -->
+  <rect x="640" y="222" width="6" height="18" rx="2" fill="#78350f"/>
+  <ellipse cx="643" cy="220" rx="5" ry="7" fill="#f97316" opacity="0.9"/>
+  <circle cx="643" cy="218" r="2.5" fill="#fbbf24"/>
+  <rect width="800" height="450" fill="url(#torch2)"/>
+  <!-- Floor (marble) -->
+  <rect x="0" y="300" width="800" height="150" fill="url(#floor)"/>
+  <line x1="0" y1="300" x2="800" y2="300" stroke="#334155" stroke-width="2"/>
+  <line x1="0" y1="330" x2="800" y2="330" stroke="#334155" stroke-width="0.8" opacity="0.4"/>
+  <line x1="0" y1="360" x2="800" y2="360" stroke="#334155" stroke-width="0.8" opacity="0.25"/>
+  <line x1="133" y1="300" x2="133" y2="450" stroke="#334155" stroke-width="0.8" opacity="0.3"/>
+  <line x1="266" y1="300" x2="266" y2="450" stroke="#334155" stroke-width="0.8" opacity="0.3"/>
+  <line x1="400" y1="300" x2="400" y2="450" stroke="#334155" stroke-width="0.8" opacity="0.3"/>
+  <line x1="534" y1="300" x2="534" y2="450" stroke="#334155" stroke-width="0.8" opacity="0.3"/>
+  <line x1="667" y1="300" x2="667" y2="450" stroke="#334155" stroke-width="0.8" opacity="0.3"/>
+  <!-- Sun medallion on floor -->
+  <circle cx="400" cy="340" r="50" fill="none" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="400" cy="340" r="35" fill="none" stroke="#d97706" stroke-width="1" opacity="0.25"/>
+  <!-- Sun rays -->
+  <line x1="400" y1="318" x2="400" y2="308" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+  <line x1="400" y1="362" x2="400" y2="372" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+  <line x1="378" y1="340" x2="368" y2="340" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+  <line x1="422" y1="340" x2="432" y2="340" stroke="#d97706" stroke-width="1.5" opacity="0.4"/>
+  <line x1="383" y1="325" x2="377" y2="319" stroke="#d97706" stroke-width="1" opacity="0.35"/>
+  <line x1="417" y1="325" x2="423" y2="319" stroke="#d97706" stroke-width="1" opacity="0.35"/>
+  <line x1="383" y1="355" x2="377" y2="361" stroke="#d97706" stroke-width="1" opacity="0.35"/>
+  <line x1="417" y1="355" x2="423" y2="361" stroke="#d97706" stroke-width="1" opacity="0.35"/>
+</svg>

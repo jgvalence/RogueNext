@@ -226,7 +226,7 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       validated.earnedResources ?? runState.earnedResources ?? {};
     if (Object.keys(earnedResources).length > 0) {
       // Victory bonus: multiply all resources by 1.5
-      const multiplier = validated.status === "VICTORY" ? 1.5 : 1;
+      const multiplier = validated.status === "VICTORY" ? 1.25 : 1;
       const scaledResources: Record<string, number> = {};
       for (const [key, amount] of Object.entries(earnedResources)) {
         scaledResources[key] = (amount as number) * multiplier;
