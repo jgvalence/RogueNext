@@ -54,6 +54,7 @@ import type { CombatRewards } from "@/game/engine/rewards";
 import {
   applyStartMerchantOffer,
   buyShopItem,
+  buyShopReroll,
   completeStartMerchant,
   type ShopItem,
   type StartMerchantOffer,
@@ -109,6 +110,7 @@ export type GameAction =
   | { type: "APPLY_HEAL_ROOM" }
   | { type: "ADVANCE_ROOM" }
   | { type: "BUY_SHOP_ITEM"; payload: { item: ShopItem } }
+  | { type: "REROLL_SHOP" }
   | { type: "BUY_START_MERCHANT_OFFER"; payload: { offer: StartMerchantOffer } }
   | { type: "COMPLETE_START_MERCHANT" }
   | { type: "CHEAT_KILL_ENEMY"; payload: { enemyInstanceId: string } }
@@ -318,7 +320,10 @@ function createGameReducer(deps: ReducerDeps) {
       }
 
       case "SELECT_ROOM":
-        return selectRoom(state, action.payload.choiceIndex);
+        return {
+          ...selectRoom(state, action.payload.choiceIndex),
+          merchantRerollCount: 0,
+        };
 
       case "APPLY_DIFFICULTY":
         return applyDifficultyToRun(state, action.payload.difficultyLevel);
@@ -359,10 +364,19 @@ function createGameReducer(deps: ReducerDeps) {
         return applyHealRoom(state);
 
       case "ADVANCE_ROOM":
-        return { ...state, currentRoom: state.currentRoom + 1 };
+        return {
+          ...state,
+          currentRoom: state.currentRoom + 1,
+          merchantRerollCount: 0,
+        };
 
       case "BUY_SHOP_ITEM": {
         const result = buyShopItem(state, action.payload.item);
+        return result ?? state;
+      }
+
+      case "REROLL_SHOP": {
+        const result = buyShopReroll(state);
         return result ?? state;
       }
 

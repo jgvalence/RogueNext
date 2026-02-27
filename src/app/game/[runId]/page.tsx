@@ -787,6 +787,7 @@ function GameContent({
             unlockedDifficultyLevelSnapshot={
               state.unlockedDifficultyLevelSnapshot ?? 0
             }
+            selectedDifficultyLevel={state.selectedDifficultyLevel ?? 0}
             relicDiscount={state.metaBonuses?.relicDiscount ?? 0}
             cardDefs={cardDefs}
             rng={rng}
@@ -795,9 +796,11 @@ function GameContent({
             usableItemCapacity={
               state.usableItemCapacity ?? GAME_CONSTANTS.MAX_USABLE_ITEMS
             }
+            rerollCount={state.merchantRerollCount ?? 0}
             onBuy={(item) =>
               dispatch({ type: "BUY_SHOP_ITEM", payload: { item } })
             }
+            onReroll={() => dispatch({ type: "REROLL_SHOP" })}
             onRemoveCard={(cardInstanceId) =>
               dispatch({
                 type: "REMOVE_CARD_FROM_DECK",

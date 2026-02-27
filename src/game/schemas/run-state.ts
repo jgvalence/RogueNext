@@ -29,6 +29,7 @@ export const RunStateSchema = z.object({
   floor: z.number().int().default(1),
   currentRoom: z.number().int().default(0),
   gold: z.number().int().default(0),
+  merchantRerollCount: z.number().int().min(0).default(0),
   playerMaxHp: z.number().int(),
   playerCurrentHp: z.number().int(),
   deck: z.array(CardInstanceSchema),

@@ -60,6 +60,8 @@ function formatBonus(bonus: MetaBonus): string {
       return `Unlock ink power ${bonus.power}`;
     case "HEAL_AFTER_COMBAT":
       return `Recover ${bonus.value}% max HP after combat`;
+    case "HEAL_AFTER_COMBAT_FLAT":
+      return `Recover ${bonus.value} HP after combat`;
     case "EXHAUST_KEEP_CHANCE":
       return `${bonus.value}% chance to not exhaust a card`;
     case "SURVIVAL_ONCE":

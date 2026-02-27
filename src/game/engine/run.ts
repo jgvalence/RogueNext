@@ -161,6 +161,7 @@ export function createNewRun(
     floor: 1,
     currentRoom: 0,
     gold: startingGold,
+    merchantRerollCount: 0,
     playerMaxHp: GAME_CONSTANTS.STARTING_HP + extraHp,
     playerCurrentHp: GAME_CONSTANTS.STARTING_HP + extraHp,
     deck,
@@ -644,6 +645,7 @@ export function completeCombat(
   const isFinalFloor = runState.floor >= GAME_CONSTANTS.MAX_FLOORS;
   const hpAfterCombat = Math.max(0, combatResult.player.currentHp);
   const healPct = Math.max(0, runState.metaBonuses?.healAfterCombat ?? 0);
+  const healFlat = Math.max(0, runState.metaBonuses?.healAfterCombatFlat ?? 0);
 
   // Blood Grimoire relic: gain max HP for each enemy killed this combat
   const roomChoicesForRelic = runState.map[runState.currentRoom];
@@ -662,7 +664,7 @@ export function completeCombat(
     : 0;
 
   const newPlayerMaxHp = runState.playerMaxHp + bloodGrimoireGain;
-  const healAmount = Math.floor((newPlayerMaxHp * healPct) / 100);
+  const healAmount = Math.floor((newPlayerMaxHp * healPct) / 100) + healFlat;
   const hpAfterMetaHeal = Math.min(
     newPlayerMaxHp,
     hpAfterCombat + healAmount + bloodGrimoireGain

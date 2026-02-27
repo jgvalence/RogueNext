@@ -32,6 +32,7 @@ export const MetaBonusSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("UNLOCK_INK_POWER"), power: InkPowerType }),
   // Bonuses complexes (non encore implémentés dans le moteur, stockés pour l'avenir)
   z.object({ type: z.literal("HEAL_AFTER_COMBAT"), value: z.number() }),
+  z.object({ type: z.literal("HEAL_AFTER_COMBAT_FLAT"), value: z.number() }),
   z.object({ type: z.literal("EXHAUST_KEEP_CHANCE"), value: z.number() }),
   z.object({ type: z.literal("SURVIVAL_ONCE") }),
   z.object({ type: z.literal("FREE_UPGRADE_PER_RUN") }),
@@ -104,6 +105,7 @@ export const ComputedMetaBonusesSchema = z.object({
   unlockedInkPowers: z.array(InkPowerType).default(["REWRITE"]),
   // Complex bonuses
   healAfterCombat: z.number().default(0), // % of max HP healed after each combat
+  healAfterCombatFlat: z.number().default(0), // flat HP healed after each combat
   exhaustKeepChance: z.number().default(0), // % chance to not exhaust
   survivalOnce: z.boolean().default(false),
   freeUpgradePerRun: z.boolean().default(false),

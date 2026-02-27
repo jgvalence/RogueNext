@@ -2,7 +2,12 @@
 
 import { useState, useMemo } from "react";
 import type { ShopItem } from "@/game/engine/merchant";
-import { generateShopInventory } from "@/game/engine/merchant";
+import {
+  generateShopInventory,
+  getMerchantAutoRestockCharges,
+  getMerchantPurgeUsesPerVisit,
+  getShopRerollPrice,
+} from "@/game/engine/merchant";
 import type { CardDefinition, CardInstance } from "@/game/schemas/cards";
 import type { UsableItemInstance } from "@/game/schemas/items";
 import type { RNG } from "@/game/engine/rng";
@@ -15,13 +20,16 @@ interface ShopViewProps {
   relicIds: string[];
   unlockedCardIds: string[];
   unlockedDifficultyLevelSnapshot: number;
+  selectedDifficultyLevel: number;
   relicDiscount: number;
   cardDefs: Map<string, CardDefinition>;
   rng: RNG;
   deck: CardInstance[];
   usableItems: UsableItemInstance[];
   usableItemCapacity: number;
+  rerollCount: number;
   onBuy: (item: ShopItem) => void;
+  onReroll: () => void;
   onRemoveCard: (cardInstanceId: string) => void;
   onLeave: () => void;
 }
@@ -44,22 +52,30 @@ export function ShopView({
   relicIds,
   unlockedCardIds,
   unlockedDifficultyLevelSnapshot,
+  selectedDifficultyLevel,
   relicDiscount,
   cardDefs,
   rng,
   deck,
   usableItems,
   usableItemCapacity,
+  rerollCount,
   onBuy,
+  onReroll,
   onRemoveCard,
   onLeave,
 }: ShopViewProps) {
   const [soldIds, setSoldIds] = useState<Set<string>>(new Set());
+  const [autoRestockChargesLeft, setAutoRestockChargesLeft] = useState(
+    getMerchantAutoRestockCharges(relicIds)
+  );
+  const purgeUsesPerVisit = getMerchantPurgeUsesPerVisit(relicIds);
+  const [purgeUses, setPurgeUses] = useState(0);
   const [pendingPurgeItemId, setPendingPurgeItemId] = useState<string | null>(
     null
   );
 
-  const inventory = useMemo(
+  const inventorySeed = useMemo(
     () =>
       generateShopInventory(
         floor,
@@ -68,6 +84,7 @@ export function ShopView({
         rng,
         unlockedCardIds,
         unlockedDifficultyLevelSnapshot,
+        selectedDifficultyLevel,
         relicDiscount,
         usableItems,
         usableItemCapacity
@@ -79,29 +96,80 @@ export function ShopView({
       rng,
       unlockedCardIds,
       unlockedDifficultyLevelSnapshot,
+      selectedDifficultyLevel,
       relicDiscount,
       usableItems,
       usableItemCapacity,
     ]
   );
+  const [inventory, setInventory] = useState<ShopItem[]>(inventorySeed);
+  const rerollPrice = getShopRerollPrice(
+    floor,
+    rerollCount,
+    selectedDifficultyLevel
+  );
+  const canReroll = gold >= rerollPrice;
 
   const handleBuy = (item: ShopItem) => {
     if (gold < item.price || soldIds.has(item.id)) return;
+    if (item.type === "purge" && purgeUses >= purgeUsesPerVisit) return;
     onBuy(item);
     if (item.type === "purge") {
       // Gold deducted by onBuy; now open picker so player selects a card to remove
       setPendingPurgeItemId(item.id);
     } else {
-      setSoldIds((prev) => new Set(prev).add(item.id));
+      if (autoRestockChargesLeft > 0) {
+        setInventory(
+          generateShopInventory(
+            floor,
+            [...cardDefs.values()],
+            relicIds,
+            rng,
+            unlockedCardIds,
+            unlockedDifficultyLevelSnapshot,
+            selectedDifficultyLevel,
+            relicDiscount,
+            usableItems,
+            usableItemCapacity
+          )
+        );
+        setSoldIds(new Set());
+        setAutoRestockChargesLeft((prev) => Math.max(0, prev - 1));
+      } else {
+        setSoldIds((prev) => new Set(prev).add(item.id));
+      }
     }
   };
 
   const handlePurgePick = (cardInstanceId: string) => {
     onRemoveCard(cardInstanceId);
+    setPurgeUses((prev) => prev + 1);
     if (pendingPurgeItemId) {
-      setSoldIds((prev) => new Set(prev).add(pendingPurgeItemId));
+      if (purgeUses + 1 >= purgeUsesPerVisit) {
+        setSoldIds((prev) => new Set(prev).add(pendingPurgeItemId));
+      }
     }
     setPendingPurgeItemId(null);
+  };
+
+  const handleReroll = () => {
+    if (!canReroll) return;
+    onReroll();
+    setInventory(
+      generateShopInventory(
+        floor,
+        [...cardDefs.values()],
+        relicIds,
+        rng,
+        unlockedCardIds,
+        unlockedDifficultyLevelSnapshot,
+        selectedDifficultyLevel,
+        relicDiscount,
+        usableItems,
+        usableItemCapacity
+      )
+    );
+    setSoldIds(new Set());
   };
 
   return (
@@ -116,6 +184,7 @@ export function ShopView({
           const isSold = soldIds.has(item.id);
           const canAfford = gold >= item.price;
           const isPurge = item.type === "purge";
+          const purgeSoldOut = isPurge && purgeUses >= purgeUsesPerVisit;
           const isMaxHp = item.type === "max_hp";
           const isUsableItem = item.type === "usable_item";
           const isUsableInventoryFull =
@@ -127,15 +196,17 @@ export function ShopView({
           return (
             <button
               key={item.id}
-              disabled={isSold || !canBuyItem}
+              disabled={isSold || purgeSoldOut || !canBuyItem}
               onClick={() => handleBuy(item)}
               className={cn(
                 "flex w-44 flex-col items-center gap-2 rounded-lg border-2 p-4 transition",
                 isSold
                   ? "border-gray-700 bg-gray-900/30 opacity-40"
-                  : canBuyItem
-                    ? "cursor-pointer hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/10"
-                    : "cursor-not-allowed opacity-60",
+                  : purgeSoldOut
+                    ? "border-gray-700 bg-gray-900/30 opacity-40"
+                    : canBuyItem
+                      ? "cursor-pointer hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/10"
+                      : "cursor-not-allowed opacity-60",
                 item.type === "card" &&
                   item.cardDef &&
                   (typeColors[item.cardDef.type] ??
@@ -218,14 +289,40 @@ export function ShopView({
               >
                 {isSold
                   ? "SOLD"
-                  : isUsableItem && isUsableInventoryFull
-                    ? "Inventory full"
-                    : `${item.price} gold`}
+                  : purgeSoldOut
+                    ? "SOLD OUT"
+                    : isUsableItem && isUsableInventoryFull
+                      ? "Inventory full"
+                      : `${item.price} gold`}
               </span>
+              {isPurge && (
+                <span className="text-[10px] text-rose-300/80">
+                  Purges left: {Math.max(0, purgeUsesPerVisit - purgeUses)}
+                </span>
+              )}
             </button>
           );
         })}
       </div>
+
+      <button
+        className={cn(
+          "rounded-lg border px-5 py-2 text-sm font-semibold transition",
+          canReroll
+            ? "border-amber-500 bg-amber-950/40 text-amber-300 hover:bg-amber-900/60"
+            : "cursor-not-allowed border-slate-700 bg-slate-900 text-slate-500"
+        )}
+        disabled={!canReroll}
+        onClick={handleReroll}
+      >
+        Reroll Shop ({rerollPrice} gold)
+      </button>
+      {autoRestockChargesLeft > 0 && (
+        <p className="text-xs text-amber-300">
+          Haggler&apos;s Satchel: auto-restock {autoRestockChargesLeft} charge
+          left.
+        </p>
+      )}
 
       <button
         className="mt-4 rounded-lg bg-gray-700 px-8 py-2.5 font-medium text-white transition hover:bg-gray-600"

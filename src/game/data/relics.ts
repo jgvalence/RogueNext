@@ -102,6 +102,18 @@ export const relicDefinitions: RelicDefinitionData[] = [
     rarity: "UNCOMMON",
   },
   {
+    id: "haggler_satchel",
+    name: "Haggler's Satchel",
+    description: "First purchase in each shop refreshes the full stock.",
+    rarity: "UNCOMMON",
+  },
+  {
+    id: "surgeons_quill",
+    name: "Surgeon's Quill",
+    description: "You can Purge up to 3 times per merchant visit.",
+    rarity: "RARE",
+  },
+  {
     id: "blood_grimoire",
     name: "Blood Grimoire",
     description:

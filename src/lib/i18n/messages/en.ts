@@ -300,7 +300,7 @@ export const en = {
     hymne_a_re: {
       title: "Hymn to Ra",
       description:
-        "A hymn to the sun god that infuses every action with divine energy. +100% chance to gain Ink when playing a card.",
+        "A hymn to the sun god that infuses every action with divine energy. +35% chance to gain Ink when playing a card.",
     },
     textes_des_pyramides: {
       title: "Pyramid Texts",
@@ -325,7 +325,7 @@ export const en = {
     calendrier_de_pierre: {
       title: "Stone Calendar",
       description:
-        "The Piedra del Sol reveals regeneration cycles. Recover 5% of max HP after each combat.",
+        "The Piedra del Sol reveals regeneration cycles. Recover 3 HP after each combat.",
     },
     chant_de_quetzalcoatl: {
       title: "Song of Quetzalcoatl",
@@ -335,7 +335,7 @@ export const en = {
     rite_du_soleil_noir: {
       title: "Rite of the Black Sun",
       description:
-        "A ritual honoring Tezcatlipoca, master of the dark mirror. +5% additional max HP recovered after each combat.",
+        "A ritual honoring Tezcatlipoca, master of the dark mirror. +3 additional HP recovered after each combat.",
     },
     le_sacrifice_cosmique: {
       title: "The Cosmic Sacrifice",

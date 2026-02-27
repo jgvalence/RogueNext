@@ -154,6 +154,9 @@ function applyBonusToComputed(
     case "HEAL_AFTER_COMBAT":
       result.healAfterCombat += bonus.value;
       break;
+    case "HEAL_AFTER_COMBAT_FLAT":
+      result.healAfterCombatFlat += bonus.value;
+      break;
     case "EXHAUST_KEEP_CHANCE":
       result.exhaustKeepChance = Math.min(
         100,

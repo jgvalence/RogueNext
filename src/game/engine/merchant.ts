@@ -29,6 +29,70 @@ const BIOME_RESOURCE_KEYS: BiomeResource[] = [
   "MASQUES",
 ];
 
+const SHOP_PRICE_MULTIPLIER = 1.25;
+const AUTO_RESTOCK_RELIC_ID = "haggler_satchel";
+const EXTRA_PURGE_RELIC_ID = "surgeons_quill";
+const SHOP_REROLL_GROWTH = 1.6;
+
+function scaleShopPrice(price: number): number {
+  return Math.max(1, Math.round(price * SHOP_PRICE_MULTIPLIER));
+}
+
+function getDifficultyShopPriceMultiplier(difficultyLevel: number): number {
+  if (difficultyLevel >= 5) return 1.3;
+  if (difficultyLevel >= 4) return 1.15;
+  return 1;
+}
+
+function applyDifficultyShopPrice(
+  price: number,
+  difficultyLevel: number
+): number {
+  return Math.max(
+    1,
+    Math.round(price * getDifficultyShopPriceMultiplier(difficultyLevel))
+  );
+}
+
+export function getMerchantAutoRestockCharges(relicIds: string[]): number {
+  return relicIds.includes(AUTO_RESTOCK_RELIC_ID) ? 1 : 0;
+}
+
+export function getMerchantPurgeUsesPerVisit(relicIds: string[]): number {
+  return relicIds.includes(EXTRA_PURGE_RELIC_ID) ? 3 : 1;
+}
+
+export function getShopRerollPrice(
+  floor: number,
+  rerollCount: number,
+  difficultyLevel = 0
+): number {
+  const safeCount = Math.max(0, Math.floor(rerollCount));
+  const base = applyDifficultyShopPrice(
+    scaleShopPrice(30 + floor * 6),
+    difficultyLevel
+  );
+  return Math.max(
+    1,
+    Math.round(base * Math.pow(SHOP_REROLL_GROWTH, safeCount))
+  );
+}
+
+export function buyShopReroll(runState: RunState): RunState | null {
+  const rerollCount = Math.max(0, runState.merchantRerollCount ?? 0);
+  const price = getShopRerollPrice(
+    runState.floor,
+    rerollCount,
+    runState.selectedDifficultyLevel ?? 0
+  );
+  if (runState.gold < price) return null;
+  return {
+    ...runState,
+    gold: runState.gold - price,
+    merchantRerollCount: rerollCount + 1,
+  };
+}
+
 function sanitizeResourcePool(
   rawPool: Record<string, number>
 ): Record<BiomeResource, number> {
@@ -95,6 +159,7 @@ export function generateShopInventory(
   rng: RNG,
   unlockedCardIds?: string[],
   unlockedDifficultyLevelSnapshot = 0,
+  selectedDifficultyLevel = 0,
   relicDiscount = 0,
   usableItems?: UsableItemInstance[],
   usableItemCapacity: number = GAME_CONSTANTS.MAX_USABLE_ITEMS
@@ -119,7 +184,10 @@ export function generateShopInventory(
   );
   for (let i = 0; i < lootable.length; i++) {
     const card = lootable[i]!;
-    const price = getCardPrice(card.rarity, floor);
+    const price = applyDifficultyShopPrice(
+      getCardPrice(card.rarity, floor),
+      selectedDifficultyLevel
+    );
     items.push({
       id: nanoid(),
       type: "card",
@@ -152,7 +220,10 @@ export function generateShopInventory(
         relicId: relic.id,
         relicName: relic.name,
         relicDescription: relic.description,
-        price: applyRelicDiscount(relic.price),
+        price: applyDifficultyShopPrice(
+          applyRelicDiscount(scaleShopPrice(relic.price)),
+          selectedDifficultyLevel
+        ),
       });
     }
   }
@@ -162,7 +233,10 @@ export function generateShopInventory(
     id: nanoid(),
     type: "heal",
     healAmount: 25,
-    price: 30 + floor * 5,
+    price: applyDifficultyShopPrice(
+      scaleShopPrice(40 + floor * 6),
+      selectedDifficultyLevel
+    ),
   });
 
   // 1 max HP potion (always available)
@@ -170,14 +244,20 @@ export function generateShopInventory(
     id: nanoid(),
     type: "max_hp",
     maxHpAmount: 10,
-    price: 75 + floor * 10,
+    price: applyDifficultyShopPrice(
+      scaleShopPrice(95 + floor * 12),
+      selectedDifficultyLevel
+    ),
   });
 
   // 1 purge option (permanently remove a card from deck)
   items.push({
     id: nanoid(),
     type: "purge",
-    price: 75 + floor * 10,
+    price: applyDifficultyShopPrice(
+      scaleShopPrice(95 + floor * 12),
+      selectedDifficultyLevel
+    ),
   });
 
   const hasUsableSlot = (usableItems?.length ?? 0) < usableItemCapacity;
@@ -187,7 +267,10 @@ export function generateShopInventory(
       id: nanoid(),
       type: "usable_item",
       usableItemDef: itemDef,
-      price: 35 + floor * 5,
+      price: applyDifficultyShopPrice(
+        scaleShopPrice(45 + floor * 6),
+        selectedDifficultyLevel
+      ),
     });
   }
 
@@ -197,12 +280,12 @@ export function generateShopInventory(
 function getCardPrice(rarity: string, floor: number): number {
   const base =
     {
-      COMMON: 30,
-      UNCOMMON: 50,
-      RARE: 80,
+      COMMON: 40,
+      UNCOMMON: 65,
+      RARE: 100,
     }[rarity] ?? 40;
 
-  return base + floor * 5;
+  return scaleShopPrice(base + floor * 6);
 }
 
 export function buyShopItem(
@@ -684,5 +767,17 @@ const ALL_SHOP_RELICS = [
     name: "Lucky Charm",
     description: "Increases loot luck for better rarity rolls.",
     price: 130,
+  },
+  {
+    id: "haggler_satchel",
+    name: "Haggler's Satchel",
+    description: "First purchase in each shop refreshes the full stock.",
+    price: 145,
+  },
+  {
+    id: "surgeons_quill",
+    name: "Surgeon's Quill",
+    description: "You can Purge up to 3 times per merchant visit.",
+    price: 155,
   },
 ];

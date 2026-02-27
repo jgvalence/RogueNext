@@ -196,6 +196,7 @@ export function applyRunConditionMetaBonuses(
   }
 
   if (merged.healAfterCombat < 0) merged.healAfterCombat = 0;
+  if (merged.healAfterCombatFlat < 0) merged.healAfterCombatFlat = 0;
   return merged;
 }
 

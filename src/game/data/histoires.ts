@@ -224,9 +224,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { GLYPHES: 10 },
     prerequis: [],
-    bonus: { type: "INK_PER_CARD_CHANCE", value: 100 },
+    bonus: { type: "INK_PER_CARD_CHANCE", value: 35 },
     description:
-      "Un hymne au dieu soleil qui infuse chaque geste d'énergie divine. +100% de chance de gain d'Ink par carte jouée.",
+      "Un hymne au dieu soleil qui infuse chaque geste d'énergie divine. +35% de chance de gain d'Ink par carte jouée.",
     visuel: "tablette",
   },
   {
@@ -288,9 +288,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { OBSIDIENNE: 10 },
     prerequis: [],
-    bonus: { type: "HEAL_AFTER_COMBAT", value: 5 },
+    bonus: { type: "HEAL_AFTER_COMBAT_FLAT", value: 3 },
     description:
-      "La Piedra del Sol révèle les cycles de régénération. Récupère 5% des HP max après chaque combat.",
+      "La Piedra del Sol révèle les cycles de régénération. Récupère 3 PV après chaque combat.",
     visuel: "tablette",
   },
   {
@@ -312,9 +312,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 2,
     cout: { OBSIDIENNE: 20 },
     prerequis: ["calendrier_de_pierre"],
-    bonus: { type: "HEAL_AFTER_COMBAT", value: 5 },
+    bonus: { type: "HEAL_AFTER_COMBAT_FLAT", value: 3 },
     description:
-      "Le rituel qui honore Tezcatlipoca, maître du miroir sombre. +5% de HP max récupérés supplémentaires après chaque combat.",
+      "Le rituel qui honore Tezcatlipoca, maître du miroir sombre. +3 PV récupérés supplémentaires après chaque combat.",
     visuel: "tablette",
   },
   {
