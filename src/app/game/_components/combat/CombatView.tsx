@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import {
   useState,
@@ -32,7 +32,7 @@ import { EnergyOrb } from "../shared/EnergyOrb";
 import { Tooltip } from "../shared/Tooltip";
 import { HpBar } from "../shared/HpBar";
 import { buffMeta } from "../shared/buff-meta";
-// TEMPORARY: centralized asset registry â€” swap paths in src/lib/assets.ts when real art is ready
+// TEMPORARY: centralized asset registry Ã¢â‚¬â€ swap paths in src/lib/assets.ts when real art is ready
 import { BACKGROUNDS, PLAYER_AVATAR } from "@/lib/assets";
 import { playSound } from "@/lib/sound";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
@@ -595,9 +595,9 @@ export function CombatView({
       className="relative flex h-full min-h-0 flex-col overflow-hidden"
       onClick={handleGlobalClick}
     >
-      {/* â”€â”€ BATTLEFIELD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* Ã¢â€â‚¬Ã¢â€â‚¬ BATTLEFIELD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
       <div className="relative flex min-h-0 flex-1 flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-[#030712] via-[#041235] to-[#020617] px-2 py-2 lg:px-6 lg:py-4 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:py-1">
-        {/* Background â€” TEMPORARY: shows image if present, CSS gradient otherwise */}
+        {/* Background Ã¢â‚¬â€ TEMPORARY: shows image if present, CSS gradient otherwise */}
         {!bgFailed && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -636,7 +636,7 @@ export function CombatView({
             <div className="mb-1 flex items-center justify-between font-semibold uppercase tracking-wide text-cyan-200">
               <span>{t("combat.debugTitle")}</span>
               <span>
-                F{debugEnemySelection.floor} R{debugEnemySelection.room + 1} Â·{" "}
+                F{debugEnemySelection.floor} R{debugEnemySelection.room + 1} ·{" "}
                 {debugEnemySelection.biome}
               </span>
             </div>
@@ -925,7 +925,7 @@ export function CombatView({
                     <p className="mt-1 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
                       {Math.max(0, ally.currentHp)}/{ally.maxHp}
                       {ally.block > 0
-                        ? ` Â· ${t("combat.block")} ${ally.block}`
+                        ? ` · ${t("combat.block")} ${ally.block}`
                         : ""}
                     </p>
                   </button>
@@ -974,7 +974,7 @@ export function CombatView({
                       onError={() => setAvatarFailed(true)}
                     />
                   ) : (
-                    <span className="text-2xl">âœ¦</span>
+                    <span className="text-2xl">*</span>
                   )}
                 </div>
                 <p className="truncate text-[11px] font-bold text-indigo-100 lg:text-xs">
@@ -989,7 +989,7 @@ export function CombatView({
                 <p className="mt-1 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
                   {Math.max(0, combat.player.currentHp)}/{combat.player.maxHp}
                   {combat.player.block > 0
-                    ? ` Â· ${t("combat.block")} ${combat.player.block}`
+                    ? ` · ${t("combat.block")} ${combat.player.block}`
                     : ""}
                 </p>
               </div>
@@ -1097,6 +1097,18 @@ export function CombatView({
                     <p className="truncate text-[11px] font-bold text-rose-100 lg:text-xs">
                       {enemy.name}
                     </p>
+                    <div className="mt-1 flex min-h-5 flex-wrap gap-0.5">
+                      {buildMobileEnemyIntentChips(ability, hideIntent, t).map(
+                        (chip, idx) => (
+                          <span
+                            key={`${enemy.instanceId}-desktop-intent-${idx}`}
+                            className="rounded border border-rose-800/70 bg-rose-950/70 px-1 py-0.5 text-[8px] font-semibold text-rose-100"
+                          >
+                            {chip}
+                          </span>
+                        )
+                      )}
+                    </div>
                     <HpBar
                       current={Math.max(0, enemy.currentHp)}
                       max={enemy.maxHp}
@@ -1106,7 +1118,7 @@ export function CombatView({
                     <p className="mt-1 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
                       {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
                       {enemy.block > 0
-                        ? ` Â· ${t("combat.block")} ${enemy.block}`
+                        ? ` · ${t("combat.block")} ${enemy.block}`
                         : ""}
                     </p>
                     {!isDead &&
@@ -1311,7 +1323,7 @@ export function CombatView({
 
               {reshuffleFx && (
                 <div className="pointer-events-none flex animate-bounce items-center justify-center text-lg font-black text-cyan-300">
-                  ↺
+                  â†º
                 </div>
               )}
             </div>
