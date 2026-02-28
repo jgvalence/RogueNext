@@ -42,6 +42,9 @@ function formatEffect(
     case "DRAW_CARDS":
       return t("gameCard.effect.draw", { value: effect.value });
     case "DOUBLE_POISON":
+      if (effect.value >= 3) {
+        return t("gameCard.effect.triplePoison");
+      }
       return t("gameCard.effect.doublePoison");
     case "GAIN_ENERGY":
       return t("gameCard.effect.gainEnergy", { value: effect.value });

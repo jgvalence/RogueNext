@@ -716,6 +716,7 @@ export const en = {
       heal: "Heal {{value}} HP",
       draw: "Draw {{value}} cards",
       doublePoison: "Double Poison on target",
+      triplePoison: "Triple Poison on target",
       gainEnergy: "Gain {{value}} energy",
       gainInk: "Gain {{value}} ink",
       gainStrength: "Gain {{value}} Strength",

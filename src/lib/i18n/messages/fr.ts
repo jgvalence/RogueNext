@@ -714,6 +714,7 @@ export const fr = {
       heal: "Soigne {{value}} PV",
       draw: "Pioche {{value}} cartes",
       doublePoison: "Double le Poison de la cible",
+      triplePoison: "Triple le Poison de la cible",
       gainEnergy: "Gagne {{value}} energie",
       gainInk: "Gagne {{value}} encre",
       gainStrength: "Gagne {{value}} Force",
