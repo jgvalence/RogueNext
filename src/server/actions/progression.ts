@@ -8,10 +8,28 @@ import { prisma } from "@/lib/db/prisma";
 import { computeMetaBonuses } from "@/game/engine/meta";
 import { histoireDefinitions } from "@/game/data/histoires";
 import type { MetaProgress } from "@/game/schemas/meta";
+import { getBestInfiniteFloor } from "@/game/engine/difficulty";
 import {
   buildRunConditionCollectionRows,
   type RunConditionCollectionRow,
 } from "@/game/engine/run-conditions";
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  playerName: string | null;
+  playerTag: string;
+  totalRuns: number;
+  wonRuns: number;
+  winRate: number;
+  bestInfiniteFloor: number;
+  highestDifficulty: number | null;
+  bestTimeAtHighestDifficultyMs: number | null;
+  bestTimesByDifficulty: Array<{
+    difficulty: number;
+    timeMs: number;
+  }>;
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -46,6 +64,42 @@ async function getOrCreateProgression(userId: string): Promise<MetaProgress> {
     winsByDifficulty: {},
     bestTimeByDifficultyMs: {},
   };
+}
+
+function computeHighestDifficultyFromWins(
+  winsByDifficulty: Record<string, number>
+): number | null {
+  let highest: number | null = null;
+  for (const [difficultyKey, wins] of Object.entries(winsByDifficulty)) {
+    if (wins <= 0) continue;
+    const difficulty = Number(difficultyKey);
+    if (!Number.isInteger(difficulty)) continue;
+    highest = highest == null ? difficulty : Math.max(highest, difficulty);
+  }
+  return highest;
+}
+
+function computeBestTimeAcrossDifficulties(
+  bestTimeByDifficultyMs: Record<string, number>
+): number | null {
+  let bestTimeMs: number | null = null;
+  for (const value of Object.values(bestTimeByDifficultyMs)) {
+    if (!Number.isFinite(value) || value <= 0) continue;
+    bestTimeMs = bestTimeMs == null ? value : Math.min(bestTimeMs, value);
+  }
+  return bestTimeMs;
+}
+
+function extractBestTimesByDifficulty(
+  bestTimeByDifficultyMs: Record<string, number>
+): Array<{ difficulty: number; timeMs: number }> {
+  return Object.entries(bestTimeByDifficultyMs)
+    .map(([difficultyKey, timeMs]) => ({
+      difficulty: Number(difficultyKey),
+      timeMs: Math.max(0, Math.floor(timeMs)),
+    }))
+    .filter((entry) => Number.isInteger(entry.difficulty) && entry.timeMs > 0)
+    .sort((a, b) => a.difficulty - b.difficulty);
 }
 
 // ---------------------------------------------------------------------------
@@ -100,6 +154,142 @@ export async function getRunConditionCollectionAction() {
       },
       conditions,
     });
+  } catch (error) {
+    return handleServerActionError(error);
+  }
+}
+
+const getLeaderboardSchema = z.object({
+  limit: z.number().int().min(1).max(100).optional(),
+});
+
+export async function getLeaderboardAction(
+  input?: z.infer<typeof getLeaderboardSchema>
+) {
+  try {
+    const { limit = 25 } = getLeaderboardSchema.parse(input ?? {});
+
+    const rows = await prisma.userProgression.findMany({
+      where: {
+        totalRuns: { gt: 0 },
+      },
+      orderBy: [
+        { wonRuns: "desc" },
+        { totalRuns: "desc" },
+        { updatedAt: "asc" },
+      ],
+      select: {
+        userId: true,
+        totalRuns: true,
+        wonRuns: true,
+        resources: true,
+        winsByDifficulty: true,
+        bestTimeByDifficultyMs: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    type LeaderboardCandidate = Omit<LeaderboardEntry, "rank">;
+
+    const sorted: LeaderboardCandidate[] = rows
+      .map((row) => {
+        const winsByDifficulty = normalizeDifficultyMap(row.winsByDifficulty);
+        const bestTimeByDifficultyMs = normalizeDifficultyMap(
+          row.bestTimeByDifficultyMs
+        );
+        const highestDifficulty =
+          computeHighestDifficultyFromWins(winsByDifficulty);
+        const bestTimeMs = computeBestTimeAcrossDifficulties(
+          bestTimeByDifficultyMs
+        );
+        const bestTimesByDifficulty = extractBestTimesByDifficulty(
+          bestTimeByDifficultyMs
+        );
+        const bestTimeAtHighestDifficultyMs =
+          highestDifficulty == null
+            ? null
+            : (bestTimesByDifficulty.find(
+                (entry) => entry.difficulty === highestDifficulty
+              )?.timeMs ?? null);
+        const totalRuns = Math.max(0, Math.floor(row.totalRuns));
+        const wonRuns = Math.max(0, Math.floor(row.wonRuns));
+        const resources = (row.resources as Record<string, number>) ?? {};
+        const bestInfiniteFloor = getBestInfiniteFloor(resources);
+
+        return {
+          userId: row.userId,
+          playerName: row.user.name?.trim() || null,
+          playerTag: row.userId.slice(-6).toUpperCase(),
+          totalRuns,
+          wonRuns,
+          winRate: totalRuns > 0 ? wonRuns / totalRuns : 0,
+          bestInfiniteFloor,
+          highestDifficulty,
+          bestTimeAtHighestDifficultyMs:
+            bestTimeAtHighestDifficultyMs ?? bestTimeMs,
+          bestTimesByDifficulty,
+        };
+      })
+      .sort((a, b) => {
+        if (b.bestInfiniteFloor !== a.bestInfiniteFloor) {
+          return b.bestInfiniteFloor - a.bestInfiniteFloor;
+        }
+
+        if (b.wonRuns !== a.wonRuns) {
+          return b.wonRuns - a.wonRuns;
+        }
+
+        const aDifficulty = a.highestDifficulty ?? -1;
+        const bDifficulty = b.highestDifficulty ?? -1;
+        if (bDifficulty !== aDifficulty) {
+          return bDifficulty - aDifficulty;
+        }
+
+        if (b.winRate !== a.winRate) {
+          return b.winRate - a.winRate;
+        }
+
+        if (
+          a.bestTimeAtHighestDifficultyMs == null &&
+          b.bestTimeAtHighestDifficultyMs != null
+        ) {
+          return 1;
+        }
+        if (
+          a.bestTimeAtHighestDifficultyMs != null &&
+          b.bestTimeAtHighestDifficultyMs == null
+        ) {
+          return -1;
+        }
+        if (
+          a.bestTimeAtHighestDifficultyMs != null &&
+          b.bestTimeAtHighestDifficultyMs != null &&
+          a.bestTimeAtHighestDifficultyMs !== b.bestTimeAtHighestDifficultyMs
+        ) {
+          return (
+            a.bestTimeAtHighestDifficultyMs - b.bestTimeAtHighestDifficultyMs
+          );
+        }
+
+        if (b.totalRuns !== a.totalRuns) {
+          return b.totalRuns - a.totalRuns;
+        }
+
+        return a.userId.localeCompare(b.userId);
+      });
+
+    const leaderboard: LeaderboardEntry[] = sorted
+      .slice(0, limit)
+      .map((entry, index) => ({
+        rank: index + 1,
+        ...entry,
+      }));
+
+    return success({ leaderboard });
   } catch (error) {
     return handleServerActionError(error);
   }

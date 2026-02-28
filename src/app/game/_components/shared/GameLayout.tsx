@@ -66,6 +66,16 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
   const ownedRelics = state.relicIds
     .map((id) => relicDefinitions.find((r) => r.id === id))
     .filter((r): r is (typeof relicDefinitions)[number] => Boolean(r));
+  const hpSource = state.combat?.player ?? {
+    currentHp: state.playerCurrentHp,
+    maxHp: state.playerMaxHp,
+  };
+  const hpRatio = hpSource.maxHp > 0 ? hpSource.currentHp / hpSource.maxHp : 0;
+  const totalRooms = Math.max(1, state.map.length);
+  const displayedRoom = Math.max(
+    1,
+    Math.min(state.currentRoom + 1, totalRooms)
+  );
 
   const toggleMute = () => {
     const next = !muted;
@@ -107,9 +117,9 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           <span className="text-xs text-slate-400 sm:text-sm">
             {t("layout.room")}{" "}
             <span className="font-semibold text-slate-200">
-              {state.currentRoom + 1}
+              {displayedRoom}
             </span>
-            <span className="text-slate-600">/{state.map.length}</span>
+            <span className="text-slate-600">/{totalRooms}</span>
           </span>
           <span className="text-xs text-slate-500 sm:text-sm">|</span>
           <span className="text-xs font-semibold text-cyan-300 sm:text-sm">
@@ -126,15 +136,15 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
             <span className="text-sm text-red-400">{t("layout.hp")}</span>
             <span
               className={`text-sm font-bold ${
-                state.playerCurrentHp / state.playerMaxHp <= 0.3
+                hpRatio <= 0.3
                   ? "text-red-400"
-                  : state.playerCurrentHp / state.playerMaxHp <= 0.6
+                  : hpRatio <= 0.6
                     ? "text-orange-300"
                     : "text-green-400"
               }`}
             >
-              {state.playerCurrentHp}
-              <span className="text-slate-500">/{state.playerMaxHp}</span>
+              {hpSource.currentHp}
+              <span className="text-slate-500">/{hpSource.maxHp}</span>
             </span>
           </div>
 

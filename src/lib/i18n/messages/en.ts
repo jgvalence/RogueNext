@@ -11,17 +11,56 @@ export const en = {
     subtitle: "Explore books of mythology. Build your deck. Survive.",
     play: "Play",
     library: "Library",
+    leaderboard: "Leaderboard",
     rules: "Rules",
     logout: "Logout",
     signup: "Sign up",
     signin: "Sign in",
     loginHint: "Sign in to save your progression",
+    signedInHint: "Your grimoire is open. Begin your next expedition.",
+    ritualKicker: "Navigation Board",
+    ritualTitle: "Run Plan",
+    ritualSubtitle:
+      "Trace your path, refine your deck, then crush the final boss.",
+    pathLabel: "Progression sequence",
+    modeLabel: "Doctrine",
+    modeValue: "Tactical roguelike",
+    pathSteps: ["Combat", "Elite", "Merchant", "Boss"],
+    quickFacts: {
+      floors: "Floors",
+      rooms: "Rooms / floor",
+      rewardChoices: "Card choices",
+      startingEnergy: "Starting energy",
+    },
     tags: [
       "Tactical combat",
       "Deck-building",
       "World mythologies",
       "Roguelike",
     ],
+  },
+  leaderboard: {
+    kicker: "Global Ranking",
+    title: "Archivists Hall",
+    subtitle:
+      "Top players ranked by best infinite floor first, then victories, difficulty progression, and best clear time.",
+    backHome: "Home",
+    loadError: "Unable to load leaderboard: {{message}}",
+    empty: "No run statistics available yet.",
+    playerFallback: "Archivist {{id}}",
+    you: "You",
+    noTime: "-",
+    none: "-",
+    columns: {
+      rank: "Rank",
+      player: "Player",
+      wins: "Wins",
+      runs: "Runs",
+      winRate: "Win Rate",
+      bestInfiniteFloor: "Best Infinite Floor",
+      bestDifficulty: "Highest Difficulty",
+      bestTime: "Times by Diff",
+    },
   },
   auth: {
     back: "Back",
@@ -156,6 +195,10 @@ export const en = {
       UNIQUE_MECHANIC: "Unique mechanic",
     },
     definitions: {
+      vanilla_run: {
+        name: "No Change",
+        description: "Classic run with no special rule.",
+      },
       quiet_pockets: {
         name: "Quiet Pockets",
         description: "Start with +20 gold.",
@@ -197,7 +240,46 @@ export const en = {
         name: "Battle Rite",
         description: "Start with +1 Strength, but heal 5% less after combat.",
       },
+      chaos_draft: {
+        name: "Chaos Draft",
+        description: "Replace your starting deck with 10 random cards.",
+      },
+      boss_rush: {
+        name: "Boss Rush",
+        description:
+          "All combats become boss fights. Combat rewards are doubled.",
+      },
+      infinite_mode: {
+        name: "Infinite Mode",
+        description:
+          "No floor cap. No biome resources are granted at the end of the run. Difficulty spikes hard after floor 5.",
+      },
     },
+  },
+  runSetup: {
+    kicker: "Run Preparation",
+    title: "Configure Your Expedition",
+    subtitle:
+      "Choose your difficulty, pick your run type, and prepare your opening loadout before entering the first room.",
+    sections: {
+      difficulty: "Difficulty",
+      runType: "Run Type",
+      runCondition: "Run Option",
+      preGameOptions: "Pre-Game Options",
+    },
+    selected: "Selected",
+    modeType: "Mode",
+    modeHint: "Choose Normal or Infinite before selecting pre-game options.",
+    modeLockedHint: "Run type is locked after selecting a run option.",
+    modeNormal: "Normal",
+    modeNormalDescription:
+      "Classic 5-floor run with regular progression and end-of-run resources.",
+    modeInfinite: "Infinite",
+    modeInfiniteDescription:
+      "No floor cap. Built for leaderboard climbing. No biome resources are awarded.",
+    continue: "Start Run",
+    readyHint: "Setup complete. You can start the run.",
+    missingHint: "Pick a difficulty and a game mode to continue.",
   },
   runDifficulty: {
     select: {
@@ -502,6 +584,9 @@ export const en = {
     piercing_word: { name: "Piercing Word" },
     poison_quill: { name: "Poison Quill" },
     mythic_blow: { name: "Mythic Blow" },
+    quick_feint: { name: "Quick Feint" },
+    bastion_crash: { name: "Bastion Crash" },
+    venom_echo: { name: "Venom Echo" },
     fortify: { name: "Fortify" },
     hexed_parchment: { name: "Hexed Parchment" },
     haunting_regret: { name: "Haunting Regret" },
@@ -549,6 +634,30 @@ export const en = {
     battle_lexicon: {
       name: "Battle Lexicon",
       description: "Start each combat with +1 Strength.",
+    },
+    vital_flask: {
+      name: "Vital Flask",
+      description: "Recover +5 HP after each combat.",
+    },
+    menders_charm: {
+      name: "Mender's Charm",
+      description: "Increase post-combat healing percentage by 50%.",
+    },
+    gilded_ledger: {
+      name: "Gilded Ledger",
+      description: "Increase gold gained from combat rewards by 50%.",
+    },
+    plague_carillon: {
+      name: "Plague Carillon",
+      description: "Each card played deals 1 damage to all enemies.",
+    },
+    phoenix_ash: {
+      name: "Phoenix Ash",
+      description: "Recover 2 HP at the start of each turn.",
+    },
+    ink_spindle: {
+      name: "Ink Spindle",
+      description: "At end of turn, gain 1 Focus if your hand is empty.",
     },
     omens_compass: {
       name: "Omen's Compass",
@@ -602,9 +711,11 @@ export const en = {
     effect: {
       damage: "Deal {{value}} damage",
       damageAll: "Deal {{value}} damage to all enemies",
+      damageEqualBlock: "Deal damage equal to your Block",
       block: "Gain {{value}} block",
       heal: "Heal {{value}} HP",
       draw: "Draw {{value}} cards",
+      doublePoison: "Double Poison on target",
       gainEnergy: "Gain {{value}} energy",
       gainInk: "Gain {{value}} ink",
       gainStrength: "Gain {{value}} Strength",
@@ -686,9 +797,11 @@ export const en = {
     },
     effect: {
       damage: "damage {{value}}",
+      damageEqualBlock: "damage equal to your block",
       heal: "heal {{value}}",
       block: "block {{value}}",
       drawCards: "draw {{value}}",
+      doublePoison: "double poison",
       gainInk: "gain {{value}} ink",
       gainEnergy: "gain {{value}} energy",
       gainFocus: "gain {{value}} focus",
@@ -865,6 +978,10 @@ export const en = {
     debugTitle: "Enemy Spawn Debug",
     debugPlanned: "Planned",
     debugThematic: "Thematic unit present",
+    drawDebugTitle: "Draw Debug",
+    drawDebugSummary:
+      "Hand {{hand}}/{{max}} - Draw/turn {{draw}} - Pending overflow {{overflow}}",
+    drawDebugNoEvents: "No draw events yet.",
     yes: "YES",
     no: "NO",
     chooseAllyFor: "Choose an ally for ",
@@ -894,6 +1011,10 @@ export const en = {
     drawOrderMasked: "(display order is masked)",
     selectRewrite: "Select a card to retrieve with Rewrite",
     noCardsInPile: "No cards in this pile.",
+    handOverflowTitle: "Hand Overflow",
+    handOverflowSubtitle:
+      "You exceeded the hand limit. Choose {{count}} card(s) to exhaust.",
+    handOverflowHint: "Enemy-caused overdraws are exhausted automatically.",
     inventoryEmpty: "Inventory empty",
     energyShort: "EN",
     you: "You",

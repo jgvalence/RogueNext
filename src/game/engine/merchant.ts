@@ -9,10 +9,6 @@ import type {
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 import { relicDefinitions } from "../data/relics";
-import {
-  filterCardsByDifficulty,
-  isRelicUnlockedForDifficulty,
-} from "./difficulty";
 import { usableItemDefinitions, createUsableItemInstance } from "./items";
 import { GAME_CONSTANTS } from "../constants";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
@@ -158,11 +154,12 @@ export function generateShopInventory(
   ownedRelicIds: string[],
   rng: RNG,
   unlockedCardIds?: string[],
-  unlockedDifficultyLevelSnapshot = 0,
+  _unlockedDifficultyLevelSnapshot = 0,
   selectedDifficultyLevel = 0,
   relicDiscount = 0,
   usableItems?: UsableItemInstance[],
-  usableItemCapacity: number = GAME_CONSTANTS.MAX_USABLE_ITEMS
+  usableItemCapacity: number = GAME_CONSTANTS.MAX_USABLE_ITEMS,
+  unlockedRelicIds?: string[]
 ): ShopItem[] {
   const items: ShopItem[] = [];
   const lootLuck = getTotalLootLuck(ownedRelicIds);
@@ -172,7 +169,7 @@ export function generateShopInventory(
 
   // 3 random non-starter cards
   const lootable = weightedSampleByRarity(
-    filterCardsByDifficulty(allCards, unlockedDifficultyLevelSnapshot).filter(
+    allCards.filter(
       (c) =>
         !c.isStarterCard &&
         c.isCollectible !== false &&
@@ -201,7 +198,7 @@ export function generateShopInventory(
     (r) =>
       !ownedRelicIds.includes(r.id) &&
       getShopRelicRarity(r.id) !== "BOSS" &&
-      isRelicUnlockedForDifficulty(r.id, unlockedDifficultyLevelSnapshot)
+      (!unlockedRelicIds || unlockedRelicIds.includes(r.id))
   );
   if (availableRelics.length > 0) {
     const relic = weightedSampleByRarity(
@@ -473,9 +470,12 @@ export function applyStartMerchantOffer(
     }
     case "BONUS_GOLD": {
       const amount = offer.goldAmount ?? 0;
+      const gained = Math.max(0, amount);
+      const nextGold = next.gold + gained;
       next = {
         ...next,
-        gold: next.gold + Math.max(0, amount),
+        gold: nextGold,
+        maxGoldReached: Math.max(next.maxGoldReached ?? 0, nextGold),
       };
       break;
     }
@@ -540,7 +540,6 @@ export function generateStartMerchantOffers(
   if (!hasAnyResource) return [];
 
   const offers: StartMerchantOffer[] = [];
-  const selectedDifficulty = runState.selectedDifficultyLevel ?? 0;
   const unlockedCardIds = new Set(runState.unlockedCardIds ?? []);
   const lootLuck = getTotalLootLuck(
     runState.relicIds,
@@ -548,10 +547,7 @@ export function generateStartMerchantOffers(
   );
 
   const cardPool = weightedSampleByRarity(
-    filterCardsByDifficulty(
-      allCards,
-      runState.unlockedDifficultyLevelSnapshot ?? 0
-    ).filter(
+    allCards.filter(
       (card) =>
         !card.isStarterCard &&
         card.isCollectible !== false &&
@@ -578,7 +574,8 @@ export function generateStartMerchantOffers(
     (r) =>
       !runState.relicIds.includes(r.id) &&
       getShopRelicRarity(r.id) !== "BOSS" &&
-      isRelicUnlockedForDifficulty(r.id, selectedDifficulty)
+      ((runState.unlockedRelicIds?.length ?? 0) === 0 ||
+        runState.unlockedRelicIds.includes(r.id))
   );
   if (relicPool.length > 0) {
     const relic = weightedSampleByRarity(
@@ -754,6 +751,30 @@ const ALL_SHOP_RELICS = [
     name: "Battle Lexicon",
     description: "Start each combat with +1 Strength.",
     price: 120,
+  },
+  {
+    id: "gilded_ledger",
+    name: "Gilded Ledger",
+    description: "Increase gold gained from combat rewards by 50%.",
+    price: 170,
+  },
+  {
+    id: "plague_carillon",
+    name: "Plague Carillon",
+    description: "Each card played deals 1 damage to all enemies.",
+    price: 190,
+  },
+  {
+    id: "phoenix_ash",
+    name: "Phoenix Ash",
+    description: "Recover 2 HP at the start of each turn.",
+    price: 190,
+  },
+  {
+    id: "ink_spindle",
+    name: "Ink Spindle",
+    description: "At end of turn, gain 1 Focus if your hand is empty.",
+    price: 130,
   },
   {
     id: "omens_compass",

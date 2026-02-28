@@ -21,9 +21,15 @@ import {
   drawRunConditionChoices,
   getRunConditionById,
   getRunConditionMapRules,
+  isInfiniteRunConditionId,
+  isRunModeConditionId,
+  normalizeRunConditionId,
+  normalizeRunConditionIds,
 } from "./run-conditions";
-import { filterCardIdsByDifficulty } from "./difficulty";
-import { getDifficultyModifiers } from "./difficulty";
+import {
+  getDifficultyModifiers,
+  getPostFloorFiveEscalation,
+} from "./difficulty";
 import { createUsableItemInstance } from "./items";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 
@@ -135,7 +141,8 @@ export function createNewRun(
   unlockedDifficultyLevels: number[] = [0],
   unlockedDifficultyLevelMax = 0,
   startingBiomeChoices: [BiomeType, BiomeType] | null = null,
-  startMerchantResourcePool: Record<string, number> = {}
+  startMerchantResourcePool: Record<string, number> = {},
+  unlockedRelicIdsSnapshot: string[] = relicDefinitions.map((r) => r.id)
 ): RunState {
   // Build starter deck instances
   const deck: CardInstance[] = starterCards.map((card) => ({
@@ -178,10 +185,7 @@ export function createNewRun(
   const unlockedCardIdsRaw = allCards
     ? computeUnlockedCardIds(allCards, unlockProgress, unlockedStoryIdsSnapshot)
     : [];
-  const unlockedCardIds = filterCardIdsByDifficulty(
-    unlockedCardIdsRaw,
-    unlockedDifficultyLevelMax
-  );
+  const unlockedCardIds = unlockedCardIdsRaw;
 
   return {
     runId,
@@ -191,6 +195,7 @@ export function createNewRun(
     floor: 1,
     currentRoom: 0,
     gold: startingGold,
+    maxGoldReached: startingGold,
     merchantRerollCount: 0,
     playerMaxHp: GAME_CONSTANTS.STARTING_HP + extraHp,
     playerCurrentHp: GAME_CONSTANTS.STARTING_HP + extraHp,
@@ -217,6 +222,7 @@ export function createNewRun(
     startMerchantCompleted: false,
     metaBonuses,
     unlockedStoryIdsSnapshot,
+    unlockedRelicIds: unlockedRelicIdsSnapshot,
     unlockedCardIds,
     initialUnlockedCardIds: unlockedCardIds,
     cardUnlockProgress: unlockProgress,
@@ -236,6 +242,7 @@ export function generateFloorMap(
   difficultyLevel = 0
 ): RoomNode[][] {
   const mapRules = getRunConditionMapRules(selectedRunConditionId);
+  const isInfiniteMode = isInfiniteRunConditionId(selectedRunConditionId);
   // Build the sequence for rooms 1-7 (7 middle rooms): 1 shop, 1-2 events, rest combat
   // Room 8 is always PRE_BOSS; Room 9 is always BOSS
   const minSpecial = mapRules.extraSpecialRoom ? 2 : 1;
@@ -273,21 +280,15 @@ export function generateFloorMap(
 
     // PRE_BOSS room: always a single node with 1 elite enemy for the "fight for relic" option
     if (isPreBossRoom) {
-      const elitePool = enemyDefinitions
-        .filter(
-          (e) => e.isElite && (e.biome === biome || e.biome === "LIBRARY")
-        )
-        .map((e) => e.id);
-      const eliteDefs = enemyDefinitions.filter(
-        (e) =>
-          e.isElite &&
-          elitePool.includes(e.id) &&
-          (e.biome === biome || e.biome === "LIBRARY")
-      );
+      const preBossDefs = mapRules.bossOnlyCombats
+        ? enemyDefinitions.filter((e) => e.isBoss && e.biome === biome)
+        : enemyDefinitions.filter(
+            (e) => e.isElite && (e.biome === biome || e.biome === "LIBRARY")
+          );
       const preBossEnemyId =
-        eliteDefs.length > 0
+        preBossDefs.length > 0
           ? weightedPick(
-              eliteDefs,
+              preBossDefs,
               (e) => getEnemySelectionWeight(e, floor, biome),
               rng
             ).id
@@ -305,7 +306,10 @@ export function generateFloorMap(
     }
 
     const requestedChoices =
-      mapRules.forceSingleChoice || isBossRoom || isFirstRoom
+      mapRules.forceSingleChoice ||
+      mapRules.bossOnlyCombats ||
+      isBossRoom ||
+      isFirstRoom
         ? 1
         : rng.nextInt(1, GAME_CONSTANTS.ROOM_CHOICES);
 
@@ -337,7 +341,9 @@ export function generateFloorMap(
               rng,
               difficultyLevel,
               numChoices > 1 ? j + 1 : 1,
-              randomEliteRoomsGenerated < maxRandomEliteRoomsForFloor
+              randomEliteRoomsGenerated < maxRandomEliteRoomsForFloor,
+              mapRules.bossOnlyCombats ?? false,
+              isInfiniteMode
             )
           : undefined;
 
@@ -421,13 +427,16 @@ function generateRoomEnemies(
   rng: RNG,
   difficultyLevel = 0,
   minEnemyCount = 1,
-  allowElite = true
+  allowElite = true,
+  bossOnlyCombats = false,
+  isInfiniteMode = false
 ): { enemyIds: string[]; isElite: boolean } {
   const difficultyModifiers = getDifficultyModifiers(difficultyLevel);
+  const postFloorEscalation = getPostFloorFiveEscalation(floor, isInfiniteMode);
   const canAppear = (e: (typeof enemyDefinitions)[0]) =>
     e.biome === biome || e.biome === "LIBRARY";
 
-  if (isBoss) {
+  if (isBoss || bossOnlyCombats) {
     const bossPool = enemyDefinitions
       .filter((e) => e.isBoss && e.biome === biome)
       .map((e) => e.id);
@@ -444,8 +453,11 @@ function generateRoomEnemies(
     .map((e) => e.id);
   const eliteDefs = enemyDefinitions.filter((e) => elitePool.includes(e.id));
   const eliteChance = Math.min(
-    0.8,
-    0.25 + (floor - 1) * 0.05 + difficultyModifiers.eliteChanceBonus
+    isInfiniteMode ? 0.95 : 0.8,
+    0.25 +
+      (floor - 1) * 0.05 +
+      difficultyModifiers.eliteChanceBonus +
+      postFloorEscalation.eliteChanceBonus
   );
   if (
     allowElite &&
@@ -608,20 +620,82 @@ export function applyRunConditionToRun(
   allCards: CardDefinition[]
 ): RunState {
   if (runState.selectedDifficultyLevel === null) return runState;
-  if (runState.selectedRunConditionId) return runState;
-  const pendingChoices = runState.pendingRunConditionChoices ?? [];
-  if (!pendingChoices.includes(conditionId)) return runState;
+  const normalizedConditionId = normalizeRunConditionId(conditionId);
+  if (!normalizedConditionId) return runState;
+  const isAtRunSetupStart =
+    runState.floor === 1 &&
+    runState.currentRoom === 0 &&
+    runState.combat === null;
+  const isTargetModeCondition = isRunModeConditionId(normalizedConditionId);
+  const pendingChoices = normalizeRunConditionIds(
+    runState.pendingRunConditionChoices ?? []
+  );
 
-  const condition = getRunConditionById(conditionId);
+  const currentConditionId = normalizeRunConditionId(
+    runState.selectedRunConditionId
+  );
+  if (currentConditionId) {
+    const canSwapRunModeOnly =
+      currentConditionId !== normalizedConditionId &&
+      isRunModeConditionId(currentConditionId) &&
+      isTargetModeCondition &&
+      isAtRunSetupStart;
+    if (canSwapRunModeOnly) {
+      return {
+        ...runState,
+        selectedRunConditionId: normalizedConditionId,
+      };
+    }
+    const canPromoteModeIntoNormalCondition =
+      isAtRunSetupStart &&
+      isRunModeConditionId(currentConditionId) &&
+      !isTargetModeCondition &&
+      pendingChoices.includes(normalizedConditionId);
+    if (!canPromoteModeIntoNormalCondition) return runState;
+  } else if (isTargetModeCondition) {
+    // Run mode (normal/infinite) is selected by the setup toggle and does not
+    // consume the 3 normal run-condition choices.
+    if (!isAtRunSetupStart) return runState;
+    return {
+      ...runState,
+      selectedRunConditionId: normalizedConditionId,
+    };
+  }
+
+  if (!pendingChoices.includes(normalizedConditionId)) return runState;
+
+  const condition = getRunConditionById(normalizedConditionId);
   if (!condition) return runState;
 
   const cardMap = new Map(allCards.map((card) => [card.id, card]));
-  const bonusCards = buildConditionStarterCards(conditionId, cardMap);
+  const bonusCards = buildConditionStarterCards(normalizedConditionId, cardMap);
   const bonusDeck: CardInstance[] = bonusCards.map((card) => ({
     instanceId: nanoid(),
     definitionId: card.id,
     upgraded: false,
   }));
+  const replacementDeckCount = Math.max(
+    0,
+    Math.floor(condition.effects.replaceStarterDeckWithRandomCount ?? 0)
+  );
+  const replacementPool = allCards.filter(
+    (card) =>
+      !card.isStarterCard &&
+      card.isCollectible !== false &&
+      ((runState.unlockedCardIds?.length ?? 0) === 0 ||
+        runState.unlockedCardIds.includes(card.id))
+  );
+  const replacementDeck: CardInstance[] =
+    replacementDeckCount > 0 && replacementPool.length > 0
+      ? Array.from({ length: replacementDeckCount }, () => {
+          const picked = rng.pick(replacementPool);
+          return {
+            instanceId: nanoid(),
+            definitionId: picked.id,
+            upgraded: false,
+          };
+        })
+      : runState.deck;
 
   const hpDelta = condition.effects.maxHpDelta ?? 0;
   const goldDelta = condition.effects.startingGoldDelta ?? 0;
@@ -633,7 +707,7 @@ export function applyRunConditionToRun(
   const nextGold = Math.max(0, runState.gold + goldDelta);
   const nextMetaBonuses = applyRunConditionMetaBonuses(
     runState.metaBonuses,
-    conditionId
+    normalizedConditionId
   );
   const hasMapRuleEffects = Boolean(condition.effects.mapRules);
   const nextMap = hasMapRuleEffects
@@ -641,7 +715,7 @@ export function applyRunConditionToRun(
         runState.floor,
         rng,
         runState.currentBiome,
-        conditionId,
+        normalizedConditionId,
         runState.selectedDifficultyLevel ?? 0
       )
     : runState.map;
@@ -649,12 +723,13 @@ export function applyRunConditionToRun(
   return {
     ...runState,
     gold: nextGold,
+    maxGoldReached: Math.max(runState.maxGoldReached ?? 0, nextGold),
     playerMaxHp: nextMaxHp,
     playerCurrentHp: nextCurrentHp,
-    deck: [...runState.deck, ...bonusDeck],
+    deck: [...replacementDeck, ...bonusDeck],
     map: nextMap,
     metaBonuses: nextMetaBonuses,
-    selectedRunConditionId: conditionId,
+    selectedRunConditionId: normalizedConditionId,
     pendingRunConditionChoices: [],
   };
 }
@@ -662,8 +737,8 @@ export function applyRunConditionToRun(
 /**
  * Complete a combat and update run state.
  * - Non-boss: advance room normally.
- * - Boss on floor < MAX_FLOORS: generate biome choices for the next floor.
- * - Boss on final floor: set status VICTORY.
+ * - Boss on non-final floor (or in infinite mode): generate biome choices for the next floor.
+ * - Boss on final floor in normal mode: set status VICTORY.
  */
 export function completeCombat(
   runState: RunState,
@@ -676,10 +751,18 @@ export function completeCombat(
   usableItemDropDefinitionId?: string | null
 ): RunState {
   const isBossRoom = runState.currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
-  const isFinalFloor = runState.floor >= GAME_CONSTANTS.MAX_FLOORS;
+  const isInfiniteMode = isInfiniteRunConditionId(
+    runState.selectedRunConditionId
+  );
+  const isFinalFloor =
+    !isInfiniteMode && runState.floor >= GAME_CONSTANTS.MAX_FLOORS;
   const hpAfterCombat = Math.max(0, combatResult.player.currentHp);
+  const activeRelicIds = relicIds ?? runState.relicIds;
   const healPct = Math.max(0, runState.metaBonuses?.healAfterCombat ?? 0);
   const healFlat = Math.max(0, runState.metaBonuses?.healAfterCombatFlat ?? 0);
+  const healPctMultiplier = activeRelicIds.includes("menders_charm") ? 1.5 : 1;
+  const healFlatBonus = activeRelicIds.includes("vital_flask") ? 5 : 0;
+  const effectiveHealPct = healPct * healPctMultiplier;
 
   // Blood Grimoire relic: gain max HP for each enemy killed this combat
   const roomChoicesForRelic = runState.map[runState.currentRoom];
@@ -687,9 +770,7 @@ export function completeCombat(
     roomChoicesForRelic?.find((r) => r.completed) ?? roomChoicesForRelic?.[0];
   const isEliteRoom = selectedRoomForRelic?.isElite ?? false;
   const enemyCount = combatResult.enemies.length;
-  const bloodGrimoireGain = (relicIds ?? runState.relicIds).includes(
-    "blood_grimoire"
-  )
+  const bloodGrimoireGain = activeRelicIds.includes("blood_grimoire")
     ? isBossRoom
       ? 5
       : isEliteRoom
@@ -698,7 +779,10 @@ export function completeCombat(
     : 0;
 
   const newPlayerMaxHp = runState.playerMaxHp + bloodGrimoireGain;
-  const healAmount = Math.floor((newPlayerMaxHp * healPct) / 100) + healFlat;
+  const healAmount =
+    Math.floor((newPlayerMaxHp * effectiveHealPct) / 100) +
+    healFlat +
+    healFlatBonus;
   const hpAfterMetaHeal = Math.min(
     newPlayerMaxHp,
     hpAfterCombat + healAmount + bloodGrimoireGain
@@ -723,7 +807,7 @@ export function completeCombat(
 
   // Accumulate biome resources earned this combat
   const updatedEarnedResources = { ...runState.earnedResources };
-  if (biomeResources) {
+  if (!isInfiniteMode && biomeResources) {
     for (const [key, amount] of Object.entries(biomeResources)) {
       updatedEarnedResources[key] =
         (updatedEarnedResources[key] ?? 0) + (amount as number);
@@ -750,10 +834,7 @@ export function completeCombat(
     unlockProgress,
     runState.unlockedStoryIdsSnapshot ?? []
   );
-  const unlockedCardIds = filterCardIdsByDifficulty(
-    unlockedCardIdsRaw,
-    runState.unlockedDifficultyLevelSnapshot ?? 0
-  );
+  const unlockedCardIds = unlockedCardIdsRaw;
   const usableItemCapacity =
     runState.usableItemCapacity ?? GAME_CONSTANTS.MAX_USABLE_ITEMS;
   const hasUsableItemSlot =
@@ -765,12 +846,14 @@ export function completeCombat(
           createUsableItemInstance(usableItemDropDefinitionId),
         ]
       : (runState.usableItems ?? []);
+  const nextGold = runState.gold + goldReward;
 
   return {
     ...runState,
     playerMaxHp: newPlayerMaxHp,
     playerCurrentHp: hpAfterMetaHeal,
-    gold: runState.gold + goldReward,
+    gold: nextGold,
+    maxGoldReached: Math.max(runState.maxGoldReached ?? 0, nextGold),
     combat: null,
     currentRoom: runState.currentRoom + 1,
     status: isBossRoom && isFinalFloor ? "VICTORY" : runState.status,
@@ -819,10 +902,7 @@ export function advanceFloor(
     unlockProgress,
     state.unlockedStoryIdsSnapshot ?? []
   );
-  const unlockedCardIds = filterCardIdsByDifficulty(
-    unlockedCardIdsRaw,
-    state.unlockedDifficultyLevelSnapshot ?? 0
-  );
+  const unlockedCardIds = unlockedCardIdsRaw;
 
   return {
     ...state,
@@ -993,9 +1073,13 @@ function addRelicToRun(state: RunState, relicId: string): RunState {
 export function pickGuaranteedEventRelicId(state: RunState): string | null {
   const nonBossPool = relicDefinitions.filter((r) => r.rarity !== "BOSS");
   const available = nonBossPool.filter((r) => !state.relicIds.includes(r.id));
-  if (available.length === 0) {
-    return nonBossPool[0]?.id ?? null;
-  }
+  const unlockedRelicIds = new Set(
+    (state.unlockedRelicIds?.length ?? 0) > 0
+      ? state.unlockedRelicIds
+      : nonBossPool.map((r) => r.id)
+  );
+  const eligible = available.filter((r) => unlockedRelicIds.has(r.id));
+  if (eligible.length === 0) return null;
   const rng = createRNG(
     `${state.seed}-guaranteed-relic-${state.floor}-${state.currentRoom}-${state.relicIds.length}`
   );
@@ -1003,7 +1087,7 @@ export function pickGuaranteedEventRelicId(state: RunState): string | null {
     state.relicIds,
     state.metaBonuses?.lootLuck ?? 0
   );
-  return weightedSampleByRarity(available, 1, rng, lootLuck)[0]?.id ?? null;
+  return weightedSampleByRarity(eligible, 1, rng, lootLuck)[0]?.id ?? null;
 }
 
 export function createGuaranteedRelicEvent(): GameEvent {
@@ -1041,6 +1125,7 @@ const EVENTS: GameEvent[] = [
           ...s,
           playerCurrentHp: Math.max(1, s.playerCurrentHp - 10),
           gold: s.gold + 50,
+          maxGoldReached: Math.max(s.maxGoldReached ?? 0, s.gold + 50),
           currentRoom: s.currentRoom + 1,
         }),
       },
@@ -1059,11 +1144,12 @@ const EVENTS: GameEvent[] = [
     choices: [
       {
         label: "Drink deeply",
-        description: "Heal 15 HP, gain 25 gold",
+        description: "Heal 5 HP, gain 25 gold",
         apply: (s) => ({
           ...s,
-          playerCurrentHp: Math.min(s.playerMaxHp, s.playerCurrentHp + 15),
+          playerCurrentHp: Math.min(s.playerMaxHp, s.playerCurrentHp + 5),
           gold: s.gold + 25,
+          maxGoldReached: Math.max(s.maxGoldReached ?? 0, s.gold + 25),
           currentRoom: s.currentRoom + 1,
         }),
       },
@@ -1073,6 +1159,7 @@ const EVENTS: GameEvent[] = [
         apply: (s) => ({
           ...s,
           gold: s.gold + 75,
+          maxGoldReached: Math.max(s.maxGoldReached ?? 0, s.gold + 75),
           currentRoom: s.currentRoom + 1,
         }),
       },
@@ -1153,6 +1240,7 @@ const EVENTS: GameEvent[] = [
         apply: (s) => ({
           ...addDeckCard(s, "hexed_parchment"),
           gold: s.gold + 90,
+          maxGoldReached: Math.max(s.maxGoldReached ?? 0, s.gold + 90),
           currentRoom: s.currentRoom + 1,
         }),
       },
@@ -1168,6 +1256,7 @@ const EVENTS: GameEvent[] = [
           return {
             ...withSecondRegret,
             gold: s.gold + 140,
+            maxGoldReached: Math.max(s.maxGoldReached ?? 0, s.gold + 140),
             currentRoom: s.currentRoom + 1,
           };
         },

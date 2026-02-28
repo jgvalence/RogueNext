@@ -1,8 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
+import { Cinzel } from "next/font/google";
 import { useTranslation } from "react-i18next";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+
+const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
 interface HomeContentProps {
   isSignedIn: boolean;
@@ -10,121 +14,188 @@ interface HomeContentProps {
 
 export function HomeContent({ isSignedIn }: HomeContentProps) {
   const { t } = useTranslation();
-  const tags = t("home.tags", { returnObjects: true }) as string[];
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gray-950 text-white">
+    <main
+      className="relative h-screen w-screen overflow-hidden bg-[#040608]"
+      style={{ fontFamily: cinzel.style.fontFamily }}
+    >
+      {/* ── BACKGROUND ── */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-900/20 blur-[128px]" />
-        <div className="absolute bottom-0 left-0 h-[300px] w-[400px] rounded-full bg-blue-900/15 blur-[96px]" />
-        <div className="absolute right-0 top-0 h-[250px] w-[350px] rounded-full bg-amber-900/10 blur-[96px]" />
+        {/* Art plein écran */}
+        <Image
+          src="/images/backgrounds/map.svg"
+          alt=""
+          fill
+          priority
+          className="object-cover object-center opacity-50"
+          aria-hidden
+        />
+        <Image
+          src="/images/backgrounds/combat.svg"
+          alt=""
+          fill
+          className="object-cover object-right opacity-25 mix-blend-screen"
+          aria-hidden
+        />
+        {/* Voile sombre : fort à gauche pour la lisibilité du menu */}
+        <div className="from-[#020406]/97 via-[#020406]/72 absolute inset-0 bg-gradient-to-r from-[30%] via-[55%] to-[#020406]/20" />
+        {/* Vignette haut/bas */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#020406]/80 via-transparent to-[#020406]/95" />
+        {/* Lueur ambrée basse-gauche */}
+        <div className="absolute bottom-0 left-0 h-1/2 w-1/2 bg-[radial-gradient(ellipse_at_bottom_left,rgba(245,158,11,0.07),transparent_70%)]" />
+        {/* Grain subtil */}
+        <div className="absolute inset-0 bg-[url('/images/backgrounds/map.svg')] bg-[length:200px_200px] bg-repeat opacity-[0.015] mix-blend-overlay" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center gap-8 px-4 text-center">
-        <div className="flex flex-col items-center gap-3">
-          <span className="text-sm font-medium uppercase tracking-[0.3em] text-purple-400">
-            {t("home.kicker")}
-          </span>
-          <h1 className="bg-gradient-to-b from-white via-white to-gray-500 bg-clip-text text-6xl font-black tracking-tight text-transparent sm:text-8xl">
-            Panlibrarium
-          </h1>
-          <p className="max-w-md text-lg text-gray-400">{t("home.subtitle")}</p>
-        </div>
+      {/* ── PERSONNAGE ATMOSPHÉRIQUE (droite) ── */}
+      <div className="pointer-events-none absolute bottom-0 right-[4%] hidden h-[88vh] w-[28vw] lg:block">
+        <Image
+          src="/images/enemies/the_archivist.svg"
+          alt=""
+          fill
+          className="animate-ambient-float object-contain object-bottom opacity-30 brightness-50 saturate-50"
+          aria-hidden
+        />
+        {/* Halo au pied du personnage */}
+        <div className="absolute bottom-0 left-1/2 h-24 w-64 -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.09),transparent_70%)]" />
+      </div>
 
-        <div className="flex flex-col items-center gap-4">
+      {/* Lignes décoratives verticales – effet vieux terminal */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.025]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(90deg,rgba(251,191,36,0.6) 0px,rgba(251,191,36,0.6) 1px,transparent 1px,transparent 80px)",
+        }}
+      />
+
+      {/* ── MENU ── */}
+      <div className="relative z-10 flex h-full flex-col justify-center pl-10 sm:pl-16 lg:pl-24 xl:pl-32">
+        {/* Kicker */}
+        <p className="mb-3 text-[0.6rem] font-semibold uppercase tracking-[0.55em] text-amber-400/50">
+          {t("home.kicker")}
+        </p>
+
+        {/* Titre principal */}
+        <h1
+          className={` ${cinzel.className} mb-12 animate-title-glow text-[clamp(3rem,7.5vw,6.5rem)] font-bold uppercase leading-none tracking-[0.06em] text-amber-100`}
+        >
+          Panlibrarium
+        </h1>
+
+        {/* Séparateur */}
+        <div className="mb-8 h-px w-24 bg-gradient-to-r from-amber-500/60 to-transparent" />
+
+        {/* Items de menu */}
+        <nav className="flex flex-col">
           {isSignedIn ? (
-            <div className="flex items-center gap-3">
-              <Link
+            <>
+              <MenuItem
                 href="/game"
-                className="group relative inline-flex items-center gap-2 rounded-lg bg-purple-600 px-10 py-4 text-lg font-bold transition-all hover:bg-purple-500 hover:shadow-[0_0_32px_rgba(147,51,234,0.4)]"
-              >
-                <span>{t("home.play")}</span>
-                <svg
-                  className="h-5 w-5 transition-transform group-hover:translate-x-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
-              </Link>
-              <Link
-                href="/library"
-                className="rounded-lg border border-amber-700 px-6 py-4 font-semibold text-amber-400 transition hover:border-amber-500 hover:text-amber-300"
-              >
-                {t("home.library")}
-              </Link>
-              <Link
-                href="/rules"
-                className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
-              >
-                {t("home.rules")}
-              </Link>
-              <LogoutButton
-                label={t("home.logout")}
-                className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
+                label={t("home.play")}
+                primary
+                font={cinzel.className}
               />
-            </div>
+              <MenuItem
+                href="/library"
+                label={t("home.library")}
+                font={cinzel.className}
+              />
+              <MenuItem
+                href="/leaderboard"
+                label={t("home.leaderboard")}
+                font={cinzel.className}
+              />
+              <MenuItem
+                href="/rules"
+                label={t("home.rules")}
+                font={cinzel.className}
+              />
+              <MenuItemLogout
+                label={t("home.logout")}
+                font={cinzel.className}
+              />
+            </>
           ) : (
             <>
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  href="/auth/signup"
-                  className="group relative inline-flex items-center gap-2 rounded-lg bg-purple-600 px-8 py-4 text-lg font-bold transition-all hover:bg-purple-500 hover:shadow-[0_0_32px_rgba(147,51,234,0.4)]"
-                >
-                  <span>{t("home.signup")}</span>
-                  <svg
-                    className="h-5 w-5 transition-transform group-hover:translate-x-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M13 7l5 5m0 0l-5 5m5-5H6"
-                    />
-                  </svg>
-                </Link>
-                <Link
-                  href="/auth/signin"
-                  className="rounded-lg border border-gray-700 px-8 py-4 text-lg font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
-                >
-                  {t("home.signin")}
-                </Link>
-                <Link
-                  href="/rules"
-                  className="rounded-lg border border-gray-700 px-4 py-2 text-sm font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
-                >
-                  {t("home.rules")}
-                </Link>
-              </div>
-              <span className="text-sm text-gray-500">
-                {t("home.loginHint")}
-              </span>
+              <MenuItem
+                href="/auth/signup"
+                label={t("home.signup")}
+                primary
+                font={cinzel.className}
+              />
+              <MenuItem
+                href="/auth/signin"
+                label={t("home.signin")}
+                font={cinzel.className}
+              />
+              <MenuItem
+                href="/leaderboard"
+                label={t("home.leaderboard")}
+                font={cinzel.className}
+              />
+              <MenuItem
+                href="/rules"
+                label={t("home.rules")}
+                font={cinzel.className}
+              />
             </>
           )}
-        </div>
+        </nav>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          {tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full border border-gray-800 bg-gray-900/50 px-4 py-1.5 text-xs font-medium text-gray-400"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+        {/* Version */}
+        <p className="absolute bottom-6 left-10 font-mono text-[0.52rem] uppercase tracking-[0.4em] text-amber-100/20 sm:left-16 lg:left-24 xl:left-32">
+          Panlibrarium — Alpha v0.1
+        </p>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-950 to-transparent" />
+      {/* Scintillement de l'écran – bord supérieur */}
+      <div className="pointer-events-none absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/25 to-transparent" />
     </main>
+  );
+}
+
+/* ── Composants de menu ── */
+
+function MenuItem({
+  href,
+  label,
+  primary = false,
+  font,
+}: {
+  href: string;
+  label: string;
+  primary?: boolean;
+  font: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className={` ${font} group flex cursor-pointer items-center py-[0.42rem] uppercase outline-none transition-all duration-150 ${
+        primary
+          ? "mb-1 text-[1.45rem] font-semibold tracking-[0.16em] text-amber-100 sm:text-[1.6rem]"
+          : "text-[1.05rem] font-normal tracking-[0.14em] text-amber-100/45 hover:text-amber-100/85 sm:text-[1.15rem]"
+      } `}
+    >
+      {/* Barre dorée animée */}
+      <span
+        className={`mr-0 inline-block h-[1.5px] shrink-0 self-center rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 transition-all duration-200 ease-out ${
+          primary
+            ? "mr-5 w-8 opacity-90"
+            : "w-0 opacity-0 group-hover:mr-4 group-hover:w-5 group-hover:opacity-60"
+        } `}
+      />
+      {label}
+    </Link>
+  );
+}
+
+function MenuItemLogout({ label, font }: { label: string; font: string }) {
+  return (
+    <LogoutButton
+      label={label}
+      className={` ${font} mt-1 flex cursor-pointer items-center py-[0.42rem] text-[1rem] font-normal uppercase tracking-[0.14em] text-amber-100/30 transition-colors duration-150 hover:text-amber-100/70 sm:text-[1.05rem]`}
+    />
   );
 }

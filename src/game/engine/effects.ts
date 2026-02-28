@@ -22,6 +22,7 @@ export type EffectTarget =
 export interface EffectContext {
   source: EffectSource;
   target: EffectTarget;
+  drawReason?: string;
 }
 
 function getSourceStats(state: CombatState, source: EffectSource) {
@@ -263,6 +264,47 @@ function applyHealToTarget(
   return state;
 }
 
+function applyPoisonMultiplierToTarget(
+  state: CombatState,
+  target: EffectTarget,
+  multiplier: number
+): CombatState {
+  const factor = Math.max(1, Math.floor(multiplier));
+  if (factor <= 1) return state;
+
+  const scalePoisonBuffs = <
+    T extends { type: string; stacks: number; duration?: number },
+  >(
+    buffs: T[]
+  ): T[] =>
+    buffs.map((buff) =>
+      buff.type === "POISON"
+        ? ({ ...buff, stacks: Math.max(1, buff.stacks * factor) } as T)
+        : buff
+    );
+
+  if (target === "all_enemies") {
+    let current = state;
+    for (const enemy of state.enemies) {
+      if (enemy.currentHp <= 0) continue;
+      current = updateEnemy(current, enemy.instanceId, (e) => ({
+        ...e,
+        buffs: scalePoisonBuffs(e.buffs),
+      }));
+    }
+    return current;
+  }
+
+  if (typeof target === "object" && target.type === "enemy") {
+    return updateEnemy(state, target.instanceId, (enemy) => ({
+      ...enemy,
+      buffs: scalePoisonBuffs(enemy.buffs),
+    }));
+  }
+
+  return state;
+}
+
 function freezeCardsInHand(state: CombatState, count: number): CombatState {
   if (count <= 0) return state;
   const alreadyFrozen = new Set(
@@ -338,6 +380,17 @@ export function resolveEffect(
     case "DAMAGE":
       return applyDamageToTarget(state, ctx.target, effect.value, ctx.source);
 
+    case "DAMAGE_EQUAL_BLOCK": {
+      const blockValue = Math.max(0, state.player.block);
+      const multiplier = Math.max(1, Math.floor(effect.value));
+      return applyDamageToTarget(
+        state,
+        ctx.target,
+        blockValue * multiplier,
+        ctx.source
+      );
+    }
+
     case "BLOCK":
       // Player-origin block uses the chosen target (player or ally).
       if (ctx.source === "player") {
@@ -362,7 +415,24 @@ export function resolveEffect(
       return applyHealToTarget(state, ctx.target, effect.value);
 
     case "DRAW_CARDS":
-      return drawCards(state, effect.value, rng);
+      return drawCards(
+        state,
+        effect.value,
+        rng,
+        ctx.source === "player"
+          ? "PLAYER"
+          : typeof ctx.source === "object" && ctx.source.type === "ally"
+            ? "SYSTEM"
+            : "ENEMY",
+        ctx.source === "player"
+          ? (ctx.drawReason ?? "PLAYER_EFFECT_DRAW")
+          : typeof ctx.source === "object" && ctx.source.type === "ally"
+            ? (ctx.drawReason ?? "ALLY_EFFECT_DRAW")
+            : (ctx.drawReason ?? "ENEMY_EFFECT_DRAW")
+      );
+
+    case "DOUBLE_POISON":
+      return applyPoisonMultiplierToTarget(state, ctx.target, effect.value);
 
     case "GAIN_ENERGY":
       return updatePlayer(state, (p) => ({

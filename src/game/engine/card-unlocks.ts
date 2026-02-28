@@ -50,6 +50,15 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   mythic_blow: { type: "BIOME_ELITE_KILLS", biome: "LIBRARY", count: 1 },
   annotated_thesis: { type: "STORY_UNLOCK", storyId: "encyclopedie_du_savoir" },
   binding_oath: { type: "STORY_UNLOCK", storyId: "traite_de_lenergie" },
+  quick_feint: { type: "BIOME_ELITE_KILLS", biome: "LIBRARY", count: 1 },
+  bastion_crash: { type: "BIOME_BOSS_KILLS", biome: "LIBRARY", count: 1 },
+  venom_echo: {
+    type: "ALL_OF",
+    rules: [
+      { type: "BIOME_BOSS_KILLS", biome: "LIBRARY", count: 1 },
+      { type: "STORY_UNLOCK", storyId: "grimoire_des_index" },
+    ],
+  },
 
   // LIBRARY (mid)
   rage_of_ages: { type: "BIOME_BOSS_KILLS", biome: "LIBRARY", count: 1 },

@@ -37,12 +37,13 @@ export function getResourcesForCombat(
   floor: number,
   rng?: RNG
 ): Partial<Record<BiomeResource, number>> {
-  const base = 1 + (floor - 1);
+  const safeFloor = Math.max(1, Math.floor(floor));
+  const base = 1 + Math.floor((safeFloor - 1) * 0.5);
   let amount = base;
   if (isBoss) {
-    amount = Math.round(base * 3);
+    amount = Math.round(base * 2.2);
   } else if (isElite) {
-    amount = Math.round(base * 1.5);
+    amount = Math.round(base * 1.35);
   }
 
   const primaryResource = BIOME_RESOURCE[biome];
@@ -51,7 +52,7 @@ export function getResourcesForCombat(
   };
 
   // 10% chance d'obtenir 1 ressource d'un biome aléatoire différent
-  if (rng && rng.next() < 0.1) {
+  if (rng && rng.next() < 0.05) {
     const otherResources = ALL_RESOURCES.filter((r) => r !== primaryResource);
     const bonus = rng.pick(otherResources);
     result[bonus] = (result[bonus] ?? 0) + 1;
@@ -209,11 +210,6 @@ export function applyMetaBonusesToCombat(
       drawCount: p.drawCount + bonuses.extraDraw,
       strength: p.strength + bonuses.startingStrength,
       block: p.block + bonuses.startingBlock,
-      maxHp: p.maxHp + bonuses.extraHp,
-      currentHp: Math.min(
-        p.maxHp + bonuses.extraHp,
-        p.currentHp + bonuses.extraHp
-      ),
     },
   };
 }

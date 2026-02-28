@@ -19,14 +19,13 @@ import { CombatView } from "../_components/combat/CombatView";
 import { FloorMap } from "../_components/map/FloorMap";
 import { RewardScreen } from "../_components/rewards/RewardScreen";
 import { ShopView } from "../_components/merchant/ShopView";
-import { StartMerchantView } from "../_components/merchant/StartMerchantView";
 import { SpecialRoomView } from "../_components/special/SpecialRoomView";
 import { BiomeSelectScreen } from "../_components/biome/BiomeSelectScreen";
-import { RunDifficultySelectScreen } from "../_components/run-difficulty/RunDifficultySelectScreen";
-import { RunConditionSelectScreen } from "../_components/run-condition/RunConditionSelectScreen";
+import { RunSetupScreen } from "../_components/run-setup/RunSetupScreen";
 import { PreBossRoomView } from "../_components/preboss/PreBossRoomView";
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
 import type { BiomeType } from "@/game/schemas/enums";
+import type { RunState } from "@/game/schemas/run-state";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { cn } from "@/lib/utils/cn";
 import { endRunAction } from "@/server/actions/run";
@@ -34,11 +33,16 @@ import {
   generateCombatRewards,
   type CombatRewards,
 } from "@/game/engine/rewards";
+import {
+  getRunConditionById,
+  isInfiniteRunConditionId,
+} from "@/game/engine/run-conditions";
 import { createRNG } from "@/game/engine/rng";
 import type { CardDefinition } from "@/game/schemas/cards";
 import { playSound } from "@/lib/sound";
 import { startMusic, stopMusic } from "@/lib/music";
 import { getUsableItemDefinitionsMap } from "@/game/engine/items";
+import type { StartMerchantOffer } from "@/game/engine/merchant";
 
 export default function RunPage() {
   const { t } = useTranslation();
@@ -100,9 +104,7 @@ export default function RunPage() {
 }
 
 type GamePhase =
-  | "RUN_DIFFICULTY"
-  | "START_MERCHANT"
-  | "RUN_CONDITION"
+  | "RUN_SETUP"
   | "RUN_FREE_UPGRADE"
   | "MAP"
   | "COMBAT"
@@ -114,6 +116,51 @@ type GamePhase =
   | "VICTORY"
   | "DEFEAT"
   | "ABANDONED";
+
+function isRunStartState(state: RunState): boolean {
+  return state.floor === 1 && state.currentRoom === 0 && state.combat === null;
+}
+
+function canOfferFreeUpgradeAtRunStart(state: RunState): boolean {
+  return (
+    Boolean(state.metaBonuses?.freeUpgradePerRun) &&
+    !state.freeUpgradeUsed &&
+    isRunStartState(state) &&
+    state.deck.some((card) => !card.upgraded)
+  );
+}
+
+function deriveInitialPhase(state: RunState): GamePhase {
+  if (state.status === "VICTORY") return "VICTORY";
+  if (state.status === "DEFEAT") return "DEFEAT";
+  if (state.status === "ABANDONED") return "ABANDONED";
+
+  const isRunStart = isRunStartState(state);
+  const needsDifficultySelection = state.selectedDifficultyLevel === null;
+  const needsRunConditionSelection =
+    !state.selectedRunConditionId &&
+    (state.pendingRunConditionChoices?.length ?? 0) > 0;
+  const needsPreGameSetup =
+    isRunStart &&
+    (needsDifficultySelection ||
+      needsRunConditionSelection ||
+      !state.startMerchantCompleted);
+
+  if (needsPreGameSetup) {
+    return "RUN_SETUP";
+  }
+  if (canOfferFreeUpgradeAtRunStart(state)) return "RUN_FREE_UPGRADE";
+  if (state.combat !== null) return "COMBAT";
+  if (state.pendingBiomeChoices !== null) return "BIOME_SELECT";
+
+  const selectedCurrentRoom =
+    state.map[state.currentRoom]?.find((room) => room.completed) ?? null;
+  if (selectedCurrentRoom?.type === "MERCHANT") return "MERCHANT";
+  if (selectedCurrentRoom?.type === "SPECIAL") return "SPECIAL";
+  if (selectedCurrentRoom?.type === "PRE_BOSS") return "PRE_BOSS";
+
+  return "MAP";
+}
 
 function GameContent({
   cardDefs,
@@ -130,35 +177,10 @@ function GameContent({
   const { state, dispatch, rng } = useGame();
   const router = useRouter();
   const hasOpeningBiomeChoice =
-    state.floor === 1 &&
-    state.currentRoom === 0 &&
-    state.combat === null &&
-    state.pendingBiomeChoices !== null;
-  const canOfferFreeUpgradeAtStart =
-    Boolean(state.metaBonuses?.freeUpgradePerRun) &&
-    !state.freeUpgradeUsed &&
-    state.floor === 1 &&
-    state.currentRoom === 0 &&
-    state.combat === null &&
-    state.deck.some((card) => !card.upgraded);
+    isRunStartState(state) && state.pendingBiomeChoices !== null;
+  const canOfferFreeUpgradeAtStart = canOfferFreeUpgradeAtRunStart(state);
   const [phase, setPhase] = useState<GamePhase>(() =>
-    state.selectedDifficultyLevel === null
-      ? "RUN_DIFFICULTY"
-      : !state.startMerchantCompleted &&
-          state.floor === 1 &&
-          state.currentRoom === 0 &&
-          state.combat === null
-        ? "START_MERCHANT"
-        : state.selectedRunConditionId ||
-            (state.pendingRunConditionChoices?.length ?? 0) === 0
-          ? canOfferFreeUpgradeAtStart
-            ? "RUN_FREE_UPGRADE"
-            : state.floor === 1 &&
-                state.currentRoom === 0 &&
-                state.pendingBiomeChoices !== null
-              ? "BIOME_SELECT"
-              : "MAP"
-          : "RUN_CONDITION"
+    deriveInitialPhase(state)
   );
   const [rewards, setRewards] = useState<CombatRewards | null>(null);
   const [isBossRewards, setIsBossRewards] = useState(false);
@@ -166,11 +188,22 @@ function GameContent({
   const [actingEnemyId, setActingEnemyId] = useState<string | null>(null);
   const [attackingEnemyId, setAttackingEnemyId] = useState<string | null>(null);
   const [isDiscarding, setIsDiscarding] = useState(false);
+  const [isResolvingEndTurn, setIsResolvingEndTurn] = useState(false);
   const enemyTurnCancelledRef = useRef(false);
   const runEndedRef = useRef(false);
+  const endTurnInFlightRef = useRef(false);
   // Always-current ref to avoid stale closures in callbacks
   const stateRef = useRef(state);
   stateRef.current = state;
+  const isInfiniteMode = isInfiniteRunConditionId(state.selectedRunConditionId);
+  const buildEndRunPayload = useCallback(
+    () => ({
+      earnedResources: isInfiniteMode ? {} : stateRef.current.earnedResources,
+      startMerchantSpentResources:
+        stateRef.current.startMerchantSpentResources ?? {},
+    }),
+    [isInfiniteMode]
+  );
   const isDevBuild = process.env.NODE_ENV !== "production";
   const usableItemDefs = useMemo(() => getUsableItemDefinitionsMap(), []);
 
@@ -190,9 +223,7 @@ function GameContent({
       phase === "SPECIAL" ||
       phase === "PRE_BOSS" ||
       phase === "BIOME_SELECT" ||
-      phase === "RUN_CONDITION" ||
-      phase === "START_MERCHANT" ||
-      phase === "RUN_DIFFICULTY"
+      phase === "RUN_SETUP"
     )
       startMusic("map");
     else stopMusic(); // VICTORY or DEFEAT
@@ -205,55 +236,66 @@ function GameContent({
 
   // Async end-turn with step-by-step enemy animation
   const handleEndTurn = useCallback(async () => {
-    if (!state.combat || state.combat.phase !== "PLAYER_TURN") return;
+    const combat = stateRef.current.combat;
+    if (!combat || combat.phase !== "PLAYER_TURN") return;
+    if ((combat.pendingHandOverflowExhaust ?? 0) > 0) return;
+    if (endTurnInFlightRef.current) return;
 
     const sleep = (ms: number) =>
       new Promise<void>((res) => setTimeout(res, ms));
 
-    // Animate cards discarding before state update
-    if (state.combat.hand.length > 0) {
-      setIsDiscarding(true);
-      await sleep(350);
+    endTurnInFlightRef.current = true;
+    setIsResolvingEndTurn(true);
+    try {
+      // Animate cards discarding before state update
+      if (combat.hand.length > 0) {
+        setIsDiscarding(true);
+        await sleep(350);
+        setIsDiscarding(false);
+      }
+
+      // Collect living enemies in speed order (mirrors the engine logic)
+      const sortedEnemies = [...combat.enemies]
+        .filter((e) => e.currentHp > 0)
+        .sort((a, b) => b.speed - a.speed);
+
+      enemyTurnCancelledRef.current = false;
+      dispatch({ type: "BEGIN_ENEMY_TURN" });
+      await sleep(150);
+
+      for (const enemy of sortedEnemies) {
+        if (enemyTurnCancelledRef.current) break;
+
+        // Highlight the acting enemy
+        setActingEnemyId(enemy.instanceId);
+        await sleep(350);
+
+        if (enemyTurnCancelledRef.current) break;
+
+        // Trigger lunge + resolve the action
+        setAttackingEnemyId(enemy.instanceId);
+        dispatch({
+          type: "EXECUTE_ENEMY_STEP",
+          payload: { enemyInstanceId: enemy.instanceId },
+        });
+        await sleep(300);
+
+        setAttackingEnemyId(null);
+        setActingEnemyId(null);
+        await sleep(150);
+      }
+
+      if (!enemyTurnCancelledRef.current) {
+        dispatch({ type: "FINALIZE_ENEMY_TURN" });
+      }
+      setActingEnemyId(null);
+      setAttackingEnemyId(null);
+    } finally {
+      endTurnInFlightRef.current = false;
+      setIsResolvingEndTurn(false);
       setIsDiscarding(false);
     }
-
-    // Collect living enemies in speed order (mirrors the engine logic)
-    const sortedEnemies = [...state.combat.enemies]
-      .filter((e) => e.currentHp > 0)
-      .sort((a, b) => b.speed - a.speed);
-
-    enemyTurnCancelledRef.current = false;
-    dispatch({ type: "BEGIN_ENEMY_TURN" });
-    await sleep(150);
-
-    for (const enemy of sortedEnemies) {
-      if (enemyTurnCancelledRef.current) break;
-
-      // Highlight the acting enemy
-      setActingEnemyId(enemy.instanceId);
-      await sleep(350);
-
-      if (enemyTurnCancelledRef.current) break;
-
-      // Trigger lunge + resolve the action
-      setAttackingEnemyId(enemy.instanceId);
-      dispatch({
-        type: "EXECUTE_ENEMY_STEP",
-        payload: { enemyInstanceId: enemy.instanceId },
-      });
-      await sleep(300);
-
-      setAttackingEnemyId(null);
-      setActingEnemyId(null);
-      await sleep(150);
-    }
-
-    if (!enemyTurnCancelledRef.current) {
-      dispatch({ type: "FINALIZE_ENEMY_TURN" });
-    }
-    setActingEnemyId(null);
-    setAttackingEnemyId(null);
-  }, [state.combat, dispatch]);
+  }, [dispatch]);
 
   // Start combat when room is selected and is COMBAT type
   const handleSelectRoom = useCallback(
@@ -280,49 +322,39 @@ function GameContent({
     [currentRoomChoices, dispatch]
   );
 
-  const handlePickRunCondition = useCallback(
-    (conditionId: string) => {
-      dispatch({ type: "APPLY_RUN_CONDITION", payload: { conditionId } });
-      setPhase(
-        canOfferFreeUpgradeAtStart
-          ? "RUN_FREE_UPGRADE"
-          : hasOpeningBiomeChoice
-            ? "BIOME_SELECT"
-            : "MAP"
-      );
-    },
-    [dispatch, hasOpeningBiomeChoice, canOfferFreeUpgradeAtStart]
-  );
-
-  const handlePickDifficulty = useCallback(
+  const handleSelectSetupDifficulty = useCallback(
     (difficultyLevel: number) => {
       dispatch({ type: "APPLY_DIFFICULTY", payload: { difficultyLevel } });
-      if (!state.startMerchantCompleted) {
-        setPhase("START_MERCHANT");
-      } else if ((state.pendingRunConditionChoices?.length ?? 0) > 0) {
-        setPhase("RUN_CONDITION");
-      } else if (canOfferFreeUpgradeAtStart) {
-        setPhase("RUN_FREE_UPGRADE");
-      } else if (hasOpeningBiomeChoice) {
-        setPhase("BIOME_SELECT");
-      } else {
-        setPhase("MAP");
-      }
     },
-    [
-      dispatch,
-      hasOpeningBiomeChoice,
-      canOfferFreeUpgradeAtStart,
-      state.startMerchantCompleted,
-      state.pendingRunConditionChoices,
-    ]
+    [dispatch]
   );
 
-  const handleCompleteStartMerchant = useCallback(() => {
-    dispatch({ type: "COMPLETE_START_MERCHANT" });
-    if ((state.pendingRunConditionChoices?.length ?? 0) > 0) {
-      setPhase("RUN_CONDITION");
-    } else if (canOfferFreeUpgradeAtStart) {
+  const handleSelectSetupMode = useCallback(
+    (conditionId: string) => {
+      if (state.selectedDifficultyLevel === null) return;
+      dispatch({ type: "APPLY_RUN_CONDITION", payload: { conditionId } });
+    },
+    [dispatch, state.selectedDifficultyLevel]
+  );
+
+  const handleBuySetupOffer = useCallback(
+    (offer: StartMerchantOffer) => {
+      dispatch({ type: "BUY_START_MERCHANT_OFFER", payload: { offer } });
+    },
+    [dispatch]
+  );
+
+  const handleContinueSetup = useCallback(() => {
+    const hasDifficulty = state.selectedDifficultyLevel !== null;
+    const needsRunConditionChoice =
+      !state.selectedRunConditionId &&
+      (state.pendingRunConditionChoices?.length ?? 0) > 0;
+    if (!hasDifficulty || needsRunConditionChoice) return;
+
+    if (!state.startMerchantCompleted) {
+      dispatch({ type: "COMPLETE_START_MERCHANT" });
+    }
+    if (canOfferFreeUpgradeAtStart) {
       setPhase("RUN_FREE_UPGRADE");
     } else if (hasOpeningBiomeChoice) {
       setPhase("BIOME_SELECT");
@@ -331,7 +363,10 @@ function GameContent({
     }
   }, [
     dispatch,
+    state.selectedDifficultyLevel,
+    state.selectedRunConditionId,
     state.pendingRunConditionChoices,
+    state.startMerchantCompleted,
     canOfferFreeUpgradeAtStart,
     hasOpeningBiomeChoice,
   ]);
@@ -352,6 +387,9 @@ function GameContent({
 
       const defeatedBossId = isBoss ? selectedRoom?.enemyIds?.[0] : undefined;
       const combatRng = createRNG(state.seed + "-rewards-" + state.currentRoom);
+      const runConditionRewardMultiplier =
+        getRunConditionById(state.selectedRunConditionId)?.effects
+          .combatRewardMultiplier ?? 1;
       const combatRewards = generateCombatRewards(
         state.floor,
         state.currentRoom,
@@ -369,7 +407,10 @@ function GameContent({
         defeatedBossId,
         state.metaBonuses?.extraCardRewardChoices ?? 0,
         state.metaBonuses?.lootLuck ?? 0,
-        state.selectedDifficultyLevel ?? 0
+        state.selectedDifficultyLevel ?? 0,
+        state.unlockedRelicIds,
+        runConditionRewardMultiplier,
+        isInfiniteMode
       );
       setRewards(combatRewards);
       setIsBossRewards(isBoss);
@@ -401,14 +442,12 @@ function GameContent({
         void endRunAction({
           runId: stateRef.current.runId,
           status: "DEFEAT",
-          earnedResources: stateRef.current.earnedResources,
-          startMerchantSpentResources:
-            stateRef.current.startMerchantSpentResources ?? {},
+          ...buildEndRunPayload(),
         });
       }
       setPhase("DEFEAT");
     }
-  }, [state.combat?.phase]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [state.combat?.phase, buildEndRunPayload]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // After rewards, go back to map — or biome select — or victory
   const handlePickCard = useCallback(
@@ -425,15 +464,13 @@ function GameContent({
           void endRunAction({
             runId: stateRef.current.runId,
             status: "VICTORY",
-            earnedResources: stateRef.current.earnedResources,
-            startMerchantSpentResources:
-              stateRef.current.startMerchantSpentResources ?? {},
+            ...buildEndRunPayload(),
           });
         }
         setPhase("VICTORY");
       }
     },
-    [dispatch, isBossRewards, state.pendingBiomeChoices]
+    [dispatch, isBossRewards, state.pendingBiomeChoices, buildEndRunPayload]
   );
 
   const handleSkipReward = useCallback(() => {
@@ -449,14 +486,12 @@ function GameContent({
         void endRunAction({
           runId: stateRef.current.runId,
           status: "VICTORY",
-          earnedResources: stateRef.current.earnedResources,
-          startMerchantSpentResources:
-            stateRef.current.startMerchantSpentResources ?? {},
+          ...buildEndRunPayload(),
         });
       }
       setPhase("VICTORY");
     }
-  }, [dispatch, isBossRewards, state.pendingBiomeChoices]);
+  }, [dispatch, isBossRewards, state.pendingBiomeChoices, buildEndRunPayload]);
 
   const handlePickRelic = useCallback(
     (relicId: string) => {
@@ -472,15 +507,13 @@ function GameContent({
           void endRunAction({
             runId: stateRef.current.runId,
             status: "VICTORY",
-            earnedResources: stateRef.current.earnedResources,
-            startMerchantSpentResources:
-              stateRef.current.startMerchantSpentResources ?? {},
+            ...buildEndRunPayload(),
           });
         }
         setPhase("VICTORY");
       }
     },
-    [dispatch, isBossRewards, state.pendingBiomeChoices]
+    [dispatch, isBossRewards, state.pendingBiomeChoices, buildEndRunPayload]
   );
 
   const handlePickAlly = useCallback(
@@ -497,15 +530,13 @@ function GameContent({
           void endRunAction({
             runId: stateRef.current.runId,
             status: "VICTORY",
-            earnedResources: stateRef.current.earnedResources,
-            startMerchantSpentResources:
-              stateRef.current.startMerchantSpentResources ?? {},
+            ...buildEndRunPayload(),
           });
         }
         setPhase("VICTORY");
       }
     },
-    [dispatch, isBossRewards, state.pendingBiomeChoices]
+    [dispatch, isBossRewards, state.pendingBiomeChoices, buildEndRunPayload]
   );
 
   const handlePickMaxHp = useCallback(
@@ -520,15 +551,13 @@ function GameContent({
           void endRunAction({
             runId: stateRef.current.runId,
             status: "VICTORY",
-            earnedResources: stateRef.current.earnedResources,
-            startMerchantSpentResources:
-              stateRef.current.startMerchantSpentResources ?? {},
+            ...buildEndRunPayload(),
           });
         }
         setPhase("VICTORY");
       }
     },
-    [dispatch, state.pendingBiomeChoices]
+    [dispatch, state.pendingBiomeChoices, buildEndRunPayload]
   );
 
   const handlePickBiome = useCallback(
@@ -555,14 +584,12 @@ function GameContent({
         await endRunAction({
           runId: stateRef.current.runId,
           status,
-          earnedResources: stateRef.current.earnedResources,
-          startMerchantSpentResources:
-            stateRef.current.startMerchantSpentResources ?? {},
+          ...buildEndRunPayload(),
         });
       }
       router.push(redirectTo);
     },
-    [router]
+    [router, buildEndRunPayload]
   );
 
   const handleAbandonRun = useCallback(async () => {
@@ -574,21 +601,18 @@ function GameContent({
       await endRunAction({
         runId: stateRef.current.runId,
         status: "ABANDONED",
-        earnedResources: stateRef.current.earnedResources,
-        startMerchantSpentResources:
-          stateRef.current.startMerchantSpentResources ?? {},
+        ...buildEndRunPayload(),
       });
     }
     setPhase("ABANDONED");
-  }, []);
+  }, [buildEndRunPayload]);
 
-  const earnedResourcesSummary = useMemo(
-    () =>
-      Object.entries(state.earnedResources ?? {})
-        .filter(([, amount]) => (amount as number) > 0)
-        .sort((a, b) => (b[1] as number) - (a[1] as number)),
-    [state.earnedResources]
-  );
+  const earnedResourcesSummary = useMemo(() => {
+    if (isInfiniteMode) return [];
+    return Object.entries(state.earnedResources ?? {})
+      .filter(([, amount]) => (amount as number) > 0)
+      .sort((a, b) => (b[1] as number) - (a[1] as number));
+  }, [isInfiniteMode, state.earnedResources]);
 
   const newlyUnlockedCardNames = useMemo(() => {
     const initial = new Set(state.initialUnlockedCardIds ?? []);
@@ -655,6 +679,16 @@ function GameContent({
     state.floor,
     state.map,
   ]);
+  const debugDrawInfo = useMemo(() => {
+    if (!isDevBuild || !isAdmin || !state.combat) return null;
+    return {
+      drawCount: state.combat.player.drawCount,
+      handSize: state.combat.hand.length,
+      maxHandSize: GAME_CONSTANTS.MAX_HAND_SIZE,
+      pendingOverflow: state.combat.pendingHandOverflowExhaust ?? 0,
+      history: [...(state.combat.drawDebugHistory ?? [])].slice(-12).reverse(),
+    };
+  }, [isAdmin, isDevBuild, state.combat]);
 
   return (
     <GameLayout onAbandonRun={handleAbandonRun}>
@@ -674,29 +708,15 @@ function GameContent({
           />
         )}
 
-        {phase === "RUN_DIFFICULTY" && (
-          <RunDifficultySelectScreen
-            unlockedLevels={state.pendingDifficultyLevels ?? [0]}
-            onSelect={handlePickDifficulty}
-          />
-        )}
-
-        {phase === "RUN_CONDITION" && (
-          <RunConditionSelectScreen
-            conditionIds={state.pendingRunConditionChoices ?? []}
-            onSelect={handlePickRunCondition}
-          />
-        )}
-
-        {phase === "START_MERCHANT" && (
-          <StartMerchantView
+        {phase === "RUN_SETUP" && (
+          <RunSetupScreen
             runState={state}
             cardDefs={cardDefs}
             allyDefs={allyDefs}
-            onBuy={(offer) =>
-              dispatch({ type: "BUY_START_MERCHANT_OFFER", payload: { offer } })
-            }
-            onContinue={handleCompleteStartMerchant}
+            onSelectDifficulty={handleSelectSetupDifficulty}
+            onSelectMode={handleSelectSetupMode}
+            onBuyStartOffer={handleBuySetupOffer}
+            onContinue={handleContinueSetup}
           />
         )}
 
@@ -745,6 +765,12 @@ function GameContent({
                 payload: { power, targetId },
               })
             }
+            onResolveHandOverflowExhaust={(cardInstanceId) =>
+              dispatch({
+                type: "RESOLVE_HAND_OVERFLOW_EXHAUST",
+                payload: { cardInstanceId },
+              })
+            }
             usableItems={state.usableItems ?? []}
             usableItemDefs={usableItemDefs}
             unlockedInkPowers={
@@ -762,9 +788,11 @@ function GameContent({
             actingEnemyId={actingEnemyId}
             attackingEnemyId={attackingEnemyId}
             isDiscarding={isDiscarding}
+            isResolvingEndTurn={isResolvingEndTurn}
             attackBonus={state.metaBonuses?.attackBonus ?? 0}
             biome={state.currentBiome}
             debugEnemySelection={debugEnemySelection ?? undefined}
+            debugDrawInfo={debugDrawInfo ?? undefined}
           />
         )}
 
@@ -792,6 +820,7 @@ function GameContent({
             gold={state.gold}
             relicIds={state.relicIds}
             unlockedCardIds={state.unlockedCardIds}
+            unlockedRelicIds={state.unlockedRelicIds ?? []}
             unlockedDifficultyLevelSnapshot={
               state.unlockedDifficultyLevelSnapshot ?? 0
             }

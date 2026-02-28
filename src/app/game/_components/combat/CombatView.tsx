@@ -45,6 +45,13 @@ import {
   getBonusDamageIfPlayerDebuffed,
   hasPlayerDebuffForEnemyBonus,
 } from "@/game/engine/enemy-intent-preview";
+import { localizeCardName } from "@/lib/i18n/card-text";
+import {
+  localizeEnemyAbilityName,
+  localizeEnemyName,
+  localizeUsableItemDescription,
+  localizeUsableItemName,
+} from "@/lib/i18n/entity-text";
 
 interface CombatViewProps {
   combat: CombatState;
@@ -59,6 +66,7 @@ interface CombatViewProps {
   onEndTurn: () => void;
   onUseItem: (itemInstanceId: string, targetId: string | null) => void;
   onUseInkPower: (power: InkPowerType, targetId: string | null) => void;
+  onResolveHandOverflowExhaust: (cardInstanceId: string) => void;
   usableItems: UsableItemInstance[];
   usableItemDefs: Map<string, UsableItemDefinition>;
   onCheatKillEnemy?: (enemyInstanceId: string) => void;
@@ -66,6 +74,7 @@ interface CombatViewProps {
   attackingEnemyId?: string | null;
   unlockedInkPowers?: InkPowerType[];
   isDiscarding?: boolean;
+  isResolvingEndTurn?: boolean;
   attackBonus?: number;
   biome?: BiomeType;
   debugEnemySelection?: {
@@ -81,6 +90,29 @@ interface CombatViewProps {
       hasDisruption: boolean;
     }>;
     hasThematicUnit: boolean;
+  };
+  debugDrawInfo?: {
+    drawCount: number;
+    handSize: number;
+    maxHandSize: number;
+    pendingOverflow: number;
+    history: Array<{
+      turnNumber: number;
+      phase:
+        | "PLAYER_TURN"
+        | "ALLIES_ENEMIES_TURN"
+        | "COMBAT_WON"
+        | "COMBAT_LOST";
+      source: "PLAYER" | "ENEMY" | "SYSTEM";
+      reason: string;
+      requested: number;
+      movedToHand: number;
+      movedToDiscard: number;
+      exhaustedOverflow: number;
+      handBefore: number;
+      handAfter: number;
+      pendingOverflowAfter: number;
+    }>;
   };
 }
 
@@ -109,6 +141,7 @@ export function CombatView({
   onEndTurn,
   onUseItem,
   onUseInkPower,
+  onResolveHandOverflowExhaust,
   usableItems,
   usableItemDefs,
   onCheatKillEnemy,
@@ -116,9 +149,11 @@ export function CombatView({
   attackingEnemyId = null,
   unlockedInkPowers,
   isDiscarding = false,
+  isResolvingEndTurn = false,
   attackBonus = 0,
   biome = "LIBRARY",
   debugEnemySelection: _debugEnemySelection,
+  debugDrawInfo,
 }: CombatViewProps) {
   const { t } = useTranslation();
   type PileType = "draw" | "discard" | "exhaust";
@@ -157,6 +192,16 @@ export function CombatView({
   const reshuffleFxIdRef = useRef(0);
   const summonHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const spawnClearTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const getEnemyDisplayName = useCallback(
+    (enemy: CombatState["enemies"][number]) => {
+      const fallbackName =
+        enemyDefs.get(enemy.definitionId)?.name ??
+        enemy.name ??
+        enemy.definitionId;
+      return localizeEnemyName(enemy.definitionId, fallbackName);
+    },
+    [enemyDefs]
+  );
 
   // Player hit flash + sound
   const prevPlayerHp = useRef(combat.player.currentHp);
@@ -196,11 +241,13 @@ export function CombatView({
     }
 
     if (summonHideTimerRef.current) clearTimeout(summonHideTimerRef.current);
-    const summonerName =
-      (actingEnemyId &&
-        combat.enemies.find((e) => e.instanceId === actingEnemyId)?.name) ||
-      t("combat.enemy");
-    const spawnedNames = spawned.map((e) => e.name);
+    const summoner = actingEnemyId
+      ? combat.enemies.find((e) => e.instanceId === actingEnemyId)
+      : null;
+    const summonerName = summoner
+      ? getEnemyDisplayName(summoner)
+      : t("combat.enemy");
+    const spawnedNames = spawned.map((enemy) => getEnemyDisplayName(enemy));
     const announcement =
       spawnedNames.length === 1
         ? t("combat.summonOne", {
@@ -213,7 +260,7 @@ export function CombatView({
       () => setSummonAnnouncement(null),
       1200
     );
-  }, [combat.enemies, actingEnemyId, t]);
+  }, [combat.enemies, actingEnemyId, t, getEnemyDisplayName]);
 
   useEffect(() => {
     const spawnTimers = spawnClearTimersRef.current;
@@ -356,6 +403,17 @@ export function CombatView({
           (entry) => entry.instanceId === mobileInfoPanel.instanceId
         ) ?? null)
       : null;
+  const isPlayerTurn = combat.phase === "PLAYER_TURN";
+  const pendingHandOverflowExhaust = Math.max(
+    0,
+    combat.pendingHandOverflowExhaust ?? 0
+  );
+  const isResolvingHandOverflow = pendingHandOverflowExhaust > 0;
+  const canAct =
+    isPlayerTurn &&
+    !isResolvingEndTurn &&
+    !isDiscarding &&
+    !isResolvingHandOverflow;
 
   const triggerCardPlay = useCallback(
     (instanceId: string, targetId: string | null, useInked: boolean) => {
@@ -373,6 +431,7 @@ export function CombatView({
 
   const handleEnemyClick = useCallback(
     (enemyInstanceId: string) => {
+      if (!canAct && !(isSelectingCheatKillTarget && onCheatKillEnemy)) return;
       if (isSelectingCheatKillTarget && onCheatKillEnemy) {
         onCheatKillEnemy(enemyInstanceId);
         setIsSelectingCheatKillTarget(false);
@@ -399,6 +458,7 @@ export function CombatView({
       selectedUsableItemId,
       needsItemEnemyTarget,
       onUseItem,
+      canAct,
     ]
   );
 
@@ -426,6 +486,7 @@ export function CombatView({
 
   const handleAllyClick = useCallback(
     (allyInstanceId: string) => {
+      if (!canAct) return;
       if (!selectedCardId || (!selectingAllyTarget && !selfCanRetargetToAlly))
         return;
       triggerCardPlay(selectedCardId, allyInstanceId, pendingInked);
@@ -436,6 +497,7 @@ export function CombatView({
       selfCanRetargetToAlly,
       triggerCardPlay,
       pendingInked,
+      canAct,
     ]
   );
 
@@ -459,6 +521,7 @@ export function CombatView({
 
   const handlePlayCard = useCallback(
     (instanceId: string, useInked: boolean) => {
+      if (!canAct) return;
       const card = combat.hand.find((c) => c.instanceId === instanceId);
       if (!card) return;
       const def = cardDefs.get(card.definitionId);
@@ -491,12 +554,19 @@ export function CombatView({
 
       triggerCardPlay(instanceId, null, useInked);
     },
-    [combat.hand, cardDefs, triggerCardPlay, pendingInked, selectedCardId]
+    [
+      combat.hand,
+      cardDefs,
+      triggerCardPlay,
+      pendingInked,
+      selectedCardId,
+      canAct,
+    ]
   );
 
   const handleUseItemClick = useCallback(
     (itemInstanceId: string) => {
-      if (combat.phase !== "PLAYER_TURN") return;
+      if (!canAct) return;
       const item = usableItems.find(
         (entry) => entry.instanceId === itemInstanceId
       );
@@ -515,12 +585,10 @@ export function CombatView({
       onUseItem(itemInstanceId, null);
       setSelectedUsableItemId(null);
     },
-    [combat.phase, onUseItem, usableItemDefs, usableItems]
+    [onUseItem, usableItemDefs, usableItems, canAct]
   );
 
-  const isPlayerTurn = combat.phase === "PLAYER_TURN";
-
-  const endTurnClass = isPlayerTurn
+  const endTurnClass = canAct
     ? "border border-emerald-300/30 bg-emerald-600 text-white shadow-[0_0_18px_rgba(16,185,129,0.35)] hover:bg-emerald-500"
     : "cursor-not-allowed border border-slate-700 bg-slate-700 text-slate-500 opacity-50";
 
@@ -566,6 +634,7 @@ export function CombatView({
 
   const handleUseInkPower = useCallback(
     (power: InkPowerType) => {
+      if (!canAct) return;
       if (power === "REWRITE") {
         setIsSelectingCheatKillTarget(false);
         setIsSelectingRewriteTarget(true);
@@ -575,7 +644,7 @@ export function CombatView({
 
       onUseInkPower(power, null);
     },
-    [onUseInkPower]
+    [onUseInkPower, canAct]
   );
 
   const closePileOverlay = useCallback(() => {
@@ -635,6 +704,45 @@ export function CombatView({
         {summonAnnouncement && (
           <div className="pointer-events-none absolute left-1/2 top-2 z-20 -translate-x-1/2 rounded-full border border-orange-400/60 bg-orange-950/80 px-3 py-1 text-xs font-semibold text-orange-200 shadow-lg shadow-orange-900/50">
             {summonAnnouncement}
+          </div>
+        )}
+        {debugDrawInfo && (
+          <div className="absolute right-2 top-2 z-20 w-[min(36rem,calc(100%-1rem))] rounded-md border border-cyan-500/40 bg-cyan-950/75 p-2 text-[10px] text-cyan-100 shadow-lg shadow-cyan-950/60 lg:text-xs">
+            <div className="mb-1 flex items-center justify-between font-semibold uppercase tracking-wide text-cyan-200">
+              <span>{t("combat.drawDebugTitle")}</span>
+              <span>
+                {debugDrawInfo.handSize}/{debugDrawInfo.maxHandSize}
+              </span>
+            </div>
+            <p className="mb-1 text-cyan-100/90">
+              {t("combat.drawDebugSummary", {
+                hand: debugDrawInfo.handSize,
+                max: debugDrawInfo.maxHandSize,
+                draw: debugDrawInfo.drawCount,
+                overflow: debugDrawInfo.pendingOverflow,
+              })}
+            </p>
+            {debugDrawInfo.history.length === 0 ? (
+              <p className="text-cyan-100/80">
+                {t("combat.drawDebugNoEvents")}
+              </p>
+            ) : (
+              <div className="max-h-28 space-y-0.5 overflow-auto pr-1">
+                {debugDrawInfo.history.map((event, index) => (
+                  <p
+                    key={`${event.turnNumber}-${event.reason}-${index}`}
+                    className="truncate text-cyan-50/90"
+                    title={`${event.phase} ${event.source} ${event.reason}`}
+                  >
+                    T{event.turnNumber} {event.source} {event.reason} req:
+                    {event.requested} h:+{event.movedToHand} d:+
+                    {event.movedToDiscard} ex:+{event.exhaustedOverflow} hand:
+                    {event.handBefore} {"->"} {event.handAfter} ovf:
+                    {event.pendingOverflowAfter}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
         )}
         {/* {debugEnemySelection && (
@@ -816,7 +924,7 @@ export function CombatView({
                     )}
                   >
                     <p className="truncate text-[9px] font-bold text-rose-100">
-                      {enemy.name}
+                      {getEnemyDisplayName(enemy)}
                     </p>
                     <HpBar
                       current={Math.max(0, enemy.currentHp)}
@@ -1060,7 +1168,7 @@ export function CombatView({
                   content={
                     <div className="space-y-1.5">
                       <p className="font-semibold text-rose-200">
-                        {enemy.name}
+                        {getEnemyDisplayName(enemy)}
                       </p>
                       <p>
                         {t("combat.hp")} {Math.max(0, enemy.currentHp)}/
@@ -1072,7 +1180,10 @@ export function CombatView({
                       {ability && !hideIntent ? (
                         <div>
                           <p className="text-amber-200">
-                            {ability.name}
+                            {localizeEnemyAbilityName(
+                              enemy.definitionId,
+                              ability.name
+                            )}
                             {" -> "}
                             {resolveEnemyIntentTargetLabel(
                               combat,
@@ -1086,6 +1197,7 @@ export function CombatView({
                               t,
                               combat,
                               enemy,
+                              ability,
                               resolvedTarget
                             )}
                           </div>
@@ -1132,12 +1244,19 @@ export function CombatView({
                     </div>
                     <div className="mb-1 flex h-14 items-center justify-center overflow-hidden rounded-lg border border-rose-900/60 bg-slate-900 sm:h-16 lg:h-28">
                       <span className="absolute left-2 top-1 text-[9px] font-bold uppercase tracking-wider text-amber-300/90">
-                        {hideIntent ? "???" : (ability?.name ?? "-")}
+                        {hideIntent
+                          ? "???"
+                          : ability
+                            ? localizeEnemyAbilityName(
+                                enemy.definitionId,
+                                ability.name
+                              )
+                            : "-"}
                       </span>
                       <span className="text-2xl text-rose-200">*</span>
                     </div>
                     <p className="truncate text-[11px] font-bold text-rose-100 lg:text-xs">
-                      {enemy.name}
+                      {getEnemyDisplayName(enemy)}
                     </p>
                     <div className="mt-1 flex min-h-5 flex-wrap gap-0.5">
                       {buildMobileEnemyIntentChips(
@@ -1188,7 +1307,9 @@ export function CombatView({
             {selectingAllyTarget
               ? t("combat.chooseAllyFor")
               : t("combat.chooseTargetFor")}
-            <span className="text-white">{selectedDef?.name}</span>
+            <span className="text-white">
+              {selectedDef ? localizeCardName(selectedDef, t) : ""}
+            </span>
           </div>
         )}
         {!needsTarget && selectedCardId && (
@@ -1201,7 +1322,12 @@ export function CombatView({
         {needsItemEnemyTarget && selectedUsableItemDef && (
           <div className="relative z-10 animate-bounce pb-1 text-xs font-semibold text-orange-300 lg:text-sm">
             {t("combat.chooseEnemyFor")}{" "}
-            <span className="text-white">{selectedUsableItemDef.name}</span>
+            <span className="text-white">
+              {localizeUsableItemName(
+                selectedUsableItemDef.id,
+                selectedUsableItemDef.name
+              )}
+            </span>
           </div>
         )}
         {isSelectingCheatKillTarget && (
@@ -1286,7 +1412,7 @@ export function CombatView({
                   "h-8 min-w-[96px] rounded-md px-2 text-[10px] font-black uppercase tracking-wide transition-all",
                   endTurnClass
                 )}
-                disabled={!isPlayerTurn}
+                disabled={!canAct}
                 onClick={onEndTurn}
               >
                 {t("combat.endTurn")}
@@ -1311,11 +1437,11 @@ export function CombatView({
                         isSelected
                           ? "border-amber-300 bg-amber-700/50 text-amber-50"
                           : "border-amber-700/70 bg-slate-900/80 text-amber-200",
-                        !isPlayerTurn && "cursor-not-allowed opacity-50"
+                        !canAct && "cursor-not-allowed opacity-50"
                       )}
-                      disabled={!isPlayerTurn}
+                      disabled={!canAct}
                     >
-                      {def.name}
+                      {localizeUsableItemName(def.id, def.name)}
                     </button>
                   );
                 })
@@ -1412,7 +1538,10 @@ export function CombatView({
                       return (
                         <Tooltip
                           key={item.instanceId}
-                          content={def.description}
+                          content={localizeUsableItemDescription(
+                            def.id,
+                            def.description
+                          )}
                         >
                           <button
                             type="button"
@@ -1422,11 +1551,11 @@ export function CombatView({
                               isSelected
                                 ? "border-amber-300 bg-amber-700/50 text-amber-50"
                                 : "border-amber-700/70 bg-slate-900/80 text-amber-200 hover:border-amber-400 hover:bg-amber-950/60",
-                              !isPlayerTurn && "cursor-not-allowed opacity-50"
+                              !canAct && "cursor-not-allowed opacity-50"
                             )}
-                            disabled={!isPlayerTurn}
+                            disabled={!canAct}
                           >
-                            {def.name}
+                            {localizeUsableItemName(def.id, def.name)}
                           </button>
                         </Tooltip>
                       );
@@ -1440,7 +1569,7 @@ export function CombatView({
                   "h-12 rounded-lg px-3 py-2 text-[10px] font-black uppercase tracking-wide transition-all lg:text-sm",
                   endTurnClass
                 )}
-                disabled={!isPlayerTurn}
+                disabled={!canAct}
                 onClick={onEndTurn}
               >
                 {t("combat.endTurn")}
@@ -1603,7 +1732,7 @@ export function CombatView({
                 return (
                   <div className="space-y-1.5">
                     <p className="text-sm font-bold text-rose-200">
-                      {mobileInfoEnemy.name}
+                      {getEnemyDisplayName(mobileInfoEnemy)}
                     </p>
                     <p>
                       {t("combat.hp")} {Math.max(0, mobileInfoEnemy.currentHp)}/
@@ -1618,7 +1747,11 @@ export function CombatView({
                     {ability && !hideIntent ? (
                       <div>
                         <p>
-                          {ability.name} {"->"}{" "}
+                          {localizeEnemyAbilityName(
+                            mobileInfoEnemy.definitionId,
+                            ability.name
+                          )}{" "}
+                          {"->"}{" "}
                           {resolveEnemyIntentTargetLabel(
                             combat,
                             resolvedTarget,
@@ -1631,6 +1764,7 @@ export function CombatView({
                             t,
                             combat,
                             mobileInfoEnemy,
+                            ability,
                             resolvedTarget
                           )}
                         </div>
@@ -1682,6 +1816,58 @@ export function CombatView({
             >
               {t("common.close")}
             </button>
+          </div>
+        </div>
+      )}
+      {isResolvingHandOverflow && (
+        <div
+          className="absolute inset-0 z-[70] flex items-center justify-center bg-black/75 px-4"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="max-h-[84vh] w-full max-w-5xl rounded-xl border border-amber-600/70 bg-slate-950 p-4">
+            <div className="mb-3 space-y-1">
+              <h3 className="text-lg font-semibold text-amber-100">
+                {t("combat.handOverflowTitle")}
+              </h3>
+              <p className="text-sm text-amber-200/90">
+                {t("combat.handOverflowSubtitle", {
+                  count: pendingHandOverflowExhaust,
+                })}
+              </p>
+              <p className="text-xs text-slate-300">
+                {t("combat.handOverflowHint")}
+              </p>
+            </div>
+
+            {combat.hand.length === 0 ? (
+              <p className="text-sm text-slate-400">
+                {t("combat.noCardsInHand")}
+              </p>
+            ) : (
+              <div className="grid max-h-[62vh] grid-cols-2 gap-2 overflow-auto pr-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                {combat.hand.map((card) => {
+                  const definition = cardDefs.get(card.definitionId);
+                  if (!definition) return null;
+                  return (
+                    <button
+                      key={card.instanceId}
+                      type="button"
+                      className="rounded outline-none ring-0 transition hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-amber-300"
+                      onClick={() =>
+                        onResolveHandOverflowExhaust(card.instanceId)
+                      }
+                    >
+                      <GameCard
+                        definition={definition}
+                        upgraded={card.upgraded}
+                        size="sm"
+                        canPlay={false}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1859,6 +2045,7 @@ function renderEnemyIntentEffects(
   t: (key: string, options?: Record<string, unknown>) => string,
   combat: CombatState,
   enemy: CombatState["enemies"][number],
+  ability: EnemyAbility | undefined,
   resolvedTarget:
     | "player"
     | "all_enemies"
@@ -1876,7 +2063,8 @@ function renderEnemyIntentEffects(
           combat,
           enemy,
           resolvedTarget,
-          effect.value
+          effect.value,
+          ability
         )}`;
         colorClass = "bg-red-900/70 text-red-200";
         break;
@@ -2071,9 +2259,13 @@ function computeEnemyDamagePreview(
     }
   }
 
+  const scaledBaseDamage = Math.max(
+    1,
+    Math.round(effectiveBaseDamage * (combat.enemyDamageScale ?? 1))
+  );
   const targetBuffs = resolveEnemyIntentTargetBuffs(combat, resolvedTarget);
   return calculateDamage(
-    effectiveBaseDamage,
+    scaledBaseDamage,
     { strength: getStrengthFromBuffs(enemy.buffs), buffs: enemy.buffs },
     { buffs: targetBuffs }
   );
@@ -2251,10 +2443,12 @@ function resolveEnemyIntentTargetLabel(
     );
   }
   if (target.type === "enemy") {
-    return (
-      combat.enemies.find((e) => e.instanceId === target.instanceId)?.name ??
-      t("combat.enemy")
+    const enemy = combat.enemies.find(
+      (e) => e.instanceId === target.instanceId
     );
+    return enemy
+      ? localizeEnemyName(enemy.definitionId, enemy.name)
+      : t("combat.enemy");
   }
   return t("combat.you");
 }

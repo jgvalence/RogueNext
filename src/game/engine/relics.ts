@@ -1,6 +1,7 @@
 import type { CombatState } from "../schemas/combat-state";
 import type { RunState } from "../schemas/run-state";
 import { nanoid } from "nanoid";
+import { applyDamage } from "./damage";
 
 /**
  * Apply relic effects at combat start.
@@ -476,6 +477,19 @@ export function applyRelicsOnTurnStart(
           },
         };
         break;
+
+      case "phoenix_ash":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            currentHp: Math.min(
+              current.player.maxHp,
+              current.player.currentHp + 2
+            ),
+          },
+        };
+        break;
     }
   }
 
@@ -525,6 +539,18 @@ export function applyRelicsOnTurnEnd(
           },
         };
         break;
+
+      case "ink_spindle":
+        if (current.hand.length === 0) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              focus: current.player.focus + 1,
+            },
+          };
+        }
+        break;
     }
   }
 
@@ -569,6 +595,21 @@ export function applyRelicsOnCardPlayed(
             },
           };
         }
+        break;
+
+      case "plague_carillon":
+        current = {
+          ...current,
+          enemies: current.enemies.map((enemy) => {
+            if (enemy.currentHp <= 0) return enemy;
+            const result = applyDamage(enemy, 1);
+            return {
+              ...enemy,
+              currentHp: result.currentHp,
+              block: result.block,
+            };
+          }),
+        };
         break;
     }
   }

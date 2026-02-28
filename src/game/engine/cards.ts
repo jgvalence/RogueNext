@@ -136,7 +136,12 @@ export function playCard(
 
   // Resolve effects
   const target = targetingToEffectTarget(def.targeting, targetId);
-  current = resolveEffects(current, effects, { source: "player", target }, rng);
+  current = resolveEffects(
+    current,
+    effects,
+    { source: "player", target, drawReason: `CARD:${def.id}` },
+    rng
+  );
 
   // Chance-based extra ink on card play.
   if (

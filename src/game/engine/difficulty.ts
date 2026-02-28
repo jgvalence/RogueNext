@@ -1,22 +1,57 @@
 import type { CardDefinition } from "../schemas/cards";
 import type { RelicDefinitionData } from "../data/relics";
+import { GAME_CONSTANTS } from "../constants";
 
 export const MAX_RUN_DIFFICULTY_LEVEL = 5;
 const DIFFICULTY_UNLOCK_KEY = "__RUN_DIFFICULTY_UNLOCKED_MAX";
+const BEST_GOLD_SINGLE_RUN_KEY = "__RUN_BEST_GOLD_SINGLE";
+const BEST_INFINITE_FLOOR_KEY = "__RUN_INFINITE_BEST_FLOOR";
 
-const CARD_DIFFICULTY_REQUIREMENTS: Record<string, number> = {
-  final_chapter: 1,
-  forbidden_appendix: 2,
-  index_of_echoes: 3,
-  redacted_blast: 4,
+interface RelicUnlockRequirement {
+  totalRuns?: number;
+  wonRuns?: number;
+  winsByDifficulty?: Record<string, number>;
+  bestGoldInSingleRun?: number;
+}
+
+const RELIC_UNLOCK_REQUIREMENTS: Record<string, RelicUnlockRequirement> = {
+  // Win progression gate: requires at least 1 win on difficulty 1 and 2 total wins.
+  vital_flask: {
+    wonRuns: 2,
+    winsByDifficulty: { "1": 1 },
+  },
+  // Late-game unlock: requires one win on difficulty 3 and 5 total wins.
+  menders_charm: {
+    wonRuns: 5,
+    winsByDifficulty: { "3": 1 },
+  },
+  // Economy milestone: reach a high gold amount in a single run.
+  gilded_ledger: {
+    bestGoldInSingleRun: 250,
+  },
+  // Mechanical unlock: asks for at least one victory on difficulty 2.
+  plague_carillon: {
+    wonRuns: 3,
+    winsByDifficulty: { "2": 1 },
+  },
+  // Sustained progression unlock.
+  phoenix_ash: {
+    totalRuns: 8,
+    wonRuns: 4,
+  },
+  // Mid-progression utility unlock.
+  ink_spindle: {
+    totalRuns: 6,
+  },
 };
 
-const RELIC_DIFFICULTY_REQUIREMENTS: Record<string, number> = {
-  cursed_diacrit: 1,
-  runic_bulwark: 2,
-  eternal_hourglass: 3,
-  blood_grimoire: 4,
-};
+export interface RelicUnlockProgress {
+  totalRuns: number;
+  wonRuns: number;
+  unlockedDifficultyMax: number;
+  winsByDifficulty?: Record<string, number>;
+  bestGoldInSingleRun?: number;
+}
 
 function clampDifficulty(level: number): number {
   return Math.min(MAX_RUN_DIFFICULTY_LEVEL, Math.max(0, Math.floor(level)));
@@ -33,6 +68,71 @@ export function getUnlockedDifficultyLevels(
 ): number[] {
   const maxUnlocked = getUnlockedMaxDifficultyFromResources(resources);
   return Array.from({ length: maxUnlocked + 1 }, (_, idx) => idx);
+}
+
+export function getBestGoldInSingleRun(
+  resources: Record<string, number>
+): number {
+  return Math.max(0, Math.floor(resources[BEST_GOLD_SINGLE_RUN_KEY] ?? 0));
+}
+
+export function updateBestGoldInSingleRun(
+  resources: Record<string, number>,
+  runBestGold: number
+): Record<string, number> {
+  const currentBest = getBestGoldInSingleRun(resources);
+  const safeRunBest = Math.max(0, Math.floor(runBestGold));
+  if (safeRunBest <= currentBest) return resources;
+  return {
+    ...resources,
+    [BEST_GOLD_SINGLE_RUN_KEY]: safeRunBest,
+  };
+}
+
+export function getBestInfiniteFloor(
+  resources: Record<string, number>
+): number {
+  return Math.max(0, Math.floor(resources[BEST_INFINITE_FLOOR_KEY] ?? 0));
+}
+
+export function updateBestInfiniteFloor(
+  resources: Record<string, number>,
+  runFloor: number
+): Record<string, number> {
+  const currentBest = getBestInfiniteFloor(resources);
+  const safeRunFloor = Math.max(0, Math.floor(runFloor));
+  if (safeRunFloor <= currentBest) return resources;
+  return {
+    ...resources,
+    [BEST_INFINITE_FLOOR_KEY]: safeRunFloor,
+  };
+}
+
+export function getPostFloorFiveEscalation(
+  floor: number,
+  enabled: boolean
+): {
+  enemyHpMultiplier: number;
+  enemyDamageMultiplier: number;
+  eliteChanceBonus: number;
+} {
+  const safeFloor = Math.max(1, Math.floor(floor));
+  if (!enabled || safeFloor <= GAME_CONSTANTS.MAX_FLOORS) {
+    return {
+      enemyHpMultiplier: 1,
+      enemyDamageMultiplier: 1,
+      eliteChanceBonus: 0,
+    };
+  }
+
+  const extraFloors = safeFloor - GAME_CONSTANTS.MAX_FLOORS;
+  return {
+    // Infinite mode is meant to spike hard immediately after floor 5.
+    // Floor 6 should feel dramatically harder, then keep ramping quickly.
+    enemyHpMultiplier: Math.pow(1.85, extraFloors),
+    enemyDamageMultiplier: Math.pow(1.6, extraFloors),
+    eliteChanceBonus: Math.min(0.6, extraFloors * 0.18),
+  };
 }
 
 export function unlockNextDifficultyOnVictory(
@@ -118,44 +218,72 @@ export function eliteCanDropRelic(level: number, rngRoll: number): boolean {
   return rngRoll >= 0.5;
 }
 
-function getCardDifficultyRequirement(cardId: string): number {
-  return CARD_DIFFICULTY_REQUIREMENTS[cardId] ?? 0;
-}
-
-function getRelicDifficultyRequirement(relicId: string): number {
-  return RELIC_DIFFICULTY_REQUIREMENTS[relicId] ?? 0;
-}
-
 export function isRelicUnlockedForDifficulty(
-  relicId: string,
-  unlockedDifficultyMax: number
+  _relicId: string,
+  _unlockedDifficultyMax: number
 ): boolean {
-  return getRelicDifficultyRequirement(relicId) <= unlockedDifficultyMax;
+  // No difficulty-based gating for relic availability.
+  return true;
+}
+
+export function isRelicUnlocked(
+  relicId: string,
+  progress: RelicUnlockProgress
+): boolean {
+  if (!isRelicUnlockedForDifficulty(relicId, progress.unlockedDifficultyMax)) {
+    return false;
+  }
+
+  const requirements = RELIC_UNLOCK_REQUIREMENTS[relicId];
+  if (!requirements) return true;
+
+  const totalRunsRequired = Math.max(0, requirements.totalRuns ?? 0);
+  const wonRunsRequired = Math.max(0, requirements.wonRuns ?? 0);
+  const bestGoldRequired = Math.max(0, requirements.bestGoldInSingleRun ?? 0);
+  if (progress.totalRuns < totalRunsRequired) return false;
+  if (progress.wonRuns < wonRunsRequired) return false;
+  if ((progress.bestGoldInSingleRun ?? 0) < bestGoldRequired) return false;
+
+  const winsByDifficulty = progress.winsByDifficulty ?? {};
+  for (const [difficulty, requiredWinsRaw] of Object.entries(
+    requirements.winsByDifficulty ?? {}
+  )) {
+    const requiredWins = Math.max(0, Math.floor(requiredWinsRaw));
+    if ((winsByDifficulty[difficulty] ?? 0) < requiredWins) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export function computeUnlockedRelicIds(
+  relicIds: string[],
+  progress: RelicUnlockProgress
+): string[] {
+  return relicIds.filter((relicId) => isRelicUnlocked(relicId, progress));
 }
 
 export function filterCardIdsByDifficulty(
   cardIds: string[],
-  unlockedDifficultyMax: number
+  _unlockedDifficultyMax: number
 ): string[] {
-  return cardIds.filter(
-    (cardId) => getCardDifficultyRequirement(cardId) <= unlockedDifficultyMax
-  );
+  // No difficulty-based gating for card availability.
+  return cardIds;
 }
 
 export function filterCardsByDifficulty(
   cards: CardDefinition[],
-  unlockedDifficultyMax: number
+  _unlockedDifficultyMax: number
 ): CardDefinition[] {
-  return cards.filter(
-    (card) => getCardDifficultyRequirement(card.id) <= unlockedDifficultyMax
-  );
+  // No difficulty-based gating for card availability.
+  return cards;
 }
 
 export function filterRelicsByDifficulty(
   relics: RelicDefinitionData[],
-  unlockedDifficultyMax: number
+  _unlockedDifficultyMax: number
 ): RelicDefinitionData[] {
-  return relics.filter(
-    (relic) => getRelicDifficultyRequirement(relic.id) <= unlockedDifficultyMax
-  );
+  // No difficulty-based gating for relic availability.
+  return relics;
 }

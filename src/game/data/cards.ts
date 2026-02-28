@@ -167,6 +167,83 @@ export const lootableCardDefinitions: CardDefinition[] = [
   // LIBRARY biome — skills
   // =========================================================
   {
+    id: "quick_feint",
+    name: "Quick Feint",
+    type: "ATTACK",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 2 damage. Draw 1 card.",
+    effects: [
+      { type: "DAMAGE", value: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Deal 4 damage. Draw 1 card.",
+      effects: [
+        { type: "DAMAGE", value: 4 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+      inkMarkCost: 1,
+    },
+    upgrade: {
+      description: "Deal 4 damage. Draw 1 card.",
+      effects: [
+        { type: "DAMAGE", value: 4 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+  {
+    id: "bastion_crash",
+    name: "Bastion Crash",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal damage equal to your Block.",
+    effects: [{ type: "DAMAGE_EQUAL_BLOCK", value: 1 }],
+    inkedVariant: {
+      description: "Deal 1.5x your Block as damage.",
+      effects: [{ type: "DAMAGE_EQUAL_BLOCK", value: 2 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 1.5x your Block as damage.",
+      effects: [{ type: "DAMAGE_EQUAL_BLOCK", value: 2 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+  {
+    id: "venom_echo",
+    name: "Venom Echo",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "RARE",
+    description: "Double Poison on target. Exhaust.",
+    effects: [
+      { type: "DOUBLE_POISON", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Triple Poison on target. Exhaust.",
+      effects: [
+        { type: "DOUBLE_POISON", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+  },
+  {
     id: "fortify",
     name: "Fortify",
     type: "SKILL",
@@ -439,23 +516,23 @@ export const lootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "RARE",
-    description: "Deal 28 damage. Exhaust.",
+    description: "Deal 24 damage. Exhaust.",
     effects: [
-      { type: "DAMAGE", value: 28 },
+      { type: "DAMAGE", value: 24 },
       { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: {
-      description: "Deal 42 damage. Exhaust.",
+      description: "Deal 36 damage. Exhaust.",
       effects: [
-        { type: "DAMAGE", value: 42 },
+        { type: "DAMAGE", value: 36 },
         { type: "EXHAUST", value: 0 },
       ],
       inkMarkCost: 4,
     },
     upgrade: {
-      description: "Deal 42 damage. Exhaust.",
+      description: "Deal 36 damage. Exhaust.",
       effects: [
-        { type: "DAMAGE", value: 42 },
+        { type: "DAMAGE", value: 36 },
         { type: "EXHAUST", value: 0 },
       ],
     },
@@ -513,22 +590,23 @@ export const lootableCardDefinitions: CardDefinition[] = [
     id: "war_drum",
     name: "War Drum",
     type: "SKILL",
-    energyCost: 1,
+    energyCost: 2,
     inkCost: 0,
     targeting: "SELF",
     rarity: "UNCOMMON",
-    description: "Draw 2 cards. Gain 1 Strength.",
-    effects: [
-      { type: "DRAW_CARDS", value: 2 },
-      { type: "GAIN_STRENGTH", value: 1 },
-    ],
-    inkedVariant: null,
-    upgrade: {
-      description: "Draw 2 cards. Gain 2 Strength.",
+    description: "Draw 2 cards.",
+    effects: [{ type: "DRAW_CARDS", value: 2 }],
+    inkedVariant: {
+      description: "Draw 2 cards. Gain 1 Strength.",
       effects: [
         { type: "DRAW_CARDS", value: 2 },
-        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "GAIN_STRENGTH", value: 1 },
       ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Draw 3 cards.",
+      effects: [{ type: "DRAW_CARDS", value: 3 }],
     },
     isStarterCard: false,
     biome: "LIBRARY",

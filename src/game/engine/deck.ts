@@ -1,6 +1,10 @@
 import type { CombatState } from "../schemas/combat-state";
 import type { CardInstance } from "../schemas/cards";
+import { GAME_CONSTANTS } from "../constants";
 import type { RNG } from "./rng";
+
+export type DrawSource = "PLAYER" | "ENEMY" | "SYSTEM";
+const MAX_DRAW_DEBUG_EVENTS = 20;
 
 export function shuffleDeck(pile: CardInstance[], rng: RNG): CardInstance[] {
   return rng.shuffle(pile);
@@ -21,11 +25,18 @@ export function reshuffleDiscardIntoDraw(
 export function drawCards(
   state: CombatState,
   count: number,
-  rng: RNG
+  rng: RNG,
+  source: DrawSource = "PLAYER",
+  reason = "GENERIC"
 ): CombatState {
   let current = { ...state };
   const drawn: CardInstance[] = [...current.hand];
   let remaining = count;
+  let pendingOverflow = Math.max(0, current.pendingHandOverflowExhaust ?? 0);
+  const handBefore = drawn.length;
+  let movedToHand = 0;
+  let movedToDiscard = 0;
+  let exhaustedOverflow = 0;
   const frozen = new Set(current.playerDisruption?.frozenHandCardIds ?? []);
   let freezeRemaining = current.playerDisruption?.freezeNextDrawsRemaining ?? 0;
   let drawsToDiscard = current.playerDisruption?.drawsToDiscardRemaining ?? 0;
@@ -44,15 +55,32 @@ export function drawCards(
 
     if (drawsToDiscard > 0) {
       drawsToDiscard--;
+      movedToDiscard++;
       current = {
         ...current,
         discardPile: [...current.discardPile, card],
       };
     } else {
-      drawn.push(card);
-      if (freezeRemaining > 0) {
-        frozen.add(card.instanceId);
-        freezeRemaining--;
+      if (drawn.length >= GAME_CONSTANTS.MAX_HAND_SIZE && source !== "PLAYER") {
+        // Overflow safety: cards drawn beyond hand cap are exhausted.
+        exhaustedOverflow++;
+        current = {
+          ...current,
+          exhaustPile: [...current.exhaustPile, card],
+        };
+      } else {
+        drawn.push(card);
+        movedToHand++;
+        if (
+          drawn.length > GAME_CONSTANTS.MAX_HAND_SIZE &&
+          source === "PLAYER"
+        ) {
+          pendingOverflow++;
+        }
+        if (freezeRemaining > 0) {
+          frozen.add(card.instanceId);
+          freezeRemaining--;
+        }
       }
     }
     current = {
@@ -65,6 +93,23 @@ export function drawCards(
   return {
     ...current,
     hand: drawn,
+    pendingHandOverflowExhaust: pendingOverflow,
+    drawDebugHistory: [
+      ...(current.drawDebugHistory ?? []),
+      {
+        turnNumber: state.turnNumber,
+        phase: state.phase,
+        source,
+        reason,
+        requested: Math.max(0, count),
+        movedToHand,
+        movedToDiscard,
+        exhaustedOverflow,
+        handBefore,
+        handAfter: drawn.length,
+        pendingOverflowAfter: pendingOverflow,
+      },
+    ].slice(-MAX_DRAW_DEBUG_EVENTS),
     playerDisruption: {
       ...current.playerDisruption,
       drawsToDiscardRemaining: drawsToDiscard,
@@ -109,6 +154,22 @@ export function moveCardToExhaust(
     ...state,
     hand: state.hand.filter((_, i) => i !== cardIndex),
     exhaustPile: [...state.exhaustPile, card],
+  };
+}
+
+export function exhaustCardFromHandForOverflow(
+  state: CombatState,
+  instanceId: string
+): CombatState {
+  if ((state.pendingHandOverflowExhaust ?? 0) <= 0) return state;
+  const next = moveCardToExhaust(state, instanceId);
+  if (next === state) return state;
+  return {
+    ...next,
+    pendingHandOverflowExhaust: Math.max(
+      0,
+      (next.pendingHandOverflowExhaust ?? 0) - 1
+    ),
   };
 }
 

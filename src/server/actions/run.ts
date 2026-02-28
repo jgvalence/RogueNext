@@ -12,17 +12,24 @@ import { createRNG } from "@/game/engine/rng";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { starterDeckComposition } from "@/game/data/starter-deck";
 import { allCardDefinitions, buildCardDefsMap } from "@/game/data";
+import { relicDefinitions } from "@/game/data/relics";
 import type { RunState } from "@/game/schemas/run-state";
 import type { BiomeType } from "@/game/schemas/enums";
 import { computeMetaBonuses } from "@/game/engine/meta";
 import {
   computeUnlockedRunConditionIds,
   drawRunConditionChoices,
+  isInfiniteRunConditionId,
+  normalizeRunConditionIds,
 } from "@/game/engine/run-conditions";
 import {
+  computeUnlockedRelicIds,
+  getBestGoldInSingleRun,
   getUnlockedDifficultyLevels,
   getUnlockedMaxDifficultyFromResources,
   unlockNextDifficultyOnVictory,
+  updateBestInfiniteFloor,
+  updateBestGoldInSingleRun,
 } from "@/game/engine/difficulty";
 import { addResourcesInternal, incrementRunStatsInternal } from "./progression";
 import {
@@ -33,6 +40,24 @@ import {
 const createRunSchema = z.object({
   seed: z.string().optional(),
 });
+
+function normalizeRunHpFromMetaBonuses(
+  state: RunState,
+  nextExtraHpBonus: number
+): Pick<RunState, "playerMaxHp" | "playerCurrentHp"> {
+  const previousExtraHpBonus = state.metaBonuses?.extraHp ?? 0;
+  const extraHpDelta = nextExtraHpBonus - previousExtraHpBonus;
+  const nextPlayerMaxHp = Math.max(1, state.playerMaxHp + extraHpDelta);
+  const nextPlayerCurrentHp = Math.max(
+    0,
+    Math.min(nextPlayerMaxHp, state.playerCurrentHp + extraHpDelta)
+  );
+
+  return {
+    playerMaxHp: nextPlayerMaxHp,
+    playerCurrentHp: nextPlayerCurrentHp,
+  };
+}
 
 export async function createRunAction(input: z.infer<typeof createRunSchema>) {
   try {
@@ -50,15 +75,28 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
         unlockedStoryIds: true,
         totalRuns: true,
         wonRuns: true,
+        winsByDifficulty: true,
       },
     });
     const unlockedStoryIds = (progression?.unlockedStoryIds as string[]) ?? [];
     const resources = (progression?.resources as Record<string, number>) ?? {};
+    const winsByDifficulty =
+      (progression?.winsByDifficulty as Record<string, number>) ?? {};
     const initialUnlockProgress = readUnlockProgressFromResources(resources);
     const metaBonuses = computeMetaBonuses(unlockedStoryIds);
     const unlockedDifficultyLevels = getUnlockedDifficultyLevels(resources);
     const unlockedDifficultyLevelMax =
       getUnlockedMaxDifficultyFromResources(resources);
+    const unlockedRelicIds = computeUnlockedRelicIds(
+      relicDefinitions.map((relic) => relic.id),
+      {
+        totalRuns: progression?.totalRuns ?? 0,
+        wonRuns: progression?.wonRuns ?? 0,
+        unlockedDifficultyMax: unlockedDifficultyLevelMax,
+        winsByDifficulty,
+        bestGoldInSingleRun: getBestGoldInSingleRun(resources),
+      }
+    );
     const unlockedRunConditionIds = computeUnlockedRunConditionIds({
       totalRuns: progression?.totalRuns ?? 0,
       wonRuns: progression?.wonRuns ?? 0,
@@ -92,7 +130,8 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
       unlockedDifficultyLevels,
       unlockedDifficultyLevelMax,
       startingBiomeChoices,
-      resources
+      resources,
+      unlockedRelicIds
     );
 
     const now = new Date();
@@ -222,10 +261,14 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
     // Prefer client-supplied earnedResources (always up-to-date, avoids auto-save race),
     // fall back to DB state for robustness
     const runState = run.state as unknown as RunState;
-    const earnedResources =
-      validated.earnedResources ?? runState.earnedResources ?? {};
+    const isInfiniteRun = isInfiniteRunConditionId(
+      runState.selectedRunConditionId
+    );
+    const earnedResources = isInfiniteRun
+      ? {}
+      : (validated.earnedResources ?? runState.earnedResources ?? {});
     if (Object.keys(earnedResources).length > 0) {
-      // Victory bonus: multiply all resources by 1.5
+      // Victory bonus: multiply all resources by 1.25
       const multiplier = validated.status === "VICTORY" ? 1.25 : 1;
       const scaledResources: Record<string, number> = {};
       for (const [key, amount] of Object.entries(earnedResources)) {
@@ -234,7 +277,6 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       await addResourcesInternal(user.id!, scaledResources);
     }
 
-    // Persist card unlock progression counters from run state.
     const progression = await prisma.userProgression.findUnique({
       where: { userId: user.id! },
       select: { resources: true, unlockedStoryIds: true },
@@ -255,76 +297,86 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
         (currentResources[resource] ?? 0) - safeSpent
       );
     }
-    const currentUnlockProgress =
-      readUnlockProgressFromResources(currentResources);
-    const runUnlockProgress = runState.cardUnlockProgress ?? {
-      enteredBiomes: {},
-      biomeRunsCompleted: {},
-      eliteKillsByBiome: {},
-      bossKillsByBiome: {},
-    };
-    const mergedUnlockProgress = {
-      enteredBiomes: { ...currentUnlockProgress.enteredBiomes },
-      biomeRunsCompleted: { ...currentUnlockProgress.biomeRunsCompleted },
-      eliteKillsByBiome: { ...currentUnlockProgress.eliteKillsByBiome },
-      bossKillsByBiome: { ...currentUnlockProgress.bossKillsByBiome },
-    };
-    for (const [biome, value] of Object.entries(
-      runUnlockProgress.enteredBiomes
-    )) {
-      mergedUnlockProgress.enteredBiomes[biome] = Math.max(
-        mergedUnlockProgress.enteredBiomes[biome] ?? 0,
-        value ?? 0
+
+    let nextResources = currentResources;
+    if (isInfiniteRun) {
+      nextResources = updateBestInfiniteFloor(nextResources, runState.floor);
+    } else {
+      const currentUnlockProgress =
+        readUnlockProgressFromResources(currentResources);
+      const runUnlockProgress = runState.cardUnlockProgress ?? {
+        enteredBiomes: {},
+        biomeRunsCompleted: {},
+        eliteKillsByBiome: {},
+        bossKillsByBiome: {},
+      };
+      const mergedUnlockProgress = {
+        enteredBiomes: { ...currentUnlockProgress.enteredBiomes },
+        biomeRunsCompleted: { ...currentUnlockProgress.biomeRunsCompleted },
+        eliteKillsByBiome: { ...currentUnlockProgress.eliteKillsByBiome },
+        bossKillsByBiome: { ...currentUnlockProgress.bossKillsByBiome },
+      };
+      for (const [biome, value] of Object.entries(
+        runUnlockProgress.enteredBiomes
+      )) {
+        mergedUnlockProgress.enteredBiomes[biome] = Math.max(
+          mergedUnlockProgress.enteredBiomes[biome] ?? 0,
+          value ?? 0
+        );
+      }
+      for (const [biome, value] of Object.entries(
+        runUnlockProgress.biomeRunsCompleted
+      )) {
+        mergedUnlockProgress.biomeRunsCompleted[biome] = Math.max(
+          mergedUnlockProgress.biomeRunsCompleted[biome] ?? 0,
+          value ?? 0
+        );
+      }
+      for (const [biome, value] of Object.entries(
+        runUnlockProgress.eliteKillsByBiome
+      )) {
+        mergedUnlockProgress.eliteKillsByBiome[biome] = Math.max(
+          mergedUnlockProgress.eliteKillsByBiome[biome] ?? 0,
+          value ?? 0
+        );
+      }
+      for (const [biome, value] of Object.entries(
+        runUnlockProgress.bossKillsByBiome
+      )) {
+        mergedUnlockProgress.bossKillsByBiome[biome] = Math.max(
+          mergedUnlockProgress.bossKillsByBiome[biome] ?? 0,
+          value ?? 0
+        );
+      }
+      const resourcesWithUnlocks = writeUnlockProgressToResources(
+        currentResources,
+        mergedUnlockProgress
+      );
+      const difficultyLevelForUnlock = runState.selectedDifficultyLevel ?? 0;
+      const resourcesWithDifficultyUnlock =
+        validated.status === "VICTORY"
+          ? unlockNextDifficultyOnVictory(
+              resourcesWithUnlocks,
+              difficultyLevelForUnlock
+            )
+          : resourcesWithUnlocks;
+      nextResources = updateBestGoldInSingleRun(
+        resourcesWithDifficultyUnlock,
+        Math.max(runState.maxGoldReached ?? 0, runState.gold ?? 0)
       );
     }
-    for (const [biome, value] of Object.entries(
-      runUnlockProgress.biomeRunsCompleted
-    )) {
-      mergedUnlockProgress.biomeRunsCompleted[biome] = Math.max(
-        mergedUnlockProgress.biomeRunsCompleted[biome] ?? 0,
-        value ?? 0
-      );
-    }
-    for (const [biome, value] of Object.entries(
-      runUnlockProgress.eliteKillsByBiome
-    )) {
-      mergedUnlockProgress.eliteKillsByBiome[biome] = Math.max(
-        mergedUnlockProgress.eliteKillsByBiome[biome] ?? 0,
-        value ?? 0
-      );
-    }
-    for (const [biome, value] of Object.entries(
-      runUnlockProgress.bossKillsByBiome
-    )) {
-      mergedUnlockProgress.bossKillsByBiome[biome] = Math.max(
-        mergedUnlockProgress.bossKillsByBiome[biome] ?? 0,
-        value ?? 0
-      );
-    }
-    const resourcesWithUnlocks = writeUnlockProgressToResources(
-      currentResources,
-      mergedUnlockProgress
-    );
+
     const selectedDifficultyLevel = runState.selectedDifficultyLevel ?? 0;
     const runDurationMs = Math.max(0, Date.now() - run.createdAt.getTime());
-    const resourcesWithDifficultyUnlock =
-      validated.status === "VICTORY"
-        ? unlockNextDifficultyOnVictory(
-            resourcesWithUnlocks,
-            selectedDifficultyLevel
-          )
-        : resourcesWithUnlocks;
     await prisma.userProgression.upsert({
       where: { userId: user.id! },
       create: {
         userId: user.id!,
-        resources:
-          resourcesWithDifficultyUnlock as unknown as Prisma.InputJsonValue,
+        resources: nextResources as unknown as Prisma.InputJsonValue,
         unlockedStoryIds: (progression?.unlockedStoryIds as string[]) ?? [],
       },
       update: {
-        resources:
-          resourcesWithDifficultyUnlock as unknown as Prisma.InputJsonValue,
+        resources: nextResources as unknown as Prisma.InputJsonValue,
       },
     });
 
@@ -362,6 +414,7 @@ export async function getActiveRunAction() {
           totalRuns: true,
           wonRuns: true,
           resources: true,
+          winsByDifficulty: true,
         },
       }),
     ]);
@@ -374,37 +427,84 @@ export async function getActiveRunAction() {
     // unlocked after the run was created are still applied.
     const unlockedStoryIds = (progression?.unlockedStoryIds as string[]) ?? [];
     const resources = (progression?.resources as Record<string, number>) ?? {};
+    const winsByDifficulty =
+      (progression?.winsByDifficulty as Record<string, number>) ?? {};
     const freshMetaBonuses = computeMetaBonuses(unlockedStoryIds);
     const state = run.state as unknown as RunState;
     const unlockedDifficultyLevels = getUnlockedDifficultyLevels(resources);
     const unlockedDifficultyLevelMax =
       getUnlockedMaxDifficultyFromResources(resources);
+    const freshUnlockedRelicIds = computeUnlockedRelicIds(
+      relicDefinitions.map((relic) => relic.id),
+      {
+        totalRuns: progression?.totalRuns ?? 0,
+        wonRuns: progression?.wonRuns ?? 0,
+        unlockedDifficultyMax: unlockedDifficultyLevelMax,
+        winsByDifficulty,
+        bestGoldInSingleRun: getBestGoldInSingleRun(resources),
+      }
+    );
+    const normalizedCurrentRoom = Math.max(
+      0,
+      Math.min(state.currentRoom, GAME_CONSTANTS.ROOMS_PER_FLOOR)
+    );
     const selectedDifficultyLevel =
       state.selectedDifficultyLevel ??
-      (state.floor > 1 || state.currentRoom > 0 || state.combat ? 0 : null);
+      (state.floor > 1 || normalizedCurrentRoom > 0 || state.combat ? 0 : null);
     const pendingDifficultyLevels =
       selectedDifficultyLevel === null
         ? unlockedDifficultyLevels
         : (state.pendingDifficultyLevels ?? []);
     const hasChosenRunCondition = Boolean(state.selectedRunConditionId);
-    const needsStartChoicesBackfill =
+    const normalizedPendingRunConditionChoices = normalizeRunConditionIds(
+      state.pendingRunConditionChoices ?? []
+    );
+    const shouldRebuildStartChoices =
       !hasChosenRunCondition &&
       state.floor === 1 &&
-      state.currentRoom === 0 &&
-      (state.pendingRunConditionChoices?.length ?? 0) === 0;
+      normalizedCurrentRoom === 0;
     const unlockedRunConditionIds = computeUnlockedRunConditionIds({
       totalRuns: progression?.totalRuns ?? 0,
       wonRuns: progression?.wonRuns ?? 0,
     });
-    const backfilledRunConditionChoices = needsStartChoicesBackfill
+    const backfilledRunConditionChoices = shouldRebuildStartChoices
       ? drawRunConditionChoices(
           unlockedRunConditionIds,
           createRNG(`${state.seed}-run-conditions`)
         )
-      : (state.pendingRunConditionChoices ?? []);
+      : normalizedPendingRunConditionChoices;
+    const isInfiniteRun = isInfiniteRunConditionId(
+      state.selectedRunConditionId
+    );
+    const needsBiomeChoicesRecovery =
+      state.pendingBiomeChoices === null &&
+      state.combat === null &&
+      normalizedCurrentRoom >= GAME_CONSTANTS.ROOMS_PER_FLOOR &&
+      (isInfiniteRun || state.floor < GAME_CONSTANTS.MAX_FLOORS);
+    let recoveredPendingBiomeChoices: RunState["pendingBiomeChoices"] =
+      state.pendingBiomeChoices ?? null;
+    if (needsBiomeChoicesRecovery) {
+      const shuffledBiomes = createRNG(
+        `${state.seed}-recover-biomes-floor-${state.floor}`
+      ).shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);
+      recoveredPendingBiomeChoices =
+        state.floor === 1
+          ? (["LIBRARY", shuffledBiomes[0]!] as [BiomeType, BiomeType])
+          : ([shuffledBiomes[0]!, shuffledBiomes[1]!] as [
+              BiomeType,
+              BiomeType,
+            ]);
+    }
+    const normalizedHp = normalizeRunHpFromMetaBonuses(
+      state,
+      freshMetaBonuses.extraHp ?? 0
+    );
 
     const stateWithFreshBonuses: RunState = {
       ...state,
+      currentRoom: normalizedCurrentRoom,
+      playerMaxHp: normalizedHp.playerMaxHp,
+      playerCurrentHp: normalizedHp.playerCurrentHp,
       runStartedAtMs:
         state.runStartedAtMs && state.runStartedAtMs > 0
           ? state.runStartedAtMs
@@ -418,6 +518,8 @@ export async function getActiveRunAction() {
         state.unlockedDifficultyLevelSnapshot ?? unlockedDifficultyLevelMax,
       pendingRunConditionChoices: backfilledRunConditionChoices,
       selectedRunConditionId: state.selectedRunConditionId ?? null,
+      pendingBiomeChoices: recoveredPendingBiomeChoices,
+      maxGoldReached: Math.max(state.maxGoldReached ?? 0, state.gold),
       startMerchantResourcePool:
         state.startMerchantResourcePool ??
         (progression?.resources as Record<string, number>) ??
@@ -429,9 +531,10 @@ export async function getActiveRunAction() {
         state.startMerchantCompleted ??
         !(
           state.floor === 1 &&
-          state.currentRoom === 0 &&
+          normalizedCurrentRoom === 0 &&
           state.combat === null
         ),
+      unlockedRelicIds: freshUnlockedRelicIds,
     };
 
     return success({

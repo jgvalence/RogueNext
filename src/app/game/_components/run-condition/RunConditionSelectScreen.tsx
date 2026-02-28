@@ -8,6 +8,14 @@ interface RunConditionSelectScreenProps {
   onSelect: (conditionId: string) => void;
 }
 
+function formatConditionFallback(conditionId: string): string {
+  return conditionId
+    .split("_")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export function RunConditionSelectScreen({
   conditionIds,
   onSelect,
@@ -32,6 +40,19 @@ export function RunConditionSelectScreen({
         {conditionIds.map((conditionId) => {
           const condition = getRunConditionById(conditionId);
           if (!condition) return null;
+          const fallbackName = formatConditionFallback(condition.id);
+          const conditionName = t(
+            `runCondition.definitions.${condition.id}.name`,
+            {
+              defaultValue: fallbackName,
+            }
+          );
+          const conditionDescription = t(
+            `runCondition.definitions.${condition.id}.description`,
+            {
+              defaultValue: conditionName,
+            }
+          );
           return (
             <button
               key={condition.id}
@@ -43,11 +64,9 @@ export function RunConditionSelectScreen({
                 {t(`runCondition.category.${condition.category}`)}
               </span>
               <h3 className="text-lg font-bold text-cyan-100">
-                {t(`runCondition.definitions.${condition.id}.name`)}
+                {conditionName}
               </h3>
-              <p className="text-sm text-slate-300">
-                {t(`runCondition.definitions.${condition.id}.description`)}
-              </p>
+              <p className="text-sm text-slate-300">{conditionDescription}</p>
               <div className="mt-auto pt-2 text-xs font-semibold uppercase tracking-wide text-cyan-400">
                 {t("runCondition.select.pickAction")}
               </div>

@@ -6,6 +6,7 @@ import {
   moveCardToDiscard,
   moveCardToExhaust,
   moveFromDiscardToHand,
+  exhaustCardFromHandForOverflow,
 } from "../engine/deck";
 import { calculateDamage, applyDamage, applyBlock } from "../engine/damage";
 import {
@@ -29,6 +30,7 @@ import {
   checkCombatEnd,
 } from "../engine/combat";
 import {
+  applyRunConditionToRun,
   createGuaranteedRelicEvent,
   createNewRun,
   generateFloorMap,
@@ -37,7 +39,10 @@ import {
   advanceFloor,
 } from "../engine/run";
 import { generateCombatRewards, addCardToRunDeck } from "../engine/rewards";
-import { applyRelicsOnCombatStart } from "../engine/relics";
+import {
+  applyRelicsOnCardPlayed,
+  applyRelicsOnCombatStart,
+} from "../engine/relics";
 import { resolveEffects, type EffectContext } from "../engine/effects";
 import { executeOneEnemyTurn } from "../engine/enemies";
 import {
@@ -101,6 +106,8 @@ function makeMinimalCombat(overrides?: Partial<CombatState>): CombatState {
     hand: [],
     discardPile: [],
     exhaustPile: [],
+    pendingHandOverflowExhaust: 0,
+    drawDebugHistory: [],
     inkPowerUsedThisTurn: false,
     firstHitReductionUsed: false,
     playerDisruption: {
@@ -198,6 +205,118 @@ describe("Deck operations", () => {
     });
     const result = drawCards(state, 5, rng);
     expect(result.hand).toHaveLength(1);
+  });
+
+  it("player overdraw sets pending exhaust choices", () => {
+    const rng = createRNG("hand-cap-overflow");
+    const baseHand = Array.from({
+      length: GAME_CONSTANTS.MAX_HAND_SIZE - 1,
+    }).map((_, i) => ({
+      instanceId: `h${i + 1}`,
+      definitionId: "strike",
+      upgraded: false,
+    }));
+    const state = makeMinimalCombat({
+      hand: baseHand,
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+        { instanceId: "d3", definitionId: "ink_surge", upgraded: false },
+      ],
+      exhaustPile: [],
+    });
+
+    const result = drawCards(state, 3, rng);
+    expect(result.hand).toHaveLength(GAME_CONSTANTS.MAX_HAND_SIZE + 2);
+    expect(result.hand.some((c) => c.instanceId === "d1")).toBe(true);
+    expect(result.hand.some((c) => c.instanceId === "d2")).toBe(true);
+    expect(result.hand.some((c) => c.instanceId === "d3")).toBe(true);
+    expect(result.pendingHandOverflowExhaust).toBe(2);
+    expect(result.exhaustPile).toHaveLength(0);
+    expect(result.drawPile).toHaveLength(0);
+  });
+
+  it("enemy overdraw exhausts overflow draws immediately", () => {
+    const rng = createRNG("enemy-overdraw");
+    const baseHand = Array.from({
+      length: GAME_CONSTANTS.MAX_HAND_SIZE - 1,
+    }).map((_, i) => ({
+      instanceId: `h${i + 1}`,
+      definitionId: "strike",
+      upgraded: false,
+    }));
+    const state = makeMinimalCombat({
+      hand: baseHand,
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+        { instanceId: "d3", definitionId: "ink_surge", upgraded: false },
+      ],
+      exhaustPile: [],
+      pendingHandOverflowExhaust: 0,
+    });
+
+    const result = drawCards(state, 3, rng, "ENEMY");
+    expect(result.hand).toHaveLength(GAME_CONSTANTS.MAX_HAND_SIZE);
+    expect(result.hand.some((c) => c.instanceId === "d1")).toBe(true);
+    expect(result.exhaustPile.map((c) => c.instanceId)).toEqual(["d2", "d3"]);
+    expect(result.pendingHandOverflowExhaust).toBe(0);
+    expect(result.drawPile).toHaveLength(0);
+  });
+
+  it("system overdraw exhausts overflow draws immediately", () => {
+    const rng = createRNG("system-overdraw");
+    const baseHand = Array.from({
+      length: GAME_CONSTANTS.MAX_HAND_SIZE - 1,
+    }).map((_, i) => ({
+      instanceId: `h${i + 1}`,
+      definitionId: "strike",
+      upgraded: false,
+    }));
+    const state = makeMinimalCombat({
+      hand: baseHand,
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+        { instanceId: "d3", definitionId: "ink_surge", upgraded: false },
+      ],
+      exhaustPile: [],
+      pendingHandOverflowExhaust: 0,
+    });
+
+    const result = drawCards(state, 3, rng, "SYSTEM");
+    expect(result.hand).toHaveLength(GAME_CONSTANTS.MAX_HAND_SIZE);
+    expect(result.hand.some((c) => c.instanceId === "d1")).toBe(true);
+    expect(result.exhaustPile.map((c) => c.instanceId)).toEqual(["d2", "d3"]);
+    expect(result.pendingHandOverflowExhaust).toBe(0);
+    expect(result.drawPile).toHaveLength(0);
+  });
+
+  it("exhaustCardFromHandForOverflow consumes one pending choice", () => {
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "h1", definitionId: "strike", upgraded: false },
+        { instanceId: "h2", definitionId: "defend", upgraded: false },
+      ],
+      pendingHandOverflowExhaust: 1,
+      exhaustPile: [],
+    });
+
+    const result = exhaustCardFromHandForOverflow(state, "h2");
+    expect(result.pendingHandOverflowExhaust).toBe(0);
+    expect(result.hand.map((c) => c.instanceId)).toEqual(["h1"]);
+    expect(result.exhaustPile.map((c) => c.instanceId)).toEqual(["h2"]);
+  });
+
+  it("exhaustCardFromHandForOverflow is a no-op when nothing is pending", () => {
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "h1", definitionId: "strike", upgraded: false }],
+      pendingHandOverflowExhaust: 0,
+      exhaustPile: [],
+    });
+
+    const result = exhaustCardFromHandForOverflow(state, "h1");
+    expect(result).toBe(state);
   });
 
   it("discardHand moves all hand cards to discard", () => {
@@ -589,6 +708,56 @@ describe("Card playing", () => {
     expect(result.exhaustPile[0]?.definitionId).toBe("inner_focus");
     expect(result.player.focus).toBe(2);
   });
+
+  it("bastion_crash deals damage equal to current block", () => {
+    const rng = createRNG("bastion-crash");
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "c1", definitionId: "bastion_crash", upgraded: false },
+      ],
+      player: {
+        ...makeMinimalCombat().player,
+        block: 7,
+      },
+    });
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+    expect(result.enemies[0]?.currentHp).toBe(7);
+  });
+
+  it("venom_echo doubles poison stacks on target", () => {
+    const rng = createRNG("venom-echo");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "venom_echo", upgraded: false }],
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          buffs: [{ type: "POISON", stacks: 3 }],
+        },
+      ],
+    });
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(6);
+    expect(result.exhaustPile).toHaveLength(1);
+    expect(result.exhaustPile[0]?.definitionId).toBe("venom_echo");
+    expect(result.discardPile).toHaveLength(0);
+  });
+
+  it("venom_echo+ triples poison stacks on target", () => {
+    const rng = createRNG("venom-echo-upgrade");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "venom_echo", upgraded: true }],
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          buffs: [{ type: "POISON", stacks: 3 }],
+        },
+      ],
+    });
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(9);
+    expect(result.exhaustPile).toHaveLength(1);
+    expect(result.exhaustPile[0]?.definitionId).toBe("venom_echo");
+  });
 });
 
 // ============================
@@ -764,6 +933,86 @@ describe("Combat flow", () => {
     expect(result.hand).toHaveLength(0);
     expect(result.discardPile).toHaveLength(2);
     expect(result.phase).toBe("ALLIES_ENEMIES_TURN");
+  });
+
+  it("brace + LOST_CHAPTER do not permanently increase drawCount", () => {
+    const rng = createRNG("brace-lostchapter-drawcount");
+    const drawPile = Array.from({ length: 20 }).map((_, i) => ({
+      instanceId: `d${i + 1}`,
+      definitionId: i % 2 === 0 ? "strike" : "defend",
+      upgraded: false,
+    }));
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "b1", definitionId: "brace", upgraded: false },
+        { instanceId: "s1", definitionId: "strike", upgraded: false },
+      ],
+      drawPile,
+      player: {
+        ...makeMinimalCombat().player,
+        energyCurrent: 3,
+        inkCurrent: 2,
+        drawCount: 5,
+      },
+    });
+
+    const afterBrace = playCard(state, "b1", null, false, cardDefs, rng);
+    const afterLostChapter = applyInkPower(
+      afterBrace,
+      "LOST_CHAPTER",
+      null,
+      cardDefs,
+      rng
+    );
+
+    expect(afterBrace.player.drawCount).toBe(5);
+    expect(afterLostChapter.player.drawCount).toBe(5);
+    expect(afterLostChapter.hand.length).toBe(4);
+  });
+
+  it("after brace + LOST_CHAPTER, next turn draws exactly one normal hand", () => {
+    const rng = createRNG("brace-lostchapter-next-turn");
+    const drawPile = Array.from({ length: 20 }).map((_, i) => ({
+      instanceId: `d${i + 1}`,
+      definitionId: i % 2 === 0 ? "strike" : "defend",
+      upgraded: false,
+    }));
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "b1", definitionId: "brace", upgraded: false },
+        { instanceId: "s1", definitionId: "strike", upgraded: false },
+      ],
+      drawPile,
+      player: {
+        ...makeMinimalCombat().player,
+        energyCurrent: 3,
+        inkCurrent: 2,
+        drawCount: 5,
+      },
+    });
+
+    const afterBrace = playCard(state, "b1", null, false, cardDefs, rng);
+    const afterLostChapter = applyInkPower(
+      afterBrace,
+      "LOST_CHAPTER",
+      null,
+      cardDefs,
+      rng
+    );
+    const afterEnd = endPlayerTurn(afterLostChapter);
+    const afterEnemyPhase = executeAlliesEnemiesTurn(
+      afterEnd,
+      enemyDefs,
+      allyDefs,
+      rng
+    );
+
+    expect(afterEnemyPhase.phase).toBe("ALLIES_ENEMIES_TURN");
+
+    const nextTurn = startPlayerTurn(afterEnemyPhase, rng);
+    expect(nextTurn.hand).toHaveLength(5);
+    expect(nextTurn.player.drawCount).toBe(5);
+    expect(nextTurn.turnNumber).toBe(afterEnemyPhase.turnNumber + 1);
   });
 
   it("startPlayerTurn heals with regenPerTurn", () => {
@@ -1395,6 +1644,20 @@ describe("Run management", () => {
     expect(map[9]?.[0]?.type).toBe("COMBAT");
   });
 
+  it("generateFloorMap with boss_rush uses bosses in non-boss combat rooms", () => {
+    const map = generateFloorMap(
+      1,
+      createRNG("boss-rush-map"),
+      "LIBRARY",
+      "boss_rush"
+    );
+    const firstCombatEnemyId = map[0]?.[0]?.enemyIds?.[0];
+    expect(firstCombatEnemyId).toBeDefined();
+    if (!firstCombatEnemyId) return;
+    const enemy = enemyDefs.get(firstCombatEnemyId);
+    expect(enemy?.isBoss).toBe(true);
+  });
+
   it("generateFloorMap distributes non-combat rooms before late-floor slots", () => {
     const seeds = [
       "map-balance-1",
@@ -1484,6 +1747,184 @@ describe("Run management", () => {
     expect(result.playerCurrentHp).toBe(56); // 50 + 10% of 60
   });
 
+  it("completeCombat boosts percentage healing with menders_charm", () => {
+    const rng = createRNG("meta-heal-menders");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun("run-1", "meta-heal-menders", starterCards, rng, {
+      ...DEFAULT_META_BONUSES,
+      healAfterCombat: 10,
+    });
+    const combatResult = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 50 },
+    });
+
+    const result = completeCombat(
+      run,
+      combatResult,
+      0,
+      rng,
+      { PAGES: 2 },
+      [...cardDefs.values()],
+      ["menders_charm"]
+    );
+    expect(result.playerCurrentHp).toBe(59); // 50 + floor(60 * 15%)
+  });
+
+  it("completeCombat adds flat post-combat healing with vital_flask", () => {
+    const rng = createRNG("meta-heal-vital-flask");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-1",
+      "meta-heal-vital-flask",
+      starterCards,
+      rng
+    );
+    const combatResult = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 40 },
+    });
+
+    const result = completeCombat(
+      run,
+      combatResult,
+      0,
+      rng,
+      { PAGES: 2 },
+      [...cardDefs.values()],
+      ["vital_flask"]
+    );
+    expect(result.playerCurrentHp).toBe(45); // 40 + 5 from relic
+  });
+
+  it("applyRunConditionToRun chaos_draft replaces starter deck with 10 random cards", () => {
+    const rng = createRNG("run-condition-chaos-draft");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun("run-chaos", "run-chaos", starterCards, rng);
+    const applied = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "chaos_draft",
+          "vanilla_run",
+          "quiet_pockets",
+        ],
+      },
+      "chaos_draft",
+      createRNG("run-condition-chaos-draft-apply"),
+      [...cardDefs.values()]
+    );
+
+    expect(applied.deck).toHaveLength(10);
+    expect(applied.deck.every((card) => card.definitionId !== "strike")).toBe(
+      true
+    );
+  });
+
+  it("applyRunConditionToRun accepts legacy vanilla pending choice id", () => {
+    const rng = createRNG("run-condition-legacy-vanilla");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-legacy-vanilla",
+      "run-legacy-vanilla",
+      starterCards,
+      rng
+    );
+    const applied = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "vanilla",
+          "quiet_pockets",
+          "open_grimoire",
+        ],
+      },
+      "vanilla_run",
+      createRNG("run-condition-legacy-vanilla-apply"),
+      [...cardDefs.values()]
+    );
+
+    expect(applied.selectedRunConditionId).toBe("vanilla_run");
+    expect(applied.pendingRunConditionChoices).toEqual([
+      "vanilla",
+      "quiet_pockets",
+      "open_grimoire",
+    ]);
+  });
+
+  it("applyRunConditionToRun can switch between normal and infinite modes before the run starts", () => {
+    const rng = createRNG("run-condition-mode-swap");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-mode-swap",
+      "run-mode-swap",
+      starterCards,
+      rng
+    );
+
+    const withNormalMode = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "vanilla_run",
+          "infinite_mode",
+          "quiet_pockets",
+        ],
+      },
+      "vanilla_run",
+      createRNG("run-condition-mode-swap-normal"),
+      [...cardDefs.values()]
+    );
+
+    const swappedToInfinite = applyRunConditionToRun(
+      withNormalMode,
+      "infinite_mode",
+      createRNG("run-condition-mode-swap-infinite"),
+      [...cardDefs.values()]
+    );
+
+    expect(withNormalMode.selectedRunConditionId).toBe("vanilla_run");
+    expect(swappedToInfinite.selectedRunConditionId).toBe("infinite_mode");
+  });
+
+  it("applyRunConditionToRun can apply a normal condition after choosing normal mode", () => {
+    const rng = createRNG("run-condition-promote-from-mode");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-condition-promote-from-mode",
+      "run-condition-promote-from-mode",
+      starterCards,
+      rng
+    );
+
+    const withNormalMode = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "vanilla_run",
+          "quiet_pockets",
+          "open_grimoire",
+        ],
+      },
+      "vanilla_run",
+      createRNG("run-condition-promote-from-mode-normal"),
+      [...cardDefs.values()]
+    );
+
+    const withQuietPockets = applyRunConditionToRun(
+      withNormalMode,
+      "quiet_pockets",
+      createRNG("run-condition-promote-from-mode-quiet"),
+      [...cardDefs.values()]
+    );
+
+    expect(withNormalMode.selectedRunConditionId).toBe("vanilla_run");
+    expect(withQuietPockets.selectedRunConditionId).toBe("quiet_pockets");
+    expect(withQuietPockets.pendingRunConditionChoices).toHaveLength(0);
+  });
+
   it("completeCombat offers LIBRARY as a guaranteed option after floor 1 boss", () => {
     const rng = createRNG("boss-floor-1-biomes");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
@@ -1533,6 +1974,58 @@ describe("Run management", () => {
     expect(choices[0]).not.toBe(choices[1]);
     expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(choices[0]);
     expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(choices[1]);
+  });
+
+  it("completeCombat in infinite mode does not end at floor 5 boss", () => {
+    const rng = createRNG("boss-floor-5-infinite");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-1",
+      "boss-floor-5-infinite",
+      starterCards,
+      rng
+    );
+    const combat = makeMinimalCombat();
+
+    const result = completeCombat(
+      {
+        ...run,
+        floor: 5,
+        currentRoom: GAME_CONSTANTS.BOSS_ROOM_INDEX,
+        selectedRunConditionId: "infinite_mode",
+      },
+      combat,
+      0,
+      createRNG("boss-floor-5-infinite-next")
+    );
+
+    expect(result.status).toBe("IN_PROGRESS");
+    expect(result.pendingBiomeChoices).not.toBeNull();
+  });
+
+  it("completeCombat in infinite mode does not keep biome resources", () => {
+    const rng = createRNG("infinite-no-biome-resources");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-1",
+      "infinite-no-biome-resources",
+      starterCards,
+      rng
+    );
+    const combat = makeMinimalCombat();
+
+    const result = completeCombat(
+      {
+        ...run,
+        selectedRunConditionId: "infinite_mode",
+      },
+      combat,
+      0,
+      createRNG("infinite-no-biome-resources-next"),
+      { PAGES: 3 }
+    );
+
+    expect(result.earnedResources).toEqual({});
   });
 
   it("advanceFloor keeps floor 1 when resolving opening biome choice", () => {
@@ -1726,6 +2219,31 @@ describe("Legacy run robustness (missing fields from old DB records)", () => {
     expect(combat.player.energyMax).toBe(4); // base 3 + 1 extraEnergyMax
   });
 
+  it("initCombat does not apply extraHp twice", () => {
+    const bonuses = {
+      ...DEFAULT_META_BONUSES,
+      extraHp: 15,
+    };
+    const bonusRun = createNewRun(
+      "run-meta-extra-hp",
+      "meta-extra-hp",
+      starterCards,
+      createRNG("meta-hp-1"),
+      bonuses
+    );
+    const combat = initCombat(
+      bonusRun,
+      ["ink_slime"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("meta-hp-2")
+    );
+
+    expect(combat.player.maxHp).toBe(bonusRun.playerMaxHp);
+    expect(combat.player.currentHp).toBe(bonusRun.playerCurrentHp);
+  });
+
   it("initCombat applies allyHpPercent bonus to recruited allies", () => {
     const bonuses = {
       ...DEFAULT_META_BONUSES,
@@ -1800,6 +2318,79 @@ describe("Rewards", () => {
     const boss = generateCombatRewards(1, 9, true, false, 1, allCards, rng2);
 
     expect(boss.gold).toBeGreaterThan(normal.gold);
+  });
+
+  it("gilded_ledger increases combat gold rewards by 50%", () => {
+    const allCards = [...cardDefs.values()];
+    const baseRng = createRNG("gilded-ledger-gold");
+    const bonusRng = createRNG("gilded-ledger-gold");
+    const base = generateCombatRewards(
+      2,
+      4,
+      false,
+      false,
+      2,
+      allCards,
+      baseRng,
+      "LIBRARY",
+      []
+    );
+    const boosted = generateCombatRewards(
+      2,
+      4,
+      false,
+      false,
+      2,
+      allCards,
+      bonusRng,
+      "LIBRARY",
+      ["gilded_ledger"]
+    );
+    expect(boosted.gold).toBe(Math.round(base.gold * 1.5));
+  });
+
+  it("boss_rush reward multiplier doubles gold and biome resources", () => {
+    const allCards = [...cardDefs.values()];
+    const baseRng = createRNG("boss-rush-rewards");
+    const bonusRng = createRNG("boss-rush-rewards");
+    const base = generateCombatRewards(
+      2,
+      4,
+      false,
+      false,
+      2,
+      allCards,
+      baseRng,
+      "LIBRARY",
+      []
+    );
+    const doubled = generateCombatRewards(
+      2,
+      4,
+      false,
+      false,
+      2,
+      allCards,
+      bonusRng,
+      "LIBRARY",
+      [],
+      undefined,
+      [],
+      0,
+      0,
+      undefined,
+      0,
+      0,
+      0,
+      undefined,
+      2
+    );
+    expect(doubled.gold).toBe(base.gold * 2);
+    for (const [resource, amount] of Object.entries(base.biomeResources)) {
+      expect(
+        (doubled.biomeResources as Record<string, number | undefined>)[resource]
+      ).toBe((amount ?? 0) * 2);
+    }
   });
 
   it("elite rewards fallback to an extra card choice when no relic is available", () => {
@@ -1944,6 +2535,49 @@ describe("Relics", () => {
     const state = makeMinimalCombat();
     const result = applyRelicsOnCombatStart(state, ["briar_codex"]);
     expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+  });
+
+  it("plague_carillon deals 1 damage to all enemies on card played", () => {
+    const state = makeMinimalCombat({
+      enemies: [
+        { ...makeMinimalCombat().enemies[0]!, currentHp: 10, maxHp: 10 },
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          instanceId: "e2",
+          currentHp: 12,
+          maxHp: 12,
+        },
+      ],
+    });
+    const result = applyRelicsOnCardPlayed(state, ["plague_carillon"], "SKILL");
+    expect(result.enemies[0]?.currentHp).toBe(9);
+    expect(result.enemies[1]?.currentHp).toBe(11);
+  });
+
+  it("phoenix_ash heals at turn start", () => {
+    const state = makeMinimalCombat({
+      phase: "ALLIES_ENEMIES_TURN",
+      player: {
+        ...makeMinimalCombat().player,
+        currentHp: 30,
+      },
+    });
+    const result = startPlayerTurn(state, createRNG("phoenix-ash"), [
+      "phoenix_ash",
+    ]);
+    expect(result.player.currentHp).toBe(32);
+  });
+
+  it("ink_spindle grants focus at turn end when hand is empty", () => {
+    const state = makeMinimalCombat({
+      hand: [],
+      player: {
+        ...makeMinimalCombat().player,
+        focus: 0,
+      },
+    });
+    const result = endPlayerTurn(state, ["ink_spindle"]);
+    expect(result.player.focus).toBe(1);
   });
 });
 
@@ -2263,7 +2897,7 @@ describe("Debuff blocked by armor", () => {
     const state = makeMinimalCombat({
       enemies: [
         {
-          ...makeMinimalCombat().enemies[0],
+          ...makeMinimalCombat().enemies[0]!,
           buffs: [{ type: "THORNS", stacks: 3 }],
         },
       ],
@@ -2283,7 +2917,7 @@ describe("Debuff blocked by armor", () => {
     const state = makeMinimalCombat({
       enemies: [
         {
-          ...makeMinimalCombat().enemies[0],
+          ...makeMinimalCombat().enemies[0]!,
           buffs: [{ type: "THORNS", stacks: 2 }],
         },
         {

@@ -270,12 +270,16 @@ function formatEffect(effect: Effect, t: TFunction): string {
   switch (effect.type) {
     case "DAMAGE":
       return t("reward.effect.damage", { value: effect.value });
+    case "DAMAGE_EQUAL_BLOCK":
+      return t("reward.effect.damageEqualBlock");
     case "HEAL":
       return t("reward.effect.heal", { value: effect.value });
     case "BLOCK":
       return t("reward.effect.block", { value: effect.value });
     case "DRAW_CARDS":
       return t("reward.effect.drawCards", { value: effect.value });
+    case "DOUBLE_POISON":
+      return t("reward.effect.doublePoison");
     case "GAIN_INK":
       return t("reward.effect.gainInk", { value: effect.value });
     case "GAIN_ENERGY":

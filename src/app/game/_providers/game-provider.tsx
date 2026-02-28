@@ -35,7 +35,7 @@ import {
   applyRelicsOnCombatStart,
   applyRelicsOnCardPlayed,
 } from "@/game/engine/relics";
-import { drawCards } from "@/game/engine/deck";
+import { drawCards, exhaustCardFromHandForOverflow } from "@/game/engine/deck";
 import {
   selectRoom,
   applyDifficultyToRun,
@@ -80,6 +80,10 @@ export type GameAction =
       };
     }
   | { type: "END_TURN" }
+  | {
+      type: "RESOLVE_HAND_OVERFLOW_EXHAUST";
+      payload: { cardInstanceId: string };
+    }
   | {
       type: "USE_USABLE_ITEM";
       payload: { itemInstanceId: string; targetId: string | null };
@@ -192,7 +196,9 @@ function createGameReducer(deps: ReducerDeps) {
           combat = drawCards(
             combat,
             combat.player.drawCount - combat.hand.length,
-            rng
+            rng,
+            "SYSTEM",
+            "COMBAT_START_RELIC_DRAW_TOPUP"
           );
         }
 
@@ -243,6 +249,7 @@ function createGameReducer(deps: ReducerDeps) {
 
       case "END_TURN": {
         if (!state.combat || state.combat.phase !== "PLAYER_TURN") return state;
+        if ((state.combat.pendingHandOverflowExhaust ?? 0) > 0) return state;
         let combat = endPlayerTurn(state.combat, state.relicIds);
         combat = executeAlliesEnemiesTurn(combat, enemyDefs, allyDefs, rng);
 
@@ -251,6 +258,15 @@ function createGameReducer(deps: ReducerDeps) {
         }
 
         return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
+      }
+
+      case "RESOLVE_HAND_OVERFLOW_EXHAUST": {
+        if (!state.combat) return state;
+        const combat = exhaustCardFromHandForOverflow(
+          state.combat,
+          action.payload.cardInstanceId
+        );
+        return { ...state, combat };
       }
 
       // ── Step-by-step enemy turn (for animations) ──────────────────

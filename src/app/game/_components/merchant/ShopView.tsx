@@ -31,6 +31,7 @@ interface ShopViewProps {
   gold: number;
   relicIds: string[];
   unlockedCardIds: string[];
+  unlockedRelicIds: string[];
   unlockedDifficultyLevelSnapshot: number;
   selectedDifficultyLevel: number;
   relicDiscount: number;
@@ -63,6 +64,7 @@ export function ShopView({
   gold,
   relicIds,
   unlockedCardIds,
+  unlockedRelicIds,
   unlockedDifficultyLevelSnapshot,
   selectedDifficultyLevel,
   relicDiscount,
@@ -100,7 +102,8 @@ export function ShopView({
         selectedDifficultyLevel,
         relicDiscount,
         usableItems,
-        usableItemCapacity
+        usableItemCapacity,
+        unlockedRelicIds
       ),
     [
       floor,
@@ -108,6 +111,7 @@ export function ShopView({
       relicIds,
       rng,
       unlockedCardIds,
+      unlockedRelicIds,
       unlockedDifficultyLevelSnapshot,
       selectedDifficultyLevel,
       relicDiscount,
@@ -143,7 +147,8 @@ export function ShopView({
             selectedDifficultyLevel,
             relicDiscount,
             usableItems,
-            usableItemCapacity
+            usableItemCapacity,
+            unlockedRelicIds
           )
         );
         setSoldIds(new Set());
@@ -179,7 +184,8 @@ export function ShopView({
         selectedDifficultyLevel,
         relicDiscount,
         usableItems,
-        usableItemCapacity
+        usableItemCapacity,
+        unlockedRelicIds
       )
     );
     setSoldIds(new Set());

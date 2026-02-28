@@ -84,7 +84,13 @@ export function applyInkPower(
     }
 
     case "LOST_CHAPTER": {
-      return drawCards(marked, GAME_CONSTANTS.LOST_CHAPTER_DRAW, rng);
+      return drawCards(
+        marked,
+        GAME_CONSTANTS.LOST_CHAPTER_DRAW,
+        rng,
+        "PLAYER",
+        "INK_POWER:LOST_CHAPTER"
+      );
     }
 
     case "SEAL": {

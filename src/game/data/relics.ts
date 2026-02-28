@@ -89,6 +89,42 @@ export const relicDefinitions: RelicDefinitionData[] = [
     rarity: "UNCOMMON",
   },
   {
+    id: "vital_flask",
+    name: "Vital Flask",
+    description: "Recover +5 HP after each combat.",
+    rarity: "UNCOMMON",
+  },
+  {
+    id: "menders_charm",
+    name: "Mender's Charm",
+    description: "Increase post-combat healing percentage by 50%.",
+    rarity: "RARE",
+  },
+  {
+    id: "gilded_ledger",
+    name: "Gilded Ledger",
+    description: "Increase gold gained from combat rewards by 50%.",
+    rarity: "RARE",
+  },
+  {
+    id: "plague_carillon",
+    name: "Plague Carillon",
+    description: "Each card played deals 1 damage to all enemies.",
+    rarity: "RARE",
+  },
+  {
+    id: "phoenix_ash",
+    name: "Phoenix Ash",
+    description: "Recover 2 HP at the start of each turn.",
+    rarity: "RARE",
+  },
+  {
+    id: "ink_spindle",
+    name: "Ink Spindle",
+    description: "At end of turn, gain 1 Focus if your hand is empty.",
+    rarity: "UNCOMMON",
+  },
+  {
     id: "omens_compass",
     name: "Omen's Compass",
     description:

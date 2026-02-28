@@ -54,6 +54,14 @@ function matchesType(
   return card.type === "SKILL";
 }
 
+function formatRunConditionFallback(conditionId: string): string {
+  return conditionId
+    .split("_")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export function CardCollectionClient({
   cards,
   runConditionRows,
@@ -156,7 +164,9 @@ export function CardCollectionClient({
               >
                 <div className="mb-1 flex items-center justify-between gap-2">
                   <p className="font-bold text-white">
-                    {t(`runCondition.definitions.${row.id}.name`)}
+                    {t(`runCondition.definitions.${row.id}.name`, {
+                      defaultValue: formatRunConditionFallback(row.id),
+                    })}
                   </p>
                   <span
                     className={`rounded px-2 py-0.5 text-xs font-semibold ${
@@ -175,7 +185,9 @@ export function CardCollectionClient({
                   {t(`runCondition.category.${row.category}`)}
                 </p>
                 <p className="mt-2 text-sm text-gray-300">
-                  {t(`runCondition.definitions.${row.id}.description`)}
+                  {t(`runCondition.definitions.${row.id}.description`, {
+                    defaultValue: formatRunConditionFallback(row.id),
+                  })}
                 </p>
 
                 {!row.unlocked && (

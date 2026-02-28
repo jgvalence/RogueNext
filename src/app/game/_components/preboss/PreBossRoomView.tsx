@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import type { TFunction } from "i18next";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { cn } from "@/lib/utils/cn";
@@ -9,6 +10,7 @@ import {
   type UpgradePreviewHoverInfo,
 } from "../shared/UpgradePreviewPortal";
 import { useTranslation } from "react-i18next";
+import { localizeCardName, localizeCardType } from "@/lib/i18n/card-text";
 
 interface PreBossRoomViewProps {
   playerCurrentHp: number;
@@ -104,7 +106,7 @@ function UpgradeSubView({
   cardDefs: Map<string, CardDefinition>;
   onUpgrade: (cardInstanceId: string) => void;
   onBack: () => void;
-  t: (key: string, params?: Record<string, unknown>) => string;
+  t: TFunction;
 }) {
   const [selected, setSelected] = useState<string | null>(null);
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
@@ -153,9 +155,14 @@ function UpgradeSubView({
                   : "border-gray-600 bg-gray-800/50 hover:border-gray-400"
               )}
             >
-              <span className="text-xs font-bold text-white">{def.name}</span>
+              <span className="text-xs font-bold text-white">
+                {localizeCardName(def, t)}
+              </span>
               <span className="text-[10px] text-gray-400">
-                {def.type} - {def.rarity}
+                {localizeCardType(def.type, t)} -{" "}
+                {t(`gameCard.rarity.${def.rarity}`, {
+                  defaultValue: def.rarity,
+                })}
               </span>
             </button>
           );

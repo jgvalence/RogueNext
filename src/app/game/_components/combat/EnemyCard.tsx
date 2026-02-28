@@ -28,6 +28,10 @@ import {
   getBonusDamageIfPlayerDebuffed,
   hasPlayerDebuffForEnemyBonus,
 } from "@/game/engine/enemy-intent-preview";
+import {
+  localizeEnemyAbilityName,
+  localizeEnemyName,
+} from "@/lib/i18n/entity-text";
 
 interface EnemyCardProps {
   enemy: EnemyState;
@@ -63,6 +67,10 @@ export function EnemyCard({
   const { t } = useTranslation();
   const isDead = enemy.currentHp <= 0;
   const intent = definition.abilities[enemy.intentIndex];
+  const localizedEnemyName = localizeEnemyName(definition.id, enemy.name);
+  const localizedIntentName = intent
+    ? localizeEnemyAbilityName(definition.id, intent.name)
+    : null;
   const prevHp = useRef(enemy.currentHp);
   const [dmgPopups, setDmgPopups] = useState<{ id: number; value: number }[]>(
     []
@@ -157,7 +165,7 @@ export function EnemyCard({
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={artImageSrc}
-            alt={definition.name}
+            alt={localizedEnemyName}
             className="absolute inset-0 h-full w-full object-cover object-top"
             onError={() => setArtFailed(true)}
           />
@@ -211,7 +219,7 @@ export function EnemyCard({
               : "text-[11px] text-white lg:text-xs"
           )}
         >
-          {enemy.name}
+          {localizedEnemyName}
         </div>
 
         {/* HP bar + numbers + block badge */}
@@ -264,7 +272,7 @@ export function EnemyCard({
                 {/* Intent name + target */}
                 <div className="flex items-start justify-between gap-1">
                   <span className="truncate text-[10px] font-semibold leading-tight text-gray-100 lg:text-[11px] [@media(max-height:540px)]:text-[11px]">
-                    {intent.name}
+                    {localizedIntentName}
                   </span>
                   {intentTargetLabel && (
                     <span className="shrink-0 text-[9px] text-amber-300/90 lg:text-[10px] [@media(max-height:540px)]:text-[10px]">
@@ -525,7 +533,7 @@ function formatIntentEffects(
         key={`summon-${parts.length}`}
         className="inline-flex items-center gap-0.5 rounded bg-orange-900/60 px-1.5 py-0.5 text-[10px] font-semibold text-orange-200 lg:text-[11px]"
       >
-        {t("enemyCard.summon")} {summonLabel}
+        {t("enemyCard.summon")} {localizeEnemyName(undefined, summonLabel)}
       </span>
     );
   }
@@ -589,7 +597,9 @@ function BossPhaseHint({
 
   return (
     <div className="mt-1 rounded border border-amber-700/60 bg-amber-950/40 px-1.5 py-1 text-[9px] text-amber-200 lg:text-[10px]">
-      {t("enemyCard.phase2Summon", { label })}
+      {t("enemyCard.phase2Summon", {
+        label: localizeEnemyName(undefined, label),
+      })}
     </div>
   );
 }

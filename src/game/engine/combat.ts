@@ -13,7 +13,12 @@ import { drawCards, discardHand, shuffleDeck } from "./deck";
 import { executeAlliesTurn, executeEnemiesTurn } from "./enemies";
 import { applyMetaBonusesToCombat } from "./meta";
 import { applyRelicsOnTurnStart, applyRelicsOnTurnEnd } from "./relics";
-import { getDifficultyModifiers, getEnemyStartingBlock } from "./difficulty";
+import {
+  getDifficultyModifiers,
+  getEnemyStartingBlock,
+  getPostFloorFiveEscalation,
+} from "./difficulty";
+import { isInfiniteRunConditionId } from "./run-conditions";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 
@@ -64,10 +69,18 @@ export function initCombat(
   const bonuses = metaBonuses ?? runState.metaBonuses;
   const difficultyLevel = runState.selectedDifficultyLevel ?? 0;
   const difficultyMods = getDifficultyModifiers(difficultyLevel);
+  const postFloorEscalation = getPostFloorFiveEscalation(
+    runState.floor,
+    isInfiniteRunConditionId(runState.selectedRunConditionId)
+  );
   const floorEnemyHpMultiplier =
-    (1 + (runState.floor - 1) * 0.15) * difficultyMods.enemyHpMultiplier;
+    (1 + (runState.floor - 1) * 0.15) *
+    difficultyMods.enemyHpMultiplier *
+    postFloorEscalation.enemyHpMultiplier;
   const enemyDamageScale =
-    (1 + (runState.floor - 1) * 0.18) * difficultyMods.enemyDamageMultiplier;
+    (1 + (runState.floor - 1) * 0.18) *
+    difficultyMods.enemyDamageMultiplier *
+    postFloorEscalation.enemyDamageMultiplier;
   const enemySpawnCountByDef: Record<string, number> = {};
 
   // Create enemy instances
@@ -168,6 +181,8 @@ export function initCombat(
     hand: [],
     discardPile: [],
     exhaustPile: [],
+    pendingHandOverflowExhaust: 0,
+    drawDebugHistory: [],
     inkPowerUsedThisTurn: false,
     firstHitReductionUsed: false,
     playerDisruption: { ...EMPTY_DISRUPTION },
@@ -184,7 +199,9 @@ export function initCombat(
   return drawCards(
     combatWithMeta,
     combatWithMeta.player.drawCount + extraHand,
-    rng
+    rng,
+    "SYSTEM",
+    "COMBAT_INIT_OPENING_HAND"
   );
 }
 
@@ -223,7 +240,9 @@ export function startPlayerTurn(
       0,
       current.player.drawCount - (current.playerDisruption.drawPenalty ?? 0)
     ),
-    rng
+    rng,
+    "SYSTEM",
+    "TURN_START_BASE_DRAW"
   );
   return current;
 }

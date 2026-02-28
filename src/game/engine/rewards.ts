@@ -8,11 +8,7 @@ import { getResourcesForCombat } from "./meta";
 import { relicDefinitions, type RelicDefinitionData } from "../data/relics";
 import { allyDefinitions } from "../data/allies";
 import type { AllyDefinition } from "../schemas/entities";
-import {
-  filterCardsByDifficulty,
-  filterRelicsByDifficulty,
-  eliteCanDropRelic,
-} from "./difficulty";
+import { eliteCanDropRelic } from "./difficulty";
 import { pickRandomUsableItemDefinitionId } from "./items";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 
@@ -46,11 +42,14 @@ export function generateCombatRewards(
   unlockedCardIds?: string[],
   currentAllyIds: string[] = [],
   allySlotCount: number = 0,
-  unlockedDifficultyLevelSnapshot = 0,
+  _unlockedDifficultyLevelSnapshot = 0,
   defeatedBossId?: string,
   extraCardRewardChoices = 0,
   metaLootLuckBonus = 0,
-  selectedDifficultyLevel = 0
+  selectedDifficultyLevel = 0,
+  unlockedRelicIds?: string[],
+  combatRewardMultiplier = 1,
+  disableBiomeResourceRewards = false
 ): CombatRewards {
   const lootLuck = getTotalLootLuck(currentRelicIds, metaLootLuckBonus);
   const hasOmensCompass = currentRelicIds.includes("omens_compass");
@@ -62,12 +61,14 @@ export function generateCombatRewards(
   gold += (enemyCount - 1) * GAME_CONSTANTS.GOLD_PER_EXTRA_ENEMY;
   if (isElite) gold += GAME_CONSTANTS.ELITE_GOLD_BONUS;
   if (isBoss) gold *= GAME_CONSTANTS.BOSS_GOLD_MULTIPLIER;
+  const relicGoldMultiplier = currentRelicIds.includes("gilded_ledger")
+    ? 1.5
+    : 1;
+  const rewardMultiplier = Math.max(1, combatRewardMultiplier);
+  gold = Math.max(0, Math.round(gold * relicGoldMultiplier * rewardMultiplier));
 
   // Card reward
-  const lootableCards = filterCardsByDifficulty(
-    allCards,
-    unlockedDifficultyLevelSnapshot
-  ).filter(
+  const lootableCards = allCards.filter(
     (c) =>
       !c.isStarterCard &&
       c.isCollectible !== false &&
@@ -97,19 +98,29 @@ export function generateCombatRewards(
   }
 
   // Biome resources (25% cross-biome chance via rng)
-  const biomeResources = getResourcesForCombat(
-    biome,
-    isElite,
-    isBoss,
-    floor,
-    rng
-  );
+  const scaledBiomeResources: Partial<Record<BiomeResource, number>> = {};
+  if (!disableBiomeResourceRewards) {
+    const biomeResources = getResourcesForCombat(
+      biome,
+      isElite,
+      isBoss,
+      floor,
+      rng
+    );
+    for (const [resource, amount] of Object.entries(biomeResources)) {
+      scaledBiomeResources[resource as BiomeResource] = Math.max(
+        0,
+        Math.round((amount as number) * rewardMultiplier)
+      );
+    }
+  }
 
   // Relic choices
-  const availableRelics = filterRelicsByDifficulty(
-    relicDefinitions,
-    unlockedDifficultyLevelSnapshot
-  ).filter((r) => !currentRelicIds.includes(r.id));
+  const availableRelics = relicDefinitions.filter(
+    (r) =>
+      !currentRelicIds.includes(r.id) &&
+      (!unlockedRelicIds || unlockedRelicIds.includes(r.id))
+  );
   let relicChoices: RelicDefinitionData[] = [];
 
   if (isBoss) {
@@ -202,7 +213,7 @@ export function generateCombatRewards(
   return {
     gold,
     cardChoices,
-    biomeResources,
+    biomeResources: scaledBiomeResources,
     relicChoices,
     allyChoices,
     bossMaxHpBonus,

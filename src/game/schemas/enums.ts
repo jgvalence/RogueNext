@@ -31,9 +31,11 @@ export type RunStatus = z.infer<typeof RunStatus>;
 
 export const EffectType = z.enum([
   "DAMAGE",
+  "DAMAGE_EQUAL_BLOCK",
   "BLOCK",
   "HEAL",
   "DRAW_CARDS",
+  "DOUBLE_POISON",
   "GAIN_ENERGY",
   "GAIN_INK",
   "APPLY_BUFF",

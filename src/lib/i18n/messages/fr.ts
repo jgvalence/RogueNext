@@ -12,17 +12,56 @@ export const fr = {
       "Parcourez les livres de la mythologie. Construisez votre deck. Survivez.",
     play: "Jouer",
     library: "Bibliotheque",
+    leaderboard: "Classement",
     rules: "Regles",
     logout: "Deconnexion",
     signup: "S'inscrire",
     signin: "Se connecter",
     loginHint: "Connectez-vous pour sauvegarder votre progression",
+    signedInHint: "Le grimoire est ouvert. Lancez une nouvelle expedition.",
+    ritualKicker: "Table de navigation",
+    ritualTitle: "Plan de run",
+    ritualSubtitle:
+      "Tracez votre route, optimisez votre deck, puis terrassez le boss.",
+    pathLabel: "Sequence de progression",
+    modeLabel: "Doctrine",
+    modeValue: "Roguelike tactique",
+    pathSteps: ["Combat", "Elite", "Marchand", "Boss"],
+    quickFacts: {
+      floors: "Etages",
+      rooms: "Salles / etage",
+      rewardChoices: "Choix de carte",
+      startingEnergy: "Energie de depart",
+    },
     tags: [
       "Combats tactiques",
       "Deck-building",
       "Mythologies du monde",
       "Roguelike",
     ],
+  },
+  leaderboard: {
+    kicker: "Classement global",
+    title: "Hall des Archivistes",
+    subtitle:
+      "Top joueurs selon le meilleur etage infini atteint, puis les victoires, la difficulte et le meilleur temps.",
+    backHome: "Accueil",
+    loadError: "Impossible de charger le classement: {{message}}",
+    empty: "Aucune statistique de run disponible pour le moment.",
+    playerFallback: "Archiviste {{id}}",
+    you: "Vous",
+    noTime: "-",
+    none: "-",
+    columns: {
+      rank: "Rang",
+      player: "Joueur",
+      wins: "Victoires",
+      runs: "Runs",
+      winRate: "Winrate",
+      bestInfiniteFloor: "Etage infini max",
+      bestDifficulty: "Difficulte max",
+      bestTime: "Temps par diff",
+    },
   },
   auth: {
     back: "Retour",
@@ -158,6 +197,10 @@ export const fr = {
       UNIQUE_MECHANIC: "Mecanique unique",
     },
     definitions: {
+      vanilla_run: {
+        name: "Sans changement",
+        description: "Run classique, sans regle speciale.",
+      },
       quiet_pockets: {
         name: "Poches tranquilles",
         description: "Commence avec +20 or.",
@@ -199,7 +242,48 @@ export const fr = {
         description:
           "Commence avec +1 Force, mais soigne 5% de moins apres combat.",
       },
+      chaos_draft: {
+        name: "Draft chaotique",
+        description: "Le deck de depart est remplace par 10 cartes aleatoires.",
+      },
+      boss_rush: {
+        name: "Marche des boss",
+        description:
+          "Tous les combats deviennent des combats de boss. Recompenses de combat x2.",
+      },
+      infinite_mode: {
+        name: "Mode infini",
+        description:
+          "Pas de limite d'etages. Aucune ressource de biome en fin de run. La difficulte explose apres l'etage 5.",
+      },
     },
+  },
+  runSetup: {
+    kicker: "Preparation du run",
+    title: "Configure ton expedition",
+    subtitle:
+      "Choisis la difficulte, le type de run, puis prepare tes options de depart avant d'entrer dans la premiere salle.",
+    sections: {
+      difficulty: "Difficulte",
+      runType: "Type de run",
+      runCondition: "Option de run",
+      preGameOptions: "Options pre-game",
+    },
+    selected: "Selectionne",
+    modeType: "Mode",
+    modeHint:
+      "Choisis d'abord entre Normal et Infini, puis configure tes options pre-game.",
+    modeLockedHint:
+      "Le type de run est verrouille apres selection d'une option de run.",
+    modeNormal: "Normal",
+    modeNormalDescription:
+      "Run classique en 5 etages, avec progression standard et ressources de fin de run.",
+    modeInfinite: "Infini",
+    modeInfiniteDescription:
+      "Pas de limite d'etages. Pense pour grimper au leaderboard. Aucune ressource de biome n'est accordee.",
+    continue: "Lancer le run",
+    readyHint: "Preparation complete. Tu peux lancer le run.",
+    missingHint: "Choisis une difficulte et un mode de jeu pour continuer.",
   },
   runDifficulty: {
     select: {
@@ -281,6 +365,9 @@ export const fr = {
     poison_quill: { name: "Plume empoisonnee" },
     mythic_blow: { name: "Coup mythique" },
     swift_slash: { name: "Entaille rapide" },
+    quick_feint: { name: "Feinte rapide" },
+    bastion_crash: { name: "Impact bastion" },
+    venom_echo: { name: "Echo venimeux" },
     fortify: { name: "Fortifier" },
     battle_cry: { name: "Cri de bataille" },
     scholars_focus: { name: "Concentration de l'erudit" },
@@ -428,6 +515,32 @@ export const fr = {
       name: "Lexique de bataille",
       description: "Commence chaque combat avec +1 Force.",
     },
+    vital_flask: {
+      name: "Flasque vitale",
+      description: "Recupere +5 PV apres chaque combat.",
+    },
+    menders_charm: {
+      name: "Charme du guerisseur",
+      description:
+        "Augmente de 50% le pourcentage de soin applique apres chaque combat.",
+    },
+    gilded_ledger: {
+      name: "Ledger dore",
+      description: "Augmente de 50% l'or gagne via les recompenses de combat.",
+    },
+    plague_carillon: {
+      name: "Carillon pestilentiel",
+      description: "Chaque carte jouee inflige 1 degat a tous les ennemis.",
+    },
+    phoenix_ash: {
+      name: "Cendre de phenix",
+      description: "Recupere 2 PV au debut de chaque tour.",
+    },
+    ink_spindle: {
+      name: "Fuseau d'encre",
+      description:
+        "A la fin du tour, gagne 1 concentration si votre main est vide.",
+    },
     omens_compass: {
       name: "Boussole des presages",
       description:
@@ -446,6 +559,120 @@ export const fr = {
       name: "Plume du chirurgien",
       description:
         "Vous pouvez purger jusqu'a 3 fois par visite chez le marchand.",
+    },
+    blood_grimoire: {
+      name: "Grimoire de sang",
+      description:
+        "Gagne 1 PV max par ennemi normal tue, 2 par elite, 5 par boss.",
+    },
+    guardians_seal: {
+      name: "Sceau du gardien",
+      description: "+2 encre max. Commence chaque combat avec 2 encre.",
+    },
+    archivists_lens: {
+      name: "Lentille de l'archiviste",
+      description: "+2 encre max. Commence chaque combat avec 2 concentration.",
+    },
+    wolf_fang: {
+      name: "Croc de loup",
+      description: "Commence chaque combat avec 2 force.",
+    },
+    hels_crown: {
+      name: "Couronne de Hel",
+      description: "Commence chaque combat avec 2 force et 4 epines.",
+    },
+    stone_pendant: {
+      name: "Pendentif de pierre",
+      description: "Commence chaque combat avec 1 force et 1 concentration.",
+    },
+    hydra_scale: {
+      name: "Ecaille d'hydre",
+      description: "Commence chaque combat avec 1 force et 5 epines.",
+    },
+    solar_disc: {
+      name: "Disque solaire",
+      description: "+1 energie max. Commence chaque combat avec 2 encre.",
+    },
+    eye_of_maat: {
+      name: "Oeil de Maat",
+      description:
+        "+1 energie max. Commence chaque combat avec 1 concentration.",
+    },
+    void_shard: {
+      name: "Eclat du vide",
+      description: "Commence chaque combat avec 2 concentration.",
+    },
+    shub_idol: {
+      name: "Idole de Shub",
+      description: "Commence chaque combat avec 2 force et 3 encre.",
+    },
+    obsidian_mirror: {
+      name: "Miroir d'obsidienne",
+      description: "Commence chaque combat avec 3 force.",
+    },
+    quetzal_feather: {
+      name: "Plume de quetzal",
+      description:
+        "Commence chaque combat avec 1 force, 1 concentration et 1 energie.",
+    },
+    dagdas_club: {
+      name: "Gourdin de Dagda",
+      description: "Commence chaque combat avec 6 epines.",
+    },
+    cernunnos_horn: {
+      name: "Corne de Cernunnos",
+      description: "Commence chaque combat avec 6 epines et +1 pioche.",
+    },
+    yaga_skull: {
+      name: "Crane de Yaga",
+      description: "Commence chaque combat avec +1 pioche et 3 epines.",
+    },
+    deathless_bone: {
+      name: "Os de l'immortel",
+      description: "+1 energie max. Commence chaque combat avec 10 armure.",
+    },
+    griot_drum: {
+      name: "Tambour du griot",
+      description: "Commence chaque combat avec 6 armure et 1 force.",
+    },
+    weavers_thread: {
+      name: "Fil du tisseur",
+      description: "Commence chaque combat avec +1 pioche et 2 concentration.",
+    },
+    thorn_mantle: {
+      name: "Manteau d'epines",
+      description: "Gagne 1 epine au debut de chaque tour.",
+    },
+    spectral_inkwell: {
+      name: "Encrier spectral",
+      description: "Gagne 1 encre au debut de chaque tour.",
+    },
+    fading_grimoire: {
+      name: "Grimoire fanant",
+      description: "Gagne 1 force au debut de chaque tour.",
+    },
+    iron_codex: {
+      name: "Codex de fer",
+      description:
+        "A la fin de votre tour, gagne 1 armure par carte encore en main.",
+    },
+    resonant_quill: {
+      name: "Plume resonante",
+      description:
+        "A la fin de votre tour, gagne 1 encre par carte non jouee (max 3).",
+    },
+    ember_seal: {
+      name: "Sceau de braise",
+      description:
+        "A la fin de votre tour, gagne 3 armure par energie non depensee.",
+    },
+    scholars_stone: {
+      name: "Pierre de l'erudit",
+      description: "Chaque carte Attaque jouee donne 1 encre.",
+    },
+    reactive_binding: {
+      name: "Reliure reactive",
+      description: "Chaque carte Competence jouee donne 1 armure.",
     },
   },
   usableItems: {
@@ -482,9 +709,11 @@ export const fr = {
     effect: {
       damage: "Inflige {{value}} degats",
       damageAll: "Inflige {{value}} degats a tous les ennemis",
+      damageEqualBlock: "Inflige des degats egaux a votre armure",
       block: "Gagne {{value}} armure",
       heal: "Soigne {{value}} PV",
       draw: "Pioche {{value}} cartes",
+      doublePoison: "Double le Poison de la cible",
       gainEnergy: "Gagne {{value}} energie",
       gainInk: "Gagne {{value}} encre",
       gainStrength: "Gagne {{value}} Force",
@@ -569,9 +798,11 @@ export const fr = {
     },
     effect: {
       damage: "degats {{value}}",
+      damageEqualBlock: "degats egaux a votre armure",
       heal: "soin {{value}}",
       block: "armure {{value}}",
       drawCards: "pioche {{value}}",
+      doublePoison: "double le poison",
       gainInk: "gagne {{value}} encre",
       gainEnergy: "gagne {{value}} energie",
       gainFocus: "gagne {{value}} concentration",
@@ -756,6 +987,10 @@ export const fr = {
     debugTitle: "Debug apparition ennemi",
     debugPlanned: "Prevu",
     debugThematic: "Unite thematique presente",
+    drawDebugTitle: "Debug pioche",
+    drawDebugSummary:
+      "Main {{hand}}/{{max}} - Pioche/tour {{draw}} - Overflow en attente {{overflow}}",
+    drawDebugNoEvents: "Aucun evenement de pioche.",
     yes: "OUI",
     no: "NON",
     chooseAllyFor: "Choisissez un allie pour ",
@@ -785,6 +1020,11 @@ export const fr = {
     drawOrderMasked: "(ordre de pioche masque)",
     selectRewrite: "Selectionnez une carte a recuperer avec Reecriture",
     noCardsInPile: "Aucune carte dans cette pile.",
+    handOverflowTitle: "Main surchargee",
+    handOverflowSubtitle:
+      "Vous avez depasse la limite de main. Choisissez {{count}} carte(s) a epuiser.",
+    handOverflowHint:
+      "Les depassements de pioche causes par les ennemis sont epuises automatiquement.",
     inventoryEmpty: "Inventaire vide",
     energyShort: "EN",
     you: "Vous",

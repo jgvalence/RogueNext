@@ -29,6 +29,7 @@ export const RunStateSchema = z.object({
   floor: z.number().int().default(1),
   currentRoom: z.number().int().default(0),
   gold: z.number().int().default(0),
+  maxGoldReached: z.number().int().default(0),
   merchantRerollCount: z.number().int().min(0).default(0),
   playerMaxHp: z.number().int(),
   playerCurrentHp: z.number().int(),
@@ -65,6 +66,8 @@ export const RunStateSchema = z.object({
   metaBonuses: ComputedMetaBonusesSchema.optional(),
   // Snapshot of unlocked stories for card unlock logic
   unlockedStoryIdsSnapshot: z.array(z.string()).default([]),
+  // Relic ids unlocked and available in this run
+  unlockedRelicIds: z.array(z.string()).default([]),
   // Card ids unlocked and available in this run
   unlockedCardIds: z.array(z.string()).default([]),
   // Snapshot of unlocked cards at run start (for end-of-run summary)

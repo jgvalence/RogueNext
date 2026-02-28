@@ -18,6 +18,11 @@ import {
 } from "../shared/UpgradePreviewPortal";
 import { CardPickerModal } from "../shared/CardPickerModal";
 import { useTranslation } from "react-i18next";
+import {
+  localizeCardDescription,
+  localizeCardName,
+  localizeCardType,
+} from "@/lib/i18n/card-text";
 
 interface SpecialRoomViewProps {
   playerCurrentHp: number;
@@ -188,12 +193,17 @@ function UpgradeRoom({
                   : "border-gray-600 bg-gray-800/50 hover:border-gray-400"
               )}
             >
-              <span className="text-xs font-bold text-white">{def.name}</span>
+              <span className="text-xs font-bold text-white">
+                {localizeCardName(def, t)}
+              </span>
               <span className="text-[10px] text-gray-400">
-                {def.type} - {def.rarity}
+                {localizeCardType(def.type, t)} -{" "}
+                {t(`gameCard.rarity.${def.rarity}`, {
+                  defaultValue: def.rarity,
+                })}
               </span>
               <span className="line-clamp-2 text-[10px] text-gray-500">
-                {def.description}
+                {localizeCardDescription(def, t)}
               </span>
             </button>
           );

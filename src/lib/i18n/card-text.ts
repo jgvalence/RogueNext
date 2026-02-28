@@ -33,12 +33,16 @@ function formatEffect(
       return allEnemies
         ? t("gameCard.effect.damageAll", { value: effect.value })
         : t("gameCard.effect.damage", { value: effect.value });
+    case "DAMAGE_EQUAL_BLOCK":
+      return t("gameCard.effect.damageEqualBlock");
     case "BLOCK":
       return t("gameCard.effect.block", { value: effect.value });
     case "HEAL":
       return t("gameCard.effect.heal", { value: effect.value });
     case "DRAW_CARDS":
       return t("gameCard.effect.draw", { value: effect.value });
+    case "DOUBLE_POISON":
+      return t("gameCard.effect.doublePoison");
     case "GAIN_ENERGY":
       return t("gameCard.effect.gainEnergy", { value: effect.value });
     case "GAIN_INK":

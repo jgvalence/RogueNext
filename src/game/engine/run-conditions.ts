@@ -12,12 +12,15 @@ export interface RunConditionMapRules {
   forceSingleChoice?: boolean;
   noMerchants?: boolean;
   extraSpecialRoom?: boolean;
+  bossOnlyCombats?: boolean;
 }
 
 export interface RunConditionEffects {
   startingGoldDelta?: number;
   maxHpDelta?: number;
   addCardIds?: string[];
+  replaceStarterDeckWithRandomCount?: number;
+  combatRewardMultiplier?: number;
   addMetaBonuses?: Partial<ComputedMetaBonuses>;
   mapRules?: RunConditionMapRules;
 }
@@ -38,7 +41,25 @@ export interface RunConditionDefinition {
   effects: RunConditionEffects;
 }
 
+export const VANILLA_RUN_CONDITION_ID = "vanilla_run";
+export const INFINITE_RUN_CONDITION_ID = "infinite_mode";
+const RUN_CONDITION_ID_ALIASES: Record<string, string> = {
+  vanilla: VANILLA_RUN_CONDITION_ID,
+};
+
 export const runConditionDefinitions: RunConditionDefinition[] = [
+  {
+    id: VANILLA_RUN_CONDITION_ID,
+    category: "SPECIAL_RULE",
+    unlock: {},
+    effects: {},
+  },
+  {
+    id: INFINITE_RUN_CONDITION_ID,
+    category: "SPECIAL_RULE",
+    unlock: {},
+    effects: {},
+  },
   {
     id: "quiet_pockets",
     category: "LIGHT_BOON",
@@ -108,6 +129,21 @@ export const runConditionDefinitions: RunConditionDefinition[] = [
       },
     },
   },
+  {
+    id: "chaos_draft",
+    category: "UNIQUE_MECHANIC",
+    unlock: { totalRuns: 4, wonRuns: 1 },
+    effects: { replaceStarterDeckWithRandomCount: 10 },
+  },
+  {
+    id: "boss_rush",
+    category: "SPECIAL_RULE",
+    unlock: { totalRuns: 8, wonRuns: 3 },
+    effects: {
+      combatRewardMultiplier: 2,
+      mapRules: { bossOnlyCombats: true },
+    },
+  },
 ];
 
 const runConditionById = new Map(runConditionDefinitions.map((c) => [c.id, c]));
@@ -119,11 +155,49 @@ export interface RunConditionCollectionRow {
   unlocked: boolean;
 }
 
+export function normalizeRunConditionId(
+  conditionId: string | null | undefined
+): string | null {
+  if (!conditionId) return null;
+  const normalized = conditionId.trim().toLowerCase();
+  if (!normalized) return null;
+  const canonical = RUN_CONDITION_ID_ALIASES[normalized] ?? normalized;
+  return runConditionById.has(canonical) ? canonical : null;
+}
+
+export function normalizeRunConditionIds(
+  conditionIds: readonly string[] | null | undefined
+): string[] {
+  const unique = new Set<string>();
+  for (const rawId of conditionIds ?? []) {
+    const conditionId = normalizeRunConditionId(rawId);
+    if (conditionId) unique.add(conditionId);
+  }
+  return [...unique];
+}
+
 export function getRunConditionById(
   conditionId: string | null | undefined
 ): RunConditionDefinition | null {
-  if (!conditionId) return null;
-  return runConditionById.get(conditionId) ?? null;
+  const normalized = normalizeRunConditionId(conditionId);
+  if (!normalized) return null;
+  return runConditionById.get(normalized) ?? null;
+}
+
+export function isInfiniteRunConditionId(
+  conditionId: string | null | undefined
+): boolean {
+  return normalizeRunConditionId(conditionId) === INFINITE_RUN_CONDITION_ID;
+}
+
+export function isRunModeConditionId(
+  conditionId: string | null | undefined
+): boolean {
+  const normalized = normalizeRunConditionId(conditionId);
+  return (
+    normalized === VANILLA_RUN_CONDITION_ID ||
+    normalized === INFINITE_RUN_CONDITION_ID
+  );
 }
 
 export function computeUnlockedRunConditionIds(
@@ -145,17 +219,29 @@ export function drawRunConditionChoices(
   rng: RNG,
   count = 3
 ): string[] {
-  const unlocked = unlockedConditionIds.filter((id) =>
-    runConditionById.has(id)
-  );
+  if (count <= 0) return [];
+  const unlocked = normalizeRunConditionIds(unlockedConditionIds);
   const fallback = runConditionDefinitions
     .filter(
       (condition) => !condition.unlock.totalRuns && !condition.unlock.wonRuns
     )
     .map((condition) => condition.id);
-  const pool = Array.from(new Set([...unlocked, ...fallback]));
-  if (pool.length <= count) return rng.shuffle(pool);
-  return rng.shuffle(pool).slice(0, count);
+  // Infinite mode is selected by a dedicated pre-run toggle, not by the
+  // "pick 1 among 3" start-condition choices.
+  const pool = Array.from(new Set([...unlocked, ...fallback])).filter(
+    (id) => id !== INFINITE_RUN_CONDITION_ID
+  );
+  const alwaysIncluded = [VANILLA_RUN_CONDITION_ID].filter((id) =>
+    pool.includes(id)
+  );
+  const remainingCount = Math.max(0, count - alwaysIncluded.length);
+  const alwaysIncludedSet = new Set(alwaysIncluded);
+  const remainingPool = pool.filter((id) => !alwaysIncludedSet.has(id));
+  const picked =
+    remainingPool.length <= remainingCount
+      ? rng.shuffle(remainingPool)
+      : rng.shuffle(remainingPool).slice(0, remainingCount);
+  return [...alwaysIncluded, ...picked];
 }
 
 export function buildRunConditionCollectionRows(
