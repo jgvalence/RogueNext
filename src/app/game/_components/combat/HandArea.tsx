@@ -108,7 +108,7 @@ export function HandArea({
     <>
       <div
         data-keep-selection="true"
-        className="flex h-[40px] items-center gap-1 overflow-x-auto pb-0.5 lg:hidden"
+        className="flex h-[44px] items-center gap-1.5 overflow-x-auto px-1 pb-0.5 lg:hidden"
       >
         {hand.map((card) => {
           const def = cardDefs.get(card.definitionId);
@@ -116,6 +116,17 @@ export function HandArea({
           const canPlay = canPlayCard(combatState, card.instanceId, cardDefs);
           const isSelected = selectedCardId === card.instanceId;
           const cardName = localizeCardName(def, t);
+
+          const typeBorder: Record<string, string> = {
+            ATTACK: "border-red-700/70",
+            SKILL: "border-blue-700/70",
+            POWER: "border-purple-700/70",
+          };
+          const typeGradient: Record<string, string> = {
+            ATTACK: "from-red-950/50 to-slate-900",
+            SKILL: "from-blue-950/50 to-slate-900",
+            POWER: "from-purple-950/50 to-slate-900",
+          };
 
           return (
             <button
@@ -128,22 +139,47 @@ export function HandArea({
               }}
               disabled={!canPlay}
               className={[
-                "h-8 min-w-[78px] shrink-0 rounded-md border px-1.5 text-left transition",
+                "relative flex h-[36px] min-w-[76px] shrink-0 items-center gap-1.5 overflow-hidden rounded-xl border px-1.5 text-left transition-all duration-150",
                 canPlay
-                  ? "border-slate-600 bg-slate-900/80 text-slate-100"
-                  : "cursor-not-allowed border-slate-800 bg-slate-900/40 text-slate-500",
-                isSelected ? "border-cyan-400 ring-1 ring-cyan-300/70" : "",
+                  ? isSelected
+                    ? "-translate-y-1.5 border-cyan-400 bg-gradient-to-r from-slate-600 to-slate-800 shadow-[0_0_10px_rgba(34,211,238,0.45)]"
+                    : `${typeBorder[def.type] ?? "border-slate-700/60"} bg-gradient-to-r ${typeGradient[def.type] ?? "from-slate-800/50 to-slate-900"} shadow-sm active:-translate-y-0.5`
+                  : "cursor-not-allowed border-slate-800/50 bg-slate-900/30 opacity-40",
               ]
                 .filter(Boolean)
                 .join(" ")}
             >
-              <p className="truncate text-[8px] font-bold">{cardName}</p>
-              <p className="text-[10px] font-black">{def.energyCost}</p>
+              {/* Badge coût */}
+              <div
+                className={[
+                  "flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full text-[10px] font-black",
+                  canPlay
+                    ? "border border-amber-600/50 bg-amber-950 text-amber-300"
+                    : "border border-slate-700 bg-slate-800 text-slate-500",
+                ].join(" ")}
+              >
+                {def.energyCost}
+              </div>
+              {/* Nom */}
+              <p
+                className={[
+                  "truncate text-[9px] font-bold leading-tight",
+                  canPlay
+                    ? isSelected
+                      ? "text-cyan-100"
+                      : "text-slate-100"
+                    : "text-slate-600",
+                ].join(" ")}
+              >
+                {cardName}
+              </p>
             </button>
           );
         })}
         {hand.length === 0 && (
-          <p className="text-xs text-gray-500">{t("combat.noCardsInHand")}</p>
+          <p className="self-center text-xs text-gray-500">
+            {t("combat.noCardsInHand")}
+          </p>
         )}
       </div>
 

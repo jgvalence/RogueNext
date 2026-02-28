@@ -1301,9 +1301,9 @@ export function CombatView({
           </div>
         </div>
 
-        {/* Target prompt */}
+        {/* Target prompt — desktop uniquement */}
         {needsTarget && selectedCardId && (
-          <div className="relative z-10 animate-bounce pb-1 text-xs font-semibold text-yellow-300 lg:text-sm">
+          <div className="relative z-10 hidden animate-bounce pb-1 text-xs font-semibold text-yellow-300 lg:block lg:text-sm">
             {selectingAllyTarget
               ? t("combat.chooseAllyFor")
               : t("combat.chooseTargetFor")}
@@ -1320,7 +1320,7 @@ export function CombatView({
           </div>
         )}
         {needsItemEnemyTarget && selectedUsableItemDef && (
-          <div className="relative z-10 animate-bounce pb-1 text-xs font-semibold text-orange-300 lg:text-sm">
+          <div className="relative z-10 hidden animate-bounce pb-1 text-xs font-semibold text-orange-300 lg:block lg:text-sm">
             {t("combat.chooseEnemyFor")}{" "}
             <span className="text-white">
               {localizeUsableItemName(
@@ -1331,7 +1331,7 @@ export function CombatView({
           </div>
         )}
         {isSelectingCheatKillTarget && (
-          <div className="relative z-10 animate-bounce pb-1 text-xs font-semibold text-rose-300 lg:text-sm">
+          <div className="relative z-10 hidden animate-bounce pb-1 text-xs font-semibold text-rose-300 lg:block lg:text-sm">
             {t("combat.devChooseEnemy")}
           </div>
         )}
@@ -1341,75 +1341,107 @@ export function CombatView({
       <div className="shrink-0 border-t border-cyan-500/20 bg-slate-950/95 backdrop-blur-sm [@media(max-height:540px)]:border-t-slate-800/70">
         <div className="relative border-t border-cyan-500/10 px-2 pb-2 pt-2 lg:px-4 lg:pb-3 lg:pt-2.5 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:pb-1 [@media(max-height:540px)]:pt-1">
           <div className="mb-1 space-y-1 lg:hidden">
-            <div className="flex gap-1 overflow-x-auto pb-0.5">
-              <div className="flex h-8 min-w-[38px] items-center justify-center rounded-md border border-yellow-600/50 bg-yellow-950/30 px-1 text-[12px] font-black text-yellow-100">
-                {combat.player.energyCurrent}
-              </div>
+            <div className="flex items-center gap-1.5">
+              <div className="flex flex-1 gap-1 overflow-x-auto pb-0.5">
+                <div className="flex h-8 min-w-[38px] items-center justify-center rounded-md border border-yellow-600/50 bg-yellow-950/30 px-1 text-[12px] font-black text-yellow-100">
+                  {combat.player.energyCurrent}
+                </div>
 
-              <button
-                className="h-8 min-w-[48px] rounded-md border border-cyan-700/60 bg-cyan-950/40 px-1 text-left"
-                onClick={() => setMobileInkPanelOpen(true)}
-                type="button"
-              >
-                <p className="text-[7px] font-semibold uppercase tracking-wide text-cyan-300/90">
-                  {t("inkGauge.ink")}
-                </p>
-                <p className="text-[10px] font-black text-cyan-100">
-                  {combat.player.inkCurrent}
-                </p>
-              </button>
-
-              <button
-                className="h-8 min-w-[52px] rounded-md border border-slate-500/70 bg-slate-800 px-1 text-left"
-                onClick={() => {
-                  setIsSelectingCheatKillTarget(false);
-                  setIsSelectingRewriteTarget(false);
-                  setOpenPile("draw");
-                }}
-                type="button"
-              >
-                <p className="text-[7px] font-semibold uppercase tracking-wide text-slate-400">
-                  {t("combat.draw")}
-                </p>
-                <p className="text-[10px] font-black text-slate-100">
-                  {combat.drawPile.length}
-                </p>
-              </button>
-
-              <button
-                className="h-8 min-w-[52px] rounded-md border border-red-700/60 bg-slate-800 px-1 text-left"
-                onClick={() => {
-                  setIsSelectingCheatKillTarget(false);
-                  setIsSelectingRewriteTarget(false);
-                  setOpenPile("discard");
-                }}
-                type="button"
-              >
-                <p className="text-[7px] font-semibold uppercase tracking-wide text-red-400/80">
-                  {t("combat.discard")}
-                </p>
-                <p className="text-[10px] font-black text-slate-100">
-                  {combat.discardPile.length}
-                </p>
-              </button>
-
-              {combat.exhaustPile.length > 0 && (
                 <button
-                  className="h-8 min-w-[42px] rounded-md border border-purple-700/60 bg-slate-800 px-1 text-[8px] font-semibold text-purple-300"
+                  className="h-8 min-w-[48px] rounded-md border border-cyan-700/60 bg-cyan-950/40 px-1 text-left"
+                  onClick={() => setMobileInkPanelOpen(true)}
+                  type="button"
+                >
+                  <p className="text-[7px] font-semibold uppercase tracking-wide text-cyan-300/90">
+                    {t("inkGauge.ink")}
+                  </p>
+                  <p className="text-[10px] font-black text-cyan-100">
+                    {combat.player.inkCurrent}
+                  </p>
+                </button>
+
+                <button
+                  className="h-8 min-w-[52px] rounded-md border border-slate-500/70 bg-slate-800 px-1 text-left"
                   onClick={() => {
                     setIsSelectingCheatKillTarget(false);
                     setIsSelectingRewriteTarget(false);
-                    setOpenPile("exhaust");
+                    setOpenPile("draw");
                   }}
                   type="button"
                 >
-                  {t("combat.exhaust")} {combat.exhaustPile.length}
+                  <p className="text-[7px] font-semibold uppercase tracking-wide text-slate-400">
+                    {t("combat.draw")}
+                  </p>
+                  <p className="text-[10px] font-black text-slate-100">
+                    {combat.drawPile.length}
+                  </p>
                 </button>
-              )}
 
+                <button
+                  className="h-8 min-w-[52px] rounded-md border border-red-700/60 bg-slate-800 px-1 text-left"
+                  onClick={() => {
+                    setIsSelectingCheatKillTarget(false);
+                    setIsSelectingRewriteTarget(false);
+                    setOpenPile("discard");
+                  }}
+                  type="button"
+                >
+                  <p className="text-[7px] font-semibold uppercase tracking-wide text-red-400/80">
+                    {t("combat.discard")}
+                  </p>
+                  <p className="text-[10px] font-black text-slate-100">
+                    {combat.discardPile.length}
+                  </p>
+                </button>
+
+                {combat.exhaustPile.length > 0 && (
+                  <button
+                    className="h-8 min-w-[42px] rounded-md border border-purple-700/60 bg-slate-800 px-1 text-[8px] font-semibold text-purple-300"
+                    onClick={() => {
+                      setIsSelectingCheatKillTarget(false);
+                      setIsSelectingRewriteTarget(false);
+                      setOpenPile("exhaust");
+                    }}
+                    type="button"
+                  >
+                    {t("combat.exhaust")} {combat.exhaustPile.length}
+                  </button>
+                )}
+
+                {usableItems.length === 0 ? (
+                  <div className="flex h-8 items-center rounded-md border border-amber-900/60 bg-slate-900/70 px-2 text-[8px] font-semibold uppercase tracking-wide text-amber-200/60">
+                    {t("combat.inventoryEmpty")}
+                  </div>
+                ) : (
+                  usableItems.map((item) => {
+                    const def = usableItemDefs.get(item.definitionId);
+                    if (!def) return null;
+                    const isSelected = selectedUsableItemId === item.instanceId;
+                    return (
+                      <button
+                        key={item.instanceId}
+                        type="button"
+                        onClick={() => handleUseItemClick(item.instanceId)}
+                        className={cn(
+                          "h-8 shrink-0 rounded-md border px-1.5 text-[8px] font-semibold uppercase tracking-wide transition",
+                          isSelected
+                            ? "border-amber-300 bg-amber-700/50 text-amber-50"
+                            : "border-amber-700/70 bg-slate-900/80 text-amber-200",
+                          !canAct && "cursor-not-allowed opacity-50"
+                        )}
+                        disabled={!canAct}
+                      >
+                        {localizeUsableItemName(def.id, def.name)}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+              {/* Fin du tour — ancré à droite, hors du scroll */}
               <button
+                type="button"
                 className={cn(
-                  "h-8 min-w-[96px] rounded-md px-2 text-[10px] font-black uppercase tracking-wide transition-all",
+                  "h-8 flex-shrink-0 rounded-lg px-2.5 text-[10px] font-black uppercase tracking-wide transition-all",
                   endTurnClass
                 )}
                 disabled={!canAct}
@@ -1417,35 +1449,6 @@ export function CombatView({
               >
                 {t("combat.endTurn")}
               </button>
-
-              {usableItems.length === 0 ? (
-                <div className="flex h-8 items-center rounded-md border border-amber-900/60 bg-slate-900/70 px-2 text-[8px] font-semibold uppercase tracking-wide text-amber-200/60">
-                  {t("combat.inventoryEmpty")}
-                </div>
-              ) : (
-                usableItems.map((item) => {
-                  const def = usableItemDefs.get(item.definitionId);
-                  if (!def) return null;
-                  const isSelected = selectedUsableItemId === item.instanceId;
-                  return (
-                    <button
-                      key={item.instanceId}
-                      type="button"
-                      onClick={() => handleUseItemClick(item.instanceId)}
-                      className={cn(
-                        "h-8 shrink-0 rounded-md border px-1.5 text-[8px] font-semibold uppercase tracking-wide transition",
-                        isSelected
-                          ? "border-amber-300 bg-amber-700/50 text-amber-50"
-                          : "border-amber-700/70 bg-slate-900/80 text-amber-200",
-                        !canAct && "cursor-not-allowed opacity-50"
-                      )}
-                      disabled={!canAct}
-                    >
-                      {localizeUsableItemName(def.id, def.name)}
-                    </button>
-                  );
-                })
-              )}
             </div>
           </div>
 
@@ -1651,139 +1654,406 @@ export function CombatView({
       {mobileInfoPanel && (
         <div
           data-keep-selection="true"
-          className="fixed inset-0 z-[90] flex items-center justify-center bg-black/65 p-3 lg:hidden"
+          className="fixed inset-0 z-[90] flex items-end lg:hidden"
+          style={{ background: "rgba(0,0,0,0.6)" }}
           onClick={() => setMobileInfoPanel(null)}
         >
           <div
             data-keep-selection="true"
-            className="w-full max-w-sm rounded-xl border border-slate-600 bg-slate-900/95 p-3 text-[11px] text-slate-200 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
+            className="w-full overflow-hidden rounded-t-3xl bg-slate-950 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            {mobileInfoPanel.type === "player" && (
-              <div className="space-y-1.5">
-                <p className="text-sm font-bold text-indigo-200">
-                  {t("combat.player")}
-                </p>
-                <p>
-                  {t("combat.hp")} {Math.max(0, combat.player.currentHp)}/
-                  {combat.player.maxHp}
-                </p>
-                <p>
-                  {t("combat.block")} {combat.player.block}
-                </p>
-                <p>
-                  {t("combat.energyShort")} {combat.player.energyCurrent}/
-                  {combat.player.energyMax} | {t("inkGauge.ink")}{" "}
-                  {combat.player.inkCurrent}/{combat.player.inkMax}
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {renderCompactBuffs(buildPlayerMarkerBuffs(combat.player))}
-                </div>
-              </div>
-            )}
+            {/* Handle bar */}
+            <div className="flex justify-center pb-1 pt-2.5">
+              <div className="h-1 w-10 rounded-full bg-slate-700" />
+            </div>
 
-            {mobileInfoPanel.type === "ally" &&
-              mobileInfoAlly &&
-              (() => {
-                const def = allyDefs.get(mobileInfoAlly.definitionId);
-                const intent = def?.abilities[mobileInfoAlly.intentIndex];
-                return (
-                  <div className="space-y-1.5">
-                    <p className="text-sm font-bold text-cyan-200">
-                      {mobileInfoAlly.name}
-                    </p>
-                    <p>
-                      {t("combat.hp")} {Math.max(0, mobileInfoAlly.currentHp)}/
-                      {mobileInfoAlly.maxHp}
-                    </p>
-                    <p>
-                      {t("combat.block")} {mobileInfoAlly.block}
-                    </p>
-                    <p>
-                      {t("combat.spd")} {mobileInfoAlly.speed}
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {renderCompactBuffs(mobileInfoAlly.buffs)}
-                    </div>
-                    {intent ? (
-                      <p>
-                        {intent.name}: {formatAllyIntent(intent, t)}
-                      </p>
-                    ) : (
-                      <p>{t("combat.noAbility")}</p>
-                    )}
-                  </div>
-                );
-              })()}
-
+            {/* ── ENNEMI ── */}
             {mobileInfoPanel.type === "enemy" &&
               mobileInfoEnemy &&
               (() => {
-                const def = enemyDefs.get(mobileInfoEnemy.definitionId);
-                const ability = def?.abilities[mobileInfoEnemy.intentIndex];
+                const enemy = mobileInfoEnemy;
+                const def = enemyDefs.get(enemy.definitionId);
+                const ability = def?.abilities[enemy.intentIndex];
                 const resolvedTarget = ability
-                  ? resolveEnemyAbilityTarget(combat, mobileInfoEnemy, ability)
+                  ? resolveEnemyAbilityTarget(combat, enemy, ability)
                   : "player";
                 const hideIntent = shouldHideEnemyIntent(
                   combat.difficultyLevel ?? 0,
                   combat.turnNumber,
-                  mobileInfoEnemy
+                  enemy
                 );
+                const hpRatio =
+                  enemy.maxHp > 0
+                    ? Math.max(0, enemy.currentHp) / enemy.maxHp
+                    : 0;
+                const canTargetNow =
+                  selectingEnemyTarget &&
+                  selectedCardId !== null &&
+                  !actingEnemyId &&
+                  enemy.currentHp > 0;
+
                 return (
-                  <div className="space-y-1.5">
-                    <p className="text-sm font-bold text-rose-200">
-                      {getEnemyDisplayName(mobileInfoEnemy)}
-                    </p>
-                    <p>
-                      {t("combat.hp")} {Math.max(0, mobileInfoEnemy.currentHp)}/
-                      {mobileInfoEnemy.maxHp}
-                    </p>
-                    <p>
-                      {t("combat.block")} {mobileInfoEnemy.block}
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {renderCompactBuffs(mobileInfoEnemy.buffs)}
-                    </div>
-                    {ability && !hideIntent ? (
-                      <div>
-                        <p>
-                          {localizeEnemyAbilityName(
-                            mobileInfoEnemy.definitionId,
-                            ability.name
-                          )}{" "}
-                          {"->"}{" "}
-                          {resolveEnemyIntentTargetLabel(
-                            combat,
-                            resolvedTarget,
-                            t
-                          )}
-                        </p>
-                        <div className="mt-1 flex flex-wrap gap-1">
-                          {renderEnemyIntentEffects(
-                            ability.effects,
-                            t,
-                            combat,
-                            mobileInfoEnemy,
-                            ability,
-                            resolvedTarget
-                          )}
+                  <>
+                    {/* Header gradient */}
+                    <div className="relative overflow-hidden bg-gradient-to-b from-rose-950/90 to-slate-950 px-5 pb-5 pt-3">
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(220,38,38,0.2),transparent_60%)]" />
+                      <div className="relative flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-rose-400/70">
+                            Ennemi
+                          </p>
+                          <h2 className="mt-0.5 truncate text-2xl font-black text-white">
+                            {getEnemyDisplayName(enemy)}
+                          </h2>
+                          <div className="mt-3">
+                            <div className="mb-1 flex justify-between text-xs">
+                              <span className="text-slate-400">PV</span>
+                              <span className="font-bold text-slate-200">
+                                {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
+                              </span>
+                            </div>
+                            <div className="h-2.5 overflow-hidden rounded-full bg-slate-800">
+                              <div
+                                className={cn(
+                                  "h-full rounded-full transition-all duration-500",
+                                  hpRatio > 0.5
+                                    ? "bg-gradient-to-r from-emerald-500 to-green-400"
+                                    : hpRatio > 0.25
+                                      ? "bg-gradient-to-r from-amber-500 to-yellow-400"
+                                      : "bg-gradient-to-r from-red-600 to-rose-400"
+                                )}
+                                style={{ width: `${hpRatio * 100}%` }}
+                              />
+                            </div>
+                          </div>
                         </div>
+                        {enemy.block > 0 && (
+                          <div className="flex flex-shrink-0 flex-col items-center rounded-2xl border border-blue-500/40 bg-blue-950/80 px-4 py-2">
+                            <p className="text-[9px] font-bold uppercase tracking-wider text-blue-400">
+                              Armure
+                            </p>
+                            <p className="text-2xl font-black text-blue-200">
+                              {enemy.block}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <p>{hideIntent ? t("enemyCard.intentHidden") : "-"}</p>
-                    )}
-                  </div>
+                    </div>
+
+                    {/* Body */}
+                    <div className="max-h-[40vh] space-y-3 overflow-y-auto px-5 py-3">
+                      {/* Intent */}
+                      <div>
+                        <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                          Prochain coup
+                        </p>
+                        {ability && !hideIntent ? (
+                          <div className="rounded-2xl border border-rose-800/50 bg-rose-950/30 px-4 py-3">
+                            <p className="text-sm font-bold text-rose-200">
+                              {localizeEnemyAbilityName(
+                                enemy.definitionId,
+                                ability.name
+                              )}
+                              <span className="ml-2 text-xs font-normal text-slate-400">
+                                →{" "}
+                                {resolveEnemyIntentTargetLabel(
+                                  combat,
+                                  resolvedTarget,
+                                  t
+                                )}
+                              </span>
+                            </p>
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              {renderEnemyIntentEffects(
+                                ability.effects,
+                                t,
+                                combat,
+                                enemy,
+                                ability,
+                                resolvedTarget
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="rounded-2xl border border-slate-800 bg-slate-900/40 px-4 py-3">
+                            <p className="text-sm text-slate-500">
+                              {hideIntent ? t("enemyCard.intentHidden") : "—"}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Buffs */}
+                      {enemy.buffs.length > 0 && (
+                        <div>
+                          <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                            Effets actifs
+                          </p>
+                          <div className="rounded-2xl border border-slate-800/60 bg-slate-900/40 px-4 py-3">
+                            {renderBuffTooltipDetails(enemy.buffs)}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-2.5 px-5 pb-8 pt-2">
+                      {canTargetNow && (
+                        <button
+                          type="button"
+                          data-keep-selection="true"
+                          className="flex-1 rounded-2xl border border-red-400/30 bg-gradient-to-r from-red-700 to-rose-600 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-[0_0_18px_rgba(239,68,68,0.35)]"
+                          onClick={() => {
+                            handleEnemyClick(enemy.instanceId);
+                            setMobileInfoPanel(null);
+                          }}
+                        >
+                          {t("combat.chooseTargetCta")}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        data-keep-selection="true"
+                        className="flex-1 rounded-2xl border border-slate-700 bg-slate-800 py-3.5 text-sm font-semibold text-slate-300"
+                        onClick={() => setMobileInfoPanel(null)}
+                      >
+                        {t("common.close")}
+                      </button>
+                    </div>
+                  </>
                 );
               })()}
 
-            <button
-              type="button"
-              data-keep-selection="true"
-              className="mt-3 w-full rounded border border-slate-600 px-2 py-1.5 text-xs font-semibold text-slate-200"
-              onClick={() => setMobileInfoPanel(null)}
-            >
-              {t("common.close")}
-            </button>
+            {/* ── JOUEUR ── */}
+            {mobileInfoPanel.type === "player" &&
+              (() => {
+                const player = combat.player;
+                const hpRatio =
+                  player.maxHp > 0
+                    ? Math.max(0, player.currentHp) / player.maxHp
+                    : 0;
+                const playerBuffs = buildPlayerMarkerBuffs(player);
+
+                return (
+                  <>
+                    <div className="relative overflow-hidden bg-gradient-to-b from-indigo-950/90 to-slate-950 px-5 pb-5 pt-3">
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(99,102,241,0.2),transparent_60%)]" />
+                      <div className="relative flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-indigo-400/70">
+                            Joueur
+                          </p>
+                          <h2 className="mt-0.5 text-2xl font-black text-white">
+                            {t("combat.player")}
+                          </h2>
+                          <div className="mt-3">
+                            <div className="mb-1 flex justify-between text-xs">
+                              <span className="text-slate-400">PV</span>
+                              <span className="font-bold text-slate-200">
+                                {Math.max(0, player.currentHp)}/{player.maxHp}
+                              </span>
+                            </div>
+                            <div className="h-2.5 overflow-hidden rounded-full bg-slate-800">
+                              <div
+                                className={cn(
+                                  "h-full rounded-full transition-all duration-500",
+                                  hpRatio > 0.5
+                                    ? "bg-gradient-to-r from-emerald-500 to-green-400"
+                                    : hpRatio > 0.25
+                                      ? "bg-gradient-to-r from-amber-500 to-yellow-400"
+                                      : "bg-gradient-to-r from-red-600 to-rose-400"
+                                )}
+                                style={{ width: `${hpRatio * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        {player.block > 0 && (
+                          <div className="flex flex-shrink-0 flex-col items-center rounded-2xl border border-blue-500/40 bg-blue-950/80 px-4 py-2">
+                            <p className="text-[9px] font-bold uppercase tracking-wider text-blue-400">
+                              Armure
+                            </p>
+                            <p className="text-2xl font-black text-blue-200">
+                              {player.block}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="max-h-[40vh] space-y-3 overflow-y-auto px-5 py-3">
+                      {/* Stats */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="rounded-2xl border border-yellow-800/40 bg-yellow-950/20 px-4 py-2.5">
+                          <p className="text-[9px] font-bold uppercase tracking-wider text-yellow-500">
+                            Énergie
+                          </p>
+                          <p className="text-xl font-black text-yellow-200">
+                            {player.energyCurrent}
+                            <span className="text-sm font-normal text-slate-500">
+                              /{player.energyMax}
+                            </span>
+                          </p>
+                        </div>
+                        <div className="rounded-2xl border border-cyan-800/40 bg-cyan-950/20 px-4 py-2.5">
+                          <p className="text-[9px] font-bold uppercase tracking-wider text-cyan-500">
+                            Encre
+                          </p>
+                          <p className="text-xl font-black text-cyan-200">
+                            {player.inkCurrent}
+                            <span className="text-sm font-normal text-slate-500">
+                              /{player.inkMax}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Buffs */}
+                      {playerBuffs.length > 0 && (
+                        <div>
+                          <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                            Effets actifs
+                          </p>
+                          <div className="rounded-2xl border border-slate-800/60 bg-slate-900/40 px-4 py-3">
+                            {renderBuffTooltipDetails(playerBuffs)}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="px-5 pb-8 pt-2">
+                      <button
+                        type="button"
+                        data-keep-selection="true"
+                        className="w-full rounded-2xl border border-slate-700 bg-slate-800 py-3.5 text-sm font-semibold text-slate-300"
+                        onClick={() => setMobileInfoPanel(null)}
+                      >
+                        {t("common.close")}
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
+
+            {/* ── ALLIÉ ── */}
+            {mobileInfoPanel.type === "ally" &&
+              mobileInfoAlly &&
+              (() => {
+                const ally = mobileInfoAlly;
+                const def = allyDefs.get(ally.definitionId);
+                const intent = def?.abilities[ally.intentIndex];
+                const hpRatio =
+                  ally.maxHp > 0 ? Math.max(0, ally.currentHp) / ally.maxHp : 0;
+                const canTargetAlly =
+                  (selectingAllyTarget || selfCanRetargetToAlly) &&
+                  selectedCardId !== null &&
+                  ally.currentHp > 0;
+
+                return (
+                  <>
+                    <div className="relative overflow-hidden bg-gradient-to-b from-cyan-950/90 to-slate-950 px-5 pb-5 pt-3">
+                      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(6,182,212,0.2),transparent_60%)]" />
+                      <div className="relative flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-400/70">
+                            Allié
+                          </p>
+                          <h2 className="mt-0.5 truncate text-2xl font-black text-white">
+                            {ally.name}
+                          </h2>
+                          <div className="mt-3">
+                            <div className="mb-1 flex justify-between text-xs">
+                              <span className="text-slate-400">PV</span>
+                              <span className="font-bold text-slate-200">
+                                {Math.max(0, ally.currentHp)}/{ally.maxHp}
+                              </span>
+                            </div>
+                            <div className="h-2.5 overflow-hidden rounded-full bg-slate-800">
+                              <div
+                                className={cn(
+                                  "h-full rounded-full transition-all duration-500",
+                                  hpRatio > 0.5
+                                    ? "bg-gradient-to-r from-emerald-500 to-green-400"
+                                    : hpRatio > 0.25
+                                      ? "bg-gradient-to-r from-amber-500 to-yellow-400"
+                                      : "bg-gradient-to-r from-red-600 to-rose-400"
+                                )}
+                                style={{ width: `${hpRatio * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        {ally.block > 0 && (
+                          <div className="flex flex-shrink-0 flex-col items-center rounded-2xl border border-blue-500/40 bg-blue-950/80 px-4 py-2">
+                            <p className="text-[9px] font-bold uppercase tracking-wider text-blue-400">
+                              Armure
+                            </p>
+                            <p className="text-2xl font-black text-blue-200">
+                              {ally.block}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="max-h-[40vh] space-y-3 overflow-y-auto px-5 py-3">
+                      {/* Intent */}
+                      {intent && (
+                        <div>
+                          <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                            Prochain coup
+                          </p>
+                          <div className="rounded-2xl border border-cyan-800/50 bg-cyan-950/30 px-4 py-3">
+                            <p className="text-sm font-bold text-cyan-200">
+                              {intent.name}
+                              <span className="ml-2 text-xs font-normal text-slate-300">
+                                {formatAllyIntent(intent, t)}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Buffs */}
+                      {ally.buffs.length > 0 && (
+                        <div>
+                          <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                            Effets actifs
+                          </p>
+                          <div className="rounded-2xl border border-slate-800/60 bg-slate-900/40 px-4 py-3">
+                            {renderBuffTooltipDetails(ally.buffs)}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2.5 px-5 pb-8 pt-2">
+                      {canTargetAlly && (
+                        <button
+                          type="button"
+                          data-keep-selection="true"
+                          className="flex-1 rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-700 to-teal-600 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-[0_0_18px_rgba(6,182,212,0.35)]"
+                          onClick={() => {
+                            handleAllyClick(ally.instanceId);
+                            setMobileInfoPanel(null);
+                          }}
+                        >
+                          {t("combat.chooseTargetCta")}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        data-keep-selection="true"
+                        className="flex-1 rounded-2xl border border-slate-700 bg-slate-800 py-3.5 text-sm font-semibold text-slate-300"
+                        onClick={() => setMobileInfoPanel(null)}
+                      >
+                        {t("common.close")}
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
           </div>
         </div>
       )}
