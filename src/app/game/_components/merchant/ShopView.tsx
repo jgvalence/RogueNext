@@ -25,6 +25,7 @@ import {
 } from "@/lib/i18n/entity-text";
 import { CardPickerModal } from "../shared/CardPickerModal";
 import { useTranslation } from "react-i18next";
+import { allyDefinitions } from "@/game/data/allies";
 
 interface ShopViewProps {
   floor: number;
@@ -41,6 +42,8 @@ interface ShopViewProps {
   usableItems: UsableItemInstance[];
   usableItemCapacity: number;
   rerollCount: number;
+  allyIds: string[];
+  allySlots: number;
   onBuy: (item: ShopItem) => void;
   onReroll: () => void;
   onRemoveCard: (cardInstanceId: string) => void;
@@ -74,6 +77,8 @@ export function ShopView({
   usableItems,
   usableItemCapacity,
   rerollCount,
+  allyIds,
+  allySlots,
   onBuy,
   onReroll,
   onRemoveCard,
@@ -103,7 +108,9 @@ export function ShopView({
         relicDiscount,
         usableItems,
         usableItemCapacity,
-        unlockedRelicIds
+        unlockedRelicIds,
+        allyIds,
+        allySlots
       ),
     [
       floor,
@@ -117,6 +124,8 @@ export function ShopView({
       relicDiscount,
       usableItems,
       usableItemCapacity,
+      allyIds,
+      allySlots,
     ]
   );
   const [inventory, setInventory] = useState<ShopItem[]>(inventorySeed);
@@ -148,7 +157,9 @@ export function ShopView({
             relicDiscount,
             usableItems,
             usableItemCapacity,
-            unlockedRelicIds
+            unlockedRelicIds,
+            allyIds,
+            allySlots
           )
         );
         setSoldIds(new Set());
@@ -185,7 +196,9 @@ export function ShopView({
         relicDiscount,
         usableItems,
         usableItemCapacity,
-        unlockedRelicIds
+        unlockedRelicIds,
+        allyIds,
+        allySlots
       )
     );
     setSoldIds(new Set());
@@ -207,6 +220,10 @@ export function ShopView({
           const purgeSoldOut = isPurge && purgeUses >= purgeUsesPerVisit;
           const isMaxHp = item.type === "max_hp";
           const isUsableItem = item.type === "usable_item";
+          const isAlly = item.type === "ally";
+          const allyDef = isAlly
+            ? (allyDefinitions.find((a) => a.id === item.allyId) ?? null)
+            : null;
           const isUsableInventoryFull =
             usableItems.length >= usableItemCapacity;
           const canBuyItem = isUsableItem
@@ -235,7 +252,8 @@ export function ShopView({
                 item.type === "heal" && "border-green-500 bg-green-950/50",
                 isMaxHp && "border-red-500 bg-red-950/50",
                 isPurge && "border-rose-600 bg-rose-950/50",
-                isUsableItem && "border-orange-500 bg-orange-950/50"
+                isUsableItem && "border-orange-500 bg-orange-950/50",
+                isAlly && "border-teal-500 bg-teal-950/50"
               )}
             >
               <span className="text-2xl">
@@ -249,7 +267,9 @@ export function ShopView({
                         ? "M"
                         : item.type === "purge"
                           ? "P"
-                          : "U"}
+                          : item.type === "ally"
+                            ? "⚔"
+                            : "U"}
               </span>
 
               <span
@@ -265,7 +285,9 @@ export function ShopView({
                           ? "text-red-300"
                           : item.type === "purge"
                             ? "text-rose-300"
-                            : "text-orange-300"
+                            : item.type === "ally"
+                              ? "text-teal-300"
+                              : "text-orange-300"
                 )}
               >
                 {item.type === "card" && item.cardDef
@@ -278,10 +300,12 @@ export function ShopView({
                         ? t("shop.itemName.maxHp")
                         : item.type === "purge"
                           ? t("shop.itemName.purge")
-                          : localizeUsableItemName(
-                              item.usableItemDef?.id,
-                              item.usableItemDef?.name
-                            )}
+                          : item.type === "ally"
+                            ? (item.allyName ?? t("shop.itemName.ally"))
+                            : localizeUsableItemName(
+                                item.usableItemDef?.id,
+                                item.usableItemDef?.name
+                              )}
               </span>
 
               <span className="text-center text-xs text-gray-400">
@@ -302,10 +326,12 @@ export function ShopView({
                           })
                         : item.type === "purge"
                           ? t("shop.itemDescription.purge")
-                          : localizeUsableItemDescription(
-                              item.usableItemDef?.id,
-                              item.usableItemDef?.description
-                            )}
+                          : item.type === "ally"
+                            ? (item.allyDescription ?? "")
+                            : localizeUsableItemDescription(
+                                item.usableItemDef?.id,
+                                item.usableItemDef?.description
+                              )}
               </span>
 
               {item.type === "card" && item.cardDef && (
@@ -313,6 +339,21 @@ export function ShopView({
                   {localizeCardType(item.cardDef.type, t)} -{" "}
                   {t("shop.energyCost", { cost: item.cardDef.energyCost })}
                 </span>
+              )}
+
+              {isAlly && allyDef && (
+                <div className="w-full space-y-1">
+                  {allyDef.abilities.map((ability, i) => (
+                    <div
+                      key={i}
+                      className="rounded border border-teal-800/70 bg-teal-900/30 px-1.5 py-1"
+                    >
+                      <div className="truncate text-[10px] font-semibold text-teal-100">
+                        {ability.name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
 
               <span

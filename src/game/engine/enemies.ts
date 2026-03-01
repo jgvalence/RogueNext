@@ -12,6 +12,7 @@ import type { EffectTarget } from "./effects";
 import { applyPoison, applyBleed, tickBuffs, applyBuff } from "./buffs";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
+import { getDifficultyModifiers } from "./difficulty";
 
 const SPLIT_ASSAULT_NAME = "Split Assault";
 const PREDATOR_FORMATION_NAME = "Predator Formation";
@@ -60,11 +61,16 @@ function getEffectiveWeight(
   enemy: EnemyState
 ): number {
   let weight = Math.max(0.01, ability.weight ?? 1);
-  if (!ability.conditionalWeights) return weight;
-  for (const cw of ability.conditionalWeights) {
-    if (evaluateCondition(cw.condition, state, enemy)) {
-      weight *= cw.weightMultiplier;
+  if (ability.conditionalWeights) {
+    for (const cw of ability.conditionalWeights) {
+      if (evaluateCondition(cw.condition, state, enemy)) {
+        weight *= cw.weightMultiplier;
+      }
     }
+  }
+  if (ability.isDisruption) {
+    const diffMods = getDifficultyModifiers(state.difficultyLevel ?? 0);
+    weight += diffMods.disruptionWeightBonus;
   }
   return Math.max(0.01, weight);
 }

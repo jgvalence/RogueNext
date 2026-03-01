@@ -9,6 +9,7 @@ import type {
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 import { relicDefinitions } from "../data/relics";
+import { allyDefinitions } from "../data/allies";
 import { usableItemDefinitions, createUsableItemInstance } from "./items";
 import { GAME_CONSTANTS } from "../constants";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
@@ -112,7 +113,7 @@ function getShopRelicRarity(
 
 export interface ShopItem {
   id: string;
-  type: "card" | "relic" | "heal" | "max_hp" | "purge" | "usable_item";
+  type: "card" | "relic" | "heal" | "max_hp" | "purge" | "usable_item" | "ally";
   cardDef?: CardDefinition;
   usableItemDef?: UsableItemDefinition;
   relicId?: string;
@@ -120,6 +121,9 @@ export interface ShopItem {
   relicDescription?: string;
   healAmount?: number;
   maxHpAmount?: number;
+  allyId?: string;
+  allyName?: string;
+  allyDescription?: string;
   price: number;
 }
 
@@ -159,7 +163,9 @@ export function generateShopInventory(
   relicDiscount = 0,
   usableItems?: UsableItemInstance[],
   usableItemCapacity: number = GAME_CONSTANTS.MAX_USABLE_ITEMS,
-  unlockedRelicIds?: string[]
+  unlockedRelicIds?: string[],
+  currentAllyIds: string[] = [],
+  allySlots = 0
 ): ShopItem[] {
   const items: ShopItem[] = [];
   const lootLuck = getTotalLootLuck(ownedRelicIds);
@@ -271,6 +277,28 @@ export function generateShopInventory(
     });
   }
 
+  // Ally offer — only if the player has an open ally slot
+  const hasAllySlot = currentAllyIds.length < allySlots;
+  if (hasAllySlot) {
+    const availableAllies = allyDefinitions.filter(
+      (a) => !currentAllyIds.includes(a.id)
+    );
+    if (availableAllies.length > 0) {
+      const ally = rng.pick(availableAllies);
+      items.push({
+        id: nanoid(),
+        type: "ally",
+        allyId: ally.id,
+        allyName: ally.name,
+        allyDescription: `${ally.maxHp} HP · ${ally.speed} SPD`,
+        price: applyDifficultyShopPrice(
+          scaleShopPrice(120 + floor * 10),
+          selectedDifficultyLevel
+        ),
+      });
+    }
+  }
+
   return items;
 }
 
@@ -343,6 +371,16 @@ export function buyShopItem(
     case "purge": {
       // Gold is deducted above. Card removal is handled by the UI
       // (opens CardPickerModal, then dispatches REMOVE_CARD_FROM_DECK).
+      break;
+    }
+    case "ally": {
+      if (!item.allyId) return null;
+      if (state.allyIds.includes(item.allyId)) return null;
+      state = {
+        ...state,
+        allyIds: [...state.allyIds, item.allyId],
+        // No entry in allyCurrentHps → ally starts at full HP next combat
+      };
       break;
     }
     case "usable_item": {

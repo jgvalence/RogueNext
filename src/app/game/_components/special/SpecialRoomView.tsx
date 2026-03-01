@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { CardInstance } from "@/game/schemas/cards";
 import type { RNG } from "@/game/engine/rng";
+import type { RunState } from "@/game/schemas/run-state";
 import {
   createGuaranteedRelicEvent,
   pickSpecialRoomTypeWithDifficulty,
@@ -33,6 +34,7 @@ interface SpecialRoomViewProps {
   rng: RNG;
   difficultyLevel: number;
   forceEventWithRelic?: boolean;
+  runState?: RunState;
   onHeal: () => void;
   onUpgrade: (cardInstanceId: string) => void;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
@@ -49,6 +51,7 @@ export function SpecialRoomView({
   rng,
   difficultyLevel,
   forceEventWithRelic = false,
+  runState,
   onHeal,
   onUpgrade,
   onEventChoice,
@@ -88,6 +91,7 @@ export function SpecialRoomView({
           rng={rng}
           difficultyLevel={difficultyLevel}
           forcedEvent={forcedEvent}
+          runState={runState}
           gold={gold}
           playerCurrentHp={playerCurrentHp}
           playerMaxHp={playerMaxHp}
@@ -239,6 +243,7 @@ function EventRoom({
   rng,
   difficultyLevel,
   forcedEvent,
+  runState,
   gold,
   playerCurrentHp,
   playerMaxHp,
@@ -250,6 +255,7 @@ function EventRoom({
   rng: RNG;
   difficultyLevel: number;
   forcedEvent: GameEvent | null;
+  runState?: RunState;
   gold: number;
   playerCurrentHp: number;
   playerMaxHp: number;
@@ -260,8 +266,8 @@ function EventRoom({
 }) {
   const { t } = useTranslation();
   const event = useMemo(
-    () => forcedEvent ?? pickEvent(rng, difficultyLevel),
-    [forcedEvent, rng, difficultyLevel]
+    () => forcedEvent ?? pickEvent(rng, difficultyLevel, runState),
+    [forcedEvent, rng, difficultyLevel, runState]
   );
   const [showPurgePicker, setShowPurgePicker] = useState(false);
 

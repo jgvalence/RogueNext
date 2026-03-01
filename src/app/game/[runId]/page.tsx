@@ -834,6 +834,8 @@ function GameContent({
               state.usableItemCapacity ?? GAME_CONSTANTS.MAX_USABLE_ITEMS
             }
             rerollCount={state.merchantRerollCount ?? 0}
+            allyIds={state.allyIds ?? []}
+            allySlots={state.metaBonuses?.allySlots ?? 0}
             onBuy={(item) =>
               dispatch({ type: "BUY_SHOP_ITEM", payload: { item } })
             }
@@ -861,6 +863,7 @@ function GameContent({
             rng={rng}
             difficultyLevel={state.selectedDifficultyLevel ?? 0}
             forceEventWithRelic={state.floor === 1 && state.currentRoom === 2}
+            runState={state}
             onHeal={handleHeal}
             onUpgrade={(cardInstanceId) => {
               dispatch({ type: "UPGRADE_CARD", payload: { cardInstanceId } });

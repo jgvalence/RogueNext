@@ -100,13 +100,7 @@ export function generateCombatRewards(
   // Biome resources (25% cross-biome chance via rng)
   const scaledBiomeResources: Partial<Record<BiomeResource, number>> = {};
   if (!disableBiomeResourceRewards) {
-    const biomeResources = getResourcesForCombat(
-      biome,
-      isElite,
-      isBoss,
-      floor,
-      rng
-    );
+    const biomeResources = getResourcesForCombat(biome, isElite, isBoss, floor);
     for (const [resource, amount] of Object.entries(biomeResources)) {
       scaledBiomeResources[resource as BiomeResource] = Math.max(
         0,

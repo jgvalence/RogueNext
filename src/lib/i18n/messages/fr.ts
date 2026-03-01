@@ -1007,6 +1007,7 @@ export const fr = {
     block: "Armure",
     noAbility: "Aucune capacite",
     activeEffects: "Effets actifs",
+    deadInCombat: "Mort au combat",
     next: "Suivant",
     devChooseEnemy: "DEV : choisissez un ennemi a tuer",
     player: "Joueur",
@@ -1134,6 +1135,7 @@ export const fr = {
       heal: "Soin",
       maxHp: "PV max",
       purge: "Purge",
+      ally: "Allié",
     },
     itemDescription: {
       heal: "Restaure {{amount}} PV",

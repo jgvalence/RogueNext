@@ -38,6 +38,7 @@ import { playSound } from "@/lib/sound";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { boostEffectsForUpgrade } from "@/game/engine/card-upgrades";
 import { calculateDamage } from "@/game/engine/damage";
+import { computeIncomingDamage } from "@/game/engine/incoming-damage";
 import { applyBuff } from "@/game/engine/buffs";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
 import { useTranslation } from "react-i18next";
@@ -384,6 +385,13 @@ export function CombatView({
     [combat.enemies]
   );
   const hasIncomingPreview = incomingDamageByEnemyId.size > 0;
+  const incomingDamage = useMemo(
+    () =>
+      combat.phase === "PLAYER_TURN"
+        ? computeIncomingDamage(combat, enemyDefs)
+        : { player: 0, allies: {} as Record<string, number> },
+    [combat, enemyDefs]
+  );
   const mobileFrontline = useMemo(
     () => [
       { type: "player" as const },
@@ -795,12 +803,18 @@ export function CombatView({
                       data-keep-selection="true"
                       onClick={() => setMobileInfoPanel({ type: "player" })}
                       className={cn(
-                        "h-[72px] rounded-lg border bg-indigo-950/40 px-1.5 py-1 text-left",
+                        "relative h-[72px] rounded-lg border bg-indigo-950/40 px-1.5 py-1 text-left",
                         playerHit
                           ? "border-red-400 shadow-[0_0_14px_rgba(248,113,113,0.4)]"
                           : "border-indigo-500/70"
                       )}
                     >
+                      {incomingDamage.player > 0 && (
+                        <IncomingDamageBadge
+                          damage={incomingDamage.player}
+                          block={combat.player.block}
+                        />
+                      )}
                       <p className="truncate text-[9px] font-bold text-indigo-100">
                         {t("combat.player")}
                       </p>
@@ -837,13 +851,20 @@ export function CombatView({
                     data-keep-selection="true"
                     onClick={() => handleMobileAllyPress(ally.instanceId)}
                     className={cn(
-                      "h-[72px] rounded-lg border bg-cyan-950/40 px-1.5 py-1 text-left",
+                      "relative h-[72px] rounded-lg border bg-cyan-950/40 px-1.5 py-1 text-left",
                       isDead
                         ? "border-slate-800 opacity-45 grayscale"
                         : "border-cyan-700/80",
                       canTarget && "border-cyan-300 ring-1 ring-cyan-300/70"
                     )}
                   >
+                    {!isDead &&
+                      (incomingDamage.allies[ally.instanceId] ?? 0) > 0 && (
+                        <IncomingDamageBadge
+                          damage={incomingDamage.allies[ally.instanceId]!}
+                          block={ally.block}
+                        />
+                      )}
                     <p className="truncate text-[9px] font-bold text-cyan-100">
                       {ally.name}
                     </p>
@@ -1037,6 +1058,20 @@ export function CombatView({
                     <div className="absolute -top-2 left-2 flex max-w-[90%] items-center gap-1 overflow-hidden">
                       {renderCompactBuffs(ally.buffs)}
                     </div>
+                    {isDead && (
+                      <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl">
+                        <span className="text-center text-[10px] font-bold text-red-400">
+                          {t("combat.deadInCombat")}
+                        </span>
+                      </div>
+                    )}
+                    {!isDead &&
+                      (incomingDamage.allies[ally.instanceId] ?? 0) > 0 && (
+                        <IncomingDamageBadge
+                          damage={incomingDamage.allies[ally.instanceId]!}
+                          block={ally.block}
+                        />
+                      )}
                     <div className="mb-1 flex h-14 items-center justify-center rounded-lg border border-cyan-900/60 bg-cyan-950/70 text-2xl sm:h-16 lg:h-28">
                       *
                     </div>
@@ -1100,6 +1135,12 @@ export function CombatView({
                 <div className="absolute -top-2 left-2 flex max-w-[90%] items-center gap-1 overflow-hidden">
                   {renderCompactBuffs(buildPlayerMarkerBuffs(combat.player))}
                 </div>
+                {incomingDamage.player > 0 && (
+                  <IncomingDamageBadge
+                    damage={incomingDamage.player}
+                    block={combat.player.block}
+                  />
+                )}
                 <div className="mb-1 flex h-14 items-center justify-center overflow-hidden rounded-lg border border-indigo-800/70 bg-indigo-950/75 sm:h-16 lg:h-28">
                   {!avatarFailed ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -2721,4 +2762,31 @@ function resolveEnemyIntentTargetLabel(
       : t("combat.enemy");
   }
   return t("combat.you");
+}
+
+/**
+ * Small badge showing incoming damage for the next enemy turn.
+ * Red   = net damage after current block (block < damage).
+ * Green = current block fully absorbs the hit.
+ */
+function IncomingDamageBadge({
+  damage,
+  block,
+}: {
+  damage: number;
+  block: number;
+}) {
+  const covered = block >= damage;
+  return (
+    <div
+      className={cn(
+        "absolute -top-3 right-1 z-20 rounded border px-1 py-0.5 text-[10px] font-bold",
+        covered
+          ? "border-green-700/80 bg-green-950/90 text-green-300"
+          : "border-red-700/80 bg-red-950/90 text-red-300"
+      )}
+    >
+      {covered ? "🛡" : "⚔"} {damage}
+    </div>
+  );
 }

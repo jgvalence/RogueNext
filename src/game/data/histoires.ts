@@ -14,7 +14,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Encyclopédie du Savoir",
     biome: "LIBRARY",
     tier: 1,
-    cout: { PAGES: 8 },
+    cout: { PAGES: 11 },
     prerequis: [],
     bonus: { type: "EXTRA_DRAW", value: 1 },
     description:
@@ -26,7 +26,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Traité de l'Énergie",
     biome: "LIBRARY",
     tier: 1,
-    cout: { PAGES: 10 },
+    cout: { PAGES: 14 },
     prerequis: [],
     bonus: { type: "EXTRA_ENERGY_MAX", value: 1 },
     description:
@@ -38,7 +38,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Grimoire des Index",
     biome: "LIBRARY",
     tier: 2,
-    cout: { PAGES: 18 },
+    cout: { PAGES: 24 },
     prerequis: ["encyclopedie_du_savoir"],
     bonus: { type: "EXTRA_HAND_AT_START", value: 2 },
     description:
@@ -50,7 +50,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Manuel de Révision",
     biome: "LIBRARY",
     tier: 2,
-    cout: { PAGES: 20 },
+    cout: { PAGES: 26 },
     prerequis: ["traite_de_lenergie"],
     bonus: { type: "FREE_UPGRADE_PER_RUN" },
     description:
@@ -62,7 +62,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Codex Infini",
     biome: "LIBRARY",
     tier: 3,
-    cout: { PAGES: 55, LAURIERS: 8 },
+    cout: { PAGES: 72, LAURIERS: 8 },
     prerequis: ["grimoire_des_index", "manuel_de_revision"],
     bonus: { type: "EXTRA_DRAW", value: 1 },
     description:
@@ -79,7 +79,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Anonyme",
     biome: "VIKING",
     tier: 1,
-    cout: { RUNES: 8 },
+    cout: { RUNES: 11 },
     prerequis: [],
     bonus: { type: "STARTING_STRENGTH", value: 1 },
     description:
@@ -91,7 +91,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Edda des Berserkers",
     biome: "VIKING",
     tier: 1,
-    cout: { RUNES: 10 },
+    cout: { RUNES: 14 },
     prerequis: [],
     bonus: { type: "EXTRA_HP", value: 15 },
     description: "Les chants sacrés des guerriers frénétiques. +15 HP max.",
@@ -102,7 +102,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Chant de Skald",
     biome: "VIKING",
     tier: 2,
-    cout: { RUNES: 18 },
+    cout: { RUNES: 24 },
     prerequis: ["saga_de_ragnar"],
     bonus: { type: "ATTACK_BONUS", value: 1 },
     description:
@@ -114,7 +114,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Runes du Valhalla",
     biome: "VIKING",
     tier: 2,
-    cout: { RUNES: 20 },
+    cout: { RUNES: 26 },
     prerequis: ["edda_des_berserkers"],
     bonus: { type: "SURVIVAL_ONCE" },
     description:
@@ -126,7 +126,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Poème de Beowulf",
     biome: "VIKING",
     tier: 3,
-    cout: { RUNES: 55, PAGES: 8 },
+    cout: { RUNES: 72, PAGES: 8 },
     prerequis: ["chant_de_skald", "runes_du_valhalla"],
     bonus: { type: "STARTING_STRENGTH", value: 2 },
     description:
@@ -143,7 +143,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Homère",
     biome: "GREEK",
     tier: 1,
-    cout: { LAURIERS: 8 },
+    cout: { LAURIERS: 11 },
     prerequis: [],
     bonus: { type: "STARTING_GOLD", value: 25 },
     description:
@@ -156,7 +156,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Platon",
     biome: "GREEK",
     tier: 1,
-    cout: { LAURIERS: 10 },
+    cout: { LAURIERS: 14 },
     prerequis: [],
     bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
     description:
@@ -168,7 +168,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Les Travaux d'Héraclès",
     biome: "GREEK",
     tier: 2,
-    cout: { LAURIERS: 18 },
+    cout: { LAURIERS: 24 },
     prerequis: ["l_odyssee"],
     bonus: { type: "RELIC_DISCOUNT", value: 20 },
     description:
@@ -181,7 +181,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Homère",
     biome: "GREEK",
     tier: 2,
-    cout: { LAURIERS: 20 },
+    cout: { LAURIERS: 26 },
     prerequis: ["la_republique"],
     bonus: { type: "STARTING_RARE_CARD" },
     description:
@@ -194,7 +194,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Platon",
     biome: "GREEK",
     tier: 3,
-    cout: { LAURIERS: 55, PAGES: 8 },
+    cout: { LAURIERS: 72, PAGES: 8 },
     prerequis: ["les_travaux_d_heracles", "hymnes_homeriques"],
     bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
     description:
@@ -210,7 +210,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Livre des Morts",
     biome: "EGYPTIAN",
     tier: 1,
-    cout: { GLYPHES: 8 },
+    cout: { GLYPHES: 11 },
     prerequis: [],
     bonus: { type: "EXTRA_INK_MAX", value: 2 },
     description:
@@ -222,7 +222,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Hymne à Rê",
     biome: "EGYPTIAN",
     tier: 1,
-    cout: { GLYPHES: 10 },
+    cout: { GLYPHES: 14 },
     prerequis: [],
     bonus: { type: "INK_PER_CARD_CHANCE", value: 35 },
     description:
@@ -234,7 +234,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Textes des Pyramides",
     biome: "EGYPTIAN",
     tier: 2,
-    cout: { GLYPHES: 18 },
+    cout: { GLYPHES: 24 },
     prerequis: ["livre_des_morts"],
     bonus: { type: "UNLOCK_INK_POWER", power: "LOST_CHAPTER" },
     description:
@@ -246,7 +246,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Papyrus d'Ani",
     biome: "EGYPTIAN",
     tier: 2,
-    cout: { GLYPHES: 20 },
+    cout: { GLYPHES: 26 },
     prerequis: ["hymne_a_re"],
     bonus: { type: "STARTING_INK", value: 3 },
     description:
@@ -258,7 +258,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Rituel du Soleil",
     biome: "EGYPTIAN",
     tier: 3,
-    cout: { GLYPHES: 55, PAGES: 8 },
+    cout: { GLYPHES: 72, PAGES: 8 },
     prerequis: ["textes_des_pyramides", "papyrus_d_ani"],
     bonus: { type: "UNLOCK_INK_POWER", power: "SEAL" },
     description:
@@ -274,7 +274,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Codex Féjerváry",
     biome: "AZTEC",
     tier: 1,
-    cout: { OBSIDIENNE: 8 },
+    cout: { OBSIDIENNE: 11 },
     prerequis: [],
     bonus: { type: "EXTRA_HP", value: 10 },
     description:
@@ -286,7 +286,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Calendrier de Pierre",
     biome: "AZTEC",
     tier: 1,
-    cout: { OBSIDIENNE: 10 },
+    cout: { OBSIDIENNE: 14 },
     prerequis: [],
     bonus: { type: "HEAL_AFTER_COMBAT_FLAT", value: 3 },
     description:
@@ -298,7 +298,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Chant de Quetzalcoatl",
     biome: "AZTEC",
     tier: 2,
-    cout: { OBSIDIENNE: 18 },
+    cout: { OBSIDIENNE: 24 },
     prerequis: ["codex_fejerváry"],
     bonus: { type: "EXTRA_HP", value: 10 },
     description:
@@ -310,7 +310,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Rite du Soleil Noir",
     biome: "AZTEC",
     tier: 2,
-    cout: { OBSIDIENNE: 20 },
+    cout: { OBSIDIENNE: 26 },
     prerequis: ["calendrier_de_pierre"],
     bonus: { type: "HEAL_AFTER_COMBAT_FLAT", value: 3 },
     description:
@@ -322,7 +322,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Sacrifice Cosmique",
     biome: "AZTEC",
     tier: 3,
-    cout: { OBSIDIENNE: 55, RUNES: 8 },
+    cout: { OBSIDIENNE: 72, RUNES: 8 },
     prerequis: ["chant_de_quetzalcoatl", "rite_du_soleil_noir"],
     bonus: { type: "EXTRA_HP", value: 10 },
     description:
@@ -339,7 +339,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Abdul Alhazred",
     biome: "LOVECRAFTIAN",
     tier: 1,
-    cout: { FRAGMENTS: 8 },
+    cout: { FRAGMENTS: 11 },
     prerequis: [],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 30 },
     description:
@@ -351,7 +351,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Journal de Miskatonic",
     biome: "LOVECRAFTIAN",
     tier: 1,
-    cout: { FRAGMENTS: 10 },
+    cout: { FRAGMENTS: 14 },
     prerequis: [],
     bonus: { type: "STARTING_RARE_CARD" },
     description:
@@ -364,7 +364,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Von Junzt",
     biome: "LOVECRAFTIAN",
     tier: 2,
-    cout: { FRAGMENTS: 18 },
+    cout: { FRAGMENTS: 24 },
     prerequis: ["necronomicon_fragment"],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 30 },
     description:
@@ -376,7 +376,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Mondes Sans Nom",
     biome: "LOVECRAFTIAN",
     tier: 2,
-    cout: { FRAGMENTS: 20 },
+    cout: { FRAGMENTS: 26 },
     prerequis: ["journal_de_miskatonic"],
     bonus: { type: "SURVIVAL_ONCE" },
     description:
@@ -388,7 +388,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Signe des Anciens",
     biome: "LOVECRAFTIAN",
     tier: 3,
-    cout: { FRAGMENTS: 55, GLYPHES: 8 },
+    cout: { FRAGMENTS: 72, GLYPHES: 8 },
     prerequis: ["cultes_innommables", "mondes_sans_nom"],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 20 },
     description:
@@ -404,7 +404,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Mabinogion",
     biome: "CELTIC",
     tier: 1,
-    cout: { AMBRE: 8 },
+    cout: { AMBRE: 11 },
     prerequis: [],
     bonus: { type: "STARTING_BLOCK", value: 3 },
     description:
@@ -416,7 +416,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Cycle d'Ulster",
     biome: "CELTIC",
     tier: 1,
-    cout: { AMBRE: 10 },
+    cout: { AMBRE: 14 },
     prerequis: [],
     bonus: { type: "STARTING_REGEN", value: 1 },
     description:
@@ -428,7 +428,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Taliesin",
     biome: "CELTIC",
     tier: 2,
-    cout: { AMBRE: 18 },
+    cout: { AMBRE: 24 },
     prerequis: ["mabinogion"],
     bonus: { type: "STARTING_BLOCK", value: 3 },
     description:
@@ -440,7 +440,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Les Triades Galloises",
     biome: "CELTIC",
     tier: 2,
-    cout: { AMBRE: 20 },
+    cout: { AMBRE: 26 },
     prerequis: ["cycle_d_ulster"],
     bonus: { type: "ATTACK_BONUS", value: 1 },
     description:
@@ -452,7 +452,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Chaudron de Dagda",
     biome: "CELTIC",
     tier: 3,
-    cout: { AMBRE: 55, OBSIDIENNE: 8 },
+    cout: { AMBRE: 72, OBSIDIENNE: 8 },
     prerequis: ["taliesin", "les_triades_galloises"],
     bonus: { type: "STARTING_BLOCK", value: 4 },
     description:
@@ -468,7 +468,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Byliny de Ilya",
     biome: "RUSSIAN",
     tier: 1,
-    cout: { SCEAUX: 8 },
+    cout: { SCEAUX: 11 },
     prerequis: [],
     bonus: { type: "STARTING_BLOCK", value: 4 },
     description:
@@ -480,7 +480,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Contes de Baba Yaga",
     biome: "RUSSIAN",
     tier: 1,
-    cout: { SCEAUX: 10 },
+    cout: { SCEAUX: 14 },
     prerequis: [],
     bonus: { type: "FIRST_HIT_DAMAGE_REDUCTION", value: 30 },
     description:
@@ -492,7 +492,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "L'Oiseau de Feu",
     biome: "RUSSIAN",
     tier: 2,
-    cout: { SCEAUX: 18 },
+    cout: { SCEAUX: 24 },
     prerequis: ["byliny_de_ilya"],
     bonus: { type: "STARTING_GOLD", value: 20 },
     description:
@@ -504,7 +504,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Domovoi",
     biome: "RUSSIAN",
     tier: 2,
-    cout: { SCEAUX: 20 },
+    cout: { SCEAUX: 26 },
     prerequis: ["contes_de_baba_yaga"],
     bonus: { type: "STARTING_BLOCK", value: 4 },
     description:
@@ -516,7 +516,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Grand Livre des Sorts",
     biome: "RUSSIAN",
     tier: 3,
-    cout: { SCEAUX: 55, AMBRE: 8 },
+    cout: { SCEAUX: 72, AMBRE: 8 },
     prerequis: ["l_oiseau_de_feu", "domovoi"],
     bonus: { type: "EXTRA_ENERGY_MAX", value: 1 },
     description:
@@ -532,7 +532,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Épopée de Soundiata",
     biome: "AFRICAN",
     tier: 1,
-    cout: { MASQUES: 8 },
+    cout: { MASQUES: 11 },
     prerequis: [],
     bonus: { type: "ALLY_SLOTS", value: 1 },
     description:
@@ -544,7 +544,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Contes d'Anansi",
     biome: "AFRICAN",
     tier: 1,
-    cout: { MASQUES: 10 },
+    cout: { MASQUES: 14 },
     prerequis: [],
     bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
     description:
@@ -556,7 +556,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Rites de Passage",
     biome: "AFRICAN",
     tier: 2,
-    cout: { MASQUES: 18 },
+    cout: { MASQUES: 24 },
     prerequis: ["epopee_de_soundiata"],
     bonus: { type: "ALLY_SLOTS", value: 1 },
     description:
@@ -568,7 +568,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Masque de Légba",
     biome: "AFRICAN",
     tier: 2,
-    cout: { MASQUES: 20 },
+    cout: { MASQUES: 26 },
     prerequis: ["contes_d_anansi"],
     bonus: { type: "STARTING_STRENGTH", value: 1 },
     description:
@@ -580,7 +580,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Griot Immortel",
     biome: "AFRICAN",
     tier: 3,
-    cout: { MASQUES: 55, LAURIERS: 8 },
+    cout: { MASQUES: 72, LAURIERS: 8 },
     prerequis: ["rites_de_passage", "masque_de_legba"],
     bonus: { type: "ALLY_SLOTS", value: 1 },
     description:

@@ -998,6 +998,7 @@ export const en = {
     block: "Block",
     noAbility: "No ability",
     activeEffects: "Active effects",
+    deadInCombat: "Dead in combat",
     next: "Next",
     devChooseEnemy: "DEV: choose an enemy to kill",
     player: "Player",
@@ -1124,6 +1125,7 @@ export const en = {
       heal: "Heal",
       maxHp: "Max HP",
       purge: "Purge",
+      ally: "Ally",
     },
     itemDescription: {
       heal: "Restore {{amount}} HP",

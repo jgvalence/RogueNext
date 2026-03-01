@@ -56,6 +56,7 @@ export const EnemyAbilitySchema = z.object({
     .optional(),
   effects: z.array(EffectSchema),
   conditionalWeights: z.array(ConditionalWeightSchema).optional(),
+  isDisruption: z.boolean().optional(),
 });
 export type EnemyAbility = z.infer<typeof EnemyAbilitySchema>;
 

@@ -410,6 +410,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Void Library",
         weight: 1,
         target: "PLAYER",
+        isDisruption: true,
         effects: [
           { type: "DAMAGE", value: 7 },
           { type: "NEXT_DRAW_TO_DISCARD_THIS_TURN", value: 1 },
@@ -3020,6 +3021,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Bone Chain",
         weight: 1,
         target: "PLAYER",
+        isDisruption: true,
         effects: [
           { type: "DAMAGE", value: 14 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
@@ -3368,6 +3370,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Silk Snare",
         weight: 1,
         target: "PLAYER",
+        isDisruption: true,
         effects: [
           { type: "DAMAGE", value: 11 },
           { type: "FREEZE_HAND_CARDS", value: 1 },
@@ -3570,6 +3573,7 @@ function makeBiomeSignatureAbility(
             name: "Binding Footnote",
             weight: 1,
             target: "PLAYER",
+            isDisruption: true,
             effects: [
               { type: "DAMAGE", value: 4 },
               { type: "NEXT_DRAW_TO_DISCARD_THIS_TURN", value: 1 },
@@ -3582,6 +3586,7 @@ function makeBiomeSignatureAbility(
             name: "Berserk Tempo",
             weight: 1,
             target: "PLAYER",
+            isDisruption: true,
             effects: [
               { type: "DAMAGE", value: 7 },
               { type: "INCREASE_CARD_COST_THIS_TURN", value: 1 },
@@ -3594,6 +3599,7 @@ function makeBiomeSignatureAbility(
             name: "Aegis Oath",
             weight: 1,
             target: "SELF",
+            isDisruption: true,
             effects: [
               { type: "BLOCK", value: 8 },
               { type: "INCREASE_CARD_COST_THIS_TURN", value: 1 },
@@ -3606,6 +3612,7 @@ function makeBiomeSignatureAbility(
             name: "Burden of Sand",
             weight: 1,
             target: "PLAYER",
+            isDisruption: true,
             effects: [
               { type: "DAMAGE", value: 5 },
               { type: "REDUCE_DRAW_THIS_TURN", value: 1 },
@@ -3617,6 +3624,7 @@ function makeBiomeSignatureAbility(
         name: "Mind Freeze",
         weight: 1,
         target: "PLAYER",
+        isDisruption: true,
         effects: [
           { type: "DAMAGE", value: 4 },
           { type: "FREEZE_HAND_CARDS", value: 2 },
@@ -3628,6 +3636,7 @@ function makeBiomeSignatureAbility(
             name: "Ritual Tax",
             weight: 1,
             target: "PLAYER",
+            isDisruption: true,
             effects: [
               { type: "DAMAGE", value: 6 },
               { type: "INCREASE_CARD_COST_THIS_TURN", value: 1 },
@@ -3651,6 +3660,7 @@ function makeBiomeSignatureAbility(
         name: "Whiteout",
         weight: 1,
         target: "PLAYER",
+        isDisruption: true,
         effects: [
           { type: "DAMAGE", value: 5 },
           { type: "REDUCE_DRAW_THIS_TURN", value: 1 },
@@ -3661,6 +3671,7 @@ function makeBiomeSignatureAbility(
         name: "War Chorus",
         weight: role === "SUPPORT" || role === "CONTROL" ? 2 : 1,
         target: "PLAYER",
+        isDisruption: true,
         effects: [
           { type: "DAMAGE", value: 5 },
           {

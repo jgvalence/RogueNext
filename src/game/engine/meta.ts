@@ -3,7 +3,6 @@ import type { ComputedMetaBonuses, MetaBonus } from "../schemas/meta";
 import { DEFAULT_META_BONUSES } from "../schemas/meta";
 import type { CombatState } from "../schemas/combat-state";
 import { histoireDefinitions } from "../data/histoires";
-import type { RNG } from "./rng";
 
 /**
  * Biome → ressource principale produite par ce biome.
@@ -20,22 +19,19 @@ export const BIOME_RESOURCE: Record<BiomeType, BiomeResource> = {
   AFRICAN: "MASQUES",
 };
 
-// All biome resource keys for cross-biome drop logic
-const ALL_RESOURCES = Object.values(BIOME_RESOURCE) as BiomeResource[];
-
 /**
  * Calcule les ressources gagnées pour un combat donné.
  * - Normal : base faible
- * - Élite  : ×1.5
- * - Boss   : ×3
- * - 10% de chance de gagner 1 ressource d'un biome aléatoire différent
+ * - Élite  : ×1.35
+ * - Boss   : ×2.2
+ * - LIBRARY (PAGES) : ×1.5 pour une progression rapide en onboarding
+ * - Autres biomes : ×0.7 pour ralentir la progression méta
  */
 export function getResourcesForCombat(
   biome: BiomeType,
   isElite: boolean,
   isBoss: boolean,
-  floor: number,
-  rng?: RNG
+  floor: number
 ): Partial<Record<BiomeResource, number>> {
   const safeFloor = Math.max(1, Math.floor(floor));
   const base = 1 + Math.floor((safeFloor - 1) * 0.5);
@@ -47,16 +43,14 @@ export function getResourcesForCombat(
   }
 
   const primaryResource = BIOME_RESOURCE[biome];
-  const result: Partial<Record<BiomeResource, number>> = {
-    [primaryResource]: amount,
-  };
 
-  // 10% chance d'obtenir 1 ressource d'un biome aléatoire différent
-  if (rng && rng.next() < 0.05) {
-    const otherResources = ALL_RESOURCES.filter((r) => r !== primaryResource);
-    const bonus = rng.pick(otherResources);
-    result[bonus] = (result[bonus] ?? 0) + 1;
-  }
+  // Bibliothèque rapporte plus (onboarding rapide), autres biomes rapportent moins
+  const biomeMultiplier = biome === "LIBRARY" ? 1.5 : 0.7;
+  const finalAmount = Math.max(1, Math.round(amount * biomeMultiplier));
+
+  const result: Partial<Record<BiomeResource, number>> = {
+    [primaryResource]: finalAmount,
+  };
 
   return result;
 }

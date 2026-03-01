@@ -135,11 +135,15 @@ export function initCombat(
         1,
         Math.round(def.maxHp * (1 + allyHpPercent / 100))
       );
+      // Use persistent HP if available (ally took damage in a previous combat)
+      const storedHp = runState.allyCurrentHps?.[def.id];
+      const currentHp =
+        storedHp != null ? Math.min(storedHp, scaledMaxHp) : scaledMaxHp;
       return {
         instanceId: nanoid(),
         definitionId: def.id,
         name: def.name,
-        currentHp: scaledMaxHp,
+        currentHp,
         maxHp: scaledMaxHp,
         block: 0,
         speed: def.speed,

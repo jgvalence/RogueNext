@@ -35,6 +35,9 @@ export const RunStateSchema = z.object({
   playerCurrentHp: z.number().int(),
   deck: z.array(CardInstanceSchema),
   allyIds: z.array(z.string()).default([]),
+  // Persistent HP for each ally between combats (key = definitionId)
+  // Absent entry = new ally, starts at full HP
+  allyCurrentHps: z.record(z.string(), z.number().int()).default({}),
   relicIds: z.array(z.string()).default([]),
   usableItems: z.array(UsableItemInstanceSchema).default([]),
   usableItemCapacity: z.number().int().min(0).default(3),

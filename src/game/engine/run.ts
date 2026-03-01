@@ -201,6 +201,7 @@ export function createNewRun(
     playerCurrentHp: GAME_CONSTANTS.STARTING_HP + extraHp,
     deck,
     allyIds: [],
+    allyCurrentHps: {},
     relicIds: [],
     usableItems: [],
     usableItemCapacity: GAME_CONSTANTS.MAX_USABLE_ITEMS,
@@ -848,6 +849,25 @@ export function completeCombat(
       : (runState.usableItems ?? []);
   const nextGold = runState.gold + goldReward;
 
+  // Ally persistence: save surviving allies' HP, permanently remove dead allies
+  const updatedAllyCurrentHps: Record<string, number> = {
+    ...(runState.allyCurrentHps ?? {}),
+  };
+  const survivingAllyDefIds = new Set(
+    combatResult.allies.map((a) => a.definitionId)
+  );
+  for (const ally of combatResult.allies) {
+    updatedAllyCurrentHps[ally.definitionId] = ally.currentHp;
+  }
+  const updatedAllyIds = (runState.allyIds ?? []).filter((id) =>
+    survivingAllyDefIds.has(id)
+  );
+  for (const id of runState.allyIds ?? []) {
+    if (!survivingAllyDefIds.has(id)) {
+      delete updatedAllyCurrentHps[id];
+    }
+  }
+
   return {
     ...runState,
     playerMaxHp: newPlayerMaxHp,
@@ -864,6 +884,8 @@ export function completeCombat(
     cardUnlockProgress: unlockProgress,
     usableItems: nextUsableItems,
     usableItemCapacity,
+    allyIds: updatedAllyIds,
+    allyCurrentHps: updatedAllyCurrentHps,
   };
 }
 
@@ -1032,6 +1054,7 @@ export interface GameEvent {
   title: string;
   description: string;
   choices: EventChoice[];
+  condition?: (state: RunState) => boolean;
 }
 
 export interface EventChoice {
@@ -1290,15 +1313,99 @@ const EVENTS: GameEvent[] = [
       },
     ],
   },
+  // ── Ally recruitment events (one per ally type, conditioned on availability)
+  {
+    id: "loyal_scribe",
+    title: "Apprenti Scribe Égaré",
+    description:
+      "Un jeune apprenti scribe, séparé de sa bibliothèque d'origine, vous cherche un protecteur. Ses connaissances des textes anciens pourraient vous être utiles.",
+    condition: (s) =>
+      !s.allyIds.includes("scribe_apprentice") &&
+      s.allyIds.length < (s.metaBonuses?.allySlots ?? 0),
+    choices: [
+      {
+        label: "L'accueillir",
+        description: "L'Apprenti Scribe rejoint votre groupe.",
+        apply: (s) => ({
+          ...s,
+          allyIds: [...s.allyIds, "scribe_apprentice"],
+          currentRoom: s.currentRoom + 1,
+        }),
+      },
+      {
+        label: "Refuser",
+        description: "Vous continuez votre chemin.",
+        apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
+      },
+    ],
+  },
+  {
+    id: "wandering_knight",
+    title: "Chevalier des Mots",
+    description:
+      "Un Chevalier-Garde solitaire, dont la bibliothèque a été détruite, erre à la recherche d'un nouveau serment. Sa ward-magie peut vous protéger.",
+    condition: (s) =>
+      !s.allyIds.includes("ward_knight") &&
+      s.allyIds.length < (s.metaBonuses?.allySlots ?? 0),
+    choices: [
+      {
+        label: "Accepter son serment",
+        description: "Le Chevalier des Mots rejoint votre groupe.",
+        apply: (s) => ({
+          ...s,
+          allyIds: [...s.allyIds, "ward_knight"],
+          currentRoom: s.currentRoom + 1,
+        }),
+      },
+      {
+        label: "Décliner",
+        description: "Vous continuez votre chemin.",
+        apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
+      },
+    ],
+  },
+  {
+    id: "ink_familiar_encounter",
+    title: "Familier d'Encre",
+    description:
+      "Une petite créature faite d'encre vivante vous observe depuis l'ombre. Elle semble chercher un maître à qui se lier.",
+    condition: (s) =>
+      !s.allyIds.includes("ink_familiar") &&
+      s.allyIds.length < (s.metaBonuses?.allySlots ?? 0),
+    choices: [
+      {
+        label: "L'apprivoiser",
+        description: "Le Familier d'Encre rejoint votre groupe.",
+        apply: (s) => ({
+          ...s,
+          allyIds: [...s.allyIds, "ink_familiar"],
+          currentRoom: s.currentRoom + 1,
+        }),
+      },
+      {
+        label: "L'ignorer",
+        description: "Vous continuez votre chemin.",
+        apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
+      },
+    ],
+  },
 ];
 
-export function pickEvent(rng: RNG, difficultyLevel = 0): GameEvent {
-  const riskyPool = EVENTS.filter((event) => RISKY_EVENT_IDS.has(event.id));
-  const safePool = EVENTS.filter((event) => !RISKY_EVENT_IDS.has(event.id));
+export function pickEvent(
+  rng: RNG,
+  difficultyLevel = 0,
+  runState?: RunState
+): GameEvent {
+  const eligible = EVENTS.filter(
+    (e) => !e.condition || !runState || e.condition(runState)
+  );
+  const pool = eligible.length > 0 ? eligible : EVENTS;
+  const riskyPool = pool.filter((event) => RISKY_EVENT_IDS.has(event.id));
+  const safePool = pool.filter((event) => !RISKY_EVENT_IDS.has(event.id));
   if (difficultyLevel >= 4 && riskyPool.length > 0 && rng.next() < 0.7) {
     return rng.pick(riskyPool);
   }
-  return rng.pick(safePool.length > 0 ? safePool : EVENTS);
+  return rng.pick(safePool.length > 0 ? safePool : pool);
 }
 
 export function applyEventChoice(

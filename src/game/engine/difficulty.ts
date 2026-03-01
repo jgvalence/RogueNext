@@ -157,12 +157,16 @@ export function getDifficultyModifiers(level: number): {
   specialRoomHealWeightMultiplier: number;
   specialRoomEventWeightBonus: number;
   enemyPackSizeBonus: number;
+  disruptionWeightBonus: number;
 } {
   const l = clampDifficulty(level);
   const eliteChanceBonus = l >= 5 ? 0.24 : l >= 4 ? 0.08 : 0;
   const specialRoomHealWeightMultiplier = l >= 5 ? 0.25 : l >= 4 ? 0.5 : 1;
   const specialRoomEventWeightBonus = l >= 5 ? 0.2 : l >= 4 ? 0.12 : 0;
   const enemyPackSizeBonus = l >= 5 ? 1 : 0;
+  // Boost the weight of enemy disruption abilities by difficulty
+  // Diff 0: none, Diff 1: light, Diff 3+: marked
+  const disruptionWeightBonus = ([0, 0.3, 0.6, 1.5, 2.0, 3.0] as const)[l] ?? 0;
   return {
     enemyHpMultiplier: 1 + l * 0.12,
     enemyDamageMultiplier: 1 + l * 0.1,
@@ -170,6 +174,7 @@ export function getDifficultyModifiers(level: number): {
     specialRoomHealWeightMultiplier,
     specialRoomEventWeightBonus,
     enemyPackSizeBonus,
+    disruptionWeightBonus,
   };
 }
 
