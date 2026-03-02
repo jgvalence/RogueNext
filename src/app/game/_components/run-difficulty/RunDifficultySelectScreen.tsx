@@ -36,11 +36,16 @@ export function RunDifficultySelectScreen({
             className="flex h-full flex-col gap-3 rounded-xl border border-amber-800/40 bg-slate-900/85 p-5 text-left transition-all duration-200 hover:border-amber-500/70 hover:bg-slate-800/90 hover:shadow-lg hover:shadow-amber-900/20 active:scale-[0.99]"
           >
             <span className="w-fit rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-amber-300">
-              {t("runDifficulty.levelLabel", { level })}
+              {t(`runDifficulty.levels.${level}.chapter`)}
             </span>
-            <h3 className="text-lg font-bold text-amber-100">
-              {t(`runDifficulty.levels.${level}.name`)}
-            </h3>
+            <div>
+              <h3 className="text-lg font-bold text-amber-100">
+                {t(`runDifficulty.levels.${level}.name`)}
+              </h3>
+              <p className="text-xs italic text-amber-700/80">
+                {t(`runDifficulty.levels.${level}.subtitle`)}
+              </p>
+            </div>
             <p className="text-sm text-slate-300">
               {t(`runDifficulty.levels.${level}.description`)}
             </p>

@@ -54,99 +54,113 @@ export function FloorMap({
           </p>
 
           <div className="flex gap-4">
-            {map[currentRoom]?.map((room, i) => {
-              const isBossRoom = currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
-              const enemyCount = room.enemyIds?.length ?? 0;
-              const baseResourceAmount = 1 + (floor - 1);
-              const guaranteedResourceAmount = isBossRoom
-                ? Math.round(baseResourceAmount * 3)
-                : room.isElite
-                  ? Math.round(baseResourceAmount * 1.5)
-                  : baseResourceAmount;
-              const primaryResource = BIOME_RESOURCE[currentBiome];
-              const enemyGoldBonus =
-                Math.max(0, enemyCount - 1) *
-                GAME_CONSTANTS.GOLD_PER_EXTRA_ENEMY;
-              const eliteGoldBonus = room.isElite
-                ? GAME_CONSTANTS.ELITE_GOLD_BONUS
-                : 0;
-              const displayedGoldBonus = enemyGoldBonus + eliteGoldBonus;
+            {(() => {
+              const rawRooms = map[currentRoom] ?? [];
+              const seen = new Set<string>();
+              const rooms = rawRooms
+                .map((room, originalIndex) => ({ room, originalIndex }))
+                .filter(({ room }) => {
+                  if (room.type !== "COMBAT") return true;
+                  const key = `${room.enemyIds?.length ?? 0}-${room.isElite ? "elite" : "normal"}`;
+                  if (seen.has(key)) return false;
+                  seen.add(key);
+                  return true;
+                });
+              return rooms.map(({ room, originalIndex: i }) => {
+                const isBossRoom =
+                  currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
+                const enemyCount = room.enemyIds?.length ?? 0;
+                const baseResourceAmount = 1 + (floor - 1);
+                const guaranteedResourceAmount = isBossRoom
+                  ? Math.round(baseResourceAmount * 3)
+                  : room.isElite
+                    ? Math.round(baseResourceAmount * 1.5)
+                    : baseResourceAmount;
+                const primaryResource = BIOME_RESOURCE[currentBiome];
+                const enemyGoldBonus =
+                  Math.max(0, enemyCount - 1) *
+                  GAME_CONSTANTS.GOLD_PER_EXTRA_ENEMY;
+                const eliteGoldBonus = room.isElite
+                  ? GAME_CONSTANTS.ELITE_GOLD_BONUS
+                  : 0;
+                const displayedGoldBonus = enemyGoldBonus + eliteGoldBonus;
 
-              return (
-                <button
-                  key={`${room.index}-${i}`}
-                  className={cn(
-                    "flex w-40 flex-col items-center gap-2 rounded-lg border-2 p-4 transition hover:scale-105",
-                    roomColors[room.type] ?? "border-gray-500 bg-gray-800"
-                  )}
-                  onClick={() => onSelectRoom(i)}
-                >
-                  <span className="text-2xl">
-                    {roomEmojis[room.type] ?? "✨"}
-                  </span>
-                  <span className="text-sm font-medium">
-                    {t(`map.roomType.${room.type}`, room.type)}
-                  </span>
-
-                  {room.type === "COMBAT" && room.isElite && (
-                    <span className="rounded bg-orange-700/80 px-2 py-0.5 text-xs font-bold text-orange-100">
-                      {t("map.elite")}
+                return (
+                  <button
+                    key={`${room.index}-${i}`}
+                    className={cn(
+                      "flex w-40 flex-col items-center gap-2 rounded-lg border-2 p-4 transition hover:scale-105",
+                      roomColors[room.type] ?? "border-gray-500 bg-gray-800"
+                    )}
+                    onClick={() => onSelectRoom(i)}
+                  >
+                    <span className="text-2xl">
+                      {roomEmojis[room.type] ?? "✨"}
                     </span>
-                  )}
+                    <span className="text-sm font-medium">
+                      {t(`map.roomType.${room.type}`, room.type)}
+                    </span>
 
-                  {room.type === "COMBAT" &&
-                    !room.isElite &&
-                    enemyCount > 0 && (
-                      <span className="text-xs text-gray-400">
-                        {t("map.enemyCount", { count: enemyCount })}
+                    {room.type === "COMBAT" && room.isElite && (
+                      <span className="rounded bg-orange-700/80 px-2 py-0.5 text-xs font-bold text-orange-100">
+                        {t("map.elite")}
                       </span>
                     )}
 
-                  {room.type === "COMBAT" && (
-                    <div className="flex w-full flex-wrap items-center justify-center gap-1.5">
-                      <span className="rounded-full border border-emerald-400/30 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-100">
-                        +{guaranteedResourceAmount}{" "}
-                        {t(
-                          `reward.resources.${primaryResource}`,
-                          primaryResource
-                        )}
-                      </span>
-                      {displayedGoldBonus > 0 && (
-                        <span className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-100">
-                          +{displayedGoldBonus} {t("reward.gold")}
+                    {room.type === "COMBAT" &&
+                      !room.isElite &&
+                      enemyCount > 0 && (
+                        <span className="text-xs text-gray-400">
+                          {t("map.enemyCount", { count: enemyCount })}
                         </span>
                       )}
-                      <span
-                        title={t("map.combatPreview.resourcesBonusHint")}
-                        className="rounded-full border border-cyan-300/20 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-100"
-                      >
-                        {t("map.combatPreview.resourcesBonusShort")}
-                      </span>
-                    </div>
-                  )}
 
-                  {room.type === "COMBAT" && (
-                    <div className="flex items-center gap-1.5 rounded bg-black/20 px-2 py-1 text-sm">
-                      {isBossRoom ? (
-                        <>
-                          <span title={t("map.reward.relic")}>💎</span>
-                          <span title={t("map.reward.ally")}>👤</span>
-                          <span title={t("map.reward.maxHp")}>❤️</span>
-                        </>
-                      ) : room.isElite ? (
-                        <>
+                    {room.type === "COMBAT" && (
+                      <div className="flex w-full flex-wrap items-center justify-center gap-1.5">
+                        <span className="rounded-full border border-emerald-400/30 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-100">
+                          +{guaranteedResourceAmount}{" "}
+                          {t(
+                            `reward.resources.${primaryResource}`,
+                            primaryResource
+                          )}
+                        </span>
+                        {displayedGoldBonus > 0 && (
+                          <span className="rounded-full border border-amber-300/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-100">
+                            +{displayedGoldBonus} {t("reward.gold")}
+                          </span>
+                        )}
+                        <span
+                          title={t("map.combatPreview.resourcesBonusHint")}
+                          className="rounded-full border border-cyan-300/20 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-100"
+                        >
+                          {t("map.combatPreview.resourcesBonusShort")}
+                        </span>
+                      </div>
+                    )}
+
+                    {room.type === "COMBAT" && (
+                      <div className="flex items-center gap-1.5 rounded bg-black/20 px-2 py-1 text-sm">
+                        {isBossRoom ? (
+                          <>
+                            <span title={t("map.reward.relic")}>💎</span>
+                            <span title={t("map.reward.ally")}>👤</span>
+                            <span title={t("map.reward.maxHp")}>❤️</span>
+                          </>
+                        ) : room.isElite ? (
+                          <>
+                            <span title={t("map.reward.card")}>🃏</span>
+                            <span title={t("map.reward.relic")}>💎</span>
+                            <span title={t("map.reward.ally")}>👤</span>
+                          </>
+                        ) : (
                           <span title={t("map.reward.card")}>🃏</span>
-                          <span title={t("map.reward.relic")}>💎</span>
-                          <span title={t("map.reward.ally")}>👤</span>
-                        </>
-                      ) : (
-                        <span title={t("map.reward.card")}>🃏</span>
-                      )}
-                    </div>
-                  )}
-                </button>
-              );
-            })}
+                        )}
+                      </div>
+                    )}
+                  </button>
+                );
+              });
+            })()}
           </div>
         </div>
       ) : (

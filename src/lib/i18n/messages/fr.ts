@@ -295,29 +295,41 @@ export const fr = {
     levelLabel: "Niveau {{level}}",
     levels: {
       0: {
+        chapter: "Chapitre I — Eveil",
+        subtitle: "L'anomalie dans l'encre",
         name: "Archiviste",
         description: "Experience standard, ideale pour decouvrir le jeu.",
       },
       1: {
+        chapter: "Chapitre II — Perturbation",
+        subtitle: "Les Tomes se contaminent",
         name: "Veilleur",
         description: "Les ennemis deviennent un peu plus menacants.",
       },
       2: {
+        chapter: "Chapitre III — Corruption",
+        subtitle: "Les histoires se melangent",
         name: "Conservateur",
         description:
           "La pression monte: les combats demandent plus de rigueur.",
       },
       3: {
+        chapter: "Chapitre IV — Effacement",
+        subtitle: "La Censure agit",
         name: "Censeur",
         description:
           "Les elites et boss deviennent plus imprevisibles, et les boss percent mieux votre defense.",
       },
       4: {
+        chapter: "Chapitre V — Amnesie",
+        subtitle: "Derniere chance",
         name: "Abyssal",
         description:
-          "Les combats elites et boss deviennent nettement plus agressifs, et les evenements sont plus risqués.",
+          "Les combats elites et boss deviennent nettement plus agressifs, et les evenements sont plus risques.",
       },
       5: {
+        chapter: "Chapitre VI — L'Abime",
+        subtitle: "Il ne reste plus rien a perdre",
         name: "Mythique",
         description:
           "Mode ultime: plus d'elites, des ennemis impitoyables, et des recompenses moins garanties.",
@@ -1096,6 +1108,8 @@ export const fr = {
     purgePickerTitle: "Choisissez une carte a retirer",
     purgePickerSubtitle:
       "Cette carte sera definitivement supprimee de votre deck.",
+    eventContinue: "Continuer",
+    eventPurgeAction: "Choisir une carte a retirer",
   },
   startMerchant: {
     kicker: "Pre-run",
@@ -1317,6 +1331,1160 @@ export const fr = {
           "Le marchand est ideal pour purger les cartes faibles et stabiliser votre plan.",
         ],
       },
+    },
+  },
+  events: {
+    mysterious_tome: {
+      title: "Le Tome Scelle",
+      flavorText:
+        "Derriere une vitrine brisee, un tome aux pages noires vous observe. L'encre a l'interieur bouge d'elle-meme, cherchant un lecteur depuis des decennies.",
+      description: "Osez-vous l'ouvrir ?",
+      choices: [
+        {
+          label: "Decacheter le tome",
+          description: "Perdez 10 PV, gagnez 50 or.",
+          outcomeText:
+            "Vos doigts saignent sur les pages. Le tome boit, satisfait. Vingt pieces tombent d'entre les feuilles — le prix d'un autre lecteur, autrefois.",
+        },
+        {
+          label: "Refermer la vitrine",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Le tome se ferme dans un claquement sec. A travers le verre, vous voyez les pages se retourner, cherchant une autre victime.",
+        },
+      ],
+    },
+    ink_fountain: {
+      title: "La Fontaine d'Encre",
+      flavorText:
+        "Au centre de la salle, une vasque de marbre noir deborde d'une encre lumineuse. Elle murmure dans une langue que vous n'avez jamais apprise — et pourtant, vous comprenez chaque mot.",
+      description: "Que faites-vous de cette encre ?",
+      choices: [
+        {
+          label: "Boire a la vasque",
+          description: "Gagnez 5 PV et 25 or.",
+          outcomeText:
+            "L'encre est froide, etrangement douce. Elle rouvre vos blessures d'un cote et les referme de l'autre. Des mots anciens brillent un instant dans vos veines.",
+        },
+        {
+          label: "Puiser dans votre bourse",
+          description: "Gagnez 75 or.",
+          outcomeText:
+            "L'encre solidifie au contact de l'air en pieces d'or parfaitement rondes. Un marche equitable pour la Bibliotheque — elle reprend toujours ce qu'elle donne.",
+        },
+      ],
+    },
+    wandering_scribe: {
+      title: "Le Scribe Errant",
+      flavorText:
+        "Un vieillard voute erre entre les rayons, sa plume grattant le vide. Il ne semble pas vous voir — jusqu'a ce qu'il se retourne brusquement : « Je peux te reecrire. Pour un prix. »",
+      description: "Ses services ont un cout. Ses soins, aussi.",
+      choices: [
+        {
+          label: "Payer ses services (30 or)",
+          description: "Perdez 30 or, gagnez 20 PV max.",
+          outcomeText:
+            "Il trace des runes dans votre paume. Elles brulent, puis disparaissent. Vous vous sentez plus solide — plus difficile a effacer.",
+        },
+        {
+          label: "Accepter ses soins",
+          description: "Gagnez 10 PV.",
+          outcomeText:
+            "Il vous tamponne les blessures avec une encre etrange et repart sans un mot, sa plume reprenant son mouvement perpetuel.",
+        },
+      ],
+    },
+    ancient_sarcophagus: {
+      title: "Le Sarcophage des Mots",
+      flavorText:
+        "Le sarcophage est debout, ses inscriptions luisant d'une lumiere d'outre-monde. Le couvercle tremble legerement, comme si quelque chose a l'interieur cherchait a sortir — ou a vous faire entrer.",
+      description:
+        "L'essence a l'interieur peut vous fortifier... a quel prix ?",
+      choices: [
+        {
+          label: "Absorber l'essence",
+          description: "Gagnez 20 PV max.",
+          outcomeText:
+            "L'energie ancienne vous enveloppe. Quelque chose de vieux s'installe en vous — bienveillant, pour l'instant.",
+        },
+        {
+          label: "Prendre le risque",
+          description: "Gagnez 30 PV max, perdez 15 PV.",
+          outcomeText:
+            "L'essence vous traverse comme un courant. Elle prend plus qu'elle ne donne dans l'immediat — mais les cicatrices virent au violet, signe d'une transformation profonde.",
+        },
+        {
+          label: "Laisser scelle",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Vous vous eloignez. Derriere vous, le couvercle cesse de trembler. Ce n'etait peut-etre pas si urgent, finalement.",
+        },
+      ],
+    },
+    whispering_idol: {
+      title: "L'Idole Chuchotante",
+      flavorText:
+        "L'idole est a peine plus grande que votre main, taillee dans un marbre couleur de cendre. Quand elle parle, toute la salle s'arrete de respirer. « Tu veux de l'or, dit-elle. Tout le monde veut de l'or. Mais moi, je veux quelque chose de toi. »",
+      description: "Un pacte de richesse maudite vous est propose.",
+      choices: [
+        {
+          label: "Accepter le pacte",
+          description: "Gagnez 90 or. Ajoutez Parchemin Maudit a votre deck.",
+          outcomeText:
+            "L'or tombe de nulle part. Le pacte est scelle d'une encre noire qui tatoue votre poignet une fraction de seconde avant de disparaitre.",
+        },
+        {
+          label: "Forcer le destin",
+          description: "Gagnez 140 or. Ajoutez 2 Regrets Hantes a votre deck.",
+          outcomeText:
+            "L'idole rit — ou du moins, quelque chose qui y ressemble. Elle vous donne plus que demande. Elle prend aussi plus que prevu.",
+        },
+        {
+          label: "Refuser",
+          description: "Vous repartez sans rien.",
+          outcomeText:
+            "L'idole se tait. Vous sentez son regard dans votre dos jusqu'a ce que vous quittiez la salle — et encore apres.",
+        },
+      ],
+    },
+    ruthless_scrivener: {
+      title: "Le Copiste Implacable",
+      flavorText:
+        "Assis a son pupitre, il revise un manuscrit avec une precision chirurgicale, bifant des passages entiers sans hesiter. En vous voyant entrer, il leve des yeux pales comme du papier : « Votre deck est trop verbeux. Je peux le corriger. »",
+      description:
+        "La purge coute du sang. Mais un deck allege vaut parfois le prix.",
+      choices: [
+        {
+          label: "Payer en sang",
+          description:
+            "Perdez 10 PV. Retirez definitivement 1 carte de votre deck.",
+          outcomeText:
+            "Il opere avec sa plume comme avec un scalpel. Une douleur vive, puis le soulagement etrange de savoir qu'une voix inutile a ete reduite au silence.",
+        },
+        {
+          label: "Refuser et repartir",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Il hausse les epaules et reprend son manuscrit. « Revenez quand vous serez pret a etre edite. » Il ne vous regarde pas partir.",
+        },
+      ],
+    },
+    loyal_scribe: {
+      title: "Apprenti Scribe Egare",
+      flavorText:
+        "Un jeune apprenti s'est perdu dans les meandres de la Bibliotheque depuis la Censure. Ses mains sont tachees d'encre jusqu'aux coudes, et il porte sous le bras une pile de grimoires qu'il essaie de sauver.",
+      description:
+        "Il cherche un protecteur. Ses connaissances des textes anciens pourraient vous etre precieuses.",
+      choices: [
+        {
+          label: "L'accueillir",
+          description: "L'Apprenti Scribe rejoint votre groupe.",
+          outcomeText:
+            "Il vous suit avec un melange de soulagement et de peur. Son savoir sera utile — a condition qu'il survive assez longtemps pour en faire la demonstration.",
+        },
+        {
+          label: "Refuser",
+          description: "Vous continuez seul.",
+          outcomeText:
+            "Il vous regarde vous eloigner sans un mot. Vous esperez qu'il trouvera un autre voyageur avant que les ombres de la Bibliotheque ne le rattrapent.",
+        },
+      ],
+    },
+    wandering_knight: {
+      title: "Chevalier des Mots",
+      flavorText:
+        "Il se tient debout dans la penombre, son armure couverte de runes gravees a la main. Sa bibliotheque a brule — ou pire, a ete censuree. Il cherche un nouveau serment a preter, une cause qui merite d'etre defendue.",
+      description:
+        "Sa ward-magie peut vous proteger. Son serment vous lierait l'un a l'autre.",
+      choices: [
+        {
+          label: "Accepter son serment",
+          description: "Le Chevalier des Mots rejoint votre groupe.",
+          outcomeText:
+            "Il pose un genou a terre, sa main sur l'un de vos grimoires comme serment. Quelque chose de chaud traverse vos veines — sa loyaute, imprimee dans l'encre de son armure.",
+        },
+        {
+          label: "Decliner",
+          description: "Vous continuez votre chemin.",
+          outcomeText:
+            "Il hoche la tete, sans amertume. « Je trouverai une autre cause digne de moi. » Vous esperez que c'est vrai.",
+        },
+      ],
+    },
+    ink_familiar_encounter: {
+      title: "Familier d'Encre",
+      flavorText:
+        "Quelque chose vous observe depuis l'ombre entre deux etageres — une silhouette a peine plus grande qu'un chat, faite entierement d'encre vivante qui pulse doucement. Ses yeux, deux points d'encre brillante, ne vous quittent pas.",
+      description:
+        "Il cherche un maitre. L'encre qui le compose reagit a votre presence.",
+      choices: [
+        {
+          label: "L'apprivoiser",
+          description: "Le Familier d'Encre rejoint votre groupe.",
+          outcomeText:
+            "Il s'approche lentement, renifle votre main, puis s'enroule autour de votre avant-bras comme un tatouage vivant. Il est a vous — et d'une certaine facon, vous etes a lui.",
+        },
+        {
+          label: "L'ignorer",
+          description: "Vous continuez votre chemin.",
+          outcomeText:
+            "Il vous suit du regard jusqu'a ce que vous disparaissiez au detour d'une etagere. L'encre fremit. Puis le silence.",
+        },
+      ],
+    },
+    mirror_of_bronze: {
+      title: "Le Miroir de Bronze",
+      flavorText:
+        "Le miroir de bronze poli trône entre deux colonnes de marbre. Il ne reflete pas votre visage — mais celui de quelqu'un que vous auriez pu etre. La silhouette sourit. Elle tend la main depuis l'autre cote du metal froid.",
+      description:
+        "Que repondez-vous a ce qui vous regarde depuis l'autre cote ?",
+      choices: [
+        {
+          label: "Tendre la main en retour",
+          description: "Gagnez 20 PV max. Perdez 15 PV.",
+          outcomeText:
+            "Vos doigts traversent le metal froid. La silhouette prend quelque chose de vous — de la vitalite brute — et en echange, grave de nouvelles lignes sur votre corps. Vous sortez avec plus de capacite et moins de certitudes.",
+        },
+        {
+          label: "Briser le miroir",
+          description: "Gagnez 90 or. Ajoutez Regret Hante a votre deck.",
+          outcomeText:
+            "Le bronze vole en eclats. Les morceaux saignent quelques instants avant de se solidifier en pieces d'or. La silhouette disparait avec un rire qui ressemble etrangement a de la reconnaissance. Les regrets restent.",
+        },
+        {
+          label: "Regarder sans agir",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Vous observez jusqu'a ce que la silhouette se lasse de vous et se detourne. Certaines verites ne valent pas le prix de leur acquisition.",
+        },
+      ],
+    },
+    turning_house: {
+      title: "La Maison qui Tourne",
+      flavorText:
+        "La salle pivote lentement sur elle-meme — les etageres changent de place quand vous ne les regardez pas. Dans le fauteuil au centre, une vieille femme tricote avec des aiguilles en os. Elle ne leve pas les yeux. « Assieds-toi, dit-elle. Les maisons qui tournent n'attendent pas. »",
+      description: "Que demandez-vous a la gardienne de cette maison ?",
+      choices: [
+        {
+          label: "S'asseoir et ecouter",
+          description: "Gagnez 35 PV max.",
+          outcomeText:
+            "Elle parle pendant ce qui semble des heures — en symboles, en images, dans des langues oubliees. Vous ne comprenez pas tout. Mais quand vous vous levez, votre corps est plus capable de tenir debout.",
+        },
+        {
+          label: "Chercher la sortie de force",
+          description: "Gagnez 75 or. Perdez 15 PV.",
+          outcomeText:
+            "La maison resiste. Les etageres bougent. Vous trebuchez, vous cognez des angles qui ne devraient pas exister. Mais vous trouvez la sortie — avec votre or et vos bleus.",
+        },
+        {
+          label: "Prendre un objet sur l'etagere",
+          description: "Gagnez 15 PV et 15 or.",
+          outcomeText:
+            "La vieille femme ne reagit pas — ou fait semblant. L'objet que vous prenez semble vous choisir autant que l'inverse. Equitable, pour une maison qui tourne.",
+        },
+      ],
+    },
+    skald_fire: {
+      title: "Le Feu des Skalds",
+      flavorText:
+        "Le brasier au centre de la salle brule depuis des siecles, sans bois ni carburant. Les flammes sont d'un bleu glacial. Quand vous approchez la main, ce n'est pas la chaleur qui mord — c'est un froid qui descend jusqu'a la moelle.",
+      description: "Le feu des skalds exige un sacrifice ou un chant.",
+      choices: [
+        {
+          label: "Plonger les mains dans le feu",
+          description: "Gagnez 40 PV max. Perdez 20 PV.",
+          outcomeText:
+            "Le froid vous arrache un cri. Mais vos mains ressortent marquees de runes lumineuses qui s'effacent en quelques secondes. Ce que le feu a pris, il l'a rendu centuple sous une autre forme.",
+        },
+        {
+          label: "Reciter une strophe",
+          description: "Gagnez 50 or.",
+          outcomeText:
+            "Les flammes bleues vacillent. Elles reconnaissent les mots — ou les aiment. De l'or tombe de l'air comme une recompense pour un poeme recite dans la langue correcte au bon moment.",
+        },
+        {
+          label: "Repartir sans un mot",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Le feu reste indifferent. Certains brasiers attendent d'etre honores. Vous tournez le dos et repartez, intact.",
+        },
+      ],
+    },
+    blank_page: {
+      title: "La Page Blanche",
+      flavorText:
+        "Au milieu d'un couloir vide, une page blanche est epinglee a hauteur d'yeux. Pas un mot. Pas une illustration. Et pourtant, vous avez le sentiment qu'elle vous attendait depuis le debut de votre voyage — depuis peut-etre avant.",
+      description: "La page est vierge. Que faites-vous de ce vide ?",
+      choices: [
+        {
+          label: "Ecrire ta force",
+          description: "Gagnez 20 PV max.",
+          outcomeText:
+            "Vous saisissez une plume qui n'etait pas la un instant plus tot. Les mots sortent d'eux-memes. La page les absorbe. Quand vous relevez les yeux, vous vous sentez plus solide — comme si vous veniez de vous reecrire un peu mieux.",
+        },
+        {
+          label: "Effacer ta faiblesse",
+          description: "Perdez 10 PV. Retirez 1 carte de votre deck.",
+          outcomeText:
+            "La page se dechire avec un son presque humain. Les morceaux se consument dans l'air. Quelque chose dans votre deck s'allege — une voix qui parlait trop fort, reduite au silence.",
+        },
+        {
+          label: "Tourner les talons",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Vous repartez. Derriere vous, vous entendez quelque chose s'ecrire sur la page. Vous ne vous retournez pas.",
+        },
+      ],
+    },
+    sealed_reliquary: {
+      title: "Le Reliquaire Scelle",
+      flavorText:
+        "Un reliquaire couvert de poussiere est pose sur un socle au centre de la piece. Il pulse d'une encre lumineuse, comme s'il attendait d'etre reclame depuis longtemps.",
+      description:
+        "Une relique vous est destinee parmi celles que renferme ce reliquaire.",
+      choices: [
+        {
+          label: "Reclamer la relique",
+          description: "Obtenez 1 relique.",
+          outcomeText:
+            "Vos doigts se referment sur l'objet. Le reliquaire se vide, apaise. Ce qu'il gardait etait pour vous — ou du moins, c'est ce qu'il veut vous faire croire.",
+        },
+      ],
+    },
+    // ── GREEK ──────────────────────────────────────────────────────────────
+    oracle_of_delphi: {
+      title: "La Pythie de Delphes",
+      flavorText:
+        "La Pythie est assise sur son trepied d'or au-dessus d'une crevasse dont s'echappent des vapeurs d'encre. Ses yeux sont revolses, ses levres forment des mots dans une langue de fumee. Elle ne vous regarde pas — elle regarde a travers le temps.",
+      description: "Elle voit ce qui vous attend. Voulez-vous savoir ?",
+      choices: [
+        {
+          label: "Ecouter la prophetie",
+          description: "Gagnez 30 PV max.",
+          outcomeText:
+            "Ses mots s'impriment en vous comme une encre indelebile. Vous ne comprenez pas tout — mais quelque chose en vous s'est prepare pour ce qui vient. Votre enveloppe s'en souvient, meme si votre esprit l'oublie.",
+        },
+        {
+          label: "Offrir un tribut (30 or)",
+          description: "Perdez 30 or, gagnez 45 PV max.",
+          outcomeText:
+            "Elle accepte l'offrande sans la regarder. En echange, elle pose un doigt froid sur votre sternum — et une vie supplementaire s'inscrit en vous, comme une revision dans les marges d'un manuscrit deja termine.",
+        },
+      ],
+    },
+    thread_of_ariadne: {
+      title: "Le Fil d'Ariane",
+      flavorText:
+        "Un fil d'argent est tendu dans l'obscurite du couloir, courant entre les etageres comme une veine dans un corps de pierre. A l'une de ses extremites, une femme dont les traits changent chaque fois que vous la regardez tient la bobine. « Ce fil te menera a ce dont tu as besoin. Combien veux-tu en prendre ? »",
+      description:
+        "Le fil peut vous guider. Mais plus vous en prenez, plus vous vous liez.",
+      choices: [
+        {
+          label: "Prendre un peu de fil",
+          description: "Gagnez 20 PV max.",
+          outcomeText:
+            "Le fil vous guide le long d'un chemin que vous n'auriez pas trouve seul. Il vous mene a une chambre pleine de lumiere, puis disparait. Vous avez trouve ce qu'il fallait trouver.",
+        },
+        {
+          label: "Derouler la bobine entiere",
+          description: "Gagnez 40 PV max. Perdez 15 PV.",
+          outcomeText:
+            "Le fil se tend — trop. Il vous traverse, reecrit quelques chapitres, en arrache d'autres. Ce que vous gagnez en endurance, vous le payez en chair. Le labyrinthe prend toujours son peage.",
+        },
+        {
+          label: "Laisser le fil",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "La femme range sa bobine sans un mot. Les labyrinthes ont des sorties meme sans guide. Il faudra seulement chercher plus longtemps.",
+        },
+      ],
+    },
+    // ── RUSSIAN ────────────────────────────────────────────────────────────
+    firebird_feather: {
+      title: "La Plume de Zhar-Ptitsa",
+      flavorText:
+        "Une plume de feu dore est posee sur une etagere, brulant sans consumer le bois, eclairant d'une lumiere orange tous les grimoires alentour. Elle ne semble pas avoir de proprietaire — ou plutot, elle attend d'en avoir un.",
+      description:
+        "La plume de l'Oiseau de Feu apporte la chance a qui sait la saisir.",
+      choices: [
+        {
+          label: "Prendre la plume",
+          description: "Gagnez 25 PV et 25 or.",
+          outcomeText:
+            "La plume brule froid dans votre main — une contradiction qui devient une verite. Sa chaleur vous traverse, cicatrisant ce qui etait blesse, transformant ce qui n'avait pas de forme. De l'or tombe de vos poches comme effet secondaire, comme si la fortune suivait la lumiere.",
+        },
+        {
+          label: "La contempler avant de la prendre",
+          description: "Gagnez 35 PV max.",
+          outcomeText:
+            "Vous observez sa lumiere jusqu'a ce qu'elle s'imprime derriere vos paupieres. Quand vous la prenez enfin, quelque chose de plus profond a deja change en vous — non pas la chair, mais le texte qui vous definit.",
+        },
+        {
+          label: "La laisser pour un autre",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "La plume continue de bruler, indifferente. Peut-etre que la prochaine personne a passer ici etait celle qui en avait vraiment besoin. Peut-etre que c'etait vous.",
+        },
+      ],
+    },
+    kostchei_needle: {
+      title: "L'Aiguille de Kostchei",
+      flavorText:
+        "Une boite en os est ouverte sur un socle. A l'interieur : un oeuf. Dans l'oeuf : un canard. Dans le canard : un lievre. Dans le lievre : une aiguille dont la pointe brille d'un noir absolu. Une voix sans source : « Mon ame est immortelle. Je peux en preter un fragment. »",
+      description:
+        "Kostchei l'Immortel propose un fragment d'eternite. Ses marches ont toujours un prix cache.",
+      choices: [
+        {
+          label: "Accepter le fragment d'immortalite",
+          description: "Gagnez 50 PV max. Perdez 25 PV.",
+          outcomeText:
+            "L'aiguille vous pique. La douleur est breve, intense — puis vient quelque chose d'autre, plus ancien que la douleur. Votre corps apprend une nouvelle definition de lui-meme. Plus de capacite. Moins d'integrite immediate. C'est exactement ce que Kostchei avait promis.",
+        },
+        {
+          label: "Marchander les termes",
+          description: "Gagnez 25 PV max et 25 or.",
+          outcomeText:
+            "Il rit — le son d'une bibliotheque qui brule a l'envers. Mais il accepte. Un fragment plus petit, un prix plus petit. Quelque chose de precieux tombe de la boite en os comme par inadvertance.",
+        },
+        {
+          label: "Refuser l'immortalite partielle",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "L'aiguille se remballe d'elle-meme dans le lievre dans le canard dans l'oeuf dans la boite. « Tu reviendras, dit la voix. Tout le monde revient. »",
+        },
+      ],
+    },
+    // ── VIKING ─────────────────────────────────────────────────────────────
+    huginn_bargain: {
+      title: "Le Regard de Huginn",
+      flavorText:
+        "Un corbeau d'une intelligence inquietante est pose sur une etagere a hauteur des yeux. Ses iris sont entierement blancs — les yeux d'Odin, depouilles de leur pupille pour voir plus loin. Il incline la tete. « Le Allfather te regarde. Il a des questions sur toi. Laisse-le voir. »",
+      description:
+        "Odin veut voir a travers vous. Cette vision se paye toujours.",
+      choices: [
+        {
+          label: "Offrir un oeil",
+          description: "Gagnez 45 PV max. Perdez 20 PV.",
+          outcomeText:
+            "Le corbeau s'approche. Ce qui suit n'est pas de la douleur — c'est une reecriture. Odin vous voit de l'interieur, et ce qu'il voit le satisfait assez pour laisser quelque chose en echange. Vous repartez avec moins d'integrite et beaucoup plus de profondeur.",
+        },
+        {
+          label: "Offrir de l'or a la place",
+          description: "Perdez 30 or, gagnez 30 PV max.",
+          outcomeText:
+            "Le corbeau cligne de ses yeux blancs. Odin accepte l'or — les dieux ont toujours besoin d'or, meme ceux qui pretendent le contraire. Un echange satisfaisant pour les deux parties.",
+        },
+        {
+          label: "Refuser de se laisser voir",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Le corbeau hause ses ailes dans ce qui ressemble a un haussement d'epaules. « Il t'a deja vu de toute facon, dit-il. Il voulait juste etre poli. »",
+        },
+      ],
+    },
+    valkyrie_verdict: {
+      title: "Le Verdict de la Valkyrie",
+      flavorText:
+        "Une guerriere en armure tachee d'encre vous observe depuis le haut d'une etagere. Elle ecrit quelque chose dans un grand livre. Elle leve les yeux. « Je t'evalue, dit-elle simplement. Montre-moi ce que tu vaux. »",
+      description:
+        "Elle choisit qui merite de continuer. Montrez-lui votre valeur.",
+      choices: [
+        {
+          label: "Defendre votre valeur en mots",
+          description: "Gagnez 25 PV max.",
+          outcomeText:
+            "Vous parlez. Elle ecoute avec une attention absolue. Quand vous avez fini, elle note quelque chose et referme son livre. « Suffisant, dit-elle. Pour l'instant. » C'est un compliment, dans sa bouche.",
+        },
+        {
+          label: "Lui montrer vos blessures",
+          description: "Gagnez 25 PV.",
+          outcomeText:
+            "Elle inspecte chaque cicatrice avec la rigueur d'un architecte qui lit un plan. « Tu as survecu a tout ca. Alors tu peux survivre a ce qui vient. » Elle pose une main brievement sur votre poitrine. La douleur diminue.",
+        },
+        {
+          label: "Refuser l'evaluation",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Elle marque un X dans son livre et dit quelque chose de definitif. Peut-etre que vous serez reevalue plus tard. Peut-etre pas.",
+        },
+      ],
+    },
+    // ── EGYPTIAN ───────────────────────────────────────────────────────────
+    anubis_scales: {
+      title: "La Balance d'Anubis",
+      flavorText:
+        "Anubis lui-meme est debout dans la salle, sa tete de chacal tournee vers vous avec une curiosite sans emotion. Sur une balance de lapis-lazuli, une plume blanche attend. Il designe votre poitrine. « Ton coeur, dit-il. Ou ce qui en tient lieu dans la Bibliotheque. »",
+      description: "Anubis juge tous les coeurs. Le votre est-il assez leger ?",
+      choices: [
+        {
+          label: "Presenter votre deck a la balance",
+          description: "Gagnez 25 PV max.",
+          outcomeText:
+            "La balance oscille, hesite, puis penche du cote de la plume. « Pas parfait, dit Anubis. Mais suffisant pour continuer. » Il ajoute quelque chose dans vos reserves vitales avant de vous congedier d'un geste.",
+        },
+        {
+          label: "Offrir une carte a la balance",
+          description: "Perdez 10 PV. Retirez 1 carte. Gagnez 45 PV max.",
+          outcomeText:
+            "La balance se stabilise dans l'equilibre parfait. Anubis incline la tete avec une satisfaction rare. Ce que vous avez donne etait ce qui alourdissait votre coeur.",
+        },
+        {
+          label: "Fuir le jugement",
+          description: "Ajoutez 2 Regrets Hantes a votre deck.",
+          outcomeText:
+            "Vous courez. Derriere vous, Anubis note votre nom avec soin. Les dieux des morts n'oublient jamais les noms. Les Regrets vous rattrapent avant que vous ayez atteint la porte.",
+        },
+      ],
+    },
+    thoth_archives: {
+      title: "Les Archives de Thoth",
+      flavorText:
+        "Thoth, le scribe des dieux, est assis a un pupitre monumental, son bec d'ibis effleurant un rouleau qui se deroule a l'infini. Il leve une main sans lever les yeux. « Je suis occupe a tout noter. Mais tu peux regarder. Ou meme prendre. A ton risque. »",
+      description:
+        "Les archives de Thoth contiennent tout — y compris des choses que vous n'etiez pas cense voir.",
+      choices: [
+        {
+          label: "Copier un parchemin legitimement",
+          description: "Gagnez 25 PV max et 20 or.",
+          outcomeText:
+            "Thoth acquiesce sans lever les yeux. Vous copiez ce qui est permis. Sa connaissance s'imprime en vous comme de l'encre bien seche — permanente, legitime, a vous.",
+        },
+        {
+          label: "Voler le rouleau principal",
+          description: "Gagnez 60 or. Ajoutez 1 Regret Hante.",
+          outcomeText:
+            "Vos doigts se referment sur le rouleau. Thoth ecrit quelque chose dans son grand livre sans lever les yeux. Il note toujours tout. Le rouleau se transforme en or dans vos mains, mais quelque chose de sa nature reste en vous sous forme de regret.",
+        },
+        {
+          label: "Lire par-dessus son epaule",
+          description: "Gagnez 20 PV max.",
+          outcomeText:
+            "Il vous laisse regarder. Il note meme votre presence dans son livre. Un lecteur silencieux qui n'interrompt pas merite toujours quelque chose.",
+        },
+      ],
+    },
+    sphinx_riddle: {
+      title: "L'Enigme de la Grande Sphinge",
+      flavorText:
+        "La Sphinge bloque un couloir entre deux etageres immenses. Elle est vivante, patiente, et tient entre ses pattes un codex qu'elle lit avec une lenteur deliberee. Elle leve les yeux. « Une enigme, dit-elle. Pas de mauvaise reponse — juste des reponses differentes. »",
+      description:
+        "La Sphinge pose une question a laquelle toutes les reponses sont vraies. Chacune ouvre une porte differente.",
+      choices: [
+        {
+          label: "Repondre : l'Encre",
+          description: "Gagnez 35 or.",
+          outcomeText:
+            "Elle sourit — pour autant qu'une sphinge puisse sourire. « L'encre cree et detruit a la fois. Oui. Voila qui te ressemble. » Elle depose des pieces d'or entre ses pattes et vous laisse passer.",
+        },
+        {
+          label: "Repondre : la Memoire",
+          description: "Gagnez 25 PV max.",
+          outcomeText:
+            "« La memoire survit a tout, dit-elle. Meme a la censure. Oui. » Elle pose une patte sur votre epaule une fraction de seconde — juste assez pour que quelque chose de sa propre permanence deteigne sur vous.",
+        },
+        {
+          label: "Garder le silence",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Elle attend une heure entiere. Puis elle reprend son codex. « Le silence est aussi une reponse, dit-elle. Pas la plus utile, mais la plus honnete. » Elle s'ecarte et vous laisse passer.",
+        },
+      ],
+    },
+    // ── LOVECRAFTIAN ───────────────────────────────────────────────────────
+    forbidden_lexicon: {
+      title: "Le Lexique Interdit",
+      flavorText:
+        "Le Bibliothecaire n'a pas de visage — ou plutot, il en a trop, qui se succedent trop vite pour etre comptes. Il tient un lexique dont les mots changent quand vous le regardez. « Ce que tu peux lire dans ce livre ne peut pas etre vu deux fois, dit-il. Choisis ta dose. »",
+      description:
+        "Le Bibliothecaire propose une connaissance qui ne peut etre vue qu'une fois. Le prix se paye en clarte mentale.",
+      choices: [
+        {
+          label: "Lire le passage interdit",
+          description: "Gagnez 50 or. Ajoutez 1 Regret Hante.",
+          outcomeText:
+            "Les mots entrent par les yeux et sortent autrement. Ce que vous comprenez n'a pas de traduction. Ce que vous retenez, c'est de l'or. Ce que vous perdez se nomme lui-meme « regret » faute d'un meilleur terme.",
+        },
+        {
+          label: "Lire avec les paupieres mi-closes",
+          description: "Gagnez 25 PV max.",
+          outcomeText:
+            "Un apercu. Suffisamment pour que quelque chose change en vous. Pas assez pour que vous sachiez precisement quoi. Le Bibliothecaire note dans son registre sans visage : « lecture partielle ».",
+        },
+        {
+          label: "Fermer le livre",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Le Bibliothecaire range le lexique dans un espace qui n'existait pas avant qu'il en ait besoin. « Tu reviendras peut-etre, dit-il. Tout le monde revient. »",
+        },
+      ],
+    },
+    deep_echo: {
+      title: "L'Echo des Abysses",
+      flavorText:
+        "Un son qui n'est pas tout a fait un son vient d'en dessous — a travers le plancher de la Bibliotheque, a travers des kilometres de pierre et d'encre. Ce n'est pas un cri. Ce n'est pas un chant. C'est quelque chose qui essaie de se souvenir de comment resonner dans un espace humain.",
+      description:
+        "L'echo cherche une reponse. Lui en donner une pourrait etre benefique — ou simplement etrange.",
+      choices: [
+        {
+          label: "Resonner avec l'echo",
+          description: "Gagnez 30 PV max.",
+          outcomeText:
+            "Vous laissez le son passer par vous. Quelque chose d'aussi vieux que la premiere lettre jamais ecrite s'installe dans vos os. Votre capacite s'accroit. Le son repart satisfait d'avoir trouve un recipient assez profond.",
+        },
+        {
+          label: "Absorber l'echo dans un grimoire",
+          description: "Gagnez 20 PV et 20 or.",
+          outcomeText:
+            "L'echo entre dans le grimoire ouvert et devient temporairement visible — une pulsation d'encre noire qui se solidifie en quelques secondes en quelque chose d'utile. Le livre se referme. Ce qu'il contient maintenant, vous ne savez pas.",
+        },
+        {
+          label: "Ignorer l'echo",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "L'echo s'en va chercher une autre oreille. Quelque part dans la Bibliotheque, quelqu'un d'autre entend ce bruit et prend une decision differente.",
+        },
+      ],
+    },
+    dreaming_gate: {
+      title: "La Porte du Reve",
+      flavorText:
+        "Une porte qui n'est pas attachee a un mur est debout dans la salle. De l'autre cote de son cadre, ce n'est pas une autre piece — c'est quelque chose que la langue humaine n'a jamais nomme, qui ressemble a un ciel mais n'en est pas un, ou des etoiles qui ne sont pas des etoiles bougent comme de l'ecriture sur une page tournee trop vite.",
+      description:
+        "La porte mene ailleurs. L'ailleurs a des effets secondaires.",
+      choices: [
+        {
+          label: "Entrer dans la porte",
+          description: "Gagnez 50 PV max. Ajoutez 2 Parchemins Maudits.",
+          outcomeText:
+            "Ce que vous voyez de l'autre cote ne se traduit pas. Mais votre corps traduit l'experience en capacite. Le prix : deux fragments de cette vision se coincent dans votre deck, refusant de partir.",
+        },
+        {
+          label: "Regarder depuis le seuil",
+          description: "Gagnez 25 PV max.",
+          outcomeText:
+            "Un apercu depuis l'embrasure — assez pour agrandir ce que vous pouvez contenir, pas assez pour perdre le fil de ce que vous etes. La porte se ferme d'elle-meme quand vous reculez.",
+        },
+        {
+          label: "Sceller la porte",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Vous scellez la porte avec ce qui vous tombe sous la main. Elle s'ouvre quelques minutes plus tard dans une autre partie de la Bibliotheque. Certaines portes ne peuvent pas etre scellees.",
+        },
+      ],
+    },
+    // ── AZTEC ──────────────────────────────────────────────────────────────
+    quetzalcoatl_blessing: {
+      title: "La Benediction de Quetzalcoatl",
+      flavorText:
+        "Un serpent couvert de plumes vertes et d'or serpente entre les etageres, trop grand pour cette salle, et pourtant la. Il s'arrete devant vous, sa tete a hauteur de votre poitrine. Sur sa langue fourchue, des glyphes naissent et disparaissent. « Scribe, dit-il. Tu meritertes une marque. »",
+      description:
+        "Le Serpent Plumeux offre un glyphe de puissance. Le sang amplifie toujours le don.",
+      choices: [
+        {
+          label: "Accepter la benediction",
+          description: "Gagnez 30 PV max.",
+          outcomeText:
+            "Il trace un glyphe sur votre front avec la pointe de sa langue. Ca ne brule pas — ca grave. Quelque chose de nouveau est inscrit dans votre existence. Quetzalcoatl repart en silence, satisfait d'avoir transmis quelque chose d'ancien.",
+        },
+        {
+          label: "Offrir votre sang pour plus de puissance",
+          description: "Gagnez 45 PV max. Perdez 15 PV.",
+          outcomeText:
+            "Vous posez une paume ouverte devant lui. Il trace le glyphe dans votre sang. C'est plus profond que la chair — une inscription dans quelque chose de plus fondamental. Le prix est visible. L'echange est juste.",
+        },
+        {
+          label: "S'incliner et decliner respectueusement",
+          description: "Gagnez 10 PV.",
+          outcomeText:
+            "Il incline la tete, respectueux en retour. Un refus poli merite un don poli — une petite guerison, offerte sans commentaire. Puis il repart dans les couloirs, plus grand que les etageres.",
+        },
+      ],
+    },
+    obsidian_altar: {
+      title: "L'Autel d'Obsidienne",
+      flavorText:
+        "L'autel est taille dans un bloc d'obsidienne qui absorbe la lumiere plutot qu'il ne la reflechit. La Pretresse du Codex est debout derriere, vetue de plumes et d'encre sechee. Elle tient un couteau de verre volcanique. « Tout connaisseur sait que la connaissance se paye. Que donneras-tu ? »",
+      description:
+        "La Pretresse du Codex reclame un sacrifice. Ce qu'elle donne en retour vaut le prix.",
+      choices: [
+        {
+          label: "Sacrifier une carte a l'autel",
+          description:
+            "Perdez 10 PV. Retirez 1 carte. Gagnez 20 PV max et 40 or.",
+          outcomeText:
+            "Le couteau d'obsidienne coupe proprement. La carte brule sur l'autel en une flamme bleue. La Pretresse note le sacrifice dans son codex, satisfaite. Ce que vous perdez etait ce qui vous alourdissait.",
+        },
+        {
+          label: "Offrir de l'or a la place",
+          description: "Perdez 30 or, gagnez 25 PV max.",
+          outcomeText:
+            "Elle accepte l'or avec une legere deception. L'or n'est pas le sacrifice prefere de l'autel. Mais c'est une offrande acceptable. Elle ecrit votre nom dans le codex — a l'encre ordinaire.",
+        },
+        {
+          label: "Reculer devant l'autel",
+          description: "Perdez 15 PV.",
+          outcomeText:
+            "La Pretresse dit quelque chose dans une langue que vous ne connaissez pas. Ce n'est pas une malediction — c'est pire. C'est de la deception. L'obsidienne vous effleure au passage. Certains autels reagissent au manque de respect.",
+        },
+      ],
+    },
+    xolotl_crossing: {
+      title: "La Traversee de Xolotl",
+      flavorText:
+        "Un chien sans poil, a la peau bleue tachee de la couleur de la nuit, est assis dans le couloir et vous regarde avec des yeux qui ont vu l'envers de toutes les choses. C'est Xolotl — le guide des morts. « Je peux te montrer le chemin le plus court, dit-il. Si tu m'accompagnes. »",
+      description:
+        "Xolotl guide les ames a travers ce que les vivants ne voient pas. Un privilege rare.",
+      choices: [
+        {
+          label: "Suivre le guide des morts",
+          description: "Gagnez 25 PV et 20 or.",
+          outcomeText:
+            "Il trotte devant vous a travers des couloirs que vous n'aviez pas remarques. Certaines portes s'ouvrent d'elles-memes. Quand il s'arrete, vous etes ailleurs — soigne et plus riche, sans avoir compris comment.",
+        },
+        {
+          label: "Lui confier un de vos secrets",
+          description: "Gagnez 35 PV max.",
+          outcomeText:
+            "Il penche la tete et ecoute. Ce qu'il fait de votre secret, vous ne savez pas. Mais en echange, il vous confie quelque chose — non pas en mots, mais en capacite. Votre enveloppe peut contenir davantage.",
+        },
+        {
+          label: "Choisir votre propre chemin",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Il vous regarde partir avec la patience de quelqu'un qui sait que tout le monde revient sur ses pas. Puis il repart, peut-etre chercher une autre ame a guider.",
+        },
+      ],
+    },
+    // ── CELTIC ─────────────────────────────────────────────────────────────
+    druid_memory: {
+      title: "La Formule du Druide",
+      flavorText:
+        "Le Druide de la Memoire n'a pas de livre — ses textes sont tous dans sa tete, memorises sur des generations de druides avant lui. Il murmure en marchant, repetant des formules que personne d'autre ne peut ecrire. En vous voyant, il s'arrete. « Tu portes des grimoires. Tu sais donc ecrire. C'est mieux que rien. »",
+      description:
+        "Les druides gardent la connaissance vivante. Il peut vous en transmettre une partie.",
+      choices: [
+        {
+          label: "Recevoir la formule par recitation",
+          description: "Gagnez 25 PV max.",
+          outcomeText:
+            "Il parle pendant plusieurs minutes, les memes mots en boucle jusqu'a ce qu'ils s'impriment. Vous ne comprenez pas tout — mais quelque chose en vous change comme une page qui se tourne. La formule travaille sans que vous la compreniez.",
+        },
+        {
+          label: "La transcrire en echange de 20 or",
+          description: "Perdez 20 or, gagnez 40 PV max.",
+          outcomeText:
+            "Il grimace legerement en voyant la plume. « Les druides n'ecrivent pas. Mais toi, tu peux. » Vous transcrivez la formule. L'or paye sa generosite. Ce que vous avez note est plus ancre, plus profond — parce qu'ecrit et entendu a la fois.",
+        },
+        {
+          label: "Refuser d'apprendre",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Il hausse les epaules. « Les formules choisissent leurs porteurs. Peut-etre pas toi aujourd'hui. » Il reprend sa recitation et disparait entre les rayons.",
+        },
+      ],
+    },
+    lady_of_the_lake: {
+      title: "La Dame du Lac Encre",
+      flavorText:
+        "Au fond d'une salle, une etendue d'encre parfaitement immobile reflete le plafond comme une eau noire. Une main emerge lentement, tenant un livre scelle par trois chaines. Une voix monte de sous la surface : « Ce livre te protegera. Si tu oses le prendre. »",
+      description:
+        "La Dame du Lac Encre tient quelque chose pour vous. Le prendre a un cout.",
+      choices: [
+        {
+          label: "Plonger la main dans l'encre",
+          description: "Gagnez 30 PV max. Perdez 15 PV.",
+          outcomeText:
+            "L'encre est froide et epaisse, comme plonger la main dans la nuit. La Dame vous laisse prendre le livre — puis prend quelque chose en echange, sans violence. Vous repartez avec plus de capacite et une blessure que vous ne pouvez pas localiser.",
+        },
+        {
+          label: "Lui offrir 30 or",
+          description: "Perdez 30 or, gagnez 25 PV max.",
+          outcomeText:
+            "La main disparait un instant, reapparait avec le livre tendu. L'or disparait sous la surface sans faire de bruit. Ce que vous avez paye, vous ne l'aurez pas en retour. Ce que vous avez recu, vous y tenez.",
+        },
+        {
+          label: "Reculer doucement",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "La main reste tendue une longue minute. Puis elle se retire lentement, emportant le livre. Le lac redevient parfaitement immobile, comme si rien ne s'etait passe.",
+        },
+      ],
+    },
+    morrigan_crow: {
+      title: "Le Corbeau de Morrigan",
+      flavorText:
+        "Le corbeau est immense — pas naturellement, mais comme si la salle autour de lui avait retreci. Il porte dans son bec une plume detachee de son propre corps. Sur cette plume : votre nom, ecrit en sang seche. Il pose la plume a vos pieds. « Je suis venu voir ton futur. Et te proposer d'en changer. »",
+      description:
+        "Morrigan voit votre mort. Elle propose de la retarder — a condition de la regarder en face.",
+      choices: [
+        {
+          label: "Regarder votre propre fin",
+          description: "Gagnez 50 PV max. Perdez 20 PV.",
+          outcomeText:
+            "Ce que vous voyez n'est pas traduisible. Mais votre corps reagit a la vision comme a une alarme — en se fortifiant, en s'epaississant, en apprenant a durer plus longtemps. La douleur du present vaut le futur qu'elle repousse.",
+        },
+        {
+          label: "Interpreter les presages de richesse",
+          description: "Gagnez 40 or.",
+          outcomeText:
+            "Le corbeau montre autre chose aussi — des eclats d'or dans votre avenir proche. Morrigan voit tout : la mort, mais aussi ce qui la precede. Vous choisissez de ne regarder que cette partie-la.",
+        },
+        {
+          label: "Chasser le corbeau",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Il s'envole avec votre plume. Les propheties se realisent avec ou sans le consentement des interesses. Il aurait peut-etre ete preferable de savoir.",
+        },
+      ],
+    },
+    // ── AFRICAN ────────────────────────────────────────────────────────────
+    anansi_story: {
+      title: "L'Histoire d'Anansi",
+      flavorText:
+        "Entre les fils d'une toile geante qui court de rayon en rayon comme un second plafond, Anansi l'Araignee est suspendu dans son corps d'homme-araignee, lisant sept livres simultanement. Il descend lentement. « Toute connaissance est une histoire, dit-il. Et toute histoire a un echange au coeur. »",
+      description:
+        "Anansi tisse des recits comme d'autres tissent des filets. Ce qu'il offre a toujours plusieurs sens.",
+      choices: [
+        {
+          label: "Lui raconter votre voyage",
+          description: "Gagnez 30 PV max.",
+          outcomeText:
+            "Il ecoute avec tous ses yeux. Quand vous avez fini, il sourit. « Une bonne histoire. Pas la meilleure que j'ai entendue. Mais honnete. » Il tisse quelque chose dans votre existence avant de remonter a son plafond.",
+        },
+        {
+          label: "Ecouter une de ses histoires",
+          description: "Gagnez 15 PV et 15 or.",
+          outcomeText:
+            "Son histoire commence simplement, puis devient complexe, puis ironique, puis profonde, puis elle se retourne et revele quelque chose que vous ne saviez pas sur vous-meme. Vous partez avec moins de blessures et plus d'or.",
+        },
+        {
+          label: "Refuser l'echange",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "Il vous regarde partir avec l'amusement de quelqu'un qui sait comment l'histoire se termine. « Tu reviendras, dit-il. Les bons personnages reviennent toujours. »",
+        },
+      ],
+    },
+    griot_song: {
+      title: "Le Chant du Griot",
+      flavorText:
+        "Le Griot des Pages est assis entre les rayons, sa kora appuyee contre une etagere, des pages volantes tournant autour de lui comme des oiseaux qui auraient oublie comment voler. Quand il chante, les mots de tous les livres autour de lui vibrent legerement dans leur reliure.",
+      description:
+        "Le chant du griot guerit ce que les medicaments ne peuvent pas atteindre. Il chante pour qui prend le temps d'ecouter.",
+      choices: [
+        {
+          label: "Ecouter la melodie complete",
+          description: "Gagnez 30 PV.",
+          outcomeText:
+            "La melodie prend du temps. Elle suit vos cicatrices, les adresse une par une. Quand elle se tait, vous etes moins blesse. Pas entierement — mais significativement.",
+        },
+        {
+          label: "Fredonner avec lui",
+          description: "Gagnez 25 PV et 15 or.",
+          outcomeText:
+            "Il sourit en vous entendant essayer. Votre voix n'est pas belle — mais elle est sincere, et le griot recompense toujours la sincerite. La guerison s'accompagne d'un petit tresor tire de nulle part.",
+        },
+        {
+          label: "Partir rapidement",
+          description: "Gagnez 10 PV.",
+          outcomeText:
+            "Il chante quand meme quelques mesures dans votre direction. Meme une ecoute distraite merite quelque chose. Vous partez un peu moins blesse.",
+        },
+      ],
+    },
+    scribe_1_first_meeting: {
+      title: "Le Scribe Efface",
+      flavorText:
+        "Entre deux rayons, presque invisible. Pas un fantome — quelque chose entre un homme et une annotation dans les marges. Il ecrit dans l'air, mais sa plume ne laisse aucune trace.",
+      description: "Il ne semble pas vous voir. Ou ne veut pas etre vu.",
+      choices: [
+        {
+          label: "L'observer en silence",
+          description: "Le regarder sans intervenir.",
+          outcomeText:
+            "Il continue d'ecrire dans le vide. Vous repartez avec la certitude d'avoir manque quelque chose, sans savoir quoi.",
+        },
+        {
+          label: "Lui adresser la parole",
+          description: "Tenter le contact.",
+          outcomeText:
+            "Il sursaute. Ouvre la bouche. La referme. L'ouvre encore. « Il y avait un mot, dit-il finalement. Je ne retrouve plus lequel. » Vous ne savez pas quoi repondre a ca.",
+        },
+        {
+          label: "L'ignorer et passer",
+          description: "Ce n'est pas votre affaire.",
+          outcomeText:
+            "Il disparait de votre champ de vision avant meme que vous ayez tourne le dos. Rien ne s'est passe. Et pourtant.",
+        },
+      ],
+    },
+    scribe_2_lost_words: {
+      title: "Les Pages Dechirées",
+      flavorText:
+        "Il est assis par terre, entoure de pages qu'il a lui-meme arrachees, essayant de les reassembler. Il ne leve pas les yeux quand vous approchez.",
+      description:
+        "Les fragments ne correspondent a rien. Il cherche quelque chose qu'il a perdu lui-meme.",
+      choices: [
+        {
+          label: "L'aider a rassembler les pages",
+          description: "Tendre la main.",
+          outcomeText:
+            "Il vous laisse faire sans protester. Les pages ne s'assemblent pas — les fragments ne correspondent a rien. Mais il vous regarde faire avec quelque chose qui ressemble a de la gratitude.",
+        },
+        {
+          label: "Regarder sans intervenir",
+          description: "Observer de loin.",
+          outcomeText:
+            "Les pages sont couvertes d'une ecriture qui ressemble vaguement a la votre. Vous decidez que c'est une coincidence.",
+        },
+        {
+          label: "Lui dire que c'est inutile",
+          description: "Etre direct.",
+          outcomeText:
+            "Il s'arrete. Vous regarde. « Tu as peut-etre raison, dit-il. Mais je dois essayer quand meme. » Il reprend. Vous partez.",
+        },
+      ],
+    },
+    scribe_3_familiar_face: {
+      title: "Le Visage Connu",
+      flavorText:
+        "Il vous arrete dans un couloir — cette fois, c'est lui qui a l'initiative. « Je te connais, dit-il. Pas de ce run. De l'autre. Ou peut-etre... du prochain. »",
+      description:
+        "Il parle de vous comme d'un personnage recurrent. Il n'a pas tort.",
+      choices: [
+        {
+          label: "Jouer le jeu",
+          description: "Hocher la tete.",
+          outcomeText:
+            "Votre acquiescement le detend. « Je savais. Les bons Archivistes reviennent toujours. » Il dit 'bons' d'une facon etrange, comme si le mot avait un prix.",
+        },
+        {
+          label: "Le corriger : vous ne vous etes jamais vus",
+          description: "Etre honnete.",
+          outcomeText:
+            "Il reflechit. « Non, dit-il. Peut-etre que tu as raison. Peut-etre que c'etait quelqu'un d'autre. » Il hoche la tete comme si c'etait une reponse satisfaisante. Ce n'en est pas une.",
+        },
+        {
+          label: "Partir sans repondre",
+          description: "Ne pas s'arreter.",
+          outcomeText:
+            "Il ne dit rien. Vous sentez son regard dans votre dos pendant tout le couloir suivant.",
+        },
+      ],
+    },
+    scribe_4_torn_pages: {
+      title: "L'Encre Effacee",
+      flavorText:
+        "Il vous montre une page. De pres, on distingue les traces — quelque chose etait la. Pas une tache : une ecriture deliberement effacee. Quelqu'un a pris le temps de tout retirer.",
+      description: "Ces pages ont ete censurees. Pas par accident.",
+      choices: [
+        {
+          label: "Essayer de lire les traces",
+          description: "Regarder de plus pres.",
+          outcomeText:
+            "Avec assez de lumiere et d'attention, quelques mots ressortent. Des noms. Des lieux. Et un titre qui revient plusieurs fois : Archiviste Principal. Vous relevez les yeux. Il attend.",
+        },
+        {
+          label: "Lui demander qui a fait ca",
+          description: "Poser la question.",
+          outcomeText:
+            "« Quelqu'un qui croyait que certaines histoires etaient trop dangereuses. » Il replie la page soigneusement. « Quelqu'un qui se croyait raisonnable. »",
+        },
+        {
+          label: "Detourner le regard",
+          description: "Ne pas regarder.",
+          outcomeText:
+            "Il replie la page sans un mot. Il ne vous en voudra pas. Il ne s'y attend pas.",
+        },
+      ],
+    },
+    scribe_5_the_name: {
+      title: "Le Prenom Perdu",
+      flavorText:
+        "Il vous aborde en murmurant quelque chose. Une syllabe. Puis deux. Il essaie de reconstituer quelque chose d'essentiel qu'il a perdu avant de savoir qu'il l'avait.",
+      description:
+        "Il cherche son nom. Ce qui reste d'un homme quand le nom s'en va.",
+      choices: [
+        {
+          label: "L'encourager a chercher",
+          description: "Rester avec lui.",
+          outcomeText:
+            "Vous attendez. Il essaie. « E... » Il s'arrete. « Il me semble que ca commencait par un E. Ou peut-etre que c'est quelqu'un d'autre. » Il sourit, defait. Vous restez la jusqu'a ce qu'il renonce.",
+        },
+        {
+          label: "Attendre en silence",
+          description: "Laisser le silence faire son travail.",
+          outcomeText:
+            "Le silence entre vous deux est confortable. Il finit par renoncer pour ce soir — si ce lieu a des soirs. « Merci d'etre reste », dit-il sans explication.",
+        },
+        {
+          label: "Lui dire que ca n'a plus d'importance",
+          description: "Clore le sujet.",
+          outcomeText:
+            "Il vous regarde longuement. « C'est vrai, finit-il par dire. Et c'est peut-etre le probleme. » Il part avant vous.",
+        },
+      ],
+    },
+    scribe_6_the_warning: {
+      title: "Ce qui Vous Attend",
+      flavorText:
+        "Il vous intercepte avec une urgence inhabituelle. Son visage est plus net que d'habitude, plus present. « Je me souviens de quelque chose, dit-il. Je dois te le dire avant que ca parte. »",
+      description:
+        "Il a quelque chose de precis a transmettre. Une derniere fois.",
+      choices: [
+        {
+          label: "Ecouter attentivement",
+          description: "Lui donner toute votre attention.",
+          outcomeText:
+            "Il vous parle d'une force — pas un ennemi, une direction. Quelque chose qui s'est decide a tout simplifier. « Les histoires simples ne blessent personne, dit cette chose. Elle a tort. Les histoires simples n'existent pas. » Il vous regarde comme si vous deviez comprendre quelque chose de plus.",
+        },
+        {
+          label: "Ecouter sans repondre",
+          description: "Absorber sans commenter.",
+          outcomeText:
+            "Il parle. Vous absorbez. Vous n'etes pas sur de tout comprendre, mais le ton suffit. Quelque chose de grave arrive.",
+        },
+        {
+          label: "Lui dire qu'il delire",
+          description: "Rejeter ses mots.",
+          outcomeText:
+            "Son regard se vide un instant. « Oui, dit-il. Peut-etre. » Il repart. Ce soir-la, vous ne dormez pas — si ce lieu permet le sommeil.",
+        },
+      ],
+    },
+    scribe_7_the_other: {
+      title: "Celui qui a Commence",
+      flavorText:
+        "Sans preambule : « Il y avait un Archiviste avant toi. Avant moi aussi, je crois. Il a decide que certaines histoires etaient trop... compliquees. » Une pause. « Il faut le retrouver. »",
+      description:
+        "Il parle de quelqu'un sans realiser qu'il parle de lui-meme.",
+      choices: [
+        {
+          label: "Lui demander d'en dire plus",
+          description: "Creuser.",
+          outcomeText:
+            "Il cherche. Le souvenir est fragmente. « Il s'appelait... » Il s'arrete. Quelque chose dans ses yeux change — une seconde de panique, puis ca se referme. « Je ne me souviens plus. Desole. » Vous le croyez.",
+        },
+        {
+          label: "Observer sa reaction",
+          description: "Le regarder parler de lui-meme.",
+          outcomeText:
+            "Ce qui est frappant, c'est qu'il parle de cet homme avec de la colere. Pas de la culpabilite. Pas encore.",
+        },
+        {
+          label: "Couper court",
+          description: "Pas le temps pour ca.",
+          outcomeText:
+            "Il s'arrete a mi-phrase. Hoche la tete. « Tu as raison. On n'a peut-etre pas le temps. » Mais il avait quelque chose a finir. Il ne finira pas aujourd'hui.",
+        },
+      ],
+    },
+    scribe_8_the_truth: {
+      title: "L'Archiviste d'Avant",
+      flavorText:
+        "Sa voix est stable. Plus stable que toutes les fois precedentes. « Je me souviens de mon role. Pas de mon nom encore. Mais mon role : Archiviste Principal du Panlibrarium. Avant toi. »",
+      description: "Il sait ce qu'il etait. Pas encore ce qu'il a fait.",
+      choices: [
+        {
+          label: "Lui dire que vous le croyez",
+          description: "Lui accorder votre confiance.",
+          outcomeText:
+            "Il ferme les yeux une seconde. « C'est plus que ce que j'esperais. » Vous ne savez pas exactement a quoi vous croyez. Mais vous y croyez quand meme.",
+        },
+        {
+          label: "Garder votre distance",
+          description: "Rester prudent.",
+          outcomeText:
+            "Ce n'est pas de la mefiance — c'est de la prudence. Il comprend. « Tu as raison d'attendre, dit-il. Je n'ai pas encore tout dit. »",
+        },
+        {
+          label: "L'accuser : c'est lui qui a tout casse",
+          description: "Dire ce que vous pensez.",
+          outcomeText:
+            "Il palit. Ou plutot, ce qui lui sert de presence se contracte. « Je n'exclus pas cette possibilite », dit-il apres un silence. Ce n'est pas un deni.",
+        },
+      ],
+    },
+    scribe_9_the_choice: {
+      title: "Ce que Tu Ferais",
+      flavorText:
+        "« Supposons, dit-il, que tu aies lu toutes les histoires. Que tu saches lesquelles rendent les gens violents. Lesquelles leur donnent de mauvaises idees. Des idees dangereuses. Qu'est-ce que tu ferais ? »",
+      description:
+        "Il ne pose pas une question rhetorique. Il veut vraiment savoir.",
+      choices: [
+        {
+          label: "Rien. Les histoires s'appartiennent.",
+          description: "Defendre la liberte des recits.",
+          outcomeText:
+            "Il hoche la tete lentement. « C'est ce que j'aurais dit, autrefois. » Une pause. « Avant de voir ce que certaines histoires faisaient aux gens. » Mais il n'a pas l'air de vous contredire.",
+        },
+        {
+          label: "Ca depend de l'histoire.",
+          description: "Etre nuance.",
+          outcomeText:
+            "« Une reponse raisonnable, dit-il. C'est exactement comme ca que ca commence. »",
+        },
+        {
+          label: "Les effacer. Proteger les lecteurs.",
+          description: "Choisir la censure.",
+          outcomeText:
+            "Quelque chose dans son visage change — pas de la satisfaction, de la douleur. « Oui, dit-il. C'est ce que j'aurais dit aussi. »",
+        },
+      ],
+    },
+    scribe_10_the_reveal: {
+      title: "Ce qui ne Peut pas etre Efface",
+      flavorText:
+        "Il est entierement la. Lucide, stable, effrayant dans sa clarte. « Je suis celui dont je t'ai parle. L'Archiviste qui a commence. Je t'ai cherche pendant toutes ces rencontres parce que je ne me souvenais pas encore. Maintenant oui. »",
+      description: "Il sait. Il dit tout. Il a quelques minutes.",
+      choices: [
+        {
+          label: "Lui dire que vous le saviez",
+          description: "Lui offrir cette grace.",
+          outcomeText:
+            "Vous mentiez — vous le suspectez, mais vous ne le saviez pas vraiment. Il sourit. « Peu importe. Maintenant tu dois aller plus loin que moi. Ce que tu trouveras la-bas, c'est ce que je suis devenu. Tue-le si tu peux. Ou... non. Ecoute-le d'abord. »",
+        },
+        {
+          label: "Rester silencieux",
+          description: "Laisser le poids de la verite exister.",
+          outcomeText:
+            "Il n'attend pas de reponse. Il sait que certaines verites n'appellent pas de mots. Il disparait lentement — litteralement, pas par metaphore. Son encre se dissout. « Bonne chance, Archiviste. »",
+        },
+        {
+          label: "Lui tourner le dos",
+          description: "Ne pas vouloir entendre.",
+          outcomeText:
+            "Il ne vous rappelle pas. Quand vous regardez derriere vous, il n'est plus la. Dans le couloir vide, une page flotte encore — couverte d'une ecriture que vous reconnaissez maintenant comme la sienne.",
+        },
+      ],
+    },
+    nyame_trial: {
+      title: "L'Epreuve de Nyame",
+      flavorText:
+        "Le plafond de la salle est une fenetre sur quelque chose qui ressemble a un ciel — et dans ce ciel, un oeil immense vous regarde. Nyame, le dieu du ciel, a lu tous les livres de la Bibliotheque depuis son plafond depuis le premier jour. Il vous a vus arriver. « Une epreuve, dit la voix d'en haut. Pour mesurer si tu meritertes de continuer. »",
+      description:
+        "Nyame juge depuis son ciel. Son epreuve est difficile mais juste.",
+      choices: [
+        {
+          label: "Accepter l'epreuve",
+          description: "Gagnez 40 PV max. Perdez 20 PV.",
+          outcomeText:
+            "Ce que l'epreuve demande, vous le payez en chair. Ce qu'elle donne en retour, vous le portez dans votre enveloppe comme une revision profonde. Nyame fait une note dans ses propres archives. Vous avez passe. Pas facilement — mais passe.",
+        },
+        {
+          label: "Offrir de l'or pour une epreuve allégee",
+          description: "Perdez 40 or, gagnez 30 PV max.",
+          outcomeText:
+            "La voix se tait un moment. « L'or ne dispense pas de l'epreuve. Mais il paye pour une version plus courte. » Une lumiere breve. Une douleur breve. Un gain reel.",
+        },
+        {
+          label: "Ignorer le regard et avancer",
+          description: "Rien ne se passe.",
+          outcomeText:
+            "L'oeil vous suit jusqu'a la prochaine salle. Nyame note quelque chose dans ses archives. Peut-etre pour une prochaine occasion. Peut-etre pour ne jamais l'oublier.",
+        },
+      ],
     },
   },
 } as const;

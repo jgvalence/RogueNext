@@ -366,6 +366,33 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       );
     }
 
+    // ── Scribe Effacé — persistance métaprogression ────────────────────────
+    // Pour chaque rencontre vue ce run, on écrase la réponse précédente dans resources.
+    // Encodage : 0/absent = pas vue, 1 = hostile (-1), 2 = neutre (0), 3 = compassion (+1)
+    // Décodage : attitude = resources["__SCRIBE_N_ATT"] - 2  (si valeur > 0)
+    // Exemple : __SCRIBE_1_ATT: 3 → rencontre 1 vue, joueur compatissant
+    const SCRIBE_RESOURCE_KEYS: Record<string, string> = {
+      scribe_1_first_meeting: "__SCRIBE_1_ATT",
+      scribe_2_lost_words: "__SCRIBE_2_ATT",
+      scribe_3_familiar_face: "__SCRIBE_3_ATT",
+      scribe_4_torn_pages: "__SCRIBE_4_ATT",
+      scribe_5_the_name: "__SCRIBE_5_ATT",
+      scribe_6_the_warning: "__SCRIBE_6_ATT",
+      scribe_7_the_other: "__SCRIBE_7_ATT",
+      scribe_8_the_truth: "__SCRIBE_8_ATT",
+      scribe_9_the_choice: "__SCRIBE_9_ATT",
+      scribe_10_the_reveal: "__SCRIBE_10_ATT",
+    };
+    const scribeChoices = runState.scribeChoices ?? {};
+    if (Object.keys(scribeChoices).length > 0) {
+      const scribeDelta: Record<string, number> = {};
+      for (const [eventId, attitudeDelta] of Object.entries(scribeChoices)) {
+        const key = SCRIBE_RESOURCE_KEYS[eventId];
+        if (key) scribeDelta[key] = attitudeDelta + 2; // encode: -1→1, 0→2, +1→3
+      }
+      nextResources = { ...nextResources, ...scribeDelta };
+    }
+
     const selectedDifficultyLevel = runState.selectedDifficultyLevel ?? 0;
     const runDurationMs = Math.max(0, Date.now() - run.createdAt.getTime());
     await prisma.userProgression.upsert({

@@ -874,10 +874,10 @@ function GameContent({
                 type: "APPLY_EVENT",
                 payload: { event, choiceIndex },
               });
-              // If choice requires a purge, stay on SPECIAL screen until card is picked
-              if (!event.choices[choiceIndex]?.requiresPurge) {
-                setPhase("MAP");
-              }
+              // EventRoom handles outcome display — do not advance here
+            }}
+            onEventContinue={() => {
+              setPhase("MAP");
             }}
             onEventPurge={(cardInstanceId) => {
               dispatch({

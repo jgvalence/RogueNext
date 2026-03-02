@@ -77,5 +77,14 @@ export const RunStateSchema = z.object({
   initialUnlockedCardIds: z.array(z.string()).default([]),
   // Detailed unlock progression state
   cardUnlockProgress: CardUnlockProgressSchema.default({}),
+  // Events already seen this run (used to prevent once-per-run events from repeating)
+  seenEventIds: z.array(z.string()).default([]),
+  // Tracks player's cumulative attitude toward the Erased Scribe across encounters
+  // Positive = compassion, near zero = indifference, negative = hostility
+  // Used by the final boss (Le Censeur) to alter its behavior
+  scribeAttitude: z.number().int().default(0),
+  // Per-encounter attitude delta for the Erased Scribe (key = event id, value = -1/0/+1)
+  // Persisted individually to meta-progression at end of run for granular boss reactions
+  scribeChoices: z.record(z.string(), z.number().int()).default({}),
 });
 export type RunState = z.infer<typeof RunStateSchema>;

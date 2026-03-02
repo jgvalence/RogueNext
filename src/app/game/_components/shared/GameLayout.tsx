@@ -127,9 +127,18 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           </span>
         </div>
 
-        <span className="hidden text-sm font-bold uppercase tracking-[0.2em] text-slate-500 sm:block [@media(max-height:540px)]:hidden">
-          Panlibrarium
-        </span>
+        <div className="hidden flex-col items-center sm:flex [@media(max-height:540px)]:hidden">
+          <span className="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">
+            Panlibrarium
+          </span>
+          {state.selectedDifficultyLevel !== null && (
+            <span className="text-[10px] italic tracking-wide text-amber-800/70">
+              {t(
+                `runDifficulty.levels.${state.selectedDifficultyLevel}.chapter`
+              )}
+            </span>
+          )}
+        </div>
 
         <div className="flex items-center gap-3 [@media(max-height:540px)]:gap-1.5">
           <div className="hidden items-center gap-1.5 sm:flex [@media(max-height:540px)]:hidden">

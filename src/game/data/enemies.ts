@@ -1384,8 +1384,8 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     biome: "EGYPTIAN",
   },
   {
-    id: "desert_cobra",
-    name: "Desert Cobra",
+    id: "apep_scion",
+    name: "Apep Scion",
     maxHp: 22,
     speed: 7,
     abilities: [
@@ -1398,11 +1398,44 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         ],
       },
       {
-        name: "Sand Spit",
+        name: "Chaos Coil",
         weight: 1,
         effects: [
           { type: "DAMAGE", value: 4 },
           { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        ],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    tier: 1,
+    biome: "EGYPTIAN",
+  },
+  {
+    id: "wadjet_guardian",
+    name: "Wadjet Guardian",
+    maxHp: 30,
+    speed: 3,
+    abilities: [
+      {
+        name: "Uraeus Ward",
+        weight: 2,
+        effects: [{ type: "BLOCK", value: 9 }],
+      },
+      {
+        name: "Cobra Retaliation",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "APPLY_BUFF", value: 2, buff: "THORNS" },
+        ],
+      },
+      {
+        name: "Royal Coil",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         ],
       },
     ],
@@ -1563,10 +1596,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
   // =========================================================
   // EGYPTIAN biome — alternate boss
   // =========================================================
-  // Eye of Osiris: block-heavy judgment, ink punishment.
+  // Judgment of Osiris: block-heavy judgment, ink punishment.
   {
-    id: "osiris_eye",
-    name: "Eye of Osiris",
+    id: "osiris_judgment",
+    name: "Judgment of Osiris",
     maxHp: 170,
     speed: 2,
     abilities: [
@@ -2088,8 +2121,8 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     biome: "AZTEC",
   },
   {
-    id: "blood_cultist",
-    name: "Blood Cultist",
+    id: "flayed_cultist",
+    name: "Flayed Cultist",
     maxHp: 22,
     speed: 5,
     abilities: [
@@ -2761,8 +2794,8 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     biome: "RUSSIAN",
   },
   {
-    id: "frost_witch",
-    name: "Frost Witch",
+    id: "snow_maiden",
+    name: "Snow Maiden",
     maxHp: 26,
     speed: 5,
     abilities: [

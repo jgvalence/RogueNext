@@ -39,6 +39,7 @@ interface SpecialRoomViewProps {
   onUpgrade: (cardInstanceId: string) => void;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
   onEventPurge: (cardInstanceId: string) => void;
+  onEventContinue: () => void;
   onSkip: () => void;
 }
 
@@ -56,6 +57,7 @@ export function SpecialRoomView({
   onUpgrade,
   onEventChoice,
   onEventPurge,
+  onEventContinue,
   onSkip,
 }: SpecialRoomViewProps) {
   const roomType = useMemo(() => {
@@ -99,6 +101,7 @@ export function SpecialRoomView({
           cardDefs={cardDefs}
           onEventChoice={onEventChoice}
           onEventPurge={onEventPurge}
+          onEventContinue={onEventContinue}
         />
       );
   }
@@ -251,6 +254,7 @@ function EventRoom({
   cardDefs,
   onEventChoice,
   onEventPurge,
+  onEventContinue,
 }: {
   rng: RNG;
   difficultyLevel: number;
@@ -263,28 +267,88 @@ function EventRoom({
   cardDefs: Map<string, CardDefinition>;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
   onEventPurge: (cardInstanceId: string) => void;
+  onEventContinue: () => void;
 }) {
   const { t } = useTranslation();
   const event = useMemo(
     () => forcedEvent ?? pickEvent(rng, difficultyLevel, runState),
     [forcedEvent, rng, difficultyLevel, runState]
   );
+  const [chosenIndex, setChosenIndex] = useState<number | null>(null);
   const [showPurgePicker, setShowPurgePicker] = useState(false);
 
   const handleChoice = (choiceIndex: number) => {
-    const choice = event.choices[choiceIndex];
     onEventChoice(event, choiceIndex);
+    setChosenIndex(choiceIndex);
+  };
+
+  const handleContinue = () => {
+    const choice = chosenIndex !== null ? event.choices[chosenIndex] : null;
     if (choice?.requiresPurge) {
       setShowPurgePicker(true);
+    } else {
+      onEventContinue();
     }
   };
 
+  // ── Phase OUTCOME ────────────────────────────────────────────────────────
+  if (chosenIndex !== null) {
+    const choice = event.choices[chosenIndex];
+    return (
+      <div className="flex flex-col items-center gap-6 py-8">
+        <h2 className="text-2xl font-bold text-purple-400">{t(event.title)}</h2>
+
+        {choice?.outcomeText && (
+          <p className="max-w-lg border-l-2 border-amber-500/40 pl-5 text-center italic leading-relaxed text-amber-200/80">
+            {t(choice.outcomeText)}
+          </p>
+        )}
+
+        {!showPurgePicker && (
+          <button
+            onClick={handleContinue}
+            className="mt-2 rounded-lg border-2 border-purple-600 bg-purple-900/50 px-8 py-2.5 text-white transition hover:border-purple-400 hover:bg-purple-900/80"
+          >
+            {choice?.requiresPurge
+              ? t("special.eventPurgeAction")
+              : t("special.eventContinue")}
+          </button>
+        )}
+
+        {showPurgePicker && (
+          <CardPickerModal
+            title={t("special.purgePickerTitle")}
+            subtitle={t("special.purgePickerSubtitle")}
+            cards={deck}
+            cardDefs={cardDefs}
+            onPick={(cardInstanceId) => {
+              setShowPurgePicker(false);
+              onEventPurge(cardInstanceId);
+            }}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // ── Phase CHOOSING ───────────────────────────────────────────────────────
   return (
     <div className="flex flex-col items-center gap-6 py-8">
-      <h2 className="text-2xl font-bold text-purple-400">{event.title}</h2>
-      <p className="max-w-md text-center text-gray-400">{event.description}</p>
+      <h2 className="text-2xl font-bold text-purple-400">{t(event.title)}</h2>
 
-      <div className="text-xs text-gray-500">
+      {event.flavorText && (
+        <p className="max-w-lg text-center italic leading-relaxed text-purple-200/70">
+          {t(event.flavorText)}
+        </p>
+      )}
+
+      {event.description && (
+        <p className="max-w-md text-center text-sm text-gray-500">
+          {t(event.description)}
+        </p>
+      )}
+
+      <div className="text-xs text-gray-600">
         {t("special.eventStats", {
           current: playerCurrentHp,
           max: playerMaxHp,
@@ -299,26 +363,13 @@ function EventRoom({
             onClick={() => handleChoice(i)}
             className="flex flex-col items-start gap-1 rounded-lg border-2 border-purple-700 bg-purple-950/40 px-6 py-3 text-left transition hover:border-purple-500 hover:bg-purple-950/60"
           >
-            <span className="font-medium text-white">{choice.label}</span>
+            <span className="font-medium text-white">{t(choice.label)}</span>
             <span className="text-xs text-purple-300">
-              {choice.description}
+              {t(choice.description)}
             </span>
           </button>
         ))}
       </div>
-
-      {showPurgePicker && (
-        <CardPickerModal
-          title={t("special.purgePickerTitle")}
-          subtitle={t("special.purgePickerSubtitle")}
-          cards={deck}
-          cardDefs={cardDefs}
-          onPick={(cardInstanceId) => {
-            setShowPurgePicker(false);
-            onEventPurge(cardInstanceId);
-          }}
-        />
-      )}
     </div>
   );
 }

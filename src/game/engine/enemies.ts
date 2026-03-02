@@ -565,7 +565,7 @@ function maybeTriggerBossPhase(
       // Winter Curse: summons witch + freezes player cards
       current = healEnemy(current, enemy.instanceId, 18);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
-      current = summonEnemyIfPossible(current, "frost_witch", enemyDefs);
+      current = summonEnemyIfPossible(current, "snow_maiden", enemyDefs);
       current = freezePlayerHandCards(current, 2);
       return current;
     case "soundiata_spirit":
@@ -598,7 +598,7 @@ function maybeTriggerBossPhase(
       current = summonEnemyIfPossible(current, "gorgon", enemyDefs);
       current = applyBuffToPlayer(current, "VULNERABLE", 3, 3);
       return current;
-    case "osiris_eye":
+    case "osiris_judgment":
       // Divine Judgment: drain all ink + heavy debuffs + big heal
       current = healEnemy(current, enemy.instanceId, 20);
       current = grantEnemyStrength(current, enemy.instanceId, 3);
@@ -790,7 +790,7 @@ function applyBossAbilityMechanics(
         current = addCardsToDiscardPile(current, "dazed", 1);
       }
       return current;
-    case "osiris_eye":
+    case "osiris_judgment":
       if (ability.name === "Anubis Seal") {
         current = healEnemy(current, enemy.instanceId, 12);
       }

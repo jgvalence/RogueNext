@@ -223,7 +223,7 @@ export function RunSetupScreen({
             </h3>
             {selectedDifficulty !== null && (
               <span className="rounded border border-emerald-300/35 bg-emerald-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-emerald-100">
-                {t("runDifficulty.levelLabel", { level: selectedDifficulty })}
+                {t(`runDifficulty.levels.${selectedDifficulty}.chapter`)}
               </span>
             )}
           </div>
@@ -243,10 +243,13 @@ export function RunSetupScreen({
                   } disabled:cursor-not-allowed disabled:opacity-75`}
                 >
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-100/70">
-                    {t("runDifficulty.levelLabel", { level })}
+                    {t(`runDifficulty.levels.${level}.chapter`)}
                   </p>
                   <p className="mt-1 text-base font-bold text-amber-50">
                     {t(`runDifficulty.levels.${level}.name`)}
+                  </p>
+                  <p className="text-xs italic text-amber-700/80">
+                    {t(`runDifficulty.levels.${level}.subtitle`)}
                   </p>
                   <p className="mt-1 text-xs text-amber-100/70">
                     {t(`runDifficulty.levels.${level}.description`)}

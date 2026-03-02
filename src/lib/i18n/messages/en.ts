@@ -291,28 +291,40 @@ export const en = {
     levelLabel: "Level {{level}}",
     levels: {
       0: {
+        chapter: "Chapter I — Awakening",
+        subtitle: "An anomaly stirs in the ink",
         name: "Archivist",
         description: "Standard experience, ideal for learning the game.",
       },
       1: {
+        chapter: "Chapter II — Disruption",
+        subtitle: "The Tomes grow corrupt",
         name: "Watcher",
         description: "Enemies are a bit more dangerous.",
       },
       2: {
+        chapter: "Chapter III — Corruption",
+        subtitle: "Stories bleed into one another",
         name: "Curator",
         description: "Pressure rises and fights require cleaner play.",
       },
       3: {
+        chapter: "Chapter IV — Erasure",
+        subtitle: "The Censure is at work",
         name: "Censor",
         description:
           "Elites and bosses become less predictable, and bosses break through your defense more easily.",
       },
       4: {
+        chapter: "Chapter V — Amnesia",
+        subtitle: "Last chance",
         name: "Abyssal",
         description:
           "Elite and boss fights become much more aggressive, and events are riskier.",
       },
       5: {
+        chapter: "Chapter VI — The Abyss",
+        subtitle: "There is nothing left to lose",
         name: "Mythic",
         description:
           "Ultimate mode: more elites, relentless enemies, and less reliable rewards.",
@@ -1086,6 +1098,8 @@ export const en = {
     purgePickerTitle: "Choose a card to remove",
     purgePickerSubtitle:
       "This card will be permanently removed from your deck.",
+    eventContinue: "Continue",
+    eventPurgeAction: "Choose a card to remove",
   },
   startMerchant: {
     kicker: "Pre-run",
@@ -1306,6 +1320,1154 @@ export const en = {
           "The merchant is ideal to remove weak cards and stabilize your plan.",
         ],
       },
+    },
+  },
+  events: {
+    mysterious_tome: {
+      title: "The Sealed Tome",
+      flavorText:
+        "Behind a broken display case, a tome with black pages watches you. The ink inside moves on its own, searching for a reader for decades.",
+      description: "Do you dare open it?",
+      choices: [
+        {
+          label: "Unseal the tome",
+          description: "Lose 10 HP, gain 50 gold.",
+          outcomeText:
+            "Your fingers bleed on the pages. The tome drinks, satisfied. Twenty coins fall from between the leaves — the price of another reader, long ago.",
+        },
+        {
+          label: "Close the display case",
+          description: "Nothing happens.",
+          outcomeText:
+            "The tome snaps shut. Through the glass, you see the pages turn, seeking another victim.",
+        },
+      ],
+    },
+    ink_fountain: {
+      title: "The Ink Fountain",
+      flavorText:
+        "At the center of the room, a black marble basin overflows with glowing ink. It whispers in a language you have never learned — and yet, you understand every word.",
+      description: "What will you do with this ink?",
+      choices: [
+        {
+          label: "Drink from the basin",
+          description: "Gain 5 HP and 25 gold.",
+          outcomeText:
+            "The ink is cold, strangely sweet. It reopens your wounds on one side and seals them on the other. Ancient words glow for an instant in your veins.",
+        },
+        {
+          label: "Fill your pockets",
+          description: "Gain 75 gold.",
+          outcomeText:
+            "The ink solidifies in the air into perfectly round gold coins. A fair trade with the Library — it always takes back what it gives.",
+        },
+      ],
+    },
+    wandering_scribe: {
+      title: "The Wandering Scribe",
+      flavorText:
+        "A hunched old man wanders the stacks, his quill scratching the air. He does not seem to see you — until he turns abruptly: 'I can rewrite you. For a price.'",
+      description: "His services have a cost. His care, too.",
+      choices: [
+        {
+          label: "Pay for his services (30 gold)",
+          description: "Lose 30 gold, gain 20 max HP.",
+          outcomeText:
+            "He traces runes in your palm. They burn, then vanish. You feel sturdier somehow — harder to erase.",
+        },
+        {
+          label: "Accept his basic care",
+          description: "Gain 10 HP.",
+          outcomeText:
+            "He dabs your wounds with strange ink and leaves without a word, his quill resuming its perpetual motion.",
+        },
+      ],
+    },
+    ancient_sarcophagus: {
+      title: "The Sarcophagus of Words",
+      flavorText:
+        "The sarcophagus stands upright, its inscriptions glowing with otherworldly light. The lid trembles slightly, as though something inside seeks to escape — or to draw you in.",
+      description: "The essence within can fortify you... at what cost?",
+      choices: [
+        {
+          label: "Absorb the essence",
+          description: "Gain 20 max HP.",
+          outcomeText:
+            "Ancient energy envelops you. Something old settles within you — benevolent, for now.",
+        },
+        {
+          label: "Take the risk",
+          description: "Gain 30 max HP, lose 15 HP.",
+          outcomeText:
+            "The essence passes through you like an electric current. It takes more than it gives immediately — but the scars turn violet, a sign of deep transformation.",
+        },
+        {
+          label: "Leave it sealed",
+          description: "Nothing happens.",
+          outcomeText:
+            "You back away. Behind you, the lid stops trembling. Perhaps it was not so urgent after all.",
+        },
+      ],
+    },
+    whispering_idol: {
+      title: "The Whispering Idol",
+      flavorText:
+        "The idol is barely larger than your hand, carved from ash-colored marble. When it speaks, the whole room stops breathing. 'You want gold,' it says. 'Everyone wants gold. But I want something from you.'",
+      description: "A pact of cursed wealth is offered.",
+      choices: [
+        {
+          label: "Accept the pact",
+          description: "Gain 90 gold. Add Hexed Parchment to your deck.",
+          outcomeText:
+            "The gold falls from nowhere. The pact is sealed with black ink that tattoos your wrist for a fraction of a second before vanishing. The Hexed Parchment slips into your pocket untouched.",
+        },
+        {
+          label: "Push your luck",
+          description: "Gain 140 gold. Add 2 Haunting Regrets to your deck.",
+          outcomeText:
+            "The idol laughs — or something like it. It gives you more than you asked. It takes more than you expected.",
+        },
+        {
+          label: "Refuse",
+          description: "You leave with nothing.",
+          outcomeText:
+            "The idol falls silent. You feel its gaze on your back until you leave the room — and even after.",
+        },
+      ],
+    },
+    ruthless_scrivener: {
+      title: "The Ruthless Scrivener",
+      flavorText:
+        "Seated at his desk, he revises a manuscript with surgical precision, crossing out entire passages without hesitation. When you enter, he raises pale eyes like paper: 'Your deck is too verbose. I can fix that.'",
+      description:
+        "Purging costs blood. But a leaner deck can be worth the price.",
+      choices: [
+        {
+          label: "Pay in blood",
+          description: "Lose 10 HP. Permanently remove 1 card from your deck.",
+          outcomeText:
+            "He operates with his quill like a scalpel. A sharp pain, then the strange relief of knowing an unnecessary voice has been silenced.",
+        },
+        {
+          label: "Walk away",
+          description: "Nothing happens.",
+          outcomeText:
+            "He shrugs and returns to his manuscript. 'Come back when you are ready to be edited.' He does not watch you leave.",
+        },
+      ],
+    },
+    loyal_scribe: {
+      title: "Lost Apprentice Scribe",
+      flavorText:
+        "A young apprentice has been lost in the Library's corridors since the Censorship. His hands are stained with ink to the elbows, and he carries under his arm a stack of grimoires he is trying to save.",
+      description:
+        "He seeks a protector. His knowledge of ancient texts could prove invaluable.",
+      choices: [
+        {
+          label: "Take him in",
+          description: "The Apprentice Scribe joins your party.",
+          outcomeText:
+            "He follows you with a mix of relief and fear. His knowledge will be useful — provided he survives long enough to demonstrate it.",
+        },
+        {
+          label: "Refuse",
+          description: "You continue alone.",
+          outcomeText:
+            "He watches you walk away without a word. You hope he will find another traveler before the Library's shadows catch up to him.",
+        },
+      ],
+    },
+    wandering_knight: {
+      title: "Knight of Words",
+      flavorText:
+        "He stands in the shadows, his armor covered in hand-carved runes. His library burned — or worse, was censored. He seeks a new oath to swear, a cause worth defending.",
+      description:
+        "His ward-magic can protect you. His oath would bind you to each other.",
+      choices: [
+        {
+          label: "Accept his oath",
+          description: "The Knight of Words joins your party.",
+          outcomeText:
+            "He kneels, placing his hand on one of your grimoires as an oath. Something warm passes through your veins — his loyalty, printed in the ink of his armor.",
+        },
+        {
+          label: "Decline",
+          description: "You continue on your way.",
+          outcomeText:
+            "He nods, without bitterness. 'I will find another cause worthy of me.' You hope that is true.",
+        },
+      ],
+    },
+    ink_familiar_encounter: {
+      title: "Ink Familiar",
+      flavorText:
+        "Something watches you from the shadow between two shelves — a silhouette barely larger than a cat, made entirely of living ink that pulses softly. Its eyes, two points of bright ink, do not leave you.",
+      description:
+        "It seeks a master. The ink that composes it responds to your presence.",
+      choices: [
+        {
+          label: "Tame it",
+          description: "The Ink Familiar joins your party.",
+          outcomeText:
+            "It approaches slowly, sniffs your hand, then coils around your forearm like a living tattoo. It belongs to you — and in some way, you belong to it.",
+        },
+        {
+          label: "Ignore it",
+          description: "You continue on your way.",
+          outcomeText:
+            "It watches you until you disappear around a corner. The ink shimmers. Then silence.",
+        },
+      ],
+    },
+    mirror_of_bronze: {
+      title: "The Mirror of Bronze",
+      flavorText:
+        "The polished bronze mirror stands between two marble columns. It does not reflect your face — but that of someone you could have been. The silhouette smiles. It reaches out from the other side of the cold metal.",
+      description:
+        "What do you answer to what watches you from the other side?",
+      choices: [
+        {
+          label: "Reach back",
+          description: "Gain 20 max HP. Lose 15 HP.",
+          outcomeText:
+            "Your fingers pass through the cold metal. The silhouette takes something from you — raw vitality — and in exchange, carves new lines onto your body. You emerge with more capacity and fewer certainties.",
+        },
+        {
+          label: "Shatter the mirror",
+          description: "Gain 90 gold. Add Haunting Regret to your deck.",
+          outcomeText:
+            "The bronze shatters. The shards bleed for a few moments before solidifying into gold coins. The silhouette vanishes with a laugh that strangely resembles recognition. The regrets remain.",
+        },
+        {
+          label: "Watch without acting",
+          description: "Nothing happens.",
+          outcomeText:
+            "You observe until the silhouette tires of you and turns away. Some truths are not worth the price of their acquisition.",
+        },
+      ],
+    },
+    turning_house: {
+      title: "The Turning House",
+      flavorText:
+        "The room slowly rotates on itself — the shelves change position when you are not looking. In the armchair at the center, an old woman knits with bone needles. She does not look up. 'Sit,' she says. 'Turning houses do not wait.'",
+      description: "What do you ask of the keeper of this house?",
+      choices: [
+        {
+          label: "Sit and listen",
+          description: "Gain 35 max HP.",
+          outcomeText:
+            "She speaks for what seems like hours — in symbols, in images, in forgotten languages. You do not understand everything. But when you stand, your body is more capable of staying upright.",
+        },
+        {
+          label: "Force your way out",
+          description: "Gain 75 gold. Lose 15 HP.",
+          outcomeText:
+            "The house resists. Shelves move. You stumble, hit corners that should not exist. But you find the exit — with your gold and your bruises.",
+        },
+        {
+          label: "Take something from the shelf",
+          description: "Gain 15 HP and 15 gold.",
+          outcomeText:
+            "The old woman does not react — or pretends not to. The object you take seems to choose you as much as you choose it. Fair enough, for a house that turns.",
+        },
+      ],
+    },
+    skald_fire: {
+      title: "The Skalds' Fire",
+      flavorText:
+        "The brazier at the center of the room has burned for centuries, without wood or fuel. The flames are an icy blue. When you reach out your hand, it is not heat that bites — it is a cold that reaches the marrow.",
+      description: "The skalds' fire demands a sacrifice or a song.",
+      choices: [
+        {
+          label: "Plunge your hands into the fire",
+          description: "Gain 40 max HP. Lose 20 HP.",
+          outcomeText:
+            "The cold tears a cry from you. But your hands emerge marked with glowing runes that fade within seconds. What the fire took, it returned a hundredfold in another form.",
+        },
+        {
+          label: "Recite a verse",
+          description: "Gain 50 gold.",
+          outcomeText:
+            "The blue flames flicker. They recognize the words — or love them. Gold falls from the air like a reward for a poem recited in the right language at the right moment.",
+        },
+        {
+          label: "Leave without a word",
+          description: "Nothing happens.",
+          outcomeText:
+            "The fire remains indifferent. Some braziers wait to be honored. You turn your back and leave, intact.",
+        },
+      ],
+    },
+    blank_page: {
+      title: "The Blank Page",
+      flavorText:
+        "In the middle of an empty corridor, a blank page is pinned at eye level. Not a word. Not an illustration. Yet you have the feeling it has been waiting for you since the beginning of your journey — perhaps before.",
+      description: "The page is blank. What do you do with this void?",
+      choices: [
+        {
+          label: "Write your strength",
+          description: "Gain 20 max HP.",
+          outcomeText:
+            "You grasp a quill that was not there a moment ago. The words emerge on their own. The page absorbs them. When you look up, you feel sturdier — as though you just rewrote yourself a little better.",
+        },
+        {
+          label: "Erase your weakness",
+          description: "Lose 10 HP. Remove 1 card from your deck.",
+          outcomeText:
+            "The page tears with an almost human sound. The pieces combust in the air. Something in your deck lightens — a voice that spoke too loudly, reduced to silence.",
+        },
+        {
+          label: "Turn your heels",
+          description: "Nothing happens.",
+          outcomeText:
+            "You leave. Behind you, you hear something being written on the page. You do not look back.",
+        },
+      ],
+    },
+    sealed_reliquary: {
+      title: "The Sealed Reliquary",
+      flavorText:
+        "A dust-covered reliquary rests on a pedestal at the center of the room. It pulses with luminous ink, as if waiting to be claimed for a long time.",
+      description:
+        "One relic among those this reliquary holds is meant for you.",
+      choices: [
+        {
+          label: "Claim the relic",
+          description: "Gain 1 relic.",
+          outcomeText:
+            "Your fingers close around the object. The reliquary empties, at peace. What it guarded was for you — or at least, that is what it wants you to believe.",
+        },
+      ],
+    },
+    // ── GREEK ──────────────────────────────────────────────────────────────
+    oracle_of_delphi: {
+      title: "The Pythia of Delphi",
+      flavorText:
+        "The Pythia sits on her golden tripod above a crevasse exhaling ink vapors. Her eyes are rolled back, her lips forming words in a language of smoke. She does not look at you — she looks through time.",
+      description: "She sees what awaits you. Do you want to know?",
+      choices: [
+        {
+          label: "Listen to the prophecy",
+          description: "Gain 30 max HP.",
+          outcomeText:
+            "Her words print themselves into you like indelible ink. You do not understand everything — but something in you has prepared for what comes. Your body remembers, even if your mind forgets.",
+        },
+        {
+          label: "Offer tribute (30 gold)",
+          description: "Lose 30 gold, gain 45 max HP.",
+          outcomeText:
+            "She accepts the offering without looking at it. In exchange, she places a cold finger on your sternum — and an extra life inscribes itself into you, like a revision in the margins of an already finished manuscript.",
+        },
+      ],
+    },
+    thread_of_ariadne: {
+      title: "Ariadne's Thread",
+      flavorText:
+        "A silver thread stretches through the corridor's darkness, running between shelves like a vein through a body of stone. At one end, a woman whose features change every time you look at her holds the spool. 'This thread will lead you to what you need. How much do you want to take?'",
+      description:
+        "The thread can guide you. But the more you take, the more you bind yourself.",
+      choices: [
+        {
+          label: "Take a little thread",
+          description: "Gain 20 max HP.",
+          outcomeText:
+            "The thread guides you along a path you would not have found alone. It leads you to a room full of light, then vanishes. You found what needed finding.",
+        },
+        {
+          label: "Unroll the entire spool",
+          description: "Gain 40 max HP. Lose 15 HP.",
+          outcomeText:
+            "The thread pulls taut — too much. It passes through you, rewrites a few chapters, tears out others. What you gain in endurance, you pay in flesh. The labyrinth always takes its toll.",
+        },
+        {
+          label: "Leave the thread",
+          description: "Nothing happens.",
+          outcomeText:
+            "The woman puts away her spool without a word. Labyrinths have exits even without a guide. You will simply need to search longer.",
+        },
+      ],
+    },
+    // ── RUSSIAN ────────────────────────────────────────────────────────────
+    firebird_feather: {
+      title: "Zhar-Ptitsa's Feather",
+      flavorText:
+        "A golden-fire feather rests on a shelf, burning without consuming the wood, bathing the surrounding grimoires in orange light. It seems to have no owner — or rather, it waits to have one.",
+      description:
+        "The Firebird's feather brings luck to those who know how to grasp it.",
+      choices: [
+        {
+          label: "Take the feather",
+          description: "Gain 25 HP and 25 gold.",
+          outcomeText:
+            "The feather burns cold in your hand — a contradiction that becomes truth. Its warmth passes through you, healing what was wounded, shaping what had no form. Gold falls from your pockets as a side effect, as if fortune follows light.",
+        },
+        {
+          label: "Contemplate it before taking it",
+          description: "Gain 35 max HP.",
+          outcomeText:
+            "You study its light until it imprints behind your eyelids. When you finally take it, something deeper has already changed in you — not the flesh, but the text that defines you.",
+        },
+        {
+          label: "Leave it for another",
+          description: "Nothing happens.",
+          outcomeText:
+            "The feather continues to burn, indifferent. Perhaps the next person to pass here was the one who truly needed it. Perhaps it was you.",
+        },
+      ],
+    },
+    kostchei_needle: {
+      title: "Kostchei's Needle",
+      flavorText:
+        "A bone box stands open on a pedestal. Inside: an egg. Inside the egg: a duck. Inside the duck: a hare. Inside the hare: a needle whose tip glows absolute black. A sourceless voice: 'My soul is immortal. I can lend a fragment of it.'",
+      description:
+        "Kostchei the Immortal offers a fragment of eternity. His bargains always have a hidden price.",
+      choices: [
+        {
+          label: "Accept the fragment of immortality",
+          description: "Gain 50 max HP. Lose 25 HP.",
+          outcomeText:
+            "The needle pricks you. The pain is brief, intense — then comes something else, older than pain. Your body learns a new definition of itself. More capacity. Less immediate integrity. Exactly what Kostchei promised.",
+        },
+        {
+          label: "Negotiate the terms",
+          description: "Gain 25 max HP and 25 gold.",
+          outcomeText:
+            "He laughs — the sound of a library burning in reverse. But he accepts. A smaller fragment, a smaller price. Something valuable falls from the bone box as if by inadvertence.",
+        },
+        {
+          label: "Refuse the partial immortality",
+          description: "Nothing happens.",
+          outcomeText:
+            "The needle packs itself back into the hare into the duck into the egg into the box. 'You will return,' says the voice. 'Everyone returns.'",
+        },
+      ],
+    },
+    // ── VIKING ─────────────────────────────────────────────────────────────
+    huginn_bargain: {
+      title: "Huginn's Gaze",
+      flavorText:
+        "A raven of unsettling intelligence perches on a shelf at eye level. Its irises are entirely white — Odin's eyes, stripped of their pupil to see further. It tilts its head. 'The Allfather watches you. He has questions about you. Let him see.'",
+      description:
+        "Odin wants to see through you. This sight always carries a price.",
+      choices: [
+        {
+          label: "Offer an eye",
+          description: "Gain 45 max HP. Lose 20 HP.",
+          outcomeText:
+            "The raven approaches. What follows is not pain — it is a rewrite. Odin sees you from the inside, and what he sees satisfies him enough to leave something in exchange. You leave with less integrity and much more depth.",
+        },
+        {
+          label: "Offer gold instead",
+          description: "Lose 30 gold, gain 30 max HP.",
+          outcomeText:
+            "The raven blinks its white eyes. Odin accepts the gold — gods always need gold, even those who claim otherwise. A satisfying exchange for both parties.",
+        },
+        {
+          label: "Refuse to be seen",
+          description: "Nothing happens.",
+          outcomeText:
+            "The raven lifts its wings in what resembles a shrug. 'He has already seen you anyway,' it says. 'He just wanted to be polite.'",
+        },
+      ],
+    },
+    valkyrie_verdict: {
+      title: "The Valkyrie's Verdict",
+      flavorText:
+        "A warrior in ink-stained armor watches you from atop a shelf, writing something in a large book. She looks up. 'I am evaluating you,' she says simply. 'Show me what you are worth.'",
+      description: "She chooses who deserves to continue. Show her your worth.",
+      choices: [
+        {
+          label: "Defend your worth in words",
+          description: "Gain 25 max HP.",
+          outcomeText:
+            "You speak. She listens with absolute attention. When you finish, she notes something and closes her book. 'Sufficient,' she says. 'For now.' Coming from her, that is a compliment.",
+        },
+        {
+          label: "Show your wounds",
+          description: "Gain 25 HP.",
+          outcomeText:
+            "She inspects each scar with the rigor of an architect reading a blueprint. 'You survived all this. Then you can survive what comes.' She briefly places a hand on your chest. The pain diminishes.",
+        },
+        {
+          label: "Refuse the evaluation",
+          description: "Nothing happens.",
+          outcomeText:
+            "She marks an X in her book and says something final. Perhaps you will be re-evaluated later. Perhaps not.",
+        },
+      ],
+    },
+    // ── EGYPTIAN ───────────────────────────────────────────────────────────
+    anubis_scales: {
+      title: "Anubis's Scales",
+      flavorText:
+        "Anubis himself stands in the room, his jackal head turned toward you with emotionless curiosity. On a lapis-lazuli scale, a white feather waits. He points to your chest. 'Your heart,' he says. 'Or whatever serves as one in the Library.'",
+      description: "Anubis judges all hearts. Is yours light enough?",
+      choices: [
+        {
+          label: "Present your deck to the scales",
+          description: "Gain 25 max HP.",
+          outcomeText:
+            "The scale oscillates, hesitates, then tilts toward the feather. 'Not perfect,' says Anubis. 'But sufficient to continue.' He adds something to your vital reserves before dismissing you with a gesture.",
+        },
+        {
+          label: "Offer a card to the scales",
+          description: "Lose 10 HP. Remove 1 card. Gain 45 max HP.",
+          outcomeText:
+            "The scale settles into perfect balance. Anubis inclines his head with rare satisfaction. What you gave was what was weighing down your heart.",
+        },
+        {
+          label: "Flee the judgment",
+          description: "Add 2 Haunting Regrets to your deck.",
+          outcomeText:
+            "You run. Behind you, Anubis carefully notes your name. Gods of the dead never forget names. The Regrets catch you before you reach the door.",
+        },
+      ],
+    },
+    thoth_archives: {
+      title: "Thoth's Archives",
+      flavorText:
+        "Thoth, scribe of the gods, sits at a monumental desk, his ibis beak hovering over a scroll that unrolls infinitely. He raises one hand without looking up. 'I am busy recording everything. But you may look. Or even take. At your own risk.'",
+      description:
+        "Thoth's archives contain everything — including things you were not meant to see.",
+      choices: [
+        {
+          label: "Legitimately copy a scroll",
+          description: "Gain 25 max HP and 20 gold.",
+          outcomeText:
+            "Thoth nods without looking up. You copy what is permitted. His knowledge prints itself into you like well-dried ink — permanent, legitimate, yours.",
+        },
+        {
+          label: "Steal the main scroll",
+          description: "Gain 60 gold. Add 1 Haunting Regret.",
+          outcomeText:
+            "Your fingers close around the scroll. Thoth writes something in his great book without looking up. He always notes everything. The scroll transforms into gold in your hands, but something of its nature remains in you as regret.",
+        },
+        {
+          label: "Simply read over his shoulder",
+          description: "Gain 20 max HP.",
+          outcomeText:
+            "He lets you look. He even notes your presence in his book. A silent reader who does not interrupt always deserves something.",
+        },
+      ],
+    },
+    sphinx_riddle: {
+      title: "The Great Sphinx's Riddle",
+      flavorText:
+        "The Sphinx blocks a corridor between two immense shelves. She is alive, patient, holding between her paws a codex she reads with deliberate slowness. She looks up. 'A riddle,' she says. 'No wrong answer — just different answers.'",
+      description:
+        "The Sphinx asks a question to which all answers are true. Each opens a different door.",
+      choices: [
+        {
+          label: "Answer: Ink",
+          description: "Gain 35 gold.",
+          outcomeText:
+            "She smiles — insofar as a sphinx can smile. 'Ink creates and destroys at once. Yes. That suits you.' She deposits gold coins between her paws and lets you pass.",
+        },
+        {
+          label: "Answer: Memory",
+          description: "Gain 25 max HP.",
+          outcomeText:
+            "'Memory survives everything,' she says. 'Even censorship. Yes.' She places a paw on your shoulder for a fraction of a second — just long enough for something of her own permanence to rub off on you.",
+        },
+        {
+          label: "Stay silent",
+          description: "Nothing happens.",
+          outcomeText:
+            "She waits a full hour. Then she picks up her codex again. 'Silence is also an answer,' she says. 'Not the most useful, but the most honest.' She steps aside and lets you pass.",
+        },
+      ],
+    },
+    // ── LOVECRAFTIAN ───────────────────────────────────────────────────────
+    forbidden_lexicon: {
+      title: "The Forbidden Lexicon",
+      flavorText:
+        "The Librarian has no face — or rather, it has too many, succeeding one another too fast to count. It holds a lexicon whose words change as you watch. 'What you can read in this book cannot be seen twice,' it says. 'Choose your dosage.'",
+      description:
+        "The Librarian offers knowledge that can only be seen once. The price is paid in mental clarity.",
+      choices: [
+        {
+          label: "Read the forbidden passage",
+          description: "Gain 50 gold. Add 1 Haunting Regret.",
+          outcomeText:
+            "The words enter through your eyes and exit differently. What you understand has no translation. What you retain is gold. What you lose calls itself 'regret' for lack of a better term.",
+        },
+        {
+          label: "Read with half-closed eyes",
+          description: "Gain 25 max HP.",
+          outcomeText:
+            "A glimpse. Enough for something to change in you. Not enough to know precisely what. The Librarian notes in its faceless register: 'partial reading.'",
+        },
+        {
+          label: "Close the book",
+          description: "Nothing happens.",
+          outcomeText:
+            "The Librarian shelves the lexicon in a space that did not exist before it needed one. 'Perhaps you will return,' it says. 'Everyone returns.'",
+        },
+      ],
+    },
+    deep_echo: {
+      title: "The Echo from the Abyss",
+      flavorText:
+        "A sound that is not quite a sound comes from below — through the Library's floor, through kilometers of stone and ink. It is not a cry. It is not a song. It is something trying to remember how to resonate in a human space.",
+      description:
+        "The echo seeks a response. Giving it one could be beneficial — or simply strange.",
+      choices: [
+        {
+          label: "Resonate with the echo",
+          description: "Gain 30 max HP.",
+          outcomeText:
+            "You breathe in and let the sound pass through you. Something as old as the first letter ever written settles into your bones. Your capacity grows. The sound departs satisfied, having found a vessel deep enough.",
+        },
+        {
+          label: "Absorb the echo into a grimoire",
+          description: "Gain 20 HP and 20 gold.",
+          outcomeText:
+            "The echo enters the open grimoire and becomes temporarily visible — a pulse of black ink that solidifies into something useful. The book closes. What it now contains, you don't know. But it weighs differently.",
+        },
+        {
+          label: "Ignore the echo",
+          description: "Nothing happens.",
+          outcomeText:
+            "The echo goes searching for another ear. Somewhere in the Library, someone else hears this sound and makes a different decision.",
+        },
+      ],
+    },
+    dreaming_gate: {
+      title: "The Dreaming Gate",
+      flavorText:
+        "A door not attached to any wall stands in the room. Beyond its frame is not another room — it is something human language has never named, where stars that are not stars move like writing on a page turned too fast.",
+      description: "The gate leads elsewhere. Elsewhere has side effects.",
+      choices: [
+        {
+          label: "Enter the gate",
+          description: "Gain 50 max HP. Add 2 Hexed Parchments.",
+          outcomeText:
+            "What you see on the other side does not translate. But your body translates the experience into capacity. The price: two fragments of that vision lodge themselves in your deck, refusing to leave.",
+        },
+        {
+          label: "Look from the threshold",
+          description: "Gain 25 max HP.",
+          outcomeText:
+            "A glimpse from the doorway — enough to expand what you can contain, not enough to lose the thread of what you are. The door closes on its own when you step back.",
+        },
+        {
+          label: "Seal the gate",
+          description: "Nothing happens.",
+          outcomeText:
+            "You seal the gate with whatever comes to hand. It opens a few minutes later in another part of the Library. Some doors cannot be sealed. They can only be ignored.",
+        },
+      ],
+    },
+    // ── AZTEC ──────────────────────────────────────────────────────────────
+    quetzalcoatl_blessing: {
+      title: "Quetzalcoatl's Blessing",
+      flavorText:
+        "A serpent covered in green and gold feathers winds between the shelves, too large for this room and yet present. It stops before you, its head level with your chest. On its forked tongue, glyphs are born and vanish. 'Scribe,' it says. 'You deserve a mark.'",
+      description:
+        "The Feathered Serpent offers a glyph of power. Blood always amplifies the gift.",
+      choices: [
+        {
+          label: "Accept the blessing",
+          description: "Gain 30 max HP.",
+          outcomeText:
+            "It traces a glyph on your forehead with the tip of its tongue. It does not burn — it carves. Something new is inscribed into your existence. Quetzalcoatl departs in silence, satisfied to have transmitted something ancient.",
+        },
+        {
+          label: "Offer your blood for more power",
+          description: "Gain 45 max HP. Lose 15 HP.",
+          outcomeText:
+            "You hold out an open palm. It traces the glyph in your blood. This is deeper than flesh — an inscription into something more fundamental. The price is visible. The exchange is fair.",
+        },
+        {
+          label: "Bow respectfully and decline",
+          description: "Gain 10 HP.",
+          outcomeText:
+            "It inclines its head respectfully in return. A polite refusal deserves a polite gift — a small healing, offered without comment. Then it departs into the corridors, larger than the shelves.",
+        },
+      ],
+    },
+    obsidian_altar: {
+      title: "The Obsidian Altar",
+      flavorText:
+        "The altar is carved from a block of obsidian that absorbs light rather than reflecting it. The Codex Priestess stands behind it, clad in feathers and dried ink. She holds a volcanic glass knife. 'Every scholar knows that knowledge has a price. What will you give?'",
+      description:
+        "The Codex Priestess demands a sacrifice. What she gives in return is worth the price.",
+      choices: [
+        {
+          label: "Sacrifice a card to the altar",
+          description: "Lose 10 HP. Remove 1 card. Gain 20 max HP and 40 gold.",
+          outcomeText:
+            "The obsidian knife cuts cleanly. The card burns on the altar in a blue flame. The Priestess notes the sacrifice in her codex, satisfied. What you lose was what was weighing you down.",
+        },
+        {
+          label: "Offer gold instead",
+          description: "Lose 30 gold, gain 25 max HP.",
+          outcomeText:
+            "She accepts the gold with slight disappointment. Gold is not the altar's preferred sacrifice. But it is an acceptable offering. She writes your name in the codex — in ordinary ink.",
+        },
+        {
+          label: "Back away from the altar",
+          description: "Lose 15 HP.",
+          outcomeText:
+            "The Priestess says something in a language you do not know. It is not a curse — it is worse. It is disappointment. The obsidian grazes you as you pass. Some altars react to disrespect.",
+        },
+      ],
+    },
+    xolotl_crossing: {
+      title: "Xolotl's Crossing",
+      flavorText:
+        "A hairless dog, its skin blue speckled with the color of night, sits in the corridor watching you with eyes that have seen the underside of all things. This is Xolotl — guide of the dead. 'I can show you the shortest path,' he says. 'If you accompany me.'",
+      description:
+        "Xolotl guides souls through what the living cannot see. A rare privilege.",
+      choices: [
+        {
+          label: "Follow the guide of the dead",
+          description: "Gain 25 HP and 20 gold.",
+          outcomeText:
+            "He trots ahead of you through corridors you had not noticed. Some doors open on their own. When he stops, you are elsewhere — healed and wealthier, without understanding how.",
+        },
+        {
+          label: "Confide one of your secrets to him",
+          description: "Gain 35 max HP.",
+          outcomeText:
+            "He tilts his head and listens. What he does with your secret, you don't know. But in return, he confides something back — not in words, but in capacity. Your vessel can contain more.",
+        },
+        {
+          label: "Choose your own path",
+          description: "Nothing happens.",
+          outcomeText:
+            "He watches you leave with the patience of someone who knows everyone retraces their steps. Then he departs, perhaps to find another soul to guide.",
+        },
+      ],
+    },
+    // ── CELTIC ─────────────────────────────────────────────────────────────
+    druid_memory: {
+      title: "The Druid's Formula",
+      flavorText:
+        "The Memory Druid has no book — his texts are all in his head, memorized across generations of druids before him. He whispers while walking, repeating formulas no one else can write down. Seeing you, he stops. 'You carry grimoires. So you know how to write. Better than nothing.'",
+      description:
+        "Druids keep knowledge alive. He can transmit some of it to you.",
+      choices: [
+        {
+          label: "Receive the formula by recitation",
+          description: "Gain 25 max HP.",
+          outcomeText:
+            "He speaks for several minutes, the same words in loops until they imprint. You do not understand everything — but something in you changes like a page turning. The formula works without your understanding it.",
+        },
+        {
+          label: "Transcribe it in exchange for 20 gold",
+          description: "Lose 20 gold, gain 40 max HP.",
+          outcomeText:
+            "He grimaces slightly at seeing the quill. 'Druids don't write. But you can.' You transcribe the formula. The gold pays for his generosity. What you have noted is more rooted, deeper — because written and heard at once.",
+        },
+        {
+          label: "Refuse to learn",
+          description: "Nothing happens.",
+          outcomeText:
+            "He shrugs. 'Formulas choose their bearers. Perhaps not you today.' He resumes his recitation and disappears between the shelves.",
+        },
+      ],
+    },
+    lady_of_the_lake: {
+      title: "The Lady of the Inked Lake",
+      flavorText:
+        "At the back of a room, a perfectly still expanse of ink reflects the ceiling like black water. A hand emerges slowly, holding a book sealed by three chains. A voice rises from beneath the surface: 'This book will protect you. If you dare take it.'",
+      description:
+        "The Lady of the Inked Lake holds something for you. Taking it has a cost.",
+      choices: [
+        {
+          label: "Plunge your hand into the ink",
+          description: "Gain 30 max HP. Lose 15 HP.",
+          outcomeText:
+            "The ink is cold and thick, like plunging your hand into night. The Lady lets you take the book — then takes something in exchange, without violence. You leave with more capacity and a wound you cannot locate.",
+        },
+        {
+          label: "Offer her 30 gold",
+          description: "Lose 30 gold, gain 25 max HP.",
+          outcomeText:
+            "The hand disappears for a moment, reappears with the book extended toward you. The gold disappears beneath the surface without a sound. What you paid, you will not have back. What you received, you hold onto.",
+        },
+        {
+          label: "Slowly back away",
+          description: "Nothing happens.",
+          outcomeText:
+            "The hand remains extended for a long minute. Then it slowly withdraws beneath the surface, taking the book. The lake becomes perfectly still again, as if nothing had happened.",
+        },
+      ],
+    },
+    morrigan_crow: {
+      title: "Morrigan's Crow",
+      flavorText:
+        "The crow is immense — not naturally, but as if the room around it has shrunk. It carries in its beak a feather from its own body. On this feather: your name, written in dried blood. It sets the feather at your feet. 'I have come to see your future. And to offer to change it.'",
+      description:
+        "Morrigan sees your death. She offers to delay it — on the condition of looking it in the face.",
+      choices: [
+        {
+          label: "Look at your own end",
+          description: "Gain 50 max HP. Lose 20 HP.",
+          outcomeText:
+            "What you see is not translatable. But your body reacts to the vision like an alarm — fortifying itself, thickening, learning to last longer. The pain of the present is worth the future it pushes back.",
+        },
+        {
+          label: "Interpret the omens of wealth",
+          description: "Gain 40 gold.",
+          outcomeText:
+            "The crow shows something else too — glints of gold in your near future. Morrigan sees everything: death, but also what precedes it. You choose to look only at that part.",
+        },
+        {
+          label: "Chase away the crow",
+          description: "Nothing happens.",
+          outcomeText:
+            "It flies away with your feather. Prophecies fulfill themselves with or without the consent of those involved. It might have been better to know.",
+        },
+      ],
+    },
+    // ── AFRICAN ────────────────────────────────────────────────────────────
+    anansi_story: {
+      title: "Anansi's Story",
+      flavorText:
+        "Between the threads of a giant web running from shelf to shelf like a second ceiling, Anansi the Spider hangs in his man-spider body, reading seven books simultaneously. He descends slowly. 'All knowledge is a story,' he says. 'And all stories have an exchange at their heart.'",
+      description:
+        "Anansi weaves tales like others weave nets. What he offers always has multiple meanings.",
+      choices: [
+        {
+          label: "Tell him your journey",
+          description: "Gain 30 max HP.",
+          outcomeText:
+            "He listens with all his eyes. When you finish, he smiles. 'A good story. Not the best I've heard. But honest.' He weaves something into your existence before climbing back to his ceiling.",
+        },
+        {
+          label: "Listen to one of his stories",
+          description: "Gain 15 HP and 15 gold.",
+          outcomeText:
+            "His story begins simply, then becomes complex, then ironic, then deep, then it turns and reveals something you didn't know about yourself. You leave with fewer wounds and more gold.",
+        },
+        {
+          label: "Refuse the exchange",
+          description: "Nothing happens.",
+          outcomeText:
+            "He watches you leave with the amusement of someone who knows how the story ends. 'You will return,' he says. 'Good characters always return.'",
+        },
+      ],
+    },
+    griot_song: {
+      title: "The Griot's Song",
+      flavorText:
+        "The Pages Griot sits between the shelves, his kora leaning against a bookcase, loose pages swirling around him like birds that have forgotten how to fly. When he sings, the words of all surrounding books vibrate slightly in their bindings.",
+      description:
+        "The griot's song heals what medicine cannot reach. He sings for those who take time to listen.",
+      choices: [
+        {
+          label: "Listen to the full melody",
+          description: "Gain 30 HP.",
+          outcomeText:
+            "The melody takes time. It follows your scars, addresses them one by one. When it falls silent, you are less wounded. Not entirely — but significantly.",
+        },
+        {
+          label: "Hum along with him",
+          description: "Gain 25 HP and 15 gold.",
+          outcomeText:
+            "He smiles hearing you try. Your voice is not beautiful — but it is sincere, and the griot always rewards sincerity. The healing comes with a small treasure he pulls from nowhere.",
+        },
+        {
+          label: "Leave quickly",
+          description: "Gain 10 HP.",
+          outcomeText:
+            "He sings a few bars in your direction anyway. Even distracted listening deserves something. You leave slightly less wounded than you arrived.",
+        },
+      ],
+    },
+    scribe_1_first_meeting: {
+      title: "The Erased Scribe",
+      flavorText:
+        "Between two shelves, nearly invisible. Not a ghost — something between a man and a margin note. He writes in the air, but his quill leaves no trace.",
+      description: "He does not seem to see you. Or does not want to be seen.",
+      choices: [
+        {
+          label: "Observe him in silence",
+          description: "Watch without intervening.",
+          outcomeText:
+            "He keeps writing in the void. You leave with the certainty of having missed something, without knowing what.",
+        },
+        {
+          label: "Speak to him",
+          description: "Attempt contact.",
+          outcomeText:
+            "He startles. Opens his mouth. Closes it. Opens it again. 'There was a word,' he finally says. 'I can no longer find it.' You do not know what to say to that.",
+        },
+        {
+          label: "Ignore him and walk on",
+          description: "Not your concern.",
+          outcomeText:
+            "He vanishes from your field of vision before you have even turned your back. Nothing happened. And yet.",
+        },
+      ],
+    },
+    scribe_2_lost_words: {
+      title: "The Torn Pages",
+      flavorText:
+        "He is sitting on the floor, surrounded by pages he has torn himself, trying to reassemble them. He does not look up when you approach.",
+      description:
+        "The fragments match nothing. He is searching for something he lost himself.",
+      choices: [
+        {
+          label: "Help him gather the pages",
+          description: "Reach out.",
+          outcomeText:
+            "He lets you help without protest. The pages do not fit together — the fragments correspond to nothing. But he watches you with something that looks like gratitude.",
+        },
+        {
+          label: "Watch without intervening",
+          description: "Keep your distance.",
+          outcomeText:
+            "The pages are covered in handwriting that vaguely resembles your own. You decide it is a coincidence.",
+        },
+        {
+          label: "Tell him it is pointless",
+          description: "Be blunt.",
+          outcomeText:
+            "He stops. Looks at you. 'Perhaps you are right,' he says. 'But I must try anyway.' He resumes. You leave.",
+        },
+      ],
+    },
+    scribe_3_familiar_face: {
+      title: "The Known Face",
+      flavorText:
+        "He stops you in a corridor — this time, he takes the initiative. 'I know you,' he says. 'Not from this run. From the other one. Or perhaps... the next.'",
+      description:
+        "He speaks of you as a recurring character. He is not wrong.",
+      choices: [
+        {
+          label: "Play along",
+          description: "Nod in agreement.",
+          outcomeText:
+            "Your agreement relaxes him. 'I knew it. Good Archivists always return.' He says 'good' in a strange way, as though the word carries a price.",
+        },
+        {
+          label: "Correct him: you have never met",
+          description: "Be honest.",
+          outcomeText:
+            "He thinks it over. 'No,' he says. 'Perhaps you are right. Perhaps it was someone else.' He nods as though this is a satisfying answer. It is not.",
+        },
+        {
+          label: "Leave without answering",
+          description: "Do not stop.",
+          outcomeText:
+            "He says nothing. You feel his gaze on your back for the entire length of the next corridor.",
+        },
+      ],
+    },
+    scribe_4_torn_pages: {
+      title: "The Erased Ink",
+      flavorText:
+        "He shows you a page. Up close, you can see the traces — something was there. Not a stain: a deliberately erased text. Someone took the time to remove every word.",
+      description: "These pages were censored. Not by accident.",
+      choices: [
+        {
+          label: "Try to read the traces",
+          description: "Look more closely.",
+          outcomeText:
+            "With enough light and attention, a few words surface. Names. Places. And one title that recurs: Chief Archivist. You look up. He is waiting.",
+        },
+        {
+          label: "Ask him who did this",
+          description: "Ask the question.",
+          outcomeText:
+            "'Someone who believed certain stories were too dangerous.' He folds the page carefully. 'Someone who thought themselves reasonable.'",
+        },
+        {
+          label: "Look away",
+          description: "Do not look.",
+          outcomeText:
+            "He folds the page without a word. He will not hold it against you. He did not expect otherwise.",
+        },
+      ],
+    },
+    scribe_5_the_name: {
+      title: "The Lost Name",
+      flavorText:
+        "He approaches murmuring something. One syllable. Then two. He is trying to reconstruct something essential he lost before he knew he had it.",
+      description:
+        "He is looking for his name. What remains of a man when the name is gone.",
+      choices: [
+        {
+          label: "Encourage him to keep searching",
+          description: "Stay with him.",
+          outcomeText:
+            "You wait. He tries. 'E...' He stops. 'I think it started with an E. Or perhaps that was someone else.' He smiles, undone. You stay until he gives up.",
+        },
+        {
+          label: "Wait in silence",
+          description: "Let silence do its work.",
+          outcomeText:
+            "The silence between you is comfortable. He eventually gives up for tonight — if this place has nights. 'Thank you for staying,' he says without explanation.",
+        },
+        {
+          label: "Tell him it no longer matters",
+          description: "Close the subject.",
+          outcomeText:
+            "He looks at you for a long moment. 'That's true,' he finally says. 'And that may be the problem.' He leaves before you do.",
+        },
+      ],
+    },
+    scribe_6_the_warning: {
+      title: "What Lies Ahead",
+      flavorText:
+        "He intercepts you with unusual urgency. His face is sharper than usual, more present. 'I remember something,' he says. 'I must tell you before it goes.'",
+      description: "He has something precise to pass on. One last time.",
+      choices: [
+        {
+          label: "Listen carefully",
+          description: "Give him your full attention.",
+          outcomeText:
+            "He speaks of a force — not an enemy, a direction. Something that decided to simplify everything. 'Simple stories hurt no one,' this thing says. 'It is wrong. Simple stories do not exist.' He looks at you as though you should understand something more.",
+        },
+        {
+          label: "Listen without answering",
+          description: "Absorb without commenting.",
+          outcomeText:
+            "He speaks. You absorb. You are not sure you understand everything, but the tone is enough. Something serious is coming.",
+        },
+        {
+          label: "Tell him he is raving",
+          description: "Dismiss his words.",
+          outcomeText:
+            "His gaze empties for a moment. 'Yes,' he says. 'Perhaps.' He leaves. That night, you do not sleep — if this place permits sleep.",
+        },
+      ],
+    },
+    scribe_7_the_other: {
+      title: "The One Who Began",
+      flavorText:
+        "Without preamble: 'There was an Archivist before you. Before me too, I think. He decided that certain stories were too... complicated.' A pause. 'He must be found.'",
+      description:
+        "He speaks of someone without realizing he is speaking of himself.",
+      choices: [
+        {
+          label: "Ask him to say more",
+          description: "Dig deeper.",
+          outcomeText:
+            "He searches. The memory is fragmented. 'His name was...' He stops. Something in his eyes shifts — a second of panic, then it closes again. 'I no longer remember. I'm sorry.' You believe him.",
+        },
+        {
+          label: "Observe his reaction",
+          description: "Watch him speak about himself.",
+          outcomeText:
+            "What is striking is that he speaks of this man with anger. Not guilt. Not yet.",
+        },
+        {
+          label: "Cut him short",
+          description: "No time for this.",
+          outcomeText:
+            "He stops mid-sentence. Nods. 'You're right. Perhaps we don't have time.' But he had something to finish. He will not finish it today.",
+        },
+      ],
+    },
+    scribe_8_the_truth: {
+      title: "The Archivist Before",
+      flavorText:
+        "His voice is steady. Steadier than all the previous times. 'I remember my role. Not my name yet. But my role: Chief Archivist of the Panlibrarium. Before you.'",
+      description: "He knows what he was. Not yet what he did.",
+      choices: [
+        {
+          label: "Tell him you believe him",
+          description: "Grant him your trust.",
+          outcomeText:
+            "He closes his eyes for a second. 'That is more than I hoped for.' You are not entirely sure what you believe. But you believe it anyway.",
+        },
+        {
+          label: "Keep your distance",
+          description: "Stay cautious.",
+          outcomeText:
+            "It is not distrust — it is caution. He understands. 'You are right to wait,' he says. 'I have not told you everything yet.'",
+        },
+        {
+          label: "Accuse him: he is the one who broke everything",
+          description: "Say what you think.",
+          outcomeText:
+            "He pales. Or rather, what serves as his presence contracts. 'I do not rule out that possibility,' he says after a silence. It is not a denial.",
+        },
+      ],
+    },
+    scribe_9_the_choice: {
+      title: "What You Would Do",
+      flavorText:
+        "'Suppose,' he says, 'that you had read all the stories. That you knew which ones make people violent. Which ones give them bad ideas. Dangerous ideas. What would you do?'",
+      description:
+        "He is not asking a rhetorical question. He genuinely wants to know.",
+      choices: [
+        {
+          label: "Nothing. Stories belong to themselves.",
+          description: "Defend the freedom of narratives.",
+          outcomeText:
+            "He nods slowly. 'That is what I would have said, once.' A pause. 'Before I saw what certain stories did to people.' But he does not seem to be contradicting you.",
+        },
+        {
+          label: "It depends on the story.",
+          description: "Be nuanced.",
+          outcomeText:
+            "'A reasonable answer,' he says. 'That is exactly how it begins.'",
+        },
+        {
+          label: "Erase them. Protect the readers.",
+          description: "Choose censorship.",
+          outcomeText:
+            "Something in his face changes — not satisfaction. Pain. 'Yes,' he says. 'That is what I would have said too.'",
+        },
+      ],
+    },
+    scribe_10_the_reveal: {
+      title: "What Cannot Be Erased",
+      flavorText:
+        "He is entirely present. Lucid, steady, frightening in his clarity. 'I am the one I told you about. The Archivist who began it. I sought you through all these encounters because I did not yet remember. Now I do.'",
+      description: "He knows. He tells you everything. He has a few minutes.",
+      choices: [
+        {
+          label: "Tell him you already knew",
+          description: "Offer him that grace.",
+          outcomeText:
+            "You were lying — you suspected, but you did not truly know. He smiles. 'No matter. Now you must go further than I did. What you find ahead is what I became. Kill it if you can. Or... no. Listen to it first.'",
+        },
+        {
+          label: "Stay silent",
+          description: "Let the weight of truth exist.",
+          outcomeText:
+            "He does not wait for an answer. He knows that certain truths call for no words. He fades slowly — literally, not as a metaphor. His ink dissolves. 'Good luck, Archivist.'",
+        },
+        {
+          label: "Turn your back on him",
+          description: "Refuse to hear it.",
+          outcomeText:
+            "He does not call you back. When you look behind you, he is gone. In the empty corridor, a page still floats — covered in handwriting you now recognize as his.",
+        },
+      ],
+    },
+    nyame_trial: {
+      title: "Nyame's Trial",
+      flavorText:
+        "The room's ceiling is a window onto something resembling a sky — and in that sky, an immense eye watches you. Nyame, the sky god, has read every book in the Library from his ceiling since the first day. He saw you coming. 'A trial,' says the voice from above. 'To measure whether you deserve to continue.'",
+      description:
+        "Nyame judges from his sky. His trial is difficult but fair.",
+      choices: [
+        {
+          label: "Accept the trial",
+          description: "Gain 40 max HP. Lose 20 HP.",
+          outcomeText:
+            "What the trial demands, you pay in flesh. What it gives in return, you carry like a deep revision. Nyame makes a note in his own archives. You passed. Not easily — but passed.",
+        },
+        {
+          label: "Offer gold for a lighter trial",
+          description: "Lose 40 gold, gain 30 max HP.",
+          outcomeText:
+            "'Gold does not exempt from the trial,' says the voice. 'But it pays for a shorter version.' A brief light. A brief pain. A real gain.",
+        },
+        {
+          label: "Ignore the gaze and move forward",
+          description: "Nothing happens.",
+          outcomeText:
+            "The eye follows you to the next room. Nyame notes something in his archives. Perhaps for another occasion. Perhaps never to forget.",
+        },
+      ],
     },
   },
 } as const;

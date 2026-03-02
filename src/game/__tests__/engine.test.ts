@@ -1511,7 +1511,7 @@ describe("Combat flow", () => {
       {
         id: "baba_yaga_hut",
         check: (r) =>
-          expect(r.enemies.some((e) => e.definitionId === "frost_witch")).toBe(
+          expect(r.enemies.some((e) => e.definitionId === "snow_maiden")).toBe(
             true
           ),
       },

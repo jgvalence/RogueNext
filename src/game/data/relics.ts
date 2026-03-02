@@ -219,7 +219,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     name: "Eye of Maat",
     description: "+1 max energy. Start each combat with 1 Focus.",
     rarity: "BOSS",
-    sourceBossId: "osiris_eye",
+    sourceBossId: "osiris_judgment",
   },
 
   // LOVECRAFTIAN bosses
