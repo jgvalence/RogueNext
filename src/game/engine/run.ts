@@ -856,10 +856,11 @@ export function completeCombat(
   const updatedAllyCurrentHps: Record<string, number> = {
     ...(runState.allyCurrentHps ?? {}),
   };
+  const survivingAllies = combatResult.allies.filter((a) => a.currentHp > 0);
   const survivingAllyDefIds = new Set(
-    combatResult.allies.map((a) => a.definitionId)
+    survivingAllies.map((a) => a.definitionId)
   );
-  for (const ally of combatResult.allies) {
+  for (const ally of survivingAllies) {
     updatedAllyCurrentHps[ally.definitionId] = ally.currentHp;
   }
   const updatedAllyIds = (runState.allyIds ?? []).filter((id) =>
@@ -1151,6 +1152,12 @@ export function createGuaranteedRelicEvent(): GameEvent {
           const withRelic = addRelicToRun(s, relicId);
           return { ...withRelic, currentRoom: withRelic.currentRoom + 1 };
         },
+      },
+      {
+        label: "events.sealed_reliquary.choices.1.label",
+        description: "events.sealed_reliquary.choices.1.description",
+        outcomeText: "events.sealed_reliquary.choices.1.outcomeText",
+        apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
       },
     ],
   };
@@ -2834,12 +2841,16 @@ export function pickEvent(
   difficultyLevel = 0,
   runState?: RunState
 ): GameEvent {
-  const currentBiome = runState?.currentBiome;
+  // Guard against legacy run states that predate seenEventIds
+  const safeState = runState
+    ? { ...runState, seenEventIds: runState.seenEventIds ?? [] }
+    : runState;
+  const currentBiome = safeState?.currentBiome;
   const eligible = EVENTS.filter(
     (e) =>
-      (!e.condition || !runState || e.condition(runState)) &&
+      (!e.condition || !safeState || e.condition(safeState)) &&
       (!e.biome || !currentBiome || e.biome === currentBiome) &&
-      (!e.once || !runState || !runState.seenEventIds.includes(e.id))
+      (!e.once || !safeState || !safeState.seenEventIds.includes(e.id))
   );
   const pool = eligible.length > 0 ? eligible : EVENTS;
   const riskyPool = pool.filter((event) => RISKY_EVENT_IDS.has(event.id));
@@ -2861,7 +2872,10 @@ export function applyEventChoice(
 
   // Mark once-per-run events as seen
   const withSeen = event.once
-    ? { ...newState, seenEventIds: [...newState.seenEventIds, event.id] }
+    ? {
+        ...newState,
+        seenEventIds: [...(newState.seenEventIds ?? []), event.id],
+      }
     : newState;
 
   // For Scribe events: record the individual attitude delta (-1/0/+1) per encounter

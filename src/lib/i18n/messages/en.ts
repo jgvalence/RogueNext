@@ -332,6 +332,7 @@ export const en = {
     },
   },
   map: {
+    floorLabel: "Floor {{floor}}",
     choosePath: "Choose Your Path",
     roomOf: "Room {{current}} of {{total}}",
     bossSuffix: "BOSS",
@@ -345,11 +346,13 @@ export const en = {
     },
     floorComplete: "Floor complete!",
     roomType: {
-      COMBAT: "Combat",
-      MERCHANT: "Merchant",
-      SPECIAL: "Event",
-      PRE_BOSS: "Pre-Boss",
+      COMBAT: "Encounter",
+      COMBAT_ELITE: "Elite Trial",
+      MERCHANT: "Scriptorium",
+      SPECIAL: "Chronicle",
+      PRE_BOSS: "Anteroom",
     },
+    bossRoom: "Boss Lair",
     reward: {
       card: "Card",
       relic: "Relic",
@@ -1073,27 +1076,35 @@ export const en = {
     noCards: "No cards available.",
   },
   preBoss: {
-    title: "Room before the boss",
-    subtitle:
-      "A moment of respite before the final challenge. Choose how to prepare.",
+    label: "Antechamber",
+    title: "The Antechamber",
+    flavorText:
+      "The torches flicker without reason. The room beyond presses heavy on the air — patient, dense, waiting.",
+    subtitle: "One path. Choose it carefully.",
     hp: "HP: {{current}}/{{max}}",
-    healTitle: "Healing Shrine",
-    healDesc: "Restore {{percent}}% of your max HP",
-    upgradeTitle: "Enchanted Anvil",
-    upgradeDesc: "Upgrade a card in your deck",
+    healTitle: "Restoration Basin",
+    healDesc:
+      "The water flowing over these stones smells of ink. Something written into these walls can still close your wounds.",
+    upgradeTitle: "The Copyist's Table",
+    upgradeDesc:
+      "A workbench covered in illuminator's tools. Refine one card before the final trial.",
     upgradeHint: "Hover a card to preview the upgrade",
-    upgradeAction: "Upgrade",
-    huntTitle: "Hunt for a relic",
-    huntDesc: "Defeat a guardian, win a relic or a rare card",
+    upgradeAction: "Refine",
+    huntTitle: "The Guardian's Challenge",
+    huntDesc:
+      "An adversary stands watch at the threshold. Defeat them to recover a fragment of a lost relic.",
   },
   special: {
     healTitle: "Healing Spring",
-    healDesc: "Restore {{percent}}% of your max HP",
+    healDesc:
+      "Between two rows of grimoires, a stone basin rests flush with the floor. The water flowing from it smells of ink and old parchment. They say the words of destroyed books dissolved within — and that to drink is to let something written mend you from the inside.",
     currentHp: "Current: {{current}}/{{max}}",
     healAction: "Heal",
     upgradeTitle: "Enchanted Anvil",
     upgradeHint: "Hover a card to preview the upgrade",
     upgradeAction: "Upgrade",
+    eventLabel: "Event",
+    relicLabel: "Revealed Relic",
     eventStats: "HP: {{current}}/{{max}} - Gold: {{gold}}",
     purgePickerTitle: "Choose a card to remove",
     purgePickerSubtitle:
@@ -1636,6 +1647,12 @@ export const en = {
           description: "Gain 1 relic.",
           outcomeText:
             "Your fingers close around the object. The reliquary empties, at peace. What it guarded was for you — or at least, that is what it wants you to believe.",
+        },
+        {
+          label: "Leave the relic",
+          description: "Take nothing. Move on.",
+          outcomeText:
+            "You turn your back on the reliquary. It watches you leave in silence. Perhaps it will call to you again, further on.",
         },
       ],
     },

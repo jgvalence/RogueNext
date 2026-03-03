@@ -1,16 +1,21 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import type { TFunction } from "i18next";
+import { Cinzel } from "next/font/google";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
-import { GAME_CONSTANTS } from "@/game/constants";
 import { cn } from "@/lib/utils/cn";
 import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
 } from "../shared/UpgradePreviewPortal";
 import { useTranslation } from "react-i18next";
-import { localizeCardName, localizeCardType } from "@/lib/i18n/card-text";
+import {
+  localizeCardDescription,
+  localizeCardName,
+  localizeCardType,
+} from "@/lib/i18n/card-text";
+
+const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
 interface PreBossRoomViewProps {
   playerCurrentHp: number;
@@ -20,6 +25,17 @@ interface PreBossRoomViewProps {
   onHeal: () => void;
   onUpgrade: (cardInstanceId: string) => void;
   onFight: () => void;
+}
+
+function Divider({ dim = false }: { dim?: boolean }) {
+  return (
+    <div
+      className={cn(
+        "h-px w-full max-w-md bg-gradient-to-r from-transparent to-transparent",
+        dim ? "via-amber-500/20" : "via-amber-500/40"
+      )}
+    />
+  );
 }
 
 export function PreBossRoomView({
@@ -41,56 +57,103 @@ export function PreBossRoomView({
         cardDefs={cardDefs}
         onUpgrade={onUpgrade}
         onBack={() => setMode("CHOOSE")}
-        t={t}
       />
     );
   }
 
+  const choices = [
+    {
+      key: "heal",
+      title: t("preBoss.healTitle"),
+      desc: t("preBoss.healDesc"),
+      onClick: onHeal,
+    },
+    {
+      key: "upgrade",
+      title: t("preBoss.upgradeTitle"),
+      desc: t("preBoss.upgradeDesc"),
+      onClick: () => setMode("UPGRADE"),
+    },
+    {
+      key: "hunt",
+      title: t("preBoss.huntTitle"),
+      desc: t("preBoss.huntDesc"),
+      onClick: onFight,
+    },
+  ];
+
   return (
-    <div className="flex flex-col items-center gap-6 py-8">
-      <h2 className="text-2xl font-bold text-amber-400">
+    <div className="flex flex-col items-center gap-5 px-4 py-10">
+      <Divider />
+
+      <p
+        className={cn(
+          cinzel.className,
+          "text-[0.55rem] font-semibold uppercase tracking-[0.55em] text-amber-400/50"
+        )}
+      >
+        {t("preBoss.label")}
+      </p>
+
+      <h2
+        className={cn(
+          cinzel.className,
+          "text-2xl font-bold uppercase tracking-[0.1em] text-amber-100"
+        )}
+      >
         {t("preBoss.title")}
       </h2>
-      <p className="max-w-md text-center text-gray-400">
+
+      <div className="h-px w-10 bg-gradient-to-r from-amber-500/60 to-transparent" />
+
+      <p className="max-w-lg text-center text-sm italic leading-relaxed text-amber-200/60">
+        {t("preBoss.flavorText")}
+      </p>
+
+      <p className="max-w-md text-center text-sm text-amber-100/35">
         {t("preBoss.subtitle")}
       </p>
-      <p className="text-sm text-gray-500">
+
+      <div
+        className={cn(
+          cinzel.className,
+          "text-[0.55rem] uppercase tracking-[0.35em] text-amber-100/20"
+        )}
+      >
         {t("preBoss.hp", { current: playerCurrentHp, max: playerMaxHp })}
-      </p>
-
-      <div className="flex w-full max-w-xs flex-col gap-3">
-        <button
-          onClick={onHeal}
-          className="rounded-lg border-2 border-green-700 bg-green-950/40 px-6 py-4 text-left transition hover:border-green-500 hover:bg-green-950/60"
-        >
-          <p className="font-medium text-green-300">{t("preBoss.healTitle")}</p>
-          <p className="text-sm text-green-600">
-            {t("preBoss.healDesc", {
-              percent: Math.floor(GAME_CONSTANTS.HEAL_ROOM_PERCENT * 100),
-            })}
-          </p>
-        </button>
-
-        <button
-          onClick={() => setMode("UPGRADE")}
-          className="rounded-lg border-2 border-blue-700 bg-blue-950/40 px-6 py-4 text-left transition hover:border-blue-500 hover:bg-blue-950/60"
-        >
-          <p className="font-medium text-blue-300">
-            {t("preBoss.upgradeTitle")}
-          </p>
-          <p className="text-sm text-blue-600">{t("preBoss.upgradeDesc")}</p>
-        </button>
-
-        <button
-          onClick={onFight}
-          className="rounded-lg border-2 border-purple-700 bg-purple-950/40 px-6 py-4 text-left transition hover:border-purple-500 hover:bg-purple-950/60"
-        >
-          <p className="font-medium text-purple-300">
-            {t("preBoss.huntTitle")}
-          </p>
-          <p className="text-sm text-purple-600">{t("preBoss.huntDesc")}</p>
-        </button>
       </div>
+
+      <div className="flex w-full max-w-md flex-col gap-3">
+        {choices.map((choice) => (
+          <button
+            key={choice.key}
+            onClick={choice.onClick}
+            className={cn(
+              "group flex flex-col items-start gap-1.5 rounded border border-amber-500/15",
+              "bg-amber-950/10 px-6 py-3 text-left",
+              "transition-all duration-150",
+              "hover:border-amber-500/35 hover:bg-amber-950/30"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <span className="inline-block h-[1.5px] w-0 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-0 transition-all duration-200 group-hover:w-4 group-hover:opacity-70" />
+              <span
+                className={cn(
+                  cinzel.className,
+                  "text-sm font-semibold uppercase tracking-[0.1em] text-amber-100"
+                )}
+              >
+                {choice.title}
+              </span>
+            </div>
+            <p className="pl-0 text-xs italic leading-relaxed text-amber-200/45">
+              {choice.desc}
+            </p>
+          </button>
+        ))}
+      </div>
+
+      <Divider dim />
     </div>
   );
 }
@@ -100,14 +163,13 @@ function UpgradeSubView({
   cardDefs,
   onUpgrade,
   onBack,
-  t,
 }: {
   deck: CardInstance[];
   cardDefs: Map<string, CardDefinition>;
   onUpgrade: (cardInstanceId: string) => void;
   onBack: () => void;
-  t: TFunction;
 }) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<string | null>(null);
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
@@ -131,11 +193,32 @@ function UpgradeSubView({
   });
 
   return (
-    <div className="flex flex-col items-center gap-6 py-8">
-      <h2 className="text-2xl font-bold text-blue-400">
+    <div className="flex flex-col items-center gap-5 px-4 py-10">
+      <Divider />
+
+      <p
+        className={cn(
+          cinzel.className,
+          "text-[0.55rem] font-semibold uppercase tracking-[0.55em] text-amber-400/50"
+        )}
+      >
+        {t("preBoss.label")}
+      </p>
+
+      <h2
+        className={cn(
+          cinzel.className,
+          "text-2xl font-bold uppercase tracking-[0.1em] text-amber-100"
+        )}
+      >
         {t("preBoss.upgradeTitle")}
       </h2>
-      <p className="text-gray-400">{t("preBoss.upgradeHint")}</p>
+
+      <div className="h-px w-10 bg-gradient-to-r from-amber-500/60 to-transparent" />
+
+      <p className="max-w-md text-center text-sm italic text-amber-200/50">
+        {t("preBoss.upgradeHint")}
+      </p>
 
       <div className="flex max-w-2xl flex-wrap justify-center gap-3">
         {upgradable.map((card) => {
@@ -149,47 +232,60 @@ function UpgradeSubView({
               onMouseEnter={(e) => handleMouseEnter(e, def)}
               onMouseLeave={handleMouseLeave}
               className={cn(
-                "flex w-32 flex-col items-center gap-1 rounded-lg border-2 p-3 text-center transition",
+                "relative flex w-32 flex-col items-center gap-1 rounded border-2 p-3 text-center transition-all duration-150",
                 isSelected
-                  ? "border-blue-400 bg-blue-950/60 ring-2 ring-blue-400"
-                  : "border-gray-600 bg-gray-800/50 hover:border-gray-400"
+                  ? "border-amber-400/60 bg-amber-950/50 ring-1 ring-amber-400/30"
+                  : "border-amber-500/15 bg-amber-950/10 hover:border-amber-500/30 hover:bg-amber-950/30"
               )}
             >
-              <span className="text-xs font-bold text-white">
+              <span className="text-xs font-bold text-amber-100">
                 {localizeCardName(def, t)}
               </span>
-              <span className="text-[10px] text-gray-400">
-                {localizeCardType(def.type, t)} -{" "}
+              <span className="text-[10px] text-amber-200/40">
+                {localizeCardType(def.type, t)} —{" "}
                 {t(`gameCard.rarity.${def.rarity}`, {
                   defaultValue: def.rarity,
                 })}
+              </span>
+              <span className="line-clamp-2 text-[10px] text-amber-100/30">
+                {localizeCardDescription(def, t)}
               </span>
             </button>
           );
         })}
       </div>
 
-      <div className="flex gap-3">
+      <div className="mt-2 flex gap-4">
         <button
           disabled={!selected}
           onClick={() => selected && onUpgrade(selected)}
           className={cn(
-            "rounded-lg px-6 py-2 font-medium transition",
+            cinzel.className,
+            "group flex items-center gap-3 py-[0.42rem] text-[1.1rem] font-semibold uppercase tracking-[0.16em] outline-none transition-all duration-150",
             selected
-              ? "bg-blue-600 text-white hover:bg-blue-500"
-              : "cursor-not-allowed bg-gray-700 text-gray-500"
+              ? "cursor-pointer text-amber-100"
+              : "cursor-not-allowed text-amber-100/20"
           )}
         >
+          {selected && (
+            <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
+          )}
           {t("preBoss.upgradeAction")}
         </button>
+
         <button
-          className="rounded-lg bg-gray-700 px-6 py-2 text-white hover:bg-gray-600"
           onClick={onBack}
+          className={cn(
+            cinzel.className,
+            "group flex items-center gap-2 py-[0.42rem] text-[1rem] font-normal uppercase tracking-[0.14em]",
+            "cursor-pointer text-amber-100/30 transition-colors duration-150 hover:text-amber-100/70"
+          )}
         >
           {t("common.back")}
         </button>
       </div>
 
+      <Divider dim />
       <UpgradePreviewPortal info={hoverInfo} />
     </div>
   );

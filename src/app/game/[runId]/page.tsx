@@ -182,6 +182,12 @@ function GameContent({
   const [phase, setPhase] = useState<GamePhase>(() =>
     deriveInitialPhase(state)
   );
+  // Captured at room-entry time so it doesn't flip to false mid-outcome when
+  // the event's apply() increments currentRoom (which would cause SpecialRoomView
+  // to switch room types while showing the outcome screen).
+  const [forceEventWithRelicStable, setForceEventWithRelicStable] = useState(
+    () => state.floor === 1 && state.currentRoom === 2
+  );
   const [rewards, setRewards] = useState<CombatRewards | null>(null);
   const [isBossRewards, setIsBossRewards] = useState(false);
   const [isEliteRewards, setIsEliteRewards] = useState(false);
@@ -314,6 +320,9 @@ function GameContent({
       } else if (room.type === "MERCHANT") {
         setPhase("MERCHANT");
       } else if (room.type === "SPECIAL") {
+        setForceEventWithRelicStable(
+          stateRef.current.floor === 1 && stateRef.current.currentRoom === 2
+        );
         setPhase("SPECIAL");
       } else if (room.type === "PRE_BOSS") {
         setPhase("PRE_BOSS");
@@ -704,6 +713,7 @@ function GameContent({
             currentRoom={state.currentRoom}
             floor={state.floor}
             currentBiome={state.currentBiome}
+            enemyDefs={enemyDefs}
             onSelectRoom={handleSelectRoom}
           />
         )}
@@ -862,7 +872,7 @@ function GameContent({
             cardDefs={cardDefs}
             rng={rng}
             difficultyLevel={state.selectedDifficultyLevel ?? 0}
-            forceEventWithRelic={state.floor === 1 && state.currentRoom === 2}
+            forceEventWithRelic={forceEventWithRelicStable}
             runState={state}
             onHeal={handleHeal}
             onUpgrade={(cardInstanceId) => {

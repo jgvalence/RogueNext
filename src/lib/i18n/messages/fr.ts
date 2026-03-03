@@ -337,6 +337,7 @@ export const fr = {
     },
   },
   map: {
+    floorLabel: "Étage {{floor}}",
     choosePath: "Choisis ton chemin",
     roomOf: "Salle {{current}} sur {{total}}",
     bossSuffix: "BOSS",
@@ -350,11 +351,13 @@ export const fr = {
     },
     floorComplete: "Etage termine !",
     roomType: {
-      COMBAT: "Combat",
-      MERCHANT: "Marchand",
-      SPECIAL: "Evenement",
-      PRE_BOSS: "Pre-Boss",
+      COMBAT: "Affrontement",
+      COMBAT_ELITE: "Épreuve d'Élite",
+      MERCHANT: "Scriptorium",
+      SPECIAL: "Chronique",
+      PRE_BOSS: "Antichambre",
     },
+    bossRoom: "Antre du Boss",
     reward: {
       card: "Carte",
       relic: "Relique",
@@ -1083,27 +1086,35 @@ export const fr = {
     noCards: "Aucune carte disponible.",
   },
   preBoss: {
-    title: "Salle avant le boss",
-    subtitle:
-      "Un moment de repit avant le combat final. Choisis ta preparation.",
+    label: "Antichambre",
+    title: "L'Antichambre",
+    flavorText:
+      "Les torches vacillent sans raison. La salle suivante pese deja sur l'air — dense, patiente, immobile.",
+    subtitle: "Une seule voie. Choisis-la avec soin.",
     hp: "PV : {{current}}/{{max}}",
-    healTitle: "Sanctuaire de soin",
-    healDesc: "Restaure {{percent}}% de vos PV max",
-    upgradeTitle: "Enclume enchantee",
-    upgradeDesc: "Ameliore une carte de ton deck",
+    healTitle: "Vasque de restauration",
+    healDesc:
+      "L'eau qui coule sur ces pierres porte l'odeur de l'encre. Quelque chose d'ecrit dans ces murs peut encore vous refermer.",
+    upgradeTitle: "Table du copiste",
+    upgradeDesc:
+      "Un etabli charge d'outils d'enlumineur. Parfaire une carte avant l'epreuve finale.",
     upgradeHint: "Survole une carte pour voir l'amelioration",
-    upgradeAction: "Ameliorer",
-    huntTitle: "Chasse a la relique",
-    huntDesc: "Bats un gardien, gagne une relique ou une carte rare",
+    upgradeAction: "Parfaire",
+    huntTitle: "Le defi du gardien",
+    huntDesc:
+      "Un adversaire veille a l'entree. Le vaincre libere un fragment de relique perdue.",
   },
   special: {
     healTitle: "Source de soin",
-    healDesc: "Restaure {{percent}}% de vos PV max",
+    healDesc:
+      "Entre deux rangees de grimoires, une vasque de pierre affleure le sol. L'eau qui s'en ecoule porte l'odeur de l'encre et du vieux parchemin. On dit que les mots des livres detruits s'y sont dissous — et qu'en boire, c'est laisser quelque chose d'ecrit vous recoudre de l'interieur.",
     currentHp: "Actuel : {{current}}/{{max}}",
     healAction: "Soigner",
     upgradeTitle: "Enclume enchantee",
     upgradeHint: "Survole une carte pour voir l'amelioration",
     upgradeAction: "Ameliorer",
+    eventLabel: "Evenement",
+    relicLabel: "Relique revilee",
     eventStats: "PV : {{current}}/{{max}} - Or : {{gold}}",
     purgePickerTitle: "Choisissez une carte a retirer",
     purgePickerSubtitle:
@@ -1649,6 +1660,12 @@ export const fr = {
           description: "Obtenez 1 relique.",
           outcomeText:
             "Vos doigts se referment sur l'objet. Le reliquaire se vide, apaise. Ce qu'il gardait etait pour vous — ou du moins, c'est ce qu'il veut vous faire croire.",
+        },
+        {
+          label: "Laisser la relique",
+          description: "Ne prenez rien. Continuez.",
+          outcomeText:
+            "Vous tournez le dos au reliquaire. Il vous regarde partir en silence. Peut-etre vous rappellera-t-il, plus loin.",
         },
       ],
     },
