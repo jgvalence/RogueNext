@@ -202,7 +202,7 @@ export function FloorMap({
                 : null;
 
               const cfgKey = isBossRoom ? "COMBAT_BOSS" : room.type;
-              const cfg = roomCardConfig[cfgKey] ?? roomCardConfig.COMBAT;
+              const cfg = (roomCardConfig[cfgKey] ?? roomCardConfig.COMBAT)!;
 
               // Room title & subtitle
               let roomTitle: string;
