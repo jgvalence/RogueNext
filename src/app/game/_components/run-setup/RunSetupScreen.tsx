@@ -39,6 +39,7 @@ interface RunSetupScreenProps {
   runState: RunState;
   cardDefs: Map<string, CardDefinition>;
   allyDefs: Map<string, AllyDefinition>;
+  showFirstRunTutorial?: boolean;
   onContinue: (draft: RunSetupDraft) => void;
 }
 
@@ -90,10 +91,19 @@ const START_MERCHANT_RESOURCE_KEYS = [
   "MASQUES",
 ] as const;
 
+const FIRST_RUN_TUTORIAL_STEP_KEYS = [
+  "chooseDifficulty",
+  "pickMode",
+  "planRoute",
+  "combatFlow",
+  "endOfRun",
+] as const;
+
 export function RunSetupScreen({
   runState,
   cardDefs,
   allyDefs,
+  showFirstRunTutorial = false,
   onContinue,
 }: RunSetupScreenProps) {
   const { t } = useTranslation();
@@ -341,6 +351,33 @@ export function RunSetupScreen({
             {t("runSetup.subtitle")}
           </p>
         </header>
+
+        {showFirstRunTutorial && (
+          <section className="rounded-2xl border border-sky-300/30 bg-sky-950/30 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.25)] sm:p-5">
+            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-sky-100/70">
+              {t("runSetup.firstRunTutorial.kicker")}
+            </p>
+            <h3 className="mt-2 text-lg font-black uppercase tracking-[0.08em] text-sky-50 sm:text-xl">
+              {t("runSetup.firstRunTutorial.title")}
+            </h3>
+            <p className="mt-2 max-w-4xl text-sm text-sky-100/80">
+              {t("runSetup.firstRunTutorial.subtitle")}
+            </p>
+            <ol className="mt-4 grid gap-2 sm:grid-cols-2">
+              {FIRST_RUN_TUTORIAL_STEP_KEYS.map((stepKey, index) => (
+                <li
+                  key={stepKey}
+                  className="flex items-start gap-2 rounded-lg border border-sky-200/20 bg-sky-900/35 px-3 py-2 text-sm text-sky-50/90"
+                >
+                  <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-sky-200/40 bg-sky-300/20 text-[0.68rem] font-bold text-sky-100">
+                    {index + 1}
+                  </span>
+                  <span>{t(`runSetup.firstRunTutorial.steps.${stepKey}`)}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
 
         {/* Character selection (when 2+ are available) */}
         {hasCharacterChoice && (

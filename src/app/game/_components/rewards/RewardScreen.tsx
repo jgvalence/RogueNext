@@ -33,6 +33,8 @@ interface RewardScreenProps {
   onPickAlly: (allyId: string) => void;
   onPickMaxHp?: (amount: number) => void;
   onSkip: () => void;
+  showFirstRewardTutorial?: boolean;
+  onDismissFirstRewardTutorial?: () => void;
 }
 
 export function RewardScreen({
@@ -49,6 +51,8 @@ export function RewardScreen({
   onPickAlly,
   onPickMaxHp,
   onSkip,
+  showFirstRewardTutorial = false,
+  onDismissFirstRewardTutorial,
 }: RewardScreenProps) {
   const { t } = useTranslation();
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
@@ -94,6 +98,32 @@ export function RewardScreen({
               +{val} {t(`reward.resources.${key}`, key)}
             </RogueTag>
           ))}
+        </div>
+      )}
+
+      {showFirstRewardTutorial && (
+        <div className="w-full max-w-3xl rounded-xl border border-cyan-400/45 bg-slate-950/90 p-4 shadow-[0_16px_50px_rgba(8,145,178,0.2)]">
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-300/85">
+            {t("reward.firstRewardTutorial.kicker")}
+          </p>
+          <h3 className="mt-1 text-sm font-black uppercase tracking-[0.08em] text-cyan-100">
+            {t("reward.firstRewardTutorial.title")}
+          </h3>
+          <p className="mt-1.5 text-xs text-slate-200/90">
+            {t("reward.firstRewardTutorial.description")}
+          </p>
+          <p className="mt-1.5 text-xs text-cyan-100/85">
+            {t("reward.firstRewardTutorial.tip")}
+          </p>
+          <div className="mt-3 flex justify-end">
+            <RogueButton
+              type="text"
+              className="!h-auto !rounded-md !border !border-cyan-500/65 !bg-cyan-700/25 !px-3 !py-1.5 !text-[10px] !font-bold !uppercase !tracking-[0.1em] !text-cyan-100 hover:!bg-cyan-600/35"
+              onClick={() => onDismissFirstRewardTutorial?.()}
+            >
+              {t("reward.firstRewardTutorial.gotIt")}
+            </RogueButton>
+          </div>
         </div>
       )}
 

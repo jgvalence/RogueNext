@@ -398,6 +398,22 @@ export const en = {
     title: "Configure Your Expedition",
     subtitle:
       "Choose your difficulty, pick your run type, and prepare your opening loadout before entering the first room.",
+    firstRunTutorial: {
+      kicker: "First run",
+      title: "Quick tutorial",
+      subtitle:
+        "This first run is meant to teach the core loop. Difficulty 0 is the safest way to learn the systems.",
+      steps: {
+        chooseDifficulty: "Choose a difficulty. Level 0 is ideal for learning.",
+        pickMode: "Pick Normal for a classic 5-floor run.",
+        planRoute:
+          "On the map, prioritize fights to grow your deck, then visit merchants when you can afford upgrades.",
+        combatFlow:
+          "In combat: play cards, watch energy/ink, then end your turn.",
+        endOfRun:
+          "At the end of the run, claim rewards and return to the Library to invest your resources.",
+      },
+    },
     sections: {
       character: "Character",
       difficulty: "Difficulty",
@@ -496,6 +512,14 @@ export const en = {
       relic: "Relic",
       ally: "Ally",
       maxHp: "Max HP",
+    },
+    firstMapTutorial: {
+      kicker: "Map tutorial",
+      title: "Choose your path",
+      description:
+        "Each room changes your run: fights grow your deck, merchants optimize it, events offer risk/reward choices.",
+      tip: "Balance progression and safety: avoid chaining dangerous rooms when your HP is low.",
+      gotIt: "Got it",
     },
   },
   stories: {
@@ -1094,6 +1118,14 @@ export const en = {
     maxHp: "Max HP",
     maxHpDescription: "Increase your maximum health permanently",
     ally: "Ally",
+    firstRewardTutorial: {
+      kicker: "Reward tutorial",
+      title: "Strengthen your deck",
+      description:
+        "After combat, pick a reward that fits your plan: card, relic, or ally depending on choices.",
+      tip: "Early on, prioritize simple and reliable cards over highly situational effects.",
+      gotIt: "Got it",
+    },
     target: {
       allEnemies: "all enemies",
       lowestHpEnemy: "lowest HP enemy",
@@ -1370,6 +1402,56 @@ export const en = {
     allEnemies: "All enemies",
     allAllies: "All allies",
     ally: "Ally",
+    firstCombatTutorial: {
+      kicker: "Combat tutorial",
+      stepCounter: "Step {{current}} / {{total}}",
+      previous: "Previous",
+      next: "Next",
+      done: "Finish",
+      skip: "Skip",
+      steps: {
+        cards: {
+          title: "Cards in hand",
+          description:
+            "Each card has an energy cost and an effect. Read attack/skill/status before playing.",
+        },
+        energy: {
+          title: "Energy per turn",
+          description:
+            "You spend energy to play cards. It refills at the start of your next turn.",
+        },
+        armor: {
+          title: "Armor (block)",
+          description:
+            "The 🛡 badge shows current armor. It absorbs incoming damage before HP.",
+        },
+        incomingDamage: {
+          title: "Incoming damage",
+          description:
+            "Enemy intents and ⚔/🛡 badges show expected damage for the next enemy turn.",
+        },
+        ink: {
+          title: "Ink",
+          description:
+            "Your ink gauge fuels inked card variants and special combat powers.",
+        },
+        inkPowers: {
+          title: "Ink powers",
+          description:
+            "Use ink powers at the right time to control the fight (draw, silence, and more).",
+        },
+        deckCycle: {
+          title: "Draw / Discard / Exhaust",
+          description:
+            "Played cards go to discard. When draw pile is empty, discard is shuffled back. Exhaust removes cards for this combat.",
+        },
+        endTurn: {
+          title: "Ending your turn",
+          description:
+            "When you have no useful action left, end turn. Enemies then act based on their intents.",
+        },
+      },
+    },
   },
   enemyCard: {
     boss: "Boss",

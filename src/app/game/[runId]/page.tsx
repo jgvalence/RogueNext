@@ -105,6 +105,7 @@ export default function RunPage() {
         enemyDefs={enemyDefs}
         allyDefs={allyDefs}
         isAdmin={runData.userRole === "ADMIN"}
+        isFirstRun={runData.isFirstRun ?? false}
       />
     </GameProvider>
   );
@@ -174,11 +175,13 @@ function GameContent({
   enemyDefs,
   allyDefs,
   isAdmin,
+  isFirstRun,
 }: {
   cardDefs: Map<string, CardDefinition>;
   enemyDefs: Map<string, EnemyDefinition>;
   allyDefs: Map<string, AllyDefinition>;
   isAdmin: boolean;
+  isFirstRun: boolean;
 }) {
   const { t } = useTranslation();
   const { state, dispatch, rng } = useGame();
@@ -202,6 +205,12 @@ function GameContent({
   const [attackingEnemyId, setAttackingEnemyId] = useState<string | null>(null);
   const [isDiscarding, setIsDiscarding] = useState(false);
   const [isResolvingEndTurn, setIsResolvingEndTurn] = useState(false);
+  const [firstCombatTutorialDismissed, setFirstCombatTutorialDismissed] =
+    useState(false);
+  const [firstRewardTutorialDismissed, setFirstRewardTutorialDismissed] =
+    useState(false);
+  const [firstMapTutorialDismissed, setFirstMapTutorialDismissed] =
+    useState(false);
   const [newBestiaryEntries, setNewBestiaryEntries] = useState<string[]>([]);
   const enemyTurnCancelledRef = useRef(false);
   const runEndedRef = useRef(false);
@@ -807,6 +816,13 @@ function GameContent({
             floor={state.floor}
             currentBiome={state.currentBiome}
             enemyDefs={enemyDefs}
+            showFirstMapTutorial={
+              isFirstRun &&
+              !firstMapTutorialDismissed &&
+              state.floor === 1 &&
+              state.currentRoom === 1
+            }
+            onDismissFirstMapTutorial={() => setFirstMapTutorialDismissed(true)}
             onSelectRoom={handleSelectRoom}
           />
         )}
@@ -816,6 +832,7 @@ function GameContent({
             runState={state}
             cardDefs={cardDefs}
             allyDefs={allyDefs}
+            showFirstRunTutorial={isFirstRun}
             onContinue={handleContinueSetup}
           />
         )}
@@ -846,6 +863,15 @@ function GameContent({
             cardDefs={cardDefs}
             enemyDefs={enemyDefs}
             allyDefs={allyDefs}
+            showFirstCombatTutorial={
+              isFirstRun &&
+              !firstCombatTutorialDismissed &&
+              state.floor === 1 &&
+              state.currentRoom === 0
+            }
+            onDismissFirstCombatTutorial={() =>
+              setFirstCombatTutorialDismissed(true)
+            }
             onPlayCard={(instanceId, targetId, useInked) =>
               dispatch({
                 type: "PLAY_CARD",
@@ -908,6 +934,15 @@ function GameContent({
             bossMaxHpBonus={rewards.bossMaxHpBonus}
             isBoss={isBossRewards}
             isElite={isEliteRewards}
+            showFirstRewardTutorial={
+              isFirstRun &&
+              !firstRewardTutorialDismissed &&
+              state.floor === 1 &&
+              state.currentRoom === 0
+            }
+            onDismissFirstRewardTutorial={() =>
+              setFirstRewardTutorialDismissed(true)
+            }
             onPickCard={handlePickCard}
             onPickRelic={handlePickRelic}
             onPickAlly={handlePickAlly}

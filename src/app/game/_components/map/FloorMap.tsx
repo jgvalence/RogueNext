@@ -16,6 +16,8 @@ interface FloorMapProps {
   currentBiome: BiomeType;
   enemyDefs: Map<string, EnemyDefinition>;
   onSelectRoom: (choiceIndex: number) => void;
+  showFirstMapTutorial?: boolean;
+  onDismissFirstMapTutorial?: () => void;
 }
 
 // === Config visuel pour les cartes de choix ===
@@ -129,6 +131,8 @@ export function FloorMap({
   currentBiome,
   enemyDefs,
   onSelectRoom,
+  showFirstMapTutorial = false,
+  onDismissFirstMapTutorial,
 }: FloorMapProps) {
   const { t } = useTranslation();
 
@@ -147,6 +151,32 @@ export function FloorMap({
         <h2 className="font-[family-name:var(--font-cinzel)] text-4xl font-bold uppercase tracking-[0.08em] text-amber-100">
           {t("map.choosePath")}
         </h2>
+
+        {showFirstMapTutorial && (
+          <div className="w-full max-w-3xl rounded-xl border border-cyan-400/45 bg-slate-950/90 p-4 text-left shadow-[0_16px_50px_rgba(8,145,178,0.2)]">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-300/85">
+              {t("map.firstMapTutorial.kicker")}
+            </p>
+            <h3 className="mt-1 text-sm font-black uppercase tracking-[0.08em] text-cyan-100">
+              {t("map.firstMapTutorial.title")}
+            </h3>
+            <p className="mt-1.5 text-xs text-slate-200/90">
+              {t("map.firstMapTutorial.description")}
+            </p>
+            <p className="mt-1.5 text-xs text-cyan-100/85">
+              {t("map.firstMapTutorial.tip")}
+            </p>
+            <div className="mt-3 flex justify-end">
+              <RogueButton
+                type="text"
+                className="!h-auto !rounded-md !border !border-cyan-500/65 !bg-cyan-700/25 !px-3 !py-1.5 !text-[10px] !font-bold !uppercase !tracking-[0.1em] !text-cyan-100 hover:!bg-cyan-600/35"
+                onClick={() => onDismissFirstMapTutorial?.()}
+              >
+                {t("map.firstMapTutorial.gotIt")}
+              </RogueButton>
+            </div>
+          </div>
+        )}
 
         {currentRoom < map.length && (
           <p className="text-xs uppercase tracking-[0.4em] text-amber-100/30">

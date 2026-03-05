@@ -517,14 +517,16 @@ export async function getActiveRunAction() {
       }),
     ]);
 
+    const resources = (progression?.resources as Record<string, number>) ?? {};
+    const isFirstRun = (progression?.totalRuns ?? 0) === 0;
+
     if (!run) {
-      return success({ run: null, userRole: user.role });
+      return success({ run: null, userRole: user.role, isFirstRun });
     }
 
     // Recompute meta bonuses from current progression so that stories
     // unlocked after the run was created are still applied.
     const unlockedStoryIds = (progression?.unlockedStoryIds as string[]) ?? [];
-    const resources = (progression?.resources as Record<string, number>) ?? {};
     const winsByDifficulty =
       (progression?.winsByDifficulty as Record<string, number>) ?? {};
     const freshMetaBonuses = computeMetaBonuses(unlockedStoryIds);
@@ -664,6 +666,7 @@ export async function getActiveRunAction() {
         createdAt: run.createdAt,
       },
       userRole: user.role,
+      isFirstRun,
     });
   } catch (error) {
     return handleServerActionError(error);

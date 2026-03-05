@@ -83,6 +83,8 @@ interface CombatViewProps {
   isResolvingEndTurn?: boolean;
   attackBonus?: number;
   biome?: BiomeType;
+  showFirstCombatTutorial?: boolean;
+  onDismissFirstCombatTutorial?: () => void;
   debugEnemySelection?: {
     floor: number;
     room: number;
@@ -138,6 +140,18 @@ type MobileInfoPanelState =
   | { type: "enemy"; instanceId: string }
   | null;
 
+const FIRST_COMBAT_TUTORIAL_STEPS = [
+  "cards",
+  "energy",
+  "armor",
+  "incomingDamage",
+  "ink",
+  "inkPowers",
+  "deckCycle",
+  "endTurn",
+] as const;
+type FirstCombatTutorialStep = (typeof FIRST_COMBAT_TUTORIAL_STEPS)[number];
+
 export function CombatView({
   combat,
   cardDefs,
@@ -158,6 +172,8 @@ export function CombatView({
   isResolvingEndTurn = false,
   attackBonus = 0,
   biome = "LIBRARY",
+  showFirstCombatTutorial = false,
+  onDismissFirstCombatTutorial,
   debugEnemySelection: _debugEnemySelection,
   debugDrawInfo: _debugDrawInfo,
 }: CombatViewProps) {
@@ -189,6 +205,11 @@ export function CombatView({
     useState<MobileInfoPanelState>(null);
   const [mobileInkPanelOpen, setMobileInkPanelOpen] = useState(false);
   const [mobileInventoryPanelOpen, setMobileInventoryPanelOpen] =
+    useState(false);
+  const [isDesktopViewport, setIsDesktopViewport] = useState(false);
+  const [firstCombatTutorialStepIndex, setFirstCombatTutorialStepIndex] =
+    useState(0);
+  const [firstCombatTutorialHidden, setFirstCombatTutorialHidden] =
     useState(false);
 
   const drawBtnRef = useRef<HTMLButtonElement>(null);
@@ -272,6 +293,18 @@ export function CombatView({
       1200
     );
   }, [combat.enemies, actingEnemyId, t, getEnemyDisplayName]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const updateDesktopState = () => setIsDesktopViewport(media.matches);
+    updateDesktopState();
+    if (typeof media.addEventListener === "function") {
+      media.addEventListener("change", updateDesktopState);
+      return () => media.removeEventListener("change", updateDesktopState);
+    }
+    media.addListener(updateDesktopState);
+    return () => media.removeListener(updateDesktopState);
+  }, []);
 
   useEffect(() => {
     const spawnTimers = spawnClearTimersRef.current;
@@ -451,6 +484,57 @@ export function CombatView({
     !isResolvingEndTurn &&
     !isDiscarding &&
     !isResolvingHandOverflow;
+  const isFirstCombatTutorialVisible =
+    showFirstCombatTutorial && isDesktopViewport && !firstCombatTutorialHidden;
+  const firstCombatTutorialCurrentStep: FirstCombatTutorialStep =
+    FIRST_COMBAT_TUTORIAL_STEPS[
+      Math.min(
+        firstCombatTutorialStepIndex,
+        FIRST_COMBAT_TUTORIAL_STEPS.length - 1
+      )
+    ] ?? "armor";
+  const isArmorTutorialStep =
+    isFirstCombatTutorialVisible && firstCombatTutorialCurrentStep === "armor";
+  const isCardsTutorialStep =
+    isFirstCombatTutorialVisible && firstCombatTutorialCurrentStep === "cards";
+  const isEnergyTutorialStep =
+    isFirstCombatTutorialVisible && firstCombatTutorialCurrentStep === "energy";
+  const isIncomingDamageTutorialStep =
+    isFirstCombatTutorialVisible &&
+    firstCombatTutorialCurrentStep === "incomingDamage";
+  const isInkTutorialStep =
+    isFirstCombatTutorialVisible && firstCombatTutorialCurrentStep === "ink";
+  const isInkPowersTutorialStep =
+    isFirstCombatTutorialVisible &&
+    firstCombatTutorialCurrentStep === "inkPowers";
+  const isDeckCycleTutorialStep =
+    isFirstCombatTutorialVisible &&
+    firstCombatTutorialCurrentStep === "deckCycle";
+  const isEndTurnTutorialStep =
+    isFirstCombatTutorialVisible &&
+    firstCombatTutorialCurrentStep === "endTurn";
+  const isLastFirstCombatTutorialStep =
+    firstCombatTutorialStepIndex >= FIRST_COMBAT_TUTORIAL_STEPS.length - 1;
+
+  const dismissFirstCombatTutorial = useCallback(() => {
+    if (firstCombatTutorialHidden) return;
+    setFirstCombatTutorialHidden(true);
+    onDismissFirstCombatTutorial?.();
+  }, [firstCombatTutorialHidden, onDismissFirstCombatTutorial]);
+
+  const handleFirstCombatTutorialNext = useCallback(() => {
+    if (isLastFirstCombatTutorialStep) {
+      dismissFirstCombatTutorial();
+      return;
+    }
+    setFirstCombatTutorialStepIndex((prev) =>
+      Math.min(FIRST_COMBAT_TUTORIAL_STEPS.length - 1, prev + 1)
+    );
+  }, [dismissFirstCombatTutorial, isLastFirstCombatTutorialStep]);
+
+  const handleFirstCombatTutorialPrevious = useCallback(() => {
+    setFirstCombatTutorialStepIndex((prev) => Math.max(0, prev - 1));
+  }, []);
 
   const triggerCardPlay = useCallback(
     (instanceId: string, targetId: string | null, useInked: boolean) => {
@@ -823,6 +907,63 @@ export function CombatView({
             {turnLabel}
           </span>
         </div>
+        {isFirstCombatTutorialVisible && (
+          <div
+            data-keep-selection="true"
+            className="absolute right-2 top-11 z-30 hidden w-[min(26rem,calc(100%-1rem))] rounded-xl border border-cyan-400/50 bg-slate-950/95 p-3 shadow-[0_16px_50px_rgba(8,145,178,0.22)] lg:block"
+          >
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-300/85">
+              {t("combat.firstCombatTutorial.kicker")}
+            </p>
+            <h3 className="mt-1 text-sm font-black uppercase tracking-[0.08em] text-cyan-100">
+              {t(
+                `combat.firstCombatTutorial.steps.${firstCombatTutorialCurrentStep}.title`
+              )}
+            </h3>
+            <p className="mt-1.5 text-xs text-slate-200/90">
+              {t(
+                `combat.firstCombatTutorial.steps.${firstCombatTutorialCurrentStep}.description`
+              )}
+            </p>
+            <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-cyan-200/70">
+              {t("combat.firstCombatTutorial.stepCounter", {
+                current: firstCombatTutorialStepIndex + 1,
+                total: FIRST_COMBAT_TUTORIAL_STEPS.length,
+              })}
+            </p>
+            <div className="mt-3 flex items-center justify-between gap-2">
+              <button
+                type="button"
+                data-keep-selection="true"
+                onClick={dismissFirstCombatTutorial}
+                className="rounded-md border border-slate-600/80 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-200 transition hover:border-slate-400"
+              >
+                {t("combat.firstCombatTutorial.skip")}
+              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  data-keep-selection="true"
+                  onClick={handleFirstCombatTutorialPrevious}
+                  disabled={firstCombatTutorialStepIndex === 0}
+                  className="rounded-md border border-cyan-700/70 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-cyan-100 transition enabled:hover:border-cyan-500 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {t("combat.firstCombatTutorial.previous")}
+                </button>
+                <button
+                  type="button"
+                  data-keep-selection="true"
+                  onClick={handleFirstCombatTutorialNext}
+                  className="rounded-md border border-cyan-400/80 bg-cyan-600/25 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-cyan-100 transition hover:border-cyan-300 hover:bg-cyan-500/30"
+                >
+                  {isLastFirstCombatTutorialStep
+                    ? t("combat.firstCombatTutorial.done")
+                    : t("combat.firstCombatTutorial.next")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {summonAnnouncement && (
           <div className="pointer-events-none absolute left-1/2 top-2 z-20 -translate-x-1/2 rounded-full border border-orange-400/60 bg-orange-950/80 px-3 py-1 text-xs font-semibold text-orange-200 shadow-lg shadow-orange-900/50">
             {summonAnnouncement}
@@ -961,7 +1102,11 @@ export function CombatView({
                       <p className="pr-10 text-[9px] font-bold text-cyan-200">
                         {isDead ? "KO" : `⚔ ${intentDamage ?? "-"}`}
                       </p>
-                      <ArmorBadge block={ally.block} compact />
+                      <ArmorBadge
+                        block={ally.block}
+                        compact
+                        highlight={isArmorTutorialStep}
+                      />
                     </button>
                   );
                 }
@@ -1008,7 +1153,11 @@ export function CombatView({
                       <p className="text-[9px] font-bold text-indigo-200">
                         {t("combat.energyShort")} {combat.player.energyCurrent}
                       </p>
-                      <ArmorBadge block={combat.player.block} compact />
+                      <ArmorBadge
+                        block={combat.player.block}
+                        compact
+                        highlight={isArmorTutorialStep}
+                      />
                     </button>
                   );
                 }
@@ -1101,7 +1250,11 @@ export function CombatView({
                     <p className="pr-10 text-[9px] font-bold text-amber-200">
                       {isDead ? "KO" : `⚔ ${intentDamageLabel}`}
                     </p>
-                    <ArmorBadge block={enemy.block} compact />
+                    <ArmorBadge
+                      block={enemy.block}
+                      compact
+                      highlight={isArmorTutorialStep}
+                    />
                   </button>
                 );
               })}
@@ -1196,6 +1349,7 @@ export function CombatView({
                         <IncomingDamageBadge
                           damage={incomingDamage.allies[ally.instanceId]!}
                           block={ally.block}
+                          highlight={isIncomingDamageTutorialStep}
                         />
                       )}
                     <div className="mb-1 flex h-14 items-center justify-center rounded-lg border border-cyan-900/60 bg-cyan-950/70 text-2xl sm:h-16 lg:h-28">
@@ -1217,7 +1371,10 @@ export function CombatView({
                         ? ` · ${t("combat.block")} ${ally.block}`
                         : ""}
                     </p>
-                    <ArmorBadge block={ally.block} />
+                    <ArmorBadge
+                      block={ally.block}
+                      highlight={isArmorTutorialStep}
+                    />
                   </button>
                 </Tooltip>
               );
@@ -1254,6 +1411,10 @@ export function CombatView({
               <div
                 className={cn(
                   "relative h-28 rounded-xl border bg-indigo-950/35 p-1.5 sm:h-32 sm:p-2 lg:h-56 lg:p-2.5",
+                  isArmorTutorialStep &&
+                    "ring-2 ring-cyan-300/80 ring-offset-2 ring-offset-slate-950",
+                  isIncomingDamageTutorialStep &&
+                    "ring-2 ring-rose-300/70 ring-offset-2 ring-offset-slate-950",
                   playerHit
                     ? "border-red-400 shadow-[0_0_22px_rgba(248,113,113,0.4)]"
                     : "border-indigo-500/70"
@@ -1266,6 +1427,7 @@ export function CombatView({
                   <IncomingDamageBadge
                     damage={incomingDamage.player}
                     block={combat.player.block}
+                    highlight={isIncomingDamageTutorialStep}
                   />
                 )}
                 <div className="mb-1 flex h-14 items-center justify-center overflow-hidden rounded-lg border border-indigo-800/70 bg-indigo-950/75 sm:h-16 lg:h-28">
@@ -1296,7 +1458,10 @@ export function CombatView({
                     ? ` · ${t("combat.block")} ${combat.player.block}`
                     : ""}
                 </p>
-                <ArmorBadge block={combat.player.block} />
+                <ArmorBadge
+                  block={combat.player.block}
+                  highlight={isArmorTutorialStep}
+                />
               </div>
             </Tooltip>
 
@@ -1395,6 +1560,8 @@ export function CombatView({
                     onClick={() => handleEnemyClick(enemy.instanceId)}
                     className={cn(
                       "relative h-28 w-full rounded-xl border bg-rose-950/35 p-1.5 text-left transition-all sm:h-32 sm:p-2 lg:h-56 lg:p-2.5",
+                      isIncomingDamageTutorialStep &&
+                        "ring-2 ring-rose-300/80 ring-offset-2 ring-offset-slate-950",
                       isDead
                         ? "border-slate-800 opacity-45 grayscale"
                         : "border-rose-700/80",
@@ -1455,7 +1622,11 @@ export function CombatView({
                       ).map((chip, idx) => (
                         <span
                           key={`${enemy.instanceId}-desktop-intent-${idx}`}
-                          className="rounded border border-rose-800/70 bg-rose-950/70 px-1 py-0.5 text-[8px] font-semibold text-rose-100"
+                          className={cn(
+                            "rounded border border-rose-800/70 bg-rose-950/70 px-1 py-0.5 text-[8px] font-semibold text-rose-100",
+                            isIncomingDamageTutorialStep &&
+                              "border-rose-300/80 bg-rose-800/70 text-rose-50"
+                          )}
                         >
                           {chip}
                         </span>
@@ -1473,7 +1644,10 @@ export function CombatView({
                         ? ` · ${t("combat.block")} ${enemy.block}`
                         : ""}
                     </p>
-                    <ArmorBadge block={enemy.block} />
+                    <ArmorBadge
+                      block={enemy.block}
+                      highlight={isArmorTutorialStep}
+                    />
                     {!isDead &&
                     incomingDamageByEnemyId.get(enemy.instanceId) ? (
                       <p className="mt-1 text-[10px] font-semibold text-red-300">
@@ -1539,8 +1713,20 @@ export function CombatView({
       <div className="relative z-20 shrink-0 border-t border-cyan-500/20 bg-slate-950/95 backdrop-blur-sm [@media(max-height:540px)]:border-t-slate-800/70">
         <div className="relative border-t border-cyan-500/10 px-2 pb-1 pt-1 lg:px-4 lg:pb-3 lg:pt-2.5 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:pb-0.5 [@media(max-height:540px)]:pt-0.5">
           <div className="flex items-start gap-2 lg:gap-4">
-            <div className="hidden w-40 flex-shrink-0 flex-col gap-2 lg:flex">
-              <div className="rounded-xl border border-yellow-500/40 bg-gradient-to-b from-yellow-900/30 to-slate-900/80 p-2 shadow-[0_0_16px_rgba(250,204,21,0.12)]">
+            <div
+              className={cn(
+                "hidden w-40 flex-shrink-0 flex-col gap-2 lg:flex",
+                (isInkTutorialStep || isInkPowersTutorialStep) &&
+                  "rounded-2xl border border-cyan-400/60 bg-cyan-950/15 p-1"
+              )}
+            >
+              <div
+                className={cn(
+                  "rounded-xl border border-yellow-500/40 bg-gradient-to-b from-yellow-900/30 to-slate-900/80 p-2 shadow-[0_0_16px_rgba(250,204,21,0.12)]",
+                  isEnergyTutorialStep &&
+                    "ring-2 ring-yellow-300/85 ring-offset-2 ring-offset-slate-950"
+                )}
+              >
                 <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.16em] text-yellow-300/80">
                   Energie
                 </p>
@@ -1551,12 +1737,22 @@ export function CombatView({
                 />
               </div>
 
-              <InkGauge
-                player={combat.player}
-                combatState={combat}
-                onUsePower={handleUseInkPower}
-                unlockedPowers={unlockedInkPowers}
-              />
+              <div
+                className={cn(
+                  "rounded-xl",
+                  isInkTutorialStep &&
+                    "ring-2 ring-cyan-300/85 ring-offset-2 ring-offset-slate-950",
+                  isInkPowersTutorialStep &&
+                    "ring-2 ring-violet-300/85 ring-offset-2 ring-offset-slate-950"
+                )}
+              >
+                <InkGauge
+                  player={combat.player}
+                  combatState={combat}
+                  onUsePower={handleUseInkPower}
+                  unlockedPowers={unlockedInkPowers}
+                />
+              </div>
 
               <button
                 ref={drawBtnRef}
@@ -1565,6 +1761,8 @@ export function CombatView({
                 }}
                 className={cn(
                   "flex h-12 flex-col items-center justify-center gap-0.5 rounded-lg border border-slate-500/70 bg-slate-800 transition hover:border-slate-300",
+                  isDeckCycleTutorialStep &&
+                    "ring-2 ring-indigo-300/85 ring-offset-2 ring-offset-slate-950",
                   reshuffleFx &&
                     "animate-pulse border-cyan-300 shadow-[0_0_22px_rgba(34,211,238,0.45)]"
                 )}
@@ -1591,7 +1789,13 @@ export function CombatView({
               )}
             </div>
 
-            <div className="min-w-0 flex-1">
+            <div
+              className={cn(
+                "min-w-0 flex-1",
+                isCardsTutorialStep &&
+                  "rounded-2xl border border-cyan-300/65 bg-cyan-950/10 p-1 ring-2 ring-cyan-300/85 ring-offset-2 ring-offset-slate-950"
+              )}
+            >
               <HandArea
                 hand={combat.hand}
                 combatState={combat}
@@ -1658,6 +1862,8 @@ export function CombatView({
                 type="text"
                 className={cn(
                   "!h-12 !rounded-lg !px-3 !py-2 !text-[10px] !font-black !uppercase !tracking-wide !transition-all lg:!text-sm",
+                  isEndTurnTutorialStep &&
+                    "!ring-2 !ring-emerald-300/85 !ring-offset-2 !ring-offset-slate-950",
                   endTurnClass
                 )}
                 disabled={!canAct}
@@ -1673,6 +1879,8 @@ export function CombatView({
                 }}
                 className={cn(
                   "flex h-12 flex-col items-center justify-center gap-0.5 rounded-lg border border-red-700/60 bg-slate-800 transition hover:border-red-400",
+                  isDeckCycleTutorialStep &&
+                    "ring-2 ring-indigo-300/85 ring-offset-2 ring-offset-slate-950",
                   reshuffleFx &&
                     "animate-pulse border-cyan-300 shadow-[0_0_22px_rgba(34,211,238,0.45)]"
                 )}
@@ -1698,7 +1906,11 @@ export function CombatView({
                   style={{
                     boxShadow: "2px 2px 0 1px #4c1d95, 4px 4px 0 1px #2e1065",
                   }}
-                  className="!flex !h-12 !flex-col !items-center !justify-center !gap-0.5 !rounded-lg !border !border-purple-700/60 !bg-slate-800 !transition hover:!border-purple-400"
+                  className={cn(
+                    "!flex !h-12 !flex-col !items-center !justify-center !gap-0.5 !rounded-lg !border !border-purple-700/60 !bg-slate-800 !transition hover:!border-purple-400",
+                    isDeckCycleTutorialStep &&
+                      "!ring-2 !ring-indigo-300/85 !ring-offset-2 !ring-offset-slate-950"
+                  )}
                   onClick={() => {
                     setIsSelectingCheatKillTarget(false);
                     setPendingDiscardTargetInkPower(null);
@@ -2937,15 +3149,19 @@ function resolveEnemyIntentTargetLabel(
 function IncomingDamageBadge({
   damage,
   block,
+  highlight = false,
 }: {
   damage: number;
   block: number;
+  highlight?: boolean;
 }) {
   const covered = block >= damage;
   return (
     <div
       className={cn(
         "absolute -top-3 right-1 z-20 rounded border px-1 py-0.5 text-[10px] font-bold",
+        highlight &&
+          "ring-2 ring-rose-200/80 ring-offset-2 ring-offset-slate-950",
         covered
           ? "border-green-700/80 bg-green-950/90 text-green-300"
           : "border-red-700/80 bg-red-950/90 text-red-300"
@@ -2959,9 +3175,11 @@ function IncomingDamageBadge({
 function ArmorBadge({
   block,
   compact = false,
+  highlight = false,
 }: {
   block: number;
   compact?: boolean;
+  highlight?: boolean;
 }) {
   const value = Math.max(0, block);
   const hasArmor = value > 0;
@@ -2973,6 +3191,8 @@ function ArmorBadge({
         compact
           ? "gap-0.5 px-1 py-0.5 text-[9px]"
           : "gap-1 px-1.5 py-0.5 text-[10px]",
+        highlight &&
+          "ring-2 ring-cyan-200/80 ring-offset-2 ring-offset-slate-950",
         hasArmor
           ? "border-cyan-700/80 bg-cyan-950/90 text-cyan-200"
           : "border-slate-700/80 bg-slate-900/90 text-slate-400"

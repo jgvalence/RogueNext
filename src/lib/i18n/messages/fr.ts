@@ -404,6 +404,23 @@ export const fr = {
     title: "Configure ton expedition",
     subtitle:
       "Choisis la difficulte, le type de run, puis prepare tes options de depart avant d'entrer dans la premiere salle.",
+    firstRunTutorial: {
+      kicker: "Premier run",
+      title: "Mini tutoriel",
+      subtitle:
+        "Cette partie sert a prendre en main les bases. Tu peux jouer tranquillement en difficulte 0 pour decouvrir les systemes.",
+      steps: {
+        chooseDifficulty:
+          "Choisis une difficulte. Le niveau 0 est ideal pour apprendre.",
+        pickMode: "Selectionne Normal pour un run classique en 5 etages.",
+        planRoute:
+          "Sur la carte, vise des combats pour renforcer ton deck, et passe au marchand si tu as assez d'or.",
+        combatFlow:
+          "En combat: joue tes cartes, garde un oeil sur l'energie/encre, puis termine ton tour.",
+        endOfRun:
+          "En fin de run, recupere tes recompenses et retourne a la Bibliotheque pour investir tes ressources.",
+      },
+    },
     sections: {
       character: "Personnage",
       difficulty: "Difficulte",
@@ -505,6 +522,14 @@ export const fr = {
       relic: "Relique",
       ally: "Allie",
       maxHp: "PV max",
+    },
+    firstMapTutorial: {
+      kicker: "Tutoriel carte",
+      title: "Choisir son chemin",
+      description:
+        "Chaque salle change ton run: combats pour gagner des cartes, marchand pour optimiser ton deck, events pour des choix a risque.",
+      tip: "Essaie d'alterner progression et securite: evite d'enchainer des salles trop dangereuses avec peu de PV.",
+      gotIt: "Compris",
     },
   },
   stories: {
@@ -1061,6 +1086,14 @@ export const fr = {
     maxHp: "PV max",
     maxHpDescription: "Augmente votre sante maximale de facon permanente",
     ally: "Allie",
+    firstRewardTutorial: {
+      kicker: "Tutoriel recompense",
+      title: "Renforcer ton deck",
+      description:
+        "Apres un combat, choisis une recompense qui sert ton plan: carte, relique ou allie selon les options.",
+      tip: "Au debut, privilegie les cartes simples et efficaces plutot que les effets trop situationnels.",
+      gotIt: "Compris",
+    },
     target: {
       allEnemies: "tous les ennemis",
       lowestHpEnemy: "ennemi avec le moins de PV",
@@ -1347,6 +1380,56 @@ export const fr = {
     allEnemies: "Tous les ennemis",
     allAllies: "Tous les allies",
     ally: "Allie",
+    firstCombatTutorial: {
+      kicker: "Tutoriel combat",
+      stepCounter: "Etape {{current}} / {{total}}",
+      previous: "Precedent",
+      next: "Suivant",
+      done: "Terminer",
+      skip: "Passer",
+      steps: {
+        cards: {
+          title: "Cartes en main",
+          description:
+            "Chaque carte a un cout en energie et un effet. Lis bien attaque/skill/statut avant de jouer.",
+        },
+        energy: {
+          title: "Energie par tour",
+          description:
+            "Tu depenses ton energie pour jouer tes cartes. Elle se recharge au debut de ton prochain tour.",
+        },
+        armor: {
+          title: "Armure (bloc)",
+          description:
+            "Le badge 🛡 indique l'armure actuelle. Elle absorbe les degats recus avant vos PV.",
+        },
+        incomingDamage: {
+          title: "Degats entrants",
+          description:
+            "Les intentions ennemies et les badges ⚔/🛡 montrent les degats prevus au prochain tour.",
+        },
+        ink: {
+          title: "Encre",
+          description:
+            "La jauge d'encre sert a activer les variantes encrees des cartes et vos pouvoirs speciaux.",
+        },
+        inkPowers: {
+          title: "Pouvoirs d'encre",
+          description:
+            "Utilisez vos pouvoirs d'encre au bon moment pour controler le combat (pioche, silence, etc.).",
+        },
+        deckCycle: {
+          title: "Pioche / Defausse / Epuise",
+          description:
+            "Les cartes jouees vont en defausse. Quand la pioche est vide, la defausse est melangee. Epuise = retire pour ce combat.",
+        },
+        endTurn: {
+          title: "Finir son tour",
+          description:
+            "Quand tu n'as plus d'action utile, termine ton tour. Les ennemis jouent ensuite selon leurs intentions.",
+        },
+      },
+    },
   },
   enemyCard: {
     boss: "Boss",
