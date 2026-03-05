@@ -1360,6 +1360,10 @@ export const en = {
     handOverflowSubtitle:
       "You exceeded the hand limit. Choose {{count}} card(s) to exhaust.",
     handOverflowHint: "Enemy-caused overdraws are exhausted automatically.",
+    section: "Combat",
+    energy: "Energy",
+    ink: "Ink",
+    inventory: "Inventory",
     inventoryEmpty: "Inventory empty",
     energyShort: "EN",
     you: "You",

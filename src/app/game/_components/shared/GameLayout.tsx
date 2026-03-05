@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useGame } from "../../_providers/game-provider";
 import { setSoundsEnabled } from "@/lib/sound";
 import { setMusicEnabled } from "@/lib/music";
+import { setLocale, supportedLocales, type SupportedLocale } from "@/lib/i18n";
 import { RogueButton, RogueModal, RogueTag } from "@/components/ui/rogue";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { relicDefinitions } from "@/game/data/relics";
@@ -33,7 +34,7 @@ interface GameLayoutProps {
 }
 
 export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { state, cardDefs } = useGame();
   const [muted, setMuted] = useState(false);
   const [showRelics, setShowRelics] = useState(false);
@@ -77,6 +78,9 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
     1,
     Math.min(state.currentRoom + 1, totalRooms)
   );
+  const canRequestCombatEndTurn =
+    state.combat?.phase === "PLAYER_TURN" &&
+    (state.combat.pendingHandOverflowExhaust ?? 0) <= 0;
 
   const toggleMute = () => {
     const next = !muted;
@@ -95,6 +99,25 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
     } catch {
       // Browser may block fullscreen when not allowed by user gesture/policy.
     }
+  };
+
+  const triggerMobileCombatAction = (
+    action:
+      | "open-ink"
+      | "open-inventory"
+      | "open-draw"
+      | "open-discard"
+      | "open-exhaust"
+  ) => {
+    window.dispatchEvent(
+      new CustomEvent("game:mobile-combat-action", {
+        detail: { action },
+      })
+    );
+  };
+
+  const requestCombatEndTurn = () => {
+    window.dispatchEvent(new Event("game:end-turn-request"));
   };
 
   return (
@@ -125,8 +148,10 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
             </span>
             <span className="text-slate-600">/{totalRooms}</span>
           </span>
-          <span className="text-xs text-slate-500 sm:text-sm">|</span>
-          <span className="text-xs font-semibold text-cyan-300 sm:text-sm">
+          <span className="hidden text-xs text-slate-500 lg:inline lg:text-sm">
+            |
+          </span>
+          <span className="hidden text-xs font-semibold text-cyan-300 lg:inline lg:text-sm">
             {t("layout.time", { value: formatRunDuration(elapsedMs) })}
           </span>
         </div>
@@ -206,10 +231,40 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
             {isFullscreen ? t("layout.exitFullscreen") : t("layout.fullscreen")}
           </RogueButton>
 
+          {state.combat && (
+            <div className="flex items-center gap-1 lg:hidden">
+              <div className="rounded border border-yellow-700/50 bg-yellow-950/30 px-1.5 py-1 text-[10px] font-black text-yellow-100">
+                {t("combat.energy")} {state.combat.player.energyCurrent}
+              </div>
+
+              <RogueButton
+                onClick={() => triggerMobileCombatAction("open-ink")}
+                className="!h-auto !rounded !border !border-cyan-700/60 !bg-cyan-950/25 !px-1.5 !py-1 !text-[10px] !font-black !text-cyan-100"
+              >
+                {t("combat.ink")} {state.combat.player.inkCurrent}
+              </RogueButton>
+
+              <RogueButton
+                onClick={() => triggerMobileCombatAction("open-inventory")}
+                className="!h-auto !rounded !border !border-amber-700/60 !bg-slate-900/80 !px-1.5 !py-1 !text-[10px] !font-black !text-amber-200"
+              >
+                {t("combat.inventory")} {state.usableItems?.length ?? 0}
+              </RogueButton>
+
+              <RogueButton
+                onClick={requestCombatEndTurn}
+                disabled={!canRequestCombatEndTurn}
+                className="!h-auto !rounded !border !border-emerald-300/30 !bg-emerald-600 !px-1.5 !py-1 !text-[10px] !font-black !uppercase !tracking-wide !text-white disabled:!cursor-not-allowed disabled:!border-slate-700 disabled:!bg-slate-700 disabled:!text-slate-500"
+              >
+                {t("combat.endTurn")}
+              </RogueButton>
+            </div>
+          )}
+
           {state.relicIds.length > 0 && (
             <RogueButton
               onClick={() => setShowRelics((v) => !v)}
-              className="!flex !h-auto items-center gap-1.5 !rounded !border !border-purple-700/50 !bg-transparent !px-2 !py-1 hover:!border-purple-500/70"
+              className="!hidden !h-auto items-center gap-1.5 !rounded !border !border-purple-700/50 !bg-transparent !px-2 !py-1 hover:!border-purple-500/70 sm:!flex"
               title={t("layout.showRelics")}
             >
               <span className="text-xs text-purple-400">
@@ -265,6 +320,86 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
           </div>
 
           <div className="space-y-2">
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                {t("common.language")}
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {supportedLocales.map((locale) => {
+                  const isActive = i18n.resolvedLanguage === locale;
+                  return (
+                    <RogueButton
+                      key={locale}
+                      onClick={() => setLocale(locale as SupportedLocale)}
+                      className={`!h-auto !rounded !border !px-3 !py-2 !text-sm !font-semibold ${
+                        isActive
+                          ? "!border-slate-300 !bg-slate-200 !text-slate-900"
+                          : "!border-slate-600 !bg-transparent !text-slate-200 hover:!border-slate-400"
+                      }`}
+                    >
+                      {locale.toUpperCase()}
+                    </RogueButton>
+                  );
+                })}
+              </div>
+            </div>
+
+            {state.combat && (
+              <div className="space-y-2 rounded border border-cyan-900/40 bg-slate-950/50 p-2 lg:hidden">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-cyan-300/80">
+                  {t("combat.section")}
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <RogueButton
+                    onClick={() => {
+                      triggerMobileCombatAction("open-draw");
+                      setShowMenu(false);
+                    }}
+                    className="!h-auto !rounded !border !border-slate-500/70 !bg-slate-800 !px-2 !py-1.5 !text-left"
+                  >
+                    <p className="text-[10px] font-semibold uppercase text-slate-400">
+                      {t("combat.draw")}
+                    </p>
+                    <p className="text-base font-black text-slate-100">
+                      {state.combat.drawPile.length}
+                    </p>
+                  </RogueButton>
+
+                  <RogueButton
+                    onClick={() => {
+                      triggerMobileCombatAction("open-discard");
+                      setShowMenu(false);
+                    }}
+                    className="!h-auto !rounded !border !border-red-700/60 !bg-slate-800 !px-2 !py-1.5 !text-left"
+                  >
+                    <p className="text-[10px] font-semibold uppercase text-red-400/80">
+                      {t("combat.discard")}
+                    </p>
+                    <p className="text-base font-black text-slate-100">
+                      {state.combat.discardPile.length}
+                    </p>
+                  </RogueButton>
+
+                  {state.combat.exhaustPile.length > 0 && (
+                    <RogueButton
+                      onClick={() => {
+                        triggerMobileCombatAction("open-exhaust");
+                        setShowMenu(false);
+                      }}
+                      className="!h-auto !rounded !border !border-purple-700/60 !bg-slate-800 !px-2 !py-1.5 !text-left"
+                    >
+                      <p className="text-[10px] font-semibold uppercase text-purple-400/80">
+                        {t("combat.exhaust")}
+                      </p>
+                      <p className="text-base font-black text-slate-100">
+                        {state.combat.exhaustPile.length}
+                      </p>
+                    </RogueButton>
+                  )}
+                </div>
+              </div>
+            )}
+
             {state.relicIds.length > 0 && (
               <RogueButton
                 onClick={() => {

@@ -327,6 +327,15 @@ function GameContent({
     }
   }, [dispatch]);
 
+  useEffect(() => {
+    const onTopMenuEndTurn = () => {
+      void handleEndTurn();
+    };
+    window.addEventListener("game:end-turn-request", onTopMenuEndTurn);
+    return () =>
+      window.removeEventListener("game:end-turn-request", onTopMenuEndTurn);
+  }, [handleEndTurn]);
+
   // Start combat when room is selected and is COMBAT type
   const handleSelectRoom = useCallback(
     (choiceIndex: number) => {

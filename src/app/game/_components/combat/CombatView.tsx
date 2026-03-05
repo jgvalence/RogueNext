@@ -159,7 +159,7 @@ export function CombatView({
   attackBonus = 0,
   biome = "LIBRARY",
   debugEnemySelection: _debugEnemySelection,
-  debugDrawInfo,
+  debugDrawInfo: _debugDrawInfo,
 }: CombatViewProps) {
   const { t } = useTranslation();
   type PileType = "draw" | "discard" | "exhaust";
@@ -188,6 +188,8 @@ export function CombatView({
   const [mobileInfoPanel, setMobileInfoPanel] =
     useState<MobileInfoPanelState>(null);
   const [mobileInkPanelOpen, setMobileInkPanelOpen] = useState(false);
+  const [mobileInventoryPanelOpen, setMobileInventoryPanelOpen] =
+    useState(false);
 
   const drawBtnRef = useRef<HTMLButtonElement>(null);
   const discardBtnRef = useRef<HTMLButtonElement>(null);
@@ -404,20 +406,27 @@ export function CombatView({
       Array.from({ length: 4 }, (_, index) => combat.enemies[index] ?? null),
     [combat.enemies]
   );
-  const hasIncomingPreview = incomingDamageByEnemyId.size > 0;
+  const mobileOccupiedSlots = useMemo<
+    Array<
+      | { type: "ally"; ally: CombatState["allies"][number] }
+      | { type: "player" }
+      | { type: "enemy"; enemy: CombatState["enemies"][number] }
+    >
+  >(
+    () => [
+      ...combat.allies.map((ally) => ({ type: "ally" as const, ally })),
+      { type: "player" as const },
+      ...combat.enemies.map((enemy) => ({ type: "enemy" as const, enemy })),
+    ],
+    [combat.allies, combat.enemies]
+  );
+  const isSingleRowMobileSlots = mobileOccupiedSlots.length <= 4;
   const incomingDamage = useMemo(
     () =>
       combat.phase === "PLAYER_TURN"
         ? computeIncomingDamage(combat, enemyDefs)
         : { player: 0, allies: {} as Record<string, number> },
     [combat, enemyDefs]
-  );
-  const mobileFrontline = useMemo(
-    () => [
-      { type: "player" as const },
-      ...combat.allies.map((ally) => ({ type: "ally" as const, ally })),
-    ],
-    [combat.allies]
   );
   const mobileInfoAlly =
     mobileInfoPanel?.type === "ally"
@@ -705,6 +714,60 @@ export function CombatView({
     setIsSelectingCheatKillTarget(false);
   }, []);
 
+  useEffect(() => {
+    const handleTopMenuAction = (
+      event: Event & {
+        detail?: {
+          action?:
+            | "open-ink"
+            | "open-inventory"
+            | "open-draw"
+            | "open-discard"
+            | "open-exhaust";
+        };
+      }
+    ) => {
+      const action = event.detail?.action;
+      if (!action) return;
+
+      setMobileInfoPanel(null);
+      setIsSelectingCheatKillTarget(false);
+      setPendingDiscardTargetInkPower(null);
+      setPendingEnemyTargetInkPower(null);
+
+      if (action === "open-ink") {
+        setMobileInventoryPanelOpen(false);
+        setMobileInkPanelOpen(true);
+        return;
+      }
+      if (action === "open-inventory") {
+        setMobileInkPanelOpen(false);
+        setMobileInventoryPanelOpen(true);
+        return;
+      }
+
+      setMobileInkPanelOpen(false);
+      setMobileInventoryPanelOpen(false);
+      if (action === "open-draw") {
+        setOpenPile("draw");
+      } else if (action === "open-discard") {
+        setOpenPile("discard");
+      } else if (action === "open-exhaust") {
+        setOpenPile("exhaust");
+      }
+    };
+
+    window.addEventListener(
+      "game:mobile-combat-action",
+      handleTopMenuAction as EventListener
+    );
+    return () =>
+      window.removeEventListener(
+        "game:mobile-combat-action",
+        handleTopMenuAction as EventListener
+      );
+  }, []);
+
   const handleGlobalClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (
@@ -765,7 +828,7 @@ export function CombatView({
             {summonAnnouncement}
           </div>
         )}
-        {debugDrawInfo && (
+        {/* {debugDrawInfo && (
           <div className="absolute right-2 top-2 z-20 w-[min(36rem,calc(100%-1rem))] rounded-md border border-cyan-500/40 bg-cyan-950/75 p-2 text-[10px] text-cyan-100 shadow-lg shadow-cyan-950/60 lg:text-xs">
             <div className="mb-1 flex items-center justify-between font-semibold uppercase tracking-wide text-cyan-200">
               <span>{t("combat.drawDebugTitle")}</span>
@@ -838,14 +901,68 @@ export function CombatView({
           ref={enemyRowRef}
           className="relative z-10 flex min-h-0 w-full flex-1 items-center justify-center py-0.5 lg:py-4 [@media(max-height:540px)]:py-0"
         >
-          <div className="w-full space-y-1 lg:hidden">
+          <div className="w-full lg:hidden">
             <div
-              className="grid gap-1"
-              style={{
-                gridTemplateColumns: `repeat(${Math.max(1, mobileFrontline.length)}, minmax(0, 1fr))`,
-              }}
+              className={cn("grid gap-1.5", !isSingleRowMobileSlots && "grid-cols-4")}
+              style={
+                isSingleRowMobileSlots
+                  ? {
+                      gridTemplateColumns: `repeat(${Math.max(
+                        1,
+                        mobileOccupiedSlots.length
+                      )}, minmax(0, 1fr))`,
+                    }
+                  : undefined
+              }
             >
-              {mobileFrontline.map((entry, index) => {
+              {mobileOccupiedSlots.map((entry, index) => {
+                if (entry.type === "ally") {
+                  const ally = entry.ally;
+                  const def = allyDefs.get(ally.definitionId);
+                  const intent = def?.abilities[ally.intentIndex];
+                  const intentDamage =
+                    intent?.effects.find((effect) => effect.type === "DAMAGE")
+                      ?.value ?? null;
+                  const canTarget =
+                    (selectingAllyTarget || selfCanRetargetToAlly) &&
+                    ally.currentHp > 0 &&
+                    !actingEnemyId;
+                  const isDead = ally.currentHp <= 0;
+
+                  return (
+                    <button
+                      key={`mobile-ally-${ally.instanceId}`}
+                      type="button"
+                      data-keep-selection="true"
+                      onClick={() => handleMobileAllyPress(ally.instanceId)}
+                      className={cn(
+                        "relative h-[104px] rounded-lg border bg-cyan-950/35 px-1.5 py-1 text-left",
+                        isDead
+                          ? "border-slate-800 opacity-45 grayscale"
+                          : "border-cyan-700/80",
+                        canTarget && "border-cyan-300 ring-1 ring-cyan-300/70"
+                      )}
+                    >
+                      <div className="absolute -top-1 left-1 flex max-w-[90%] items-center gap-1 overflow-hidden">
+                        {renderBuffSymbols(ally.buffs)}
+                      </div>
+                      <div className="mb-1 mt-1 flex h-14 items-center justify-center overflow-hidden rounded-md border border-cyan-900/60 bg-cyan-950/65">
+                        <span className="text-xl text-cyan-200/85">*</span>
+                      </div>
+                      <p className="truncate text-[9px] font-bold text-cyan-100">
+                        {ally.name}
+                      </p>
+                      <p className="mt-0.5 text-[10px] font-semibold text-slate-200">
+                        {Math.max(0, ally.currentHp)}/{ally.maxHp}
+                      </p>
+                      <p className="pr-10 text-[9px] font-bold text-cyan-200">
+                        {isDead ? "KO" : `⚔ ${intentDamage ?? "-"}`}
+                      </p>
+                      <ArmorBadge block={ally.block} compact />
+                    </button>
+                  );
+                }
+
                 if (entry.type === "player") {
                   return (
                     <button
@@ -854,98 +971,47 @@ export function CombatView({
                       data-keep-selection="true"
                       onClick={() => setMobileInfoPanel({ type: "player" })}
                       className={cn(
-                        "relative h-[72px] rounded-lg border bg-indigo-950/40 px-1.5 py-1 text-left",
+                        "relative h-[104px] rounded-lg border bg-indigo-950/40 px-1.5 py-1 text-left",
                         playerHit
                           ? "border-red-400 shadow-[0_0_14px_rgba(248,113,113,0.4)]"
                           : "border-indigo-500/70"
                       )}
                     >
-                      {incomingDamage.player > 0 && (
-                        <IncomingDamageBadge
-                          damage={incomingDamage.player}
-                          block={combat.player.block}
-                        />
-                      )}
+                      <div className="absolute -top-1 left-1 flex max-w-[90%] items-center gap-1 overflow-hidden">
+                        {renderBuffSymbols(buildPlayerMarkerBuffs(combat.player))}
+                      </div>
+                      <div className="mb-1 mt-1 flex h-14 items-center justify-center overflow-hidden rounded-md border border-indigo-800/70 bg-indigo-950/70">
+                        {!avatarFailed ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={PLAYER_AVATAR}
+                            alt={t("combat.player")}
+                            className="h-full w-full object-contain p-1"
+                            onError={() => setAvatarFailed(true)}
+                          />
+                        ) : (
+                          <span className="text-xl text-indigo-100">*</span>
+                        )}
+                      </div>
                       <p className="truncate text-[9px] font-bold text-indigo-100">
                         {t("combat.player")}
                       </p>
-                      <HpBar
-                        current={Math.max(0, combat.player.currentHp)}
-                        max={combat.player.maxHp}
-                        showText={false}
-                        className="mt-1 h-1.5 bg-slate-700"
-                      />
-                      <p className="mt-1 text-[9px] font-semibold text-slate-200">
+                      <p className="mt-0.5 text-[10px] font-semibold text-slate-200">
                         {Math.max(0, combat.player.currentHp)}/
                         {combat.player.maxHp}
                       </p>
-                      <div className="mt-1 flex flex-wrap gap-0.5">
-                        {renderCompactBuffs(
-                          buildPlayerMarkerBuffs(combat.player)
-                        )}
-                      </div>
+                      <p className="text-[9px] font-bold text-indigo-200">
+                        {t("combat.energyShort")} {combat.player.energyCurrent}
+                      </p>
+                      <ArmorBadge block={combat.player.block} compact />
                     </button>
                   );
                 }
 
-                const ally = entry.ally;
-                const canTarget =
-                  (selectingAllyTarget || selfCanRetargetToAlly) &&
-                  ally.currentHp > 0 &&
-                  !actingEnemyId;
-                const isDead = ally.currentHp <= 0;
-
-                return (
-                  <button
-                    key={`ally-mobile-${ally.instanceId}`}
-                    type="button"
-                    data-keep-selection="true"
-                    onClick={() => handleMobileAllyPress(ally.instanceId)}
-                    className={cn(
-                      "relative h-[72px] rounded-lg border bg-cyan-950/40 px-1.5 py-1 text-left",
-                      isDead
-                        ? "border-slate-800 opacity-45 grayscale"
-                        : "border-cyan-700/80",
-                      canTarget && "border-cyan-300 ring-1 ring-cyan-300/70"
-                    )}
-                  >
-                    {!isDead &&
-                      (incomingDamage.allies[ally.instanceId] ?? 0) > 0 && (
-                        <IncomingDamageBadge
-                          damage={incomingDamage.allies[ally.instanceId]!}
-                          block={ally.block}
-                        />
-                      )}
-                    <p className="truncate text-[9px] font-bold text-cyan-100">
-                      {ally.name}
-                    </p>
-                    <HpBar
-                      current={Math.max(0, ally.currentHp)}
-                      max={ally.maxHp}
-                      showText={false}
-                      color="green"
-                      className="mt-1 h-1.5 bg-slate-700"
-                    />
-                    <p className="mt-1 text-[9px] font-semibold text-slate-200">
-                      {Math.max(0, ally.currentHp)}/{ally.maxHp}
-                    </p>
-                    <div className="mt-1 flex flex-wrap gap-0.5">
-                      {renderCompactBuffs(ally.buffs)}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div
-              className="grid gap-1"
-              style={{
-                gridTemplateColumns: `repeat(${Math.max(1, combat.enemies.length)}, minmax(0, 1fr))`,
-              }}
-            >
-              {combat.enemies.map((enemy) => {
+                const enemy = entry.enemy;
                 const def = enemyDefs.get(enemy.definitionId);
-                const ability = def?.abilities[enemy.intentIndex];
+                if (!def) return null;
+                const ability = def.abilities[enemy.intentIndex];
                 const resolvedTarget = ability
                   ? resolveEnemyAbilityTarget(combat, enemy, ability)
                   : "player";
@@ -954,14 +1020,20 @@ export function CombatView({
                   combat.turnNumber,
                   enemy
                 );
-                const intentChips = buildMobileEnemyIntentChips(
-                  combat,
-                  enemy,
-                  resolvedTarget,
-                  ability,
-                  hideIntent,
-                  t
+                const intentDamageEffect = ability?.effects.find(
+                  (effect) => effect.type === "DAMAGE"
                 );
+                const intentDamageLabel = hideIntent
+                  ? "?"
+                  : intentDamageEffect
+                    ? `${computeEnemyDamagePreview(
+                        combat,
+                        enemy,
+                        resolvedTarget,
+                        intentDamageEffect.value,
+                        ability
+                      )}`
+                    : "-";
                 const isDead = enemy.currentHp <= 0;
                 const isTargetable =
                   selectingEnemyTarget &&
@@ -971,23 +1043,22 @@ export function CombatView({
                 const isCheatSelectable =
                   isSelectingCheatKillTarget && enemy.currentHp > 0;
                 const isActing = actingEnemyId === enemy.instanceId;
+                const enemyArtSrc = getEnemyImageSrc(enemy.definitionId);
+                const enemyArtFailed = enemyArtFailures.has(enemy.definitionId);
 
                 return (
                   <button
-                    key={`enemy-mobile-${enemy.instanceId}`}
+                    key={`mobile-enemy-${enemy.instanceId}`}
                     type="button"
                     data-keep-selection="true"
                     onClick={() => handleMobileEnemyPress(enemy.instanceId)}
                     className={cn(
-                      "h-[88px] rounded-lg border bg-rose-950/40 px-1.5 py-1 text-left transition-all",
+                      "relative h-[104px] rounded-lg border bg-rose-950/35 px-1.5 py-1 text-left transition-all",
                       isDead
                         ? "border-slate-800 opacity-45 grayscale"
                         : "border-rose-700/80",
                       (isTargetable || isCheatSelectable) &&
                         "border-red-400 ring-1 ring-red-300/70",
-                      hasIncomingPreview &&
-                        !isDead &&
-                        "animate-pulse border-amber-400/80 shadow-[0_0_16px_rgba(251,191,36,0.25)]",
                       isActing && "animate-enemy-acting",
                       attackingEnemyId === enemy.instanceId &&
                         "animate-enemy-attack",
@@ -995,38 +1066,37 @@ export function CombatView({
                         "animate-enemy-summon-enter"
                     )}
                   >
+                    <div className="absolute -top-1 left-1 flex max-w-[90%] items-center gap-1 overflow-hidden">
+                      {renderBuffSymbols(enemy.buffs)}
+                    </div>
+                    <div className="mb-1 mt-1 flex h-14 items-center justify-center overflow-hidden rounded-md border border-rose-900/60 bg-slate-900">
+                      {!enemyArtFailed ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={enemyArtSrc}
+                            alt={getEnemyDisplayName(enemy)}
+                            className="h-full w-full object-contain object-center p-1"
+                            onError={() =>
+                              markEnemyArtFailure(enemy.definitionId)
+                            }
+                          />
+                          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/55 via-slate-900/5 to-transparent" />
+                        </>
+                      ) : (
+                        <span className="text-xl text-rose-200">*</span>
+                      )}
+                    </div>
                     <p className="truncate text-[9px] font-bold text-rose-100">
                       {getEnemyDisplayName(enemy)}
                     </p>
-                    <HpBar
-                      current={Math.max(0, enemy.currentHp)}
-                      max={enemy.maxHp}
-                      showText={false}
-                      className="mt-1 h-1.5 bg-slate-700"
-                    />
-                    <p className="mt-1 text-[9px] font-semibold text-slate-200">
+                    <p className="mt-0.5 text-[10px] font-semibold text-slate-200">
                       {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
                     </p>
-                    {!isDead &&
-                    incomingDamageByEnemyId.get(enemy.instanceId) ? (
-                      <p className="mt-0.5 text-[9px] font-bold text-amber-300">
-                        {t("enemyCard.incoming")}{" "}
-                        {incomingDamageByEnemyId.get(enemy.instanceId)}
-                      </p>
-                    ) : null}
-                    <div className="mt-0.5 flex flex-wrap gap-0.5">
-                      {intentChips.map((chip, idx) => (
-                        <span
-                          key={`${enemy.instanceId}-intent-${idx}`}
-                          className="rounded border border-rose-800/70 bg-rose-950/70 px-1 py-0.5 text-[8px] font-semibold text-rose-100"
-                        >
-                          {chip}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-1 flex flex-wrap gap-0.5">
-                      {renderCompactBuffs(enemy.buffs)}
-                    </div>
+                    <p className="pr-10 text-[9px] font-bold text-amber-200">
+                      {isDead ? "KO" : `⚔ ${intentDamageLabel}`}
+                    </p>
+                    <ArmorBadge block={enemy.block} compact />
                   </button>
                 );
               })}
@@ -1136,12 +1206,13 @@ export function CombatView({
                       color="green"
                       className="mt-1 h-2 bg-slate-700"
                     />
-                    <p className="mt-1 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
+                    <p className="mt-1 pr-10 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
                       {Math.max(0, ally.currentHp)}/{ally.maxHp}
                       {ally.block > 0
                         ? ` · ${t("combat.block")} ${ally.block}`
                         : ""}
                     </p>
+                    <ArmorBadge block={ally.block} />
                   </button>
                 </Tooltip>
               );
@@ -1214,12 +1285,13 @@ export function CombatView({
                   showText={false}
                   className="mt-1 h-2 bg-slate-700"
                 />
-                <p className="mt-1 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
+                <p className="mt-1 pr-10 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
                   {Math.max(0, combat.player.currentHp)}/{combat.player.maxHp}
                   {combat.player.block > 0
                     ? ` · ${t("combat.block")} ${combat.player.block}`
                     : ""}
                 </p>
+                <ArmorBadge block={combat.player.block} />
               </div>
             </Tooltip>
 
@@ -1390,12 +1462,13 @@ export function CombatView({
                       showText={false}
                       className="mt-1 h-2 bg-slate-700"
                     />
-                    <p className="mt-1 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
+                    <p className="mt-1 pr-10 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
                       {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
                       {enemy.block > 0
                         ? ` · ${t("combat.block")} ${enemy.block}`
                         : ""}
                     </p>
+                    <ArmorBadge block={enemy.block} />
                     {!isDead &&
                     incomingDamageByEnemyId.get(enemy.instanceId) ? (
                       <p className="mt-1 text-[10px] font-semibold text-red-300">
@@ -1458,123 +1531,8 @@ export function CombatView({
       </div>
 
       {/* PLAYER ZONE */}
-      <div className="shrink-0 border-t border-cyan-500/20 bg-slate-950/95 backdrop-blur-sm [@media(max-height:540px)]:border-t-slate-800/70">
-        <div className="relative border-t border-cyan-500/10 px-2 pb-2 pt-2 lg:px-4 lg:pb-3 lg:pt-2.5 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:pb-1 [@media(max-height:540px)]:pt-1">
-          <div className="mb-1 space-y-1 lg:hidden">
-            <div className="flex items-center gap-1.5">
-              <div className="flex flex-1 gap-1 overflow-x-auto pb-0.5">
-                <div className="flex h-8 min-w-[38px] items-center justify-center rounded-md border border-yellow-600/50 bg-yellow-950/30 px-1 text-[12px] font-black text-yellow-100">
-                  {combat.player.energyCurrent}
-                </div>
-
-                <RogueButton
-                  type="text"
-                  className="!h-8 !min-w-[48px] !rounded-md !border !border-cyan-700/60 !bg-cyan-950/40 !px-1 !text-left"
-                  onClick={() => setMobileInkPanelOpen(true)}
-                >
-                  <p className="text-[7px] font-semibold uppercase tracking-wide text-cyan-300/90">
-                    {t("inkGauge.ink")}
-                  </p>
-                  <p className="text-[10px] font-black text-cyan-100">
-                    {combat.player.inkCurrent}
-                  </p>
-                </RogueButton>
-
-                <RogueButton
-                  type="text"
-                  className="!h-8 !min-w-[52px] !rounded-md !border !border-slate-500/70 !bg-slate-800 !px-1 !text-left"
-                  onClick={() => {
-                    setIsSelectingCheatKillTarget(false);
-                    setPendingDiscardTargetInkPower(null);
-                    setPendingEnemyTargetInkPower(null);
-                    setOpenPile("draw");
-                  }}
-                >
-                  <p className="text-[7px] font-semibold uppercase tracking-wide text-slate-400">
-                    {t("combat.draw")}
-                  </p>
-                  <p className="text-[10px] font-black text-slate-100">
-                    {combat.drawPile.length}
-                  </p>
-                </RogueButton>
-
-                <RogueButton
-                  type="text"
-                  className="!h-8 !min-w-[52px] !rounded-md !border !border-red-700/60 !bg-slate-800 !px-1 !text-left"
-                  onClick={() => {
-                    setIsSelectingCheatKillTarget(false);
-                    setPendingDiscardTargetInkPower(null);
-                    setPendingEnemyTargetInkPower(null);
-                    setOpenPile("discard");
-                  }}
-                >
-                  <p className="text-[7px] font-semibold uppercase tracking-wide text-red-400/80">
-                    {t("combat.discard")}
-                  </p>
-                  <p className="text-[10px] font-black text-slate-100">
-                    {combat.discardPile.length}
-                  </p>
-                </RogueButton>
-
-                {combat.exhaustPile.length > 0 && (
-                  <RogueButton
-                    type="text"
-                    className="!h-8 !min-w-[42px] !rounded-md !border !border-purple-700/60 !bg-slate-800 !px-1 !text-[8px] !font-semibold !text-purple-300"
-                    onClick={() => {
-                      setIsSelectingCheatKillTarget(false);
-                      setPendingDiscardTargetInkPower(null);
-                      setPendingEnemyTargetInkPower(null);
-                      setOpenPile("exhaust");
-                    }}
-                  >
-                    {t("combat.exhaust")} {combat.exhaustPile.length}
-                  </RogueButton>
-                )}
-
-                {usableItems.length === 0 ? (
-                  <div className="flex h-8 items-center rounded-md border border-amber-900/60 bg-slate-900/70 px-2 text-[8px] font-semibold uppercase tracking-wide text-amber-200/60">
-                    {t("combat.inventoryEmpty")}
-                  </div>
-                ) : (
-                  usableItems.map((item) => {
-                    const def = usableItemDefs.get(item.definitionId);
-                    if (!def) return null;
-                    const isSelected = selectedUsableItemId === item.instanceId;
-                    return (
-                      <RogueButton
-                        key={item.instanceId}
-                        type="text"
-                        onClick={() => handleUseItemClick(item.instanceId)}
-                        className={cn(
-                          "!h-8 !shrink-0 !rounded-md !border !px-1.5 !text-[8px] !font-semibold !uppercase !tracking-wide !transition",
-                          isSelected
-                            ? "!border-amber-300 !bg-amber-700/50 !text-amber-50"
-                            : "!border-amber-700/70 !bg-slate-900/80 !text-amber-200",
-                          !canAct && "!cursor-not-allowed !opacity-50"
-                        )}
-                        disabled={!canAct}
-                      >
-                        {localizeUsableItemName(def.id, def.name)}
-                      </RogueButton>
-                    );
-                  })
-                )}
-              </div>
-              {/* Fin du tour — ancré à droite, hors du scroll */}
-              <RogueButton
-                type="text"
-                className={cn(
-                  "!h-8 !flex-shrink-0 !rounded-lg !px-2.5 !text-[10px] !font-black !uppercase !tracking-wide !transition-all",
-                  endTurnClass
-                )}
-                disabled={!canAct}
-                onClick={onEndTurn}
-              >
-                {t("combat.endTurn")}
-              </RogueButton>
-            </div>
-          </div>
-
+      <div className="relative z-20 shrink-0 border-t border-cyan-500/20 bg-slate-950/95 backdrop-blur-sm [@media(max-height:540px)]:border-t-slate-800/70">
+        <div className="relative border-t border-cyan-500/10 px-2 pb-1 pt-1 lg:px-4 lg:pb-3 lg:pt-2.5 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:pb-0.5 [@media(max-height:540px)]:pt-0.5">
           <div className="flex items-start gap-2 lg:gap-4">
             <div className="hidden w-40 flex-shrink-0 flex-col gap-2 lg:flex">
               <div className="rounded-xl border border-yellow-500/40 bg-gradient-to-b from-yellow-900/30 to-slate-900/80 p-2 shadow-[0_0_16px_rgba(250,204,21,0.12)]">
@@ -2026,7 +1984,7 @@ export function CombatView({
                         </div>
                         <div className="rounded-2xl border border-cyan-800/40 bg-cyan-950/20 px-4 py-2.5">
                           <p className="text-[9px] font-bold uppercase tracking-wider text-cyan-500">
-                            Encre
+                            ✒
                           </p>
                           <p className="text-xl font-black text-cyan-200">
                             {player.inkCurrent}
@@ -2211,6 +2169,64 @@ export function CombatView({
               data-keep-selection="true"
               className="!mt-2 !h-auto !w-full !rounded !border !border-slate-600 !px-2 !py-1.5 !text-xs !font-semibold !text-slate-200 hover:!border-slate-400"
               onClick={() => setMobileInkPanelOpen(false)}
+            >
+              {t("common.close")}
+            </RogueButton>
+          </div>
+        </div>
+      )}
+      {mobileInventoryPanelOpen && (
+        <div
+          data-keep-selection="true"
+          className="fixed inset-0 z-[90] flex items-end lg:hidden"
+          style={{ background: "rgba(0,0,0,0.6)" }}
+          onClick={() => setMobileInventoryPanelOpen(false)}
+        >
+          <div
+            data-keep-selection="true"
+            className="w-full rounded-t-3xl border-t border-amber-700/60 bg-slate-950 px-4 pb-6 pt-3 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-slate-700" />
+            {usableItems.length === 0 ? (
+              <div className="rounded-xl border border-amber-900/60 bg-slate-900/70 px-3 py-2 text-sm font-semibold text-amber-200/60">
+                {t("combat.inventoryEmpty")}
+              </div>
+            ) : (
+              <div className="max-h-[45vh] space-y-2 overflow-y-auto pr-1">
+                {usableItems.map((item) => {
+                  const def = usableItemDefs.get(item.definitionId);
+                  if (!def) return null;
+                  const isSelected = selectedUsableItemId === item.instanceId;
+                  return (
+                    <RogueButton
+                      key={item.instanceId}
+                      type="text"
+                      data-keep-selection="true"
+                      onClick={() => {
+                        handleUseItemClick(item.instanceId);
+                        setMobileInventoryPanelOpen(false);
+                      }}
+                      className={cn(
+                        "!h-auto !w-full !rounded-xl !border !px-3 !py-2 !text-left !text-xs !font-semibold !uppercase !tracking-wide",
+                        isSelected
+                          ? "!border-amber-300 !bg-amber-700/50 !text-amber-100"
+                          : "!border-amber-700/70 !bg-slate-900/80 !text-amber-200",
+                        !canAct && "!cursor-not-allowed !opacity-50"
+                      )}
+                      disabled={!canAct}
+                    >
+                      {localizeUsableItemName(def.id, def.name)}
+                    </RogueButton>
+                  );
+                })}
+              </div>
+            )}
+            <RogueButton
+              type="text"
+              data-keep-selection="true"
+              className="!mt-3 !h-auto !w-full !rounded-xl !border !border-slate-600 !bg-slate-800 !px-2 !py-2 !text-sm !font-semibold !text-slate-200"
+              onClick={() => setMobileInventoryPanelOpen(false)}
             >
               {t("common.close")}
             </RogueButton>
@@ -2403,6 +2419,59 @@ function renderCompactBuffs(buffs: BuffInstance[]): ReactNode {
       )}
     </>
   );
+}
+
+function renderBuffSymbols(buffs: BuffInstance[]): ReactNode {
+  if (buffs.length === 0) return null;
+
+  const visible = buffs.slice(0, 4);
+  const remaining = buffs.length - visible.length;
+
+  return (
+    <>
+      {visible.map((buff, index) => {
+        const meta = buffMeta[buff.type];
+        return (
+          <span
+            key={`${buff.type}-symbol-${index}`}
+            className={cn(
+              "inline-flex h-4 min-w-4 items-center justify-center rounded-full border border-slate-950/70 px-1 text-[9px] font-black leading-none",
+              meta?.color ?? "bg-slate-700 text-slate-200"
+            )}
+          >
+            {getBuffSymbol(buff.type)}
+            {buff.stacks > 1 ? buff.stacks : ""}
+          </span>
+        );
+      })}
+      {remaining > 0 && (
+        <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full border border-slate-900/70 bg-slate-900/85 px-1 text-[9px] font-black text-slate-200">
+          +{remaining}
+        </span>
+      )}
+    </>
+  );
+}
+
+function getBuffSymbol(buffType: string): string {
+  switch (buffType) {
+    case "POISON":
+      return "☠";
+    case "WEAK":
+      return "⌄";
+    case "VULNERABLE":
+      return "◉";
+    case "STRENGTH":
+      return "⚔";
+    case "FOCUS":
+      return "✦";
+    case "THORNS":
+      return "✶";
+    case "BLEED":
+      return "🩸";
+    default:
+      return "•";
+  }
 }
 
 function renderBuffTooltipDetails(buffs: BuffInstance[]): ReactNode {
@@ -2878,6 +2947,32 @@ function IncomingDamageBadge({
       )}
     >
       {covered ? "🛡" : "⚔"} {damage}
+    </div>
+  );
+}
+
+function ArmorBadge({
+  block,
+  compact = false,
+}: {
+  block: number;
+  compact?: boolean;
+}) {
+  const value = Math.max(0, block);
+  const hasArmor = value > 0;
+
+  return (
+    <div
+      className={cn(
+        "pointer-events-none absolute bottom-1 right-1 z-20 inline-flex items-center rounded border font-black leading-none shadow-sm",
+        compact ? "gap-0.5 px-1 py-0.5 text-[9px]" : "gap-1 px-1.5 py-0.5 text-[10px]",
+        hasArmor
+          ? "border-cyan-700/80 bg-cyan-950/90 text-cyan-200"
+          : "border-slate-700/80 bg-slate-900/90 text-slate-400"
+      )}
+    >
+      <span className={compact ? "text-[9px]" : "text-[10px]"}>🛡</span>
+      <span>{value}</span>
     </div>
   );
 }

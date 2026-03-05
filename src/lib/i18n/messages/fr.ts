@@ -1337,6 +1337,10 @@ export const fr = {
       "Vous avez depasse la limite de main. Choisissez {{count}} carte(s) a epuiser.",
     handOverflowHint:
       "Les depassements de pioche causes par les ennemis sont epuises automatiquement.",
+    section: "Combat",
+    energy: "Energie",
+    ink: "Encre",
+    inventory: "Inventaire",
     inventoryEmpty: "Inventaire vide",
     energyShort: "EN",
     you: "Vous",
