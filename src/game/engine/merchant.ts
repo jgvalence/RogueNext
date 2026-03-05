@@ -13,6 +13,7 @@ import { allyDefinitions } from "../data/allies";
 import { usableItemDefinitions, createUsableItemInstance } from "./items";
 import { GAME_CONSTANTS } from "../constants";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
+import { addRelicToRunState } from "./relics";
 
 const BIOME_RESOURCE_KEYS: BiomeResource[] = [
   "PAGES",
@@ -29,6 +30,9 @@ const BIOME_RESOURCE_KEYS: BiomeResource[] = [
 const SHOP_PRICE_MULTIPLIER = 1.25;
 const AUTO_RESTOCK_RELIC_ID = "haggler_satchel";
 const EXTRA_PURGE_RELIC_ID = "surgeons_quill";
+const PURGE_DISCOUNT_RELIC_ID = "library_catalog_discount";
+const FREE_REROLL_RELIC_ID = "african_legba_key";
+const FORBIDDEN_CONTRACT_RELIC_ID = "love_forbidden_contract";
 const SHOP_REROLL_GROWTH = 1.6;
 
 function scaleShopPrice(price: number): number {
@@ -59,6 +63,22 @@ export function getMerchantPurgeUsesPerVisit(relicIds: string[]): number {
   return relicIds.includes(EXTRA_PURGE_RELIC_ID) ? 3 : 1;
 }
 
+function getMerchantPurgeCostMultiplier(relicIds: string[]): number {
+  return relicIds.includes(PURGE_DISCOUNT_RELIC_ID) ? 0.5 : 1;
+}
+
+function getMerchantPriceMultiplier(relicIds: string[]): number {
+  return relicIds.includes(FORBIDDEN_CONTRACT_RELIC_ID) ? 1.1 : 1;
+}
+
+function getMerchantExtraRelicOfferCount(relicIds: string[]): number {
+  return relicIds.includes(FORBIDDEN_CONTRACT_RELIC_ID) ? 1 : 0;
+}
+
+function hasFreeFirstReroll(relicIds: string[]): boolean {
+  return relicIds.includes(FREE_REROLL_RELIC_ID);
+}
+
 export function getShopRerollPrice(
   floor: number,
   rerollCount: number,
@@ -77,11 +97,13 @@ export function getShopRerollPrice(
 
 export function buyShopReroll(runState: RunState): RunState | null {
   const rerollCount = Math.max(0, runState.merchantRerollCount ?? 0);
-  const price = getShopRerollPrice(
+  const basePrice = getShopRerollPrice(
     runState.floor,
     rerollCount,
     runState.selectedDifficultyLevel ?? 0
   );
+  const price =
+    rerollCount === 0 && hasFreeFirstReroll(runState.relicIds) ? 0 : basePrice;
   if (runState.gold < price) return null;
   return {
     ...runState,
@@ -170,8 +192,13 @@ export function generateShopInventory(
   const items: ShopItem[] = [];
   const lootLuck = getTotalLootLuck(ownedRelicIds);
   const clampedRelicDiscount = Math.max(0, Math.min(95, relicDiscount));
+  const merchantPriceMultiplier = getMerchantPriceMultiplier(ownedRelicIds);
+  const purgeCostMultiplier = getMerchantPurgeCostMultiplier(ownedRelicIds);
+  const extraRelicOffers = getMerchantExtraRelicOfferCount(ownedRelicIds);
   const applyRelicDiscount = (price: number) =>
     Math.max(0, Math.round(price * (1 - clampedRelicDiscount / 100)));
+  const applyMerchantMultiplier = (price: number) =>
+    Math.max(1, Math.round(price * merchantPriceMultiplier));
 
   // 3 random non-starter cards
   const lootable = weightedSampleByRarity(
@@ -195,11 +222,11 @@ export function generateShopInventory(
       id: nanoid(),
       type: "card",
       cardDef: card,
-      price,
+      price: applyMerchantMultiplier(price),
     });
   }
 
-  // 1 relic (if any available)
+  // 1-2 relic offers (contract relic can add one extra choice)
   const availableRelics = ALL_SHOP_RELICS.filter(
     (r) =>
       !ownedRelicIds.includes(r.id) &&
@@ -207,25 +234,27 @@ export function generateShopInventory(
       (!unlockedRelicIds || unlockedRelicIds.includes(r.id))
   );
   if (availableRelics.length > 0) {
-    const relic = weightedSampleByRarity(
+    const relicChoices = weightedSampleByRarity(
       availableRelics.map((relic) => ({
         ...relic,
         rarity: getShopRelicRarity(relic.id),
       })),
-      1,
+      Math.max(1, 1 + extraRelicOffers),
       rng,
       lootLuck
-    )[0];
-    if (relic) {
+    );
+    for (const relic of relicChoices) {
       items.push({
         id: nanoid(),
         type: "relic",
         relicId: relic.id,
         relicName: relic.name,
         relicDescription: relic.description,
-        price: applyDifficultyShopPrice(
-          applyRelicDiscount(scaleShopPrice(relic.price)),
-          selectedDifficultyLevel
+        price: applyMerchantMultiplier(
+          applyDifficultyShopPrice(
+            applyRelicDiscount(scaleShopPrice(relic.price)),
+            selectedDifficultyLevel
+          )
         ),
       });
     }
@@ -236,9 +265,11 @@ export function generateShopInventory(
     id: nanoid(),
     type: "heal",
     healAmount: 25,
-    price: applyDifficultyShopPrice(
-      scaleShopPrice(40 + floor * 6),
-      selectedDifficultyLevel
+    price: applyMerchantMultiplier(
+      applyDifficultyShopPrice(
+        scaleShopPrice(40 + floor * 6),
+        selectedDifficultyLevel
+      )
     ),
   });
 
@@ -247,9 +278,11 @@ export function generateShopInventory(
     id: nanoid(),
     type: "max_hp",
     maxHpAmount: 10,
-    price: applyDifficultyShopPrice(
-      scaleShopPrice(95 + floor * 12),
-      selectedDifficultyLevel
+    price: applyMerchantMultiplier(
+      applyDifficultyShopPrice(
+        scaleShopPrice(95 + floor * 12),
+        selectedDifficultyLevel
+      )
     ),
   });
 
@@ -257,9 +290,11 @@ export function generateShopInventory(
   items.push({
     id: nanoid(),
     type: "purge",
-    price: applyDifficultyShopPrice(
-      scaleShopPrice(95 + floor * 12),
-      selectedDifficultyLevel
+    price: applyMerchantMultiplier(
+      applyDifficultyShopPrice(
+        Math.round(scaleShopPrice(95 + floor * 12) * purgeCostMultiplier),
+        selectedDifficultyLevel
+      )
     ),
   });
 
@@ -270,9 +305,11 @@ export function generateShopInventory(
       id: nanoid(),
       type: "usable_item",
       usableItemDef: itemDef,
-      price: applyDifficultyShopPrice(
-        scaleShopPrice(45 + floor * 6),
-        selectedDifficultyLevel
+      price: applyMerchantMultiplier(
+        applyDifficultyShopPrice(
+          scaleShopPrice(45 + floor * 6),
+          selectedDifficultyLevel
+        )
       ),
     });
   }
@@ -290,10 +327,12 @@ export function generateShopInventory(
         type: "ally",
         allyId: ally.id,
         allyName: ally.name,
-        allyDescription: `${ally.maxHp} HP · ${ally.speed} SPD`,
-        price: applyDifficultyShopPrice(
-          scaleShopPrice(120 + floor * 10),
-          selectedDifficultyLevel
+        allyDescription: `${ally.maxHp} HP - ${ally.speed} SPD`,
+        price: applyMerchantMultiplier(
+          applyDifficultyShopPrice(
+            scaleShopPrice(120 + floor * 10),
+            selectedDifficultyLevel
+          )
         ),
       });
     }
@@ -342,10 +381,7 @@ export function buyShopItem(
     }
     case "relic": {
       if (!item.relicId) return null;
-      state = {
-        ...state,
-        relicIds: [...state.relicIds, item.relicId],
-      };
+      state = addRelicToRunState(state, item.relicId);
       break;
     }
     case "heal": {
@@ -472,10 +508,7 @@ export function applyStartMerchantOffer(
     case "RELIC": {
       if (!offer.relicId || next.relicIds.includes(offer.relicId))
         return runState;
-      next = {
-        ...next,
-        relicIds: [...next.relicIds, offer.relicId],
-      };
+      next = addRelicToRunState(next, offer.relicId);
       break;
     }
     case "USABLE_ITEM": {
@@ -711,132 +744,25 @@ export function generateStartMerchantOffers(
   return offers.slice(0, 7);
 }
 
-const ALL_SHOP_RELICS = [
-  {
-    id: "ancient_quill",
-    name: "Ancient Quill",
-    description: "+2 ink max",
-    price: 80,
-  },
-  {
-    id: "energy_crystal",
-    name: "Energy Crystal",
-    description: "+1 energy per turn",
-    price: 120,
-  },
-  {
-    id: "bookmark",
-    name: "Bookmark",
-    description: "Draw 1 extra card per turn",
-    price: 100,
-  },
-  {
-    id: "ink_stamp",
-    name: "Ink Stamp",
-    description: "Start combat with 3 ink",
-    price: 70,
-  },
-  {
-    id: "iron_binding",
-    name: "Iron Binding",
-    description: "+1 ink gained when ink-per-card triggers",
-    price: 150,
-  },
-  {
-    id: "blighted_compass",
-    name: "Blighted Compass",
-    description: "+1 draw per turn, but start combat with Weak.",
-    price: 90,
-  },
-  {
-    id: "cursed_diacrit",
-    name: "Cursed Diacrit",
-    description: "+1 energy per turn, but gain a curse each combat.",
-    price: 100,
-  },
-  {
-    id: "runic_bulwark",
-    name: "Runic Bulwark",
-    description: "Retain 50% of your remaining Block each turn.",
-    price: 140,
-  },
-  {
-    id: "eternal_hourglass",
-    name: "Eternal Hourglass",
-    description: "Unspent energy is conserved between turns.",
-    price: 160,
-  },
-  {
-    id: "briar_codex",
-    name: "Briar Codex",
-    description: "Start each combat with 2 Thorns.",
-    price: 115,
-  },
-  {
-    id: "warded_ribbon",
-    name: "Warded Ribbon",
-    description: "Start each combat with 6 Block.",
-    price: 80,
-  },
-  {
-    id: "inkwell_reservoir",
-    name: "Inkwell Reservoir",
-    description: "+1 max ink and start each combat with 1 ink.",
-    price: 90,
-  },
-  {
-    id: "battle_lexicon",
-    name: "Battle Lexicon",
-    description: "Start each combat with +1 Strength.",
-    price: 120,
-  },
-  {
-    id: "gilded_ledger",
-    name: "Gilded Ledger",
-    description: "Increase gold gained from combat rewards by 50%.",
-    price: 170,
-  },
-  {
-    id: "plague_carillon",
-    name: "Plague Carillon",
-    description: "Each card played deals 1 damage to all enemies.",
-    price: 190,
-  },
-  {
-    id: "phoenix_ash",
-    name: "Phoenix Ash",
-    description: "Recover 2 HP at the start of each turn.",
-    price: 190,
-  },
-  {
-    id: "ink_spindle",
-    name: "Ink Spindle",
-    description: "At end of turn, gain 1 Focus if your hand is empty.",
-    price: 130,
-  },
-  {
-    id: "omens_compass",
-    name: "Omen's Compass",
-    description:
-      "Boss rewards are more likely to include an additional Boss relic option.",
-    price: 170,
-  },
-  {
-    id: "lucky_charm",
-    name: "Lucky Charm",
-    description: "Increases loot luck for better rarity rolls.",
-    price: 130,
-  },
-  {
-    id: "haggler_satchel",
-    name: "Haggler's Satchel",
-    description: "First purchase in each shop refreshes the full stock.",
-    price: 145,
-  },
-  {
-    id: "surgeons_quill",
-    name: "Surgeon's Quill",
-    description: "You can Purge up to 3 times per merchant visit.",
-    price: 155,
-  },
-];
+function getBaseShopRelicPrice(
+  rarity: "COMMON" | "UNCOMMON" | "RARE" | "BOSS"
+): number {
+  switch (rarity) {
+    case "BOSS":
+      return 260;
+    case "RARE":
+      return 180;
+    case "UNCOMMON":
+      return 130;
+    case "COMMON":
+    default:
+      return 90;
+  }
+}
+
+const ALL_SHOP_RELICS = relicDefinitions.map((relic) => ({
+  id: relic.id,
+  name: relic.name,
+  description: relic.description,
+  price: getBaseShopRelicPrice(relic.rarity),
+}));

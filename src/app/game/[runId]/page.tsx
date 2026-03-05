@@ -21,12 +21,16 @@ import { RewardScreen } from "../_components/rewards/RewardScreen";
 import { ShopView } from "../_components/merchant/ShopView";
 import { SpecialRoomView } from "../_components/special/SpecialRoomView";
 import { BiomeSelectScreen } from "../_components/biome/BiomeSelectScreen";
-import { RunSetupScreen } from "../_components/run-setup/RunSetupScreen";
+import {
+  RunSetupScreen,
+  type RunSetupDraft,
+} from "../_components/run-setup/RunSetupScreen";
 import { PreBossRoomView } from "../_components/preboss/PreBossRoomView";
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
 import type { BiomeType } from "@/game/schemas/enums";
 import type { RunState } from "@/game/schemas/run-state";
 import { GAME_CONSTANTS } from "@/game/constants";
+import { getCharacterById } from "@/game/data/characters";
 import { cn } from "@/lib/utils/cn";
 import { endRunAction } from "@/server/actions/run";
 import {
@@ -34,15 +38,18 @@ import {
   type CombatRewards,
 } from "@/game/engine/rewards";
 import {
+  VANILLA_RUN_CONDITION_ID,
   getRunConditionById,
   isInfiniteRunConditionId,
 } from "@/game/engine/run-conditions";
+import { computeEnemyKillUnlockedRelicIds } from "@/game/engine/difficulty";
 import { createRNG } from "@/game/engine/rng";
 import type { CardDefinition } from "@/game/schemas/cards";
 import { playSound } from "@/lib/sound";
 import { startMusic, stopMusic } from "@/lib/music";
 import { getUsableItemDefinitionsMap } from "@/game/engine/items";
-import type { StartMerchantOffer } from "@/game/engine/merchant";
+import { localizeEnemyName } from "@/lib/i18n/entity-text";
+import { relicDefinitions } from "@/game/data/relics";
 
 export default function RunPage() {
   const { t } = useTranslation();
@@ -195,6 +202,7 @@ function GameContent({
   const [attackingEnemyId, setAttackingEnemyId] = useState<string | null>(null);
   const [isDiscarding, setIsDiscarding] = useState(false);
   const [isResolvingEndTurn, setIsResolvingEndTurn] = useState(false);
+  const [newBestiaryEntries, setNewBestiaryEntries] = useState<string[]>([]);
   const enemyTurnCancelledRef = useRef(false);
   const runEndedRef = useRef(false);
   const endTurnInFlightRef = useRef(false);
@@ -207,11 +215,21 @@ function GameContent({
       earnedResources: isInfiniteMode ? {} : stateRef.current.earnedResources,
       startMerchantSpentResources:
         stateRef.current.startMerchantSpentResources ?? {},
+      encounteredEnemies: stateRef.current.encounteredEnemies ?? {},
+      enemyKillCounts: stateRef.current.enemyKillCounts ?? {},
     }),
     [isInfiniteMode]
   );
   const isDevBuild = process.env.NODE_ENV !== "production";
   const usableItemDefs = useMemo(() => getUsableItemDefinitionsMap(), []);
+
+  const newBestiaryEntryNames = useMemo(
+    () =>
+      newBestiaryEntries.map((enemyId) =>
+        localizeEnemyName(enemyId, enemyDefs.get(enemyId)?.name ?? enemyId)
+      ),
+    [newBestiaryEntries, enemyDefs]
+  );
 
   useAutoSave(state);
 
@@ -236,6 +254,12 @@ function GameContent({
   }, [phase, state.combat?.enemies]);
 
   useEffect(() => () => stopMusic(0.3), []);
+
+  useEffect(() => {
+    if (newBestiaryEntries.length === 0) return;
+    const timer = window.setTimeout(() => setNewBestiaryEntries([]), 4200);
+    return () => window.clearTimeout(timer);
+  }, [newBestiaryEntries]);
 
   // Determine current room info
   const currentRoomChoices = state.map[state.currentRoom];
@@ -331,60 +355,90 @@ function GameContent({
     [currentRoomChoices, dispatch]
   );
 
-  const handleSelectSetupDifficulty = useCallback(
-    (difficultyLevel: number) => {
+  const handleContinueSetup = useCallback(
+    (draft: RunSetupDraft) => {
+      const difficultyLevel = draft.difficultyLevel;
+      const modeConditionId = draft.modeConditionId;
+      if (difficultyLevel === null || modeConditionId === null) return;
+      const difficultyMaxForCharacter =
+        state.difficultyMaxByCharacter?.[draft.characterId];
+      if (
+        typeof difficultyMaxForCharacter === "number" &&
+        Number.isFinite(difficultyMaxForCharacter) &&
+        difficultyLevel > Math.max(0, Math.floor(difficultyMaxForCharacter))
+      ) {
+        return;
+      }
+      if (
+        modeConditionId === VANILLA_RUN_CONDITION_ID &&
+        draft.normalConditionId === null
+      ) {
+        return;
+      }
+
+      if (draft.characterId !== state.characterId) {
+        dispatch({
+          type: "CHOOSE_CHARACTER",
+          payload: { characterId: draft.characterId },
+        });
+      }
+
       dispatch({ type: "APPLY_DIFFICULTY", payload: { difficultyLevel } });
+      dispatch({
+        type: "APPLY_RUN_CONDITION",
+        payload: { conditionId: modeConditionId },
+      });
+
+      if (modeConditionId === VANILLA_RUN_CONDITION_ID) {
+        dispatch({
+          type: "APPLY_RUN_CONDITION",
+          payload: {
+            conditionId: draft.normalConditionId ?? VANILLA_RUN_CONDITION_ID,
+          },
+        });
+      }
+
+      for (const offer of draft.selectedStartOffers) {
+        dispatch({ type: "BUY_START_MERCHANT_OFFER", payload: { offer } });
+      }
+
+      if (!state.startMerchantCompleted) {
+        dispatch({ type: "COMPLETE_START_MERCHANT" });
+      }
+      if (canOfferFreeUpgradeAtStart) {
+        setPhase("RUN_FREE_UPGRADE");
+      } else if (hasOpeningBiomeChoice) {
+        setPhase("BIOME_SELECT");
+      } else {
+        setPhase("MAP");
+      }
     },
-    [dispatch]
+    [
+      dispatch,
+      state.characterId,
+      state.startMerchantCompleted,
+      canOfferFreeUpgradeAtStart,
+      hasOpeningBiomeChoice,
+    ]
   );
-
-  const handleSelectSetupMode = useCallback(
-    (conditionId: string) => {
-      if (state.selectedDifficultyLevel === null) return;
-      dispatch({ type: "APPLY_RUN_CONDITION", payload: { conditionId } });
-    },
-    [dispatch, state.selectedDifficultyLevel]
-  );
-
-  const handleBuySetupOffer = useCallback(
-    (offer: StartMerchantOffer) => {
-      dispatch({ type: "BUY_START_MERCHANT_OFFER", payload: { offer } });
-    },
-    [dispatch]
-  );
-
-  const handleContinueSetup = useCallback(() => {
-    const hasDifficulty = state.selectedDifficultyLevel !== null;
-    const needsRunConditionChoice =
-      !state.selectedRunConditionId &&
-      (state.pendingRunConditionChoices?.length ?? 0) > 0;
-    if (!hasDifficulty || needsRunConditionChoice) return;
-
-    if (!state.startMerchantCompleted) {
-      dispatch({ type: "COMPLETE_START_MERCHANT" });
-    }
-    if (canOfferFreeUpgradeAtStart) {
-      setPhase("RUN_FREE_UPGRADE");
-    } else if (hasOpeningBiomeChoice) {
-      setPhase("BIOME_SELECT");
-    } else {
-      setPhase("MAP");
-    }
-  }, [
-    dispatch,
-    state.selectedDifficultyLevel,
-    state.selectedRunConditionId,
-    state.pendingRunConditionChoices,
-    state.startMerchantCompleted,
-    canOfferFreeUpgradeAtStart,
-    hasOpeningBiomeChoice,
-  ]);
 
   // Handle combat end
   useEffect(() => {
     if (!state.combat) return;
 
     if (state.combat.phase === "COMBAT_WON") {
+      const knownEnemyIds = new Set(
+        Object.keys(state.encounteredEnemies ?? {})
+      );
+      const discoveredNow = Array.from(
+        new Set(
+          state.combat.enemies
+            .map((enemy) => enemy.definitionId)
+            .filter((enemyId) => !knownEnemyIds.has(enemyId))
+        )
+      );
+      setNewBestiaryEntries(discoveredNow);
+
       const isBoss = state.currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
 
       // Find the selected room to get enemy count and elite status
@@ -395,6 +449,18 @@ function GameContent({
       const isElite = selectedRoom?.isElite ?? false;
 
       const defeatedBossId = isBoss ? selectedRoom?.enemyIds?.[0] : undefined;
+      const projectedEnemyKillCounts = { ...(state.enemyKillCounts ?? {}) };
+      for (const enemy of state.combat.enemies) {
+        projectedEnemyKillCounts[enemy.definitionId] =
+          (projectedEnemyKillCounts[enemy.definitionId] ?? 0) + 1;
+      }
+      const projectedUnlockedRelicIds = new Set([
+        ...(state.unlockedRelicIds ?? []),
+        ...computeEnemyKillUnlockedRelicIds(
+          relicDefinitions.map((relic) => relic.id),
+          projectedEnemyKillCounts
+        ),
+      ]);
       const combatRng = createRNG(state.seed + "-rewards-" + state.currentRoom);
       const runConditionRewardMultiplier =
         getRunConditionById(state.selectedRunConditionId)?.effects
@@ -417,9 +483,10 @@ function GameContent({
         state.metaBonuses?.extraCardRewardChoices ?? 0,
         state.metaBonuses?.lootLuck ?? 0,
         state.selectedDifficultyLevel ?? 0,
-        state.unlockedRelicIds,
+        [...projectedUnlockedRelicIds],
         runConditionRewardMultiplier,
-        isInfiniteMode
+        isInfiniteMode,
+        state.characterId ?? "scribe"
       );
       setRewards(combatRewards);
       setIsBossRewards(isBoss);
@@ -707,6 +774,23 @@ function GameContent({
           phase === "COMBAT" && "h-full overflow-hidden"
         )}
       >
+        {newBestiaryEntries.length > 0 && (
+          <div className="pointer-events-none fixed right-4 top-16 z-40 max-w-sm rounded-lg border border-amber-600/80 bg-amber-950/95 px-4 py-3 shadow-xl shadow-amber-950/40">
+            <p className="text-xs font-semibold uppercase tracking-wider text-amber-300">
+              {t("run.newBestiaryEntryTitle")}
+            </p>
+            <p className="mt-1 text-sm text-amber-100">
+              {newBestiaryEntryNames.length === 1
+                ? t("run.newBestiaryEntrySingle", {
+                    name: newBestiaryEntryNames[0],
+                  })
+                : t("run.newBestiaryEntryMultiple", {
+                    count: newBestiaryEntryNames.length,
+                  })}
+            </p>
+          </div>
+        )}
+
         {phase === "MAP" && (
           <FloorMap
             map={state.map}
@@ -723,9 +807,6 @@ function GameContent({
             runState={state}
             cardDefs={cardDefs}
             allyDefs={allyDefs}
-            onSelectDifficulty={handleSelectSetupDifficulty}
-            onSelectMode={handleSelectSetupMode}
-            onBuyStartOffer={handleBuySetupOffer}
             onContinue={handleContinueSetup}
           />
         )}
@@ -783,9 +864,11 @@ function GameContent({
             }
             usableItems={state.usableItems ?? []}
             usableItemDefs={usableItemDefs}
-            unlockedInkPowers={
-              state.metaBonuses?.unlockedInkPowers ?? ["REWRITE"]
-            }
+            unlockedInkPowers={(() => {
+              const char = getCharacterById(state.characterId ?? "scribe");
+              const slots = state.metaBonuses?.unlockedPowerSlots ?? [1];
+              return char.powers.filter((_, i) => slots.includes(i + 1));
+            })()}
             onCheatKillEnemy={
               isDevBuild && isAdmin
                 ? (enemyInstanceId) =>

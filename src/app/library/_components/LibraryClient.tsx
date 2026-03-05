@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { RogueButton, RogueCard, RogueTag } from "@/components/ui/rogue";
 import { BIOME_ORDER } from "./constants";
 import type { SlotState } from "./constants";
 import { ResourceBar } from "./ResourceBar";
@@ -36,6 +37,7 @@ export function LibraryClient({
   histoires,
 }: LibraryClientProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const [progression, setProgression] =
     useState<MetaProgress>(initialProgression);
   const [selected, setSelected] = useState<Histoire | null>(null);
@@ -59,54 +61,58 @@ export function LibraryClient({
       </div>
 
       <header className="relative z-10 border-b border-slate-800 bg-gray-950/80 px-6 py-4 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="flex items-center gap-1.5 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-400 transition hover:border-slate-500 hover:text-white"
-            >
-              {"<-"} {t("library.backHome")}
-            </Link>
-            <div>
-              <h1 className="text-lg font-black tracking-tight text-white">
-                {t("library.title")}
-              </h1>
-              <p className="text-[11px] text-slate-500">
-                {t("library.collectedStories", {
-                  unlocked: totalUnlocked,
-                  total: totalHistoires,
-                })}
-              </p>
-            </div>
-          </div>
+        <div className="mx-auto max-w-6xl">
+          <RogueCard
+            className="rounded-2xl border border-slate-800 bg-slate-950/70"
+            styles={{ body: { padding: 16 } }}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <RogueButton
+                  onClick={() => router.push("/")}
+                  className="!flex !items-center !gap-1.5 !rounded-lg !border !border-slate-700 !bg-transparent !px-3 !py-1.5 !text-xs !font-semibold !text-slate-400 hover:!border-slate-500 hover:!text-white"
+                >
+                  {"<-"} {t("library.backHome")}
+                </RogueButton>
+                <div>
+                  <h1 className="text-lg font-black tracking-tight text-white">
+                    {t("library.title")}
+                  </h1>
+                  <RogueTag
+                    bordered={false}
+                    className="rounded bg-slate-800 px-2 py-0.5 text-[11px] text-slate-300"
+                  >
+                    {t("library.collectedStories", {
+                      unlocked: totalUnlocked,
+                      total: totalHistoires,
+                    })}
+                  </RogueTag>
+                </div>
+              </div>
 
-          <div className="flex items-center gap-2">
-            <Link
-              href="/library/collection"
-              className="rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
-            >
-              {t("library.collection")}
-            </Link>
-            <Link
-              href="/game"
-              className="flex items-center gap-2 rounded-lg bg-purple-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-purple-500 hover:shadow-[0_0_24px_rgba(147,51,234,0.4)]"
-            >
-              {t("library.startRun")}
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"
-                />
-              </svg>
-            </Link>
-          </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <RogueButton
+                  onClick={() => router.push("/library/collection")}
+                  className="!rounded-lg !border !border-slate-700 !bg-transparent !px-4 !py-2.5 !text-sm !font-semibold !text-slate-200 hover:!border-slate-500 hover:!text-white"
+                >
+                  {t("library.collection")}
+                </RogueButton>
+                <RogueButton
+                  onClick={() => router.push("/library/bestiary")}
+                  className="!rounded-lg !border !border-slate-700 !bg-transparent !px-4 !py-2.5 !text-sm !font-semibold !text-slate-200 hover:!border-slate-500 hover:!text-white"
+                >
+                  {t("library.bestiary")}
+                </RogueButton>
+                <RogueButton
+                  type="primary"
+                  onClick={() => router.push("/game")}
+                  className="!flex !items-center !gap-2 !rounded-lg !bg-purple-600 !px-5 !py-2.5 !text-sm !font-bold hover:!bg-purple-500"
+                >
+                  {t("library.startRun")}
+                </RogueButton>
+              </div>
+            </div>
+          </RogueCard>
         </div>
       </header>
 

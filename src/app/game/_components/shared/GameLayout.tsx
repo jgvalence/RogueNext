@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useGame } from "../../_providers/game-provider";
 import { setSoundsEnabled } from "@/lib/sound";
 import { setMusicEnabled } from "@/lib/music";
+import { RogueButton, RogueModal, RogueTag } from "@/components/ui/rogue";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { relicDefinitions } from "@/game/data/relics";
 import { DeckViewerModal } from "./DeckViewerModal";
@@ -110,9 +111,12 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
 
       <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/90 px-2 py-1.5 backdrop-blur-sm sm:px-5 sm:py-2.5 [@media(max-height:540px)]:gap-2 [@media(max-height:540px)]:px-2 [@media(max-height:540px)]:py-1">
         <div className="flex items-center gap-2">
-          <span className="rounded bg-slate-700 px-2.5 py-1 text-xs font-semibold uppercase tracking-widest text-slate-300">
+          <RogueTag
+            bordered={false}
+            className="rounded bg-slate-700 px-2.5 py-1 text-xs font-semibold uppercase tracking-widest text-slate-300"
+          >
             {t("layout.floor", { floor: state.floor })}
-          </span>
+          </RogueTag>
           <span className="text-xs text-slate-500 sm:text-sm">|</span>
           <span className="text-xs text-slate-400 sm:text-sm">
             {t("layout.room")}{" "}
@@ -173,39 +177,39 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
               {Object.entries(state.earnedResources ?? {})
                 .filter(([, v]) => v > 0)
                 .map(([key, val]) => (
-                  <span
+                  <RogueTag
                     key={key}
+                    bordered={false}
                     className="rounded bg-slate-700/60 px-1.5 py-0.5 text-xs text-amber-400/80"
                   >
                     {val} {key.charAt(0) + key.slice(1).toLowerCase()}
-                  </span>
+                  </RogueTag>
                 ))}
             </div>
           )}
 
-          <button
+          <RogueButton
             onClick={() => setShowDeckViewer(true)}
-            className="hidden items-center gap-1.5 rounded border border-slate-600/50 px-2 py-1 transition hover:border-slate-400 sm:flex [@media(max-height:540px)]:hidden"
+            className="hidden !h-auto items-center gap-1.5 !rounded !border !border-slate-600/50 !bg-transparent !px-2 !py-1 transition hover:!border-slate-400 sm:!flex [@media(max-height:540px)]:!hidden"
             title={t("layout.viewDeck")}
           >
             <span className="text-xs text-slate-500">{t("layout.deck")}</span>
             <span className="text-sm font-semibold text-slate-200">
               {state.deck.length}
             </span>
-          </button>
-          <button
+          </RogueButton>
+          <RogueButton
             onClick={toggleFullscreen}
-            className="rounded border border-cyan-700/70 px-2 py-1 text-xs font-semibold text-cyan-200 transition hover:border-cyan-400 hover:text-white"
+            className="!h-auto !rounded !border !border-cyan-700/70 !bg-transparent !px-2 !py-1 !text-xs !font-semibold !text-cyan-200 transition hover:!border-cyan-400 hover:!text-white"
             title={t("layout.fullscreen")}
-            type="button"
           >
             {isFullscreen ? t("layout.exitFullscreen") : t("layout.fullscreen")}
-          </button>
+          </RogueButton>
 
           {state.relicIds.length > 0 && (
-            <button
+            <RogueButton
               onClick={() => setShowRelics((v) => !v)}
-              className="flex items-center gap-1.5 rounded border border-purple-700/50 px-2 py-1 hover:border-purple-500/70"
+              className="!flex !h-auto items-center gap-1.5 !rounded !border !border-purple-700/50 !bg-transparent !px-2 !py-1 hover:!border-purple-500/70"
               title={t("layout.showRelics")}
             >
               <span className="text-xs text-purple-400">
@@ -214,16 +218,15 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
               <span className="text-sm font-semibold text-purple-300">
                 {state.relicIds.length}
               </span>
-            </button>
+            </RogueButton>
           )}
-          <button
+          <RogueButton
             onClick={() => setShowMenu(true)}
-            className="rounded border border-slate-600 px-2 py-1 text-xs font-semibold text-slate-300 transition hover:border-slate-400 hover:text-white"
+            className="!h-auto !rounded !border !border-slate-600 !bg-transparent !px-2 !py-1 !text-xs !font-semibold !text-slate-300 transition hover:!border-slate-400 hover:!text-white"
             title={t("layout.menu")}
-            type="button"
           >
             {t("layout.menu")}
-          </button>
+          </RogueButton>
         </div>
       </div>
 
@@ -240,133 +243,124 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
       {showRules && <RulesModal onClose={() => setShowRules(false)} />}
 
       {showMenu && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4"
-          onClick={() => setShowMenu(false)}
+        <RogueModal
+          open
+          onCancel={() => setShowMenu(false)}
+          footer={null}
+          centered
+          destroyOnClose
+          width={420}
+          className="[&_.ant-modal-body]:!p-4 [&_.ant-modal-close]:!text-slate-300 [&_.ant-modal-content]:!rounded-xl [&_.ant-modal-content]:!border [&_.ant-modal-content]:!border-slate-700 [&_.ant-modal-content]:!bg-slate-900"
         >
-          <div
-            className="w-full max-w-sm rounded-xl border border-slate-700 bg-slate-900 p-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-slate-100">
-                {t("layout.menu")}
-              </h3>
-              <button
-                onClick={() => setShowMenu(false)}
-                className="rounded border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:border-slate-400"
-                type="button"
-              >
-                {t("common.close")}
-              </button>
-            </div>
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-slate-100">
+              {t("layout.menu")}
+            </h3>
+            <RogueButton
+              onClick={() => setShowMenu(false)}
+              className="!h-auto !rounded !border !border-slate-600 !bg-transparent !px-2 !py-1 !text-xs !text-slate-300 hover:!border-slate-400"
+            >
+              {t("common.close")}
+            </RogueButton>
+          </div>
 
-            <div className="space-y-2">
-              {state.relicIds.length > 0 && (
-                <button
-                  onClick={() => {
-                    setShowRelics(true);
-                    setShowMenu(false);
-                  }}
-                  className="w-full rounded border border-purple-700/60 px-3 py-2 text-sm font-semibold text-purple-300 hover:border-purple-500 hover:text-purple-200"
-                  type="button"
-                >
-                  {t("layout.relics")} ({state.relicIds.length})
-                </button>
-              )}
-
-              <button
+          <div className="space-y-2">
+            {state.relicIds.length > 0 && (
+              <RogueButton
                 onClick={() => {
-                  setShowRules(true);
+                  setShowRelics(true);
                   setShowMenu(false);
                 }}
-                className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
-                type="button"
+                className="!h-auto !w-full !rounded !border !border-purple-700/60 !bg-transparent !px-3 !py-2 !text-sm !font-semibold !text-purple-300 hover:!border-purple-500 hover:!text-purple-200"
               >
-                {t("home.rules")}
-              </button>
+                {t("layout.relics")} ({state.relicIds.length})
+              </RogueButton>
+            )}
 
-              <button
-                onClick={toggleMute}
-                className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
-                type="button"
+            <RogueButton
+              onClick={() => {
+                setShowRules(true);
+                setShowMenu(false);
+              }}
+              className="!h-auto !w-full !rounded !border !border-slate-600 !bg-transparent !px-3 !py-2 !text-sm !font-semibold !text-slate-200 hover:!border-slate-400 hover:!text-white"
+            >
+              {t("home.rules")}
+            </RogueButton>
+
+            <RogueButton
+              onClick={toggleMute}
+              className="!h-auto !w-full !rounded !border !border-slate-600 !bg-transparent !px-3 !py-2 !text-sm !font-semibold !text-slate-200 hover:!border-slate-400 hover:!text-white"
+            >
+              {muted ? t("layout.unmute") : t("layout.mute")}
+            </RogueButton>
+
+            {onAbandonRun && (
+              <RogueButton
+                onClick={() => {
+                  const confirmed = window.confirm(t("layout.abandonConfirm"));
+                  if (!confirmed) return;
+                  setShowMenu(false);
+                  void onAbandonRun();
+                }}
+                className="!h-auto !w-full !rounded !border !border-red-700 !bg-transparent !px-3 !py-2 !text-sm !font-semibold !text-red-300 hover:!border-red-500 hover:!text-red-200"
               >
-                {muted ? t("layout.unmute") : t("layout.mute")}
-              </button>
+                {t("layout.abandonRun")}
+              </RogueButton>
+            )}
 
-              {onAbandonRun && (
-                <button
-                  onClick={() => {
-                    const confirmed = window.confirm(
-                      t("layout.abandonConfirm")
-                    );
-                    if (!confirmed) return;
-                    setShowMenu(false);
-                    void onAbandonRun();
-                  }}
-                  className="w-full rounded border border-red-700 px-3 py-2 text-sm font-semibold text-red-300 hover:border-red-500 hover:text-red-200"
-                  type="button"
-                >
-                  {t("layout.abandonRun")}
-                </button>
-              )}
-
-              <LogoutButton
-                label={t("home.logout")}
-                className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
-              />
-            </div>
+            <LogoutButton
+              label={t("home.logout")}
+              className="w-full rounded border border-slate-600 px-3 py-2 text-sm font-semibold text-slate-200 hover:border-slate-400 hover:text-white"
+            />
           </div>
-        </div>
+        </RogueModal>
       )}
 
       {showRelics && (
-        <div
-          className="fixed inset-0 z-40 flex items-center justify-center bg-black/70 px-4"
-          onClick={() => setShowRelics(false)}
+        <RogueModal
+          open
+          onCancel={() => setShowRelics(false)}
+          footer={null}
+          centered
+          destroyOnClose
+          width={860}
+          className="[&_.ant-modal-body]:!p-4 [&_.ant-modal-close]:!text-slate-300 [&_.ant-modal-content]:!rounded-xl [&_.ant-modal-content]:!border [&_.ant-modal-content]:!border-slate-700 [&_.ant-modal-content]:!bg-slate-900"
         >
-          <div
-            className="w-full max-w-xl rounded-xl border border-slate-700 bg-slate-900 p-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-slate-100">
-                {t("layout.yourRelics")}
-              </h3>
-              <button
-                onClick={() => setShowRelics(false)}
-                className="rounded border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:border-slate-400"
-              >
-                {t("common.close")}
-              </button>
-            </div>
-
-            {ownedRelics.length === 0 ? (
-              <p className="text-sm text-slate-400">
-                {t("layout.noRelicsYet")}
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {ownedRelics.map((relic) => (
-                  <div
-                    key={relic.id}
-                    className="rounded border border-slate-700 bg-slate-950/60 p-3"
-                  >
-                    <p className="text-sm font-semibold text-slate-100">
-                      {localizeRelicName(relic.id, relic.name)}{" "}
-                      <span className="ml-1 text-xs uppercase tracking-wide text-slate-400">
-                        {relic.rarity}
-                      </span>
-                    </p>
-                    <p className="text-sm text-slate-300">
-                      {localizeRelicDescription(relic.id, relic.description)}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-slate-100">
+              {t("layout.yourRelics")}
+            </h3>
+            <RogueButton
+              onClick={() => setShowRelics(false)}
+              className="!h-auto !rounded !border !border-slate-600 !bg-transparent !px-2 !py-1 !text-xs !text-slate-300 hover:!border-slate-400"
+            >
+              {t("common.close")}
+            </RogueButton>
           </div>
-        </div>
+
+          {ownedRelics.length === 0 ? (
+            <p className="text-sm text-slate-400">{t("layout.noRelicsYet")}</p>
+          ) : (
+            <div className="space-y-2">
+              {ownedRelics.map((relic) => (
+                <div
+                  key={relic.id}
+                  className="rounded border border-slate-700 bg-slate-950/60 p-3"
+                >
+                  <p className="text-sm font-semibold text-slate-100">
+                    {localizeRelicName(relic.id, relic.name)}{" "}
+                    <RogueTag className="ml-1 text-xs uppercase tracking-wide text-slate-400">
+                      {relic.rarity}
+                    </RogueTag>
+                  </p>
+                  <p className="text-sm text-slate-300">
+                    {localizeRelicDescription(relic.id, relic.description)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </RogueModal>
       )}
     </div>
   );

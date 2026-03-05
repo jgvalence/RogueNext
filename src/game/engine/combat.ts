@@ -168,15 +168,17 @@ export function initCombat(
       energyCurrent: GAME_CONSTANTS.STARTING_ENERGY,
       energyMax: GAME_CONSTANTS.STARTING_ENERGY,
       inkCurrent: 0,
-      inkMax: GAME_CONSTANTS.STARTING_INK_MAX,
+      inkMax:
+        GAME_CONSTANTS.STARTING_INK_MAX +
+        (runState.relicPersistentStats?.inkMax ?? 0),
       inkPerCardChance: GAME_CONSTANTS.STARTING_INK_PER_CARD_CHANCE,
       inkPerCardValue: GAME_CONSTANTS.STARTING_INK_PER_CARD_VALUE,
       regenPerTurn: 0,
       firstHitDamageReductionPercent: 0,
       drawCount: GAME_CONSTANTS.STARTING_DRAW_COUNT,
       speed: 0,
-      strength: 0,
-      focus: 0,
+      strength: runState.relicPersistentStats?.strength ?? 0,
+      focus: runState.relicPersistentStats?.focus ?? 0,
       buffs: [],
     },
     allies,
@@ -191,6 +193,16 @@ export function initCombat(
     firstHitReductionUsed: false,
     playerDisruption: { ...EMPTY_DISRUPTION },
     nextPlayerDisruption: { ...EMPTY_DISRUPTION },
+    relicFlags: {},
+    relicCounters: {},
+    relicModifiers: {
+      playerVulnerableDamageMultiplier: 1.5,
+      enemyVulnerableDamageMultiplier: 1.5,
+      playerPoisonDamageMultiplier: 1,
+      enemyPoisonDamageMultiplier: 1,
+      playerBleedDamageMultiplier: 1,
+      enemyBleedDamageMultiplier: 1,
+    },
   };
 
   // Apply meta-progression bonuses if any
@@ -237,7 +249,7 @@ export function startPlayerTurn(
     },
   };
 
-  current = applyRelicsOnTurnStart(current, relicIds);
+  current = applyRelicsOnTurnStart(current, relicIds, rng);
   current = drawCards(
     current,
     Math.max(
@@ -292,6 +304,20 @@ export function executeAlliesEnemiesTurn(
  */
 export function checkCombatEnd(state: CombatState): CombatState {
   if (state.player.currentHp <= 0) {
+    if (state.relicFlags?.deathless_locket_available) {
+      return {
+        ...state,
+        player: {
+          ...state.player,
+          currentHp: Math.max(1, Math.floor(state.player.maxHp * 0.3)),
+          block: state.player.block + 20,
+        },
+        relicFlags: {
+          ...(state.relicFlags ?? {}),
+          deathless_locket_available: false,
+        },
+      };
+    }
     return { ...state, phase: "COMBAT_LOST" };
   }
 

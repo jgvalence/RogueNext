@@ -49,10 +49,15 @@ export function generateCombatRewards(
   selectedDifficultyLevel = 0,
   unlockedRelicIds?: string[],
   combatRewardMultiplier = 1,
-  disableBiomeResourceRewards = false
+  disableBiomeResourceRewards = false,
+  characterId?: string
 ): CombatRewards {
   const lootLuck = getTotalLootLuck(currentRelicIds, metaLootLuckBonus);
   const hasOmensCompass = currentRelicIds.includes("omens_compass");
+  const hasOracleDrachma = currentRelicIds.includes("greek_oracle_drachma");
+  const hasVoidCompass = currentRelicIds.includes("love_void_compass");
+  const hasGriotArchive = currentRelicIds.includes("african_griot_archive");
+  const hasGoldenCanopic = currentRelicIds.includes("egypt_golden_canopic");
   // Gold reward
   const baseGold = GAME_CONSTANTS.GOLD_REWARD_BASE;
   const variance = rng.nextInt(0, GAME_CONSTANTS.GOLD_REWARD_VARIANCE);
@@ -73,11 +78,16 @@ export function generateCombatRewards(
       !c.isStarterCard &&
       c.isCollectible !== false &&
       (c.biome === biome || c.biome === "LIBRARY") &&
+      (!c.characterId || !characterId || c.characterId === characterId) &&
       (unlockedCardIds ? unlockedCardIds.includes(c.id) : true)
   );
   const shuffledCards = rng.shuffle(lootableCards);
 
-  const extraChoices = Math.max(0, Math.floor(extraCardRewardChoices));
+  const extraChoices =
+    Math.max(0, Math.floor(extraCardRewardChoices)) +
+    (hasOracleDrachma ? 1 : 0) +
+    (hasVoidCompass ? 1 : 0) +
+    (isElite && hasGriotArchive ? 1 : 0);
   let cardChoices: CardDefinition[];
   if (isBoss) {
     cardChoices = []; // Boss: no card choice
@@ -100,11 +110,14 @@ export function generateCombatRewards(
   // Biome resources (25% cross-biome chance via rng)
   const scaledBiomeResources: Partial<Record<BiomeResource, number>> = {};
   if (!disableBiomeResourceRewards) {
+    const biomeResourceMultiplier = hasGoldenCanopic ? 1.2 : 1;
     const biomeResources = getResourcesForCombat(biome, isElite, isBoss, floor);
     for (const [resource, amount] of Object.entries(biomeResources)) {
       scaledBiomeResources[resource as BiomeResource] = Math.max(
         0,
-        Math.round((amount as number) * rewardMultiplier)
+        Math.round(
+          (amount as number) * rewardMultiplier * biomeResourceMultiplier
+        )
       );
     }
   }
@@ -228,8 +241,10 @@ export function addCardToRunDeck(
     upgraded: false,
   };
 
+  const hpPenalty = runState.relicIds.includes("love_void_compass") ? 2 : 0;
   return {
     ...runState,
     deck: [...runState.deck, newCard],
+    playerCurrentHp: Math.max(1, runState.playerCurrentHp - hpPenalty),
   };
 }

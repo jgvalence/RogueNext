@@ -99,6 +99,8 @@ function formatEffect(
       return t("gameCard.effect.reduceDrawNextTurn", { value: effect.value });
     case "FORCE_DISCARD_RANDOM":
       return t("gameCard.effect.forceDiscardRandom", { value: effect.value });
+    case "UPGRADE_RANDOM_CARD_IN_HAND":
+      return t("gameCard.effect.upgradeRandomCardInHand");
     default:
       return `${effect.type as EffectType} ${effect.value}`;
   }

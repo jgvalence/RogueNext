@@ -34,6 +34,8 @@ export const CardDefinitionSchema = z.object({
   isStatusCard: z.boolean().default(false),
   isCurseCard: z.boolean().default(false),
   biome: BiomeType.default("LIBRARY"),
+  /** Si défini, la carte n'apparaît qu'en récompense pour ce personnage. */
+  characterId: z.string().optional(),
 });
 export type CardDefinition = Omit<
   z.infer<typeof CardDefinitionSchema>,

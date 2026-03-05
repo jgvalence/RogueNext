@@ -27,11 +27,18 @@ import {
   normalizeRunConditionIds,
 } from "./run-conditions";
 import {
+  computeEnemyKillUnlockedRelicIds,
   getDifficultyModifiers,
   getPostFloorFiveEscalation,
 } from "./difficulty";
 import { createUsableItemInstance } from "./items";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
+import {
+  deriveEncounteredEnemyType,
+  mergeEncounteredEnemies,
+  type EncounteredEnemyType,
+} from "./bestiary";
+import { addRelicToRunState } from "./relics";
 
 type EnemyDef = (typeof enemyDefinitions)[0];
 const DISRUPTION_EFFECT_TYPES = new Set([
@@ -142,7 +149,11 @@ export function createNewRun(
   unlockedDifficultyLevelMax = 0,
   startingBiomeChoices: [BiomeType, BiomeType] | null = null,
   startMerchantResourcePool: Record<string, number> = {},
-  unlockedRelicIdsSnapshot: string[] = relicDefinitions.map((r) => r.id)
+  initialEncounteredEnemies: Record<string, EncounteredEnemyType> = {},
+  unlockedRelicIdsSnapshot: string[] = relicDefinitions.map((r) => r.id),
+  initialEnemyKillCounts: Record<string, number> = {},
+  availableCharacters: string[] = ["scribe"],
+  difficultyMaxByCharacter: Record<string, number> = {}
 ): RunState {
   // Build starter deck instances
   const deck: CardInstance[] = starterCards.map((card) => ({
@@ -183,7 +194,12 @@ export function createNewRun(
     bossKillsByBiome: {},
   };
   const unlockedCardIdsRaw = allCards
-    ? computeUnlockedCardIds(allCards, unlockProgress, unlockedStoryIdsSnapshot)
+    ? computeUnlockedCardIds(
+        allCards,
+        unlockProgress,
+        unlockedStoryIdsSnapshot,
+        initialEnemyKillCounts
+      )
     : [];
   const unlockedCardIds = unlockedCardIdsRaw;
 
@@ -210,6 +226,10 @@ export function createNewRun(
     map,
     combat: null,
     currentBiome: "LIBRARY",
+    characterId: "scribe",
+    pendingCharacterChoices:
+      availableCharacters.length > 1 ? availableCharacters : null,
+    difficultyMaxByCharacter,
     pendingBiomeChoices: startingBiomeChoices,
     pendingDifficultyLevels: unlockedDifficultyLevels,
     selectedDifficultyLevel: null,
@@ -230,6 +250,9 @@ export function createNewRun(
     seenEventIds: [],
     scribeAttitude: 0,
     scribeChoices: {},
+    encounteredEnemies: initialEncounteredEnemies,
+    enemyKillCounts: initialEnemyKillCounts,
+    relicPersistentStats: { strength: 0, focus: 0, inkMax: 0 },
   };
 }
 
@@ -682,6 +705,23 @@ export function applyRunConditionToRun(
     0,
     Math.floor(condition.effects.replaceStarterDeckWithRandomCount ?? 0)
   );
+  const addRandomCardsCount = Math.max(
+    0,
+    Math.floor(condition.effects.addRandomCardsCount ?? 0)
+  );
+  const removeRandomStarterCardsCount = Math.max(
+    0,
+    Math.floor(condition.effects.removeRandomStarterCardsCount ?? 0)
+  );
+  const upgradeRandomDeckCardsCount = Math.max(
+    0,
+    Math.floor(condition.effects.upgradeRandomDeckCardsCount ?? 0)
+  );
+  const addRandomCardRarities = condition.effects.addRandomCardRarities;
+  const rarityFilter =
+    addRandomCardRarities && addRandomCardRarities.length > 0
+      ? new Set(addRandomCardRarities)
+      : null;
   const replacementPool = allCards.filter(
     (card) =>
       !card.isStarterCard &&
@@ -689,7 +729,15 @@ export function applyRunConditionToRun(
       ((runState.unlockedCardIds?.length ?? 0) === 0 ||
         runState.unlockedCardIds.includes(card.id))
   );
-  const replacementDeck: CardInstance[] =
+  const randomAdditionPool = replacementPool.filter((card) =>
+    rarityFilter
+      ? card.rarity !== "STARTER" && rarityFilter.has(card.rarity)
+      : true
+  );
+  const starterCardIds = new Set(
+    allCards.filter((card) => card.isStarterCard).map((card) => card.id)
+  );
+  let conditionedDeck: CardInstance[] =
     replacementDeckCount > 0 && replacementPool.length > 0
       ? Array.from({ length: replacementDeckCount }, () => {
           const picked = rng.pick(replacementPool);
@@ -699,7 +747,68 @@ export function applyRunConditionToRun(
             upgraded: false,
           };
         })
-      : runState.deck;
+      : [...runState.deck];
+
+  if (removeRandomStarterCardsCount > 0 && conditionedDeck.length > 1) {
+    const removableStarterCards = conditionedDeck.filter((card) =>
+      starterCardIds.has(card.definitionId)
+    );
+    const maxRemovals = Math.max(
+      0,
+      Math.min(
+        removeRandomStarterCardsCount,
+        removableStarterCards.length,
+        conditionedDeck.length - 1
+      )
+    );
+    if (maxRemovals > 0) {
+      const toRemove = new Set(
+        rng
+          .shuffle(removableStarterCards)
+          .slice(0, maxRemovals)
+          .map((card) => card.instanceId)
+      );
+      conditionedDeck = conditionedDeck.filter(
+        (card) => !toRemove.has(card.instanceId)
+      );
+    }
+  }
+
+  if (addRandomCardsCount > 0 && randomAdditionPool.length > 0) {
+    const randomAddedCards: CardInstance[] = Array.from(
+      { length: addRandomCardsCount },
+      () => {
+        const picked = rng.pick(randomAdditionPool);
+        return {
+          instanceId: nanoid(),
+          definitionId: picked.id,
+          upgraded: false,
+        };
+      }
+    );
+    conditionedDeck = [...conditionedDeck, ...randomAddedCards];
+  }
+
+  conditionedDeck = [...conditionedDeck, ...bonusDeck];
+
+  if (upgradeRandomDeckCardsCount > 0) {
+    const upgradableCards = conditionedDeck.filter((card) => !card.upgraded);
+    const upgradeCount = Math.min(
+      upgradeRandomDeckCardsCount,
+      upgradableCards.length
+    );
+    if (upgradeCount > 0) {
+      const toUpgrade = new Set(
+        rng
+          .shuffle(upgradableCards)
+          .slice(0, upgradeCount)
+          .map((card) => card.instanceId)
+      );
+      conditionedDeck = conditionedDeck.map((card) =>
+        toUpgrade.has(card.instanceId) ? { ...card, upgraded: true } : card
+      );
+    }
+  }
 
   const hpDelta = condition.effects.maxHpDelta ?? 0;
   const goldDelta = condition.effects.startingGoldDelta ?? 0;
@@ -724,18 +833,28 @@ export function applyRunConditionToRun(
       )
     : runState.map;
 
-  return {
+  const baseState: RunState = {
     ...runState,
     gold: nextGold,
     maxGoldReached: Math.max(runState.maxGoldReached ?? 0, nextGold),
     playerMaxHp: nextMaxHp,
     playerCurrentHp: nextCurrentHp,
-    deck: [...replacementDeck, ...bonusDeck],
+    deck: conditionedDeck,
     map: nextMap,
     metaBonuses: nextMetaBonuses,
     selectedRunConditionId: normalizedConditionId,
     pendingRunConditionChoices: [],
   };
+
+  const relicIdsToAdd = condition.effects.addRelicIds ?? [];
+  if (relicIdsToAdd.length === 0) {
+    return baseState;
+  }
+
+  return relicIdsToAdd.reduce<RunState>(
+    (state, relicId) => addRelicToRunState(state, relicId),
+    baseState
+  );
 }
 
 /**
@@ -774,6 +893,17 @@ export function completeCombat(
     roomChoicesForRelic?.find((r) => r.completed) ?? roomChoicesForRelic?.[0];
   const isEliteRoom = selectedRoomForRelic?.isElite ?? false;
   const enemyCount = combatResult.enemies.length;
+  const skaldGoldBonus = activeRelicIds.includes("viking_skald_ledger")
+    ? Math.min(30, enemyCount)
+    : 0;
+  const tombLedgerHeal = activeRelicIds.includes("egypt_tomb_ledger")
+    ? isEliteRoom || isBossRoom
+      ? 7
+      : 3
+    : 0;
+  const eliteCauldronHeal =
+    activeRelicIds.includes("celtic_morrigan_cauldron") && isEliteRoom ? 8 : 0;
+  const raBrazierPenalty = activeRelicIds.includes("egypt_ra_brazier") ? 1 : 0;
   const bloodGrimoireGain = activeRelicIds.includes("blood_grimoire")
     ? isBossRoom
       ? 5
@@ -789,7 +919,15 @@ export function completeCombat(
     healFlatBonus;
   const hpAfterMetaHeal = Math.min(
     newPlayerMaxHp,
-    hpAfterCombat + healAmount + bloodGrimoireGain
+    Math.max(
+      1,
+      hpAfterCombat +
+        healAmount +
+        bloodGrimoireGain +
+        tombLedgerHeal +
+        eliteCauldronHeal -
+        raBrazierPenalty
+    )
   );
 
   let pendingBiomeChoices: RunState["pendingBiomeChoices"] = null;
@@ -818,6 +956,31 @@ export function completeCombat(
     }
   }
 
+  const encounteredThisCombat: Record<string, EncounteredEnemyType> = {};
+  const updatedEnemyKillCounts = { ...(runState.enemyKillCounts ?? {}) };
+  for (const enemy of combatResult.enemies) {
+    encounteredThisCombat[enemy.definitionId] = deriveEncounteredEnemyType({
+      isBoss: enemy.isBoss,
+      isElite: enemy.isElite,
+    });
+    updatedEnemyKillCounts[enemy.definitionId] =
+      (updatedEnemyKillCounts[enemy.definitionId] ?? 0) + 1;
+  }
+  const updatedEncounteredEnemies = mergeEncounteredEnemies(
+    runState.encounteredEnemies ?? {},
+    encounteredThisCombat
+  );
+  const enemyKillUnlockedRelicIds = computeEnemyKillUnlockedRelicIds(
+    relicDefinitions.map((relic) => relic.id),
+    updatedEnemyKillCounts
+  );
+  const unlockedRelicIds = Array.from(
+    new Set([
+      ...(runState.unlockedRelicIds ?? []),
+      ...enemyKillUnlockedRelicIds,
+    ])
+  );
+
   let unlockProgress = runState.cardUnlockProgress ?? {
     enteredBiomes: {},
     biomeRunsCompleted: {},
@@ -836,7 +999,8 @@ export function completeCombat(
   const unlockedCardIdsRaw = computeUnlockedCardIds(
     allCards ?? [],
     unlockProgress,
-    runState.unlockedStoryIdsSnapshot ?? []
+    runState.unlockedStoryIdsSnapshot ?? [],
+    updatedEnemyKillCounts
   );
   const unlockedCardIds = unlockedCardIdsRaw;
   const usableItemCapacity =
@@ -850,7 +1014,29 @@ export function completeCombat(
           createUsableItemInstance(usableItemDropDefinitionId),
         ]
       : (runState.usableItems ?? []);
-  const nextGold = runState.gold + goldReward;
+  const nextGold = runState.gold + goldReward + skaldGoldBonus;
+  const currentPersistentStats = runState.relicPersistentStats ?? {
+    strength: 0,
+    focus: 0,
+    inkMax: 0,
+  };
+  const relicPersistentStats =
+    isBossRoom && activeRelicIds.includes("global_codex_prime")
+      ? (() => {
+          const codexPrimeRng = createRNG(
+            `${runState.seed}-codex-prime-${runState.floor}-${runState.currentRoom}-${runState.relicIds.length}`
+          );
+          const picked = codexPrimeRng.pick([
+            "strength",
+            "focus",
+            "inkMax",
+          ] as const);
+          return {
+            ...currentPersistentStats,
+            [picked]: (currentPersistentStats[picked] ?? 0) + 1,
+          };
+        })()
+      : currentPersistentStats;
 
   // Ally persistence: save surviving allies' HP, permanently remove dead allies
   const updatedAllyCurrentHps: Record<string, number> = {
@@ -885,11 +1071,15 @@ export function completeCombat(
     earnedResources: updatedEarnedResources,
     unlockedCardIds:
       unlockedCardIds.length > 0 ? unlockedCardIds : runState.unlockedCardIds,
+    unlockedRelicIds,
     cardUnlockProgress: unlockProgress,
     usableItems: nextUsableItems,
     usableItemCapacity,
     allyIds: updatedAllyIds,
     allyCurrentHps: updatedAllyCurrentHps,
+    encounteredEnemies: updatedEncounteredEnemies,
+    enemyKillCounts: updatedEnemyKillCounts,
+    relicPersistentStats,
   };
 }
 
@@ -926,7 +1116,8 @@ export function advanceFloor(
   const unlockedCardIdsRaw = computeUnlockedCardIds(
     allCards ?? [],
     unlockProgress,
-    state.unlockedStoryIdsSnapshot ?? []
+    state.unlockedStoryIdsSnapshot ?? [],
+    state.enemyKillCounts ?? {}
   );
   const unlockedCardIds = unlockedCardIdsRaw;
 
@@ -947,8 +1138,10 @@ export function advanceFloor(
  * Apply a special room heal effect.
  */
 export function applyHealRoom(runState: RunState): RunState {
+  const hasFrostLedger = runState.relicIds.includes("russian_frost_ledger");
+  const healMultiplier = hasFrostLedger ? 1.2 : 1;
   const healAmount = Math.floor(
-    runState.playerMaxHp * GAME_CONSTANTS.HEAL_ROOM_PERCENT
+    runState.playerMaxHp * GAME_CONSTANTS.HEAL_ROOM_PERCENT * healMultiplier
   );
   return {
     ...runState,
@@ -1108,11 +1301,7 @@ function addDeckCard(state: RunState, definitionId: string): RunState {
 }
 
 function addRelicToRun(state: RunState, relicId: string): RunState {
-  if (state.relicIds.includes(relicId)) return state;
-  return {
-    ...state,
-    relicIds: [...state.relicIds, relicId],
-  };
+  return addRelicToRunState(state, relicId);
 }
 
 export function pickGuaranteedEventRelicId(state: RunState): string | null {

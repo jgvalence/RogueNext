@@ -172,11 +172,12 @@ function MenuItem({
   return (
     <Link
       href={href}
-      className={` ${font} group flex cursor-pointer items-center py-[0.42rem] uppercase outline-none transition-all duration-150 ${
+      className={` ${font} group flex cursor-pointer items-center !border-0 py-[0.42rem] uppercase !outline-none !ring-0 transition-all duration-150 focus:!border-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!outline-none focus-visible:!ring-0 ${
         primary
           ? "mb-1 text-[1.45rem] font-semibold tracking-[0.16em] text-amber-100 sm:text-[1.6rem]"
           : "text-[1.05rem] font-normal tracking-[0.14em] text-amber-100/45 hover:text-amber-100/85 sm:text-[1.15rem]"
       } `}
+      style={{ border: "none", outline: "none", boxShadow: "none" }}
     >
       {/* Barre dorée animée */}
       <span
@@ -195,7 +196,7 @@ function MenuItemLogout({ label, font }: { label: string; font: string }) {
   return (
     <LogoutButton
       label={label}
-      className={` ${font} mt-1 flex cursor-pointer items-center py-[0.42rem] text-[1rem] font-normal uppercase tracking-[0.14em] text-amber-100/30 transition-colors duration-150 hover:text-amber-100/70 sm:text-[1.05rem]`}
+      className={` ${font} mt-1 flex cursor-pointer items-center !border-0 py-[0.42rem] text-[1rem] font-normal uppercase tracking-[0.14em] !outline-none !ring-0 transition-colors duration-150 hover:text-amber-100/70 focus:!border-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!outline-none focus-visible:!ring-0 sm:text-[1.05rem]`}
     />
   );
 }

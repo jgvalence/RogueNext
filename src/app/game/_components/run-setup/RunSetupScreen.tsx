@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { RogueButton, RogueTag, RogueTooltip } from "@/components/ui/rogue";
 import { useTranslation } from "react-i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { AllyDefinition } from "@/game/schemas/entities";
@@ -28,15 +29,25 @@ import {
   localizeUsableItemDescription,
   localizeUsableItemName,
 } from "@/lib/i18n/entity-text";
+import {
+  localizeRunConditionDescription,
+  localizeRunConditionName,
+} from "@/lib/i18n/run-condition-text";
+import { characterDefinitions } from "@/game/data/characters";
 
 interface RunSetupScreenProps {
   runState: RunState;
   cardDefs: Map<string, CardDefinition>;
   allyDefs: Map<string, AllyDefinition>;
-  onSelectDifficulty: (difficultyLevel: number) => void;
-  onSelectMode: (conditionId: string) => void;
-  onBuyStartOffer: (offer: StartMerchantOffer) => void;
-  onContinue: () => void;
+  onContinue: (draft: RunSetupDraft) => void;
+}
+
+export interface RunSetupDraft {
+  characterId: string;
+  difficultyLevel: number | null;
+  modeConditionId: string | null;
+  normalConditionId: string | null;
+  selectedStartOffers: StartMerchantOffer[];
 }
 
 function canAfford(
@@ -67,21 +78,22 @@ function getOfferTypeLabel(type: StartMerchantOffer["type"]): string {
   }
 }
 
-function formatConditionFallback(conditionId: string): string {
-  return conditionId
-    .split("_")
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
+const START_MERCHANT_RESOURCE_KEYS = [
+  "PAGES",
+  "RUNES",
+  "LAURIERS",
+  "GLYPHES",
+  "FRAGMENTS",
+  "OBSIDIENNE",
+  "AMBRE",
+  "SCEAUX",
+  "MASQUES",
+] as const;
 
 export function RunSetupScreen({
   runState,
   cardDefs,
   allyDefs,
-  onSelectDifficulty,
-  onSelectMode,
-  onBuyStartOffer,
   onContinue,
 }: RunSetupScreenProps) {
   const { t } = useTranslation();
@@ -96,15 +108,26 @@ export function RunSetupScreen({
       ),
     [runState, cardDefs, allyDefs]
   );
-  const remainingResources = useMemo(
-    () => getRemainingStartMerchantResources(runState),
-    [runState]
+  const initialCharacterId = runState.characterId ?? "scribe";
+  const initialDifficulty = runState.selectedDifficultyLevel;
+  const initialSelectedOfferIds = useMemo(
+    () => runState.startMerchantPurchasedOfferIds ?? [],
+    [runState.startMerchantPurchasedOfferIds]
   );
-  const purchasedOfferIds = new Set(
-    runState.startMerchantPurchasedOfferIds ?? []
+  const [draftCharacterId, setDraftCharacterId] = useState(initialCharacterId);
+  const [draftDifficulty, setDraftDifficulty] = useState<number | null>(
+    initialDifficulty
+  );
+  const [draftModeConditionId, setDraftModeConditionId] = useState<
+    string | null
+  >(null);
+  const [draftNormalConditionId, setDraftNormalConditionId] = useState<
+    string | null
+  >(null);
+  const [draftSelectedOfferIds, setDraftSelectedOfferIds] = useState<string[]>(
+    initialSelectedOfferIds
   );
 
-  const selectedDifficulty = runState.selectedDifficultyLevel;
   const selectedConditionId = normalizeRunConditionId(
     runState.selectedRunConditionId
   );
@@ -119,32 +142,135 @@ export function RunSetupScreen({
         ? selectedConditionId
         : VANILLA_RUN_CONDITION_ID
       : null;
+
+  useEffect(() => {
+    setDraftCharacterId(initialCharacterId);
+    setDraftDifficulty(initialDifficulty);
+    setDraftModeConditionId(selectedModeConditionId);
+    setDraftNormalConditionId(selectedNormalConditionId);
+    setDraftSelectedOfferIds([...initialSelectedOfferIds]);
+  }, [
+    initialCharacterId,
+    initialDifficulty,
+    selectedModeConditionId,
+    selectedNormalConditionId,
+    initialSelectedOfferIds,
+  ]);
+
+  const fallbackCharacterChoices = useMemo(() => {
+    const knownChoices = Object.keys(runState.difficultyMaxByCharacter ?? {});
+    if (knownChoices.length === 0) return [initialCharacterId];
+    const knownSet = new Set(knownChoices);
+    return characterDefinitions
+      .map((character) => character.id)
+      .filter((characterId) => knownSet.has(characterId));
+  }, [runState.difficultyMaxByCharacter, initialCharacterId]);
+
+  const characterChoices = useMemo(() => {
+    const pendingCharacterChoices = runState.pendingCharacterChoices ?? [];
+    if (pendingCharacterChoices.length > 0) return pendingCharacterChoices;
+    return fallbackCharacterChoices;
+  }, [runState.pendingCharacterChoices, fallbackCharacterChoices]);
+  const hasCharacterChoice = characterChoices.length > 1;
+
+  const difficultyChoices = useMemo(() => {
+    const difficultyMaxByCharacter = runState.difficultyMaxByCharacter ?? {};
+    const characterMax = difficultyMaxByCharacter[draftCharacterId];
+    if (typeof characterMax === "number" && Number.isFinite(characterMax)) {
+      const max = Math.max(0, Math.floor(characterMax));
+      return Array.from({ length: max + 1 }, (_, index) => index);
+    }
+    const fallback = runState.pendingDifficultyLevels ?? [0];
+    return fallback.length > 0 ? fallback : [0];
+  }, [
+    draftCharacterId,
+    runState.difficultyMaxByCharacter,
+    runState.pendingDifficultyLevels,
+  ]);
+
+  useEffect(() => {
+    if (draftDifficulty === null) return;
+    if (!difficultyChoices.includes(draftDifficulty)) {
+      setDraftDifficulty(null);
+    }
+  }, [draftDifficulty, difficultyChoices]);
+
   const normalConditionChoices = useMemo(() => {
     const pending = normalizeRunConditionIds(
       runState.pendingRunConditionChoices ?? []
     ).filter((id) => id !== INFINITE_RUN_CONDITION_ID);
-    const withSelected =
-      selectedNormalConditionId && !pending.includes(selectedNormalConditionId)
-        ? [selectedNormalConditionId, ...pending]
-        : pending;
-    const withVanilla = withSelected.includes(VANILLA_RUN_CONDITION_ID)
-      ? withSelected
-      : [VANILLA_RUN_CONDITION_ID, ...withSelected];
+    const withSelected = draftNormalConditionId
+      ? [draftNormalConditionId, ...pending]
+      : pending;
+    const dedupedWithSelected = Array.from(new Set(withSelected));
+    const withVanilla = dedupedWithSelected.includes(VANILLA_RUN_CONDITION_ID)
+      ? dedupedWithSelected
+      : [VANILLA_RUN_CONDITION_ID, ...dedupedWithSelected];
     return Array.from(new Set(withVanilla)).slice(0, 3);
-  }, [runState.pendingRunConditionChoices, selectedNormalConditionId]);
-  const modeLockedByCondition =
-    selectedConditionId !== null &&
-    selectedConditionId !== VANILLA_RUN_CONDITION_ID &&
-    selectedConditionId !== INFINITE_RUN_CONDITION_ID;
+  }, [runState.pendingRunConditionChoices, draftNormalConditionId]);
+
+  const draftSelectedOfferIdSet = useMemo(
+    () => new Set(draftSelectedOfferIds),
+    [draftSelectedOfferIds]
+  );
+  const draftSelectedOffers = useMemo(
+    () => offers.filter((offer) => draftSelectedOfferIdSet.has(offer.id)),
+    [offers, draftSelectedOfferIdSet]
+  );
+  const remainingResources = useMemo(() => {
+    const base = getRemainingStartMerchantResources(runState);
+    const remaining: Record<string, number> = {};
+    for (const resource of START_MERCHANT_RESOURCE_KEYS) {
+      remaining[resource] = base[resource] ?? 0;
+    }
+    for (const offer of draftSelectedOffers) {
+      for (const [resource, amount] of Object.entries(offer.cost)) {
+        remaining[resource] = Math.max(
+          0,
+          (remaining[resource] ?? 0) - (amount ?? 0)
+        );
+      }
+    }
+    return remaining;
+  }, [runState, draftSelectedOffers]);
+
+  const isDifficultyValid =
+    draftDifficulty !== null && difficultyChoices.includes(draftDifficulty);
   const canContinue =
-    selectedDifficulty !== null &&
-    selectedModeConditionId !== null &&
-    (selectedModeConditionId === INFINITE_RUN_CONDITION_ID ||
-      selectedNormalConditionId !== null);
+    isDifficultyValid &&
+    draftModeConditionId !== null &&
+    (draftModeConditionId === INFINITE_RUN_CONDITION_ID ||
+      draftNormalConditionId !== null);
 
   const visibleResources = Object.entries(remainingResources).filter(
     ([, amount]) => amount > 0
   );
+
+  const toggleDraftStartOffer = (offer: StartMerchantOffer): void => {
+    const isSelected = draftSelectedOfferIdSet.has(offer.id);
+    if (isSelected) {
+      setDraftSelectedOfferIds((prev) =>
+        prev.filter((offerId) => offerId !== offer.id)
+      );
+      return;
+    }
+    if (!canAfford(remainingResources, offer)) return;
+    setDraftSelectedOfferIds((prev) => [...prev, offer.id]);
+  };
+
+  const handleContinue = (): void => {
+    if (!canContinue) return;
+    onContinue({
+      characterId: draftCharacterId,
+      difficultyLevel: draftDifficulty,
+      modeConditionId: draftModeConditionId,
+      normalConditionId:
+        draftModeConditionId === VANILLA_RUN_CONDITION_ID
+          ? draftNormalConditionId
+          : null,
+      selectedStartOffers: draftSelectedOffers,
+    });
+  };
 
   const getOfferName = (offer: StartMerchantOffer): string => {
     switch (offer.type) {
@@ -216,31 +342,129 @@ export function RunSetupScreen({
           </p>
         </header>
 
+        {/* Character selection (when 2+ are available) */}
+        {hasCharacterChoice && (
+          <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100/80">
+                {t("runSetup.sections.character")}
+              </h3>
+              {hasCharacterChoice && (
+                <RogueTag
+                  bordered
+                  className="!m-0 rounded border-violet-300/35 bg-violet-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-violet-100"
+                >
+                  {t(`characters.${draftCharacterId}.name`, draftCharacterId)}
+                </RogueTag>
+              )}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {characterChoices.map((charId) => {
+                const charDef = characterDefinitions.find(
+                  (c) => c.id === charId
+                );
+                if (!charDef) return null;
+                const isSelected = draftCharacterId === charId;
+                const slots = runState.metaBonuses?.unlockedPowerSlots ?? [1];
+                return (
+                  <RogueButton
+                    key={charId}
+                    type="text"
+                    onClick={() => {
+                      setDraftCharacterId(charId);
+                      const charMax =
+                        runState.difficultyMaxByCharacter?.[charId];
+                      const maxDifficulty =
+                        typeof charMax === "number" && Number.isFinite(charMax)
+                          ? Math.max(0, Math.floor(charMax))
+                          : 0;
+                      setDraftDifficulty((current) => {
+                        if (current === null) return null;
+                        return current <= maxDifficulty ? current : null;
+                      });
+                    }}
+                    className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition ${
+                      isSelected
+                        ? "!border-violet-300/55 !bg-violet-300/10"
+                        : "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
+                    }`}
+                  >
+                    <p className="text-base font-bold text-amber-50">
+                      {t(`characters.${charId}.name`, charId)}
+                    </p>
+                    <p className="mt-1 text-xs italic text-amber-100/60">
+                      {t(`characters.${charId}.description`, "")}
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-1">
+                      {charDef.powers.map((power, i) => {
+                        const unlocked = slots.includes(i + 1);
+                        const powerLabel = t(
+                          `inkGauge.powers.${power}.label`,
+                          power
+                        );
+                        const powerDescription = t(
+                          `inkGauge.powers.${power}.desc`,
+                          ""
+                        );
+                        const powerTooltip = powerDescription
+                          ? `${powerLabel}: ${powerDescription}`
+                          : powerLabel;
+                        const tooltip = unlocked
+                          ? powerTooltip
+                          : `${t("playerStats.inkPowerLocked")} - ${powerTooltip}`;
+                        return (
+                          <RogueTooltip key={power} title={tooltip}>
+                            <RogueTag
+                              bordered={false}
+                              aria-label={tooltip}
+                              className={`!m-0 rounded px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider ${
+                                unlocked
+                                  ? "bg-violet-400/20 text-violet-200"
+                                  : "bg-amber-100/5 text-amber-100/30"
+                              }`}
+                            >
+                              {unlocked
+                                ? t(`inkGauge.powers.${power}.label`, power)
+                                : "\uD83D\uDD12"}
+                            </RogueTag>
+                          </RogueTooltip>
+                        );
+                      })}
+                    </div>
+                  </RogueButton>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
           <div className="mb-3 flex items-center justify-between gap-3">
             <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100/80">
               {t("runSetup.sections.difficulty")}
             </h3>
-            {selectedDifficulty !== null && (
-              <span className="rounded border border-emerald-300/35 bg-emerald-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-emerald-100">
-                {t(`runDifficulty.levels.${selectedDifficulty}.chapter`)}
-              </span>
+            {draftDifficulty !== null && (
+              <RogueTag
+                bordered
+                className="!m-0 rounded border-emerald-300/35 bg-emerald-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-emerald-100"
+              >
+                {t(`runDifficulty.levels.${draftDifficulty}.chapter`)}
+              </RogueTag>
             )}
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {(runState.pendingDifficultyLevels ?? [0]).map((level) => {
-              const isSelected = selectedDifficulty === level;
+            {difficultyChoices.map((level) => {
+              const isSelected = draftDifficulty === level;
               return (
-                <button
+                <RogueButton
                   key={level}
-                  type="button"
-                  onClick={() => onSelectDifficulty(level)}
-                  disabled={selectedDifficulty !== null}
-                  className={`rounded-xl border p-4 text-left transition ${
+                  type="text"
+                  onClick={() => setDraftDifficulty(level)}
+                  className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition ${
                     isSelected
-                      ? "border-emerald-300/55 bg-emerald-300/10"
-                      : "border-amber-100/15 bg-amber-100/5 hover:border-amber-300/45"
-                  } disabled:cursor-not-allowed disabled:opacity-75`}
+                      ? "!border-emerald-300/55 !bg-emerald-300/10"
+                      : "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
+                  }`}
                 >
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-100/70">
                     {t(`runDifficulty.levels.${level}.chapter`)}
@@ -254,7 +478,7 @@ export function RunSetupScreen({
                   <p className="mt-1 text-xs text-amber-100/70">
                     {t(`runDifficulty.levels.${level}.description`)}
                   </p>
-                </button>
+                </RogueButton>
               );
             })}
           </div>
@@ -265,10 +489,13 @@ export function RunSetupScreen({
             <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100/80">
               {t("runSetup.sections.runType")}
             </h3>
-            {selectedModeConditionId && (
-              <span className="rounded border border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-cyan-100">
+            {draftModeConditionId && (
+              <RogueTag
+                bordered
+                className="!m-0 rounded border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-cyan-100"
+              >
                 {t("runSetup.selected")}
-              </span>
+              </RogueTag>
             )}
           </div>
           <p className="mb-3 text-xs text-amber-100/65">
@@ -277,7 +504,7 @@ export function RunSetupScreen({
           <div className="grid gap-3 sm:grid-cols-2">
             {[VANILLA_RUN_CONDITION_ID, INFINITE_RUN_CONDITION_ID].map(
               (modeConditionId) => {
-                const isSelected = selectedModeConditionId === modeConditionId;
+                const isSelected = draftModeConditionId === modeConditionId;
                 const title =
                   modeConditionId === INFINITE_RUN_CONDITION_ID
                     ? t("runSetup.modeInfinite")
@@ -287,61 +514,58 @@ export function RunSetupScreen({
                     ? t("runSetup.modeInfiniteDescription")
                     : t("runSetup.modeNormalDescription");
                 return (
-                  <button
+                  <RogueButton
                     key={modeConditionId}
-                    type="button"
+                    type="text"
                     onClick={() => {
                       if (modeConditionId === INFINITE_RUN_CONDITION_ID) {
-                        onSelectMode(INFINITE_RUN_CONDITION_ID);
+                        setDraftModeConditionId(INFINITE_RUN_CONDITION_ID);
                         return;
                       }
-                      if (
-                        selectedConditionId === null ||
-                        selectedConditionId === INFINITE_RUN_CONDITION_ID
-                      ) {
-                        onSelectMode(VANILLA_RUN_CONDITION_ID);
-                      }
+                      setDraftModeConditionId(VANILLA_RUN_CONDITION_ID);
+                      setDraftNormalConditionId(
+                        (current) => current ?? VANILLA_RUN_CONDITION_ID
+                      );
                     }}
-                    disabled={
-                      selectedDifficulty === null || modeLockedByCondition
-                    }
-                    className={`rounded-xl border p-4 text-left transition ${
+                    disabled={draftDifficulty === null}
+                    className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition ${
                       isSelected
-                        ? "border-cyan-300/60 bg-cyan-300/10"
-                        : "border-amber-100/15 bg-amber-100/5 hover:border-amber-300/45"
-                    } disabled:cursor-not-allowed disabled:opacity-65`}
+                        ? "!border-cyan-300/60 !bg-cyan-300/10"
+                        : "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
+                    } disabled:!cursor-not-allowed disabled:!opacity-65`}
                   >
-                    <span className="inline-flex rounded border border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-cyan-100">
+                    <RogueTag
+                      bordered
+                      className="!m-0 rounded border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-cyan-100"
+                    >
                       {t("runSetup.modeType")}
-                    </span>
+                    </RogueTag>
                     <p className="mt-2 text-base font-bold text-amber-50">
                       {title}
                     </p>
                     <p className="mt-1 text-xs text-amber-100/70">
                       {description}
                     </p>
-                  </button>
+                  </RogueButton>
                 );
               }
             )}
           </div>
-          {modeLockedByCondition && (
-            <p className="mt-3 text-[0.72rem] text-amber-200/70">
-              {t("runSetup.modeLockedHint")}
-            </p>
-          )}
         </section>
 
-        {selectedModeConditionId === VANILLA_RUN_CONDITION_ID && (
+        {draftModeConditionId === VANILLA_RUN_CONDITION_ID && (
           <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100/80">
                 {t("runSetup.sections.runCondition")}
               </h3>
-              {selectedNormalConditionId && (
-                <span className="rounded border border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-cyan-100">
+              {draftNormalConditionId && (
+                <RogueTag
+                  bordered
+                  className="!m-0 rounded border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-cyan-100"
+                >
                   {t("runSetup.selected")}
-                </span>
+                </RogueTag>
               )}
             </div>
             <p className="mb-3 text-xs text-amber-100/65">
@@ -351,36 +575,33 @@ export function RunSetupScreen({
               {normalConditionChoices.map((conditionId) => {
                 const condition = getRunConditionById(conditionId);
                 if (!condition) return null;
-                const conditionName = t(
-                  `runCondition.definitions.${condition.id}.name`,
-                  {
-                    defaultValue: formatConditionFallback(condition.id),
-                  }
+                const conditionName = localizeRunConditionName(condition.id, t);
+                const conditionDescription = localizeRunConditionDescription(
+                  condition.id,
+                  t
                 );
-                const conditionDescription = t(
-                  `runCondition.definitions.${condition.id}.description`,
-                  {
-                    defaultValue: conditionName,
-                  }
-                );
-                const isSelected = selectedNormalConditionId === condition.id;
+                const isSelected = draftNormalConditionId === condition.id;
                 return (
-                  <button
+                  <RogueButton
                     key={condition.id}
-                    type="button"
-                    onClick={() => onSelectMode(condition.id)}
+                    type="text"
+                    onClick={() => setDraftNormalConditionId(condition.id)}
                     disabled={
-                      selectedDifficulty === null || modeLockedByCondition
+                      draftDifficulty === null ||
+                      draftModeConditionId !== VANILLA_RUN_CONDITION_ID
                     }
-                    className={`rounded-xl border p-4 text-left transition ${
+                    className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition ${
                       isSelected
-                        ? "border-cyan-300/60 bg-cyan-300/10"
-                        : "border-amber-100/15 bg-amber-100/5 hover:border-amber-300/45"
-                    } disabled:cursor-not-allowed disabled:opacity-65`}
+                        ? "!border-cyan-300/60 !bg-cyan-300/10"
+                        : "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
+                    } disabled:!cursor-not-allowed disabled:!opacity-65`}
                   >
-                    <span className="inline-flex rounded border border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-cyan-100">
+                    <RogueTag
+                      bordered
+                      className="!m-0 rounded border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-cyan-100"
+                    >
                       {t(`runCondition.category.${condition.category}`)}
-                    </span>
+                    </RogueTag>
                     <p className="mt-2 text-base font-bold text-amber-50">
                       {conditionName}
                     </p>
@@ -392,7 +613,7 @@ export function RunSetupScreen({
                         ? t("runSetup.selected")
                         : t("runCondition.select.pickAction")}
                     </p>
-                  </button>
+                  </RogueButton>
                 );
               })}
             </div>
@@ -406,36 +627,47 @@ export function RunSetupScreen({
             </h3>
             <div className="flex flex-wrap gap-1.5">
               {visibleResources.length === 0 ? (
-                <span className="rounded border border-amber-100/20 bg-amber-100/5 px-2 py-0.5 text-[0.65rem] text-amber-100/65">
+                <RogueTag
+                  bordered
+                  className="!m-0 rounded border-amber-100/20 bg-amber-100/5 px-2 py-0.5 text-[0.65rem] text-amber-100/65"
+                >
                   {t("startMerchant.noResources")}
-                </span>
+                </RogueTag>
               ) : (
                 visibleResources.map(([resource, amount]) => (
-                  <span
+                  <RogueTag
                     key={resource}
-                    className="rounded border border-emerald-300/35 bg-emerald-300/15 px-2 py-0.5 text-[0.65rem] font-semibold text-emerald-100"
+                    bordered
+                    className="!m-0 rounded border-emerald-300/35 bg-emerald-300/15 px-2 py-0.5 text-[0.65rem] font-semibold text-emerald-100"
                   >
                     {t(`reward.resources.${resource}`, resource)}: {amount}
-                  </span>
+                  </RogueTag>
                 ))
               )}
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {offers.map((offer) => {
-              const alreadyBought = purchasedOfferIds.has(offer.id);
+              const isSelected = draftSelectedOfferIdSet.has(offer.id);
               const affordable = canAfford(remainingResources, offer);
               return (
-                <button
+                <RogueButton
                   key={offer.id}
-                  type="button"
-                  disabled={alreadyBought || !affordable}
-                  onClick={() => onBuyStartOffer(offer)}
-                  className="rounded-xl border border-amber-100/15 bg-amber-100/5 p-4 text-left transition enabled:hover:border-amber-300/45 disabled:cursor-not-allowed disabled:opacity-55"
+                  type="text"
+                  disabled={!isSelected && !affordable}
+                  onClick={() => toggleDraftStartOffer(offer)}
+                  className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition disabled:!cursor-not-allowed disabled:!opacity-55 ${
+                    isSelected
+                      ? "!border-emerald-300/60 !bg-emerald-300/10"
+                      : "!border-amber-100/15 !bg-amber-100/5 enabled:hover:!border-amber-300/45"
+                  }`}
                 >
-                  <span className="inline-flex rounded border border-amber-300/30 bg-amber-300/10 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-amber-100">
+                  <RogueTag
+                    bordered
+                    className="!m-0 rounded border-amber-300/30 bg-amber-300/10 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-amber-100"
+                  >
                     {t(getOfferTypeLabel(offer.type))}
-                  </span>
+                  </RogueTag>
                   <p className="mt-2 text-sm font-bold text-amber-50">
                     {getOfferName(offer)}
                   </p>
@@ -452,13 +684,13 @@ export function RunSetupScreen({
                       .join(" + ")}
                   </p>
                   <p className="mt-2 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-amber-200/75">
-                    {alreadyBought
-                      ? t("startMerchant.bought")
+                    {isSelected
+                      ? t("runSetup.selected")
                       : affordable
                         ? t("startMerchant.trade")
                         : t("startMerchant.insufficient")}
                   </p>
-                </button>
+                </RogueButton>
               );
             })}
           </div>
@@ -468,14 +700,14 @@ export function RunSetupScreen({
           <p className="text-xs text-amber-100/60">
             {canContinue ? t("runSetup.readyHint") : t("runSetup.missingHint")}
           </p>
-          <button
-            type="button"
-            onClick={onContinue}
+          <RogueButton
+            type="primary"
+            onClick={handleContinue}
             disabled={!canContinue}
-            className="rounded-lg border border-amber-300/40 bg-amber-300/15 px-6 py-2 text-sm font-bold uppercase tracking-[0.12em] text-amber-100 transition hover:border-amber-200/65 hover:bg-amber-200/20 disabled:cursor-not-allowed disabled:opacity-40"
+            className="!h-auto !rounded-lg !px-6 !py-2 !text-sm !font-bold !uppercase !tracking-[0.12em]"
           >
             {t("runSetup.continue")}
-          </button>
+          </RogueButton>
         </div>
       </div>
     </div>

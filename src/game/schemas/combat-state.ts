@@ -61,5 +61,17 @@ export const CombatStateSchema = z.object({
   firstHitReductionUsed: z.boolean().default(false),
   playerDisruption: TurnDisruptionSchema.default({}),
   nextPlayerDisruption: TurnDisruptionSchema.default({}),
+  relicFlags: z.record(z.string(), z.boolean()).optional(),
+  relicCounters: z.record(z.string(), z.number()).optional(),
+  relicModifiers: z
+    .object({
+      playerVulnerableDamageMultiplier: z.number().optional(),
+      enemyVulnerableDamageMultiplier: z.number().optional(),
+      playerPoisonDamageMultiplier: z.number().optional(),
+      enemyPoisonDamageMultiplier: z.number().optional(),
+      playerBleedDamageMultiplier: z.number().optional(),
+      enemyBleedDamageMultiplier: z.number().optional(),
+    })
+    .optional(),
 });
 export type CombatState = z.infer<typeof CombatStateSchema>;

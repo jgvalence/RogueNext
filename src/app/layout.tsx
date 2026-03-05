@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "antd/dist/reset.css";
 import { QueryProvider } from "@/lib/query/provider";
 import { Toaster } from "sonner";
 import { env } from "@/lib/env";
+import { AntdProvider } from "@/components/providers/AntdProvider";
 import { I18nProvider } from "@/components/providers/I18nProvider";
 import { GlobalLanguageDock } from "@/components/shared/GlobalLanguageDock";
 
@@ -56,11 +58,13 @@ export default function RootLayout({
     <html lang="fr">
       <body className={inter.className}>
         <I18nProvider>
-          <GlobalLanguageDock />
-          <QueryProvider>
-            {children}
-            <Toaster position="top-right" richColors />
-          </QueryProvider>
+          <AntdProvider>
+            <GlobalLanguageDock />
+            <QueryProvider>
+              {children}
+              <Toaster position="top-right" richColors />
+            </QueryProvider>
+          </AntdProvider>
         </I18nProvider>
       </body>
     </html>

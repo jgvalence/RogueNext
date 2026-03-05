@@ -101,6 +101,7 @@ export const en = {
     title: "Panlibrarium Library",
     collectedStories: "{{unlocked}}/{{total}} stories collected",
     collection: "Collection",
+    bestiary: "Bestiary",
     startRun: "Start Run",
     tier: "Tier",
     permanentBonus: "Permanent bonus",
@@ -134,6 +135,7 @@ export const en = {
       extraCardRewardChoices: "+{{value}} card reward choices",
       relicDiscount: "{{value}}% relic discount",
       unlockInkPower: "Unlock ink power {{power}}",
+      unlockPowerSlot: "Unlock power slot {{slot}}",
       healAfterCombat: "Recover {{value}}% max HP after combat",
       healAfterCombatFlat: "Recover {{value}} HP after combat",
       exhaustKeepChance: "{{value}}% chance to not exhaust a card",
@@ -149,21 +151,40 @@ export const en = {
     failedToStart: "Failed to start game: {{message}}",
   },
   collection: {
-    title: "Card Collection",
+    title: "Collection",
     unlockedCount: "{{unlocked}}/{{total}} unlocked",
+    cardSummary: "{{unlocked}} unlocked - {{locked}} locked - {{total}} cards",
+    relicSummary:
+      "{{unlocked}} unlocked - {{locked}} locked - {{total}} relics",
     backToLibrary: "Back to Library",
     startRun: "Start Run",
+    tabs: {
+      runOptions: "Starting options",
+      cards: "Cards",
+      relics: "Relics",
+    },
     allBiomes: "All biomes",
     allTypes: "All types",
     attack: "Attack",
     defenseSkill: "Defense (Skill)",
     power: "Power",
+    allOwnerships: "All origins",
+    neutralOnly: "Neutral",
+    characterTypedOnly: "Character-typed",
     allRarities: "All rarities",
+    bossRelicRarity: "Boss relic",
     allStates: "All states",
     unlocked: "Unlocked",
     locked: "Locked",
     searchPlaceholder: "Search card name...",
+    searchRelicPlaceholder: "Search relic name...",
+    noCardsForFilters: "No cards match these filters.",
+    noRelicsForFilters: "No relics match these filters.",
     energy: "energy",
+    neutralBadge: "Neutral",
+    characterTypedBadge: "Typed {{character}}",
+    relicSourceBoss: "Source: boss {{boss}}",
+    relicSourceGeneral: "Source: general",
     whyLocked: "Why this card is locked",
     missingCondition: "Missing condition",
     progress: "Progress",
@@ -175,9 +196,36 @@ export const en = {
       unlockCondition: "Unlock condition",
       unlockRuns: "Complete at least {{runs}} run(s)",
       unlockWins: "Win at least {{wins}} run(s)",
+      unlockEnemyKills: "Defeat {{enemy}} {{kills}} time(s)",
       unlockRunsAndWins:
         "Complete at least {{runs}} run(s) and win {{wins}} run(s)",
     },
+  },
+  bestiary: {
+    title: "Realm Bestiary",
+    discoveredCount: "{{discovered}}/{{total}} entries discovered",
+    backToLibrary: "Back to Library",
+    startRun: "Start Run",
+    allBiomes: "All biomes",
+    allTypes: "All types",
+    noEntries: "No entries match this filter.",
+    type: {
+      NORMAL: "Normal",
+      ELITE: "Elite",
+      BOSS: "Boss",
+    },
+    state: {
+      discovered: "Discovered",
+      locked: "Locked",
+    },
+    lockedName: "???",
+    lockedLore: "This entry is revealed after your first encounter.",
+    stats: "Base stats",
+    hp: "HP",
+    speed: "Speed",
+    kills: "Victories",
+    loreTier: "Lore {{current}}/{{total}}",
+    nextLoreAt: "next entry at {{count}}",
   },
   runCondition: {
     select: {
@@ -185,6 +233,11 @@ export const en = {
       title: "Choose a starting option",
       subtitle: "Pick 1 option among 3.",
       pickAction: "Choose this option",
+    },
+    bossStart: {
+      name: "{{boss}} Blessing",
+      description: "Start the run with: {{bonus}}.",
+      bonusFallback: "Boss start bonus",
     },
     category: {
       LIGHT_BOON: "Light boon",
@@ -217,16 +270,35 @@ export const en = {
       },
       battle_manual: {
         name: "Battle Manual",
-        description: "Add Heavy Strike to your starting deck.",
+        description: "Upgrade 2 random cards in your starting deck.",
       },
       packed_supplies: {
         name: "Packed Supplies",
-        description: "Start with +12 gold and +6 max HP.",
+        description:
+          "Remove 1 random starter card and add 1 random collectible card.",
+      },
+      curators_patronage: {
+        name: "Curator's Patronage",
+        description: "Start with the Prep Satchel relic, but lose 12 max HP.",
+      },
+      fractured_archive: {
+        name: "Fractured Archive",
+        description:
+          "Upgrade 3 random cards, but add 2 Haunting Regret to your deck.",
+      },
+      severed_index: {
+        name: "Severed Index",
+        description:
+          "Remove 2 random starter cards, then add 1 random Rare card and upgrade 1 random card.",
+      },
+      merciless_routes: {
+        name: "Merciless Routes",
+        description:
+          "No merchants and only one path, but combat rewards are doubled.",
       },
       forbidden_contract: {
         name: "Forbidden Contract",
-        description:
-          "Add Mythic Blow and Haunting Regret to your starting deck.",
+        description: "Add Mythic Blow and Haunting Regret, but lose 6 max HP.",
       },
       single_path: {
         name: "Single Path",
@@ -238,7 +310,7 @@ export const en = {
       },
       battle_rite: {
         name: "Battle Rite",
-        description: "Start with +1 Strength, but heal 5% less after combat.",
+        description: "Start with +1 Strength, but lose 8 max HP.",
       },
       chaos_draft: {
         name: "Chaos Draft",
@@ -248,6 +320,71 @@ export const en = {
         name: "Boss Rush",
         description:
           "All combats become boss fights. Combat rewards are doubled.",
+      },
+      veterans_oath: {
+        name: "Snokin Practitioners",
+        description: "Recover 100% HP after each combat, but lose 50 max HP.",
+      },
+      ink_lender: {
+        name: "Ink Loan",
+        description:
+          "Start each combat with +2 ink and +1 ink per card played, but -20 gold.",
+      },
+      prepared_wards: {
+        name: "Prepared Wards",
+        description: "Start with the Warded Ribbon relic.",
+      },
+      archivist_cache: {
+        name: "Archivist Cache",
+        description:
+          "Add 2 random Common or Uncommon cards to your starting deck.",
+      },
+      rare_tithe: {
+        name: "Rare Tithe",
+        description: "Add 1 random Rare card, but lose 14 max HP.",
+      },
+      surgical_cut: {
+        name: "Surgical Cut",
+        description:
+          "Remove 2 random starter cards and upgrade 2 random cards.",
+      },
+      quick_studies: {
+        name: "Quick Studies",
+        description:
+          "Upgrade 1 random card and add 1 random Uncommon or Rare card.",
+      },
+      cursed_compendium: {
+        name: "Cursed Compendium",
+        description: "Add 2 random cards, but also add 2 Haunting Regret.",
+      },
+      crystal_loan: {
+        name: "Crystal Loan",
+        description:
+          "Start with the Energy Crystal relic, upgrade 1 random card, but add 1 Haunting Regret.",
+      },
+      inkwell_bargain: {
+        name: "Inkwell Bargain",
+        description: "Start with the Inkwell Reservoir relic, but -25 gold.",
+      },
+      forged_lexicon: {
+        name: "Forged Lexicon",
+        description:
+          "Start with the Battle Lexicon relic, but add 1 Haunting Regret.",
+      },
+      isolated_trials: {
+        name: "Isolated Trials",
+        description:
+          "Only one path at each room, but add 2 random collectible cards.",
+      },
+      grim_shortcuts: {
+        name: "Grim Shortcuts",
+        description:
+          "Single-path routes with extra special rooms, +10 gold, but add 1 Haunting Regret.",
+      },
+      fateful_manuscript: {
+        name: "Fateful Manuscript",
+        description:
+          "Start with +1 max energy and +1 draw each turn, but add 2 Haunting Regret and lose 12 max HP.",
       },
       infinite_mode: {
         name: "Infinite Mode",
@@ -262,6 +399,7 @@ export const en = {
     subtitle:
       "Choose your difficulty, pick your run type, and prepare your opening loadout before entering the first room.",
     sections: {
+      character: "Character",
       difficulty: "Difficulty",
       runType: "Run Type",
       runCondition: "Run Option",
@@ -594,17 +732,168 @@ export const en = {
     },
   },
   cards: {
-    heavy_strike: { name: "Heavy Strike" },
-    cleave: { name: "Cleave" },
+    heavy_strike: { name: "Inkstone Blow" },
+    cleave: { name: "Page Rend" },
     piercing_word: { name: "Piercing Word" },
     poison_quill: { name: "Poison Quill" },
-    mythic_blow: { name: "Mythic Blow" },
-    quick_feint: { name: "Quick Feint" },
-    bastion_crash: { name: "Bastion Crash" },
+    mythic_blow: { name: "Legendary Chapter" },
+    swift_slash: { name: "Tome Slash" },
+    quick_feint: { name: "Scripted Feint" },
+    bastion_crash: { name: "Shelf Collapse" },
     venom_echo: { name: "Venom Echo" },
-    fortify: { name: "Fortify" },
+    fortify: { name: "Archive Seal" },
+    scholars_focus: { name: "Scholar's Focus" },
+    healing_script: { name: "Healing Script" },
+    ink_flow: { name: "Ink Flow" },
+    adrenaline: { name: "Ink Rush" },
+    rage_of_ages: { name: "Rage of Ages" },
+    tome_strike: { name: "Tome Strike" },
+    double_strike: { name: "Dual Script" },
+    curse_word: { name: "Curse Word" },
+    final_chapter: { name: "Final Chapter" },
+    vulnerability_hex: { name: "Vulnerability Hex" },
+    meditation: { name: "Silent Study" },
+    quick_recovery: { name: "Index Recovery" },
+    inked_sweep: { name: "Inked Sweep" },
+    brace: { name: "Stacked Volumes" },
+    ink_surge: { name: "Ink Surge" },
+    exploit_weakness: { name: "Exposed Margin" },
+    iron_will: { name: "Scribal Resolve" },
     hexed_parchment: { name: "Hexed Parchment" },
     haunting_regret: { name: "Haunting Regret" },
+    // VIKING — Scribe
+    iron_verse: { name: "Iron Verse" },
+    frost_rune_shield: { name: "Frost Rune Shield" },
+    scald_cry: { name: "Scald Cry" },
+    rune_storm: { name: "Rune Storm" },
+    battle_inscription: { name: "Battle Inscription" },
+    odin_script: { name: "Odin's Script" },
+    epic_saga: { name: "Epic Saga" },
+    // VIKING — Bibliothécaire
+    nordic_treatise: { name: "Nordic Treatise" },
+    rune_curse: { name: "Rune Curse" },
+    saga_archive: { name: "Saga Archive" },
+    norn_prophecy: { name: "Norn Prophecy" },
+    ancient_ward: { name: "Ancient Ward" },
+    saga_keeper: { name: "Saga Keeper" },
+    valhalla_codex: { name: "Valhalla Codex" },
+    // GREEK — Scribe
+    logos_strike: { name: "Logos Strike" },
+    philosophers_quill: { name: "Philosopher's Quill" },
+    epic_simile: { name: "Epic Simile" },
+    hermes_dash: { name: "Hermes Dash" },
+    written_prophecy: { name: "Written Prophecy" },
+    titans_wrath: { name: "Titan's Wrath" },
+    ares_verse: { name: "Ares Verse" },
+    olympian_scripture: { name: "Olympian Scripture" },
+    // GREEK — Bibliothécaire
+    oracle_scroll: { name: "Oracle Scroll" },
+    shield_of_athena: { name: "Shield of Athena" },
+    sphinx_riddle: { name: "Sphinx Riddle" },
+    apollos_archive: { name: "Apollo's Archive" },
+    labyrinth_trap: { name: "Labyrinth Trap" },
+    pythian_codex: { name: "Pythian Codex" },
+    fates_decree: { name: "Fate's Decree" },
+    // EGYPTIAN — Scribe
+    hieroglyph_strike: { name: "Hieroglyph Strike" },
+    sacred_papyrus: { name: "Sacred Papyrus" },
+    spell_inscription: { name: "Spell Inscription" },
+    book_of_ra: { name: "Book of Ra" },
+    sacred_ink_burst: { name: "Sacred Ink Burst" },
+    scribes_judgment: { name: "Scribe's Judgment" },
+    // EGYPTIAN — Bibliothécaire
+    death_scroll: { name: "Death Scroll" },
+    mummy_ward: { name: "Mummy Ward" },
+    plague_of_words: { name: "Plague of Words" },
+    osiris_archive: { name: "Osiris Archive" },
+    funerary_rite: { name: "Funerary Rite" },
+    desert_wisdom: { name: "Desert Papyrus" },
+    embalmed_tome: { name: "Embalmed Tome" },
+    book_of_the_dead: { name: "Book of the Dead" },
+    // LOVECRAFTIAN — Scribe
+    void_quill: { name: "Void Quill" },
+    cursed_inscription: { name: "Cursed Inscription" },
+    black_page: { name: "Black Page" },
+    forbidden_verse: { name: "Forbidden Verse" },
+    eldritch_script: { name: "Eldritch Script" },
+    necrotic_words: { name: "Necrotic Words" },
+    void_scripture: { name: "Void Scripture" },
+    // LOVECRAFTIAN — Bibliothécaire
+    sealed_tome: { name: "Sealed Tome" },
+    library_horror: { name: "Library Horror" },
+    readers_pact: { name: "Reader's Pact" },
+    forbidden_index: { name: "Forbidden Index" },
+    void_librarian: { name: "Void Librarian" },
+    necronomicon_page: { name: "Necronomicon Page" },
+    cosmic_archive: { name: "Cosmic Archive" },
+    // AZTEC — Scribe
+    obsidian_quill: { name: "Obsidian Quill" },
+    codex_strike: { name: "Codex Strike" },
+    sacrificial_word: { name: "Sacrificial Word" },
+    xipe_shield: { name: "Xipe Shield" },
+    sun_codex: { name: "Sun Codex" },
+    hummingbird_strike: { name: "Hummingbird Strike" },
+    blood_codex: { name: "Blood Codex" },
+    // AZTEC — Bibliothécaire
+    calendric_ward: { name: "Calendric Ward" },
+    poison_herb: { name: "Sacred Herb" },
+    star_chart: { name: "Star Chart" },
+    quetzal_shield: { name: "Quetzal Shield" },
+    temple_archive: { name: "Temple Archive" },
+    obsidian_ward: { name: "Obsidian Curse" },
+    feathered_serpent: { name: "Feathered Serpent" },
+    // CELTIC — Scribe
+    kells_strike: { name: "Kells Strike" },
+    bardic_verse: { name: "Bardic Verse" },
+    illuminated_shield: { name: "Illuminated Shield" },
+    iron_bard: { name: "Iron Bard" },
+    triquetra_mark: { name: "Triquetra Mark" },
+    ogham_inscription: { name: "Ogham Inscription" },
+    celtic_illumination: { name: "Celtic Illumination" },
+    green_man_verse: { name: "Green Man Verse" },
+    // CELTIC — Bibliothécaire
+    herb_lore: { name: "Herb Lore" },
+    fairy_veil: { name: "Fairy Veil" },
+    morrigan_curse: { name: "Morrigan Curse" },
+    cauldron_lore: { name: "Cauldron Lore" },
+    selkie_song: { name: "Selkie Song" },
+    ancient_manuscript: { name: "Ancient Manuscript" },
+    world_tree: { name: "World Tree" },
+    // RUSSIAN — Scribe
+    byliny_verse: { name: "Byliny Verse" },
+    bogatyr_strike: { name: "Bogatyr Strike" },
+    winter_inscription: { name: "Winter Inscription" },
+    blizzard_verse: { name: "Blizzard Verse" },
+    firebird_script: { name: "Firebird Script" },
+    baba_yaga_deal: { name: "Baba Yaga's Deal" },
+    koschei_strike: { name: "Koschei Strike" },
+    folk_epic: { name: "Folk Epic" },
+    // RUSSIAN — Bibliothécaire
+    fur_binding: { name: "Fur Binding" },
+    folk_curse: { name: "Folk Curse" },
+    matryoshka_lore: { name: "Matryoshka Lore" },
+    snowstorm_trap: { name: "Snowstorm Trap" },
+    leshy_ward: { name: "Leshy Ward" },
+    zhar_ptitsa: { name: "Zhar-Ptitsa" },
+    folklore_archive: { name: "Folklore Archive" },
+    frost_witch: { name: "Frost Witch" },
+    // AFRICAN — Scribe
+    drum_strike: { name: "Griot's Beat" },
+    war_dance: { name: "Battle Chant" },
+    ink_of_ancestors: { name: "Ink of Ancestors" },
+    griot_strike: { name: "Griot Strike" },
+    anansi_tale: { name: "Anansi's Tale" },
+    buffalo_charge: { name: "Griot's Epic" },
+    ancestral_verse: { name: "Ancestral Verse" },
+    sunbird_power: { name: "Sunbird's Script" },
+    // AFRICAN — Bibliothécaire
+    spider_web: { name: "Web of Lore" },
+    baobab_shield: { name: "Baobab Codex" },
+    healing_rhythm: { name: "Keeper's Song" },
+    oral_history: { name: "Oral History" },
+    trickster_lore: { name: "Trickster Lore" },
+    ancestor_archive: { name: "Ancestor Archive" },
+    cosmic_spider: { name: "Anansi Codex" },
   },
   relics: {
     ancient_quill: { name: "Ancient Quill", description: "+2 max ink" },
@@ -752,6 +1041,7 @@ export const en = {
       reduceDrawThisTurn: "Draw -{{value}} this turn",
       reduceDrawNextTurn: "Draw -{{value}} next turn",
       forceDiscardRandom: "Discard {{value}} random card(s)",
+      upgradeRandomCardInHand: "Upgrade a random card in hand",
     },
   },
   buff: {
@@ -866,6 +1156,9 @@ export const en = {
     reachedRoom: "Reached: Room {{room}}/{{total}}",
     resourcesGained: "Resources gained this run",
     cardsUnlocked: "Cards unlocked this run",
+    newBestiaryEntryTitle: "New Bestiary entry",
+    newBestiaryEntrySingle: "{{name}} added to the Bestiary",
+    newBestiaryEntryMultiple: "{{count}} new entries added to the Bestiary",
     none: "None",
     backToLibrary: "Library",
   },
@@ -966,6 +1259,33 @@ export const en = {
     ink: "INK",
     powerTooltip: "{{description}} ({{cost}} ink)",
     powers: {
+      // Scribe
+      CALLIGRAPHIE: {
+        label: "Calligraphy",
+        desc: "Upgrade a random card in hand (this combat)",
+      },
+      ENCRE_NOIRE: {
+        label: "Black Ink",
+        desc: "Deal ink x2 damage to all enemies",
+      },
+      SEAL: {
+        label: "Seal",
+        desc: "Gain 8 block",
+      },
+      // Librarian
+      VISION: {
+        label: "Vision",
+        desc: "Draw 2 cards",
+      },
+      INDEX: {
+        label: "Index",
+        desc: "Retrieve a card from discard",
+      },
+      SILENCE: {
+        label: "Shhh",
+        desc: "An enemy loses their next turn",
+      },
+      // Legacy
       REWRITE: {
         label: "Rewrite",
         desc: "Retrieve a card from discard",
@@ -974,10 +1294,18 @@ export const en = {
         label: "Lost Chapter",
         desc: "Draw 2 cards",
       },
-      SEAL: {
-        label: "Seal",
-        desc: "Gain 8 block",
-      },
+    },
+  },
+  characters: {
+    scribe: {
+      name: "The Scribe",
+      description:
+        "Master of ink and word. Upgrades cards and strikes with the brilliance of ink.",
+    },
+    bibliothecaire: {
+      name: "The Librarian",
+      description:
+        "Guardian of knowledge. Manipulates the draw pile and can silence enemies.",
     },
   },
   combat: {

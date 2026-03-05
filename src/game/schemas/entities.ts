@@ -63,6 +63,8 @@ export type EnemyAbility = z.infer<typeof EnemyAbilitySchema>;
 export const EnemyDefinitionSchema = z.object({
   id: z.string(),
   name: z.string(),
+  loreText: z.string().optional(),
+  loreEntries: z.array(z.string()).optional(),
   maxHp: z.number().int().min(1),
   speed: z.number().int(),
   abilities: z.array(EnemyAbilitySchema),

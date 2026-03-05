@@ -1,4 +1,6 @@
 import type { CardDefinition } from "../schemas/cards";
+import { enemyDefinitions } from "../data/enemies";
+import type { BiomeType, Rarity } from "../schemas/enums";
 import type { ComputedMetaBonuses } from "../schemas/meta";
 import { DEFAULT_META_BONUSES } from "../schemas/meta";
 import type { RNG } from "./rng";
@@ -6,6 +8,7 @@ import type { RNG } from "./rng";
 export interface RunConditionProgress {
   totalRuns: number;
   wonRuns: number;
+  enemyKillCounts?: Record<string, number>;
 }
 
 export interface RunConditionMapRules {
@@ -19,10 +22,24 @@ export interface RunConditionEffects {
   startingGoldDelta?: number;
   maxHpDelta?: number;
   addCardIds?: string[];
+  addRelicIds?: string[];
+  addRandomCardsCount?: number;
+  addRandomCardRarities?: Exclude<Rarity, "STARTER">[];
+  removeRandomStarterCardsCount?: number;
+  upgradeRandomDeckCardsCount?: number;
   replaceStarterDeckWithRandomCount?: number;
   combatRewardMultiplier?: number;
   addMetaBonuses?: Partial<ComputedMetaBonuses>;
   mapRules?: RunConditionMapRules;
+}
+
+export interface RunConditionUnlockRequirement {
+  totalRuns?: number;
+  wonRuns?: number;
+  enemyKills?: {
+    enemyId: string;
+    count: number;
+  };
 }
 
 export interface RunConditionDefinition {
@@ -34,20 +51,18 @@ export interface RunConditionDefinition {
     | "GOOD_BAD_CARD"
     | "SPECIAL_RULE"
     | "UNIQUE_MECHANIC";
-  unlock: {
-    totalRuns?: number;
-    wonRuns?: number;
-  };
+  unlock: RunConditionUnlockRequirement;
   effects: RunConditionEffects;
 }
 
 export const VANILLA_RUN_CONDITION_ID = "vanilla_run";
 export const INFINITE_RUN_CONDITION_ID = "infinite_mode";
+export const BOSS_START_OPTION_CONDITION_PREFIX = "boss_start_option_";
 const RUN_CONDITION_ID_ALIASES: Record<string, string> = {
   vanilla: VANILLA_RUN_CONDITION_ID,
 };
 
-export const runConditionDefinitions: RunConditionDefinition[] = [
+const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: VANILLA_RUN_CONDITION_ID,
     category: "SPECIAL_RULE",
@@ -92,19 +107,57 @@ export const runConditionDefinitions: RunConditionDefinition[] = [
     id: "battle_manual",
     category: "BONUS_CARD",
     unlock: {},
-    effects: { addCardIds: ["heavy_strike"] },
+    effects: { upgradeRandomDeckCardsCount: 2 },
   },
   {
     id: "packed_supplies",
     category: "LIGHT_BOON",
     unlock: {},
-    effects: { startingGoldDelta: 12, maxHpDelta: 6 },
+    effects: { removeRandomStarterCardsCount: 1, addRandomCardsCount: 1 },
+  },
+  {
+    id: "curators_patronage",
+    category: "BOON_WITH_DRAWBACK",
+    unlock: { totalRuns: 2 },
+    effects: { addRelicIds: ["library_prep_satchel"], maxHpDelta: -12 },
+  },
+  {
+    id: "fractured_archive",
+    category: "GOOD_BAD_CARD",
+    unlock: { totalRuns: 4, wonRuns: 1 },
+    effects: {
+      upgradeRandomDeckCardsCount: 3,
+      addCardIds: ["haunting_regret", "haunting_regret"],
+    },
+  },
+  {
+    id: "severed_index",
+    category: "UNIQUE_MECHANIC",
+    unlock: { totalRuns: 5, wonRuns: 2 },
+    effects: {
+      removeRandomStarterCardsCount: 2,
+      addRandomCardsCount: 1,
+      addRandomCardRarities: ["RARE"],
+      upgradeRandomDeckCardsCount: 1,
+    },
+  },
+  {
+    id: "merciless_routes",
+    category: "SPECIAL_RULE",
+    unlock: { totalRuns: 7, wonRuns: 3 },
+    effects: {
+      combatRewardMultiplier: 2,
+      mapRules: { noMerchants: true, forceSingleChoice: true },
+    },
   },
   {
     id: "forbidden_contract",
     category: "GOOD_BAD_CARD",
     unlock: { totalRuns: 2 },
-    effects: { addCardIds: ["mythic_blow", "haunting_regret"] },
+    effects: {
+      maxHpDelta: -6,
+      addCardIds: ["mythic_blow", "haunting_regret"],
+    },
   },
   {
     id: "single_path",
@@ -123,9 +176,9 @@ export const runConditionDefinitions: RunConditionDefinition[] = [
     category: "BOON_WITH_DRAWBACK",
     unlock: { wonRuns: 2 },
     effects: {
+      maxHpDelta: -8,
       addMetaBonuses: {
         startingStrength: 1,
-        healAfterCombat: -5,
       },
     },
   },
@@ -144,6 +197,228 @@ export const runConditionDefinitions: RunConditionDefinition[] = [
       mapRules: { bossOnlyCombats: true },
     },
   },
+  {
+    id: "veterans_oath",
+    category: "BOON_WITH_DRAWBACK",
+    unlock: { totalRuns: 1 },
+    effects: {
+      maxHpDelta: -50,
+      addMetaBonuses: {
+        healAfterCombat: 100,
+      },
+    },
+  },
+  {
+    id: "ink_lender",
+    category: "BOON_WITH_DRAWBACK",
+    unlock: { totalRuns: 1 },
+    effects: {
+      startingGoldDelta: -20,
+      addMetaBonuses: {
+        startingInk: 2,
+        inkPerCardValue: 1,
+      },
+    },
+  },
+  {
+    id: "prepared_wards",
+    category: "LIGHT_BOON",
+    unlock: { totalRuns: 1 },
+    effects: {
+      addRelicIds: ["warded_ribbon"],
+    },
+  },
+  {
+    id: "archivist_cache",
+    category: "BONUS_CARD",
+    unlock: { totalRuns: 2 },
+    effects: {
+      addRandomCardsCount: 2,
+      addRandomCardRarities: ["COMMON", "UNCOMMON"],
+    },
+  },
+  {
+    id: "rare_tithe",
+    category: "BOON_WITH_DRAWBACK",
+    unlock: { totalRuns: 3 },
+    effects: {
+      addRandomCardsCount: 1,
+      addRandomCardRarities: ["RARE"],
+      maxHpDelta: -14,
+    },
+  },
+  {
+    id: "surgical_cut",
+    category: "UNIQUE_MECHANIC",
+    unlock: { totalRuns: 3, wonRuns: 1 },
+    effects: {
+      removeRandomStarterCardsCount: 2,
+      upgradeRandomDeckCardsCount: 2,
+    },
+  },
+  {
+    id: "quick_studies",
+    category: "BONUS_CARD",
+    unlock: { totalRuns: 3, wonRuns: 1 },
+    effects: {
+      upgradeRandomDeckCardsCount: 1,
+      addRandomCardsCount: 1,
+      addRandomCardRarities: ["UNCOMMON", "RARE"],
+    },
+  },
+  {
+    id: "cursed_compendium",
+    category: "GOOD_BAD_CARD",
+    unlock: { totalRuns: 4 },
+    effects: {
+      addRandomCardsCount: 2,
+      addCardIds: ["haunting_regret", "haunting_regret"],
+    },
+  },
+  {
+    id: "crystal_loan",
+    category: "GOOD_BAD_CARD",
+    unlock: { totalRuns: 4, wonRuns: 1 },
+    effects: {
+      addRelicIds: ["energy_crystal"],
+      addCardIds: ["haunting_regret"],
+      upgradeRandomDeckCardsCount: 1,
+    },
+  },
+  {
+    id: "inkwell_bargain",
+    category: "BOON_WITH_DRAWBACK",
+    unlock: { totalRuns: 5, wonRuns: 2 },
+    effects: {
+      addRelicIds: ["inkwell_reservoir"],
+      startingGoldDelta: -25,
+    },
+  },
+  {
+    id: "forged_lexicon",
+    category: "GOOD_BAD_CARD",
+    unlock: { totalRuns: 5, wonRuns: 2 },
+    effects: {
+      addRelicIds: ["battle_lexicon"],
+      addCardIds: ["haunting_regret"],
+    },
+  },
+  {
+    id: "isolated_trials",
+    category: "SPECIAL_RULE",
+    unlock: { totalRuns: 6, wonRuns: 2 },
+    effects: {
+      mapRules: { forceSingleChoice: true },
+      addRandomCardsCount: 2,
+    },
+  },
+  {
+    id: "grim_shortcuts",
+    category: "SPECIAL_RULE",
+    unlock: { totalRuns: 7, wonRuns: 3 },
+    effects: {
+      mapRules: { forceSingleChoice: true, extraSpecialRoom: true },
+      startingGoldDelta: 10,
+      addCardIds: ["haunting_regret"],
+    },
+  },
+  {
+    id: "fateful_manuscript",
+    category: "GOOD_BAD_CARD",
+    unlock: { totalRuns: 8, wonRuns: 3 },
+    effects: {
+      maxHpDelta: -12,
+      addCardIds: ["haunting_regret", "haunting_regret"],
+      addMetaBonuses: {
+        extraEnergyMax: 1,
+        extraDraw: 1,
+      },
+    },
+  },
+];
+
+function getDefaultBossStartConditionMetaBonuses(
+  biome: BiomeType
+): Partial<ComputedMetaBonuses> {
+  switch (biome) {
+    case "LIBRARY":
+      return { startingInk: 2 };
+    case "VIKING":
+      return { startingStrength: 1 };
+    case "GREEK":
+      return { startingBlock: 6 };
+    case "EGYPTIAN":
+      return { firstHitDamageReduction: 20 };
+    case "LOVECRAFTIAN":
+      return { extraDraw: 1 };
+    case "AZTEC":
+      return { attackBonus: 2 };
+    case "CELTIC":
+      return { startingRegen: 1 };
+    case "RUSSIAN":
+      return { extraHandAtStart: 1 };
+    case "AFRICAN":
+      return { healAfterCombatFlat: 2 };
+  }
+}
+
+const bossStartConditionMetaBonusesByBossId: Record<
+  string,
+  Partial<ComputedMetaBonuses>
+> = {
+  chapter_guardian: { startingBlock: 8 },
+  the_archivist: { startingInk: 2, extraDraw: 1 },
+  fenrir: { startingStrength: 1, attackBonus: 1 },
+  hel_queen: { healAfterCombatFlat: 3, firstHitDamageReduction: 10 },
+  medusa: { firstHitDamageReduction: 20, startingBlock: 4 },
+  hydra_aspect: { startingRegen: 1, extraEnergyMax: 1 },
+  ra_avatar: { startingInk: 3, firstHitDamageReduction: 10 },
+  osiris_judgment: { healAfterCombat: 8, extraHandAtStart: 1 },
+  nyarlathotep_shard: { extraDraw: 1, extraInkMax: 2 },
+  shub_spawn: { healAfterCombatFlat: 4, inkPerCardChance: 20 },
+  tezcatlipoca_echo: { attackBonus: 2, extraHandAtStart: 1 },
+  quetzalcoatl_wrath: { attackBonus: 1, extraDraw: 1 },
+  dagda_shadow: { startingRegen: 1, startingBlock: 6 },
+  cernunnos_shade: { healAfterCombatFlat: 2, inkPerCardValue: 1 },
+  baba_yaga_hut: { extraHandAtStart: 1, startingInk: 1 },
+  koschei_deathless: { firstHitDamageReduction: 25, extraInkMax: 1 },
+  soundiata_spirit: { healAfterCombatFlat: 2, startingStrength: 1 },
+  anansi_weaver: { extraDraw: 1, inkPerCardChance: 25 },
+};
+
+function getBossStartConditionMetaBonuses(
+  bossId: string,
+  biome: BiomeType
+): Partial<ComputedMetaBonuses> {
+  return (
+    bossStartConditionMetaBonusesByBossId[bossId] ??
+    getDefaultBossStartConditionMetaBonuses(biome)
+  );
+}
+
+function buildBossStartRunConditions(): RunConditionDefinition[] {
+  return enemyDefinitions
+    .filter((enemy) => enemy.isBoss)
+    .map((boss) => ({
+      id: `${BOSS_START_OPTION_CONDITION_PREFIX}${boss.id}`,
+      category: "UNIQUE_MECHANIC" as const,
+      unlock: {
+        enemyKills: {
+          enemyId: boss.id,
+          count: 3,
+        },
+      },
+      effects: {
+        addMetaBonuses: getBossStartConditionMetaBonuses(boss.id, boss.biome),
+      },
+    }));
+}
+
+const bossStartRunConditions = buildBossStartRunConditions();
+
+export const runConditionDefinitions: RunConditionDefinition[] = [
+  ...baseRunConditionDefinitions,
+  ...bossStartRunConditions,
 ];
 
 const runConditionById = new Map(runConditionDefinitions.map((c) => [c.id, c]));
@@ -203,12 +478,20 @@ export function isRunModeConditionId(
 export function computeUnlockedRunConditionIds(
   progress: RunConditionProgress
 ): string[] {
+  const enemyKillCounts = progress.enemyKillCounts ?? {};
   return runConditionDefinitions
     .filter((condition) => {
       const requiredRuns = condition.unlock.totalRuns ?? 0;
       const requiredWins = condition.unlock.wonRuns ?? 0;
+      const requiredEnemyKills = condition.unlock.enemyKills;
+      const hasRequiredEnemyKills = requiredEnemyKills
+        ? (enemyKillCounts[requiredEnemyKills.enemyId] ?? 0) >=
+          requiredEnemyKills.count
+        : true;
       return (
-        progress.totalRuns >= requiredRuns && progress.wonRuns >= requiredWins
+        progress.totalRuns >= requiredRuns &&
+        progress.wonRuns >= requiredWins &&
+        hasRequiredEnemyKills
       );
     })
     .map((condition) => condition.id);
@@ -223,7 +506,10 @@ export function drawRunConditionChoices(
   const unlocked = normalizeRunConditionIds(unlockedConditionIds);
   const fallback = runConditionDefinitions
     .filter(
-      (condition) => !condition.unlock.totalRuns && !condition.unlock.wonRuns
+      (condition) =>
+        !condition.unlock.totalRuns &&
+        !condition.unlock.wonRuns &&
+        !condition.unlock.enemyKills
     )
     .map((condition) => condition.id);
   // Infinite mode is selected by a dedicated pre-run toggle, not by the

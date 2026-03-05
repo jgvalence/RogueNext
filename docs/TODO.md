@@ -26,7 +26,8 @@
 - [x] Cartes lootables pour tous les biomes (LIBRARY + 8 biomes)
 - [x] Ennemis pour tous les biomes (normaux + elite + boss)
 - [x] Multi-boss (deux boss par biome, choix aleatoire)
-- [x] Relique unique par boss (18 reliques boss-specifiques, garanties en recompense)
+- [x] Relique unique par boss (18 reliques boss-specifiques, debloquees apres 3 victoires sur ce boss)
+- [x] Cartes bestiaire: 1 carte biome par ennemi normal (unlock a 15 kills) + 1 carte rare par elite (unlock a 5 kills)
 - [x] IA boss conditionnelle (poids conditionnels par situation, phase 2 differenciee)
 - [x] 24+ ennemis supplementaires (2 normaux + 1 elite par biome hors LIBRARY, + Wadjet Guardian)
 - [x] 23+ nouvelles cartes (7 ALWAYS LIBRARY + 8 COMMON biome + 8 UNCOMMON biome)
@@ -51,6 +52,7 @@
   - kill elite biome
   - kill boss biome
   - nb de runs completes par biome
+  - kills par ennemi (ID precis)
   - unlock via histoire (arbre de competences)
 - [x] Rewards cartes filtrees par cartes debloquees
 - [x] Shop cartes filtre selon cartes debloquees
@@ -59,7 +61,8 @@
 
 - [x] 6 niveaux de difficulte (0-5), debloquables progressivement apres victoires
 - [x] Difficulte filtre cartes/reliques disponibles
-- [x] 10 Run Conditions (modificateurs de run) avec unlock progressif
+- [x] Run Conditions de base (modificateurs de run) avec unlock progressif
+- [x] 1 option de debut de fight par boss (deblocage a 3 kills de ce boss)
 - [x] Conditions modifient: or de depart, HP max, cartes de depart, regles de map
 - [x] Branding narratif chapitres (Chapitre I a VI + sous-titres lore dans l'UI difficulte)
 
@@ -169,15 +172,19 @@
 
 ### Bestiaire (Encyclopedie des ennemis)
 
-- [ ] **Systeme de decouverte** — stocker les IDs d'ennemis rencontres dans la metaprogression (DB, cle `encounteredEnemies`)
+- [x] **Systeme de decouverte** — stocker les IDs d'ennemis rencontres dans la metaprogression (DB, cle `encounteredEnemies`)
   - Enregistrer la premiere rencontre d'un ennemi en fin de combat
   - Distinguer : normal / elite / boss
-- [ ] **Donnees ennemis enrichies** — ajouter `loreText?` (description narrative) a chaque entree dans `enemies.ts`
-- [ ] **Page Bestiaire** — accessible depuis la Bibliotheque (hub)
+- [x] **Donnees ennemis enrichies** — ajouter `loreText?`/`loreEntries?` (description narrative) a chaque entree dans `enemies.ts`
+  - 3 paliers lore debloques par nombre de victoires:
+    - normal: 1, 5, 15
+    - elite: 1, 3, 5
+    - boss: 1, 2, 3
+- [x] **Page Bestiaire** — accessible depuis la Bibliotheque (hub)
   - Entrees verrouillees affichees avec silhouette + "???" avant rencontre
   - A la decouverte : nom, illustration (asset SVG existant), stats de base, description lore
   - Filtres par biome + type (normal / elite / boss)
-- [ ] **Notification** premiere decouverte en fin de combat ("Nouvelle entree dans le Bestiaire")
+- [x] **Notification** premiere decouverte en fin de combat ("Nouvelle entree dans le Bestiaire")
 
 ### UX / technique
 

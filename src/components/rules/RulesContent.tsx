@@ -1,8 +1,14 @@
 "use client";
 
-import Link from "next/link";
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import {
+  RogueButton,
+  RogueCollapse,
+  RogueTable,
+  RogueTag,
+} from "@/components/ui/rogue";
 
 interface RulesContentProps {
   mode?: "page" | "modal";
@@ -19,8 +25,29 @@ interface SimpleTableRow {
   impact?: string;
 }
 
+interface InkTableRow {
+  key: string;
+  power: string;
+  cost: string;
+  effect: string;
+}
+
+interface RoomTableRow {
+  key: string;
+  room: string;
+  content: string;
+  reward: string;
+}
+
+interface BuffTableRow {
+  key: string;
+  effect: string;
+  impact: string;
+}
+
 export function RulesContent({ mode = "page", onClose }: RulesContentProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const isModal = mode === "modal";
 
   const runStructureBullets = t("rules.sections.runStructure.bullets", {
@@ -45,33 +72,130 @@ export function RulesContent({ mode = "page", onClose }: RulesContentProps) {
     returnObjects: true,
   }) as string[];
 
+  const inkTableData = useMemo(
+    () =>
+      inkRows.map((row, index) => ({
+        key: `ink-row-${index}`,
+        power: row.power ?? "",
+        cost: row.cost ?? "",
+        effect: row.effect ?? "",
+      })),
+    [inkRows]
+  );
+  const roomTableData = useMemo(
+    () =>
+      roomRows.map((row, index) => ({
+        key: `room-row-${index}`,
+        room: row.room ?? "",
+        content: row.content ?? "",
+        reward: row.reward ?? "",
+      })),
+    [roomRows]
+  );
+  const buffTableData = useMemo(
+    () =>
+      buffRows.map((row, index) => ({
+        key: `buff-row-${index}`,
+        effect: row.effect ?? "",
+        impact: row.impact ?? "",
+      })),
+    [buffRows]
+  );
+
+  const inkColumns = useMemo(
+    () => [
+      {
+        title: t("rules.sections.ink.tableHeaders.power"),
+        dataIndex: "power",
+        key: "power",
+        render: (value: string) => (
+          <span className="font-semibold text-blue-300">{value}</span>
+        ),
+      },
+      {
+        title: t("rules.sections.ink.tableHeaders.cost"),
+        dataIndex: "cost",
+        key: "cost",
+      },
+      {
+        title: t("rules.sections.ink.tableHeaders.effect"),
+        dataIndex: "effect",
+        key: "effect",
+      },
+    ],
+    [t]
+  );
+  const roomColumns = useMemo(
+    () => [
+      {
+        title: t("rules.sections.rooms.tableHeaders.room"),
+        dataIndex: "room",
+        key: "room",
+        render: (value: string) => (
+          <span className="font-semibold text-gray-200">{value}</span>
+        ),
+      },
+      {
+        title: t("rules.sections.rooms.tableHeaders.content"),
+        dataIndex: "content",
+        key: "content",
+      },
+      {
+        title: t("rules.sections.rooms.tableHeaders.reward"),
+        dataIndex: "reward",
+        key: "reward",
+      },
+    ],
+    [t]
+  );
+  const buffColumns = useMemo(
+    () => [
+      {
+        title: t("rules.sections.buffs.tableHeaders.effect"),
+        dataIndex: "effect",
+        key: "effect",
+        render: (value: string) => (
+          <span className="font-semibold text-red-300">{value}</span>
+        ),
+      },
+      {
+        title: t("rules.sections.buffs.tableHeaders.impact"),
+        dataIndex: "impact",
+        key: "impact",
+      },
+    ],
+    [t]
+  );
+
+  const tableClassName =
+    "rounded-xl border border-gray-700 bg-gray-950/60 [&_.ant-table]:!bg-transparent [&_.ant-table-thead>tr>th]:!border-b-gray-700 [&_.ant-table-thead>tr>th]:!bg-transparent [&_.ant-table-thead>tr>th]:!text-gray-300 [&_.ant-table-tbody>tr>td]:!border-b-gray-800 [&_.ant-table-tbody>tr>td]:!bg-transparent [&_.ant-table-tbody>tr>td]:!text-gray-300";
+
   return (
     <div className="w-full space-y-5">
       <header className="rounded-2xl border border-gray-800 bg-gray-900/70 p-5 backdrop-blur-sm">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             {isModal ? (
-              <span className="rounded-lg border border-gray-700 px-3 py-1 text-xs font-semibold text-gray-300">
+              <RogueTag className="rounded-lg border border-gray-700 px-3 py-1 text-xs font-semibold text-gray-300">
                 {t("rules.quickGuide")}
-              </span>
+              </RogueTag>
             ) : (
-              <Link
-                href="/"
-                className="rounded-lg border border-gray-700 px-3 py-1 text-xs font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
+              <RogueButton
+                onClick={() => router.push("/")}
+                className="!rounded-lg !border !border-gray-700 !bg-transparent !px-3 !py-1 !text-xs !font-semibold !text-gray-300 hover:!border-gray-500 hover:!text-white"
               >
                 {"<-"} {t("rules.back")}
-              </Link>
+              </RogueButton>
             )}
           </div>
 
           {isModal && onClose && (
-            <button
+            <RogueButton
               onClick={onClose}
-              className="rounded-lg border border-gray-700 px-3 py-1 text-xs font-semibold text-gray-300 transition hover:border-gray-500 hover:text-white"
-              type="button"
+              className="!rounded-lg !border !border-gray-700 !bg-transparent !px-3 !py-1 !text-xs !font-semibold !text-gray-300 hover:!border-gray-500 hover:!text-white"
             >
               {t("rules.close")}
-            </button>
+            </RogueButton>
           )}
         </div>
 
@@ -176,39 +300,13 @@ export function RulesContent({ mode = "page", onClose }: RulesContentProps) {
             </ul>
 
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[420px] border-collapse text-left text-sm">
-                <thead>
-                  <tr className="border-b border-gray-700 text-gray-300">
-                    <th className="py-2 pr-3">
-                      {t("rules.sections.ink.tableHeaders.power")}
-                    </th>
-                    <th className="py-2 pr-3">
-                      {t("rules.sections.ink.tableHeaders.cost")}
-                    </th>
-                    <th className="py-2">
-                      {t("rules.sections.ink.tableHeaders.effect")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-300">
-                  {inkRows.map((row, index) => (
-                    <tr
-                      key={`ink-row-${index}`}
-                      className={
-                        index < inkRows.length - 1
-                          ? "border-b border-gray-800"
-                          : ""
-                      }
-                    >
-                      <td className="py-2 pr-3 font-semibold text-blue-300">
-                        {row.power}
-                      </td>
-                      <td className="py-2 pr-3">{row.cost}</td>
-                      <td className="py-2">{row.effect}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <RogueTable<InkTableRow>
+                dataSource={inkTableData}
+                columns={inkColumns}
+                pagination={false}
+                size="small"
+                className={tableClassName}
+              />
             </div>
           </div>
         </RuleBlock>
@@ -219,39 +317,13 @@ export function RulesContent({ mode = "page", onClose }: RulesContentProps) {
           emoji={t("rules.sections.rooms.emoji")}
         >
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[560px] border-collapse text-left text-sm">
-              <thead>
-                <tr className="border-b border-gray-700 text-gray-300">
-                  <th className="py-2 pr-3">
-                    {t("rules.sections.rooms.tableHeaders.room")}
-                  </th>
-                  <th className="py-2 pr-3">
-                    {t("rules.sections.rooms.tableHeaders.content")}
-                  </th>
-                  <th className="py-2">
-                    {t("rules.sections.rooms.tableHeaders.reward")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-300">
-                {roomRows.map((row, index) => (
-                  <tr
-                    key={`room-row-${index}`}
-                    className={
-                      index < roomRows.length - 1
-                        ? "border-b border-gray-800"
-                        : ""
-                    }
-                  >
-                    <td className="py-2 pr-3 font-semibold text-gray-200">
-                      {row.room}
-                    </td>
-                    <td className="py-2 pr-3">{row.content}</td>
-                    <td className="py-2">{row.reward}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <RogueTable<RoomTableRow>
+              dataSource={roomTableData}
+              columns={roomColumns}
+              pagination={false}
+              size="small"
+              className={tableClassName}
+            />
           </div>
         </RuleBlock>
 
@@ -261,35 +333,13 @@ export function RulesContent({ mode = "page", onClose }: RulesContentProps) {
           emoji={t("rules.sections.buffs.emoji")}
         >
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[520px] border-collapse text-left text-sm">
-              <thead>
-                <tr className="border-b border-gray-700 text-gray-300">
-                  <th className="py-2 pr-3">
-                    {t("rules.sections.buffs.tableHeaders.effect")}
-                  </th>
-                  <th className="py-2">
-                    {t("rules.sections.buffs.tableHeaders.impact")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-300">
-                {buffRows.map((row, index) => (
-                  <tr
-                    key={`buff-row-${index}`}
-                    className={
-                      index < buffRows.length - 1
-                        ? "border-b border-gray-800"
-                        : ""
-                    }
-                  >
-                    <td className="py-2 pr-3 font-semibold text-red-300">
-                      {row.effect}
-                    </td>
-                    <td className="py-2">{row.impact}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <RogueTable<BuffTableRow>
+              dataSource={buffTableData}
+              columns={buffColumns}
+              pagination={false}
+              size="small"
+              className={tableClassName}
+            />
           </div>
         </RuleBlock>
 
@@ -325,19 +375,24 @@ function RuleBlock({
   defaultOpen = false,
 }: RuleBlockProps) {
   return (
-    <details
-      open={defaultOpen}
-      className="group rounded-2xl border border-gray-800 bg-gray-900/60 p-4 backdrop-blur-sm"
-    >
-      <summary className="cursor-pointer select-none list-none">
-        <div className="flex items-center gap-3">
-          <span className="text-lg">{emoji}</span>
-          <h2 className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-lg font-bold text-transparent sm:text-xl">
-            {number}. {title}
-          </h2>
-        </div>
-      </summary>
-      <div className="mt-4">{children}</div>
-    </details>
+    <RogueCollapse
+      bordered={false}
+      defaultActiveKey={defaultOpen ? [number] : []}
+      items={[
+        {
+          key: number,
+          label: (
+            <div className="flex items-center gap-3">
+              <span className="text-lg">{emoji}</span>
+              <h2 className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-lg font-bold text-transparent sm:text-xl">
+                {number}. {title}
+              </h2>
+            </div>
+          ),
+          children: <div className="mt-2">{children}</div>,
+        },
+      ]}
+      className="rounded-2xl border border-gray-800 bg-gray-900/60 backdrop-blur-sm [&_.ant-collapse-content-box]:!px-4 [&_.ant-collapse-content-box]:!pb-4 [&_.ant-collapse-content-box]:!pt-0 [&_.ant-collapse-header]:!px-4 [&_.ant-collapse-header]:!py-4"
+    />
   );
 }

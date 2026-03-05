@@ -2,6 +2,11 @@ import * as React from "react";
 import { cn } from "@/lib/utils/cn";
 
 /**
+ * @deprecated Use wrappers from "@/components/ui/rogue" (RogueCard).
+ * This file is kept only for backward compatibility during migration.
+ */
+
+/**
  * Card Component
  *
  * A container component for grouping related content

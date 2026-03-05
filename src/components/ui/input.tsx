@@ -1,6 +1,11 @@
 import * as React from "react";
 import { cn } from "@/lib/utils/cn";
 
+/**
+ * @deprecated Use wrappers from "@/components/ui/rogue" (RogueInput).
+ * This file is kept only for backward compatibility during migration.
+ */
+
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
   label?: string;

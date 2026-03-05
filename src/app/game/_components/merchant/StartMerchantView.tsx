@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { RogueButton, RogueTag } from "@/components/ui/rogue";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { AllyDefinition } from "@/game/schemas/entities";
 import type { RunState } from "@/game/schemas/run-state";
@@ -152,17 +153,21 @@ export function StartMerchantView({
 
       <div className="flex flex-wrap justify-center gap-2">
         {resources.length === 0 && (
-          <span className="rounded border border-slate-700 bg-slate-900/70 px-3 py-1 text-xs text-slate-300">
+          <RogueTag
+            bordered={false}
+            className="rounded border border-slate-700 bg-slate-900/70 px-3 py-1 text-xs text-slate-300"
+          >
             {t("startMerchant.noResources")}
-          </span>
+          </RogueTag>
         )}
         {resources.map(([resource, amount]) => (
-          <span
+          <RogueTag
             key={resource}
+            bordered={false}
             className="rounded border border-emerald-700/50 bg-emerald-950/60 px-2.5 py-1 text-xs font-semibold text-emerald-300"
           >
             {t(`reward.resources.${resource}`, resource)}: {amount}
-          </span>
+          </RogueTag>
         ))}
       </div>
 
@@ -171,23 +176,26 @@ export function StartMerchantView({
           const alreadyBought = purchased.has(offer.id);
           const affordable = canAfford(remaining, offer);
           return (
-            <button
+            <RogueButton
               key={offer.id}
-              type="button"
+              type="text"
               disabled={alreadyBought || !affordable}
               onClick={() => onBuy(offer)}
-              className="flex h-full flex-col gap-3 rounded-xl border border-emerald-800/40 bg-slate-900/85 p-5 text-left transition-all duration-200 enabled:hover:border-emerald-500/70 enabled:hover:bg-slate-800/90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="!flex !h-full !w-full !flex-col !items-start !justify-start !gap-3 !whitespace-normal !rounded-xl !border !border-emerald-800/40 !bg-slate-900/85 !p-5 !text-left transition-all duration-200 enabled:hover:!border-emerald-500/70 enabled:hover:!bg-slate-800/90 disabled:!cursor-not-allowed disabled:!opacity-50"
             >
-              <span className="w-fit rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
+              <RogueTag
+                bordered={false}
+                className="w-fit rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300"
+              >
                 {t(getOfferTypeLabel(offer.type))}
-              </span>
-              <h3 className="text-base font-bold text-emerald-100">
+              </RogueTag>
+              <h3 className="break-words text-base font-bold text-emerald-100">
                 {getOfferName(offer)}
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="break-words text-xs text-slate-400">
                 {getOfferDescription(offer)}
               </p>
-              <p className="text-xs text-slate-300">
+              <p className="break-words text-xs text-slate-300">
                 {t("startMerchant.cost")}:{" "}
                 {Object.entries(offer.cost)
                   .map(
@@ -203,18 +211,17 @@ export function StartMerchantView({
                     ? t("startMerchant.trade")
                     : t("startMerchant.insufficient")}
               </div>
-            </button>
+            </RogueButton>
           );
         })}
       </div>
 
-      <button
-        type="button"
-        className="rounded-lg bg-slate-700 px-8 py-2.5 font-medium text-white transition hover:bg-slate-600"
+      <RogueButton
+        className="!h-auto !rounded-lg !bg-slate-700 !px-8 !py-2.5 !font-medium !text-white transition hover:!bg-slate-600"
         onClick={onContinue}
       >
         {t("startMerchant.continue")}
-      </button>
+      </RogueButton>
     </div>
   );
 }

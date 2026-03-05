@@ -32,8 +32,10 @@ import {
 } from "@/game/engine/enemies";
 import { applyInkPower } from "@/game/engine/ink";
 import {
+  addRelicToRunState,
   applyRelicsOnCombatStart,
   applyRelicsOnCardPlayed,
+  getRelicExhaustKeepChance,
 } from "@/game/engine/relics";
 import { drawCards, exhaustCardFromHandForOverflow } from "@/game/engine/deck";
 import {
@@ -60,6 +62,8 @@ import {
   type StartMerchantOffer,
 } from "@/game/engine/merchant";
 import { applyUsableItem } from "@/game/engine/items";
+import { getCharacterById } from "@/game/data/characters";
+import { nanoid } from "nanoid";
 
 // ============================
 // Types
@@ -123,7 +127,8 @@ export type GameAction =
   | { type: "MARK_FREE_UPGRADE_USED" }
   | { type: "REMOVE_CARD_FROM_DECK"; payload: { cardInstanceId: string } }
   | { type: "APPLY_EVENT"; payload: { event: GameEvent; choiceIndex: number } }
-  | { type: "CHOOSE_BIOME"; payload: { biome: BiomeType } };
+  | { type: "CHOOSE_BIOME"; payload: { biome: BiomeType } }
+  | { type: "CHOOSE_CHARACTER"; payload: { characterId: string } };
 
 interface GameContextValue {
   state: RunState;
@@ -222,14 +227,21 @@ function createGameReducer(deps: ReducerDeps) {
           rng,
           {
             attackBonus: state.metaBonuses?.attackBonus ?? 0,
-            exhaustKeepChance: state.metaBonuses?.exhaustKeepChance ?? 0,
+            exhaustKeepChance:
+              (state.metaBonuses?.exhaustKeepChance ?? 0) +
+              getRelicExhaustKeepChance(state.relicIds),
           }
         );
         if (playedCardDef && state.relicIds.length > 0) {
           combat = applyRelicsOnCardPlayed(
             combat,
             state.relicIds,
-            playedCardDef.type
+            playedCardDef.type,
+            {
+              beforeState: state.combat,
+              targetId: action.payload.targetId,
+              rng,
+            }
           );
         }
         combat = checkCombatEnd(combat);
@@ -363,6 +375,52 @@ function createGameReducer(deps: ReducerDeps) {
         );
       }
 
+      case "CHOOSE_CHARACTER": {
+        const char = getCharacterById(action.payload.characterId);
+        const newDeck = char.starterDeckIds
+          .map((id) => cardDefs.get(id))
+          .filter((def): def is NonNullable<typeof def> => def != null)
+          .map((def) => ({
+            instanceId: nanoid(),
+            definitionId: def.id,
+            upgraded: false,
+          }));
+        if (state.metaBonuses?.startingRareCard) {
+          const rarePool = [...cardDefs.values()].filter(
+            (card) =>
+              card.rarity === "RARE" &&
+              !card.isStarterCard &&
+              card.isCollectible !== false
+          );
+          if (rarePool.length > 0) {
+            const rareCard = rng.pick(rarePool);
+            newDeck.push({
+              instanceId: nanoid(),
+              definitionId: rareCard.id,
+              upgraded: false,
+            });
+          }
+        }
+        // Rebuild difficulty levels from the per-character snapshot
+        const charDiffMax =
+          (
+            state.difficultyMaxByCharacter as Record<string, number> | undefined
+          )?.[char.id] ?? 0;
+        const charDiffLevels = Array.from(
+          { length: charDiffMax + 1 },
+          (_, idx) => idx
+        );
+        return {
+          ...state,
+          characterId: char.id,
+          deck: newDeck,
+          pendingCharacterChoices: null,
+          pendingDifficultyLevels: charDiffLevels,
+          selectedDifficultyLevel: null,
+          unlockedDifficultyLevelSnapshot: charDiffMax,
+        };
+      }
+
       case "CHOOSE_BIOME":
         return advanceFloor(state, action.payload.biome, rng, [
           ...cardDefs.values(),
@@ -444,10 +502,7 @@ function createGameReducer(deps: ReducerDeps) {
         );
 
       case "PICK_RELIC_REWARD":
-        return {
-          ...state,
-          relicIds: [...state.relicIds, action.payload.relicId],
-        };
+        return addRelicToRunState(state, action.payload.relicId);
 
       case "GAIN_MAX_HP":
         return {

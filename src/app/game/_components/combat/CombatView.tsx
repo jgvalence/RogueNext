@@ -33,7 +33,11 @@ import { Tooltip } from "../shared/Tooltip";
 import { HpBar } from "../shared/HpBar";
 import { buffMeta } from "../shared/buff-meta";
 // TEMPORARY: centralized asset registry Ã¢â‚¬â€ swap paths in src/lib/assets.ts when real art is ready
-import { COMBAT_BACKGROUNDS, PLAYER_AVATAR } from "@/lib/assets";
+import {
+  COMBAT_BACKGROUNDS,
+  PLAYER_AVATAR,
+  getEnemyImageSrc,
+} from "@/lib/assets";
 import { playSound } from "@/lib/sound";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { boostEffectsForUpgrade } from "@/game/engine/card-upgrades";
@@ -53,6 +57,7 @@ import {
   localizeUsableItemDescription,
   localizeUsableItemName,
 } from "@/lib/i18n/entity-text";
+import { RogueButton } from "@/components/ui/rogue";
 
 interface CombatViewProps {
   combat: CombatState;
@@ -165,8 +170,11 @@ export function CombatView({
   >(null);
   const [pendingInked, setPendingInked] = useState(false);
   const [openPile, setOpenPile] = useState<PileType | null>(null);
-  const [isSelectingRewriteTarget, setIsSelectingRewriteTarget] =
-    useState(false);
+  const [pendingDiscardTargetInkPower, setPendingDiscardTargetInkPower] =
+    useState<InkPowerType | null>(null);
+  const isSelectingRewriteTarget = pendingDiscardTargetInkPower !== null;
+  const [pendingEnemyTargetInkPower, setPendingEnemyTargetInkPower] =
+    useState<InkPowerType | null>(null);
   const [isSelectingCheatKillTarget, setIsSelectingCheatKillTarget] =
     useState(false);
   const [newlySummonedIds, setNewlySummonedIds] = useState<Set<string>>(
@@ -328,6 +336,18 @@ export function CombatView({
   const [bgFailed, setBgFailed] = useState(false);
   // TEMPORARY: track whether player avatar loaded
   const [avatarFailed, setAvatarFailed] = useState(false);
+  // TEMPORARY: track enemy arts that failed to avoid repeated broken requests
+  const [enemyArtFailures, setEnemyArtFailures] = useState<Set<string>>(
+    new Set()
+  );
+  const markEnemyArtFailure = useCallback((definitionId: string) => {
+    setEnemyArtFailures((prev) => {
+      if (prev.has(definitionId)) return prev;
+      const next = new Set(prev);
+      next.add(definitionId);
+      return next;
+    });
+  }, []);
 
   const selectedCard = selectedCardId
     ? combat.hand.find((c) => c.instanceId === selectedCardId)
@@ -445,6 +465,11 @@ export function CombatView({
         setIsSelectingCheatKillTarget(false);
         return;
       }
+      if (pendingEnemyTargetInkPower) {
+        onUseInkPower(pendingEnemyTargetInkPower, enemyInstanceId);
+        setPendingEnemyTargetInkPower(null);
+        return;
+      }
 
       if (selectedCardId && selectingEnemyTarget) {
         triggerCardPlay(selectedCardId, enemyInstanceId, pendingInked);
@@ -459,6 +484,8 @@ export function CombatView({
     [
       isSelectingCheatKillTarget,
       onCheatKillEnemy,
+      pendingEnemyTargetInkPower,
+      onUseInkPower,
       selectedCardId,
       selectingEnemyTarget,
       pendingInked,
@@ -474,6 +501,7 @@ export function CombatView({
     (enemyInstanceId: string) => {
       const shouldTarget =
         isSelectingCheatKillTarget ||
+        pendingEnemyTargetInkPower !== null ||
         (selectedCardId && selectingEnemyTarget) ||
         (selectedUsableItemId && needsItemEnemyTarget);
       if (shouldTarget) {
@@ -484,6 +512,7 @@ export function CombatView({
     },
     [
       isSelectingCheatKillTarget,
+      pendingEnemyTargetInkPower,
       selectedCardId,
       selectingEnemyTarget,
       selectedUsableItemId,
@@ -553,6 +582,8 @@ export function CombatView({
         setSelectedCardId(instanceId);
         setSelectedUsableItemId(null);
         setPendingInked(useInked);
+        setPendingEnemyTargetInkPower(null);
+        setPendingDiscardTargetInkPower(null);
         return;
       }
 
@@ -584,6 +615,8 @@ export function CombatView({
 
       setSelectedCardId(null);
       setPendingInked(false);
+      setPendingEnemyTargetInkPower(null);
+      setPendingDiscardTargetInkPower(null);
 
       if (def.targeting === "SINGLE_ENEMY") {
         setSelectedUsableItemId(itemInstanceId);
@@ -643,13 +676,23 @@ export function CombatView({
   const handleUseInkPower = useCallback(
     (power: InkPowerType) => {
       if (!canAct) return;
-      if (power === "REWRITE") {
+      if (power === "REWRITE" || power === "INDEX") {
         setIsSelectingCheatKillTarget(false);
-        setIsSelectingRewriteTarget(true);
+        setPendingEnemyTargetInkPower(null);
+        setPendingDiscardTargetInkPower(power);
         setOpenPile("discard");
         return;
       }
+      if (power === "SILENCE") {
+        setIsSelectingCheatKillTarget(false);
+        setPendingDiscardTargetInkPower(null);
+        setOpenPile(null);
+        setPendingEnemyTargetInkPower(power);
+        return;
+      }
 
+      setPendingDiscardTargetInkPower(null);
+      setPendingEnemyTargetInkPower(null);
       onUseInkPower(power, null);
     },
     [onUseInkPower, canAct]
@@ -657,25 +700,33 @@ export function CombatView({
 
   const closePileOverlay = useCallback(() => {
     setOpenPile(null);
-    setIsSelectingRewriteTarget(false);
+    setPendingDiscardTargetInkPower(null);
+    setPendingEnemyTargetInkPower(null);
     setIsSelectingCheatKillTarget(false);
   }, []);
 
   const handleGlobalClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      if (!selectedCardId && !selectedUsableItemId) return;
+      if (
+        !selectedCardId &&
+        !selectedUsableItemId &&
+        !pendingEnemyTargetInkPower
+      ) {
+        return;
+      }
       const target = event.target as HTMLElement;
       if (target.closest('[data-keep-selection="true"]')) return;
       setSelectedCardId(null);
       setSelectedUsableItemId(null);
       setPendingInked(false);
+      setPendingEnemyTargetInkPower(null);
     },
-    [selectedCardId, selectedUsableItemId]
+    [selectedCardId, selectedUsableItemId, pendingEnemyTargetInkPower]
   );
 
   return (
     <div
-      className="relative flex h-full min-h-0 flex-col overflow-hidden"
+      className="relative flex h-full min-h-0 flex-col overflow-y-auto overflow-x-hidden lg:overflow-hidden"
       onClick={handleGlobalClick}
     >
       {/* Ã¢â€â‚¬Ã¢â€â‚¬ BATTLEFIELD Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */}
@@ -1202,6 +1253,8 @@ export function CombatView({
               const isCheatSelectable =
                 isSelectingCheatKillTarget && enemy.currentHp > 0;
               const isActing = actingEnemyId === enemy.instanceId;
+              const enemyArtSrc = getEnemyImageSrc(enemy.definitionId);
+              const enemyArtFailed = enemyArtFailures.has(enemy.definitionId);
 
               return (
                 <Tooltip
@@ -1284,6 +1337,22 @@ export function CombatView({
                       {renderCompactBuffs(enemy.buffs)}
                     </div>
                     <div className="mb-1 flex h-14 items-center justify-center overflow-hidden rounded-lg border border-rose-900/60 bg-slate-900 sm:h-16 lg:h-28">
+                      {!enemyArtFailed ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={enemyArtSrc}
+                            alt={getEnemyDisplayName(enemy)}
+                            className="h-full w-full object-cover object-top"
+                            onError={() =>
+                              markEnemyArtFailure(enemy.definitionId)
+                            }
+                          />
+                          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-900/15 to-transparent" />
+                        </>
+                      ) : (
+                        <span className="text-2xl text-rose-200">*</span>
+                      )}
                       <span className="absolute left-2 top-1 text-[9px] font-bold uppercase tracking-wider text-amber-300/90">
                         {hideIntent
                           ? "???"
@@ -1294,7 +1363,6 @@ export function CombatView({
                               )
                             : "-"}
                       </span>
-                      <span className="text-2xl text-rose-200">*</span>
                     </div>
                     <p className="truncate text-[11px] font-bold text-rose-100 lg:text-xs">
                       {getEnemyDisplayName(enemy)}
@@ -1371,6 +1439,17 @@ export function CombatView({
             </span>
           </div>
         )}
+        {pendingEnemyTargetInkPower && (
+          <div className="relative z-10 hidden animate-bounce pb-1 text-xs font-semibold text-cyan-300 lg:block lg:text-sm">
+            {t("combat.chooseEnemyFor")}{" "}
+            <span className="text-white">
+              {t(
+                `inkGauge.powers.${pendingEnemyTargetInkPower}.label`,
+                pendingEnemyTargetInkPower
+              )}
+            </span>
+          </div>
+        )}
         {isSelectingCheatKillTarget && (
           <div className="relative z-10 hidden animate-bounce pb-1 text-xs font-semibold text-rose-300 lg:block lg:text-sm">
             {t("combat.devChooseEnemy")}
@@ -1388,10 +1467,10 @@ export function CombatView({
                   {combat.player.energyCurrent}
                 </div>
 
-                <button
-                  className="h-8 min-w-[48px] rounded-md border border-cyan-700/60 bg-cyan-950/40 px-1 text-left"
+                <RogueButton
+                  type="text"
+                  className="!h-8 !min-w-[48px] !rounded-md !border !border-cyan-700/60 !bg-cyan-950/40 !px-1 !text-left"
                   onClick={() => setMobileInkPanelOpen(true)}
-                  type="button"
                 >
                   <p className="text-[7px] font-semibold uppercase tracking-wide text-cyan-300/90">
                     {t("inkGauge.ink")}
@@ -1399,16 +1478,17 @@ export function CombatView({
                   <p className="text-[10px] font-black text-cyan-100">
                     {combat.player.inkCurrent}
                   </p>
-                </button>
+                </RogueButton>
 
-                <button
-                  className="h-8 min-w-[52px] rounded-md border border-slate-500/70 bg-slate-800 px-1 text-left"
+                <RogueButton
+                  type="text"
+                  className="!h-8 !min-w-[52px] !rounded-md !border !border-slate-500/70 !bg-slate-800 !px-1 !text-left"
                   onClick={() => {
                     setIsSelectingCheatKillTarget(false);
-                    setIsSelectingRewriteTarget(false);
+                    setPendingDiscardTargetInkPower(null);
+                    setPendingEnemyTargetInkPower(null);
                     setOpenPile("draw");
                   }}
-                  type="button"
                 >
                   <p className="text-[7px] font-semibold uppercase tracking-wide text-slate-400">
                     {t("combat.draw")}
@@ -1416,16 +1496,17 @@ export function CombatView({
                   <p className="text-[10px] font-black text-slate-100">
                     {combat.drawPile.length}
                   </p>
-                </button>
+                </RogueButton>
 
-                <button
-                  className="h-8 min-w-[52px] rounded-md border border-red-700/60 bg-slate-800 px-1 text-left"
+                <RogueButton
+                  type="text"
+                  className="!h-8 !min-w-[52px] !rounded-md !border !border-red-700/60 !bg-slate-800 !px-1 !text-left"
                   onClick={() => {
                     setIsSelectingCheatKillTarget(false);
-                    setIsSelectingRewriteTarget(false);
+                    setPendingDiscardTargetInkPower(null);
+                    setPendingEnemyTargetInkPower(null);
                     setOpenPile("discard");
                   }}
-                  type="button"
                 >
                   <p className="text-[7px] font-semibold uppercase tracking-wide text-red-400/80">
                     {t("combat.discard")}
@@ -1433,20 +1514,21 @@ export function CombatView({
                   <p className="text-[10px] font-black text-slate-100">
                     {combat.discardPile.length}
                   </p>
-                </button>
+                </RogueButton>
 
                 {combat.exhaustPile.length > 0 && (
-                  <button
-                    className="h-8 min-w-[42px] rounded-md border border-purple-700/60 bg-slate-800 px-1 text-[8px] font-semibold text-purple-300"
+                  <RogueButton
+                    type="text"
+                    className="!h-8 !min-w-[42px] !rounded-md !border !border-purple-700/60 !bg-slate-800 !px-1 !text-[8px] !font-semibold !text-purple-300"
                     onClick={() => {
                       setIsSelectingCheatKillTarget(false);
-                      setIsSelectingRewriteTarget(false);
+                      setPendingDiscardTargetInkPower(null);
+                      setPendingEnemyTargetInkPower(null);
                       setOpenPile("exhaust");
                     }}
-                    type="button"
                   >
                     {t("combat.exhaust")} {combat.exhaustPile.length}
-                  </button>
+                  </RogueButton>
                 )}
 
                 {usableItems.length === 0 ? (
@@ -1459,37 +1541,37 @@ export function CombatView({
                     if (!def) return null;
                     const isSelected = selectedUsableItemId === item.instanceId;
                     return (
-                      <button
+                      <RogueButton
                         key={item.instanceId}
-                        type="button"
+                        type="text"
                         onClick={() => handleUseItemClick(item.instanceId)}
                         className={cn(
-                          "h-8 shrink-0 rounded-md border px-1.5 text-[8px] font-semibold uppercase tracking-wide transition",
+                          "!h-8 !shrink-0 !rounded-md !border !px-1.5 !text-[8px] !font-semibold !uppercase !tracking-wide !transition",
                           isSelected
-                            ? "border-amber-300 bg-amber-700/50 text-amber-50"
-                            : "border-amber-700/70 bg-slate-900/80 text-amber-200",
-                          !canAct && "cursor-not-allowed opacity-50"
+                            ? "!border-amber-300 !bg-amber-700/50 !text-amber-50"
+                            : "!border-amber-700/70 !bg-slate-900/80 !text-amber-200",
+                          !canAct && "!cursor-not-allowed !opacity-50"
                         )}
                         disabled={!canAct}
                       >
                         {localizeUsableItemName(def.id, def.name)}
-                      </button>
+                      </RogueButton>
                     );
                   })
                 )}
               </div>
               {/* Fin du tour — ancré à droite, hors du scroll */}
-              <button
-                type="button"
+              <RogueButton
+                type="text"
                 className={cn(
-                  "h-8 flex-shrink-0 rounded-lg px-2.5 text-[10px] font-black uppercase tracking-wide transition-all",
+                  "!h-8 !flex-shrink-0 !rounded-lg !px-2.5 !text-[10px] !font-black !uppercase !tracking-wide !transition-all",
                   endTurnClass
                 )}
                 disabled={!canAct}
                 onClick={onEndTurn}
               >
                 {t("combat.endTurn")}
-              </button>
+              </RogueButton>
             </div>
           </div>
 
@@ -1525,7 +1607,8 @@ export function CombatView({
                 )}
                 onClick={() => {
                   setIsSelectingCheatKillTarget(false);
-                  setIsSelectingRewriteTarget(false);
+                  setPendingDiscardTargetInkPower(null);
+                  setPendingEnemyTargetInkPower(null);
                   setOpenPile("draw");
                 }}
                 type="button"
@@ -1587,20 +1670,20 @@ export function CombatView({
                             def.description
                           )}
                         >
-                          <button
-                            type="button"
+                          <RogueButton
+                            type="text"
                             onClick={() => handleUseItemClick(item.instanceId)}
                             className={cn(
-                              "h-9 min-w-24 rounded-lg border px-2 text-[9px] font-semibold uppercase tracking-wide transition",
+                              "!h-9 !min-w-24 !rounded-lg !border !px-2 !text-[9px] !font-semibold !uppercase !tracking-wide !transition",
                               isSelected
-                                ? "border-amber-300 bg-amber-700/50 text-amber-50"
-                                : "border-amber-700/70 bg-slate-900/80 text-amber-200 hover:border-amber-400 hover:bg-amber-950/60",
-                              !canAct && "cursor-not-allowed opacity-50"
+                                ? "!border-amber-300 !bg-amber-700/50 !text-amber-50"
+                                : "!border-amber-700/70 !bg-slate-900/80 !text-amber-200 hover:!border-amber-400 hover:!bg-amber-950/60",
+                              !canAct && "!cursor-not-allowed !opacity-50"
                             )}
                             disabled={!canAct}
                           >
                             {localizeUsableItemName(def.id, def.name)}
-                          </button>
+                          </RogueButton>
                         </Tooltip>
                       );
                     })
@@ -1608,16 +1691,17 @@ export function CombatView({
                 </div>
               </div>
 
-              <button
+              <RogueButton
+                type="text"
                 className={cn(
-                  "h-12 rounded-lg px-3 py-2 text-[10px] font-black uppercase tracking-wide transition-all lg:text-sm",
+                  "!h-12 !rounded-lg !px-3 !py-2 !text-[10px] !font-black !uppercase !tracking-wide !transition-all lg:!text-sm",
                   endTurnClass
                 )}
                 disabled={!canAct}
                 onClick={onEndTurn}
               >
                 {t("combat.endTurn")}
-              </button>
+              </RogueButton>
 
               <button
                 ref={discardBtnRef}
@@ -1631,7 +1715,8 @@ export function CombatView({
                 )}
                 onClick={() => {
                   setIsSelectingCheatKillTarget(false);
-                  setIsSelectingRewriteTarget(false);
+                  setPendingDiscardTargetInkPower(null);
+                  setPendingEnemyTargetInkPower(null);
                   setOpenPile("discard");
                 }}
                 type="button"
@@ -1645,17 +1730,18 @@ export function CombatView({
               </button>
 
               {combat.exhaustPile.length > 0 && (
-                <button
+                <RogueButton
+                  type="text"
                   style={{
                     boxShadow: "2px 2px 0 1px #4c1d95, 4px 4px 0 1px #2e1065",
                   }}
-                  className="flex h-12 flex-col items-center justify-center gap-0.5 rounded-lg border border-purple-700/60 bg-slate-800 transition hover:border-purple-400"
+                  className="!flex !h-12 !flex-col !items-center !justify-center !gap-0.5 !rounded-lg !border !border-purple-700/60 !bg-slate-800 !transition hover:!border-purple-400"
                   onClick={() => {
                     setIsSelectingCheatKillTarget(false);
-                    setIsSelectingRewriteTarget(false);
+                    setPendingDiscardTargetInkPower(null);
+                    setPendingEnemyTargetInkPower(null);
                     setOpenPile("exhaust");
                   }}
-                  type="button"
                 >
                   <span className="text-[9px] font-semibold uppercase tracking-wider text-purple-400/80">
                     Epuise
@@ -1663,30 +1749,31 @@ export function CombatView({
                   <span className="text-xl font-black text-slate-100">
                     {combat.exhaustPile.length}
                   </span>
-                </button>
+                </RogueButton>
               )}
 
               {onCheatKillEnemy && (
-                <button
+                <RogueButton
+                  type="text"
                   className={cn(
-                    "rounded-lg border px-2 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-all lg:px-3 lg:py-2 lg:text-xs",
+                    "!h-auto !rounded-lg !border !px-2 !py-1.5 !text-[10px] !font-bold !uppercase !tracking-wide !transition-all lg:!px-3 lg:!py-2 lg:!text-xs",
                     isSelectingCheatKillTarget
-                      ? "border-rose-500 bg-rose-900/60 text-rose-200"
-                      : "border-rose-700 bg-rose-950/60 text-rose-300 hover:border-rose-500"
+                      ? "!border-rose-500 !bg-rose-900/60 !text-rose-200"
+                      : "!border-rose-700 !bg-rose-950/60 !text-rose-300 hover:!border-rose-500"
                   )}
                   onClick={() => {
-                    setIsSelectingRewriteTarget(false);
+                    setPendingDiscardTargetInkPower(null);
+                    setPendingEnemyTargetInkPower(null);
                     setOpenPile(null);
                     setSelectedCardId(null);
                     setPendingInked(false);
                     setIsSelectingCheatKillTarget((v) => !v);
                   }}
-                  type="button"
                 >
                   {isSelectingCheatKillTarget
                     ? t("combat.cancelKill")
                     : t("combat.devKill")}
-                </button>
+                </RogueButton>
               )}
             </div>
           </div>
@@ -1841,26 +1928,26 @@ export function CombatView({
                     {/* Buttons */}
                     <div className="flex gap-2.5 px-5 pb-8 pt-2">
                       {canTargetNow && (
-                        <button
-                          type="button"
+                        <RogueButton
+                          type="primary"
                           data-keep-selection="true"
-                          className="flex-1 rounded-2xl border border-red-400/30 bg-gradient-to-r from-red-700 to-rose-600 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-[0_0_18px_rgba(239,68,68,0.35)]"
+                          className="!h-auto !flex-1 !rounded-2xl !border !border-red-400/30 !bg-gradient-to-r !from-red-700 !to-rose-600 !py-3.5 !text-sm !font-black !uppercase !tracking-wide !text-white !shadow-[0_0_18px_rgba(239,68,68,0.35)]"
                           onClick={() => {
                             handleEnemyClick(enemy.instanceId);
                             setMobileInfoPanel(null);
                           }}
                         >
                           {t("combat.chooseTargetCta")}
-                        </button>
+                        </RogueButton>
                       )}
-                      <button
-                        type="button"
+                      <RogueButton
+                        type="text"
                         data-keep-selection="true"
-                        className="flex-1 rounded-2xl border border-slate-700 bg-slate-800 py-3.5 text-sm font-semibold text-slate-300"
+                        className="!h-auto !flex-1 !rounded-2xl !border !border-slate-700 !bg-slate-800 !py-3.5 !text-sm !font-semibold !text-slate-300"
                         onClick={() => setMobileInfoPanel(null)}
                       >
                         {t("common.close")}
-                      </button>
+                      </RogueButton>
                     </div>
                   </>
                 );
@@ -1964,14 +2051,14 @@ export function CombatView({
                     </div>
 
                     <div className="px-5 pb-8 pt-2">
-                      <button
-                        type="button"
+                      <RogueButton
+                        type="text"
                         data-keep-selection="true"
-                        className="w-full rounded-2xl border border-slate-700 bg-slate-800 py-3.5 text-sm font-semibold text-slate-300"
+                        className="!h-auto !w-full !rounded-2xl !border !border-slate-700 !bg-slate-800 !py-3.5 !text-sm !font-semibold !text-slate-300"
                         onClick={() => setMobileInfoPanel(null)}
                       >
                         {t("common.close")}
-                      </button>
+                      </RogueButton>
                     </div>
                   </>
                 );
@@ -2071,26 +2158,26 @@ export function CombatView({
 
                     <div className="flex gap-2.5 px-5 pb-8 pt-2">
                       {canTargetAlly && (
-                        <button
-                          type="button"
+                        <RogueButton
+                          type="primary"
                           data-keep-selection="true"
-                          className="flex-1 rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-700 to-teal-600 py-3.5 text-sm font-black uppercase tracking-wide text-white shadow-[0_0_18px_rgba(6,182,212,0.35)]"
+                          className="!h-auto !flex-1 !rounded-2xl !border !border-cyan-400/30 !bg-gradient-to-r !from-cyan-700 !to-teal-600 !py-3.5 !text-sm !font-black !uppercase !tracking-wide !text-white !shadow-[0_0_18px_rgba(6,182,212,0.35)]"
                           onClick={() => {
                             handleAllyClick(ally.instanceId);
                             setMobileInfoPanel(null);
                           }}
                         >
                           {t("combat.chooseTargetCta")}
-                        </button>
+                        </RogueButton>
                       )}
-                      <button
-                        type="button"
+                      <RogueButton
+                        type="text"
                         data-keep-selection="true"
-                        className="flex-1 rounded-2xl border border-slate-700 bg-slate-800 py-3.5 text-sm font-semibold text-slate-300"
+                        className="!h-auto !flex-1 !rounded-2xl !border !border-slate-700 !bg-slate-800 !py-3.5 !text-sm !font-semibold !text-slate-300"
                         onClick={() => setMobileInfoPanel(null)}
                       >
                         {t("common.close")}
-                      </button>
+                      </RogueButton>
                     </div>
                   </>
                 );
@@ -2119,14 +2206,14 @@ export function CombatView({
               }}
               unlockedPowers={unlockedInkPowers}
             />
-            <button
-              type="button"
+            <RogueButton
+              type="text"
               data-keep-selection="true"
-              className="mt-2 w-full rounded border border-slate-600 px-2 py-1.5 text-xs font-semibold text-slate-200"
+              className="!mt-2 !h-auto !w-full !rounded !border !border-slate-600 !px-2 !py-1.5 !text-xs !font-semibold !text-slate-200 hover:!border-slate-400"
               onClick={() => setMobileInkPanelOpen(false)}
             >
               {t("common.close")}
-            </button>
+            </RogueButton>
           </div>
         </div>
       )}
@@ -2206,13 +2293,13 @@ export function CombatView({
                   </p>
                 )}
               </div>
-              <button
-                className="rounded border border-slate-600 px-2 py-1 text-xs text-slate-300 hover:border-slate-400"
+              <RogueButton
+                type="text"
+                className="!h-auto !rounded !border !border-slate-600 !px-2 !py-1 !text-xs !text-slate-300 hover:!border-slate-400"
                 onClick={closePileOverlay}
-                type="button"
               >
                 {t("common.close")}
-              </button>
+              </RogueButton>
             </div>
 
             {pileCards.length === 0 ? (
@@ -2234,7 +2321,11 @@ export function CombatView({
                           type="button"
                           className="rounded"
                           onClick={() => {
-                            onUseInkPower("REWRITE", card.instanceId);
+                            if (!pendingDiscardTargetInkPower) return;
+                            onUseInkPower(
+                              pendingDiscardTargetInkPower,
+                              card.instanceId
+                            );
                             closePileOverlay();
                           }}
                         >

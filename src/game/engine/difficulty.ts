@@ -1,5 +1,6 @@
 import type { CardDefinition } from "../schemas/cards";
-import type { RelicDefinitionData } from "../data/relics";
+import { relicDefinitions, type RelicDefinitionData } from "../data/relics";
+import { RELIC_UNLOCK_REQUIREMENTS_FROM_DOC } from "../data/relic-unlocks";
 import { GAME_CONSTANTS } from "../constants";
 
 export const MAX_RUN_DIFFICULTY_LEVEL = 5;
@@ -7,43 +8,54 @@ const DIFFICULTY_UNLOCK_KEY = "__RUN_DIFFICULTY_UNLOCKED_MAX";
 const BEST_GOLD_SINGLE_RUN_KEY = "__RUN_BEST_GOLD_SINGLE";
 const BEST_INFINITE_FLOOR_KEY = "__RUN_INFINITE_BEST_FLOOR";
 
+function difficultyUnlockKeyForCharacter(characterId: string): string {
+  return `${DIFFICULTY_UNLOCK_KEY}_${characterId}`;
+}
+
+/**
+ * Retourne le max de difficulté débloqué pour un personnage donné.
+ * Migration douce : le Scribe hérite aussi de l'ancienne clé globale.
+ */
+export function getUnlockedMaxDifficultyForCharacter(
+  resources: Record<string, number>,
+  characterId: string
+): number {
+  const charMax = resources[difficultyUnlockKeyForCharacter(characterId)] ?? 0;
+  // Soft migration : le Scribe hérite de la clé globale pré-système de personnages
+  const legacyMax =
+    characterId === "scribe" ? (resources[DIFFICULTY_UNLOCK_KEY] ?? 0) : 0;
+  return clampDifficulty(Math.max(charMax, legacyMax));
+}
+
+/**
+ * Retourne la liste des niveaux de difficulté débloqués pour un personnage.
+ */
+export function getUnlockedDifficultyLevelsForCharacter(
+  resources: Record<string, number>,
+  characterId: string
+): number[] {
+  const maxUnlocked = getUnlockedMaxDifficultyForCharacter(
+    resources,
+    characterId
+  );
+  return Array.from({ length: maxUnlocked + 1 }, (_, idx) => idx);
+}
+
 interface RelicUnlockRequirement {
   totalRuns?: number;
   wonRuns?: number;
   winsByDifficulty?: Record<string, number>;
   bestGoldInSingleRun?: number;
+  enemyKills?: {
+    enemyId: string;
+    count: number;
+  };
 }
 
-const RELIC_UNLOCK_REQUIREMENTS: Record<string, RelicUnlockRequirement> = {
-  // Win progression gate: requires at least 1 win on difficulty 1 and 2 total wins.
-  vital_flask: {
-    wonRuns: 2,
-    winsByDifficulty: { "1": 1 },
-  },
-  // Late-game unlock: requires one win on difficulty 3 and 5 total wins.
-  menders_charm: {
-    wonRuns: 5,
-    winsByDifficulty: { "3": 1 },
-  },
-  // Economy milestone: reach a high gold amount in a single run.
-  gilded_ledger: {
-    bestGoldInSingleRun: 250,
-  },
-  // Mechanical unlock: asks for at least one victory on difficulty 2.
-  plague_carillon: {
-    wonRuns: 3,
-    winsByDifficulty: { "2": 1 },
-  },
-  // Sustained progression unlock.
-  phoenix_ash: {
-    totalRuns: 8,
-    wonRuns: 4,
-  },
-  // Mid-progression utility unlock.
-  ink_spindle: {
-    totalRuns: 6,
-  },
-};
+type EnemyKillRequirement = NonNullable<RelicUnlockRequirement["enemyKills"]>;
+
+const RELIC_UNLOCK_REQUIREMENTS: Record<string, RelicUnlockRequirement> =
+  RELIC_UNLOCK_REQUIREMENTS_FROM_DOC;
 
 export interface RelicUnlockProgress {
   totalRuns: number;
@@ -51,6 +63,55 @@ export interface RelicUnlockProgress {
   unlockedDifficultyMax: number;
   winsByDifficulty?: Record<string, number>;
   bestGoldInSingleRun?: number;
+  enemyKillCounts?: Record<string, number>;
+}
+
+function getRelicUnlockRequirement(
+  relicId: string
+): RelicUnlockRequirement | undefined {
+  const base = RELIC_UNLOCK_REQUIREMENTS[relicId];
+  if (base) return base;
+
+  const sourceBossId = relicDefinitions.find(
+    (r) => r.id === relicId
+  )?.sourceBossId;
+
+  if (!sourceBossId) return undefined;
+
+  return {
+    enemyKills: {
+      enemyId: sourceBossId,
+      count: 3,
+    },
+  };
+}
+
+export function getEnemyKillRequirementForRelic(
+  relicId: string
+): EnemyKillRequirement | null {
+  const fromDoc = RELIC_UNLOCK_REQUIREMENTS[relicId]?.enemyKills;
+  if (fromDoc) return fromDoc;
+
+  const sourceBossId = relicDefinitions.find(
+    (r) => r.id === relicId
+  )?.sourceBossId;
+  if (!sourceBossId) return null;
+  return {
+    enemyId: sourceBossId,
+    count: 3,
+  };
+}
+
+export function computeEnemyKillUnlockedRelicIds(
+  relicIds: string[],
+  enemyKillCounts: Record<string, number> = {}
+): string[] {
+  return relicIds.filter((relicId) => {
+    const requirement = getEnemyKillRequirementForRelic(relicId);
+    if (!requirement) return false;
+    const killCount = Math.max(0, enemyKillCounts[requirement.enemyId] ?? 0);
+    return killCount >= requirement.count;
+  });
 }
 
 function clampDifficulty(level: number): number {
@@ -137,8 +198,24 @@ export function getPostFloorFiveEscalation(
 
 export function unlockNextDifficultyOnVictory(
   resources: Record<string, number>,
-  wonDifficultyLevel: number
+  wonDifficultyLevel: number,
+  characterId?: string
 ): Record<string, number> {
+  if (characterId) {
+    const currentMax = getUnlockedMaxDifficultyForCharacter(
+      resources,
+      characterId
+    );
+    const won = clampDifficulty(wonDifficultyLevel);
+    if (won < currentMax) return resources;
+    const nextMax = clampDifficulty(currentMax + 1);
+    if (nextMax === currentMax) return resources;
+    return {
+      ...resources,
+      [difficultyUnlockKeyForCharacter(characterId)]: nextMax,
+    };
+  }
+  // Fallback global (rétrocompat)
   const currentMax = getUnlockedMaxDifficultyFromResources(resources);
   const won = clampDifficulty(wonDifficultyLevel);
   if (won < currentMax) return resources;
@@ -239,7 +316,7 @@ export function isRelicUnlocked(
     return false;
   }
 
-  const requirements = RELIC_UNLOCK_REQUIREMENTS[relicId];
+  const requirements = getRelicUnlockRequirement(relicId);
   if (!requirements) return true;
 
   const totalRunsRequired = Math.max(0, requirements.totalRuns ?? 0);
@@ -248,6 +325,16 @@ export function isRelicUnlocked(
   if (progress.totalRuns < totalRunsRequired) return false;
   if (progress.wonRuns < wonRunsRequired) return false;
   if ((progress.bestGoldInSingleRun ?? 0) < bestGoldRequired) return false;
+
+  const enemyKills = progress.enemyKillCounts ?? {};
+  if (requirements.enemyKills) {
+    const requiredEnemyKills = Math.max(0, requirements.enemyKills.count);
+    if (
+      (enemyKills[requirements.enemyKills.enemyId] ?? 0) < requiredEnemyKills
+    ) {
+      return false;
+    }
+  }
 
   const winsByDifficulty = progress.winsByDifficulty ?? {};
   for (const [difficulty, requiredWinsRaw] of Object.entries(

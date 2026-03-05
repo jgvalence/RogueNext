@@ -33,12 +33,22 @@ export const GAME_CONSTANTS = {
   INK_MARK_COST_DEFAULT: 2,
 
   INK_POWER_COSTS: {
+    // Scribe
+    CALLIGRAPHIE: 3,
+    ENCRE_NOIRE: 4,
+    SEAL: 2,
+    // Bibliothécaire
+    VISION: 2,
+    INDEX: 3,
+    SILENCE: 7,
+    // Legacy
     REWRITE: 3,
     LOST_CHAPTER: 2,
-    SEAL: 2,
   },
   SEAL_BLOCK_AMOUNT: 8,
   LOST_CHAPTER_DRAW: 2,
+  ENCRE_NOIRE_DAMAGE_MULTIPLIER: 2,
+  VISION_DRAW: 2,
 
   GOLD_REWARD_BASE: 10,
   GOLD_REWARD_VARIANCE: 6,

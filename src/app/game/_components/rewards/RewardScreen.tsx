@@ -8,6 +8,7 @@ import type { BiomeResource } from "@/game/schemas/enums";
 import type { RelicDefinitionData } from "@/game/data/relics";
 import type { AllyDefinition } from "@/game/schemas/entities";
 import type { Effect } from "@/game/schemas/effects";
+import { RogueButton, RogueTag } from "@/components/ui/rogue";
 import {
   localizeRelicDescription,
   localizeRelicName,
@@ -85,12 +86,13 @@ export function RewardScreen({
       {resourceEntries.length > 0 && (
         <div className="flex flex-wrap justify-center gap-2">
           {resourceEntries.map(([key, val]) => (
-            <span
+            <RogueTag
               key={key}
-              className="rounded border border-amber-700/50 bg-amber-950/60 px-2.5 py-1 text-xs font-semibold text-amber-300"
+              bordered
+              className="rounded border-amber-700/50 bg-amber-950/60 px-2.5 py-1 text-xs font-semibold text-amber-300"
             >
               +{val} {t(`reward.resources.${key}`, key)}
-            </span>
+            </RogueTag>
           ))}
         </div>
       )}
@@ -108,9 +110,10 @@ export function RewardScreen({
               <AllyCard key={ally.id} ally={ally} onPick={onPickAlly} />
             ))}
             {bossMaxHpBonus && onPickMaxHp && (
-              <button
+              <RogueButton
                 onClick={() => onPickMaxHp(bossMaxHpBonus)}
-                className="flex w-36 flex-col items-center gap-2 rounded-xl border-2 border-red-700 bg-red-950/40 p-4 text-center transition hover:border-red-500 hover:bg-red-950/60"
+                type="text"
+                className="!flex !h-auto !w-36 !flex-col !items-center !gap-2 !rounded-xl !border-2 !border-red-700 !bg-red-950/40 !p-4 !text-center !transition hover:!border-red-500 hover:!bg-red-950/60"
               >
                 <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
                   {t("reward.vitality")}
@@ -121,7 +124,7 @@ export function RewardScreen({
                 <span className="text-xs text-red-200">
                   {t("reward.maxHpDescription")}
                 </span>
-              </button>
+              </RogueButton>
             )}
           </div>
         </>
@@ -163,12 +166,13 @@ export function RewardScreen({
             ))}
           </div>
           {!hasAnyEliteChoice && (
-            <button
-              className="rounded-lg border border-gray-600 px-6 py-2 text-sm text-gray-400 transition hover:bg-gray-800"
+            <RogueButton
+              type="text"
+              className="!h-auto !rounded-lg !border !border-gray-600 !px-6 !py-2 !text-sm !text-gray-400 !transition hover:!bg-gray-800"
               onClick={onSkip}
             >
               {t("reward.continue")}
-            </button>
+            </RogueButton>
           )}
         </>
       )}
@@ -192,12 +196,13 @@ export function RewardScreen({
               </div>
             ))}
           </div>
-          <button
-            className="rounded-lg border border-gray-600 px-6 py-2 text-sm text-gray-400 transition hover:bg-gray-800"
+          <RogueButton
+            type="text"
+            className="!h-auto !rounded-lg !border !border-gray-600 !px-6 !py-2 !text-sm !text-gray-400 !transition hover:!bg-gray-800"
             onClick={onSkip}
           >
             {t("reward.skip")}
-          </button>
+          </RogueButton>
         </>
       )}
       <UpgradePreviewPortal info={hoverInfo} />
@@ -215,14 +220,17 @@ function AllyCard({
   const { t } = useTranslation();
 
   return (
-    <button
+    <RogueButton
       onClick={() => onPick(ally.id)}
-      className="flex w-40 flex-col items-center gap-2 rounded-xl border-2 border-cyan-700 bg-cyan-950/40 p-4 text-center transition hover:border-cyan-500 hover:bg-cyan-950/60"
+      type="text"
+      className="!flex !h-auto !w-40 !min-w-0 !flex-col !items-center !gap-2 !whitespace-normal !rounded-xl !border-2 !border-cyan-700 !bg-cyan-950/40 !p-4 !text-center !transition hover:!border-cyan-500 hover:!bg-cyan-950/60"
     >
       <span className="text-xs font-semibold uppercase tracking-widest text-cyan-300">
         {t("reward.ally")}
       </span>
-      <span className="text-sm font-bold text-white">{ally.name}</span>
+      <span className="block w-full whitespace-normal break-words text-sm font-bold leading-tight text-white [overflow-wrap:anywhere]">
+        {ally.name}
+      </span>
       <span className="text-xs text-cyan-200">
         {ally.maxHp} HP - {ally.speed} SPD
       </span>
@@ -232,17 +240,17 @@ function AllyCard({
             key={`${ally.id}-ability-${i}`}
             className="rounded border border-cyan-800/70 bg-cyan-900/40 px-2 py-1"
           >
-            <div className="truncate text-[11px] font-semibold text-cyan-100">
+            <div className="whitespace-normal break-words text-[11px] font-semibold leading-tight text-cyan-100 [overflow-wrap:anywhere]">
               {ability.name}
             </div>
-            <div className="text-[10px] text-cyan-300">
+            <div className="whitespace-normal break-words text-[10px] leading-relaxed text-cyan-300 [overflow-wrap:anywhere]">
               {formatTarget(ability.target, t)} -{" "}
               {formatEffects(ability.effects, t)}
             </div>
           </div>
         ))}
       </div>
-    </button>
+    </RogueButton>
   );
 }
 
@@ -318,19 +326,20 @@ function RelicCard({
   const { t } = useTranslation();
 
   return (
-    <button
+    <RogueButton
       onClick={() => onPick(relic.id)}
-      className="flex w-36 flex-col items-center gap-2 rounded-xl border-2 border-purple-700 bg-purple-950/40 p-4 text-center transition hover:border-purple-500 hover:bg-purple-950/60"
+      type="text"
+      className="!flex !h-auto !w-36 !min-w-0 !flex-col !items-center !gap-2 !whitespace-normal !rounded-xl !border-2 !border-purple-700 !bg-purple-950/40 !p-4 !text-center !transition hover:!border-purple-500 hover:!bg-purple-950/60"
     >
       <span className="text-xs font-semibold uppercase tracking-widest text-purple-400">
         {t(`gameCard.rarity.${relic.rarity}`, relic.rarity)}
       </span>
-      <span className="text-sm font-bold text-white">
+      <span className="block w-full whitespace-normal break-words text-sm font-bold leading-tight text-white [overflow-wrap:anywhere]">
         {localizeRelicName(relic.id, relic.name)}
       </span>
-      <span className="text-xs text-purple-200">
+      <span className="block w-full whitespace-normal break-words text-xs leading-relaxed text-purple-200 [overflow-wrap:anywhere]">
         {localizeRelicDescription(relic.id, relic.description)}
       </span>
-    </button>
+    </RogueButton>
   );
 }

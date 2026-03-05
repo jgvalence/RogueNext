@@ -3838,10 +3838,86 @@ function assignEnemyRoles(defs: RawEnemyDefinition[]): EnemyDefinition[] {
   return defs.map((def) => ({ ...def, role: inferRole(def) }));
 }
 
-export const enemyDefinitions: EnemyDefinition[] = assignEnemyRoles(
+const BIOME_LORE_CONTEXT: Record<EnemyDefinition["biome"], string> = {
+  LIBRARY: "born from corrupted margins and restless manuscripts",
+  VIKING: "forged by frost, oaths, and battle songs",
+  GREEK: "shaped by pride, prophecy, and divine rivalry",
+  EGYPTIAN: "bound to tomb rites, judgment, and eternal balance",
+  LOVECRAFTIAN: "drawn from the void between impossible stars",
+  AZTEC: "fed by ritual blood and solar fanaticism",
+  CELTIC: "woven from wild groves, omens, and old pacts",
+  RUSSIAN: "tempered by winter curses and iron folklore",
+  AFRICAN: "carried by ancestral masks, drums, and storm spirits",
+};
+
+function getEncounterRankLabel(def: EnemyDefinition): string {
+  if (def.isBoss) return "boss";
+  if (def.isElite) return "elite";
+  return "foe";
+}
+
+function buildDefaultEnemyLoreEntryOne(def: EnemyDefinition): string {
+  const context = BIOME_LORE_CONTEXT[def.biome];
+  const rank = getEncounterRankLabel(def);
+  const roleHint =
+    def.role === "ASSAULT"
+      ? "It prefers relentless pressure over defense."
+      : def.role === "SUPPORT"
+        ? "It bends the fight by sustaining its allies."
+        : def.role === "CONTROL"
+          ? "It disrupts tempo and punishes predictable turns."
+          : def.role === "TANK"
+            ? "It absorbs punishment and stalls the battlefield."
+            : "It adapts between offense and attrition.";
+
+  return `${def.name} is a ${rank} ${context}. ${roleHint}`;
+}
+
+function buildDefaultEnemyLoreEntryTwo(def: EnemyDefinition): string {
+  const abilityNames = def.abilities
+    .slice(0, 2)
+    .map((ability) => ability.name)
+    .filter((name) => name.trim().length > 0);
+
+  if (abilityNames.length === 0) {
+    return `${def.name} shifts its pattern after repeated clashes, testing openings before committing to a finishing rhythm.`;
+  }
+  if (abilityNames.length === 1) {
+    return `${def.name} often opens with ${abilityNames[0]}, then adjusts tempo to punish defensive turns.`;
+  }
+  return `${def.name} alternates between ${abilityNames[0]} and ${abilityNames[1]} once it has measured its opponent.`;
+}
+
+function buildDefaultEnemyLoreEntryThree(def: EnemyDefinition): string {
+  const biomeContext = BIOME_LORE_CONTEXT[def.biome];
+  return `Archive records suggest that defeating ${def.name} repeatedly reveals a deeper will ${biomeContext}, as if each fall teaches the same story to fight back harder.`;
+}
+
+function buildDefaultEnemyLoreEntries(
+  def: EnemyDefinition
+): [string, string, string] {
+  return [
+    buildDefaultEnemyLoreEntryOne(def),
+    buildDefaultEnemyLoreEntryTwo(def),
+    buildDefaultEnemyLoreEntryThree(def),
+  ];
+}
+
+const builtEnemyDefinitions = assignEnemyRoles(
   ensureMinimumEnemyAbilityVariety(
     applyAllyCounterplayAbilities(
       applyBiomeCombatSignatures(baseEnemyDefinitions)
     )
   )
+);
+
+export const enemyDefinitions: EnemyDefinition[] = builtEnemyDefinitions.map(
+  (definition) => ({
+    ...definition,
+    loreEntries:
+      definition.loreEntries ?? buildDefaultEnemyLoreEntries(definition),
+    loreText:
+      definition.loreText ??
+      (definition.loreEntries ?? buildDefaultEnemyLoreEntries(definition))[0],
+  })
 );

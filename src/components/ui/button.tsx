@@ -3,6 +3,11 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils/cn";
 
 /**
+ * @deprecated Use wrappers from "@/components/ui/rogue" (RogueButton).
+ * This file is kept only for backward compatibility during migration.
+ */
+
+/**
  * Button Variants
  * Using CVA (class-variance-authority) for type-safe variant props
  */

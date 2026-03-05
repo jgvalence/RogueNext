@@ -46,9 +46,18 @@ export function computeIncomingDamage(
       );
 
       if (target === "player") {
-        result.player += calculateDamage(scaledBase, sourceStats, {
-          buffs: state.player.buffs,
-        });
+        const playerVulnerableMultiplier =
+          state.relicModifiers?.playerVulnerableDamageMultiplier ?? 1.5;
+        result.player += calculateDamage(
+          scaledBase,
+          sourceStats,
+          {
+            buffs: state.player.buffs,
+          },
+          {
+            vulnerableMultiplier: playerVulnerableMultiplier,
+          }
+        );
       } else if (target === "all_allies") {
         for (const ally of state.allies) {
           if (ally.currentHp <= 0) continue;

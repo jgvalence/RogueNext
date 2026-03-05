@@ -6,6 +6,7 @@ import type { CardDefinition } from "../schemas/cards";
  */
 
 export const starterCardDefinitions: CardDefinition[] = [
+  // ─── Cartes de base (communes aux deux personnages) ───────────────────────
   {
     id: "strike",
     name: "Strike",
@@ -57,6 +58,169 @@ export const starterCardDefinitions: CardDefinition[] = [
       energyCost: 0,
       description: "Gain 3 ink.",
       effects: [{ type: "GAIN_INK", value: 3 }],
+    },
+    isStarterCard: true,
+    biome: "LIBRARY",
+  },
+
+  // ─── Cartes uniques du Scribe ─────────────────────────────────────────────
+  {
+    id: "trace_tranchant",
+    name: "Tracé Tranchant",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "STARTER",
+    description:
+      "Inflige 8 dégâts. Si une carte améliorée est en main, inflige 4 de plus.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "DAMAGE_BONUS_IF_UPGRADED_IN_HAND", value: 4 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Inflige 10 dégâts. Si une carte améliorée est en main, inflige 6 de plus.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "DAMAGE_BONUS_IF_UPGRADED_IN_HAND", value: 6 },
+      ],
+    },
+    isStarterCard: true,
+    biome: "LIBRARY",
+  },
+  {
+    id: "parchemin_de_soin",
+    name: "Parchemin de Soin",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "STARTER",
+    description: "Gagnez 4 bouclier. Gagnez 1 encre.",
+    effects: [
+      { type: "BLOCK", value: 4 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gagnez 6 bouclier. Gagnez 3 encre.",
+      effects: [
+        { type: "BLOCK", value: 6 },
+        { type: "GAIN_INK", value: 3 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gagnez 6 bouclier. Gagnez 1 encre.",
+      effects: [
+        { type: "BLOCK", value: 6 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: true,
+    biome: "LIBRARY",
+  },
+  {
+    id: "annotation",
+    name: "Annotation",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "STARTER",
+    description:
+      "Exhaust. Améliorez une carte aléatoire en main jusqu'à la fin du combat.",
+    effects: [
+      { type: "EXHAUST", value: 0 },
+      { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      energyCost: 0,
+      description:
+        "Exhaust. Améliorez une carte aléatoire en main jusqu'à la fin du combat.",
+      effects: [
+        { type: "EXHAUST", value: 0 },
+        { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 0 },
+      ],
+    },
+    isStarterCard: true,
+    biome: "LIBRARY",
+  },
+
+  // ─── Cartes uniques de la Bibliothécaire ──────────────────────────────────
+  {
+    id: "catalogue",
+    name: "Catalogue",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "STARTER",
+    description:
+      "Piochez 3 cartes. Défaussez 2 cartes aléatoires de votre main.",
+    effects: [
+      { type: "DRAW_CARDS", value: 3 },
+      { type: "FORCE_DISCARD_RANDOM", value: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Piochez 3 cartes. Défaussez 1 carte aléatoire de votre main.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "FORCE_DISCARD_RANDOM", value: 1 },
+      ],
+    },
+    isStarterCard: true,
+    biome: "LIBRARY",
+  },
+  {
+    id: "chuchotement",
+    name: "Chuchotement",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "STARTER",
+    description: "Appliquez WEAK 2 à tous les ennemis.",
+    effects: [{ type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 }],
+    inkedVariant: {
+      description: "Appliquez WEAK 3 et VULNERABLE 1 à tous les ennemis.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Appliquez WEAK 3 à tous les ennemis.",
+      effects: [{ type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 }],
+    },
+    isStarterCard: true,
+    biome: "LIBRARY",
+  },
+  {
+    id: "marque_page",
+    name: "Marque-Page",
+    type: "SKILL",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "STARTER",
+    description: "Exhaust. Piochez 1 carte.",
+    effects: [
+      { type: "EXHAUST", value: 0 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Exhaust. Piochez 2 cartes.",
+      effects: [
+        { type: "EXHAUST", value: 0 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
     },
     isStarterCard: true,
     biome: "LIBRARY",

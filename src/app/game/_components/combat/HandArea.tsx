@@ -8,6 +8,7 @@ import { canPlayCard, canPlayCardInked } from "@/game/engine/cards";
 import { GameCard } from "./GameCard";
 import { useTranslation } from "react-i18next";
 import { localizeCardName } from "@/lib/i18n/card-text";
+import { RogueButton } from "@/components/ui/rogue";
 
 interface HandAreaProps {
   hand: CardInstance[];
@@ -108,7 +109,7 @@ export function HandArea({
     <>
       <div
         data-keep-selection="true"
-        className="flex h-[44px] items-center gap-1.5 overflow-x-auto px-1 pb-0.5 lg:hidden"
+        className="flex h-[44px] w-full min-w-0 touch-pan-x items-center gap-1.5 overflow-x-auto overflow-y-visible overscroll-x-contain px-1 pb-0.5 pr-2 [-webkit-overflow-scrolling:touch] lg:hidden"
       >
         {hand.map((card) => {
           const def = cardDefs.get(card.definitionId);
@@ -139,7 +140,7 @@ export function HandArea({
               }}
               disabled={!canPlay}
               className={[
-                "relative flex h-[36px] min-w-[76px] shrink-0 items-center gap-1.5 overflow-hidden rounded-xl border px-1.5 text-left transition-all duration-150",
+                "relative flex h-[36px] min-w-[76px] shrink-0 snap-start items-center gap-1.5 overflow-hidden rounded-xl border px-1.5 text-left transition-all duration-150",
                 canPlay
                   ? isSelected
                     ? "-translate-y-1.5 border-cyan-400 bg-gradient-to-r from-slate-600 to-slate-800 shadow-[0_0_10px_rgba(34,211,238,0.45)]"
@@ -308,10 +309,10 @@ export function HandArea({
                   }
                 />
               </div>
-              <button
-                type="button"
+              <RogueButton
                 data-keep-selection="true"
-                className="w-full rounded-lg border border-emerald-300/30 bg-emerald-600 px-2 py-2 text-xs font-black uppercase tracking-wide text-white"
+                type="primary"
+                className="!h-auto !w-full !rounded-lg !border !border-emerald-300/30 !bg-emerald-600 !px-2 !py-2 !text-xs !font-black !uppercase !tracking-wide !text-white hover:!bg-emerald-500"
                 onClick={() => {
                   if (mobilePreviewNeedsTarget) {
                     setMobilePreviewCardId(null);
@@ -323,15 +324,15 @@ export function HandArea({
                 {mobilePreviewNeedsTarget
                   ? t("combat.chooseTargetCta")
                   : t("combat.playCardCta")}
-              </button>
-              <button
-                type="button"
+              </RogueButton>
+              <RogueButton
                 data-keep-selection="true"
-                className="w-full rounded-lg border border-slate-600 px-2 py-1.5 text-xs font-semibold text-slate-200"
+                type="text"
+                className="!h-auto !w-full !rounded-lg !border !border-slate-600 !px-2 !py-1.5 !text-xs !font-semibold !text-slate-200 hover:!border-slate-400"
                 onClick={() => setMobilePreviewCardId(null)}
               >
                 {t("common.close")}
-              </button>
+              </RogueButton>
             </div>
           </div>
         </div>

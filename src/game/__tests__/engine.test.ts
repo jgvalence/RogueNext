@@ -49,6 +49,7 @@ import {
   computeUnlockedCardIds,
   getCardUnlockDetails,
 } from "../engine/card-unlocks";
+import { getLoreEntryIndexForKillCount } from "../engine/bestiary";
 import type { CombatState } from "../schemas/combat-state";
 import type { Effect } from "../schemas/effects";
 import { DEFAULT_META_BONUSES } from "../schemas/meta";
@@ -402,7 +403,12 @@ describe("Deck operations", () => {
 
   it("can play a SELF block card on an ally target", () => {
     const rng = createRNG("block-ally-target");
-    const fortify = [...cardDefs.values()].find((c) => c.name === "Fortify");
+    const fortify = [...cardDefs.values()].find(
+      (c) =>
+        c.targeting === "SELF" &&
+        c.type === "SKILL" &&
+        c.effects.some((effect) => effect.type === "BLOCK")
+    );
     expect(fortify).toBeDefined();
     if (!fortify) return;
 
@@ -656,12 +662,12 @@ describe("Card playing", () => {
     expect(result.enemies[0]?.currentHp).toBe(14 - 27);
   });
 
-  it("playCard inked lightning_bolt applies Vulnerable to all surviving enemies", () => {
-    const rng = createRNG("inked-lightning-bolt-test");
+  it("playCard inked trickster_snare applies Vulnerable to all surviving enemies", () => {
+    const rng = createRNG("inked-trickster-snare-test");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
       hand: [
-        { instanceId: "c1", definitionId: "lightning_bolt", upgraded: false },
+        { instanceId: "c1", definitionId: "trickster_snare", upgraded: false },
       ],
       player: {
         ...base.player,
@@ -687,17 +693,18 @@ describe("Card playing", () => {
 
     const result = playCard(state, "c1", null, true, cardDefs, rng);
 
-    expect(result.enemies[0]?.currentHp).toBe(18);
-    expect(result.enemies[1]?.currentHp).toBe(16);
-    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
-    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(1);
+    // trickster_snare inked: 6 dmg AOE + VULN 2 ALL
+    expect(result.enemies[0]?.currentHp).toBe(24);
+    expect(result.enemies[1]?.currentHp).toBe(22);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(2);
   });
 
   it("playCard exhausts POWER cards for the rest of combat", () => {
     const rng = createRNG("power-exhaust-test");
     const state = makeMinimalCombat({
       hand: [
-        { instanceId: "c1", definitionId: "inner_focus", upgraded: false },
+        { instanceId: "c1", definitionId: "rage_of_ages", upgraded: false },
       ],
     });
     const result = playCard(state, "c1", null, false, cardDefs, rng);
@@ -705,8 +712,8 @@ describe("Card playing", () => {
     expect(result.hand).toHaveLength(0);
     expect(result.discardPile).toHaveLength(0);
     expect(result.exhaustPile).toHaveLength(1);
-    expect(result.exhaustPile[0]?.definitionId).toBe("inner_focus");
-    expect(result.player.focus).toBe(2);
+    expect(result.exhaustPile[0]?.definitionId).toBe("rage_of_ages");
+    expect(result.player.strength).toBe(2);
   });
 
   it("bastion_crash deals damage equal to current block", () => {
@@ -821,6 +828,91 @@ describe("Ink system", () => {
     expect(result.hand).toHaveLength(2);
     expect(result.drawPile).toHaveLength(1);
     expect(result.player.inkCurrent).toBe(3); // 5 - 2
+  });
+
+  it("applyInkPower CALLIGRAPHIE upgrades a random card in hand", () => {
+    const rng = createRNG("calligraphie-test");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 5 },
+      hand: [
+        { instanceId: "h1", definitionId: "strike", upgraded: false },
+        { instanceId: "h2", definitionId: "defend", upgraded: false },
+      ],
+    });
+    const result = applyInkPower(state, "CALLIGRAPHIE", null, cardDefs, rng);
+    const upgradedCount = result.hand.filter((c) => c.upgraded).length;
+    expect(upgradedCount).toBe(1);
+    expect(result.player.inkCurrent).toBe(2); // 5 - 3
+  });
+
+  it("applyInkPower ENCRE_NOIRE deals inkCurrent*2 damage to all enemies", () => {
+    const rng = createRNG("encrenoire-test");
+    const enemy = {
+      instanceId: "e1",
+      definitionId: "test_enemy",
+      name: "Test",
+      currentHp: 30,
+      maxHp: 30,
+      block: 0,
+      speed: 5,
+      buffs: [],
+      intentIndex: 0,
+    };
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 5 },
+      enemies: [enemy],
+    });
+    const result = applyInkPower(state, "ENCRE_NOIRE", null, cardDefs, rng);
+    // Damage = 5 (inkCurrent before spend) * 2 = 10
+    expect(result.enemies[0]!.currentHp).toBe(20);
+    expect(result.player.inkCurrent).toBe(1); // 5 - 4
+  });
+
+  it("applyInkPower SILENCE applies STUN buff to target enemy", () => {
+    const rng = createRNG("silence-test");
+    const enemy = {
+      instanceId: "e1",
+      definitionId: "test_enemy",
+      name: "Test",
+      currentHp: 30,
+      maxHp: 30,
+      block: 0,
+      speed: 5,
+      buffs: [],
+      intentIndex: 0,
+    };
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 7 },
+      enemies: [enemy],
+    });
+    const result = applyInkPower(state, "SILENCE", "e1", cardDefs, rng);
+    const stunBuff = result.enemies[0]!.buffs.find((b) => b.type === "STUN");
+    expect(stunBuff).toBeDefined();
+    expect(result.player.inkCurrent).toBe(0); // 7 - 7
+  });
+
+  it("applyInkPower VISION draws 2 cards", () => {
+    const rng = createRNG("vision-test");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 5 },
+    });
+    const result = applyInkPower(state, "VISION", null, cardDefs, rng);
+    expect(result.hand).toHaveLength(2);
+    expect(result.player.inkCurrent).toBe(3); // 5 - 2
+  });
+
+  it("applyInkPower INDEX moves card from discard to hand", () => {
+    const rng = createRNG("index-test");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 5 },
+      discardPile: [
+        { instanceId: "c1", definitionId: "strike", upgraded: false },
+      ],
+    });
+    const result = applyInkPower(state, "INDEX", "c1", cardDefs, rng);
+    expect(result.discardPile).toHaveLength(0);
+    expect(result.hand).toHaveLength(1);
+    expect(result.player.inkCurrent).toBe(2); // 5 - 3
   });
 });
 
@@ -1795,6 +1887,85 @@ describe("Run management", () => {
     expect(result.playerCurrentHp).toBe(45); // 40 + 5 from relic
   });
 
+  it("completeCombat records newly encountered enemies for bestiary tracking", () => {
+    const rng = createRNG("bestiary-encounter-normal");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-bestiary",
+      "bestiary-encounter",
+      starterCards,
+      rng
+    );
+    const combatResult = makeMinimalCombat({
+      enemies: [
+        {
+          instanceId: "enemy-1",
+          definitionId: "ink_slime",
+          name: "Ink Slime",
+          currentHp: 0,
+          maxHp: 18,
+          block: 0,
+          speed: 2,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+
+    const result = completeCombat(run, combatResult, 0, rng, { PAGES: 1 });
+    expect(result.encounteredEnemies["ink_slime"]).toBe("NORMAL");
+    expect(result.enemyKillCounts["ink_slime"]).toBe(1);
+  });
+
+  it("completeCombat upgrades bestiary encounter type to elite/boss when needed", () => {
+    const rng = createRNG("bestiary-encounter-rank");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = {
+      ...createNewRun(
+        "run-bestiary-rank",
+        "bestiary-encounter-rank",
+        starterCards,
+        rng
+      ),
+      encounteredEnemies: { ink_archon: "NORMAL" as const },
+      enemyKillCounts: { ink_archon: 2 },
+    };
+    const combatResult = makeMinimalCombat({
+      enemies: [
+        {
+          instanceId: "enemy-elite",
+          definitionId: "ink_archon",
+          name: "Ink Archon",
+          isElite: true,
+          currentHp: 0,
+          maxHp: 52,
+          block: 0,
+          speed: 3,
+          buffs: [],
+          intentIndex: 0,
+        },
+        {
+          instanceId: "enemy-boss",
+          definitionId: "chapter_guardian",
+          name: "Chapter Guardian",
+          isBoss: true,
+          currentHp: 0,
+          maxHp: 145,
+          block: 0,
+          speed: 5,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+
+    const result = completeCombat(run, combatResult, 0, rng, { PAGES: 1 });
+    expect(result.encounteredEnemies["ink_archon"]).toBe("ELITE");
+    expect(result.encounteredEnemies["chapter_guardian"]).toBe("BOSS");
+    expect(result.enemyKillCounts["ink_archon"]).toBe(3);
+    expect(result.enemyKillCounts["chapter_guardian"]).toBe(1);
+  });
+
   it("applyRunConditionToRun chaos_draft replaces starter deck with 10 random cards", () => {
     const rng = createRNG("run-condition-chaos-draft");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
@@ -1818,6 +1989,90 @@ describe("Run management", () => {
     expect(applied.deck.every((card) => card.definitionId !== "strike")).toBe(
       true
     );
+  });
+
+  it("applyRunConditionToRun battle_manual upgrades two random starter cards", () => {
+    const rng = createRNG("run-condition-battle-manual");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-battle-manual",
+      "run-battle-manual",
+      starterCards,
+      rng
+    );
+    const applied = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "battle_manual",
+          "vanilla_run",
+          "quiet_pockets",
+        ],
+      },
+      "battle_manual",
+      createRNG("run-condition-battle-manual-apply"),
+      [...cardDefs.values()]
+    );
+
+    expect(applied.selectedRunConditionId).toBe("battle_manual");
+    expect(applied.deck.filter((card) => card.upgraded)).toHaveLength(2);
+  });
+
+  it("applyRunConditionToRun packed_supplies removes one starter card and adds one random collectible", () => {
+    const rng = createRNG("run-condition-packed-supplies");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-packed-supplies",
+      "run-packed-supplies",
+      starterCards,
+      rng
+    );
+    const starterIds = new Set(starterCards.map((card) => card.id));
+    const applied = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "packed_supplies",
+          "vanilla_run",
+          "quiet_pockets",
+        ],
+      },
+      "packed_supplies",
+      createRNG("run-condition-packed-supplies-apply"),
+      [...cardDefs.values()]
+    );
+
+    expect(applied.selectedRunConditionId).toBe("packed_supplies");
+    expect(applied.deck).toHaveLength(run.deck.length);
+    expect(
+      applied.deck.some((card) => !starterIds.has(card.definitionId))
+    ).toBe(true);
+  });
+
+  it("applyRunConditionToRun curators_patronage grants a start relic with a max HP drawback", () => {
+    const rng = createRNG("run-condition-curator");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun("run-curator", "run-curator", starterCards, rng);
+    const applied = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "curators_patronage",
+          "vanilla_run",
+          "quiet_pockets",
+        ],
+      },
+      "curators_patronage",
+      createRNG("run-condition-curator-apply"),
+      [...cardDefs.values()]
+    );
+
+    expect(applied.selectedRunConditionId).toBe("curators_patronage");
+    expect(applied.relicIds).toContain("library_prep_satchel");
+    expect(applied.playerMaxHp).toBe(run.playerMaxHp - 12);
   });
 
   it("applyRunConditionToRun accepts legacy vanilla pending choice id", () => {
@@ -2077,6 +2332,27 @@ describe("Run management", () => {
   });
 });
 
+describe("Bestiary lore milestones", () => {
+  it("uses 1/5/15 milestones for normal enemies", () => {
+    expect(getLoreEntryIndexForKillCount("NORMAL", 0)).toBe(0);
+    expect(getLoreEntryIndexForKillCount("NORMAL", 1)).toBe(0);
+    expect(getLoreEntryIndexForKillCount("NORMAL", 5)).toBe(1);
+    expect(getLoreEntryIndexForKillCount("NORMAL", 15)).toBe(2);
+  });
+
+  it("uses 1/3/5 milestones for elite enemies", () => {
+    expect(getLoreEntryIndexForKillCount("ELITE", 1)).toBe(0);
+    expect(getLoreEntryIndexForKillCount("ELITE", 3)).toBe(1);
+    expect(getLoreEntryIndexForKillCount("ELITE", 5)).toBe(2);
+  });
+
+  it("uses 1/2/3 milestones for bosses", () => {
+    expect(getLoreEntryIndexForKillCount("BOSS", 1)).toBe(0);
+    expect(getLoreEntryIndexForKillCount("BOSS", 2)).toBe(1);
+    expect(getLoreEntryIndexForKillCount("BOSS", 3)).toBe(2);
+  });
+});
+
 describe("Card unlock rules", () => {
   it("uses explicit card-id rules independently of input ordering", () => {
     const allCards = [...cardDefs.values()];
@@ -2104,6 +2380,30 @@ describe("Card unlock rules", () => {
     const details = getCardUnlockDetails(allCards, progress, []);
     expect(details["rune_strike"]?.unlocked).toBe(false);
     expect(details["rune_strike"]?.missingCondition).toContain("elite");
+  });
+
+  it("unlocks bestiary enemy cards from per-enemy kill thresholds", () => {
+    const allCards = [...cardDefs.values()];
+    const progress = {
+      enteredBiomes: { LIBRARY: 1 },
+      biomeRunsCompleted: {},
+      eliteKillsByBiome: {},
+      bossKillsByBiome: {},
+    };
+
+    const locked = computeUnlockedCardIds(allCards, progress, [], {
+      draugr: 14,
+      valkyrie: 4,
+    });
+    expect(locked.includes("bestiary_normal_draugr")).toBe(false);
+    expect(locked.includes("bestiary_elite_valkyrie")).toBe(false);
+
+    const unlocked = computeUnlockedCardIds(allCards, progress, [], {
+      draugr: 15,
+      valkyrie: 5,
+    });
+    expect(unlocked.includes("bestiary_normal_draugr")).toBe(true);
+    expect(unlocked.includes("bestiary_elite_valkyrie")).toBe(true);
   });
 
   it("keeps selected LIBRARY cards locked at run start", () => {

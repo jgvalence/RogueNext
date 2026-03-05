@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  computeEnemyKillUnlockedRelicIds,
   computeUnlockedRelicIds,
   eliteCanDropRelic,
   filterCardIdsByDifficulty,
@@ -52,7 +53,7 @@ describe("Run difficulty progression", () => {
     expect(getDifficultyModifiers(5).eliteChanceBonus).toBe(0.24);
   });
 
-  it("unlocks new healing relics with run-win conditions", () => {
+  it("supports run-win gated relic unlocks from relic.md", () => {
     const baseProgress = {
       totalRuns: 5,
       wonRuns: 2,
@@ -60,21 +61,26 @@ describe("Run difficulty progression", () => {
       winsByDifficulty: { "1": 1 },
     };
     expect(isRelicUnlocked("vital_flask", baseProgress)).toBe(true);
-    expect(isRelicUnlocked("menders_charm", baseProgress)).toBe(false);
+    expect(isRelicUnlocked("menders_charm", baseProgress)).toBe(true);
+    expect(isRelicUnlocked("global_codex_prime", baseProgress)).toBe(false);
 
     const lateProgress = {
-      totalRuns: 7,
-      wonRuns: 5,
-      unlockedDifficultyMax: 0,
-      winsByDifficulty: { "1": 1, "3": 1 },
+      totalRuns: 14,
+      wonRuns: 10,
+      unlockedDifficultyMax: 5,
+      winsByDifficulty: { "1": 1, "3": 1, "4": 1 },
     };
-    expect(isRelicUnlocked("menders_charm", lateProgress)).toBe(true);
+    expect(isRelicUnlocked("global_codex_prime", lateProgress)).toBe(true);
 
     const unlocked = computeUnlockedRelicIds(
-      ["vital_flask", "menders_charm"],
+      ["vital_flask", "menders_charm", "global_codex_prime"],
       lateProgress
     );
-    expect(unlocked).toEqual(["vital_flask", "menders_charm"]);
+    expect(unlocked).toEqual([
+      "vital_flask",
+      "menders_charm",
+      "global_codex_prime",
+    ]);
   });
 
   it("tracks and uses best gold from a single run for relic unlocks", () => {
@@ -88,7 +94,7 @@ describe("Run difficulty progression", () => {
     expect(getBestGoldInSingleRun(noDowngrade)).toBe(260);
 
     expect(
-      isRelicUnlocked("gilded_ledger", {
+      isRelicUnlocked("egypt_golden_canopic", {
         totalRuns: 10,
         wonRuns: 5,
         unlockedDifficultyMax: 5,
@@ -98,14 +104,79 @@ describe("Run difficulty progression", () => {
     ).toBe(false);
 
     expect(
-      isRelicUnlocked("gilded_ledger", {
+      isRelicUnlocked("egypt_golden_canopic", {
         totalRuns: 10,
         wonRuns: 5,
         unlockedDifficultyMax: 5,
         winsByDifficulty: { "2": 1 },
-        bestGoldInSingleRun: 260,
+        bestGoldInSingleRun: 300,
       })
     ).toBe(true);
+  });
+
+  it("requires 3 kills of each boss to unlock its boss relic", () => {
+    expect(
+      isRelicUnlocked("guardians_seal", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 0,
+        enemyKillCounts: { chapter_guardian: 2 },
+      })
+    ).toBe(false);
+
+    expect(
+      isRelicUnlocked("guardians_seal", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 0,
+        enemyKillCounts: { chapter_guardian: 3 },
+      })
+    ).toBe(true);
+  });
+
+  it("unlocks enemy mastery relics from non-boss enemy kill thresholds", () => {
+    expect(
+      isRelicUnlocked("slime_ink_vial", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 0,
+        enemyKillCounts: { ink_slime: 14 },
+      })
+    ).toBe(false);
+
+    expect(
+      isRelicUnlocked("slime_ink_vial", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 0,
+        enemyKillCounts: { ink_slime: 15 },
+      })
+    ).toBe(true);
+
+    expect(
+      isRelicUnlocked("harbinger_storm_bell", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 0,
+        enemyKillCounts: { oya_harbinger: 4 },
+      })
+    ).toBe(false);
+
+    expect(
+      isRelicUnlocked("harbinger_storm_bell", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 0,
+        enemyKillCounts: { oya_harbinger: 5 },
+      })
+    ).toBe(true);
+
+    expect(
+      computeEnemyKillUnlockedRelicIds(
+        ["slime_ink_vial", "harbinger_storm_bell"],
+        { ink_slime: 15, oya_harbinger: 5 }
+      )
+    ).toEqual(["slime_ink_vial", "harbinger_storm_bell"]);
   });
 
   it("tracks best floor reached in infinite mode", () => {

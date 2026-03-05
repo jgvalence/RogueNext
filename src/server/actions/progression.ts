@@ -13,6 +13,7 @@ import {
   buildRunConditionCollectionRows,
   type RunConditionCollectionRow,
 } from "@/game/engine/run-conditions";
+import { readEnemyKillCountsFromResources } from "@/game/engine/bestiary";
 
 export interface LeaderboardEntry {
   rank: number;
@@ -138,14 +139,17 @@ export async function getRunConditionCollectionAction() {
     const user = await requireAuth();
     const row = await prisma.userProgression.findUnique({
       where: { userId: user.id! },
-      select: { totalRuns: true, wonRuns: true },
+      select: { totalRuns: true, wonRuns: true, resources: true },
     });
     const totalRuns = row?.totalRuns ?? 0;
     const wonRuns = row?.wonRuns ?? 0;
+    const resources = (row?.resources as Record<string, number>) ?? {};
+    const enemyKillCounts = readEnemyKillCountsFromResources(resources);
     const conditions: RunConditionCollectionRow[] =
       buildRunConditionCollectionRows({
         totalRuns,
         wonRuns,
+        enemyKillCounts,
       });
     return success({
       runStats: {

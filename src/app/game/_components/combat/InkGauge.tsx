@@ -7,6 +7,7 @@ import { canUseInkPower } from "@/game/engine/ink";
 import type { CombatState } from "@/game/schemas/combat-state";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { useTranslation } from "react-i18next";
+import { RogueButton, RogueTooltip } from "@/components/ui/rogue";
 
 interface InkGaugeProps {
   player: PlayerState;
@@ -17,9 +18,29 @@ interface InkGaugeProps {
 }
 
 const ALL_INK_POWERS: { type: InkPowerType; label: string; desc: string }[] = [
+  // Scribe
+  {
+    type: "CALLIGRAPHIE",
+    label: "Calligraphie",
+    desc: "Upgrade a random card in your hand for this combat",
+  },
+  {
+    type: "ENCRE_NOIRE",
+    label: "Encre Noire",
+    desc: "Deal damage to all enemies based on your current Ink",
+  },
+  { type: "SEAL", label: "Seal", desc: "Gain 8 block" },
+  // Bibliothecaire
+  { type: "VISION", label: "Vision", desc: "Draw 2 cards" },
+  { type: "INDEX", label: "Index", desc: "Return a discard card to your hand" },
+  {
+    type: "SILENCE",
+    label: "Silence",
+    desc: "Apply Stun to the targeted enemy",
+  },
+  // Legacy
   { type: "REWRITE", label: "Rewrite", desc: "Retrieve a card from discard" },
   { type: "LOST_CHAPTER", label: "Lost Chapter", desc: "Draw 2 cards" },
-  { type: "SEAL", label: "Seal", desc: "Gain 8 block" },
 ];
 
 export function InkGauge({
@@ -56,28 +77,28 @@ export function InkGauge({
           {inkPowers.map((power) => {
             const canUse = canUseInkPower(combatState, power.type);
             const cost = GAME_CONSTANTS.INK_POWER_COSTS[power.type];
+            const tooltip = t("inkGauge.powerTooltip", {
+              description: t(`inkGauge.powers.${power.type}.desc`, power.desc),
+              cost,
+            });
 
             return (
-              <button
-                key={power.type}
-                className={cn(
-                  "shrink-0 rounded px-1.5 py-0.5 text-[9px] font-semibold transition",
-                  canUse
-                    ? "bg-cyan-700 text-cyan-100"
-                    : "cursor-not-allowed bg-gray-700 text-gray-500"
-                )}
-                disabled={!canUse}
-                onClick={() => onUsePower(power.type)}
-                title={t("inkGauge.powerTooltip", {
-                  description: t(
-                    `inkGauge.powers.${power.type}.desc`,
-                    power.desc
-                  ),
-                  cost,
-                })}
-              >
-                {t(`inkGauge.powers.${power.type}.label`, power.label)} ({cost})
-              </button>
+              <RogueTooltip key={power.type} title={tooltip}>
+                <RogueButton
+                  type="text"
+                  className={cn(
+                    "!h-auto !max-w-full !shrink-0 !whitespace-normal !rounded !px-1.5 !py-0.5 !text-[9px] !font-semibold !leading-tight !transition",
+                    canUse
+                      ? "!bg-cyan-700 !text-cyan-100"
+                      : "!cursor-not-allowed !bg-gray-700 !text-gray-500"
+                  )}
+                  disabled={!canUse}
+                  onClick={() => onUsePower(power.type)}
+                >
+                  {t(`inkGauge.powers.${power.type}.label`, power.label)} (
+                  {cost})
+                </RogueButton>
+              </RogueTooltip>
             );
           })}
         </div>
@@ -104,32 +125,35 @@ export function InkGauge({
       </div>
 
       {/* Ink powers */}
-      <div className="flex gap-1">
+      <div className="grid grid-cols-2 gap-1">
         {inkPowers.map((power) => {
           const canUse = canUseInkPower(combatState, power.type);
           const cost = GAME_CONSTANTS.INK_POWER_COSTS[power.type];
+          const tooltip = t("inkGauge.powerTooltip", {
+            description: t(`inkGauge.powers.${power.type}.desc`, power.desc),
+            cost,
+          });
 
           return (
-            <button
+            <RogueTooltip
               key={power.type}
-              className={cn(
-                "flex-1 rounded px-1 py-0.5 text-[9px] font-medium transition lg:px-1.5 lg:py-1 lg:text-[11px]",
-                canUse
-                  ? "bg-cyan-700 text-cyan-100 hover:bg-cyan-600"
-                  : "cursor-not-allowed bg-gray-700 text-gray-500"
-              )}
-              disabled={!canUse}
-              onClick={() => onUsePower(power.type)}
-              title={t("inkGauge.powerTooltip", {
-                description: t(
-                  `inkGauge.powers.${power.type}.desc`,
-                  power.desc
-                ),
-                cost,
-              })}
+              title={tooltip}
+              className="!block !min-w-0"
             >
-              {t(`inkGauge.powers.${power.type}.label`, power.label)} ({cost})
-            </button>
+              <RogueButton
+                type="text"
+                className={cn(
+                  "!h-auto !w-full !min-w-0 !whitespace-normal !rounded !px-1 !py-0.5 !text-center !text-[9px] !font-medium !leading-tight !transition lg:!px-1.5 lg:!py-1 lg:!text-[11px]",
+                  canUse
+                    ? "!bg-cyan-700 !text-cyan-100 hover:!bg-cyan-600"
+                    : "!cursor-not-allowed !bg-gray-700 !text-gray-500"
+                )}
+                disabled={!canUse}
+                onClick={() => onUsePower(power.type)}
+              >
+                {t(`inkGauge.powers.${power.type}.label`, power.label)} ({cost})
+              </RogueButton>
+            </RogueTooltip>
           );
         })}
       </div>

@@ -9,6 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
+    "antd:first:check": "node scripts/check-antd-first.mjs",
+    "antd:first:update-baseline": "node scripts/check-antd-first.mjs --update-baseline",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "type-check": "tsc --noEmit",

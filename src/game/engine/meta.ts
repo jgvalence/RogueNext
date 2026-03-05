@@ -57,21 +57,20 @@ export function getResourcesForCombat(
 
 /**
  * Agrège les bonus de toutes les histoires débloquées en un objet plat.
- * REWRITE est toujours présent dans unlockedInkPowers.
+ * Le slot 1 est toujours disponible (pouvoir de base du personnage).
  */
 export function computeMetaBonuses(
   unlockedStoryIds: string[]
 ): ComputedMetaBonuses {
   const result = { ...DEFAULT_META_BONUSES };
-  // Always unlock REWRITE
-  const inkPowers = new Set<"REWRITE" | "LOST_CHAPTER" | "SEAL">(["REWRITE"]);
+  const unlockedSlots = new Set<number>([1]);
 
   const storyMap = new Map(histoireDefinitions.map((h) => [h.id, h]));
 
   for (const id of unlockedStoryIds) {
     const histoire = storyMap.get(id);
     if (!histoire) continue;
-    applyBonusToComputed(result, histoire.bonus, inkPowers);
+    applyBonusToComputed(result, histoire.bonus, unlockedSlots);
   }
 
   // Story-specific passive described in "Le Griot Immortel".
@@ -79,14 +78,14 @@ export function computeMetaBonuses(
     result.allyHpPercent += 25;
   }
 
-  result.unlockedInkPowers = Array.from(inkPowers);
+  result.unlockedPowerSlots = Array.from(unlockedSlots).sort((a, b) => a - b);
   return result;
 }
 
 function applyBonusToComputed(
   result: ComputedMetaBonuses,
   bonus: MetaBonus,
-  inkPowers: Set<"REWRITE" | "LOST_CHAPTER" | "SEAL">
+  unlockedSlots: Set<number>
 ): void {
   switch (bonus.type) {
     case "EXTRA_DRAW":
@@ -143,8 +142,8 @@ function applyBonusToComputed(
     case "LOOT_LUCK":
       result.lootLuck += bonus.value;
       break;
-    case "UNLOCK_INK_POWER":
-      inkPowers.add(bonus.power);
+    case "UNLOCK_POWER_SLOT":
+      unlockedSlots.add(bonus.slot);
       break;
     case "HEAL_AFTER_COMBAT":
       result.healAfterCombat += bonus.value;

@@ -1,7 +1,15 @@
 "use client";
 
-import Link from "next/link";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  RogueAlert,
+  RogueCard,
+  RogueEmpty,
+  RoguePageHeader,
+  RogueTable,
+  RogueTag,
+} from "@/components/ui/rogue";
 import type { LeaderboardEntry } from "@/server/actions/progression";
 
 interface LeaderboardClientProps {
@@ -28,12 +36,14 @@ function formatDurationMs(ms: number): string {
   return `${minutes}m ${String(seconds).padStart(2, "0")}s`;
 }
 
-function getRankStyle(rank: number): string {
-  if (rank === 1) return "border-amber-300/70 bg-amber-300/20 text-amber-100";
-  if (rank === 2) return "border-slate-300/60 bg-slate-200/20 text-slate-100";
+function getRankTagClass(rank: number): string {
+  if (rank === 1)
+    return "!border-amber-300/70 !bg-amber-300/20 !text-amber-100";
+  if (rank === 2)
+    return "!border-slate-300/60 !bg-slate-200/20 !text-slate-100";
   if (rank === 3)
-    return "border-orange-300/60 bg-orange-300/20 text-orange-100";
-  return "border-amber-100/20 bg-amber-100/5 text-amber-100/80";
+    return "!border-orange-300/60 !bg-orange-300/20 !text-orange-100";
+  return "!border-amber-100/20 !bg-amber-100/5 !text-amber-100/80";
 }
 
 function DifficultyTimes({
@@ -50,12 +60,13 @@ function DifficultyTimes({
   return (
     <div className="flex flex-wrap gap-1.5">
       {items.map((item) => (
-        <span
+        <RogueTag
           key={item.difficulty}
+          bordered
           className="rounded border border-amber-100/20 bg-amber-100/10 px-2 py-0.5 text-[0.68rem] font-semibold text-amber-100/90"
         >
           D{item.difficulty}: {formatDurationMs(item.timeMs)}
-        </span>
+        </RogueTag>
       ))}
     </div>
   );
@@ -68,123 +79,145 @@ export function LeaderboardClient({
 }: LeaderboardClientProps) {
   const { t } = useTranslation();
 
+  const columns = useMemo(
+    () => [
+      {
+        title: t("leaderboard.columns.rank"),
+        key: "rank",
+        width: 110,
+        render: (_: unknown, entry: LeaderboardEntry) => (
+          <RogueTag
+            bordered
+            className={`inline-flex min-w-12 items-center justify-center rounded-full border px-2 py-0.5 text-xs font-semibold ${getRankTagClass(entry.rank)}`}
+          >
+            #{entry.rank}
+          </RogueTag>
+        ),
+      },
+      {
+        title: t("leaderboard.columns.player"),
+        key: "player",
+        render: (_: unknown, entry: LeaderboardEntry) => {
+          const isCurrentUser = entry.userId === currentUserId;
+          const displayName =
+            entry.playerName ??
+            t("leaderboard.playerFallback", { id: entry.playerTag });
+
+          return (
+            <div className="font-semibold text-amber-50">
+              {displayName}
+              {isCurrentUser && (
+                <RogueTag
+                  bordered
+                  className="ml-2 rounded border border-amber-200/45 bg-amber-200/20 px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-amber-100"
+                >
+                  {t("leaderboard.you")}
+                </RogueTag>
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        title: t("leaderboard.columns.wins"),
+        key: "wins",
+        dataIndex: "wonRuns",
+        render: (value: number) => value.toLocaleString(),
+      },
+      {
+        title: t("leaderboard.columns.runs"),
+        key: "runs",
+        dataIndex: "totalRuns",
+        render: (value: number) => value.toLocaleString(),
+      },
+      {
+        title: t("leaderboard.columns.winRate"),
+        key: "winRate",
+        dataIndex: "winRate",
+        render: (value: number) => formatPercent(value),
+      },
+      {
+        title: t("leaderboard.columns.bestInfiniteFloor"),
+        key: "bestInfiniteFloor",
+        dataIndex: "bestInfiniteFloor",
+        render: (value: number) => (value > 0 ? value : t("leaderboard.none")),
+      },
+      {
+        title: t("leaderboard.columns.bestDifficulty"),
+        key: "highestDifficulty",
+        dataIndex: "highestDifficulty",
+        render: (value: number | null) =>
+          value == null ? t("leaderboard.none") : value,
+      },
+      {
+        title: t("leaderboard.columns.bestTime"),
+        key: "bestTime",
+        render: (_: unknown, entry: LeaderboardEntry) => (
+          <DifficultyTimes
+            items={entry.bestTimesByDifficulty}
+            emptyLabel={t("leaderboard.noTime")}
+          />
+        ),
+      },
+    ],
+    [currentUserId, t]
+  );
+
   return (
     <div className="space-y-5">
-      <header className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/85 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.45)] backdrop-blur-sm">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-          <Link
-            href="/"
-            className="rounded-lg border border-amber-100/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-amber-100/75 transition hover:border-amber-300/45 hover:text-amber-100"
-          >
+      <RoguePageHeader
+        title={t("leaderboard.title")}
+        subtitle={t("leaderboard.subtitle")}
+        backHref="/"
+        backLabel={
+          <>
             {"<-"} {t("leaderboard.backHome")}
-          </Link>
-          <span className="rounded-lg border border-amber-200/25 bg-amber-200/10 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-amber-100/80">
+          </>
+        }
+        actions={
+          <RogueTag
+            bordered
+            className="rounded-lg border border-amber-200/25 bg-amber-200/10 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-amber-100/80"
+          >
             {t("leaderboard.kicker")}
-          </span>
-        </div>
-
-        <h1 className="text-2xl font-black uppercase tracking-[0.08em] text-amber-100 sm:text-4xl">
-          {t("leaderboard.title")}
-        </h1>
-        <p className="mt-2 max-w-3xl text-sm text-amber-100/70 sm:text-base">
-          {t("leaderboard.subtitle")}
-        </p>
-      </header>
+          </RogueTag>
+        }
+      />
 
       {loadError && (
-        <div className="rounded-xl border border-rose-400/35 bg-rose-950/35 px-4 py-3 text-sm text-rose-100">
-          {t("leaderboard.loadError", { message: loadError })}
-        </div>
+        <RogueAlert
+          type="error"
+          showIcon
+          message={t("leaderboard.loadError", { message: loadError })}
+          className="!rounded-xl !border !border-rose-400/35 !bg-rose-950/35 !text-rose-100"
+        />
       )}
 
       {entries.length === 0 ? (
-        <div className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-8 text-center text-sm text-amber-100/65">
-          {t("leaderboard.empty")}
-        </div>
+        <RogueCard
+          className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-8"
+          styles={{ body: { padding: 32 } }}
+        >
+          <RogueEmpty
+            description={t("leaderboard.empty")}
+            className="[&_.ant-empty-description]:!text-sm [&_.ant-empty-description]:!text-amber-100/65"
+          />
+        </RogueCard>
       ) : (
         <>
-          <section className="hidden overflow-x-auto rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 shadow-[0_16px_40px_rgba(0,0,0,0.3)] md:block">
-            <table className="w-full min-w-[840px] border-collapse text-left">
-              <thead>
-                <tr className="border-b border-amber-100/10 text-xs uppercase tracking-[0.16em] text-amber-100/55">
-                  <th className="px-4 py-3">{t("leaderboard.columns.rank")}</th>
-                  <th className="px-4 py-3">
-                    {t("leaderboard.columns.player")}
-                  </th>
-                  <th className="px-4 py-3">{t("leaderboard.columns.wins")}</th>
-                  <th className="px-4 py-3">{t("leaderboard.columns.runs")}</th>
-                  <th className="px-4 py-3">
-                    {t("leaderboard.columns.winRate")}
-                  </th>
-                  <th className="px-4 py-3">
-                    {t("leaderboard.columns.bestInfiniteFloor")}
-                  </th>
-                  <th className="px-4 py-3">
-                    {t("leaderboard.columns.bestDifficulty")}
-                  </th>
-                  <th className="px-4 py-3">
-                    {t("leaderboard.columns.bestTime")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {entries.map((entry) => {
-                  const isCurrentUser = entry.userId === currentUserId;
-                  const displayName =
-                    entry.playerName ??
-                    t("leaderboard.playerFallback", { id: entry.playerTag });
-
-                  return (
-                    <tr
-                      key={entry.userId}
-                      className={`border-amber-100/8 border-b text-sm text-amber-50/90 ${isCurrentUser ? "bg-amber-300/10" : "hover:bg-amber-100/5"}`}
-                    >
-                      <td className="px-4 py-3">
-                        <span
-                          className={`inline-flex min-w-12 items-center justify-center rounded-full border px-2 py-0.5 text-xs font-semibold ${getRankStyle(entry.rank)}`}
-                        >
-                          #{entry.rank}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 font-semibold text-amber-50">
-                        {displayName}
-                        {isCurrentUser && (
-                          <span className="ml-2 rounded border border-amber-200/45 bg-amber-200/20 px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-amber-100">
-                            {t("leaderboard.you")}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        {entry.wonRuns.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        {entry.totalRuns.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        {formatPercent(entry.winRate)}
-                      </td>
-                      <td className="px-4 py-3">
-                        {entry.bestInfiniteFloor > 0
-                          ? entry.bestInfiniteFloor
-                          : t("leaderboard.none")}
-                      </td>
-                      <td className="px-4 py-3">
-                        {entry.highestDifficulty == null
-                          ? t("leaderboard.none")
-                          : entry.highestDifficulty}
-                      </td>
-                      <td className="px-4 py-3">
-                        <DifficultyTimes
-                          items={entry.bestTimesByDifficulty}
-                          emptyLabel={t("leaderboard.noTime")}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </section>
+          <RogueTable<LeaderboardEntry>
+            className="hidden overflow-x-auto rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 shadow-[0_16px_40px_rgba(0,0,0,0.3)] md:block [&_.ant-table-tbody>tr>td]:!border-b-amber-100/10 [&_.ant-table-tbody>tr>td]:!bg-transparent [&_.ant-table-tbody>tr>td]:!text-sm [&_.ant-table-tbody>tr>td]:!text-amber-50/90 [&_.ant-table-thead>tr>th]:!border-b-amber-100/10 [&_.ant-table-thead>tr>th]:!bg-transparent [&_.ant-table-thead>tr>th]:!text-xs [&_.ant-table-thead>tr>th]:!font-semibold [&_.ant-table-thead>tr>th]:!uppercase [&_.ant-table-thead>tr>th]:!tracking-[0.16em] [&_.ant-table-thead>tr>th]:!text-amber-100/55 [&_.ant-table]:!bg-transparent"
+            dataSource={entries}
+            columns={columns}
+            rowKey={(entry) => entry.userId}
+            pagination={false}
+            scroll={{ x: 840 }}
+            rowClassName={(entry) =>
+              entry.userId === currentUserId
+                ? "!bg-amber-300/10"
+                : "hover:!bg-amber-100/5"
+            }
+          />
 
           <section className="space-y-3 md:hidden">
             {entries.map((entry) => {
@@ -194,20 +227,29 @@ export function LeaderboardClient({
                 t("leaderboard.playerFallback", { id: entry.playerTag });
 
               return (
-                <article
+                <RogueCard
                   key={entry.userId}
-                  className={`rounded-xl border p-4 ${isCurrentUser ? "border-amber-300/45 bg-amber-300/10" : "border-amber-100/15 bg-[#0A1118]/85"}`}
+                  className={`rounded-xl border ${
+                    isCurrentUser
+                      ? "border-amber-300/45 bg-amber-300/10"
+                      : "border-amber-100/15 bg-[#0A1118]/85"
+                  }`}
+                  styles={{ body: { padding: 16 } }}
                 >
                   <div className="mb-3 flex items-center justify-between gap-2">
-                    <span
-                      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold ${getRankStyle(entry.rank)}`}
+                    <RogueTag
+                      bordered
+                      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-semibold ${getRankTagClass(entry.rank)}`}
                     >
                       #{entry.rank}
-                    </span>
+                    </RogueTag>
                     {isCurrentUser && (
-                      <span className="rounded border border-amber-200/45 bg-amber-200/20 px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-amber-100">
+                      <RogueTag
+                        bordered
+                        className="rounded border border-amber-200/45 bg-amber-200/20 px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-amber-100"
+                      >
                         {t("leaderboard.you")}
-                      </span>
+                      </RogueTag>
                     )}
                   </div>
 
@@ -271,7 +313,7 @@ export function LeaderboardClient({
                       </div>
                     </div>
                   </div>
-                </article>
+                </RogueCard>
               );
             })}
           </section>

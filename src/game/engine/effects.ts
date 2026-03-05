@@ -95,41 +95,153 @@ function applyDamageToTarget(
       : baseDamage;
 
   if (target === "player") {
-    const rawDamage = calculateDamage(scaledBaseDamage, sourceStats, {
-      buffs: state.player.buffs,
-    });
+    const sourceEnemy =
+      typeof source === "object" && source.type === "enemy"
+        ? state.enemies.find((enemy) => enemy.instanceId === source.instanceId)
+        : null;
+    const playerVulnerableMultiplier =
+      state.relicModifiers?.playerVulnerableDamageMultiplier ?? 1.5;
+    const rawDamage = calculateDamage(
+      scaledBaseDamage,
+      sourceStats,
+      {
+        buffs: state.player.buffs,
+      },
+      {
+        vulnerableMultiplier: playerVulnerableMultiplier,
+      }
+    );
     const canUseFirstHitReduction =
       typeof source === "object" &&
       source.type === "enemy" &&
       !state.firstHitReductionUsed &&
       state.player.firstHitDamageReductionPercent > 0 &&
       rawDamage > 0;
-    const finalDmg = canUseFirstHitReduction
+    let finalDmg = canUseFirstHitReduction
       ? Math.floor(
           (rawDamage * (100 - state.player.firstHitDamageReductionPercent)) /
             100
         )
       : rawDamage;
-    const result = applyDamage(state.player, finalDmg);
-    return {
-      ...updatePlayer(state, (p) => ({
+
+    let nextState = state;
+
+    const sidheCloakActive = Boolean(
+      nextState.relicFlags?.sidhe_cloak_available
+    );
+    if (
+      sidheCloakActive &&
+      sourceEnemy &&
+      !sourceEnemy.isBoss &&
+      finalDmg > 0
+    ) {
+      finalDmg = 0;
+      nextState = {
+        ...nextState,
+        relicFlags: {
+          ...(nextState.relicFlags ?? {}),
+          sidhe_cloak_available: false,
+        },
+      };
+    }
+
+    const hpBefore = nextState.player.currentHp;
+    const result = applyDamage(nextState.player, finalDmg);
+    nextState = {
+      ...updatePlayer(nextState, (p) => ({
         ...p,
         currentHp: result.currentHp,
         block: result.block,
       })),
       firstHitReductionUsed: canUseFirstHitReduction
         ? true
-        : state.firstHitReductionUsed,
+        : nextState.firstHitReductionUsed,
     };
+
+    if (sourceEnemy && finalDmg > 0) {
+      const reflectHitsLeft = Math.max(
+        0,
+        Math.floor(nextState.relicCounters?.tezca_reflect_hits_left ?? 0)
+      );
+      if (reflectHitsLeft > 0) {
+        const reflected = applyDamage(sourceEnemy, 3);
+        nextState = updateEnemy(nextState, sourceEnemy.instanceId, (enemy) => ({
+          ...enemy,
+          currentHp: reflected.currentHp,
+          block: reflected.block,
+        }));
+        nextState = {
+          ...nextState,
+          relicCounters: {
+            ...(nextState.relicCounters ?? {}),
+            tezca_reflect_hits_left: reflectHitsLeft - 1,
+          },
+        };
+      }
+    }
+
+    if (sourceEnemy && finalDmg > 0) {
+      const hpLost = Math.max(0, hpBefore - result.currentHp);
+      if (hpLost > 0 && nextState.relicFlags?.fenrir_fang_active) {
+        const triggersUsed = Math.max(
+          0,
+          Math.floor(nextState.relicCounters?.turn_fenrir_triggers ?? 0)
+        );
+        if (triggersUsed < 3) {
+          nextState = {
+            ...nextState,
+            player: {
+              ...nextState.player,
+              strength: nextState.player.strength + 1,
+            },
+            relicCounters: {
+              ...(nextState.relicCounters ?? {}),
+              turn_fenrir_triggers: triggersUsed + 1,
+            },
+          };
+        }
+      }
+
+      const oakAvailable = Boolean(nextState.relicFlags?.oak_geas_available);
+      if (
+        oakAvailable &&
+        result.currentHp > 0 &&
+        result.currentHp <= Math.floor(nextState.player.maxHp * 0.4)
+      ) {
+        nextState = {
+          ...nextState,
+          player: {
+            ...nextState.player,
+            strength: nextState.player.strength + 2,
+            block: nextState.player.block + 8,
+          },
+          relicFlags: {
+            ...(nextState.relicFlags ?? {}),
+            oak_geas_available: false,
+          },
+        };
+      }
+    }
+
+    return nextState;
   }
 
   if (target === "all_enemies") {
+    const enemyVulnerableMultiplier =
+      state.relicModifiers?.enemyVulnerableDamageMultiplier ?? 1.5;
     let s = state;
     for (const enemy of state.enemies) {
       if (enemy.currentHp <= 0) continue;
-      const finalDmg = calculateDamage(scaledBaseDamage, sourceStats, {
-        buffs: enemy.buffs,
-      });
+      const finalDmg = calculateDamage(
+        scaledBaseDamage,
+        sourceStats,
+        {
+          buffs: enemy.buffs,
+        },
+        {
+          vulnerableMultiplier: enemyVulnerableMultiplier,
+        }
+      );
       const result = applyDamage(enemy, finalDmg);
       s = updateEnemy(s, enemy.instanceId, (e) => ({
         ...e,
@@ -141,11 +253,20 @@ function applyDamageToTarget(
   }
 
   if (typeof target === "object" && target.type === "enemy") {
+    const enemyVulnerableMultiplier =
+      state.relicModifiers?.enemyVulnerableDamageMultiplier ?? 1.5;
     const enemy = state.enemies.find((e) => e.instanceId === target.instanceId);
     if (!enemy || enemy.currentHp <= 0) return state;
-    const finalDmg = calculateDamage(scaledBaseDamage, sourceStats, {
-      buffs: enemy.buffs,
-    });
+    const finalDmg = calculateDamage(
+      scaledBaseDamage,
+      sourceStats,
+      {
+        buffs: enemy.buffs,
+      },
+      {
+        vulnerableMultiplier: enemyVulnerableMultiplier,
+      }
+    );
     const result = applyDamage(enemy, finalDmg);
     return updateEnemy(state, target.instanceId, (e) => ({
       ...e,
@@ -155,12 +276,21 @@ function applyDamageToTarget(
   }
 
   if (target === "all_allies") {
+    const enemyVulnerableMultiplier =
+      state.relicModifiers?.enemyVulnerableDamageMultiplier ?? 1.5;
     let s = state;
     for (const ally of state.allies) {
       if (ally.currentHp <= 0) continue;
-      const finalDmg = calculateDamage(scaledBaseDamage, sourceStats, {
-        buffs: ally.buffs,
-      });
+      const finalDmg = calculateDamage(
+        scaledBaseDamage,
+        sourceStats,
+        {
+          buffs: ally.buffs,
+        },
+        {
+          vulnerableMultiplier: enemyVulnerableMultiplier,
+        }
+      );
       const result = applyDamage(ally, finalDmg);
       s = updateAlly(s, ally.instanceId, (a) => ({
         ...a,
@@ -172,11 +302,20 @@ function applyDamageToTarget(
   }
 
   if (typeof target === "object" && target.type === "ally") {
+    const enemyVulnerableMultiplier =
+      state.relicModifiers?.enemyVulnerableDamageMultiplier ?? 1.5;
     const ally = state.allies.find((a) => a.instanceId === target.instanceId);
     if (!ally || ally.currentHp <= 0) return state;
-    const finalDmg = calculateDamage(scaledBaseDamage, sourceStats, {
-      buffs: ally.buffs,
-    });
+    const finalDmg = calculateDamage(
+      scaledBaseDamage,
+      sourceStats,
+      {
+        buffs: ally.buffs,
+      },
+      {
+        vulnerableMultiplier: enemyVulnerableMultiplier,
+      }
+    );
     const result = applyDamage(ally, finalDmg);
     return updateAlly(state, target.instanceId, (a) => ({
       ...a,
@@ -659,6 +798,24 @@ export function resolveEffect(
         Math.max(0, Math.floor(effect.value)),
         rng
       );
+
+    case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND": {
+      const hasUpgraded = state.hand.some((c) => c.upgraded);
+      if (!hasUpgraded) return state;
+      return applyDamageToTarget(state, ctx.target, effect.value, ctx.source);
+    }
+
+    case "UPGRADE_RANDOM_CARD_IN_HAND": {
+      const upgradeable = state.hand.filter((c) => !c.upgraded);
+      if (upgradeable.length === 0) return state;
+      const picked = rng.pick(upgradeable);
+      return {
+        ...state,
+        hand: state.hand.map((c) =>
+          c.instanceId === picked.instanceId ? { ...c, upgraded: true } : c
+        ),
+      };
+    }
 
     default:
       return state;

@@ -105,6 +105,22 @@ export const ENEMY_IMAGES: Record<string, string> = {
   anansi_weaver: "/images/enemies/anansi_weaver.svg",
 };
 
+const ENEMY_IMAGE_ALIASES: Record<string, string> = {
+  apep_scion: "desert_cobra",
+  wadjet_guardian: "sand_guardian",
+  osiris_judgment: "osiris_eye",
+  flayed_cultist: "blood_cultist",
+  snow_maiden: "frost_witch",
+};
+
+export function getEnemyImageSrc(enemyId: string): string {
+  if (ENEMY_IMAGE_ALIASES[enemyId]) {
+    return `/images/enemies/${ENEMY_IMAGE_ALIASES[enemyId]}.svg`;
+  }
+  if (ENEMY_IMAGES[enemyId]) return ENEMY_IMAGES[enemyId];
+  return `/images/enemies/${enemyId}.svg`;
+}
+
 // â”€â”€â”€ Card art â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const CARD_IMAGES: Record<string, string> = {

@@ -26,7 +26,11 @@ export function canPlayCard(
 
   const def = cardDefs.get(cardInst.definitionId);
   if (!def) return false;
-  if (def.type === "STATUS" || def.type === "CURSE") return false;
+  const statusCursePlayable = Boolean(
+    state.relicFlags?.statusCursePlayable ?? false
+  );
+  if (!statusCursePlayable && (def.type === "STATUS" || def.type === "CURSE"))
+    return false;
   if (state.playerDisruption?.frozenHandCardIds?.includes(instanceId))
     return false;
 
@@ -168,7 +172,10 @@ export function playCard(
 
   // Move card to appropriate pile
   const shouldExhaust =
-    def.type === "POWER" || effects.some((e) => e.type === "EXHAUST");
+    def.type === "POWER" ||
+    effects.some((e) => e.type === "EXHAUST") ||
+    (Boolean(state.relicFlags?.statusCursePlayExhaust) &&
+      (def.type === "STATUS" || def.type === "CURSE"));
   if (shouldExhaust) {
     const keepChance = Math.min(
       100,

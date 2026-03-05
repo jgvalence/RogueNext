@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BiomeResource, BiomeType, InkPowerType } from "./enums";
+import { BiomeResource, BiomeType } from "./enums";
 
 // ---------------------------------------------------------------------------
 // MetaBonus — tous les types de bonus permanents possibles
@@ -28,8 +28,11 @@ export const MetaBonusSchema = z.discriminatedUnion("type", [
     type: z.literal("EXTRA_CARD_REWARD_CHOICES"),
     value: z.number().int(),
   }),
-  // Unlock d'Ink Powers
-  z.object({ type: z.literal("UNLOCK_INK_POWER"), power: InkPowerType }),
+  // Unlock de slot de pouvoir (peu importe le personnage actif)
+  z.object({
+    type: z.literal("UNLOCK_POWER_SLOT"),
+    slot: z.union([z.literal(2), z.literal(3)]),
+  }),
   // Bonuses complexes (non encore implémentés dans le moteur, stockés pour l'avenir)
   z.object({ type: z.literal("HEAL_AFTER_COMBAT"), value: z.number() }),
   z.object({ type: z.literal("HEAL_AFTER_COMBAT_FLAT"), value: z.number() }),
@@ -101,8 +104,8 @@ export const ComputedMetaBonusesSchema = z.object({
   extraCardRewardChoices: z.number().int().default(0),
   relicDiscount: z.number().default(0),
   lootLuck: z.number().int().default(0),
-  // Ink powers — REWRITE toujours présent, SEAL et LOST_CHAPTER à débloquer
-  unlockedInkPowers: z.array(InkPowerType).default(["REWRITE"]),
+  // Slots de pouvoirs débloqués (slot 1 toujours disponible)
+  unlockedPowerSlots: z.array(z.number().int().min(1).max(3)).default([1]),
   // Complex bonuses
   healAfterCombat: z.number().default(0), // % of max HP healed after each combat
   healAfterCombatFlat: z.number().default(0), // flat HP healed after each combat

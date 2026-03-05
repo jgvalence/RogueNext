@@ -437,6 +437,40 @@ export function localizeEnemyName(
   );
 }
 
+export function localizeEnemyLore(
+  enemyId: string | undefined,
+  fallback: string | undefined
+): string {
+  const fallbackValue = fallback ?? "";
+  if (!enemyId) return maybeTranslateFallbackText(fallbackValue);
+  return (
+    getLocaleString(`enemies.${enemyId}.lore`) ??
+    maybeTranslateFallbackText(fallbackValue)
+  );
+}
+
+export function localizeEnemyLoreEntry(
+  enemyId: string | undefined,
+  entryIndex: number,
+  fallback: string | undefined
+): string {
+  const fallbackValue = fallback ?? "";
+  if (!enemyId) return maybeTranslateFallbackText(fallbackValue);
+  const normalizedIndex = Math.max(0, Math.floor(entryIndex));
+
+  const indexedLore = getLocaleString(
+    `enemies.${enemyId}.lore.${normalizedIndex + 1}`
+  );
+  if (indexedLore) return indexedLore;
+
+  if (normalizedIndex === 0) {
+    const baseLore = getLocaleString(`enemies.${enemyId}.lore`);
+    if (baseLore) return baseLore;
+  }
+
+  return maybeTranslateFallbackText(fallbackValue);
+}
+
 export function localizeEnemyAbilityName(
   enemyId: string | undefined,
   abilityName: string | undefined

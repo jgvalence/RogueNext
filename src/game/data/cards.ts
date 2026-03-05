@@ -1,17 +1,21 @@
 import type { CardDefinition } from "../schemas/cards";
+import type { EnemyDefinition } from "../schemas/entities";
+import type { BiomeType } from "../schemas/enums";
+import { enemyDefinitions } from "./enemies";
+import { ENEMIES_WITHOUT_BESTIARY_CARDS_SET } from "./enemy-mastery";
 
 /**
  * Lootable cards — obtainable via rewards or merchant.
  * Cards tagged biome: "LIBRARY" appear on all floors.
  * Biome-specific cards only appear on their matching floor.
  */
-export const lootableCardDefinitions: CardDefinition[] = [
+const baseLootableCardDefinitions: CardDefinition[] = [
   // =========================================================
   // LIBRARY biome — attacks
   // =========================================================
   {
     id: "heavy_strike",
-    name: "Heavy Strike",
+    name: "Inkstone Blow",
     type: "ATTACK",
     energyCost: 2,
     inkCost: 0,
@@ -30,10 +34,11 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "cleave",
-    name: "Cleave",
+    name: "Page Rend",
     type: "ATTACK",
     energyCost: 1,
     inkCost: 0,
@@ -52,6 +57,8 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
+    isCollectible: false,
   },
   {
     id: "piercing_word",
@@ -83,6 +90,8 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
+    isCollectible: false,
   },
   {
     id: "poison_quill",
@@ -114,10 +123,12 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
+    isCollectible: false,
   },
   {
     id: "mythic_blow",
-    name: "Mythic Blow",
+    name: "Legendary Chapter",
     type: "ATTACK",
     energyCost: 3,
     inkCost: 0,
@@ -136,10 +147,11 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "swift_slash",
-    name: "Swift Slash",
+    name: "Tome Slash",
     type: "ATTACK",
     energyCost: 0,
     inkCost: 0,
@@ -161,6 +173,8 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
+    isCollectible: false,
   },
 
   // =========================================================
@@ -168,7 +182,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
   // =========================================================
   {
     id: "quick_feint",
-    name: "Quick Feint",
+    name: "Scripted Feint",
     type: "ATTACK",
     energyCost: 0,
     inkCost: 0,
@@ -196,10 +210,12 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
+    isCollectible: false,
   },
   {
     id: "bastion_crash",
-    name: "Bastion Crash",
+    name: "Shelf Collapse",
     type: "ATTACK",
     energyCost: 1,
     inkCost: 0,
@@ -218,6 +234,8 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
+    isCollectible: false,
   },
   {
     id: "venom_echo",
@@ -242,10 +260,12 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
+    isCollectible: false,
   },
   {
     id: "fortify",
-    name: "Fortify",
+    name: "Archive Seal",
     type: "SKILL",
     energyCost: 1,
     inkCost: 0,
@@ -264,31 +284,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
-  },
-  {
-    id: "battle_cry",
-    name: "Battle Cry",
-    type: "SKILL",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "ALL_ENEMIES",
-    rarity: "UNCOMMON",
-    description: "Apply 1 Weak to ALL enemies.",
-    effects: [{ type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 }],
-    inkedVariant: {
-      description: "Apply 2 Weak to ALL enemies.",
-      effects: [{ type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 }],
-      inkMarkCost: 2,
-    },
-    upgrade: {
-      description: "Apply 2 Weak to ALL enemies. Draw 1 card.",
-      effects: [
-        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
-        { type: "DRAW_CARDS", value: 1 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "scholars_focus",
@@ -313,6 +309,8 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
+    isCollectible: false,
   },
   {
     id: "healing_script",
@@ -335,6 +333,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "ink_flow",
@@ -357,10 +356,11 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "adrenaline",
-    name: "Adrenaline",
+    name: "Ink Rush",
     type: "SKILL",
     energyCost: 0,
     inkCost: 0,
@@ -381,6 +381,8 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
+    isCollectible: false,
   },
 
   // =========================================================
@@ -404,25 +406,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
-  },
-  {
-    id: "inner_focus",
-    name: "Inner Focus",
-    type: "POWER",
-    energyCost: 2,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "RARE",
-    description: "Gain 2 Focus.",
-    effects: [{ type: "GAIN_FOCUS", value: 2 }],
-    inkedVariant: null,
-    upgrade: {
-      energyCost: 1,
-      description: "Gain 2 Focus.",
-      effects: [{ type: "GAIN_FOCUS", value: 2 }],
-    },
-    isStarterCard: false,
-    biome: "LIBRARY",
+    characterId: "scribe",
   },
 
   // =========================================================
@@ -451,10 +435,11 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "double_strike",
-    name: "Double Strike",
+    name: "Dual Script",
     type: "ATTACK",
     energyCost: 1,
     inkCost: 0,
@@ -482,6 +467,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "curse_word",
@@ -507,6 +493,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "final_chapter",
@@ -538,30 +525,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
-  },
-  {
-    id: "battle_stance",
-    name: "Battle Stance",
-    type: "SKILL",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "COMMON",
-    description: "Gain 5 block. Gain 1 ink.",
-    effects: [
-      { type: "BLOCK", value: 5 },
-      { type: "GAIN_INK", value: 1 },
-    ],
-    inkedVariant: null,
-    upgrade: {
-      description: "Gain 8 block. Gain 2 ink.",
-      effects: [
-        { type: "BLOCK", value: 8 },
-        { type: "GAIN_INK", value: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "vulnerability_hex",
@@ -585,36 +549,12 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
-  },
-  {
-    id: "war_drum",
-    name: "War Drum",
-    type: "SKILL",
-    energyCost: 2,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "UNCOMMON",
-    description: "Draw 2 cards.",
-    effects: [{ type: "DRAW_CARDS", value: 2 }],
-    inkedVariant: {
-      description: "Draw 2 cards. Gain 1 Strength.",
-      effects: [
-        { type: "DRAW_CARDS", value: 2 },
-        { type: "GAIN_STRENGTH", value: 1 },
-      ],
-      inkMarkCost: 3,
-    },
-    upgrade: {
-      description: "Draw 3 cards.",
-      effects: [{ type: "DRAW_CARDS", value: 3 }],
-    },
-    isStarterCard: false,
-    biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "meditation",
-    name: "Meditation",
-    type: "SKILL",
+    name: "Silent Study",
+    type: "POWER",
     energyCost: 2,
     inkCost: 0,
     targeting: "SELF",
@@ -636,36 +576,15 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
 
   // =========================================================
   // LIBRARY biome — new ALWAYS cards
   // =========================================================
   {
-    id: "rough_tome",
-    name: "Rough Tome",
-    type: "ATTACK",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "SINGLE_ENEMY",
-    rarity: "COMMON",
-    description: "Deal 9 damage.",
-    effects: [{ type: "DAMAGE", value: 9 }],
-    inkedVariant: {
-      description: "Deal 13 damage.",
-      effects: [{ type: "DAMAGE", value: 13 }],
-      inkMarkCost: 2,
-    },
-    upgrade: {
-      description: "Deal 13 damage.",
-      effects: [{ type: "DAMAGE", value: 13 }],
-    },
-    isStarterCard: false,
-    biome: "LIBRARY",
-  },
-  {
     id: "quick_recovery",
-    name: "Quick Recovery",
+    name: "Index Recovery",
     type: "SKILL",
     energyCost: 0,
     inkCost: 0,
@@ -684,6 +603,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "inked_sweep",
@@ -715,10 +635,12 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
+    isCollectible: false,
   },
   {
     id: "brace",
-    name: "Brace",
+    name: "Stacked Volumes",
     type: "SKILL",
     energyCost: 1,
     inkCost: 0,
@@ -746,6 +668,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "ink_surge",
@@ -780,7 +703,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
   },
   {
     id: "exploit_weakness",
-    name: "Exploit Weakness",
+    name: "Exposed Margin",
     type: "ATTACK",
     energyCost: 1,
     inkCost: 0,
@@ -811,10 +734,11 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "iron_will",
-    name: "Iron Will",
+    name: "Scribal Resolve",
     type: "SKILL",
     energyCost: 1,
     inkCost: 0,
@@ -842,6 +766,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
 
   // =========================================================
@@ -979,39 +904,9 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "VIKING",
+    characterId: "scribe",
   },
 
-  {
-    id: "rune_carve",
-    name: "Rune Carve",
-    type: "ATTACK",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "SINGLE_ENEMY",
-    rarity: "COMMON",
-    description: "Deal 8 damage. Apply 1 Vulnerable.",
-    effects: [
-      { type: "DAMAGE", value: 8 },
-      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
-    ],
-    inkedVariant: {
-      description: "Deal 11 damage. Apply 2 Vulnerable.",
-      effects: [
-        { type: "DAMAGE", value: 11 },
-        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
-      ],
-      inkMarkCost: 2,
-    },
-    upgrade: {
-      description: "Deal 11 damage. Apply 2 Vulnerable.",
-      effects: [
-        { type: "DAMAGE", value: 11 },
-        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "VIKING",
-  },
   {
     id: "valkyries_dive",
     name: "Valkyrie's Dive",
@@ -1079,88 +974,37 @@ export const lootableCardDefinitions: CardDefinition[] = [
     biome: "GREEK",
   },
   {
-    id: "lightning_bolt",
-    name: "Lightning Bolt",
-    type: "ATTACK",
-    energyCost: 2,
-    inkCost: 0,
-    targeting: "ALL_ENEMIES",
-    rarity: "UNCOMMON",
-    description: "Deal 8 damage to ALL enemies.",
-    effects: [{ type: "DAMAGE", value: 8 }],
-    inkedVariant: {
-      description: "Deal 12 damage to ALL enemies. Apply 1 Vulnerable to ALL.",
-      effects: [
-        { type: "DAMAGE", value: 12 },
-        {
-          type: "APPLY_DEBUFF",
-          value: 1,
-          buff: "VULNERABLE",
-          duration: 2,
-        },
-      ],
-      inkMarkCost: 3,
-    },
-    upgrade: {
-      description: "Deal 12 damage to ALL enemies. Apply 1 Vulnerable to ALL.",
-      effects: [
-        { type: "DAMAGE", value: 12 },
-        { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "GREEK",
-  },
-  {
     id: "gorgons_gaze",
     name: "Gorgon's Gaze",
-    type: "SKILL",
+    type: "ATTACK",
     energyCost: 1,
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Apply 1 Vulnerable and 1 Weak to ALL enemies.",
+    description:
+      "Deal 5 damage to ALL enemies. Apply 1 Vulnerable and 1 Weak to ALL.",
     effects: [
+      { type: "DAMAGE", value: 5 },
       { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
       { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
     ],
     inkedVariant: {
-      description: "Apply 2 Vulnerable and 2 Weak to ALL enemies.",
+      description:
+        "Deal 7 damage to ALL. Apply 2 Vulnerable and 2 Weak to ALL.",
       effects: [
+        { type: "DAMAGE", value: 7 },
         { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
       ],
       inkMarkCost: 3,
     },
     upgrade: {
-      description: "Apply 2 Vulnerable and 2 Weak to ALL enemies.",
+      description:
+        "Deal 7 damage to ALL. Apply 2 Vulnerable and 2 Weak to ALL.",
       effects: [
+        { type: "DAMAGE", value: 7 },
         { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "GREEK",
-  },
-  {
-    id: "icarus_wings",
-    name: "Icarus Wings",
-    type: "SKILL",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "RARE",
-    description: "Gain 1 energy. Draw 2 cards.",
-    effects: [
-      { type: "GAIN_ENERGY", value: 1 },
-      { type: "DRAW_CARDS", value: 2 },
-    ],
-    inkedVariant: null,
-    upgrade: {
-      description: "Gain 1 energy. Draw 3 cards.",
-      effects: [
-        { type: "GAIN_ENERGY", value: 1 },
-        { type: "DRAW_CARDS", value: 3 },
       ],
     },
     isStarterCard: false,
@@ -1362,30 +1206,6 @@ export const lootableCardDefinitions: CardDefinition[] = [
     isStarterCard: false,
     biome: "EGYPTIAN",
   },
-  {
-    id: "mummies_wrath",
-    name: "Mummy's Wrath",
-    type: "ATTACK",
-    energyCost: 2,
-    inkCost: 0,
-    targeting: "SINGLE_ENEMY",
-    rarity: "RARE",
-    description: "Deal 18 damage. Apply 3 Vulnerable.",
-    effects: [
-      { type: "DAMAGE", value: 18 },
-      { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
-    ],
-    inkedVariant: null,
-    upgrade: {
-      description: "Deal 27 damage. Apply 4 Vulnerable.",
-      effects: [
-        { type: "DAMAGE", value: 27 },
-        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "EGYPTIAN",
-  },
 
   {
     id: "sand_whip",
@@ -1442,55 +1262,38 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "EGYPTIAN",
+    characterId: "bibliothecaire",
   },
 
   // =========================================================
   // LOVECRAFTIAN biome — cards
   // =========================================================
   {
-    id: "eldritch_blast",
-    name: "Eldritch Blast",
+    id: "forbidden_whisper",
+    name: "Forbidden Whisper",
     type: "ATTACK",
     energyCost: 1,
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
-    rarity: "COMMON",
-    description: "Deal 8 damage.",
-    effects: [{ type: "DAMAGE", value: 8 }],
+    rarity: "UNCOMMON",
+    description: "Deal 5 damage. Apply 4 Vulnerable to target.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+    ],
     inkedVariant: {
-      description: "Deal 12 damage.",
-      effects: [{ type: "DAMAGE", value: 12 }],
+      description: "Deal 7 damage. Apply 5 Vulnerable to target.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 5, buff: "VULNERABLE", duration: 2 },
+      ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 12 damage. Apply 1 Weak.",
+      description: "Deal 7 damage. Apply 4 Vulnerable to target.",
       effects: [
-        { type: "DAMAGE", value: 12 },
-        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "LOVECRAFTIAN",
-  },
-  {
-    id: "forbidden_whisper",
-    name: "Forbidden Whisper",
-    type: "SKILL",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "ALL_ENEMIES",
-    rarity: "UNCOMMON",
-    description: "Apply 1 Weak to ALL enemies. Draw 1 card.",
-    effects: [
-      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
-      { type: "DRAW_CARDS", value: 1 },
-    ],
-    inkedVariant: null,
-    upgrade: {
-      description: "Apply 2 Weak to ALL enemies. Draw 1 card.",
-      effects: [
-        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
-        { type: "DRAW_CARDS", value: 1 },
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
       ],
     },
     isStarterCard: false,
@@ -1642,6 +1445,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LOVECRAFTIAN",
+    characterId: "scribe",
   },
 
   // =========================================================
@@ -1778,37 +1582,6 @@ export const lootableCardDefinitions: CardDefinition[] = [
   },
 
   {
-    id: "sacred_jade",
-    name: "Sacred Jade",
-    type: "SKILL",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "COMMON",
-    description: "Gain 7 block. Gain 1 Ink.",
-    effects: [
-      { type: "BLOCK", value: 7 },
-      { type: "GAIN_INK", value: 1 },
-    ],
-    inkedVariant: {
-      description: "Gain 10 block. Gain 2 Ink.",
-      effects: [
-        { type: "BLOCK", value: 10 },
-        { type: "GAIN_INK", value: 2 },
-      ],
-      inkMarkCost: 2,
-    },
-    upgrade: {
-      description: "Gain 10 block. Gain 2 Ink.",
-      effects: [
-        { type: "BLOCK", value: 10 },
-        { type: "GAIN_INK", value: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "AZTEC",
-  },
-  {
     id: "jaguars_blood",
     name: "Jaguar's Blood",
     type: "ATTACK",
@@ -1838,6 +1611,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "AZTEC",
+    characterId: "scribe",
   },
 
   // =========================================================
@@ -1875,24 +1649,6 @@ export const lootableCardDefinitions: CardDefinition[] = [
     biome: "CELTIC",
   },
   {
-    id: "oak_guard",
-    name: "Oak Guard",
-    type: "SKILL",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "COMMON",
-    description: "Gain 10 block.",
-    effects: [{ type: "BLOCK", value: 10 }],
-    inkedVariant: null,
-    upgrade: {
-      description: "Gain 15 block.",
-      effects: [{ type: "BLOCK", value: 15 }],
-    },
-    isStarterCard: false,
-    biome: "CELTIC",
-  },
-  {
     id: "druids_breath",
     name: "Druid's Breath",
     type: "SKILL",
@@ -1918,31 +1674,6 @@ export const lootableCardDefinitions: CardDefinition[] = [
       effects: [
         { type: "HEAL", value: 9 },
         { type: "DRAW_CARDS", value: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "CELTIC",
-  },
-  {
-    id: "stag_charge",
-    name: "Stag Charge",
-    type: "ATTACK",
-    energyCost: 2,
-    inkCost: 0,
-    targeting: "ALL_ENEMIES",
-    rarity: "UNCOMMON",
-    description: "Deal 7 damage to ALL enemies.",
-    effects: [{ type: "DAMAGE", value: 7 }],
-    inkedVariant: {
-      description: "Deal 11 damage to ALL enemies.",
-      effects: [{ type: "DAMAGE", value: 11 }],
-      inkMarkCost: 3,
-    },
-    upgrade: {
-      description: "Deal 10 damage to ALL enemies. Apply 1 Weak to ALL.",
-      effects: [
-        { type: "DAMAGE", value: 10 },
-        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
       ],
     },
     isStarterCard: false,
@@ -2079,72 +1810,6 @@ export const lootableCardDefinitions: CardDefinition[] = [
     biome: "RUSSIAN",
   },
   {
-    id: "winter_ballad",
-    name: "Winter Ballad",
-    type: "SKILL",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "ALL_ENEMIES",
-    rarity: "UNCOMMON",
-    description: "Apply 2 Weak to ALL enemies.",
-    effects: [{ type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 }],
-    inkedVariant: null,
-    upgrade: {
-      description: "Apply 3 Weak to ALL enemies. Draw 1 card.",
-      effects: [
-        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
-        { type: "DRAW_CARDS", value: 1 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "RUSSIAN",
-  },
-  {
-    id: "wolf_hunt",
-    name: "Wolf Hunt",
-    type: "ATTACK",
-    energyCost: 2,
-    inkCost: 0,
-    targeting: "SINGLE_ENEMY",
-    rarity: "UNCOMMON",
-    description: "Deal 17 damage.",
-    effects: [{ type: "DAMAGE", value: 17 }],
-    inkedVariant: {
-      description: "Deal 24 damage.",
-      effects: [{ type: "DAMAGE", value: 24 }],
-      inkMarkCost: 3,
-    },
-    upgrade: {
-      description: "Deal 24 damage. Apply 1 Vulnerable.",
-      effects: [
-        { type: "DAMAGE", value: 24 },
-        { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "RUSSIAN",
-  },
-  {
-    id: "firebird_feather",
-    name: "Firebird Feather",
-    type: "POWER",
-    energyCost: 2,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "RARE",
-    description: "Gain 2 Strength.",
-    effects: [{ type: "GAIN_STRENGTH", value: 2 }],
-    inkedVariant: null,
-    upgrade: {
-      energyCost: 1,
-      description: "Gain 2 Strength.",
-      effects: [{ type: "GAIN_STRENGTH", value: 2 }],
-    },
-    isStarterCard: false,
-    biome: "RUSSIAN",
-  },
-
-  {
     id: "bear_claw",
     name: "Bear Claw",
     type: "ATTACK",
@@ -2210,55 +1875,6 @@ export const lootableCardDefinitions: CardDefinition[] = [
   // =========================================================
   // AFRICAN biome — cards
   // =========================================================
-  {
-    id: "lion_claw",
-    name: "Lion Claw",
-    type: "ATTACK",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "SINGLE_ENEMY",
-    rarity: "COMMON",
-    description: "Deal 9 damage.",
-    effects: [{ type: "DAMAGE", value: 9 }],
-    inkedVariant: {
-      description: "Deal 13 damage.",
-      effects: [{ type: "DAMAGE", value: 13 }],
-      inkMarkCost: 2,
-    },
-    upgrade: {
-      description: "Deal 13 damage. Apply 1 Vulnerable.",
-      effects: [
-        { type: "DAMAGE", value: 13 },
-        { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "AFRICAN",
-  },
-  {
-    id: "mask_dance",
-    name: "Mask Dance",
-    type: "SKILL",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "UNCOMMON",
-    description: "Draw 2 cards. Gain 1 block.",
-    effects: [
-      { type: "DRAW_CARDS", value: 2 },
-      { type: "BLOCK", value: 1 },
-    ],
-    inkedVariant: null,
-    upgrade: {
-      description: "Draw 3 cards. Gain 2 block.",
-      effects: [
-        { type: "DRAW_CARDS", value: 3 },
-        { type: "BLOCK", value: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "AFRICAN",
-  },
   {
     id: "ancestral_drum",
     name: "Ancestral Drum",
@@ -2404,28 +2020,6 @@ export const lootableCardDefinitions: CardDefinition[] = [
     biome: "AFRICAN",
   },
   {
-    id: "margin_barrage",
-    name: "Margin Barrage",
-    type: "ATTACK",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "ALL_ENEMIES",
-    rarity: "UNCOMMON",
-    description: "Deal 6 damage to ALL enemies.",
-    effects: [{ type: "DAMAGE", value: 6 }],
-    inkedVariant: {
-      description: "Deal 9 damage to ALL enemies.",
-      effects: [{ type: "DAMAGE", value: 9 }],
-      inkMarkCost: 2,
-    },
-    upgrade: {
-      description: "Deal 9 damage to ALL enemies.",
-      effects: [{ type: "DAMAGE", value: 9 }],
-    },
-    isStarterCard: false,
-    biome: "LIBRARY",
-  },
-  {
     id: "annotated_thesis",
     name: "Annotated Thesis",
     type: "SKILL",
@@ -2450,30 +2044,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
-  },
-  {
-    id: "binding_oath",
-    name: "Binding Oath",
-    type: "POWER",
-    energyCost: 2,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "RARE",
-    description: "Gain 1 Strength. Gain 1 Focus.",
-    effects: [
-      { type: "GAIN_STRENGTH", value: 1 },
-      { type: "GAIN_FOCUS", value: 1 },
-    ],
-    inkedVariant: null,
-    upgrade: {
-      description: "Gain 2 Strength. Gain 2 Focus.",
-      effects: [
-        { type: "GAIN_STRENGTH", value: 2 },
-        { type: "GAIN_FOCUS", value: 2 },
-      ],
-    },
-    isStarterCard: false,
-    biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "forbidden_appendix",
@@ -2505,6 +2076,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "index_of_echoes",
@@ -2529,6 +2101,7 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "redacted_blast",
@@ -2562,6 +2135,8 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "scribe",
+    isCollectible: false,
   },
   {
     id: "curator_pact",
@@ -2588,6 +2163,3598 @@ export const lootableCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: false,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
+  },
+
+  // =========================================================
+  // VIKING — Scribe
+  // =========================================================
+  {
+    id: "iron_verse",
+    name: "Iron Verse",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 8 damage. Apply 2 Bleed.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description: "Deal 11 damage. Apply 3 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 11 damage. Apply 2 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "scribe",
+  },
+  {
+    id: "frost_rune_shield",
+    name: "Frost Rune Shield",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 8 block. Gain 1 ink.",
+    effects: [
+      { type: "BLOCK", value: 8 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 11 block. Gain 2 ink.",
+      effects: [
+        { type: "BLOCK", value: 11 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 11 block. Gain 1 ink.",
+      effects: [
+        { type: "BLOCK", value: 11 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "scribe",
+  },
+  {
+    id: "scald_cry",
+    name: "Scald Cry",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 2 ink. Draw 1 card. Gain 1 Strength.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "GAIN_STRENGTH", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 ink. Draw 1 card. Gain 1 Strength.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "GAIN_STRENGTH", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "scribe",
+  },
+  {
+    id: "rune_storm",
+    name: "Rune Storm",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Deal 10 damage to ALL enemies. Apply 2 Bleed to ALL enemies.",
+    effects: [
+      { type: "DAMAGE", value: 10 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description:
+        "Deal 14 damage to ALL enemies. Apply 3 Bleed to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 14 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description:
+        "Deal 14 damage to ALL enemies. Apply 2 Bleed to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 14 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "scribe",
+  },
+  {
+    id: "battle_inscription",
+    name: "Battle Inscription",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 6 block. Gain 1 ink. Upgrade 1 random card in hand.",
+    effects: [
+      { type: "BLOCK", value: 6 },
+      { type: "GAIN_INK", value: 1 },
+      { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 8 block. Gain 1 ink. Upgrade 1 random card in hand.",
+      effects: [
+        { type: "BLOCK", value: 8 },
+        { type: "GAIN_INK", value: 1 },
+        { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "scribe",
+  },
+  {
+    id: "odin_script",
+    name: "Odin's Script",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 4 ink. Draw 2 cards. Exhaust.",
+    effects: [
+      { type: "GAIN_INK", value: 4 },
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Gain 5 ink. Draw 3 cards. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 5 },
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 4 ink. Draw 3 cards. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 4 },
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "scribe",
+  },
+  {
+    id: "epic_saga",
+    name: "Epic Saga",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 3 Strength. Gain 2 ink. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 3 },
+      { type: "GAIN_INK", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 Strength. Gain 3 ink. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "GAIN_INK", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "scribe",
+  },
+  // =========================================================
+  // GREEK — Scribe
+  // =========================================================
+  {
+    id: "logos_strike",
+    name: "Logos Strike",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 8 damage. Apply 1 Vulnerable.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 12 damage. Apply 2 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 12 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 11 damage. Apply 1 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "scribe",
+  },
+  {
+    id: "philosophers_quill",
+    name: "Philosopher's Quill",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 2 ink. Draw 1 card.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 3 ink. Draw 2 cards.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 3 ink. Draw 1 card.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "scribe",
+  },
+  {
+    id: "epic_simile",
+    name: "Epic Simile",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description: "Deal 5 damage to ALL enemies. Apply 1 Weak to ALL enemies.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 7 damage to ALL enemies. Apply 2 Weak to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 7 damage to ALL enemies. Apply 1 Weak to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "scribe",
+  },
+  {
+    id: "hermes_dash",
+    name: "Hermes Dash",
+    type: "ATTACK",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 5 damage. Gain 1 ink. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "GAIN_INK", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Deal 8 damage. Gain 2 ink. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "GAIN_INK", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 7 damage. Gain 1 ink. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "GAIN_INK", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "scribe",
+  },
+  {
+    id: "written_prophecy",
+    name: "Written Prophecy",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Draw 2 cards. Gain 2 ink. Exhaust.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "GAIN_INK", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Draw 3 cards. Gain 3 ink. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "GAIN_INK", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Draw 3 cards. Gain 2 ink. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "GAIN_INK", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "scribe",
+  },
+  {
+    id: "titans_wrath",
+    name: "Titan's Wrath",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 14 damage. Apply 2 Vulnerable.",
+    effects: [
+      { type: "DAMAGE", value: 14 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 20 damage. Apply 3 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 20 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 18 damage. Apply 2 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 18 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "scribe",
+  },
+  {
+    id: "ares_verse",
+    name: "Ares Verse",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 6 block. Gain 2 Strength.",
+    effects: [
+      { type: "BLOCK", value: 6 },
+      { type: "GAIN_STRENGTH", value: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 8 block. Gain 2 Strength.",
+      effects: [
+        { type: "BLOCK", value: 8 },
+        { type: "GAIN_STRENGTH", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "scribe",
+  },
+  {
+    id: "olympian_scripture",
+    name: "Olympian Scripture",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 3 Strength. Gain 3 ink. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 3 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 Strength. Gain 4 ink. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "GAIN_INK", value: 4 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "scribe",
+  },
+  // =========================================================
+  // EGYPTIAN — Scribe
+  // =========================================================
+  {
+    id: "hieroglyph_strike",
+    name: "Hieroglyph Strike",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 8 damage. Gain 1 ink.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Deal 12 damage. Gain 2 ink.",
+      effects: [
+        { type: "DAMAGE", value: 12 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 11 damage. Gain 1 ink.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "sacred_papyrus",
+    name: "Sacred Papyrus",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 9 block.",
+    effects: [{ type: "BLOCK", value: 9 }],
+    inkedVariant: {
+      description: "Gain 13 block.",
+      effects: [{ type: "BLOCK", value: 13 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 13 block.",
+      effects: [{ type: "BLOCK", value: 13 }],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "spell_inscription",
+    name: "Spell Inscription",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 12 damage. Apply 3 Poison.",
+    effects: [
+      { type: "DAMAGE", value: 12 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description: "Deal 16 damage. Apply 4 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 16 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 16 damage. Apply 3 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 16 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "book_of_ra",
+    name: "Book of Ra",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 3 ink. Draw 2 cards.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "DRAW_CARDS", value: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 ink. Draw 3 cards.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 3 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "sacred_ink_burst",
+    name: "Sacred Ink Burst",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 3 ink. Gain 6 block.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "BLOCK", value: 6 },
+    ],
+    inkedVariant: {
+      description: "Gain 4 ink. Gain 9 block.",
+      effects: [
+        { type: "GAIN_INK", value: 4 },
+        { type: "BLOCK", value: 9 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 3 ink. Gain 8 block.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "BLOCK", value: 8 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "scribes_judgment",
+    name: "Scribe's Judgment",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "RARE",
+    description: "Deal 15 damage. Apply 2 Bleed. Apply 2 Vulnerable.",
+    effects: [
+      { type: "DAMAGE", value: 15 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 20 damage. Apply 3 Bleed. Apply 3 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 20 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 20 damage. Apply 2 Bleed. Apply 2 Vulnerable.",
+      effects: [
+        { type: "DAMAGE", value: 20 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "scribe",
+  },
+  // =========================================================
+  // LOVECRAFTIAN — Scribe
+  // =========================================================
+  {
+    id: "void_quill",
+    name: "Void Quill",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 10 damage. Add 1 Dazed to discard.",
+    effects: [
+      { type: "DAMAGE", value: 10 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Deal 13 damage. Add 1 Dazed to discard.",
+      effects: [
+        { type: "DAMAGE", value: 13 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "cursed_inscription",
+    name: "Cursed Inscription",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 6 damage. Apply 3 Poison.",
+    effects: [
+      { type: "DAMAGE", value: 6 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description: "Deal 9 damage. Apply 4 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 9 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 9 damage. Apply 3 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 9 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "black_page",
+    name: "Black Page",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description: "Gain 2 ink. Apply 1 Weak to ALL enemies.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Gain 3 ink. Apply 2 Weak to ALL enemies.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 3 ink. Apply 1 Weak to ALL enemies.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "forbidden_verse",
+    name: "Forbidden Verse",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 12 damage. Apply 2 Bleed. Apply 1 Weak.",
+    effects: [
+      { type: "DAMAGE", value: 12 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 16 damage. Apply 3 Bleed. Apply 2 Weak.",
+      effects: [
+        { type: "DAMAGE", value: 16 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 16 damage. Apply 2 Bleed. Apply 1 Weak.",
+      effects: [
+        { type: "DAMAGE", value: 16 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "eldritch_script",
+    name: "Eldritch Script",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Gain 3 ink. Apply 1 Vulnerable to ALL enemies. Draw 1 card.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Gain 3 ink. Apply 2 Vulnerable to ALL enemies. Draw 1 card.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "necrotic_words",
+    name: "Necrotic Words",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Deal 5 damage to ALL enemies. Apply 2 Bleed to ALL enemies.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description:
+        "Deal 7 damage to ALL enemies. Apply 3 Bleed to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description:
+        "Deal 7 damage to ALL enemies. Apply 2 Bleed to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "void_scripture",
+    name: "Void Scripture",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 3 Strength. Gain 3 ink. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 3 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 4 Strength. Gain 3 ink. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 4 },
+        { type: "GAIN_INK", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "scribe",
+  },
+  // =========================================================
+  // AZTEC — Scribe
+  // =========================================================
+  {
+    id: "obsidian_quill",
+    name: "Obsidian Quill",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Gain 2 ink. Deal 4 damage to target.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "DAMAGE", value: 4 },
+    ],
+    inkedVariant: {
+      description: "Gain 3 ink. Deal 7 damage to target.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DAMAGE", value: 7 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 3 ink. Deal 4 damage to target.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DAMAGE", value: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "scribe",
+  },
+  {
+    id: "codex_strike",
+    name: "Codex Strike",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 8 damage. Apply 2 Bleed.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description: "Deal 11 damage. Apply 3 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 11 damage. Apply 2 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "scribe",
+  },
+  {
+    id: "sacrificial_word",
+    name: "Sacrificial Word",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description:
+      "Deal 5 damage to ALL enemies. Apply 1 Vulnerable to ALL enemies.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Deal 7 damage to ALL enemies. Apply 1 Vulnerable to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "scribe",
+  },
+  {
+    id: "xipe_shield",
+    name: "Xipe Shield",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 8 block. Gain 2 ink.",
+    effects: [
+      { type: "BLOCK", value: 8 },
+      { type: "GAIN_INK", value: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 11 block. Gain 2 ink.",
+      effects: [
+        { type: "BLOCK", value: 11 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "scribe",
+  },
+  {
+    id: "sun_codex",
+    name: "Sun Codex",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 3 ink. Draw 1 card. Gain 1 Strength.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "GAIN_STRENGTH", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 ink. Draw 2 cards. Gain 1 Strength.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "GAIN_STRENGTH", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "scribe",
+  },
+  {
+    id: "hummingbird_strike",
+    name: "Hummingbird Strike",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "RARE",
+    description: "Deal 15 damage. Gain 2 Strength. Apply 3 Bleed.",
+    effects: [
+      { type: "DAMAGE", value: 15 },
+      { type: "GAIN_STRENGTH", value: 2 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description: "Deal 20 damage. Gain 3 Strength. Apply 3 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 20 },
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 20 damage. Gain 2 Strength. Apply 3 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 20 },
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "scribe",
+  },
+  {
+    id: "blood_codex",
+    name: "Blood Codex",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 3 Strength. Gain 3 ink. Lose 8 HP. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 3 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "DAMAGE", value: 8 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 Strength. Gain 4 ink. Lose 8 HP. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "GAIN_INK", value: 4 },
+        { type: "DAMAGE", value: 8 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "scribe",
+  },
+  // =========================================================
+  // CELTIC — Scribe
+  // =========================================================
+  {
+    id: "kells_strike",
+    name: "Kells Strike",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 8 damage. Apply 2 Poison.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description: "Deal 11 damage. Apply 3 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 11 damage. Apply 2 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "scribe",
+  },
+  {
+    id: "bardic_verse",
+    name: "Bardic Verse",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 2 ink. Draw 1 card. Gain 1 Strength.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "GAIN_STRENGTH", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 ink. Draw 1 card. Gain 1 Strength.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "GAIN_STRENGTH", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "scribe",
+  },
+  {
+    id: "illuminated_shield",
+    name: "Illuminated Shield",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 8 block. Gain 1 ink.",
+    effects: [
+      { type: "BLOCK", value: 8 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 11 block. Gain 2 ink.",
+      effects: [
+        { type: "BLOCK", value: 11 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 11 block. Gain 1 ink.",
+      effects: [
+        { type: "BLOCK", value: 11 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "scribe",
+  },
+  {
+    id: "iron_bard",
+    name: "Iron Bard",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 12 damage. Apply 3 Bleed.",
+    effects: [
+      { type: "DAMAGE", value: 12 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description: "Deal 16 damage. Apply 4 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 16 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 16 damage. Apply 3 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 16 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "scribe",
+  },
+  {
+    id: "triquetra_mark",
+    name: "Triquetra Mark",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description:
+      "Apply 2 Vulnerable to target. Apply 2 Weak to target. Draw 1 card.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Apply 3 Vulnerable to target. Apply 2 Weak to target. Draw 1 card.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "scribe",
+  },
+  {
+    id: "ogham_inscription",
+    name: "Ogham Inscription",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 3 ink. Gain 6 block.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "BLOCK", value: 6 },
+    ],
+    inkedVariant: {
+      description: "Gain 4 ink. Gain 9 block.",
+      effects: [
+        { type: "GAIN_INK", value: 4 },
+        { type: "BLOCK", value: 9 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 3 ink. Gain 9 block.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "BLOCK", value: 9 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "scribe",
+  },
+  {
+    id: "celtic_illumination",
+    name: "Celtic Illumination",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 4 ink. Draw 2 cards. Exhaust.",
+    effects: [
+      { type: "GAIN_INK", value: 4 },
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Gain 5 ink. Draw 3 cards. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 5 },
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 4 ink. Draw 3 cards. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 4 },
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "scribe",
+  },
+  {
+    id: "green_man_verse",
+    name: "Green Man Verse",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 2 Strength. Gain 2 ink. Heal 4. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 2 },
+      { type: "GAIN_INK", value: 2 },
+      { type: "HEAL", value: 4 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 Strength. Gain 2 ink. Heal 4. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "GAIN_INK", value: 2 },
+        { type: "HEAL", value: 4 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "scribe",
+  },
+  // =========================================================
+  // RUSSIAN — Scribe
+  // =========================================================
+  {
+    id: "byliny_verse",
+    name: "Byliny Verse",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 2 ink. Draw 1 card. Gain 1 Strength.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "GAIN_STRENGTH", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 ink. Draw 1 card. Gain 1 Strength.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "GAIN_STRENGTH", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "bogatyr_strike",
+    name: "Bogatyr Strike",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 9 damage. Apply 1 Weak.",
+    effects: [
+      { type: "DAMAGE", value: 9 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 13 damage. Apply 2 Weak.",
+      effects: [
+        { type: "DAMAGE", value: 13 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 12 damage. Apply 1 Weak.",
+      effects: [
+        { type: "DAMAGE", value: 12 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "winter_inscription",
+    name: "Winter Inscription",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 8 block. Gain 1 ink.",
+    effects: [
+      { type: "BLOCK", value: 8 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 11 block. Gain 2 ink.",
+      effects: [
+        { type: "BLOCK", value: 11 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 11 block. Gain 1 ink.",
+      effects: [
+        { type: "BLOCK", value: 11 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "blizzard_verse",
+    name: "Blizzard Verse",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Deal 5 damage to ALL enemies. Apply 2 Weak to ALL enemies.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 7 damage to ALL enemies. Apply 3 Weak to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 7 damage to ALL enemies. Apply 2 Weak to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "firebird_script",
+    name: "Firebird Script",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 3 ink. Gain 6 block. Draw 1 card.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "BLOCK", value: 6 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 ink. Gain 8 block. Draw 1 card.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "BLOCK", value: 8 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "baba_yaga_deal",
+    name: "Baba Yaga's Deal",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Lose 4 HP. Gain 3 ink. Draw 2 cards.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "DRAW_CARDS", value: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Lose 4 HP. Gain 4 ink. Draw 2 cards.",
+      effects: [
+        { type: "DAMAGE", value: 4 },
+        { type: "GAIN_INK", value: 4 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "koschei_strike",
+    name: "Koschei Strike",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "RARE",
+    description: "Deal 16 damage. Apply 3 Bleed.",
+    effects: [
+      { type: "DAMAGE", value: 16 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description: "Deal 22 damage. Apply 4 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 22 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 22 damage. Apply 3 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 22 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "scribe",
+  },
+  {
+    id: "folk_epic",
+    name: "Folk Epic",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 3 Strength. Gain 2 ink. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 3 },
+      { type: "GAIN_INK", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 4 Strength. Gain 2 ink. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 4 },
+        { type: "GAIN_INK", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "scribe",
+  },
+  // =========================================================
+  // AFRICAN — Scribe
+  // =========================================================
+  {
+    id: "drum_strike",
+    name: "Griot's Beat",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 7 damage. Apply 1 Bleed.",
+    effects: [
+      { type: "DAMAGE", value: 7 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description: "Deal 10 damage. Apply 2 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 10 damage. Apply 1 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "BLEED", duration: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "scribe",
+  },
+  {
+    id: "war_dance",
+    name: "Battle Chant",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description: "Deal 5 damage to ALL enemies. Gain 1 Strength.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "GAIN_STRENGTH", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Deal 7 damage to ALL enemies. Gain 2 Strength.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "GAIN_STRENGTH", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 7 damage to ALL enemies. Gain 1 Strength.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "GAIN_STRENGTH", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "scribe",
+  },
+  {
+    id: "ink_of_ancestors",
+    name: "Ink of Ancestors",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 3 ink. Gain 6 block.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "BLOCK", value: 6 },
+    ],
+    inkedVariant: {
+      description: "Gain 4 ink. Gain 9 block.",
+      effects: [
+        { type: "GAIN_INK", value: 4 },
+        { type: "BLOCK", value: 9 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 3 ink. Gain 9 block.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "BLOCK", value: 9 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "scribe",
+  },
+  {
+    id: "griot_strike",
+    name: "Griot Strike",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 8 damage. Apply 2 Vulnerable. Draw 1 card.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Deal 11 damage. Apply 2 Vulnerable. Draw 1 card.",
+      effects: [
+        { type: "DAMAGE", value: 11 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "scribe",
+  },
+  {
+    id: "anansi_tale",
+    name: "Anansi's Tale",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Gain 2 ink. Apply 2 Weak to ALL enemies. Draw 1 card.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 2 ink. Apply 3 Weak to ALL enemies. Draw 1 card.",
+      effects: [
+        { type: "GAIN_INK", value: 2 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "scribe",
+  },
+  {
+    id: "buffalo_charge",
+    name: "Griot's Epic",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 14 damage. Apply 2 Bleed.",
+    effects: [
+      { type: "DAMAGE", value: 14 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+    ],
+    inkedVariant: {
+      description: "Deal 19 damage. Apply 3 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 19 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Deal 19 damage. Apply 2 Bleed.",
+      effects: [
+        { type: "DAMAGE", value: 19 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "scribe",
+  },
+  {
+    id: "ancestral_verse",
+    name: "Ancestral Verse",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description:
+      "Draw 2 cards. Gain 3 ink. Apply 1 Vulnerable to ALL enemies. Exhaust.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description:
+        "Draw 3 cards. Gain 4 ink. Apply 2 Vulnerable to ALL enemies. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "GAIN_INK", value: 4 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description:
+        "Draw 3 cards. Gain 3 ink. Apply 1 Vulnerable to ALL enemies. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "GAIN_INK", value: 3 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "scribe",
+  },
+  {
+    id: "sunbird_power",
+    name: "Sunbird's Script",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 2 Strength. Gain 2 ink. Draw 1 card. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 2 },
+      { type: "GAIN_INK", value: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 Strength. Gain 2 ink. Draw 1 card. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "GAIN_INK", value: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "scribe",
+  },
+  // =========================================================
+  // AFRICAN — Bibliothécaire
+  // =========================================================
+  {
+    id: "spider_web",
+    name: "Web of Lore",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description: "Deal 4 damage to ALL enemies. Apply 2 Weak to ALL.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 6 damage to ALL. Apply 3 Weak to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 6 damage to ALL. Apply 2 Weak to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "baobab_shield",
+    name: "Baobab Codex",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 10 block.",
+    effects: [{ type: "BLOCK", value: 10 }],
+    inkedVariant: {
+      description: "Gain 14 block.",
+      effects: [{ type: "BLOCK", value: 14 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 14 block.",
+      effects: [{ type: "BLOCK", value: 14 }],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "healing_rhythm",
+    name: "Keeper's Song",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Heal 6. Draw 1 card. Gain 1 ink.",
+    effects: [
+      { type: "HEAL", value: 6 },
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Heal 8. Draw 1 card. Gain 1 ink.",
+      effects: [
+        { type: "HEAL", value: 8 },
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "oral_history",
+    name: "Oral History",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description:
+      "Deal 5 damage to ALL enemies. Apply 2 Vulnerable to ALL. Draw 1 card.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Deal 7 damage to ALL. Apply 2 Vulnerable to ALL. Draw 1 card.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "trickster_lore",
+    name: "Trickster Lore",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Gain 3 ink. Apply 3 Vulnerable to target.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Gain 4 ink. Apply 4 Vulnerable to target.",
+      effects: [
+        { type: "GAIN_INK", value: 4 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 3 ink. Apply 4 Vulnerable to target.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "ancestor_archive",
+    name: "Ancestor Archive",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Draw 3 cards. Gain 1 energy. Exhaust.",
+    effects: [
+      { type: "DRAW_CARDS", value: 3 },
+      { type: "GAIN_ENERGY", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Draw 4 cards. Gain 1 energy. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 4 },
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Draw 4 cards. Gain 1 energy. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 4 },
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "cosmic_spider",
+    name: "Anansi Codex",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description:
+      "Gain 2 Strength. Apply 3 Vulnerable to ALL enemies. Gain 2 ink. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 2 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      { type: "GAIN_INK", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Gain 2 Strength. Apply 4 Vulnerable to ALL enemies. Gain 2 ink. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+        { type: "GAIN_INK", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AFRICAN",
+    characterId: "bibliothecaire",
+  },
+
+  // =========================================================
+  // RUSSIAN — Bibliothécaire
+  // =========================================================
+  {
+    id: "fur_binding",
+    name: "Fur Binding",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 9 block.",
+    effects: [{ type: "BLOCK", value: 9 }],
+    inkedVariant: {
+      description: "Gain 13 block.",
+      effects: [{ type: "BLOCK", value: 13 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 13 block.",
+      effects: [{ type: "BLOCK", value: 13 }],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "folk_curse",
+    name: "Folk Curse",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description: "Deal 4 damage to ALL enemies. Apply 2 Weak to ALL.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 6 damage to ALL. Apply 3 Weak to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 6 damage to ALL. Apply 2 Weak to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "matryoshka_lore",
+    name: "Matryoshka Lore",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Draw 2 cards. Gain 2 ink.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "GAIN_INK", value: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Draw 3 cards. Gain 2 ink.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "snowstorm_trap",
+    name: "Snowstorm Trap",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Deal 5 damage to ALL enemies. Apply 2 Vulnerable to ALL.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 7 damage to ALL. Apply 3 Vulnerable to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 7 damage to ALL. Apply 2 Vulnerable to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "leshy_ward",
+    name: "Leshy Ward",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 10 block. Heal 3.",
+    effects: [
+      { type: "BLOCK", value: 10 },
+      { type: "HEAL", value: 3 },
+    ],
+    inkedVariant: {
+      description: "Gain 14 block. Heal 5.",
+      effects: [
+        { type: "BLOCK", value: 14 },
+        { type: "HEAL", value: 5 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 14 block. Heal 3.",
+      effects: [
+        { type: "BLOCK", value: 14 },
+        { type: "HEAL", value: 3 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "zhar_ptitsa",
+    name: "Zhar-Ptitsa",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Gain 3 ink. Apply 2 Vulnerable to ALL enemies.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 ink. Apply 3 Vulnerable to ALL enemies.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "folklore_archive",
+    name: "Folklore Archive",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Draw 3 cards. Gain 1 energy. Exhaust.",
+    effects: [
+      { type: "DRAW_CARDS", value: 3 },
+      { type: "GAIN_ENERGY", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Draw 4 cards. Gain 1 energy. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 4 },
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Draw 4 cards. Gain 1 energy. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 4 },
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "frost_witch",
+    name: "Frost Witch",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description:
+      "Apply 2 Weak to ALL enemies. Gain 3 ink. Gain 1 Strength. Exhaust.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "GAIN_STRENGTH", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Apply 3 Weak to ALL enemies. Gain 3 ink. Gain 2 Strength. Exhaust.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "GAIN_INK", value: 3 },
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "RUSSIAN",
+    characterId: "bibliothecaire",
+  },
+
+  // =========================================================
+  // CELTIC — Bibliothécaire
+  // =========================================================
+  {
+    id: "herb_lore",
+    name: "Herb Lore",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Heal 8. Draw 1 card.",
+    effects: [
+      { type: "HEAL", value: 8 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Heal 12. Draw 2 cards.",
+      effects: [
+        { type: "HEAL", value: 12 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Heal 11. Draw 1 card.",
+      effects: [
+        { type: "HEAL", value: 11 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "fairy_veil",
+    name: "Fairy Veil",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 10 block.",
+    effects: [{ type: "BLOCK", value: 10 }],
+    inkedVariant: {
+      description: "Gain 14 block.",
+      effects: [{ type: "BLOCK", value: 14 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 14 block.",
+      effects: [{ type: "BLOCK", value: 14 }],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "morrigan_curse",
+    name: "Morrigan Curse",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Deal 5 damage to ALL enemies. Apply 3 Vulnerable to ALL.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Deal 7 damage to ALL. Apply 4 Vulnerable to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 7 damage to ALL. Apply 3 Vulnerable to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "cauldron_lore",
+    name: "Cauldron Lore",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Draw 2 cards. Heal 3. Gain 1 ink.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "HEAL", value: 3 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Draw 2 cards. Heal 5. Gain 1 ink.",
+      effects: [
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "HEAL", value: 5 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "selkie_song",
+    name: "Selkie Song",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Heal 5. Draw 2 cards.",
+    effects: [
+      { type: "HEAL", value: 5 },
+      { type: "DRAW_CARDS", value: 2 },
+    ],
+    inkedVariant: {
+      description: "Heal 7. Draw 3 cards.",
+      effects: [
+        { type: "HEAL", value: 7 },
+        { type: "DRAW_CARDS", value: 3 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Heal 7. Draw 2 cards.",
+      effects: [
+        { type: "HEAL", value: 7 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "ancient_manuscript",
+    name: "Ancient Manuscript",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description:
+      "Deal 4 damage to ALL enemies. Apply 2 Vulnerable to ALL. Gain 1 ink.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Deal 6 damage to ALL. Apply 2 Vulnerable to ALL. Gain 1 ink.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "world_tree",
+    name: "World Tree",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 2 Strength. Heal 6. Gain 2 ink. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 2 },
+      { type: "HEAL", value: 6 },
+      { type: "GAIN_INK", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 Strength. Heal 6. Gain 2 ink. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "HEAL", value: 6 },
+        { type: "GAIN_INK", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "CELTIC",
+    characterId: "bibliothecaire",
+  },
+
+  // =========================================================
+  // AZTEC — Bibliothécaire
+  // =========================================================
+  {
+    id: "calendric_ward",
+    name: "Calendric Ward",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 8 block. Draw 1 card.",
+    effects: [
+      { type: "BLOCK", value: 8 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 11 block. Draw 2 cards.",
+      effects: [
+        { type: "BLOCK", value: 11 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 11 block. Draw 1 card.",
+      effects: [
+        { type: "BLOCK", value: 11 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "poison_herb",
+    name: "Sacred Herb",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Apply 3 Poison to target.",
+    effects: [{ type: "APPLY_DEBUFF", value: 3, buff: "POISON" }],
+    inkedVariant: {
+      description: "Apply 5 Poison to target.",
+      effects: [{ type: "APPLY_DEBUFF", value: 5, buff: "POISON" }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Apply 4 Poison to target.",
+      effects: [{ type: "APPLY_DEBUFF", value: 4, buff: "POISON" }],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "star_chart",
+    name: "Star Chart",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Gain 2 ink. Apply 2 Weak to ALL enemies.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 2 ink. Apply 3 Weak to ALL enemies.",
+      effects: [
+        { type: "GAIN_INK", value: 2 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "quetzal_shield",
+    name: "Quetzal Shield",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 7 block. Gain 2 ink.",
+    effects: [
+      { type: "BLOCK", value: 7 },
+      { type: "GAIN_INK", value: 2 },
+    ],
+    inkedVariant: {
+      description: "Gain 10 block. Gain 3 ink.",
+      effects: [
+        { type: "BLOCK", value: 10 },
+        { type: "GAIN_INK", value: 3 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 10 block. Gain 2 ink.",
+      effects: [
+        { type: "BLOCK", value: 10 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "temple_archive",
+    name: "Temple Archive",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Draw 2 cards. Heal 4.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "HEAL", value: 4 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Draw 3 cards. Heal 4.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "HEAL", value: 4 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "obsidian_ward",
+    name: "Obsidian Curse",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description:
+      "Deal 10 damage to ALL enemies. Apply 2 Poison to ALL enemies.",
+    effects: [
+      { type: "DAMAGE", value: 10 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description:
+        "Deal 14 damage to ALL enemies. Apply 3 Poison to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 14 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description:
+        "Deal 14 damage to ALL enemies. Apply 2 Poison to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 14 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "feathered_serpent",
+    name: "Feathered Serpent",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description: "Apply 2 Vulnerable to ALL enemies. Gain 3 ink. Exhaust.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Apply 3 Vulnerable to ALL enemies. Gain 3 ink. Exhaust.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "GAIN_INK", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "AZTEC",
+    characterId: "bibliothecaire",
+  },
+
+  // =========================================================
+  // LOVECRAFTIAN — Bibliothécaire
+  // =========================================================
+  {
+    id: "sealed_tome",
+    name: "Sealed Tome",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 9 block.",
+    effects: [{ type: "BLOCK", value: 9 }],
+    inkedVariant: {
+      description: "Gain 13 block.",
+      effects: [{ type: "BLOCK", value: 13 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 13 block.",
+      effects: [{ type: "BLOCK", value: 13 }],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "library_horror",
+    name: "Library Horror",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description:
+      "Deal 4 damage to ALL enemies. Apply 2 Weak and 1 Vulnerable to ALL.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description:
+        "Deal 6 damage to ALL. Apply 2 Weak and 2 Vulnerable to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description:
+        "Deal 6 damage to ALL. Apply 2 Weak and 2 Vulnerable to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "readers_pact",
+    name: "Reader's Pact",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 3 ink. Gain 1 energy. Exhaust.",
+    effects: [
+      { type: "GAIN_INK", value: 3 },
+      { type: "GAIN_ENERGY", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Gain 4 ink. Gain 2 energy. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 4 },
+        { type: "GAIN_ENERGY", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 4 ink. Gain 1 energy. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 4 },
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "forbidden_index",
+    name: "Forbidden Index",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Draw 3 cards. Apply 1 Vulnerable to ALL enemies.",
+    effects: [
+      { type: "DRAW_CARDS", value: 3 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Draw 3 cards. Apply 2 Vulnerable to ALL enemies.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "void_librarian",
+    name: "Void Librarian",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Gain 2 ink. Apply 3 Vulnerable to target. Draw 1 card.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 2 ink. Apply 4 Vulnerable to target. Draw 1 card.",
+      effects: [
+        { type: "GAIN_INK", value: 2 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "necronomicon_page",
+    name: "Necronomicon Page",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description:
+      "Deal 12 damage to ALL enemies. Apply 3 Vulnerable to ALL enemies.",
+    effects: [
+      { type: "DAMAGE", value: 12 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description:
+        "Deal 16 damage to ALL enemies. Apply 4 Vulnerable to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 16 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description:
+        "Deal 16 damage to ALL enemies. Apply 3 Vulnerable to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 16 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "cosmic_archive",
+    name: "Cosmic Archive",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 2 Strength. Gain 3 ink. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 2 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 Strength. Gain 3 ink. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "GAIN_INK", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
+    characterId: "bibliothecaire",
+  },
+
+  // =========================================================
+  // EGYPTIAN — Bibliothécaire
+  // =========================================================
+  {
+    id: "death_scroll",
+    name: "Death Scroll",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Deal 7 damage. Apply 3 Poison.",
+    effects: [
+      { type: "DAMAGE", value: 7 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description: "Deal 10 damage. Apply 4 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 10 damage. Apply 3 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "mummy_ward",
+    name: "Mummy Ward",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description:
+      "Apply 2 Weak to ALL enemies. Apply 1 Vulnerable to ALL enemies.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description:
+        "Apply 2 Weak to ALL enemies. Apply 2 Vulnerable to ALL enemies.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description:
+        "Apply 3 Weak to ALL enemies. Apply 1 Vulnerable to ALL enemies.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "plague_of_words",
+    name: "Plague of Words",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Deal 4 damage to ALL enemies. Apply 3 Poison to ALL enemies.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description:
+        "Deal 6 damage to ALL enemies. Apply 4 Poison to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description:
+        "Deal 6 damage to ALL enemies. Apply 3 Poison to ALL enemies.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "osiris_archive",
+    name: "Osiris Archive",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Draw 2 cards. Heal 3. Gain 1 ink.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "HEAL", value: 3 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Draw 2 cards. Heal 5. Gain 1 ink.",
+      effects: [
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "HEAL", value: 5 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "funerary_rite",
+    name: "Funerary Rite",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Heal 6. Draw 1 card. Gain 1 ink.",
+    effects: [
+      { type: "HEAL", value: 6 },
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Heal 8. Draw 1 card. Gain 1 ink.",
+      effects: [
+        { type: "HEAL", value: 8 },
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "desert_wisdom",
+    name: "Desert Papyrus",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 9 block. Heal 3.",
+    effects: [
+      { type: "BLOCK", value: 9 },
+      { type: "HEAL", value: 3 },
+    ],
+    inkedVariant: {
+      description: "Gain 12 block. Heal 5.",
+      effects: [
+        { type: "BLOCK", value: 12 },
+        { type: "HEAL", value: 5 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 12 block. Heal 3.",
+      effects: [
+        { type: "BLOCK", value: 12 },
+        { type: "HEAL", value: 3 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "embalmed_tome",
+    name: "Embalmed Tome",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 4 ink. Draw 2 cards. Exhaust.",
+    effects: [
+      { type: "GAIN_INK", value: 4 },
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Gain 5 ink. Draw 3 cards. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 5 },
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 4 ink. Draw 3 cards. Exhaust.",
+      effects: [
+        { type: "GAIN_INK", value: 4 },
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "book_of_the_dead",
+    name: "Book of the Dead",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description:
+      "Gain 2 Strength. Apply 1 Vulnerable to ALL enemies. Gain 2 ink. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      { type: "GAIN_INK", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Gain 2 Strength. Apply 2 Vulnerable to ALL enemies. Gain 2 ink. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "GAIN_INK", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "EGYPTIAN",
+    characterId: "bibliothecaire",
+  },
+
+  // =========================================================
+  // GREEK — Bibliothécaire
+  // =========================================================
+  {
+    id: "oracle_scroll",
+    name: "Oracle Scroll",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Draw 2 cards. Apply 1 Weak to target.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+    ],
+    inkedVariant: {
+      description: "Draw 3 cards. Apply 2 Weak to target.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Draw 2 cards. Apply 2 Weak to target.",
+      effects: [
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "shield_of_athena",
+    name: "Shield of Athena",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 10 block.",
+    effects: [{ type: "BLOCK", value: 10 }],
+    inkedVariant: {
+      description: "Gain 14 block.",
+      effects: [{ type: "BLOCK", value: 14 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 14 block.",
+      effects: [{ type: "BLOCK", value: 14 }],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "sphinx_riddle",
+    name: "Sphinx Riddle",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description: "Apply 3 Vulnerable to ALL enemies. Draw 1 card.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Apply 4 Vulnerable to ALL enemies. Draw 1 card.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "apollos_archive",
+    name: "Apollo's Archive",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 6 damage. Gain 1 energy. Gain 1 ink.",
+    effects: [
+      { type: "DAMAGE", value: 6 },
+      { type: "GAIN_ENERGY", value: 1 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Deal 8 damage. Gain 1 energy. Gain 2 ink.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "GAIN_INK", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Deal 8 damage. Gain 1 energy. Gain 1 ink.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "labyrinth_trap",
+    name: "Labyrinth Trap",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description:
+      "Deal 4 damage to ALL enemies. Apply 2 Weak and 1 Vulnerable to ALL.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: {
+      description:
+        "Deal 6 damage to ALL. Apply 2 Weak and 2 Vulnerable to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description:
+        "Deal 6 damage to ALL. Apply 2 Weak and 2 Vulnerable to ALL.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "pythian_codex",
+    name: "Pythian Codex",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Draw 3 cards. Gain 3 ink. Exhaust.",
+    effects: [
+      { type: "DRAW_CARDS", value: 3 },
+      { type: "GAIN_INK", value: 3 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Draw 4 cards. Gain 4 ink. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 4 },
+        { type: "GAIN_INK", value: 4 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Draw 4 cards. Gain 3 ink. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 4 },
+        { type: "GAIN_INK", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "fates_decree",
+    name: "Fate's Decree",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Draw 2 cards. Gain 2 Strength. Exhaust.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "GAIN_STRENGTH", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Draw 3 cards. Gain 2 Strength. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "GREEK",
+    characterId: "bibliothecaire",
+  },
+
+  // =========================================================
+  // VIKING — Bibliothécaire
+  // =========================================================
+  {
+    id: "nordic_treatise",
+    name: "Nordic Treatise",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gain 6 block. Draw 1 card.",
+    effects: [
+      { type: "BLOCK", value: 6 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 8 block. Draw 2 cards.",
+      effects: [
+        { type: "BLOCK", value: 8 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gain 9 block. Draw 1 card.",
+      effects: [
+        { type: "BLOCK", value: 9 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "rune_curse",
+    name: "Rune Curse",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "UNCOMMON",
+    description:
+      "Apply 2 Weak to ALL enemies. Apply 1 Vulnerable to ALL enemies.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Apply 2 Weak to ALL enemies. Apply 2 Vulnerable to ALL enemies.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "saga_archive",
+    name: "Saga Archive",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Draw 2 cards. Gain 1 energy. Exhaust.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "GAIN_ENERGY", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description: "Draw 3 cards. Gain 2 energy. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "GAIN_ENERGY", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Draw 3 cards. Gain 1 energy. Exhaust.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "norn_prophecy",
+    name: "Norn Prophecy",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Gain 2 ink. Apply 3 Vulnerable to target. Draw 1 card.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 2 ink. Apply 4 Vulnerable to target. Draw 1 card.",
+      effects: [
+        { type: "GAIN_INK", value: 2 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "ancient_ward",
+    name: "Ancient Ward",
+    type: "SKILL",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Gain 14 block. Draw 1 card.",
+    effects: [
+      { type: "BLOCK", value: 14 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gain 18 block. Draw 2 cards.",
+      effects: [
+        { type: "BLOCK", value: 18 },
+        { type: "DRAW_CARDS", value: 2 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Gain 18 block. Draw 1 card.",
+      effects: [
+        { type: "BLOCK", value: 18 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "saga_keeper",
+    name: "Saga Keeper",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Gain 3 Strength. Draw 2 cards. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 3 },
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description: "Gain 3 Strength. Draw 3 cards. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "bibliothecaire",
+  },
+  {
+    id: "valhalla_codex",
+    name: "Valhalla Codex",
+    type: "POWER",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description:
+      "Gain 2 Strength. Apply 2 Weak to ALL enemies. Gain 2 ink. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 2 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "GAIN_INK", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: {
+      description:
+        "Gain 2 Strength. Apply 3 Weak to ALL enemies. Gain 2 ink. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "GAIN_INK", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "VIKING",
+    characterId: "bibliothecaire",
   },
 
   // =========================================================
@@ -2661,4 +5828,464 @@ export const lootableCardDefinitions: CardDefinition[] = [
     isCurseCard: true,
     biome: "LIBRARY",
   },
+];
+
+function buildEnemyCardName(enemy: EnemyDefinition, suffix: string): string {
+  return `${enemy.name} ${suffix}`;
+}
+
+const BESTIARY_CHARACTER_OVERRIDES: Record<
+  string,
+  "scribe" | "bibliothecaire"
+> = {
+  deep_one: "scribe",
+};
+
+function getBestiaryCharacterId(enemy: EnemyDefinition): string | undefined {
+  // Keep exactly one Russian bestiary card neutral to hit the target of 5 neutral cards in that biome.
+  if (enemy.id === "winter_wolf") return undefined;
+
+  const override = BESTIARY_CHARACTER_OVERRIDES[enemy.id];
+  if (override) return override;
+
+  // Deterministic split between characters for generated bestiary cards.
+  let checksum = 0;
+  for (const ch of enemy.id) checksum += ch.charCodeAt(0);
+  return checksum % 2 === 0 ? "scribe" : "bibliothecaire";
+}
+
+function getBiomeNormalCardTemplate(
+  biome: BiomeType
+): Omit<CardDefinition, "id" | "name" | "rarity" | "biome"> {
+  switch (biome) {
+    case "LIBRARY":
+      return {
+        type: "SKILL",
+        energyCost: 1,
+        inkCost: 0,
+        targeting: "SELF",
+        description: "Gain 5 block. Gain 1 ink.",
+        effects: [
+          { type: "BLOCK", value: 5 },
+          { type: "GAIN_INK", value: 1 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Gain 8 block. Gain 1 ink. Draw 1 card.",
+          effects: [
+            { type: "BLOCK", value: 8 },
+            { type: "GAIN_INK", value: 1 },
+            { type: "DRAW_CARDS", value: 1 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "VIKING":
+      return {
+        type: "ATTACK",
+        energyCost: 1,
+        inkCost: 0,
+        targeting: "SINGLE_ENEMY",
+        description: "Deal 7 damage. Apply 1 Vulnerable.",
+        effects: [
+          { type: "DAMAGE", value: 7 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Deal 10 damage. Apply 2 Vulnerable.",
+          effects: [
+            { type: "DAMAGE", value: 10 },
+            { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "GREEK":
+      return {
+        type: "SKILL",
+        energyCost: 1,
+        inkCost: 0,
+        targeting: "SELF",
+        description: "Gain 7 block. Gain 1 focus.",
+        effects: [
+          { type: "BLOCK", value: 7 },
+          { type: "GAIN_FOCUS", value: 1 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Gain 10 block. Gain 1 focus. Draw 1 card.",
+          effects: [
+            { type: "BLOCK", value: 10 },
+            { type: "GAIN_FOCUS", value: 1 },
+            { type: "DRAW_CARDS", value: 1 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "EGYPTIAN":
+      return {
+        type: "ATTACK",
+        energyCost: 1,
+        inkCost: 0,
+        targeting: "SINGLE_ENEMY",
+        description: "Deal 6 damage. Drain 2 ink from the target.",
+        effects: [
+          { type: "DAMAGE", value: 6 },
+          { type: "DRAIN_INK", value: 2 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Deal 9 damage. Drain 3 ink from the target.",
+          effects: [
+            { type: "DAMAGE", value: 9 },
+            { type: "DRAIN_INK", value: 3 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "LOVECRAFTIAN":
+      return {
+        type: "SKILL",
+        energyCost: 1,
+        inkCost: 0,
+        targeting: "SINGLE_ENEMY",
+        description: "Deal 5 damage. Apply 1 Weak.",
+        effects: [
+          { type: "DAMAGE", value: 5 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Deal 8 damage. Apply 2 Weak.",
+          effects: [
+            { type: "DAMAGE", value: 8 },
+            { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "AZTEC":
+      return {
+        type: "ATTACK",
+        energyCost: 1,
+        inkCost: 0,
+        targeting: "SINGLE_ENEMY",
+        description: "Deal 8 damage. Apply 3 Bleed.",
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 3 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Deal 11 damage. Apply 4 Bleed.",
+          effects: [
+            { type: "DAMAGE", value: 11 },
+            { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "CELTIC":
+      return {
+        type: "SKILL",
+        energyCost: 1,
+        inkCost: 0,
+        targeting: "SELF",
+        description: "Gain 6 block. Gain 1 Thorns.",
+        effects: [
+          { type: "BLOCK", value: 6 },
+          { type: "APPLY_BUFF", value: 1, buff: "THORNS" },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Gain 9 block. Gain 2 Thorns.",
+          effects: [
+            { type: "BLOCK", value: 9 },
+            { type: "APPLY_BUFF", value: 2, buff: "THORNS" },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "RUSSIAN":
+      return {
+        type: "ATTACK",
+        energyCost: 1,
+        inkCost: 0,
+        targeting: "ALL_ENEMIES",
+        description:
+          "Deal 4 damage to all enemies. Apply 1 Weak to all enemies.",
+        effects: [
+          { type: "DAMAGE", value: 4 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 1 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description:
+            "Deal 6 damage to all enemies. Apply 1 Weak to all enemies.",
+          effects: [
+            { type: "DAMAGE", value: 6 },
+            { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "AFRICAN":
+      return {
+        type: "SKILL",
+        energyCost: 1,
+        inkCost: 0,
+        targeting: "SELF",
+        description: "Draw 1 card. Gain 1 ink.",
+        effects: [
+          { type: "DRAW_CARDS", value: 1 },
+          { type: "GAIN_INK", value: 1 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Draw 2 cards. Gain 1 ink.",
+          effects: [
+            { type: "DRAW_CARDS", value: 2 },
+            { type: "GAIN_INK", value: 1 },
+          ],
+        },
+        isStarterCard: false,
+      };
+  }
+}
+
+function getBiomeEliteCardTemplate(
+  biome: BiomeType
+): Omit<CardDefinition, "id" | "name" | "rarity" | "biome"> {
+  switch (biome) {
+    case "LIBRARY":
+      return {
+        type: "ATTACK",
+        energyCost: 2,
+        inkCost: 0,
+        targeting: "SINGLE_ENEMY",
+        description: "Deal 14 damage. Drain 4 ink from the target.",
+        effects: [
+          { type: "DAMAGE", value: 14 },
+          { type: "DRAIN_INK", value: 4 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Deal 20 damage. Drain 6 ink from the target.",
+          effects: [
+            { type: "DAMAGE", value: 20 },
+            { type: "DRAIN_INK", value: 6 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "VIKING":
+      return {
+        type: "POWER",
+        energyCost: 2,
+        inkCost: 0,
+        targeting: "SELF",
+        description: "Gain 2 Strength.",
+        effects: [{ type: "GAIN_STRENGTH", value: 2 }],
+        inkedVariant: null,
+        upgrade: {
+          description: "Gain 3 Strength.",
+          effects: [{ type: "GAIN_STRENGTH", value: 3 }],
+        },
+        isStarterCard: false,
+      };
+    case "GREEK":
+      return {
+        type: "SKILL",
+        energyCost: 2,
+        inkCost: 0,
+        targeting: "SELF",
+        description: "Gain 14 block. Gain 2 focus.",
+        effects: [
+          { type: "BLOCK", value: 14 },
+          { type: "GAIN_FOCUS", value: 2 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Gain 18 block. Gain 3 focus.",
+          effects: [
+            { type: "BLOCK", value: 18 },
+            { type: "GAIN_FOCUS", value: 3 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "EGYPTIAN":
+      return {
+        type: "ATTACK",
+        energyCost: 2,
+        inkCost: 0,
+        targeting: "ALL_ENEMIES",
+        description:
+          "Deal 8 damage to all enemies. Apply 1 Weak to all enemies.",
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description:
+            "Deal 12 damage to all enemies. Apply 1 Weak to all enemies.",
+          effects: [
+            { type: "DAMAGE", value: 12 },
+            { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "LOVECRAFTIAN":
+      return {
+        type: "SKILL",
+        energyCost: 2,
+        inkCost: 0,
+        targeting: "SINGLE_ENEMY",
+        description: "Deal 10 damage. Apply 2 Vulnerable. Draw 1 card.",
+        effects: [
+          { type: "DAMAGE", value: 10 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+          { type: "DRAW_CARDS", value: 1 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Deal 14 damage. Apply 2 Vulnerable. Draw 2 cards.",
+          effects: [
+            { type: "DAMAGE", value: 14 },
+            { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+            { type: "DRAW_CARDS", value: 2 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "AZTEC":
+      return {
+        type: "ATTACK",
+        energyCost: 2,
+        inkCost: 0,
+        targeting: "SINGLE_ENEMY",
+        description: "Deal 16 damage. Apply 6 Bleed.",
+        effects: [
+          { type: "DAMAGE", value: 16 },
+          { type: "APPLY_DEBUFF", value: 6, buff: "BLEED", duration: 4 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Deal 22 damage. Apply 8 Bleed.",
+          effects: [
+            { type: "DAMAGE", value: 22 },
+            { type: "APPLY_DEBUFF", value: 8, buff: "BLEED", duration: 4 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "CELTIC":
+      return {
+        type: "POWER",
+        energyCost: 2,
+        inkCost: 0,
+        targeting: "SELF",
+        description: "Gain 10 block. Gain 3 Thorns.",
+        effects: [
+          { type: "BLOCK", value: 10 },
+          { type: "APPLY_BUFF", value: 3, buff: "THORNS" },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Gain 14 block. Gain 4 Thorns.",
+          effects: [
+            { type: "BLOCK", value: 14 },
+            { type: "APPLY_BUFF", value: 4, buff: "THORNS" },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "RUSSIAN":
+      return {
+        type: "ATTACK",
+        energyCost: 2,
+        inkCost: 0,
+        targeting: "ALL_ENEMIES",
+        description:
+          "Deal 10 damage to all enemies. Apply 1 Weak to all enemies.",
+        effects: [
+          { type: "DAMAGE", value: 10 },
+          { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description:
+            "Deal 14 damage to all enemies. Apply 2 Weak to all enemies.",
+          effects: [
+            { type: "DAMAGE", value: 14 },
+            { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+          ],
+        },
+        isStarterCard: false,
+      };
+    case "AFRICAN":
+      return {
+        type: "SKILL",
+        energyCost: 2,
+        inkCost: 0,
+        targeting: "SELF",
+        description: "Gain 1 energy. Draw 2 cards.",
+        effects: [
+          { type: "GAIN_ENERGY", value: 1 },
+          { type: "DRAW_CARDS", value: 2 },
+        ],
+        inkedVariant: null,
+        upgrade: {
+          description: "Gain 1 energy. Draw 3 cards.",
+          effects: [
+            { type: "GAIN_ENERGY", value: 1 },
+            { type: "DRAW_CARDS", value: 3 },
+          ],
+        },
+        isStarterCard: false,
+      };
+  }
+}
+
+function buildNormalEnemyMasteryCard(enemy: EnemyDefinition): CardDefinition {
+  const characterId = getBestiaryCharacterId(enemy);
+  return {
+    id: `bestiary_normal_${enemy.id}`,
+    name: buildEnemyCardName(enemy, "Dossier"),
+    rarity: "UNCOMMON",
+    biome: enemy.biome,
+    ...(characterId ? { characterId } : {}),
+    ...getBiomeNormalCardTemplate(enemy.biome),
+  };
+}
+
+function buildEliteEnemyMasteryCard(enemy: EnemyDefinition): CardDefinition {
+  const characterId = getBestiaryCharacterId(enemy);
+  return {
+    id: `bestiary_elite_${enemy.id}`,
+    name: buildEnemyCardName(enemy, "Trophy"),
+    rarity: "RARE",
+    biome: enemy.biome,
+    ...(characterId ? { characterId } : {}),
+    ...getBiomeEliteCardTemplate(enemy.biome),
+  };
+}
+
+const generatedEnemyMasteryCards: CardDefinition[] = enemyDefinitions
+  .filter(
+    (enemy) =>
+      !enemy.isBoss && !ENEMIES_WITHOUT_BESTIARY_CARDS_SET.has(enemy.id)
+  )
+  .map((enemy) =>
+    enemy.isElite
+      ? buildEliteEnemyMasteryCard(enemy)
+      : buildNormalEnemyMasteryCard(enemy)
+  );
+
+export const lootableCardDefinitions: CardDefinition[] = [
+  ...baseLootableCardDefinitions,
+  ...generatedEnemyMasteryCards,
 ];

@@ -52,15 +52,22 @@ export function tickBuffs(buffs: BuffInstance[]): BuffInstance[] {
  * Apply bleed damage: deal stacks damage each round.
  * Unlike poison, stacks do NOT decrease — bleed expires via duration only.
  */
-export function applyBleed(entity: {
-  currentHp: number;
-  buffs: BuffInstance[];
-}): { currentHp: number; buffs: BuffInstance[] } {
+export function applyBleed(
+  entity: {
+    currentHp: number;
+    buffs: BuffInstance[];
+  },
+  damageMultiplier = 1
+): { currentHp: number; buffs: BuffInstance[] } {
   const bleedStacks = getBuffStacks(entity.buffs, "BLEED");
   if (bleedStacks <= 0) return entity;
+  const scaledDamage = Math.max(
+    0,
+    Math.round(bleedStacks * Math.max(0, damageMultiplier))
+  );
 
   return {
-    currentHp: entity.currentHp - bleedStacks,
+    currentHp: entity.currentHp - scaledDamage,
     buffs: entity.buffs,
   };
 }
@@ -69,14 +76,21 @@ export function applyBleed(entity: {
  * Apply poison damage: deal stacks damage, then reduce stacks by 1.
  * Returns updated entity HP and buffs.
  */
-export function applyPoison(entity: {
-  currentHp: number;
-  buffs: BuffInstance[];
-}): { currentHp: number; buffs: BuffInstance[] } {
+export function applyPoison(
+  entity: {
+    currentHp: number;
+    buffs: BuffInstance[];
+  },
+  damageMultiplier = 1
+): { currentHp: number; buffs: BuffInstance[] } {
   const poisonStacks = getBuffStacks(entity.buffs, "POISON");
   if (poisonStacks <= 0) return entity;
 
-  const newHp = entity.currentHp - poisonStacks;
+  const scaledDamage = Math.max(
+    0,
+    Math.round(poisonStacks * Math.max(0, damageMultiplier))
+  );
+  const newHp = entity.currentHp - scaledDamage;
   const newBuffs =
     poisonStacks <= 1
       ? removeBuff(entity.buffs, "POISON")

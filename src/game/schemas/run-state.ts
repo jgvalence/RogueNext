@@ -12,6 +12,8 @@ const CardUnlockProgressSchema = z.object({
   bossKillsByBiome: z.record(z.string(), z.number().int()).default({}),
 });
 
+const EncounteredEnemyTypeSchema = z.enum(["NORMAL", "ELITE", "BOSS"]);
+
 export const RoomNodeSchema = z.object({
   index: z.number().int(),
   type: RoomType,
@@ -47,6 +49,10 @@ export const RunStateSchema = z.object({
   combat: CombatStateSchema.nullable().default(null),
   currentBiome: BiomeType.default("LIBRARY"),
   pendingBiomeChoices: z.tuple([BiomeType, BiomeType]).nullable().default(null),
+  // Snapshot of max unlocked difficulty per character at run start
+  difficultyMaxByCharacter: z
+    .record(z.string(), z.number().int().min(0))
+    .default({}),
   // Difficulty flow at run start: pick one unlocked level first
   pendingDifficultyLevels: z.array(z.number().int().min(0)).default([]),
   selectedDifficultyLevel: z.number().int().min(0).nullable().default(null),
@@ -65,6 +71,10 @@ export const RunStateSchema = z.object({
     .optional(),
   startMerchantPurchasedOfferIds: z.array(z.string()).optional(),
   startMerchantCompleted: z.boolean().optional(),
+  // Personnage actif pour ce run
+  characterId: z.string().default("scribe"),
+  // Personnages disponibles à choisir en début de run (null = choix déjà fait)
+  pendingCharacterChoices: z.array(z.string()).nullable().default(null),
   // Meta bonuses computed at run creation
   metaBonuses: ComputedMetaBonusesSchema.optional(),
   // Snapshot of unlocked stories for card unlock logic
@@ -86,5 +96,19 @@ export const RunStateSchema = z.object({
   // Per-encounter attitude delta for the Erased Scribe (key = event id, value = -1/0/+1)
   // Persisted individually to meta-progression at end of run for granular boss reactions
   scribeChoices: z.record(z.string(), z.number().int()).default({}),
+  // Bestiary discovery map (key = enemy id, value = discovered category)
+  encounteredEnemies: z
+    .record(z.string(), EncounteredEnemyTypeSchema)
+    .default({}),
+  // Cumulative kills by enemy definition ID (used to unlock deeper bestiary lore tiers)
+  enemyKillCounts: z.record(z.string(), z.number().int().min(0)).default({}),
+  // Persistent stat bonuses granted by run-scale relics (applied at combat init)
+  relicPersistentStats: z
+    .object({
+      strength: z.number().int().default(0),
+      focus: z.number().int().default(0),
+      inkMax: z.number().int().default(0),
+    })
+    .optional(),
 });
 export type RunState = z.infer<typeof RunStateSchema>;

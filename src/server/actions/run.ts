@@ -10,7 +10,10 @@ import { nanoid } from "nanoid";
 import { createNewRun } from "@/game/engine/run";
 import { createRNG } from "@/game/engine/rng";
 import { GAME_CONSTANTS } from "@/game/constants";
-import { starterDeckComposition } from "@/game/data/starter-deck";
+import {
+  getAvailableCharacters,
+  getCharacterById,
+} from "@/game/data/characters";
 import { allCardDefinitions, buildCardDefsMap } from "@/game/data";
 import { relicDefinitions } from "@/game/data/relics";
 import type { RunState } from "@/game/schemas/run-state";
@@ -25,8 +28,9 @@ import {
 import {
   computeUnlockedRelicIds,
   getBestGoldInSingleRun,
-  getUnlockedDifficultyLevels,
   getUnlockedMaxDifficultyFromResources,
+  getUnlockedMaxDifficultyForCharacter,
+  getUnlockedDifficultyLevelsForCharacter,
   unlockNextDifficultyOnVictory,
   updateBestInfiniteFloor,
   updateBestGoldInSingleRun,
@@ -36,6 +40,14 @@ import {
   readUnlockProgressFromResources,
   writeUnlockProgressToResources,
 } from "@/game/engine/card-unlocks";
+import {
+  mergeEnemyKillCounts,
+  mergeEncounteredEnemies,
+  readEnemyKillCountsFromResources,
+  readEncounteredEnemiesFromResources,
+  writeEnemyKillCountsToResources,
+  writeEncounteredEnemiesToResources,
+} from "@/game/engine/bestiary";
 
 const createRunSchema = z.object({
   seed: z.string().optional(),
@@ -83,8 +95,10 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
     const winsByDifficulty =
       (progression?.winsByDifficulty as Record<string, number>) ?? {};
     const initialUnlockProgress = readUnlockProgressFromResources(resources);
+    const initialEncounteredEnemies =
+      readEncounteredEnemiesFromResources(resources);
+    const initialEnemyKillCounts = readEnemyKillCountsFromResources(resources);
     const metaBonuses = computeMetaBonuses(unlockedStoryIds);
-    const unlockedDifficultyLevels = getUnlockedDifficultyLevels(resources);
     const unlockedDifficultyLevelMax =
       getUnlockedMaxDifficultyFromResources(resources);
     const unlockedRelicIds = computeUnlockedRelicIds(
@@ -95,11 +109,13 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
         unlockedDifficultyMax: unlockedDifficultyLevelMax,
         winsByDifficulty,
         bestGoldInSingleRun: getBestGoldInSingleRun(resources),
+        enemyKillCounts: initialEnemyKillCounts,
       }
     );
     const unlockedRunConditionIds = computeUnlockedRunConditionIds({
       totalRuns: progression?.totalRuns ?? 0,
       wonRuns: progression?.wonRuns ?? 0,
+      enemyKillCounts: initialEnemyKillCounts,
     });
     const startingBiomeChoices: [BiomeType, BiomeType] | null =
       (progression?.totalRuns ?? 0) > 0
@@ -111,9 +127,28 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
           ] as [BiomeType, BiomeType])
         : null;
 
-    // Build starter card definitions from composition
+    // Personnages disponibles selon le nombre total de runs
+    const totalRuns = progression?.totalRuns ?? 0;
+    const availableCharacters = getAvailableCharacters(totalRuns).map(
+      (c) => c.id
+    );
+
+    // Snapshot du max de difficulté débloqué pour chaque personnage disponible
+    const difficultyMaxByCharacter: Record<string, number> = {};
+    for (const charId of availableCharacters) {
+      difficultyMaxByCharacter[charId] = getUnlockedMaxDifficultyForCharacter(
+        resources,
+        charId
+      );
+    }
+    // Le Scribe est le perso par défaut : ses niveaux de difficulté initialisent pendingDifficultyLevels
+    const unlockedDifficultyLevelsForScribe =
+      getUnlockedDifficultyLevelsForCharacter(resources, "scribe");
+
+    // Build starter card definitions from the default character (Scribe)
     const cardDefsMap = buildCardDefsMap();
-    const starterCards = starterDeckComposition
+    const scribeStarterDeckIds = getCharacterById("scribe").starterDeckIds;
+    const starterCards = scribeStarterDeckIds
       .map((id) => cardDefsMap.get(id))
       .filter((c): c is NonNullable<typeof c> => c != null);
 
@@ -127,11 +162,15 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
       initialUnlockProgress,
       allCardDefinitions,
       unlockedRunConditionIds,
-      unlockedDifficultyLevels,
-      unlockedDifficultyLevelMax,
+      unlockedDifficultyLevelsForScribe,
+      difficultyMaxByCharacter["scribe"] ?? 0,
       startingBiomeChoices,
       resources,
-      unlockedRelicIds
+      initialEncounteredEnemies,
+      unlockedRelicIds,
+      initialEnemyKillCounts,
+      availableCharacters,
+      difficultyMaxByCharacter
     );
 
     const now = new Date();
@@ -228,6 +267,10 @@ const endRunSchema = z.object({
   status: z.enum(["VICTORY", "DEFEAT", "ABANDONED"]),
   earnedResources: z.record(z.string(), z.number()).optional(),
   startMerchantSpentResources: z.record(z.string(), z.number()).optional(),
+  encounteredEnemies: z
+    .record(z.string(), z.enum(["NORMAL", "ELITE", "BOSS"]))
+    .optional(),
+  enemyKillCounts: z.record(z.string(), z.number().int().min(0)).optional(),
 });
 
 export async function endRunAction(input: z.infer<typeof endRunSchema>) {
@@ -353,11 +396,14 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
         mergedUnlockProgress
       );
       const difficultyLevelForUnlock = runState.selectedDifficultyLevel ?? 0;
+      const characterIdForUnlock =
+        (runState.characterId as string | undefined) ?? "scribe";
       const resourcesWithDifficultyUnlock =
         validated.status === "VICTORY"
           ? unlockNextDifficultyOnVictory(
               resourcesWithUnlocks,
-              difficultyLevelForUnlock
+              difficultyLevelForUnlock,
+              characterIdForUnlock
             )
           : resourcesWithUnlocks;
       nextResources = updateBestGoldInSingleRun(
@@ -394,6 +440,31 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
     }
 
     const selectedDifficultyLevel = runState.selectedDifficultyLevel ?? 0;
+    const persistedEncounteredEnemies =
+      readEncounteredEnemiesFromResources(currentResourcesBase);
+    const runEncounteredEnemies =
+      validated.encounteredEnemies ?? runState.encounteredEnemies ?? {};
+    const mergedEncounteredEnemies = mergeEncounteredEnemies(
+      persistedEncounteredEnemies,
+      runEncounteredEnemies
+    );
+    nextResources = writeEncounteredEnemiesToResources(
+      nextResources,
+      mergedEncounteredEnemies
+    );
+    const persistedEnemyKillCounts =
+      readEnemyKillCountsFromResources(currentResourcesBase);
+    const runEnemyKillCounts =
+      validated.enemyKillCounts ?? runState.enemyKillCounts ?? {};
+    const mergedEnemyKillCounts = mergeEnemyKillCounts(
+      persistedEnemyKillCounts,
+      runEnemyKillCounts
+    );
+    nextResources = writeEnemyKillCountsToResources(
+      nextResources,
+      mergedEnemyKillCounts
+    );
+
     const runDurationMs = Math.max(0, Date.now() - run.createdAt.getTime());
     await prisma.userProgression.upsert({
       where: { userId: user.id! },
@@ -458,7 +529,12 @@ export async function getActiveRunAction() {
       (progression?.winsByDifficulty as Record<string, number>) ?? {};
     const freshMetaBonuses = computeMetaBonuses(unlockedStoryIds);
     const state = run.state as unknown as RunState;
-    const unlockedDifficultyLevels = getUnlockedDifficultyLevels(resources);
+    const activeCharacterId =
+      (state.characterId as string | undefined) ?? "scribe";
+    const unlockedDifficultyLevels = getUnlockedDifficultyLevelsForCharacter(
+      resources,
+      activeCharacterId
+    );
     const unlockedDifficultyLevelMax =
       getUnlockedMaxDifficultyFromResources(resources);
     const freshUnlockedRelicIds = computeUnlockedRelicIds(
@@ -469,6 +545,10 @@ export async function getActiveRunAction() {
         unlockedDifficultyMax: unlockedDifficultyLevelMax,
         winsByDifficulty,
         bestGoldInSingleRun: getBestGoldInSingleRun(resources),
+        enemyKillCounts: mergeEnemyKillCounts(
+          readEnemyKillCountsFromResources(resources),
+          state.enemyKillCounts ?? {}
+        ),
       }
     );
     const normalizedCurrentRoom = Math.max(
@@ -493,6 +573,10 @@ export async function getActiveRunAction() {
     const unlockedRunConditionIds = computeUnlockedRunConditionIds({
       totalRuns: progression?.totalRuns ?? 0,
       wonRuns: progression?.wonRuns ?? 0,
+      enemyKillCounts: mergeEnemyKillCounts(
+        readEnemyKillCountsFromResources(resources),
+        state.enemyKillCounts ?? {}
+      ),
     });
     const backfilledRunConditionChoices = shouldRebuildStartChoices
       ? drawRunConditionChoices(
@@ -562,6 +646,14 @@ export async function getActiveRunAction() {
           state.combat === null
         ),
       unlockedRelicIds: freshUnlockedRelicIds,
+      encounteredEnemies: mergeEncounteredEnemies(
+        readEncounteredEnemiesFromResources(resources),
+        state.encounteredEnemies ?? {}
+      ),
+      enemyKillCounts: mergeEnemyKillCounts(
+        readEnemyKillCountsFromResources(resources),
+        state.enemyKillCounts ?? {}
+      ),
     };
 
     return success({

@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState, useMemo } from "react";
+import { RogueButton, RogueTag } from "@/components/ui/rogue";
 import type { ShopItem } from "@/game/engine/merchant";
 import {
   generateShopInventory,
@@ -231,12 +232,13 @@ export function ShopView({
             : canAfford;
 
           return (
-            <button
+            <RogueButton
               key={item.id}
               disabled={isSold || purgeSoldOut || !canBuyItem}
+              type="text"
               onClick={() => handleBuy(item)}
               className={cn(
-                "flex w-44 flex-col items-center gap-2 rounded-lg border-2 p-4 transition",
+                "!flex !h-auto !w-44 !flex-col !items-center !justify-start !gap-2 !whitespace-normal !rounded-lg !border-2 !p-4 transition",
                 isSold
                   ? "border-gray-700 bg-gray-900/30 opacity-40"
                   : purgeSoldOut
@@ -274,7 +276,7 @@ export function ShopView({
 
               <span
                 className={cn(
-                  "text-sm font-bold",
+                  "break-words text-sm font-bold",
                   item.type === "card" && item.cardDef
                     ? (rarityColors[item.cardDef.rarity] ?? "text-white")
                     : item.type === "relic"
@@ -308,7 +310,7 @@ export function ShopView({
                               )}
               </span>
 
-              <span className="text-center text-xs text-gray-400">
+              <span className="break-words text-center text-xs text-gray-400">
                 {item.type === "card" && item.cardDef
                   ? localizeCardDescription(item.cardDef, t)
                   : item.type === "relic"
@@ -335,10 +337,13 @@ export function ShopView({
               </span>
 
               {item.type === "card" && item.cardDef && (
-                <span className="rounded bg-gray-700 px-1.5 py-0.5 text-[10px] text-gray-300">
+                <RogueTag
+                  bordered={false}
+                  className="rounded bg-gray-700 px-1.5 py-0.5 text-[10px] text-gray-300"
+                >
                   {localizeCardType(item.cardDef.type, t)} -{" "}
                   {t("shop.energyCost", { cost: item.cardDef.energyCost })}
-                </span>
+                </RogueTag>
               )}
 
               {isAlly && allyDef && (
@@ -371,41 +376,44 @@ export function ShopView({
                       : t("shop.priceGold", { price: item.price })}
               </span>
               {isPurge && (
-                <span className="text-[10px] text-rose-300/80">
+                <RogueTag
+                  bordered={false}
+                  className="text-[10px] text-rose-300/80"
+                >
                   {t("shop.purgesLeft", {
                     count: Math.max(0, purgeUsesPerVisit - purgeUses),
                   })}
-                </span>
+                </RogueTag>
               )}
-            </button>
+            </RogueButton>
           );
         })}
       </div>
 
-      <button
+      <RogueButton
         className={cn(
-          "rounded-lg border px-5 py-2 text-sm font-semibold transition",
+          "!h-auto !rounded-lg !border !px-5 !py-2 !text-sm !font-semibold transition",
           canReroll
-            ? "border-amber-500 bg-amber-950/40 text-amber-300 hover:bg-amber-900/60"
-            : "cursor-not-allowed border-slate-700 bg-slate-900 text-slate-500"
+            ? "!border-amber-500 !bg-amber-950/40 !text-amber-300 hover:!bg-amber-900/60"
+            : "!cursor-not-allowed !border-slate-700 !bg-slate-900 !text-slate-500"
         )}
         disabled={!canReroll}
         onClick={handleReroll}
       >
         {t("shop.reroll", { price: rerollPrice })}
-      </button>
+      </RogueButton>
       {autoRestockChargesLeft > 0 && (
         <p className="text-xs text-amber-300">
           {t("shop.autoRestock", { count: autoRestockChargesLeft })}
         </p>
       )}
 
-      <button
-        className="mt-4 rounded-lg bg-gray-700 px-8 py-2.5 font-medium text-white transition hover:bg-gray-600"
+      <RogueButton
+        className="!mt-4 !h-auto !rounded-lg !bg-gray-700 !px-8 !py-2.5 !font-medium !text-white transition hover:!bg-gray-600"
         onClick={onLeave}
       >
         {t("shop.leave")}
-      </button>
+      </RogueButton>
 
       {pendingPurgeItemId && (
         <CardPickerModal

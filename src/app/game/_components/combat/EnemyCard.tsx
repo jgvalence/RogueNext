@@ -21,7 +21,7 @@ import { BuffPill } from "../shared/BuffPill";
 import { Tooltip } from "../shared/Tooltip";
 import { buffMeta } from "../shared/buff-meta";
 // TEMPORARY: centralized asset registry - swap paths in src/lib/assets.ts when real art is ready
-import { ENEMY_IMAGES } from "@/lib/assets";
+import { getEnemyImageSrc } from "@/lib/assets";
 import { playSound } from "@/lib/sound";
 import { useTranslation } from "react-i18next";
 import {
@@ -124,7 +124,7 @@ export function EnemyCard({
       : "";
 
   // TEMPORARY: use image from asset registry, fall back to emoji if missing
-  const artImageSrc = ENEMY_IMAGES[definition.id];
+  const artImageSrc = getEnemyImageSrc(definition.id);
 
   return (
     <div

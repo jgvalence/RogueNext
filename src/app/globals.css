@@ -6,6 +6,16 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+    --rogue-bg-base: #05090f;
+    --rogue-bg-panel: #0a1118;
+    --rogue-bg-elevated: #111d2a;
+    --rogue-border-subtle: #2b3a4d;
+    --rogue-text-primary: #f6e9cf;
+    --rogue-text-muted: #d0bf9f;
+    --rogue-accent-amber: #d9ae62;
+    --rogue-accent-cyan: #74c8e8;
+    --rogue-accent-emerald: #66c49a;
+    --rogue-accent-crimson: #d86c6c;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -21,6 +31,10 @@
 
   body {
     @apply bg-white text-gray-900;
+  }
+
+  .ant-app {
+    color: var(--rogue-text-primary);
   }
 }
 

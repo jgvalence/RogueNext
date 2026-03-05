@@ -20,7 +20,8 @@ export interface DamageTarget {
 export function calculateDamage(
   baseDamage: number,
   attacker: DamageSource,
-  target: { buffs: BuffInstance[] }
+  target: { buffs: BuffInstance[] },
+  options?: { vulnerableMultiplier?: number }
 ): number {
   let damage = baseDamage + attacker.strength;
 
@@ -31,7 +32,7 @@ export function calculateDamage(
 
   // Vulnerable target: +50% damage
   if (getBuffStacks(target.buffs, "VULNERABLE") > 0) {
-    damage = Math.floor(damage * 1.5);
+    damage = Math.floor(damage * (options?.vulnerableMultiplier ?? 1.5));
   }
 
   return Math.max(0, damage);

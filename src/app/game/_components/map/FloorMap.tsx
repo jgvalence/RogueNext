@@ -7,6 +7,7 @@ import type { EnemyDefinition } from "@/game/schemas/entities";
 import { cn } from "@/lib/utils/cn";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { BIOME_RESOURCE } from "@/game/engine/meta";
+import { RogueButton, RogueTag, RogueTooltip } from "@/components/ui/rogue";
 
 interface FloorMapProps {
   map: RoomNode[][];
@@ -217,10 +218,11 @@ export function FloorMap({
               }
 
               return (
-                <button
+                <RogueButton
                   key={`${room.index}-${i}`}
+                  type="text"
                   className={cn(
-                    "group flex w-64 flex-col gap-4 rounded-xl border bg-[#0A1118]/80 p-7 text-left transition-all duration-150",
+                    "!group !flex !h-auto !w-72 !flex-col !gap-4 !whitespace-normal !rounded-xl !border !bg-[#0A1118]/80 !p-7 !text-left !transition-all !duration-150",
                     isBossRoom ? "border-red-500/20" : "border-amber-100/12",
                     cfg.hoverBorder,
                     cfg.hoverBg,
@@ -237,22 +239,22 @@ export function FloorMap({
                   />
 
                   {/* Icône + nom */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex w-full flex-col items-start gap-3 sm:flex-row sm:items-start sm:gap-4">
                     <div
                       className={cn(
-                        "flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border text-2xl",
+                        "flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border text-xl sm:h-14 sm:w-14 sm:text-2xl",
                         cfg.iconRing,
                         cfg.iconText
                       )}
                     >
                       {cfg.icon}
                     </div>
-                    <div className="min-w-0">
-                      <div className="font-[family-name:var(--font-cinzel)] text-base font-semibold uppercase tracking-[0.08em] text-amber-100">
+                    <div className="min-w-0 flex-1">
+                      <div className="break-normal font-[family-name:var(--font-cinzel)] text-base font-semibold uppercase leading-snug tracking-[0.03em] text-amber-100 sm:tracking-[0.08em]">
                         {roomTitle}
                       </div>
                       {roomSubtitle && (
-                        <div className="mt-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.5em] text-red-400/60">
+                        <div className="mt-0.5 break-normal text-[0.55rem] font-semibold uppercase leading-snug tracking-[0.2em] text-red-400/60 sm:tracking-[0.5em]">
                           {roomSubtitle}
                         </div>
                       )}
@@ -260,7 +262,7 @@ export function FloorMap({
                         room.type === "COMBAT" &&
                         !room.isElite &&
                         enemyCount > 0 && (
-                          <div className="mt-0.5 text-[0.6rem] uppercase tracking-[0.35em] text-amber-100/25">
+                          <div className="mt-0.5 break-words text-[0.6rem] uppercase tracking-[0.2em] text-amber-100/25 sm:tracking-[0.35em]">
                             {t("map.enemyCount", { count: enemyCount })}
                           </div>
                         )}
@@ -271,24 +273,34 @@ export function FloorMap({
                   {room.type === "COMBAT" && (
                     <div className="border-amber-100/8 flex flex-col gap-2 border-t pt-3">
                       <div className="flex flex-wrap gap-1.5">
-                        <span className="rounded border border-emerald-400/20 bg-emerald-950/40 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-emerald-300/80">
+                        <RogueTag
+                          bordered
+                          className="rounded border-emerald-400/20 bg-emerald-950/40 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-emerald-300/80"
+                        >
                           +{guaranteedResourceAmount}{" "}
                           {t(
                             `reward.resources.${primaryResource}`,
                             primaryResource
                           )}
-                        </span>
+                        </RogueTag>
                         {displayedGoldBonus > 0 && (
-                          <span className="rounded border border-amber-300/20 bg-amber-950/40 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-amber-300/80">
+                          <RogueTag
+                            bordered
+                            className="rounded border-amber-300/20 bg-amber-950/40 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-amber-300/80"
+                          >
                             +{displayedGoldBonus} {t("reward.gold")}
-                          </span>
+                          </RogueTag>
                         )}
-                        <span
+                        <RogueTooltip
                           title={t("map.combatPreview.resourcesBonusHint")}
-                          className="rounded border border-cyan-300/15 bg-cyan-950/30 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-cyan-300/55"
                         >
-                          {t("map.combatPreview.resourcesBonusShort")}
-                        </span>
+                          <RogueTag
+                            bordered
+                            className="rounded border-cyan-300/15 bg-cyan-950/30 px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-cyan-300/55"
+                          >
+                            {t("map.combatPreview.resourcesBonusShort")}
+                          </RogueTag>
+                        </RogueTooltip>
                       </div>
                       <div className="flex items-center gap-1.5 text-base text-amber-100/30">
                         {isBossRoom ? (
@@ -309,7 +321,7 @@ export function FloorMap({
                       </div>
                     </div>
                   )}
-                </button>
+                </RogueButton>
               );
             });
           })()}

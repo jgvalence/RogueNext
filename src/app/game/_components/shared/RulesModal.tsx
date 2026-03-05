@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
+import { RogueModal } from "@/components/ui/rogue";
 import { RulesContent } from "@/components/rules/RulesContent";
 
 interface RulesModalProps {
@@ -9,27 +8,17 @@ interface RulesModalProps {
 }
 
 export function RulesModal({ onClose }: RulesModalProps) {
-  useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
-
-  const modal = (
-    <div
-      className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto bg-black/80 px-3 py-4 sm:px-6 sm:py-8"
-      onClick={onClose}
+  return (
+    <RogueModal
+      open
+      onCancel={onClose}
+      footer={null}
+      width={1200}
+      centered
+      destroyOnClose
+      className="[&_.ant-modal-body]:!px-3 [&_.ant-modal-body]:!py-4 sm:[&_.ant-modal-body]:!px-5 sm:[&_.ant-modal-body]:!py-5 [&_.ant-modal-close]:!text-slate-300 [&_.ant-modal-content]:!rounded-2xl [&_.ant-modal-content]:!border [&_.ant-modal-content]:!border-slate-700 [&_.ant-modal-content]:!bg-slate-900/95"
     >
-      <div
-        className="w-full max-w-5xl rounded-2xl border border-slate-700 bg-slate-900/95 p-3 shadow-2xl sm:p-5"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <RulesContent mode="modal" onClose={onClose} />
-      </div>
-    </div>
+      <RulesContent mode="modal" onClose={onClose} />
+    </RogueModal>
   );
-
-  return createPortal(modal, document.body);
 }

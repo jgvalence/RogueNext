@@ -40,6 +40,10 @@ export function drawCards(
   const frozen = new Set(current.playerDisruption?.frozenHandCardIds ?? []);
   let freezeRemaining = current.playerDisruption?.freezeNextDrawsRemaining ?? 0;
   let drawsToDiscard = current.playerDisruption?.drawsToDiscardRemaining ?? 0;
+  const isCurseLikeDefinitionId = (definitionId: string): boolean =>
+    definitionId === "haunting_regret" ||
+    definitionId === "hexed_parchment" ||
+    definitionId.includes("curse");
 
   while (remaining > 0) {
     if (current.drawPile.length === 0 && current.discardPile.length === 0) {
@@ -61,7 +65,25 @@ export function drawCards(
         discardPile: [...current.discardPile, card],
       };
     } else {
-      if (drawn.length >= GAME_CONSTANTS.MAX_HAND_SIZE && source !== "PLAYER") {
+      const exhaustFirstCursePending = Boolean(
+        current.relicFlags?.first_curse_draw_exhaust_pending
+      );
+      if (
+        exhaustFirstCursePending &&
+        isCurseLikeDefinitionId(card.definitionId)
+      ) {
+        current = {
+          ...current,
+          exhaustPile: [...current.exhaustPile, card],
+          relicFlags: {
+            ...(current.relicFlags ?? {}),
+            first_curse_draw_exhaust_pending: false,
+          },
+        };
+      } else if (
+        drawn.length >= GAME_CONSTANTS.MAX_HAND_SIZE &&
+        source !== "PLAYER"
+      ) {
         // Overflow safety: cards drawn beyond hand cap are exhausted.
         exhaustedOverflow++;
         current = {
@@ -90,7 +112,7 @@ export function drawCards(
     remaining--;
   }
 
-  return {
+  let next: CombatState = {
     ...current,
     hand: drawn,
     pendingHandOverflowExhaust: pendingOverflow,
@@ -117,6 +139,43 @@ export function drawCards(
       frozenHandCardIds: [...frozen],
     },
   };
+
+  if (movedToHand > 0 && next.phase === "PLAYER_TURN" && source !== "ENEMY") {
+    const drawCountBefore = Math.max(
+      0,
+      Math.floor(next.relicCounters?.turn_drawn_count ?? 0)
+    );
+    const drawCountAfter = drawCountBefore + movedToHand;
+    next = {
+      ...next,
+      relicCounters: {
+        ...(next.relicCounters ?? {}),
+        turn_drawn_count: drawCountAfter,
+      },
+    };
+    if (next.relicFlags?.rusalka_teardrop_active) {
+      const granted = Math.max(
+        0,
+        Math.floor(next.relicCounters?.turn_rusalka_focus_granted ?? 0)
+      );
+      if (drawCountBefore < 3 && drawCountAfter >= 3 && granted === 0) {
+        next = {
+          ...next,
+          player: {
+            ...next.player,
+            focus: next.player.focus + 1,
+          },
+          relicCounters: {
+            ...(next.relicCounters ?? {}),
+            turn_drawn_count: drawCountAfter,
+            turn_rusalka_focus_granted: 1,
+          },
+        };
+      }
+    }
+  }
+
+  return next;
 }
 
 export function discardHand(state: CombatState): CombatState {

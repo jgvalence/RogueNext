@@ -9,7 +9,14 @@ import type {
 } from "../schemas/entities";
 import { resolveEffects } from "./effects";
 import type { EffectTarget } from "./effects";
-import { applyPoison, applyBleed, tickBuffs, applyBuff } from "./buffs";
+import {
+  applyPoison,
+  applyBleed,
+  tickBuffs,
+  applyBuff,
+  getBuffStacks,
+  removeBuff,
+} from "./buffs";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 import { getDifficultyModifiers } from "./difficulty";
@@ -123,6 +130,18 @@ export function executeOneEnemyTurn(
 ): CombatState {
   if (enemy.currentHp <= 0) return state;
   if (enemyDef.abilities.length === 0) return state;
+
+  // STUN : l'ennemi passe son tour
+  if (getBuffStacks(enemy.buffs, "STUN") > 0) {
+    return {
+      ...state,
+      enemies: state.enemies.map((e) =>
+        e.instanceId === enemy.instanceId
+          ? { ...e, buffs: removeBuff(e.buffs, "STUN") }
+          : e
+      ),
+    };
+  }
 
   const { ability, usedIntentIndex } = pickAbilityForEnemyTurn(
     state,
@@ -257,8 +276,12 @@ export function executeEnemiesTurn(
     ...current,
     enemies: current.enemies.map((e) => {
       if (e.currentHp <= 0) return e;
-      const afterPoison = applyPoison(e);
-      const afterBleed = applyBleed(afterPoison);
+      const enemyPoisonMultiplier =
+        current.relicModifiers?.enemyPoisonDamageMultiplier ?? 1;
+      const enemyBleedMultiplier =
+        current.relicModifiers?.enemyBleedDamageMultiplier ?? 1;
+      const afterPoison = applyPoison(e, enemyPoisonMultiplier);
+      const afterBleed = applyBleed(afterPoison, enemyBleedMultiplier);
       return {
         ...e,
         currentHp: afterBleed.currentHp,
@@ -268,8 +291,12 @@ export function executeEnemiesTurn(
   };
 
   // Apply poison, bleed and tick buffs for player and allies
-  const playerAfterPoison = applyPoison(current.player);
-  const playerAfterBleed = applyBleed(playerAfterPoison);
+  const playerPoisonMultiplier =
+    current.relicModifiers?.playerPoisonDamageMultiplier ?? 1;
+  const playerBleedMultiplier =
+    current.relicModifiers?.playerBleedDamageMultiplier ?? 1;
+  const playerAfterPoison = applyPoison(current.player, playerPoisonMultiplier);
+  const playerAfterBleed = applyBleed(playerAfterPoison, playerBleedMultiplier);
   current = {
     ...current,
     player: {
@@ -304,8 +331,12 @@ export function finalizeEnemyRound(state: CombatState): CombatState {
     ...current,
     enemies: current.enemies.map((e) => {
       if (e.currentHp <= 0) return e;
-      const afterPoison = applyPoison(e);
-      const afterBleed = applyBleed(afterPoison);
+      const enemyPoisonMultiplier =
+        current.relicModifiers?.enemyPoisonDamageMultiplier ?? 1;
+      const enemyBleedMultiplier =
+        current.relicModifiers?.enemyBleedDamageMultiplier ?? 1;
+      const afterPoison = applyPoison(e, enemyPoisonMultiplier);
+      const afterBleed = applyBleed(afterPoison, enemyBleedMultiplier);
       return {
         ...e,
         currentHp: afterBleed.currentHp,
@@ -315,8 +346,12 @@ export function finalizeEnemyRound(state: CombatState): CombatState {
   };
 
   // Apply poison, bleed and tick buffs for player and allies
-  const playerAfterPoison = applyPoison(current.player);
-  const playerAfterBleed = applyBleed(playerAfterPoison);
+  const playerPoisonMultiplier =
+    current.relicModifiers?.playerPoisonDamageMultiplier ?? 1;
+  const playerBleedMultiplier =
+    current.relicModifiers?.playerBleedDamageMultiplier ?? 1;
+  const playerAfterPoison = applyPoison(current.player, playerPoisonMultiplier);
+  const playerAfterBleed = applyBleed(playerAfterPoison, playerBleedMultiplier);
   current = {
     ...current,
     player: {

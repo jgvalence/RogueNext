@@ -54,6 +54,8 @@ export const EffectType = z.enum([
   "REDUCE_DRAW_THIS_TURN",
   "REDUCE_DRAW_NEXT_TURN",
   "FORCE_DISCARD_RANDOM",
+  "DAMAGE_BONUS_IF_UPGRADED_IN_HAND",
+  "UPGRADE_RANDOM_CARD_IN_HAND",
 ]);
 export type EffectType = z.infer<typeof EffectType>;
 
@@ -65,10 +67,23 @@ export const BuffType = z.enum([
   "POISON",
   "THORNS",
   "BLEED",
+  "STUN",
 ]);
 export type BuffType = z.infer<typeof BuffType>;
 
-export const InkPowerType = z.enum(["REWRITE", "LOST_CHAPTER", "SEAL"]);
+export const InkPowerType = z.enum([
+  // Scribe
+  "CALLIGRAPHIE",
+  "ENCRE_NOIRE",
+  "SEAL",
+  // Bibliothécaire
+  "VISION",
+  "INDEX",
+  "SILENCE",
+  // Legacy (conservés pour la compatibilité des saves existantes)
+  "REWRITE",
+  "LOST_CHAPTER",
+]);
 export type InkPowerType = z.infer<typeof InkPowerType>;
 
 export const BiomeType = z.enum([

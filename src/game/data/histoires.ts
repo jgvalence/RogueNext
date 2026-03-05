@@ -236,9 +236,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 2,
     cout: { GLYPHES: 24 },
     prerequis: ["livre_des_morts"],
-    bonus: { type: "UNLOCK_INK_POWER", power: "LOST_CHAPTER" },
+    bonus: { type: "UNLOCK_POWER_SLOT", slot: 2 },
     description:
-      "Les plus anciens textes religieux de l'humanité, gravés dans la pierre. Débloque le pouvoir d'Ink LOST_CHAPTER.",
+      "Les plus anciens textes religieux de l'humanité, gravés dans la pierre. Débloque le deuxième pouvoir de votre personnage.",
     visuel: "tablette",
   },
   {
@@ -260,9 +260,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 3,
     cout: { GLYPHES: 72, PAGES: 8 },
     prerequis: ["textes_des_pyramides", "papyrus_d_ani"],
-    bonus: { type: "UNLOCK_INK_POWER", power: "SEAL" },
+    bonus: { type: "UNLOCK_POWER_SLOT", slot: 3 },
     description:
-      "Le rituel secret qui permet de sceller la réalité elle-même. Débloque le pouvoir d'Ink SEAL et +3 Ink max supplémentaires.",
+      "Le rituel secret qui permet de sceller la réalité elle-même. Débloque le troisième pouvoir de votre personnage.",
     visuel: "tablette",
   },
 

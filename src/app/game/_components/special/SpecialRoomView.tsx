@@ -27,6 +27,7 @@ import {
   localizeCardName,
   localizeCardType,
 } from "@/lib/i18n/card-text";
+import { RogueButton } from "@/components/ui/rogue";
 
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -130,7 +131,7 @@ function RoomLabel({ label }: { label: string }) {
     <p
       className={cn(
         cinzel.className,
-        "text-[0.55rem] font-semibold uppercase tracking-[0.55em] text-amber-400/50"
+        "max-w-[min(100%,22rem)] text-center text-[0.55rem] font-semibold uppercase leading-relaxed tracking-[0.35em] text-amber-400/50 [overflow-wrap:anywhere] sm:tracking-[0.55em]"
       )}
     >
       {label}
@@ -154,7 +155,7 @@ function RoomTitle({
     <h2
       className={cn(
         cinzel.className,
-        "text-2xl font-bold uppercase tracking-[0.1em]",
+        "max-w-[min(100%,24rem)] text-center text-2xl font-bold uppercase leading-snug tracking-[0.08em] [overflow-wrap:anywhere] sm:tracking-[0.1em]",
         colorClass
       )}
     >
@@ -199,18 +200,19 @@ function HealRoom({
         <span className="text-amber-100/30">/ {playerMaxHp}</span>
       </div>
 
-      <button
+      <RogueButton
         onClick={onHeal}
+        type="text"
         className={cn(
           cinzel.className,
-          "group mt-2 flex cursor-pointer items-center gap-3 py-[0.42rem] uppercase",
-          "text-[1.1rem] font-semibold tracking-[0.16em] text-amber-100",
-          "outline-none transition-all duration-150"
+          "!group !mt-2 !flex !h-auto !items-center !gap-3 !py-[0.42rem] !uppercase",
+          "!text-[1.1rem] !font-semibold !tracking-[0.16em] !text-amber-100",
+          "!outline-none !transition-all !duration-150"
         )}
       >
         <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
         {t("special.healAction")}
-      </button>
+      </RogueButton>
 
       <Divider dim />
     </div>
@@ -236,7 +238,7 @@ function UpgradeRoom({
     null
   );
   const handleCardMouseEnter = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>, def: CardDefinition) => {
+    (e: React.MouseEvent<HTMLElement>, def: CardDefinition) => {
       setHoverInfo({ definition: def, anchorEl: e.currentTarget });
     },
     []
@@ -272,63 +274,66 @@ function UpgradeRoom({
           const isSelected = selected === card.instanceId;
 
           return (
-            <button
+            <RogueButton
               key={card.instanceId}
               onClick={() => setSelected(card.instanceId)}
               onMouseEnter={(e) => handleCardMouseEnter(e, def)}
               onMouseLeave={handleCardMouseLeave}
+              type="text"
               className={cn(
-                "relative flex w-32 flex-col items-center gap-1 rounded border-2 p-3 text-center transition-all duration-150",
+                "!relative !flex !h-auto !w-32 !min-w-0 !flex-col !items-center !gap-1 !whitespace-normal !rounded !border-2 !p-3 !text-center !transition-all !duration-150",
                 isSelected
-                  ? "border-amber-400/60 bg-amber-950/50 ring-1 ring-amber-400/30"
-                  : "border-amber-500/15 bg-amber-950/10 hover:border-amber-500/30 hover:bg-amber-950/30"
+                  ? "!border-amber-400/60 !bg-amber-950/50 !ring-1 !ring-amber-400/30"
+                  : "!border-amber-500/15 !bg-amber-950/10 hover:!border-amber-500/30 hover:!bg-amber-950/30"
               )}
             >
-              <span className="text-xs font-bold text-amber-100">
+              <span className="block w-full whitespace-normal break-words text-xs font-bold leading-tight text-amber-100 [overflow-wrap:anywhere]">
                 {localizeCardName(def, t)}
               </span>
-              <span className="text-[10px] text-amber-200/40">
+              <span className="block w-full whitespace-normal break-words text-[10px] leading-tight text-amber-200/40 [overflow-wrap:anywhere]">
                 {localizeCardType(def.type, t)} —{" "}
                 {t(`gameCard.rarity.${def.rarity}`, {
                   defaultValue: def.rarity,
                 })}
               </span>
-              <span className="line-clamp-2 text-[10px] text-amber-100/30">
+              <span className="line-clamp-2 block w-full whitespace-normal break-words text-[10px] leading-tight text-amber-100/30 [overflow-wrap:anywhere]">
                 {localizeCardDescription(def, t)}
               </span>
-            </button>
+            </RogueButton>
           );
         })}
       </div>
 
       <div className="mt-2 flex gap-4">
-        <button
+        <RogueButton
           disabled={!selected}
           onClick={() => selected && onUpgrade(selected)}
+          type="text"
           className={cn(
             cinzel.className,
-            "group flex items-center gap-3 py-[0.42rem] text-[1.1rem] font-semibold uppercase tracking-[0.16em] outline-none transition-all duration-150",
+            "!group !flex !h-auto !items-center !gap-3 !py-[0.42rem] !text-[1.1rem] !font-semibold !uppercase !tracking-[0.16em] !outline-none !transition-all !duration-150",
             selected
-              ? "cursor-pointer text-amber-100"
-              : "cursor-not-allowed text-amber-100/20"
+              ? "!cursor-pointer !text-amber-100"
+              : "!cursor-not-allowed !text-amber-100/20"
           )}
         >
           {selected && (
             <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
           )}
           {t("special.upgradeAction")}
-        </button>
+        </RogueButton>
 
-        <button
+        <RogueButton
           onClick={onSkip}
+          type="text"
           className={cn(
             cinzel.className,
-            "group flex items-center gap-2 py-[0.42rem] text-[1rem] font-normal uppercase tracking-[0.14em]",
-            "cursor-pointer text-amber-100/30 transition-colors duration-150 hover:text-amber-100/70"
+            "!group !flex !h-auto !items-center !gap-2 !py-[0.42rem] !text-[1rem] !font-normal !uppercase !tracking-[0.14em]",
+            "!cursor-pointer !text-amber-100/30 !transition-colors !duration-150 hover:!text-amber-100/70"
           )}
         >
           {t("reward.skip")}
-        </button>
+        </RogueButton>
       </div>
 
       <Divider dim />
@@ -438,20 +443,21 @@ function EventRoom({
         )}
 
         {!showPurgePicker && (
-          <button
+          <RogueButton
             onClick={handleContinue}
+            type="text"
             className={cn(
               cinzel.className,
-              "group mt-2 flex cursor-pointer items-center gap-3 py-[0.42rem] uppercase",
-              "text-[1.1rem] font-semibold tracking-[0.16em] text-amber-100",
-              "outline-none transition-all duration-150"
+              "!group !mt-2 !flex !h-auto !items-center !gap-3 !py-[0.42rem] !uppercase",
+              "!text-[1.1rem] !font-semibold !tracking-[0.16em] !text-amber-100",
+              "!outline-none !transition-all !duration-150"
             )}
           >
             <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
             {choice?.requiresPurge
               ? t("special.eventPurgeAction")
               : t("special.eventContinue")}
-          </button>
+          </RogueButton>
         )}
 
         {showPurgePicker && (
@@ -543,14 +549,15 @@ function EventRoom({
       {/* Choices */}
       <div className="flex w-full max-w-md flex-col gap-3">
         {event.choices.map((choice, i) => (
-          <button
+          <RogueButton
             key={i}
             onClick={() => handleChoice(i)}
+            type="text"
             className={cn(
-              "group flex flex-col items-start gap-1.5 rounded border border-amber-500/15",
-              "bg-amber-950/10 px-6 py-3 text-left",
-              "transition-all duration-150",
-              "hover:border-amber-500/35 hover:bg-amber-950/30"
+              "!group !flex !h-auto !flex-col !items-start !gap-1.5 !rounded !border !border-amber-500/15",
+              "!bg-amber-950/10 !px-6 !py-3 !text-left",
+              "!transition-all !duration-150",
+              "hover:!border-amber-500/35 hover:!bg-amber-950/30"
             )}
           >
             <div className="flex items-center gap-3">
@@ -568,7 +575,7 @@ function EventRoom({
             <span className="pl-0 text-xs text-amber-200/45 transition-all duration-200 group-hover:pl-7">
               {t(choice.description)}
             </span>
-          </button>
+          </RogueButton>
         ))}
       </div>
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createRNG } from "../engine/rng";
 import {
+  BOSS_START_OPTION_CONDITION_PREFIX,
   computeUnlockedRunConditionIds,
   drawRunConditionChoices,
   getRunConditionById,
@@ -10,6 +11,22 @@ import {
 } from "../engine/run-conditions";
 
 describe("Run conditions", () => {
+  it("defines 50 total starting options (including boss starts)", () => {
+    expect(runConditionDefinitions).toHaveLength(50);
+  });
+
+  it("ensures each boss start option has a unique mechanic signature", () => {
+    const bossStarts = runConditionDefinitions.filter((condition) =>
+      condition.id.startsWith(BOSS_START_OPTION_CONDITION_PREFIX)
+    );
+    const signatures = bossStarts.map((condition) =>
+      Object.keys(condition.effects.addMetaBonuses ?? {})
+        .sort()
+        .join("|")
+    );
+    expect(new Set(signatures).size).toBe(signatures.length);
+  });
+
   it("keeps exactly three normal start choices, always including vanilla mode", () => {
     const allIds = runConditionDefinitions.map((condition) => condition.id);
     const choices = drawRunConditionChoices(
@@ -37,6 +54,22 @@ describe("Run conditions", () => {
     const late = computeUnlockedRunConditionIds({ totalRuns: 9, wonRuns: 3 });
     expect(late.includes("chaos_draft")).toBe(true);
     expect(late.includes("boss_rush")).toBe(true);
+  });
+
+  it("unlocks boss start options after 3 kills of that boss", () => {
+    const locked = computeUnlockedRunConditionIds({
+      totalRuns: 20,
+      wonRuns: 10,
+      enemyKillCounts: { chapter_guardian: 2 },
+    });
+    expect(locked.includes("boss_start_option_chapter_guardian")).toBe(false);
+
+    const unlocked = computeUnlockedRunConditionIds({
+      totalRuns: 20,
+      wonRuns: 10,
+      enemyKillCounts: { chapter_guardian: 3 },
+    });
+    expect(unlocked.includes("boss_start_option_chapter_guardian")).toBe(true);
   });
 
   it("normalizes the legacy vanilla identifier", () => {
