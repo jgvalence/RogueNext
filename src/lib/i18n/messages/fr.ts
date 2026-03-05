@@ -1005,6 +1005,8 @@ export const fr = {
       damage: "Inflige {{value}} degats",
       damageAll: "Inflige {{value}} degats a tous les ennemis",
       damageEqualBlock: "Inflige des degats egaux a votre armure",
+      damageBonusIfUpgradedInHand:
+        "Si cette carte est amelioree en main : +{{value}} degats",
       block: "Gagne {{value}} armure",
       heal: "Soigne {{value}} PV",
       draw: "Pioche {{value}} cartes",
@@ -1104,6 +1106,8 @@ export const fr = {
     effect: {
       damage: "degats {{value}}",
       damageEqualBlock: "degats egaux a votre armure",
+      damageBonusIfUpgradedInHand:
+        "si cette carte est amelioree en main : +{{value}} degats",
       heal: "soin {{value}}",
       block: "armure {{value}}",
       drawCards: "pioche {{value}}",

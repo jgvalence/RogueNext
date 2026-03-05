@@ -35,6 +35,10 @@ function formatEffect(
         : t("gameCard.effect.damage", { value: effect.value });
     case "DAMAGE_EQUAL_BLOCK":
       return t("gameCard.effect.damageEqualBlock");
+    case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
+      return t("gameCard.effect.damageBonusIfUpgradedInHand", {
+        value: effect.value,
+      });
     case "BLOCK":
       return t("gameCard.effect.block", { value: effect.value });
     case "HEAL":

@@ -81,7 +81,7 @@ export function HandArea({
     <>
       <div
         data-keep-selection="true"
-        className="relative z-30 flex h-[196px] w-full min-w-0 touch-pan-x items-end gap-0 overflow-x-auto overflow-y-visible overscroll-x-contain px-2 pb-2 pr-2 [-webkit-overflow-scrolling:touch] lg:hidden"
+        className="relative z-30 flex h-[170px] w-full min-w-0 touch-pan-x items-end gap-0 overflow-x-auto overflow-y-visible overscroll-x-contain px-2 pb-1.5 pr-2 [-webkit-overflow-scrolling:touch] lg:hidden [@media(max-height:540px)]:h-[156px]"
       >
         <div className="mx-auto flex h-full w-max min-w-full items-end justify-center">
           {hand.map((card, index) => {
@@ -101,7 +101,7 @@ export function HandArea({
             const fanOffset = index - (hand.length - 1) / 2;
             const fanRotateDeg = fanOffset * 2.6;
             const fanLiftPx = Math.max(0, 4.5 - Math.abs(fanOffset) * 1.25);
-            const selectedLiftPx = isSelected ? 18 : fanLiftPx;
+            const selectedLiftPx = isSelected ? 10 : fanLiftPx;
 
             return (
               <div
@@ -109,7 +109,7 @@ export function HandArea({
                 className="relative shrink-0 origin-bottom snap-start transition-all duration-200 ease-out"
                 style={{
                   marginLeft: index === 0 ? 0 : -22,
-                  transform: `translateY(-${selectedLiftPx}px) rotate(${fanRotateDeg}deg) scale(${isSelected ? 1.1 : 1})`,
+                  transform: `translateY(-${selectedLiftPx}px) rotate(${fanRotateDeg}deg) scale(${isSelected ? 1.06 : 1})`,
                   zIndex: isSelected ? 90 : 30 + index,
                 }}
               >
@@ -123,7 +123,7 @@ export function HandArea({
                   isFrozen={isFrozen}
                   upgraded={card.upgraded}
                   size="md"
-                  className="!h-[178px] !w-[104px] shadow-[0_10px_18px_rgba(2,6,23,0.45)]"
+                  className="!h-[152px] !w-[88px] shadow-[0_10px_18px_rgba(2,6,23,0.45)] [@media(max-height:540px)]:!h-[140px] [@media(max-height:540px)]:!w-[82px]"
                   onClick={() => onPlayCard(card.instanceId, false)}
                   onInkedClick={() => onPlayCard(card.instanceId, true)}
                 />

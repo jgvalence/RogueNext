@@ -6,12 +6,32 @@ import {
 } from "@/game/engine/run-conditions";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
 
+const LEGACY_BONUS_KEY_ALIASES: Record<string, string> = {
+  damage_bonus_X: "attackBonus",
+  damage_bonus: "attackBonus",
+  attack_bonus: "attackBonus",
+};
+
 function formatFallback(value: string): string {
   return value
+    .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
     .split("_")
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
+}
+
+function normalizeBonusKey(bonusKey: string): string {
+  if (bonusKey in LEGACY_BONUS_KEY_ALIASES) {
+    return LEGACY_BONUS_KEY_ALIASES[bonusKey]!;
+  }
+  if (!bonusKey.includes("_")) return bonusKey;
+  const [head, ...tail] = bonusKey.split("_").filter(Boolean);
+  if (!head) return bonusKey;
+  return (
+    head +
+    tail.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join("")
+  );
 }
 
 function extractBossId(conditionId: string): string | null {
@@ -32,12 +52,13 @@ function buildBossBonusDescription(conditionId: string, t: TFunction): string {
     return t("runCondition.bossStart.bonusFallback");
   }
 
-  const parts = entries.map(([bonusKey, value]) =>
-    t(`library.bonus.${bonusKey}`, {
+  const parts = entries.map(([bonusKey, value]) => {
+    const normalizedBonusKey = normalizeBonusKey(bonusKey);
+    return t(`library.bonus.${normalizedBonusKey}`, {
       value,
-      defaultValue: `${formatFallback(bonusKey)} ${value}`,
-    })
-  );
+      defaultValue: `${formatFallback(normalizedBonusKey)} ${value}`,
+    });
+  });
 
   return parts.join(" | ");
 }

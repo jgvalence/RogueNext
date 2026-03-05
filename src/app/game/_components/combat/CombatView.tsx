@@ -206,7 +206,6 @@ export function CombatView({
   const [mobileInkPanelOpen, setMobileInkPanelOpen] = useState(false);
   const [mobileInventoryPanelOpen, setMobileInventoryPanelOpen] =
     useState(false);
-  const [isDesktopViewport, setIsDesktopViewport] = useState(false);
   const [firstCombatTutorialStepIndex, setFirstCombatTutorialStepIndex] =
     useState(0);
   const [firstCombatTutorialHidden, setFirstCombatTutorialHidden] =
@@ -293,18 +292,6 @@ export function CombatView({
       1200
     );
   }, [combat.enemies, actingEnemyId, t, getEnemyDisplayName]);
-
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
-    const updateDesktopState = () => setIsDesktopViewport(media.matches);
-    updateDesktopState();
-    if (typeof media.addEventListener === "function") {
-      media.addEventListener("change", updateDesktopState);
-      return () => media.removeEventListener("change", updateDesktopState);
-    }
-    media.addListener(updateDesktopState);
-    return () => media.removeListener(updateDesktopState);
-  }, []);
 
   useEffect(() => {
     const spawnTimers = spawnClearTimersRef.current;
@@ -454,6 +441,12 @@ export function CombatView({
     [combat.allies, combat.enemies]
   );
   const isSingleRowMobileSlots = mobileOccupiedSlots.length <= 4;
+  const mobileSlotHeightClass = isSingleRowMobileSlots
+    ? "h-[140px] [@media(max-height:540px)]:h-[124px]"
+    : "h-[104px] [@media(max-height:540px)]:h-[96px]";
+  const mobileSlotArtHeightClass = isSingleRowMobileSlots
+    ? "h-20 [@media(max-height:540px)]:h-16"
+    : "h-14 [@media(max-height:540px)]:h-12";
   const incomingDamage = useMemo(
     () =>
       combat.phase === "PLAYER_TURN"
@@ -485,7 +478,7 @@ export function CombatView({
     !isDiscarding &&
     !isResolvingHandOverflow;
   const isFirstCombatTutorialVisible =
-    showFirstCombatTutorial && isDesktopViewport && !firstCombatTutorialHidden;
+    showFirstCombatTutorial && !firstCombatTutorialHidden;
   const firstCombatTutorialCurrentStep: FirstCombatTutorialStep =
     FIRST_COMBAT_TUTORIAL_STEPS[
       Math.min(
@@ -910,7 +903,7 @@ export function CombatView({
         {isFirstCombatTutorialVisible && (
           <div
             data-keep-selection="true"
-            className="absolute right-2 top-11 z-30 hidden w-[min(26rem,calc(100%-1rem))] rounded-xl border border-cyan-400/50 bg-slate-950/95 p-3 shadow-[0_16px_50px_rgba(8,145,178,0.22)] lg:block"
+            className="absolute inset-x-2 bottom-2 z-30 max-h-[60dvh] overflow-y-auto rounded-xl border border-cyan-400/50 bg-slate-950/95 p-3 shadow-[0_16px_50px_rgba(8,145,178,0.22)] lg:bottom-auto lg:left-auto lg:right-2 lg:top-11 lg:max-h-none lg:w-[min(26rem,calc(100%-1rem))] lg:overflow-visible"
           >
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-300/85">
               {t("combat.firstCombatTutorial.kicker")}
@@ -931,16 +924,16 @@ export function CombatView({
                 total: FIRST_COMBAT_TUTORIAL_STEPS.length,
               })}
             </p>
-            <div className="mt-3 flex items-center justify-between gap-2">
+            <div className="mt-3 flex flex-col gap-2 border-t border-cyan-900/50 pt-2 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="button"
                 data-keep-selection="true"
                 onClick={dismissFirstCombatTutorial}
-                className="rounded-md border border-slate-600/80 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-200 transition hover:border-slate-400"
+                className="self-start rounded-md border border-slate-600/80 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-200 transition hover:border-slate-400 sm:self-auto"
               >
                 {t("combat.firstCombatTutorial.skip")}
               </button>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 self-end sm:self-auto">
                 <button
                   type="button"
                   data-keep-selection="true"
@@ -1080,7 +1073,8 @@ export function CombatView({
                       data-keep-selection="true"
                       onClick={() => handleMobileAllyPress(ally.instanceId)}
                       className={cn(
-                        "relative h-[104px] rounded-lg border bg-cyan-950/35 px-1.5 py-1 text-left",
+                        "relative rounded-lg border bg-cyan-950/35 px-1.5 py-1 text-left",
+                        mobileSlotHeightClass,
                         isDead
                           ? "border-slate-800 opacity-45 grayscale"
                           : "border-cyan-700/80",
@@ -1090,7 +1084,12 @@ export function CombatView({
                       <div className="absolute -top-1 left-1 flex max-w-[90%] items-center gap-1 overflow-hidden">
                         {renderBuffSymbols(ally.buffs)}
                       </div>
-                      <div className="mb-1 mt-1 flex h-14 items-center justify-center overflow-hidden rounded-md border border-cyan-900/60 bg-cyan-950/65">
+                      <div
+                        className={cn(
+                          "mb-1 mt-1 flex items-center justify-center overflow-hidden rounded-md border border-cyan-900/60 bg-cyan-950/65",
+                          mobileSlotArtHeightClass
+                        )}
+                      >
                         <span className="text-xl text-cyan-200/85">*</span>
                       </div>
                       <p className="truncate text-[9px] font-bold text-cyan-100">
@@ -1119,7 +1118,8 @@ export function CombatView({
                       data-keep-selection="true"
                       onClick={() => setMobileInfoPanel({ type: "player" })}
                       className={cn(
-                        "relative h-[104px] rounded-lg border bg-indigo-950/40 px-1.5 py-1 text-left",
+                        "relative rounded-lg border bg-indigo-950/40 px-1.5 py-1 text-left",
+                        mobileSlotHeightClass,
                         playerHit
                           ? "border-red-400 shadow-[0_0_14px_rgba(248,113,113,0.4)]"
                           : "border-indigo-500/70"
@@ -1130,7 +1130,12 @@ export function CombatView({
                           buildPlayerMarkerBuffs(combat.player)
                         )}
                       </div>
-                      <div className="mb-1 mt-1 flex h-14 items-center justify-center overflow-hidden rounded-md border border-indigo-800/70 bg-indigo-950/70">
+                      <div
+                        className={cn(
+                          "mb-1 mt-1 flex items-center justify-center overflow-hidden rounded-md border border-indigo-800/70 bg-indigo-950/70",
+                          mobileSlotArtHeightClass
+                        )}
+                      >
                         {!avatarFailed ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
@@ -1207,7 +1212,8 @@ export function CombatView({
                     data-keep-selection="true"
                     onClick={() => handleMobileEnemyPress(enemy.instanceId)}
                     className={cn(
-                      "relative h-[104px] rounded-lg border bg-rose-950/35 px-1.5 py-1 text-left transition-all",
+                      "relative rounded-lg border bg-rose-950/35 px-1.5 py-1 text-left transition-all",
+                      mobileSlotHeightClass,
                       isDead
                         ? "border-slate-800 opacity-45 grayscale"
                         : "border-rose-700/80",
@@ -1223,7 +1229,12 @@ export function CombatView({
                     <div className="absolute -top-1 left-1 flex max-w-[90%] items-center gap-1 overflow-hidden">
                       {renderBuffSymbols(enemy.buffs)}
                     </div>
-                    <div className="mb-1 mt-1 flex h-14 items-center justify-center overflow-hidden rounded-md border border-rose-900/60 bg-slate-900">
+                    <div
+                      className={cn(
+                        "mb-1 mt-1 flex items-center justify-center overflow-hidden rounded-md border border-rose-900/60 bg-slate-900",
+                        mobileSlotArtHeightClass
+                      )}
+                    >
                       {!enemyArtFailed ? (
                         <>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -2756,6 +2767,12 @@ function renderEnemyIntentEffects(
         )}`;
         colorClass = "bg-red-900/70 text-red-200";
         break;
+      case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
+        label = t("reward.effect.damageBonusIfUpgradedInHand", {
+          value: effect.value,
+        });
+        colorClass = "bg-red-900/70 text-red-200";
+        break;
       case "HEAL":
         label = `${t("reward.effect.heal", { value: effect.value })}`;
         colorClass = "bg-emerald-900/70 text-emerald-200";
@@ -2817,6 +2834,10 @@ function formatAllyIntent(
     switch (effect.type) {
       case "DAMAGE":
         return t("reward.effect.damage", { value: effect.value });
+      case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
+        return t("reward.effect.damageBonusIfUpgradedInHand", {
+          value: effect.value,
+        });
       case "HEAL":
         return t("reward.effect.heal", { value: effect.value });
       case "BLOCK":
@@ -2891,6 +2912,8 @@ function buildMobileEnemyIntentChips(
           effect.value,
           ability
         )}`;
+      case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
+        return `DMG+${effect.value}`;
       case "BLOCK":
         return `${translate("enemyCard.blk")} ${effect.value}`;
       case "HEAL":

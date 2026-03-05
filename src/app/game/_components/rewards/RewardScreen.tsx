@@ -310,6 +310,10 @@ function formatEffect(effect: Effect, t: TFunction): string {
       return t("reward.effect.damage", { value: effect.value });
     case "DAMAGE_EQUAL_BLOCK":
       return t("reward.effect.damageEqualBlock");
+    case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
+      return t("reward.effect.damageBonusIfUpgradedInHand", {
+        value: effect.value,
+      });
     case "HEAL":
       return t("reward.effect.heal", { value: effect.value });
     case "BLOCK":

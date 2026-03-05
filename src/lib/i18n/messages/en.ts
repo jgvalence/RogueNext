@@ -1040,6 +1040,8 @@ export const en = {
       damage: "Deal {{value}} damage",
       damageAll: "Deal {{value}} damage to all enemies",
       damageEqualBlock: "Deal damage equal to your Block",
+      damageBonusIfUpgradedInHand:
+        "If this card is upgraded in hand: +{{value}} damage",
       block: "Gain {{value}} block",
       heal: "Heal {{value}} HP",
       draw: "Draw {{value}} cards",
@@ -1136,6 +1138,8 @@ export const en = {
     effect: {
       damage: "damage {{value}}",
       damageEqualBlock: "damage equal to your block",
+      damageBonusIfUpgradedInHand:
+        "if this card is upgraded in hand: +{{value}} damage",
       heal: "heal {{value}}",
       block: "block {{value}}",
       drawCards: "draw {{value}}",
