@@ -83,7 +83,7 @@ export function HandArea({
         data-keep-selection="true"
         className="relative z-30 flex h-[196px] w-full min-w-0 touch-pan-x items-end gap-0 overflow-x-auto overflow-y-visible overscroll-x-contain px-2 pb-2 pr-2 [-webkit-overflow-scrolling:touch] lg:hidden"
       >
-        <div className="mx-auto flex h-full min-w-full w-max items-end justify-center">
+        <div className="mx-auto flex h-full w-max min-w-full items-end justify-center">
           {hand.map((card, index) => {
             const def = cardDefs.get(card.definitionId);
             if (!def) return null;

@@ -903,7 +903,10 @@ export function CombatView({
         >
           <div className="w-full lg:hidden">
             <div
-              className={cn("grid gap-1.5", !isSingleRowMobileSlots && "grid-cols-4")}
+              className={cn(
+                "grid gap-1.5",
+                !isSingleRowMobileSlots && "grid-cols-4"
+              )}
               style={
                 isSingleRowMobileSlots
                   ? {
@@ -978,7 +981,9 @@ export function CombatView({
                       )}
                     >
                       <div className="absolute -top-1 left-1 flex max-w-[90%] items-center gap-1 overflow-hidden">
-                        {renderBuffSymbols(buildPlayerMarkerBuffs(combat.player))}
+                        {renderBuffSymbols(
+                          buildPlayerMarkerBuffs(combat.player)
+                        )}
                       </div>
                       <div className="mb-1 mt-1 flex h-14 items-center justify-center overflow-hidden rounded-md border border-indigo-800/70 bg-indigo-950/70">
                         {!avatarFailed ? (
@@ -2965,7 +2970,9 @@ function ArmorBadge({
     <div
       className={cn(
         "pointer-events-none absolute bottom-1 right-1 z-20 inline-flex items-center rounded border font-black leading-none shadow-sm",
-        compact ? "gap-0.5 px-1 py-0.5 text-[9px]" : "gap-1 px-1.5 py-0.5 text-[10px]",
+        compact
+          ? "gap-0.5 px-1 py-0.5 text-[9px]"
+          : "gap-1 px-1.5 py-0.5 text-[10px]",
         hasArmor
           ? "border-cyan-700/80 bg-cyan-950/90 text-cyan-200"
           : "border-slate-700/80 bg-slate-900/90 text-slate-400"
