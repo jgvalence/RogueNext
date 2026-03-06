@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { getActiveRunAction } from "@/server/actions/run";
@@ -13,6 +12,12 @@ import {
 } from "@/lib/query/hooks/use-game-data";
 import { GameProvider, useGame } from "../_providers/game-provider";
 import { useAutoSave } from "../_hooks/use-auto-save";
+import { useCombatTurnFlow } from "../_hooks/use-combat-turn-flow";
+import { useCombatOutcome } from "../_hooks/use-combat-outcome";
+import { useCombatDebugInfo } from "../_hooks/use-combat-debug-info";
+import { useRewardPhaseHandlers } from "../_hooks/use-reward-phase-handlers";
+import { useRunRoomActions } from "../_hooks/use-run-room-actions";
+import { useRunPhaseViewHandlers } from "../_hooks/use-run-phase-view-handlers";
 import { GameLayout } from "../_components/shared/GameLayout";
 import { CardPickerModal } from "../_components/shared/CardPickerModal";
 import { CombatView } from "../_components/combat/CombatView";
@@ -21,35 +26,27 @@ import { RewardScreen } from "../_components/rewards/RewardScreen";
 import { ShopView } from "../_components/merchant/ShopView";
 import { SpecialRoomView } from "../_components/special/SpecialRoomView";
 import { BiomeSelectScreen } from "../_components/biome/BiomeSelectScreen";
-import {
-  RunSetupScreen,
-  type RunSetupDraft,
-} from "../_components/run-setup/RunSetupScreen";
+import { RunSetupScreen } from "../_components/run-setup/RunSetupScreen";
 import { PreBossRoomView } from "../_components/preboss/PreBossRoomView";
+import { RunOutcomeScreen } from "../_components/run-end/RunOutcomeScreen";
+import { useRunOutcomeSummary } from "../_hooks/use-run-outcome-summary";
+import {
+  type GamePhase,
+  canOfferFreeUpgradeAtRunStart,
+  deriveInitialPhase,
+  isRunStartState,
+} from "../_services/run-phase";
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
-import type { BiomeType } from "@/game/schemas/enums";
-import type { RunState } from "@/game/schemas/run-state";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { getCharacterById } from "@/game/data/characters";
 import { cn } from "@/lib/utils/cn";
 import { endRunAction } from "@/server/actions/run";
-import {
-  generateCombatRewards,
-  type CombatRewards,
-} from "@/game/engine/rewards";
-import {
-  VANILLA_RUN_CONDITION_ID,
-  getRunConditionById,
-  isInfiniteRunConditionId,
-} from "@/game/engine/run-conditions";
-import { computeEnemyKillUnlockedRelicIds } from "@/game/engine/difficulty";
-import { createRNG } from "@/game/engine/rng";
+import type { CombatRewards } from "@/game/engine/rewards";
+import { isInfiniteRunConditionId } from "@/game/engine/run-conditions";
 import type { CardDefinition } from "@/game/schemas/cards";
-import { playSound } from "@/lib/sound";
 import { startMusic, stopMusic } from "@/lib/music";
 import { getUsableItemDefinitionsMap } from "@/game/engine/items";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
-import { relicDefinitions } from "@/game/data/relics";
 
 export default function RunPage() {
   const { t } = useTranslation();
@@ -111,65 +108,6 @@ export default function RunPage() {
   );
 }
 
-type GamePhase =
-  | "RUN_SETUP"
-  | "RUN_FREE_UPGRADE"
-  | "MAP"
-  | "COMBAT"
-  | "REWARDS"
-  | "MERCHANT"
-  | "SPECIAL"
-  | "PRE_BOSS"
-  | "BIOME_SELECT"
-  | "VICTORY"
-  | "DEFEAT"
-  | "ABANDONED";
-
-function isRunStartState(state: RunState): boolean {
-  return state.floor === 1 && state.currentRoom === 0 && state.combat === null;
-}
-
-function canOfferFreeUpgradeAtRunStart(state: RunState): boolean {
-  return (
-    Boolean(state.metaBonuses?.freeUpgradePerRun) &&
-    !state.freeUpgradeUsed &&
-    isRunStartState(state) &&
-    state.deck.some((card) => !card.upgraded)
-  );
-}
-
-function deriveInitialPhase(state: RunState): GamePhase {
-  if (state.status === "VICTORY") return "VICTORY";
-  if (state.status === "DEFEAT") return "DEFEAT";
-  if (state.status === "ABANDONED") return "ABANDONED";
-
-  const isRunStart = isRunStartState(state);
-  const needsDifficultySelection = state.selectedDifficultyLevel === null;
-  const needsRunConditionSelection =
-    !state.selectedRunConditionId &&
-    (state.pendingRunConditionChoices?.length ?? 0) > 0;
-  const needsPreGameSetup =
-    isRunStart &&
-    (needsDifficultySelection ||
-      needsRunConditionSelection ||
-      !state.startMerchantCompleted);
-
-  if (needsPreGameSetup) {
-    return "RUN_SETUP";
-  }
-  if (canOfferFreeUpgradeAtRunStart(state)) return "RUN_FREE_UPGRADE";
-  if (state.combat !== null) return "COMBAT";
-  if (state.pendingBiomeChoices !== null) return "BIOME_SELECT";
-
-  const selectedCurrentRoom =
-    state.map[state.currentRoom]?.find((room) => room.completed) ?? null;
-  if (selectedCurrentRoom?.type === "MERCHANT") return "MERCHANT";
-  if (selectedCurrentRoom?.type === "SPECIAL") return "SPECIAL";
-  if (selectedCurrentRoom?.type === "PRE_BOSS") return "PRE_BOSS";
-
-  return "MAP";
-}
-
 function GameContent({
   cardDefs,
   enemyDefs,
@@ -201,10 +139,6 @@ function GameContent({
   const [rewards, setRewards] = useState<CombatRewards | null>(null);
   const [isBossRewards, setIsBossRewards] = useState(false);
   const [isEliteRewards, setIsEliteRewards] = useState(false);
-  const [actingEnemyId, setActingEnemyId] = useState<string | null>(null);
-  const [attackingEnemyId, setAttackingEnemyId] = useState<string | null>(null);
-  const [isDiscarding, setIsDiscarding] = useState(false);
-  const [isResolvingEndTurn, setIsResolvingEndTurn] = useState(false);
   const [firstCombatTutorialDismissed, setFirstCombatTutorialDismissed] =
     useState(false);
   const [firstRewardTutorialDismissed, setFirstRewardTutorialDismissed] =
@@ -212,12 +146,18 @@ function GameContent({
   const [firstMapTutorialDismissed, setFirstMapTutorialDismissed] =
     useState(false);
   const [newBestiaryEntries, setNewBestiaryEntries] = useState<string[]>([]);
-  const enemyTurnCancelledRef = useRef(false);
   const runEndedRef = useRef(false);
-  const endTurnInFlightRef = useRef(false);
   // Always-current ref to avoid stale closures in callbacks
   const stateRef = useRef(state);
   stateRef.current = state;
+  const {
+    actingEnemyId,
+    attackingEnemyId,
+    isDiscarding,
+    isResolvingEndTurn,
+    handleEndTurn,
+    cancelEnemyTurnFlow,
+  } = useCombatTurnFlow({ dispatch, stateRef });
   const isInfiniteMode = isInfiniteRunConditionId(state.selectedRunConditionId);
   const buildEndRunPayload = useCallback(
     () => ({
@@ -273,516 +213,98 @@ function GameContent({
   // Determine current room info
   const currentRoomChoices = state.map[state.currentRoom];
 
-  // Async end-turn with step-by-step enemy animation
-  const handleEndTurn = useCallback(async () => {
-    const combat = stateRef.current.combat;
-    if (!combat || combat.phase !== "PLAYER_TURN") return;
-    if ((combat.pendingHandOverflowExhaust ?? 0) > 0) return;
-    if (endTurnInFlightRef.current) return;
-
-    const sleep = (ms: number) =>
-      new Promise<void>((res) => setTimeout(res, ms));
-
-    endTurnInFlightRef.current = true;
-    setIsResolvingEndTurn(true);
-    try {
-      // Animate cards discarding before state update
-      if (combat.hand.length > 0) {
-        setIsDiscarding(true);
-        await sleep(350);
-        setIsDiscarding(false);
-      }
-
-      // Collect living enemies in speed order (mirrors the engine logic)
-      const sortedEnemies = [...combat.enemies]
-        .filter((e) => e.currentHp > 0)
-        .sort((a, b) => b.speed - a.speed);
-
-      enemyTurnCancelledRef.current = false;
-      dispatch({ type: "BEGIN_ENEMY_TURN" });
-      await sleep(150);
-
-      for (const enemy of sortedEnemies) {
-        if (enemyTurnCancelledRef.current) break;
-
-        // Highlight the acting enemy
-        setActingEnemyId(enemy.instanceId);
-        await sleep(350);
-
-        if (enemyTurnCancelledRef.current) break;
-
-        // Trigger lunge + resolve the action
-        setAttackingEnemyId(enemy.instanceId);
-        dispatch({
-          type: "EXECUTE_ENEMY_STEP",
-          payload: { enemyInstanceId: enemy.instanceId },
-        });
-        await sleep(300);
-
-        setAttackingEnemyId(null);
-        setActingEnemyId(null);
-        await sleep(150);
-      }
-
-      if (!enemyTurnCancelledRef.current) {
-        dispatch({ type: "FINALIZE_ENEMY_TURN" });
-      }
-      setActingEnemyId(null);
-      setAttackingEnemyId(null);
-    } finally {
-      endTurnInFlightRef.current = false;
-      setIsResolvingEndTurn(false);
-      setIsDiscarding(false);
-    }
-  }, [dispatch]);
-
-  useEffect(() => {
-    const onTopMenuEndTurn = () => {
-      void handleEndTurn();
-    };
-    window.addEventListener("game:end-turn-request", onTopMenuEndTurn);
-    return () =>
-      window.removeEventListener("game:end-turn-request", onTopMenuEndTurn);
-  }, [handleEndTurn]);
-
-  // Start combat when room is selected and is COMBAT type
-  const handleSelectRoom = useCallback(
-    (choiceIndex: number) => {
-      const room = currentRoomChoices?.[choiceIndex];
-      if (!room) return;
-
-      dispatch({ type: "SELECT_ROOM", payload: { choiceIndex } });
-
-      if (room.type === "COMBAT" && room.enemyIds) {
-        dispatch({
-          type: "START_COMBAT",
-          payload: { enemyIds: room.enemyIds },
-        });
-        setPhase("COMBAT");
-      } else if (room.type === "MERCHANT") {
-        setPhase("MERCHANT");
-      } else if (room.type === "SPECIAL") {
-        setForceEventWithRelicStable(
-          stateRef.current.floor === 1 && stateRef.current.currentRoom === 2
-        );
-        setPhase("SPECIAL");
-      } else if (room.type === "PRE_BOSS") {
-        setPhase("PRE_BOSS");
-      }
-    },
-    [currentRoomChoices, dispatch]
-  );
-
-  const handleContinueSetup = useCallback(
-    (draft: RunSetupDraft) => {
-      const difficultyLevel = draft.difficultyLevel;
-      const modeConditionId = draft.modeConditionId;
-      if (difficultyLevel === null || modeConditionId === null) return;
-      const difficultyMaxForCharacter =
-        state.difficultyMaxByCharacter?.[draft.characterId];
-      if (
-        typeof difficultyMaxForCharacter === "number" &&
-        Number.isFinite(difficultyMaxForCharacter) &&
-        difficultyLevel > Math.max(0, Math.floor(difficultyMaxForCharacter))
-      ) {
-        return;
-      }
-      if (
-        modeConditionId === VANILLA_RUN_CONDITION_ID &&
-        draft.normalConditionId === null
-      ) {
-        return;
-      }
-
-      if (draft.characterId !== state.characterId) {
-        dispatch({
-          type: "CHOOSE_CHARACTER",
-          payload: { characterId: draft.characterId },
-        });
-      }
-
-      dispatch({ type: "APPLY_DIFFICULTY", payload: { difficultyLevel } });
-      dispatch({
-        type: "APPLY_RUN_CONDITION",
-        payload: { conditionId: modeConditionId },
-      });
-
-      if (modeConditionId === VANILLA_RUN_CONDITION_ID) {
-        dispatch({
-          type: "APPLY_RUN_CONDITION",
-          payload: {
-            conditionId: draft.normalConditionId ?? VANILLA_RUN_CONDITION_ID,
-          },
-        });
-      }
-
-      for (const offer of draft.selectedStartOffers) {
-        dispatch({ type: "BUY_START_MERCHANT_OFFER", payload: { offer } });
-      }
-
-      if (!state.startMerchantCompleted) {
-        dispatch({ type: "COMPLETE_START_MERCHANT" });
-      }
-      if (canOfferFreeUpgradeAtStart) {
-        setPhase("RUN_FREE_UPGRADE");
-      } else if (hasOpeningBiomeChoice) {
-        setPhase("BIOME_SELECT");
-      } else {
-        setPhase("MAP");
-      }
-    },
-    [
+  const { handleSelectRoom, handleContinueSetup, handlePickBiome, handleHeal } =
+    useRunRoomActions({
+      state,
+      stateRef,
+      currentRoomChoices,
       dispatch,
-      state.characterId,
-      state.startMerchantCompleted,
+      setPhase,
+      setForceEventWithRelicStable,
       canOfferFreeUpgradeAtStart,
       hasOpeningBiomeChoice,
-    ]
-  );
+    });
 
-  // Handle combat end
-  useEffect(() => {
-    if (!state.combat) return;
+  useCombatOutcome({
+    state,
+    stateRef,
+    runEndedRef,
+    cardDefs,
+    isInfiniteMode,
+    buildEndRunPayload,
+    dispatch,
+    setRewards,
+    setIsBossRewards,
+    setIsEliteRewards,
+    setPhase,
+    setNewBestiaryEntries,
+    onCombatLost: cancelEnemyTurnFlow,
+  });
 
-    if (state.combat.phase === "COMBAT_WON") {
-      const knownEnemyIds = new Set(
-        Object.keys(state.encounteredEnemies ?? {})
-      );
-      const discoveredNow = Array.from(
-        new Set(
-          state.combat.enemies
-            .map((enemy) => enemy.definitionId)
-            .filter((enemyId) => !knownEnemyIds.has(enemyId))
-        )
-      );
-      setNewBestiaryEntries(discoveredNow);
-
-      const isBoss = state.currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
-
-      // Find the selected room to get enemy count and elite status
-      const roomChoices = state.map[state.currentRoom];
-      const selectedRoom =
-        roomChoices?.find((r) => r.completed) ?? roomChoices?.[0];
-      const enemyCount = selectedRoom?.enemyIds?.length ?? 1;
-      const isElite = selectedRoom?.isElite ?? false;
-
-      const defeatedBossId = isBoss ? selectedRoom?.enemyIds?.[0] : undefined;
-      const projectedEnemyKillCounts = { ...(state.enemyKillCounts ?? {}) };
-      for (const enemy of state.combat.enemies) {
-        projectedEnemyKillCounts[enemy.definitionId] =
-          (projectedEnemyKillCounts[enemy.definitionId] ?? 0) + 1;
-      }
-      const projectedUnlockedRelicIds = new Set([
-        ...(state.unlockedRelicIds ?? []),
-        ...computeEnemyKillUnlockedRelicIds(
-          relicDefinitions.map((relic) => relic.id),
-          projectedEnemyKillCounts
-        ),
-      ]);
-      const combatRng = createRNG(state.seed + "-rewards-" + state.currentRoom);
-      const runConditionRewardMultiplier =
-        getRunConditionById(state.selectedRunConditionId)?.effects
-          .combatRewardMultiplier ?? 1;
-      const combatRewards = generateCombatRewards(
-        state.floor,
-        state.currentRoom,
-        isBoss,
-        isElite,
-        enemyCount,
-        [...cardDefs.values()],
-        combatRng,
-        state.currentBiome,
-        state.relicIds,
-        state.unlockedCardIds,
-        state.allyIds,
-        state.metaBonuses?.allySlots ?? 0,
-        state.unlockedDifficultyLevelSnapshot ?? 0,
-        defeatedBossId,
-        state.metaBonuses?.extraCardRewardChoices ?? 0,
-        state.metaBonuses?.lootLuck ?? 0,
-        state.selectedDifficultyLevel ?? 0,
-        [...projectedUnlockedRelicIds],
-        runConditionRewardMultiplier,
-        isInfiniteMode,
-        state.characterId ?? "scribe"
-      );
-      setRewards(combatRewards);
-      setIsBossRewards(isBoss);
-      setIsEliteRewards(isElite);
-
-      // TEMPORARY: play victory sound (file: /public/sounds/result/victory.ogg)
-      playSound("VICTORY", 0.8);
-      dispatch({
-        type: "COMPLETE_COMBAT",
-        payload: {
-          goldReward: combatRewards.gold,
-          biomeResources: combatRewards.biomeResources,
-          usableItemDropDefinitionId: combatRewards.usableItemDropDefinitionId,
-        },
-      });
-      setPhase("REWARDS");
-    }
-
-    if (state.combat.phase === "COMBAT_LOST") {
-      enemyTurnCancelledRef.current = true;
-      setActingEnemyId(null);
-      setAttackingEnemyId(null);
-      // TEMPORARY: play defeat sound (file: /public/sounds/result/defeat.ogg)
-      playSound("DEFEAT", 0.8);
-      // Finalise immediately so the run won't appear as "IN_PROGRESS" in the DB
-      // if the player navigates away before clicking "Return to Menu".
-      if (!runEndedRef.current) {
-        runEndedRef.current = true;
-        void endRunAction({
-          runId: stateRef.current.runId,
-          status: "DEFEAT",
-          ...buildEndRunPayload(),
-        });
-      }
-      setPhase("DEFEAT");
-    }
-  }, [state.combat?.phase, buildEndRunPayload]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // After rewards, go back to map — or biome select — or victory
-  const handlePickCard = useCallback(
-    (definitionId: string) => {
-      dispatch({ type: "PICK_CARD_REWARD", payload: { definitionId } });
-      setRewards(null);
-      if (!isBossRewards) {
-        setPhase("MAP");
-      } else if (state.pendingBiomeChoices !== null) {
-        setPhase("BIOME_SELECT");
-      } else {
-        if (!runEndedRef.current) {
-          runEndedRef.current = true;
-          void endRunAction({
-            runId: stateRef.current.runId,
-            status: "VICTORY",
-            ...buildEndRunPayload(),
-          });
-        }
-        setPhase("VICTORY");
-      }
-    },
-    [dispatch, isBossRewards, state.pendingBiomeChoices, buildEndRunPayload]
-  );
-
-  const handleSkipReward = useCallback(() => {
-    dispatch({ type: "SKIP_CARD_REWARD" });
-    setRewards(null);
-    if (!isBossRewards) {
-      setPhase("MAP");
-    } else if (state.pendingBiomeChoices !== null) {
-      setPhase("BIOME_SELECT");
-    } else {
-      if (!runEndedRef.current) {
-        runEndedRef.current = true;
-        void endRunAction({
-          runId: stateRef.current.runId,
-          status: "VICTORY",
-          ...buildEndRunPayload(),
-        });
-      }
-      setPhase("VICTORY");
-    }
-  }, [dispatch, isBossRewards, state.pendingBiomeChoices, buildEndRunPayload]);
-
-  const handlePickRelic = useCallback(
-    (relicId: string) => {
-      dispatch({ type: "PICK_RELIC_REWARD", payload: { relicId } });
-      setRewards(null);
-      if (!isBossRewards) {
-        setPhase("MAP");
-      } else if (state.pendingBiomeChoices !== null) {
-        setPhase("BIOME_SELECT");
-      } else {
-        if (!runEndedRef.current) {
-          runEndedRef.current = true;
-          void endRunAction({
-            runId: stateRef.current.runId,
-            status: "VICTORY",
-            ...buildEndRunPayload(),
-          });
-        }
-        setPhase("VICTORY");
-      }
-    },
-    [dispatch, isBossRewards, state.pendingBiomeChoices, buildEndRunPayload]
-  );
-
-  const handlePickAlly = useCallback(
-    (allyId: string) => {
-      dispatch({ type: "PICK_ALLY_REWARD", payload: { allyId } });
-      setRewards(null);
-      if (!isBossRewards) {
-        setPhase("MAP");
-      } else if (state.pendingBiomeChoices !== null) {
-        setPhase("BIOME_SELECT");
-      } else {
-        if (!runEndedRef.current) {
-          runEndedRef.current = true;
-          void endRunAction({
-            runId: stateRef.current.runId,
-            status: "VICTORY",
-            ...buildEndRunPayload(),
-          });
-        }
-        setPhase("VICTORY");
-      }
-    },
-    [dispatch, isBossRewards, state.pendingBiomeChoices, buildEndRunPayload]
-  );
-
-  const handlePickMaxHp = useCallback(
-    (amount: number) => {
-      dispatch({ type: "GAIN_MAX_HP", payload: { amount } });
-      setRewards(null);
-      if (state.pendingBiomeChoices !== null) {
-        setPhase("BIOME_SELECT");
-      } else {
-        if (!runEndedRef.current) {
-          runEndedRef.current = true;
-          void endRunAction({
-            runId: stateRef.current.runId,
-            status: "VICTORY",
-            ...buildEndRunPayload(),
-          });
-        }
-        setPhase("VICTORY");
-      }
-    },
-    [dispatch, state.pendingBiomeChoices, buildEndRunPayload]
-  );
-
-  const handlePickBiome = useCallback(
-    (biome: BiomeType) => {
-      dispatch({ type: "CHOOSE_BIOME", payload: { biome } });
-      setPhase("MAP");
-    },
-    [dispatch]
-  );
-
-  // Special room actions
-  const handleHeal = useCallback(() => {
-    dispatch({ type: "APPLY_HEAL_ROOM" });
-    setPhase("MAP");
-  }, [dispatch]);
-
-  const handleEndRun = useCallback(
-    async (
-      status: "VICTORY" | "DEFEAT" | "ABANDONED",
-      redirectTo: string = "/library"
-    ) => {
-      if (!runEndedRef.current) {
-        runEndedRef.current = true;
-        await endRunAction({
-          runId: stateRef.current.runId,
-          status,
-          ...buildEndRunPayload(),
-        });
-      }
-      router.push(redirectTo);
-    },
-    [router, buildEndRunPayload]
-  );
-
-  const handleAbandonRun = useCallback(async () => {
-    enemyTurnCancelledRef.current = true;
-    setActingEnemyId(null);
-    setAttackingEnemyId(null);
-    if (!runEndedRef.current) {
-      runEndedRef.current = true;
-      await endRunAction({
-        runId: stateRef.current.runId,
-        status: "ABANDONED",
-        ...buildEndRunPayload(),
-      });
-    }
-    setPhase("ABANDONED");
+  const queueVictoryRunEnd = useCallback(() => {
+    if (runEndedRef.current) return;
+    runEndedRef.current = true;
+    void endRunAction({
+      runId: stateRef.current.runId,
+      status: "VICTORY",
+      ...buildEndRunPayload(),
+    });
   }, [buildEndRunPayload]);
 
-  const earnedResourcesSummary = useMemo(() => {
-    if (isInfiniteMode) return [];
-    return Object.entries(state.earnedResources ?? {})
-      .filter(([, amount]) => (amount as number) > 0)
-      .sort((a, b) => (b[1] as number) - (a[1] as number));
-  }, [isInfiniteMode, state.earnedResources]);
+  // After rewards, go back to map — or biome select — or victory
+  const {
+    handlePickCard,
+    handleSkipReward,
+    handlePickRelic,
+    handlePickAlly,
+    handlePickMaxHp,
+  } = useRewardPhaseHandlers({
+    dispatch,
+    isBossRewards,
+    hasPendingBiomeChoices: state.pendingBiomeChoices !== null,
+    queueVictoryRunEnd,
+    setPhase,
+    setRewards,
+  });
 
-  const newlyUnlockedCardNames = useMemo(() => {
-    const initial = new Set(state.initialUnlockedCardIds ?? []);
-    return (state.unlockedCardIds ?? [])
-      .filter((id) => !initial.has(id))
-      .map((id) => cardDefs.get(id)?.name ?? id)
-      .sort((a, b) => a.localeCompare(b));
-  }, [state.initialUnlockedCardIds, state.unlockedCardIds, cardDefs]);
+  const {
+    handleEndRun,
+    handleAbandonRun,
+    handleMerchantBuy,
+    handleMerchantReroll,
+    handleMerchantRemoveCard,
+    handleMerchantLeave,
+    handleSpecialUpgrade,
+    handleSpecialEventChoice,
+    handleSpecialEventContinue,
+    handleSpecialEventPurge,
+    handleSpecialSkip,
+    handlePreBossHeal,
+    handlePreBossUpgrade,
+    handlePreBossFight,
+  } = useRunPhaseViewHandlers({
+    state,
+    stateRef,
+    runEndedRef,
+    dispatch,
+    setPhase,
+    buildEndRunPayload,
+    pushToRoute: router.push,
+    cancelEnemyTurnFlow,
+  });
 
-  const debugEnemySelection = useMemo(() => {
-    if (!isDevBuild || !isAdmin || !state.combat) return null;
-
-    const roomChoices = state.map[state.currentRoom];
-    const selectedRoom =
-      roomChoices?.find((room) => room.completed) ?? roomChoices?.[0];
-    const plannedEnemyIds = selectedRoom?.enemyIds ?? [];
-    const activeEnemies = state.combat.enemies.map((enemy) => {
-      const def = enemyDefs.get(enemy.definitionId);
-      const hasDisruption =
-        def?.abilities.some((ability) =>
-          ability.effects.some((effect) =>
-            [
-              "FREEZE_HAND_CARDS",
-              "NEXT_DRAW_TO_DISCARD_THIS_TURN",
-              "DISABLE_INK_POWER_THIS_TURN",
-              "INCREASE_CARD_COST_THIS_TURN",
-              "INCREASE_CARD_COST_NEXT_TURN",
-              "REDUCE_DRAW_THIS_TURN",
-              "REDUCE_DRAW_NEXT_TURN",
-              "FORCE_DISCARD_RANDOM",
-            ].includes(effect.type)
-          )
-        ) ?? false;
-      return {
-        instanceId: enemy.instanceId,
-        definitionId: enemy.definitionId,
-        biome: def?.biome ?? "UNKNOWN",
-        role: def?.role ?? "UNKNOWN",
-        hasDisruption,
-      };
+  const { earnedResourcesSummary, newlyUnlockedCardNames } =
+    useRunOutcomeSummary({
+      state,
+      isInfiniteMode,
+      cardDefs,
     });
-    const hasThematicUnit = activeEnemies.some(
-      (enemy) =>
-        enemy.hasDisruption ||
-        enemy.role === "SUPPORT" ||
-        enemy.role === "CONTROL" ||
-        enemy.role === "TANK"
-    );
-    return {
-      floor: state.floor,
-      room: state.currentRoom,
-      biome: state.currentBiome,
-      plannedEnemyIds,
-      activeEnemies,
-      hasThematicUnit,
-    };
-  }, [
-    isAdmin,
+  const { debugEnemySelection, debugDrawInfo } = useCombatDebugInfo({
     isDevBuild,
+    isAdmin,
+    state,
     enemyDefs,
-    state.combat,
-    state.currentBiome,
-    state.currentRoom,
-    state.floor,
-    state.map,
-  ]);
-  const debugDrawInfo = useMemo(() => {
-    if (!isDevBuild || !isAdmin || !state.combat) return null;
-    return {
-      drawCount: state.combat.player.drawCount,
-      handSize: state.combat.hand.length,
-      maxHandSize: GAME_CONSTANTS.MAX_HAND_SIZE,
-      pendingOverflow: state.combat.pendingHandOverflowExhaust ?? 0,
-      history: [...(state.combat.drawDebugHistory ?? [])].slice(-12).reverse(),
-    };
-  }, [isAdmin, isDevBuild, state.combat]);
+  });
 
   return (
     <GameLayout onAbandonRun={handleAbandonRun}>
@@ -973,20 +495,10 @@ function GameContent({
             rerollCount={state.merchantRerollCount ?? 0}
             allyIds={state.allyIds ?? []}
             allySlots={state.metaBonuses?.allySlots ?? 0}
-            onBuy={(item) =>
-              dispatch({ type: "BUY_SHOP_ITEM", payload: { item } })
-            }
-            onReroll={() => dispatch({ type: "REROLL_SHOP" })}
-            onRemoveCard={(cardInstanceId) =>
-              dispatch({
-                type: "REMOVE_CARD_FROM_DECK",
-                payload: { cardInstanceId },
-              })
-            }
-            onLeave={() => {
-              dispatch({ type: "ADVANCE_ROOM" });
-              setPhase("MAP");
-            }}
+            onBuy={handleMerchantBuy}
+            onReroll={handleMerchantReroll}
+            onRemoveCard={handleMerchantRemoveCard}
+            onLeave={handleMerchantLeave}
           />
         )}
 
@@ -1002,32 +514,11 @@ function GameContent({
             forceEventWithRelic={forceEventWithRelicStable}
             runState={state}
             onHeal={handleHeal}
-            onUpgrade={(cardInstanceId) => {
-              dispatch({ type: "UPGRADE_CARD", payload: { cardInstanceId } });
-              setPhase("MAP");
-            }}
-            onEventChoice={(event, choiceIndex) => {
-              dispatch({
-                type: "APPLY_EVENT",
-                payload: { event, choiceIndex },
-              });
-              // EventRoom handles outcome display — do not advance here
-            }}
-            onEventContinue={() => {
-              setPhase("MAP");
-            }}
-            onEventPurge={(cardInstanceId) => {
-              dispatch({
-                type: "REMOVE_CARD_FROM_DECK",
-                payload: { cardInstanceId },
-              });
-              dispatch({ type: "ADVANCE_ROOM" });
-              setPhase("MAP");
-            }}
-            onSkip={() => {
-              dispatch({ type: "ADVANCE_ROOM" });
-              setPhase("MAP");
-            }}
+            onUpgrade={handleSpecialUpgrade}
+            onEventChoice={handleSpecialEventChoice}
+            onEventContinue={handleSpecialEventContinue}
+            onEventPurge={handleSpecialEventPurge}
+            onSkip={handleSpecialSkip}
           />
         )}
 
@@ -1037,23 +528,9 @@ function GameContent({
             playerMaxHp={state.playerMaxHp}
             deck={state.deck}
             cardDefs={cardDefs}
-            onHeal={() => {
-              dispatch({ type: "APPLY_HEAL_ROOM" });
-              setPhase("MAP");
-            }}
-            onUpgrade={(cardInstanceId) => {
-              dispatch({ type: "UPGRADE_CARD", payload: { cardInstanceId } });
-              setPhase("MAP");
-            }}
-            onFight={() => {
-              const preBossRoom = state.map[state.currentRoom]?.[0];
-              if (!preBossRoom?.enemyIds) return;
-              dispatch({
-                type: "START_COMBAT",
-                payload: { enemyIds: preBossRoom.enemyIds },
-              });
-              setPhase("COMBAT");
-            }}
+            onHeal={handlePreBossHeal}
+            onUpgrade={handlePreBossUpgrade}
+            onFight={handlePreBossFight}
           />
         )}
 
@@ -1066,187 +543,45 @@ function GameContent({
         )}
 
         {phase === "VICTORY" && (
-          <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
-            <h2 className="text-4xl font-bold text-green-400">
-              {t("run.victoryTitle")}
-            </h2>
-            <p className="text-gray-400">
-              {t("run.victorySubtitle", { floor: state.floor })}
-            </p>
-            <div className="space-y-1 text-sm text-gray-500">
-              <p>{t("run.goldEarned", { gold: state.gold })}</p>
-              <p>{t("run.deckSize", { count: state.deck.length })}</p>
-              <p>{t("run.relicCount", { count: state.relicIds.length })}</p>
-            </div>
-            <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
-              <div>
-                <p className="mb-1 font-semibold text-gray-300">
-                  {t("run.resourcesGained")}
-                </p>
-                {earnedResourcesSummary.length === 0 ? (
-                  <p className="text-gray-500">{t("run.none")}</p>
-                ) : (
-                  <ul className="space-y-0.5 text-gray-400">
-                    {earnedResourcesSummary.map(([resource, amount]) => (
-                      <li key={resource}>
-                        {resource}: +{amount as number}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              <div>
-                <p className="mb-1 font-semibold text-gray-300">
-                  {t("run.cardsUnlocked")}
-                </p>
-                {newlyUnlockedCardNames.length === 0 ? (
-                  <p className="text-gray-500">{t("run.none")}</p>
-                ) : (
-                  <ul className="space-y-0.5 text-gray-400">
-                    {newlyUnlockedCardNames.map((name) => (
-                      <li key={name}>{name}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Link
-                href="/library"
-                className="rounded-lg border border-amber-700 px-6 py-3 font-bold text-amber-400 hover:border-amber-500 hover:text-amber-300"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  await handleEndRun("VICTORY");
-                }}
-              >
-                {t("run.backToLibrary")}
-              </Link>
-            </div>
-          </div>
+          <RunOutcomeScreen
+            status="VICTORY"
+            floor={state.floor}
+            currentRoom={state.currentRoom}
+            gold={state.gold}
+            deckSize={state.deck.length}
+            relicCount={state.relicIds.length}
+            earnedResourcesSummary={earnedResourcesSummary}
+            newlyUnlockedCardNames={newlyUnlockedCardNames}
+            onBackToLibrary={() => handleEndRun("VICTORY")}
+          />
         )}
 
         {phase === "DEFEAT" && (
-          <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
-            <h2 className="text-4xl font-bold text-red-400">
-              {t("run.defeatTitle")}
-            </h2>
-            <p className="text-gray-400">{t("run.defeatSubtitle")}</p>
-            <div className="space-y-1 text-sm text-gray-500">
-              <p>
-                {t("run.reachedRoom", {
-                  room: state.currentRoom,
-                  total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
-                })}
-              </p>
-              <p>{t("run.goldSimple", { gold: state.gold })}</p>
-            </div>
-            <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
-              <div>
-                <p className="mb-1 font-semibold text-gray-300">
-                  {t("run.resourcesGained")}
-                </p>
-                {earnedResourcesSummary.length === 0 ? (
-                  <p className="text-gray-500">{t("run.none")}</p>
-                ) : (
-                  <ul className="space-y-0.5 text-gray-400">
-                    {earnedResourcesSummary.map(([resource, amount]) => (
-                      <li key={resource}>
-                        {resource}: +{amount as number}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              <div>
-                <p className="mb-1 font-semibold text-gray-300">
-                  {t("run.cardsUnlocked")}
-                </p>
-                {newlyUnlockedCardNames.length === 0 ? (
-                  <p className="text-gray-500">{t("run.none")}</p>
-                ) : (
-                  <ul className="space-y-0.5 text-gray-400">
-                    {newlyUnlockedCardNames.map((name) => (
-                      <li key={name}>{name}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Link
-                href="/library"
-                className="rounded-lg border border-amber-700 px-6 py-3 font-bold text-amber-400 hover:border-amber-500 hover:text-amber-300"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  await handleEndRun("DEFEAT");
-                }}
-              >
-                {t("run.backToLibrary")}
-              </Link>
-            </div>
-          </div>
+          <RunOutcomeScreen
+            status="DEFEAT"
+            floor={state.floor}
+            currentRoom={state.currentRoom}
+            gold={state.gold}
+            deckSize={state.deck.length}
+            relicCount={state.relicIds.length}
+            earnedResourcesSummary={earnedResourcesSummary}
+            newlyUnlockedCardNames={newlyUnlockedCardNames}
+            onBackToLibrary={() => handleEndRun("DEFEAT")}
+          />
         )}
 
         {phase === "ABANDONED" && (
-          <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
-            <h2 className="text-4xl font-bold text-amber-400">
-              {t("run.abandonedTitle")}
-            </h2>
-            <p className="text-gray-400">{t("run.abandonedSubtitle")}</p>
-            <div className="space-y-1 text-sm text-gray-500">
-              <p>
-                {t("run.reachedRoom", {
-                  room: state.currentRoom,
-                  total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
-                })}
-              </p>
-              <p>{t("run.goldSimple", { gold: state.gold })}</p>
-            </div>
-            <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
-              <div>
-                <p className="mb-1 font-semibold text-gray-300">
-                  {t("run.resourcesGained")}
-                </p>
-                {earnedResourcesSummary.length === 0 ? (
-                  <p className="text-gray-500">{t("run.none")}</p>
-                ) : (
-                  <ul className="space-y-0.5 text-gray-400">
-                    {earnedResourcesSummary.map(([resource, amount]) => (
-                      <li key={resource}>
-                        {resource}: +{amount as number}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              <div>
-                <p className="mb-1 font-semibold text-gray-300">
-                  {t("run.cardsUnlocked")}
-                </p>
-                {newlyUnlockedCardNames.length === 0 ? (
-                  <p className="text-gray-500">{t("run.none")}</p>
-                ) : (
-                  <ul className="space-y-0.5 text-gray-400">
-                    {newlyUnlockedCardNames.map((name) => (
-                      <li key={name}>{name}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Link
-                href="/library"
-                className="rounded-lg border border-amber-700 px-6 py-3 font-bold text-amber-400 hover:border-amber-500 hover:text-amber-300"
-                onClick={async (e) => {
-                  e.preventDefault();
-                  await handleEndRun("ABANDONED", "/library");
-                }}
-              >
-                {t("run.backToLibrary")}
-              </Link>
-            </div>
-          </div>
+          <RunOutcomeScreen
+            status="ABANDONED"
+            floor={state.floor}
+            currentRoom={state.currentRoom}
+            gold={state.gold}
+            deckSize={state.deck.length}
+            relicCount={state.relicIds.length}
+            earnedResourcesSummary={earnedResourcesSummary}
+            newlyUnlockedCardNames={newlyUnlockedCardNames}
+            onBackToLibrary={() => handleEndRun("ABANDONED", "/library")}
+          />
         )}
       </div>
     </GameLayout>

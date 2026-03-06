@@ -44,7 +44,7 @@ export default function GameHubPage() {
     } else {
       createRun.mutate();
     }
-  }, [isLoading, isFetching, activeRun]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoading, isFetching, activeRun, router, createRun]);
 
   if (isActiveRunError || createRun.isError) {
     const message =
