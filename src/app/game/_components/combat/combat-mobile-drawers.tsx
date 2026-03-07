@@ -16,6 +16,7 @@ interface MobileInkPanelOverlayProps {
   isOpen: boolean;
   combat: CombatState;
   unlockedInkPowers?: InkPowerType[];
+  allowedInkPowers?: InkPowerType[] | null;
   onUsePower: (power: InkPowerType) => void;
   onClose: () => void;
 }
@@ -24,6 +25,7 @@ export function MobileInkPanelOverlay({
   isOpen,
   combat,
   unlockedInkPowers,
+  allowedInkPowers = null,
   onUsePower,
   onClose,
 }: MobileInkPanelOverlayProps) {
@@ -47,6 +49,7 @@ export function MobileInkPanelOverlay({
           combatState={combat}
           onUsePower={onUsePower}
           unlockedPowers={unlockedInkPowers}
+          allowedPowers={allowedInkPowers}
         />
         <RogueButton
           type="text"

@@ -14,6 +14,7 @@ interface InkGaugeProps {
   combatState: CombatState;
   onUsePower: (power: InkPowerType) => void;
   unlockedPowers?: InkPowerType[];
+  allowedPowers?: InkPowerType[] | null;
   compact?: boolean;
 }
 
@@ -48,6 +49,7 @@ export function InkGauge({
   combatState,
   onUsePower,
   unlockedPowers = ["REWRITE"],
+  allowedPowers = null,
   compact = false,
 }: InkGaugeProps) {
   const { t } = useTranslation();
@@ -75,7 +77,10 @@ export function InkGauge({
         </div>
         <div className="flex gap-1 overflow-x-auto">
           {inkPowers.map((power) => {
-            const canUse = canUseInkPower(combatState, power.type);
+            const isAllowedByTutorial =
+              allowedPowers == null || allowedPowers.includes(power.type);
+            const canUse =
+              isAllowedByTutorial && canUseInkPower(combatState, power.type);
             const cost = GAME_CONSTANTS.INK_POWER_COSTS[power.type];
             const tooltip = t("inkGauge.powerTooltip", {
               description: t(`inkGauge.powers.${power.type}.desc`, power.desc),
@@ -127,7 +132,10 @@ export function InkGauge({
       {/* Ink powers */}
       <div className="grid grid-cols-2 gap-1">
         {inkPowers.map((power) => {
-          const canUse = canUseInkPower(combatState, power.type);
+          const isAllowedByTutorial =
+            allowedPowers == null || allowedPowers.includes(power.type);
+          const canUse =
+            isAllowedByTutorial && canUseInkPower(combatState, power.type);
           const cost = GAME_CONSTANTS.INK_POWER_COSTS[power.type];
           const tooltip = t("inkGauge.powerTooltip", {
             description: t(`inkGauge.powers.${power.type}.desc`, power.desc),

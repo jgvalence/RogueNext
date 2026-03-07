@@ -23,6 +23,7 @@ interface HistoireModalProps {
   histoires: Histoire[];
   progression: MetaProgress;
   slotState: SlotState;
+  showFirstRunEnergyStoryTutorial?: boolean;
   onClose: () => void;
   onUnlocked: (updatedProgression: MetaProgress) => void;
 }
@@ -90,6 +91,7 @@ export function HistoireModal({
   histoires,
   progression,
   slotState,
+  showFirstRunEnergyStoryTutorial = false,
   onClose,
   onUnlocked,
 }: HistoireModalProps) {
@@ -111,14 +113,10 @@ export function HistoireModal({
         setError(result.error.message);
         return;
       }
-      const updatedResources = { ...progression.resources };
-      for (const [resource, cost] of Object.entries(histoire.cout)) {
-        updatedResources[resource] =
-          (updatedResources[resource] ?? 0) - (cost as number);
-      }
       onUnlocked({
-        resources: updatedResources,
-        unlockedStoryIds: [...progression.unlockedStoryIds, histoire.id],
+        ...progression,
+        resources: result.data.resources,
+        unlockedStoryIds: result.data.unlockedStoryIds,
       });
       onClose();
     } catch {
@@ -161,6 +159,17 @@ export function HistoireModal({
       className="[&_.ant-modal-content]:!rounded-2xl [&_.ant-modal-content]:!border [&_.ant-modal-content]:!border-slate-800 [&_.ant-modal-content]:!bg-slate-950 [&_.ant-modal-header]:!bg-transparent [&_.ant-modal-title]:!text-white"
     >
       <div className="space-y-4">
+        {showFirstRunEnergyStoryTutorial && (
+          <div className="rounded-lg border border-cyan-500/45 bg-cyan-950/35 p-3">
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-200/90">
+              {t("library.energyStoryTutorial.kicker")}
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-cyan-50">
+              {t("library.energyStoryTutorial.description")}
+            </p>
+          </div>
+        )}
+
         <p className="text-sm leading-relaxed text-slate-300">
           {storyDescription}
         </p>

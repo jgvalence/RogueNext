@@ -17,6 +17,11 @@ import { relicDefinitions } from "@/game/data/relics";
 import { GAME_CONSTANTS } from "@/game/constants";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { RunState } from "@/game/schemas/run-state";
+import {
+  FIRST_RUN_ENERGY_TUTORIAL_OUTCOME,
+  getFirstRunScriptedEndResources,
+  isFirstRunScriptedEliteRoom,
+} from "@/game/engine/first-run-script";
 import type { GameAction } from "../_providers/game-reducer";
 import type { GamePhase } from "../_services/run-phase";
 
@@ -39,6 +44,7 @@ interface UseCombatOutcomeParams {
   setPhase: Dispatch<SetStateAction<GamePhase>>;
   setNewBestiaryEntries: Dispatch<SetStateAction<string[]>>;
   onCombatLost: () => void;
+  onScriptedFirstRunDefeat: () => void;
 }
 
 export function useCombatOutcome({
@@ -55,6 +61,7 @@ export function useCombatOutcome({
   setPhase,
   setNewBestiaryEntries,
   onCombatLost,
+  onScriptedFirstRunDefeat,
 }: UseCombatOutcomeParams) {
   useEffect(() => {
     const combat = state.combat;
@@ -141,8 +148,30 @@ export function useCombatOutcome({
     if (combat.phase === "COMBAT_LOST") {
       onCombatLost();
       playSound("DEFEAT", 0.8);
+      const isScriptedFirstRunDefeat = isFirstRunScriptedEliteRoom(state);
+
       if (!runEndedRef.current) {
         runEndedRef.current = true;
+        if (isScriptedFirstRunDefeat) {
+          void (async () => {
+            const result = await endRunAction({
+              runId: stateRef.current.runId,
+              status: "DEFEAT",
+              ...buildEndRunPayload(),
+              earnedResources: getFirstRunScriptedEndResources(),
+              scriptedOutcome: FIRST_RUN_ENERGY_TUTORIAL_OUTCOME,
+            });
+
+            if (result.success) {
+              onScriptedFirstRunDefeat();
+              return;
+            }
+
+            setPhase("DEFEAT");
+          })();
+          return;
+        }
+
         void endRunAction({
           runId: stateRef.current.runId,
           status: "DEFEAT",
@@ -151,5 +180,15 @@ export function useCombatOutcome({
       }
       setPhase("DEFEAT");
     }
-  }, [state, cardDefs, isInfiniteMode, buildEndRunPayload, onCombatLost]);
+  }, [
+    state,
+    cardDefs,
+    isInfiniteMode,
+    buildEndRunPayload,
+    onCombatLost,
+    onScriptedFirstRunDefeat,
+    runEndedRef,
+    setPhase,
+    stateRef,
+  ]);
 }

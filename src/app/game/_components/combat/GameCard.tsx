@@ -108,9 +108,11 @@ export function GameCard({
       className={cn(
         "relative z-0 flex select-none flex-col overflow-hidden rounded-xl border-2 bg-gray-900 transition-all duration-150",
         typeBorder[displayDefinition.type] ?? "border-gray-500",
+        upgraded &&
+          "shadow-[0_0_0_1px_rgba(253,224,71,0.52),0_14px_26px_rgba(245,158,11,0.18)]",
         cardW,
         cardH,
-        canPlay
+        canPlay || canPlayInked
           ? "cursor-pointer hover:-translate-y-1 hover:shadow-xl hover:shadow-black/50 lg:hover:-translate-y-2"
           : "cursor-not-allowed opacity-40",
         isFrozen && "ring-2 ring-cyan-500/80 grayscale",
@@ -124,13 +126,26 @@ export function GameCard({
       )}
       onClick={canPlay ? onClick : undefined}
     >
-      <div className="absolute -left-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-900 bg-amber-500 text-[10px] font-black text-white shadow-md lg:-left-1.5 lg:-top-1.5 lg:h-7 lg:w-7 lg:text-sm">
+      {upgraded && (
+        <>
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-1.5 bg-gradient-to-r from-amber-500 via-yellow-200 to-amber-500" />
+          <div className="pointer-events-none absolute inset-[3px] rounded-[10px] border border-amber-300/65 shadow-[inset_0_0_18px_rgba(251,191,36,0.12)]" />
+        </>
+      )}
+
+      <div
+        className={cn(
+          "absolute -left-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-900 bg-amber-500 text-[10px] font-black text-white shadow-md lg:-left-1.5 lg:-top-1.5 lg:h-7 lg:w-7 lg:text-sm",
+          upgraded &&
+            "border-amber-100 bg-gradient-to-br from-yellow-200 to-amber-500 text-slate-950"
+        )}
+      >
         {displayDefinition.energyCost}
       </div>
 
       {upgraded && (
-        <div className="absolute right-1 top-1 z-10 text-xs text-yellow-400">
-          *
+        <div className="absolute right-1 top-1 z-10 flex items-center rounded-full border border-amber-100/80 bg-amber-400/95 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-[0.14em] text-slate-950 shadow-[0_4px_12px_rgba(245,158,11,0.35)]">
+          +
         </div>
       )}
 
@@ -148,6 +163,9 @@ export function GameCard({
           typeArtBg[displayDefinition.type] ?? "from-gray-800 to-gray-700"
         )}
       >
+        {upgraded && (
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(253,224,71,0.18),transparent_58%)]" />
+        )}
         {artImageSrc && !artFailed && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -185,11 +203,18 @@ export function GameCard({
         <span
           className={cn(
             "w-fit rounded px-1 py-px text-[8px] font-semibold uppercase tracking-wide lg:text-[9px]",
-            typeBadge[displayDefinition.type] ?? "bg-gray-600 text-gray-100"
+            typeBadge[displayDefinition.type] ?? "bg-gray-600 text-gray-100",
+            upgraded && "ring-1 ring-amber-300/45"
           )}
         >
           {localizedType}
         </span>
+
+        {upgraded && (
+          <span className="w-fit max-w-full whitespace-nowrap rounded border border-amber-300/65 bg-amber-400/15 px-1 py-px text-[7px] font-black uppercase tracking-[0.12em] text-amber-200 lg:text-[8px]">
+            {t("gameCard.labels.upgraded")}
+          </span>
+        )}
 
         <div
           className={cn(
@@ -197,7 +222,11 @@ export function GameCard({
             isMd
               ? "text-[8px] lg:text-[9px] xl:text-[10px]"
               : "text-[8px] lg:text-[9px]",
-            isPendingInked ? "text-gray-500 opacity-50" : "text-gray-300"
+            isPendingInked
+              ? "text-gray-500 opacity-50"
+              : upgraded
+                ? "text-amber-50"
+                : "text-gray-300"
           )}
         >
           {isPendingInked

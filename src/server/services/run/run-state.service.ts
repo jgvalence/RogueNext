@@ -135,7 +135,13 @@ export async function buildInitialRunStateForUser(
     unlockedRelicIds,
     initialEnemyKillCounts,
     availableCharacters,
-    difficultyMaxByCharacter
+    difficultyMaxByCharacter,
+    totalRuns === 0
+      ? {
+          enabled: true,
+          step: "FIRST_COMBAT",
+        }
+      : null
   );
 
   return { seed, state };
@@ -263,6 +269,7 @@ export async function getActiveRunSnapshotForUser(
         normalizedCurrentRoom === 0 &&
         state.combat === null
       ),
+    firstRunScript: state.firstRunScript ?? null,
     unlockedRelicIds: freshUnlockedRelicIds,
     encounteredEnemies: mergedEncounteredEnemies,
     enemyKillCounts: mergedEnemyKillCounts,

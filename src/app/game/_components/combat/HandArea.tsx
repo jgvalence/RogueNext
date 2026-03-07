@@ -15,6 +15,8 @@ interface HandAreaProps {
   selectedCardId: string | null;
   pendingInked: boolean;
   onPlayCard: (instanceId: string, useInked: boolean) => void;
+  disableCardInteractions?: boolean;
+  tutorialPlayableInkedCardId?: string | null;
   isDiscarding?: boolean;
   discardBtnRef?: RefObject<HTMLButtonElement | null>;
   playingCardId?: string | null;
@@ -28,6 +30,8 @@ export function HandArea({
   selectedCardId,
   pendingInked,
   onPlayCard,
+  disableCardInteractions = false,
+  tutorialPlayableInkedCardId = null,
   isDiscarding = false,
   discardBtnRef,
   playingCardId = null,
@@ -94,6 +98,17 @@ export function HandArea({
               card.instanceId,
               cardDefs
             );
+            const isTutorialPlayableInkedCard =
+              tutorialPlayableInkedCardId === card.instanceId;
+            const cardInteractionsBlocked =
+              disableCardInteractions ||
+              (tutorialPlayableInkedCardId !== null &&
+                !isTutorialPlayableInkedCard);
+            const displayedCanPlay =
+              tutorialPlayableInkedCardId !== null
+                ? false
+                : !cardInteractionsBlocked && canPlay;
+            const displayedCanPlayInked = !cardInteractionsBlocked && canInked;
             const isFrozen = (
               combatState.playerDisruption?.frozenHandCardIds ?? []
             ).includes(card.instanceId);
@@ -116,14 +131,20 @@ export function HandArea({
                 <GameCard
                   instanceId={card.instanceId}
                   definition={def}
-                  canPlay={canPlay}
-                  canPlayInked={canInked}
+                  canPlay={displayedCanPlay}
+                  canPlayInked={displayedCanPlayInked}
                   isSelected={isSelected}
                   isPendingInked={isSelected && pendingInked}
                   isFrozen={isFrozen}
                   upgraded={card.upgraded}
                   size="md"
-                  className="!h-[152px] !w-[88px] shadow-[0_10px_18px_rgba(2,6,23,0.45)] [@media(max-height:540px)]:!h-[140px] [@media(max-height:540px)]:!w-[82px]"
+                  className={[
+                    "!h-[152px] !w-[88px] shadow-[0_10px_18px_rgba(2,6,23,0.45)] [@media(max-height:540px)]:!h-[140px] [@media(max-height:540px)]:!w-[82px]",
+                    isTutorialPlayableInkedCard &&
+                      "ring-2 ring-cyan-300/85 ring-offset-2 ring-offset-slate-950",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                   onClick={() => onPlayCard(card.instanceId, false)}
                   onInkedClick={() => onPlayCard(card.instanceId, true)}
                 />
@@ -150,6 +171,17 @@ export function HandArea({
             card.instanceId,
             cardDefs
           );
+          const isTutorialPlayableInkedCard =
+            tutorialPlayableInkedCardId === card.instanceId;
+          const cardInteractionsBlocked =
+            disableCardInteractions ||
+            (tutorialPlayableInkedCardId !== null &&
+              !isTutorialPlayableInkedCard);
+          const displayedCanPlay =
+            tutorialPlayableInkedCardId !== null
+              ? false
+              : !cardInteractionsBlocked && canPlay;
+          const displayedCanPlayInked = !cardInteractionsBlocked && canInked;
           const isFrozen = (
             combatState.playerDisruption?.frozenHandCardIds ?? []
           ).includes(card.instanceId);
@@ -207,12 +239,17 @@ export function HandArea({
               <GameCard
                 instanceId={card.instanceId}
                 definition={def}
-                canPlay={canPlay}
-                canPlayInked={canInked}
+                canPlay={displayedCanPlay}
+                canPlayInked={displayedCanPlayInked}
                 isSelected={isSelected}
                 isPendingInked={isSelected && pendingInked}
                 isFrozen={isFrozen}
                 upgraded={card.upgraded}
+                className={
+                  isTutorialPlayableInkedCard
+                    ? "ring-2 ring-cyan-300/85 ring-offset-2 ring-offset-slate-950"
+                    : undefined
+                }
                 onClick={() => onPlayCard(card.instanceId, false)}
                 onInkedClick={() => onPlayCard(card.instanceId, true)}
               />

@@ -116,6 +116,25 @@ export const en = {
     genericError: "An error occurred.",
     loadErrorTitle: "Failed to load the library",
     collectionLoadErrorTitle: "Failed to load the collection",
+    firstVisitTutorial: {
+      kicker: "Library tutorial",
+      title: "This is where runs become permanent progression",
+      description:
+        "The Library is your meta-progression hub. Resources earned during runs are spent here to unlock stories that strengthen every future run.",
+      resourcesTitle: "Resources",
+      resourcesDescription:
+        "Each biome grants its own resource after combat. The bar at the top shows your current stock so you can see which stories you can afford.",
+      treeTitle: "Skill tree",
+      treeDescription:
+        "Each book is a node in the tree. Unlocking a story grants a permanent bonus, but deeper branches require prerequisites or more resources first.",
+      tip: "Start with the accessible Library biome nodes, then branch out as your expeditions bring back more resources.",
+      gotIt: "Explore the library",
+    },
+    energyStoryTutorial: {
+      kicker: "First purchase",
+      description:
+        "You recovered exactly enough Pages to unlock the Treatise of Energy. This story grants +1 max energy on all your future runs.",
+    },
     bonus: {
       extraDraw: "+{{value}} draw each turn",
       extraEnergyMax: "+{{value}} max energy",
@@ -515,10 +534,11 @@ export const en = {
     },
     firstMapTutorial: {
       kicker: "Map tutorial",
-      title: "Choose your path",
+      title: "Read the floor paths",
       description:
-        "Each room changes your run: fights grow your deck, merchants optimize it, events offer risk/reward choices.",
-      tip: "Balance progression and safety: avoid chaining dangerous rooms when your HP is low.",
+        "Chronicles are event rooms, the Scriptorium helps improve your deck, and elite combats pay more but are far more dangerous.",
+      tip: "For this first expedition, study these three options: we are deliberately taking the elite path so you can feel that risk.",
+      forcedChoice: "Pick the 3rd card: the elite challenge.",
       gotIt: "Got it",
     },
   },
@@ -1442,7 +1462,12 @@ export const en = {
         inkPowers: {
           title: "Ink powers",
           description:
-            "Use ink powers at the right time to control the fight (draw, silence, and more).",
+            "I am giving you enough ink for this: use your ink power now. Here, it upgrades one card in your hand for this combat.",
+        },
+        inkedCard: {
+          title: "Inked card",
+          description:
+            "Your power just upgraded a card: an upgraded card has stronger numbers, and sometimes a better cost or effect for this combat. Look for the golden treatment. Clicking the card plays its base version; the Ink button at the bottom plays the + Ink version. I am topping your ink up again: use the Ink button on the highlighted card now.",
         },
         deckCycle: {
           title: "Draw / Discard / Exhaust",
@@ -1452,7 +1477,7 @@ export const en = {
         endTurn: {
           title: "Ending your turn",
           description:
-            "When you have no useful action left, end turn. Enemies then act based on their intents.",
+            "When you have no useful action left, end your turn now. Enemies will then act based on their intents.",
         },
       },
     },

@@ -117,6 +117,25 @@ export const fr = {
     genericError: "Une erreur est survenue.",
     loadErrorTitle: "Impossible de charger la bibliotheque",
     collectionLoadErrorTitle: "Impossible de charger la collection",
+    firstVisitTutorial: {
+      kicker: "Tutoriel bibliotheque",
+      title: "Ici, tu transformes tes runs en progression permanente",
+      description:
+        "La Bibliotheque sert de meta-progression. Les ressources gagnees en run sont depensees ici pour debloquer des histoires qui renforcent tous tes prochains runs.",
+      resourcesTitle: "Ressources",
+      resourcesDescription:
+        "Chaque biome donne sa propre ressource apres les combats. Le bandeau en haut montre ton stock actuel pour savoir quelles histoires tu peux acheter.",
+      treeTitle: "Arbre de competences",
+      treeDescription:
+        "Chaque livre est un noeud de l'arbre. Debloquer une histoire accorde un bonus permanent, mais certaines branches demandent d'abord des prerequis ou plus de ressources.",
+      tip: "Commence par les noeuds accessibles du biome Bibliotheque, puis ouvre les autres branches au fil de tes expeditions.",
+      gotIt: "Explorer la bibliotheque",
+    },
+    energyStoryTutorial: {
+      kicker: "Premier achat",
+      description:
+        "Tu as recupere juste assez de Pages pour debloquer le Traite de l'Energie. Cette histoire te donnera +1 energie max sur tous tes prochains runs.",
+    },
     bonus: {
       extraDraw: "+{{value}} pioche par tour",
       extraEnergyMax: "+{{value}} energie max",
@@ -525,10 +544,11 @@ export const fr = {
     },
     firstMapTutorial: {
       kicker: "Tutoriel carte",
-      title: "Choisir son chemin",
+      title: "Lire les chemins de l'etage",
       description:
-        "Chaque salle change ton run: combats pour gagner des cartes, marchand pour optimiser ton deck, events pour des choix a risque.",
-      tip: "Essaie d'alterner progression et securite: evite d'enchainer des salles trop dangereuses avec peu de PV.",
+        "Les chroniques sont des evenements, le Scriptorium sert a ameliorer ton deck, et les combats d'elite offrent plus mais sont beaucoup plus dangereux.",
+      tip: "Pour cette premiere expedition, observe bien ces trois options: on va volontairement prendre le chemin d'elite pour te montrer le risque.",
+      forcedChoice: "Choisis obligatoirement la 3e carte: l'epreuve d'elite.",
       gotIt: "Compris",
     },
   },
@@ -1420,7 +1440,12 @@ export const fr = {
         inkPowers: {
           title: "Pouvoirs d'encre",
           description:
-            "Utilisez vos pouvoirs d'encre au bon moment pour controler le combat (pioche, silence, etc.).",
+            "Je te donne assez d'encre pour ca: utilise maintenant ton pouvoir d'encre. Ici, il ameliore une carte en main pour ce combat.",
+        },
+        inkedCard: {
+          title: "Carte encree",
+          description:
+            "Le pouvoir vient d'ameliorer une carte: une carte amelioree a des chiffres renforces, et parfois un cout ou un effet meilleur pour ce combat. Repere-la a son habillage dore. Cliquer sur la carte joue sa version normale; le bouton Encre en bas joue sa version + Encre. Je te redonne de l'encre: utilise maintenant le bouton Encre de la carte surlignee dans ta main.",
         },
         deckCycle: {
           title: "Pioche / Defausse / Epuise",
@@ -1430,7 +1455,7 @@ export const fr = {
         endTurn: {
           title: "Finir son tour",
           description:
-            "Quand tu n'as plus d'action utile, termine ton tour. Les ennemis jouent ensuite selon leurs intentions.",
+            "Quand tu n'as plus d'action utile, termine maintenant ton tour. Les ennemis joueront ensuite selon leurs intentions.",
         },
       },
     },

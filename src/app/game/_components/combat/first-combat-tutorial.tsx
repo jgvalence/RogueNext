@@ -8,6 +8,7 @@ interface FirstCombatTutorialOverlayProps {
   stepIndex: number;
   totalSteps: number;
   isLastStep: boolean;
+  isNextDisabled?: boolean;
   onSkip: () => void;
   onPrevious: () => void;
   onNext: () => void;
@@ -19,6 +20,7 @@ export function FirstCombatTutorialOverlay({
   stepIndex,
   totalSteps,
   isLastStep,
+  isNextDisabled = false,
   onSkip,
   onPrevious,
   onNext,
@@ -70,7 +72,8 @@ export function FirstCombatTutorialOverlay({
             type="button"
             data-keep-selection="true"
             onClick={onNext}
-            className="rounded-md border border-cyan-400/80 bg-cyan-600/25 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-cyan-100 transition hover:border-cyan-300 hover:bg-cyan-500/30"
+            disabled={isNextDisabled}
+            className="rounded-md border border-cyan-400/80 bg-cyan-600/25 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-cyan-100 transition hover:border-cyan-300 hover:bg-cyan-500/30 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isLastStep
               ? t("combat.firstCombatTutorial.done")

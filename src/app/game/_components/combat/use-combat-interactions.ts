@@ -61,6 +61,7 @@ export function useCombatInteractions({
     handleUseItemClick,
     handleGlobalClick,
     clearCardSelection,
+    clearAllSelections,
     clearInkPowerTargets,
     disableCheatKillTargeting,
     toggleCheatKillTargeting,
@@ -183,6 +184,20 @@ export function useCombatInteractions({
     openPileByType,
   });
 
+  const resetInteractionState = useCallback(() => {
+    closePile();
+    clearAllSelections();
+    closeMobileInfoPanel();
+    closeMobileInkPanel();
+    closeMobileInventoryPanel();
+  }, [
+    closePile,
+    clearAllSelections,
+    closeMobileInfoPanel,
+    closeMobileInkPanel,
+    closeMobileInventoryPanel,
+  ]);
+
   return {
     selectedCardId,
     selectedUsableItemId,
@@ -224,5 +239,6 @@ export function useCombatInteractions({
     closeMobileInventoryPanel,
     handleMobileInkPowerUse,
     handleMobileInventoryItemUse,
+    resetInteractionState,
   };
 }

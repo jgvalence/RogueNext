@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { EnemyDefinition, AllyDefinition } from "@/game/schemas/entities";
@@ -28,6 +28,12 @@ import { CombatOverlays } from "./combat-overlays";
 import { computeIncomingDamage } from "@/game/engine/incoming-damage";
 import { useTranslation } from "react-i18next";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
+import { useGame } from "@/app/game/_providers/game-provider";
+import { GAME_CONSTANTS } from "@/game/constants";
+import {
+  getFirstInkedCardInHand,
+  getInkedCardTotalInkCost,
+} from "@/game/engine/first-combat-tutorial";
 
 interface CombatViewProps {
   combat: CombatState;
@@ -55,6 +61,7 @@ interface CombatViewProps {
   biome?: BiomeType;
   showFirstCombatTutorial?: boolean;
   onDismissFirstCombatTutorial?: () => void;
+  shouldAutoLoseFirstRunElite?: boolean;
   debugEnemySelection?: {
     floor: number;
     room: number;
@@ -116,10 +123,12 @@ export function CombatView({
   biome = "LIBRARY",
   showFirstCombatTutorial = false,
   onDismissFirstCombatTutorial,
+  shouldAutoLoseFirstRunElite = false,
   debugEnemySelection: _debugEnemySelection,
   debugDrawInfo: _debugDrawInfo,
 }: CombatViewProps) {
   const { t } = useTranslation();
+  const { dispatch } = useGame();
 
   const drawBtnRef = useRef<HTMLButtonElement>(null);
   const discardBtnRef = useRef<HTMLButtonElement>(null);
@@ -147,6 +156,124 @@ export function CombatView({
     !isResolvingEndTurn &&
     !isDiscarding &&
     !isResolvingHandOverflow;
+
+  const {
+    firstCombatTutorialStepIndex,
+    furthestFirstCombatTutorialStepIndex,
+    firstCombatTutorialCurrentStep,
+    firstCombatTutorialTotalSteps,
+    isFirstCombatTutorialVisible,
+    isLastFirstCombatTutorialStep,
+    isArmorTutorialStep,
+    isCardsTutorialStep,
+    isEnergyTutorialStep,
+    isIncomingDamageTutorialStep,
+    isInkTutorialStep,
+    isInkPowersTutorialStep,
+    isInkedCardTutorialStep,
+    isDeckCycleTutorialStep,
+    isEndTurnTutorialStep,
+    dismissFirstCombatTutorial,
+    handleFirstCombatTutorialNext,
+    handleFirstCombatTutorialPrevious,
+  } = useFirstCombatTutorial({
+    showFirstCombatTutorial,
+    onDismissFirstCombatTutorial,
+  });
+
+  const tutorialInkedCard = useMemo(
+    () => getFirstInkedCardInHand(combat, cardDefs),
+    [combat, cardDefs]
+  );
+  const tutorialInkedCardId = tutorialInkedCard?.instanceId ?? null;
+  const tutorialInkedCardInkCost = useMemo(
+    () =>
+      tutorialInkedCard
+        ? getInkedCardTotalInkCost(tutorialInkedCard, cardDefs)
+        : 0,
+    [tutorialInkedCard, cardDefs]
+  );
+  const tutorialPrimaryInkPower = unlockedInkPowers?.[0] ?? null;
+  const interactionCanAct =
+    canAct &&
+    (!isFirstCombatTutorialVisible ||
+      isInkPowersTutorialStep ||
+      isInkedCardTutorialStep);
+  const disableCardInteractions =
+    isFirstCombatTutorialVisible && !isInkedCardTutorialStep;
+  const allowedInkPowers = !isFirstCombatTutorialVisible
+    ? null
+    : isInkPowersTutorialStep && tutorialPrimaryInkPower
+      ? [tutorialPrimaryInkPower]
+      : [];
+  const canUseItems = canAct && !isFirstCombatTutorialVisible;
+  const canEndTurn =
+    canAct && (!isFirstCombatTutorialVisible || isEndTurnTutorialStep);
+  const hasAlreadyAdvancedPastCurrentTutorialStep =
+    firstCombatTutorialStepIndex < furthestFirstCombatTutorialStepIndex;
+  const isFirstCombatTutorialNextDisabled =
+    (isInkPowersTutorialStep ||
+      isInkedCardTutorialStep ||
+      isEndTurnTutorialStep) &&
+    !hasAlreadyAdvancedPastCurrentTutorialStep;
+
+  const handleTutorialPlayCard = useCallback(
+    (instanceId: string, targetId: string | null, useInked: boolean) => {
+      if (!isFirstCombatTutorialVisible) {
+        onPlayCard(instanceId, targetId, useInked);
+        return;
+      }
+
+      if (!isInkedCardTutorialStep) return;
+      if (!useInked) return;
+      if (tutorialInkedCardId && instanceId !== tutorialInkedCardId) return;
+
+      onPlayCard(instanceId, targetId, true);
+      handleFirstCombatTutorialNext();
+    },
+    [
+      isFirstCombatTutorialVisible,
+      isInkedCardTutorialStep,
+      tutorialInkedCardId,
+      onPlayCard,
+      handleFirstCombatTutorialNext,
+    ]
+  );
+
+  const handleTutorialUseInkPower = useCallback(
+    (power: InkPowerType, targetId: string | null) => {
+      if (!isFirstCombatTutorialVisible) {
+        onUseInkPower(power, targetId);
+        return;
+      }
+
+      if (!isInkPowersTutorialStep) return;
+      if (!tutorialPrimaryInkPower || power !== tutorialPrimaryInkPower) return;
+
+      onUseInkPower(power, targetId);
+      handleFirstCombatTutorialNext();
+    },
+    [
+      isFirstCombatTutorialVisible,
+      isInkPowersTutorialStep,
+      tutorialPrimaryInkPower,
+      onUseInkPower,
+      handleFirstCombatTutorialNext,
+    ]
+  );
+
+  const handleTutorialEndTurn = useCallback(() => {
+    if (isFirstCombatTutorialVisible && !isEndTurnTutorialStep) return;
+    if (isFirstCombatTutorialVisible) {
+      dismissFirstCombatTutorial();
+    }
+    onEndTurn();
+  }, [
+    isFirstCombatTutorialVisible,
+    isEndTurnTutorialStep,
+    dismissFirstCombatTutorial,
+    onEndTurn,
+  ]);
 
   const {
     selectedCardId,
@@ -189,39 +316,63 @@ export function CombatView({
     closeMobileInventoryPanel,
     handleMobileInkPowerUse,
     handleMobileInventoryItemUse,
+    resetInteractionState,
   } = useCombatInteractions({
     combat,
     cardDefs,
     usableItems,
     usableItemDefs,
-    onPlayCard,
+    onPlayCard: handleTutorialPlayCard,
     onUseItem,
-    onUseInkPower,
+    onUseInkPower: handleTutorialUseInkPower,
     onCheatKillEnemy,
-    canAct,
+    canAct: interactionCanAct,
   });
 
-  const {
-    firstCombatTutorialStepIndex,
-    firstCombatTutorialCurrentStep,
-    firstCombatTutorialTotalSteps,
+  useEffect(() => {
+    if (!isFirstCombatTutorialVisible) return;
+
+    dispatch({
+      type: "SYNC_FIRST_COMBAT_TUTORIAL_STATE",
+      payload: {
+        ensureInkedCardInHand: true,
+        minimumInkCurrent: isInkPowersTutorialStep
+          ? tutorialPrimaryInkPower
+            ? GAME_CONSTANTS.INK_POWER_COSTS[tutorialPrimaryInkPower]
+            : 0
+          : isInkedCardTutorialStep
+            ? tutorialInkedCardInkCost
+            : undefined,
+      },
+    });
+  }, [
+    dispatch,
     isFirstCombatTutorialVisible,
-    isLastFirstCombatTutorialStep,
-    isArmorTutorialStep,
-    isCardsTutorialStep,
-    isEnergyTutorialStep,
-    isIncomingDamageTutorialStep,
-    isInkTutorialStep,
     isInkPowersTutorialStep,
-    isDeckCycleTutorialStep,
-    isEndTurnTutorialStep,
-    dismissFirstCombatTutorial,
-    handleFirstCombatTutorialNext,
-    handleFirstCombatTutorialPrevious,
-  } = useFirstCombatTutorial({
-    showFirstCombatTutorial,
-    onDismissFirstCombatTutorial,
-  });
+    tutorialPrimaryInkPower,
+    isInkedCardTutorialStep,
+    tutorialInkedCardInkCost,
+  ]);
+
+  useEffect(() => {
+    if (!isFirstCombatTutorialVisible) return;
+    resetInteractionState();
+  }, [
+    isFirstCombatTutorialVisible,
+    firstCombatTutorialCurrentStep,
+    resetInteractionState,
+  ]);
+
+  useEffect(() => {
+    if (!shouldAutoLoseFirstRunElite) return;
+    if (combat.phase !== "PLAYER_TURN") return;
+
+    const timeoutId = window.setTimeout(() => {
+      dispatch({ type: "FORCE_TUTORIAL_COMBAT_DEFEAT" });
+    }, 1400);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [combat.phase, dispatch, shouldAutoLoseFirstRunElite]);
 
   const previewEffects = useMemo(
     () =>
@@ -285,7 +436,7 @@ export function CombatView({
     getEnemyDisplayName,
   });
 
-  const endTurnClass = canAct
+  const endTurnClass = canEndTurn
     ? "border border-emerald-300/30 bg-emerald-600 text-white shadow-[0_0_18px_rgba(16,185,129,0.35)] hover:bg-emerald-500"
     : "cursor-not-allowed border border-slate-700 bg-slate-700 text-slate-500 opacity-50";
 
@@ -321,6 +472,7 @@ export function CombatView({
         firstCombatTutorialStepIndex={firstCombatTutorialStepIndex}
         firstCombatTutorialTotalSteps={firstCombatTutorialTotalSteps}
         isLastFirstCombatTutorialStep={isLastFirstCombatTutorialStep}
+        isNextFirstCombatTutorialDisabled={isFirstCombatTutorialNextDisabled}
         onDismissFirstCombatTutorial={dismissFirstCombatTutorial}
         onPreviousFirstCombatTutorial={handleFirstCombatTutorialPrevious}
         onNextFirstCombatTutorial={handleFirstCombatTutorialNext}
@@ -381,12 +533,14 @@ export function CombatView({
         enemyRowRef={enemyRowRef}
         isInkTutorialStep={isInkTutorialStep}
         isInkPowersTutorialStep={isInkPowersTutorialStep}
+        isInkedCardTutorialStep={isInkedCardTutorialStep}
         isEnergyTutorialStep={isEnergyTutorialStep}
         isCardsTutorialStep={isCardsTutorialStep}
         isEndTurnTutorialStep={isEndTurnTutorialStep}
         isDeckCycleTutorialStep={isDeckCycleTutorialStep}
         reshuffleFx={reshuffleFx}
         unlockedInkPowers={unlockedInkPowers}
+        allowedInkPowers={allowedInkPowers}
         onUseInkPower={handleUseInkPower}
         onOpenDrawPile={handleOpenDrawPile}
         onOpenDiscardPile={handleOpenDiscardPile}
@@ -394,9 +548,14 @@ export function CombatView({
         usableItems={usableItems}
         usableItemDefs={usableItemDefs}
         selectedUsableItemId={selectedUsableItemId}
-        canAct={canAct}
+        disableCardInteractions={disableCardInteractions}
+        tutorialPlayableInkedCardId={
+          isInkedCardTutorialStep ? tutorialInkedCardId : null
+        }
+        canUseItems={canUseItems}
+        canEndTurn={canEndTurn}
         onUseItemClick={handleUseItemClick}
-        onEndTurn={onEndTurn}
+        onEndTurn={handleTutorialEndTurn}
         endTurnClass={endTurnClass}
         showCheatKillButton={Boolean(onCheatKillEnemy)}
         isSelectingCheatKillTarget={isSelectingCheatKillTarget}
@@ -423,6 +582,7 @@ export function CombatView({
         isOpen={mobileInkPanelOpen}
         combat={combat}
         unlockedInkPowers={unlockedInkPowers}
+        allowedInkPowers={allowedInkPowers}
         onUsePower={handleMobileInkPowerUse}
         onClose={closeMobileInkPanel}
       />
@@ -431,7 +591,7 @@ export function CombatView({
         usableItems={usableItems}
         usableItemDefs={usableItemDefs}
         selectedUsableItemId={selectedUsableItemId}
-        canAct={canAct}
+        canAct={canUseItems}
         onUseItem={handleMobileInventoryItemUse}
         onClose={closeMobileInventoryPanel}
       />
@@ -447,7 +607,7 @@ export function CombatView({
         pileCards={pileCards}
         isSelectingRewriteTarget={isSelectingRewriteTarget}
         pendingDiscardTargetInkPower={pendingDiscardTargetInkPower}
-        onUseInkPower={onUseInkPower}
+        onUseInkPower={handleTutorialUseInkPower}
         reshuffleCards={reshuffleCards}
       />
     </div>

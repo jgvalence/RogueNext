@@ -23,6 +23,7 @@ interface CombatBattlefieldProps {
   firstCombatTutorialStepIndex: number;
   firstCombatTutorialTotalSteps: number;
   isLastFirstCombatTutorialStep: boolean;
+  isNextFirstCombatTutorialDisabled?: boolean;
   onDismissFirstCombatTutorial: () => void;
   onPreviousFirstCombatTutorial: () => void;
   onNextFirstCombatTutorial: () => void;
@@ -74,6 +75,7 @@ export function CombatBattlefield({
   firstCombatTutorialStepIndex,
   firstCombatTutorialTotalSteps,
   isLastFirstCombatTutorialStep,
+  isNextFirstCombatTutorialDisabled = false,
   onDismissFirstCombatTutorial,
   onPreviousFirstCombatTutorial,
   onNextFirstCombatTutorial,
@@ -147,6 +149,7 @@ export function CombatBattlefield({
         stepIndex={firstCombatTutorialStepIndex}
         totalSteps={firstCombatTutorialTotalSteps}
         isLastStep={isLastFirstCombatTutorialStep}
+        isNextDisabled={isNextFirstCombatTutorialDisabled}
         onSkip={onDismissFirstCombatTutorial}
         onPrevious={onPreviousFirstCombatTutorial}
         onNext={onNextFirstCombatTutorial}

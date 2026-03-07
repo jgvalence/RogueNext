@@ -23,6 +23,7 @@ import {
   addResourcesInternal,
   incrementRunStatsInternal,
 } from "@/server/actions/progression";
+import { markFirstRunEnergyStoryTutorialPending } from "@/game/engine/library-tutorial";
 
 const EMPTY_CARD_UNLOCK_PROGRESS = {
   enteredBiomes: {},
@@ -50,6 +51,7 @@ export interface SyncRunEndProgressionInput {
   status: "VICTORY" | "DEFEAT" | "ABANDONED";
   earnedResources?: Record<string, number>;
   startMerchantSpentResources?: Record<string, number>;
+  scriptedOutcome?: "FIRST_RUN_ENERGY_TUTORIAL";
   encounteredEnemies?: RunState["encounteredEnemies"];
   enemyKillCounts?: RunState["enemyKillCounts"];
 }
@@ -209,6 +211,9 @@ export async function syncRunEndProgression(
     : buildStandardRunResources(currentResources, runState, input.status);
 
   nextResources = applyScribeChoices(nextResources, runState);
+  if (input.scriptedOutcome === "FIRST_RUN_ENERGY_TUTORIAL") {
+    nextResources = markFirstRunEnergyStoryTutorialPending(nextResources);
+  }
 
   const mergedEncounteredEnemies = mergeEncounteredEnemies(
     readEncounteredEnemiesFromResources(currentResourcesBase),

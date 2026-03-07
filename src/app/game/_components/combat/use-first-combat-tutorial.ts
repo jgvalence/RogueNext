@@ -9,6 +9,7 @@ const FIRST_COMBAT_TUTORIAL_STEPS = [
   "incomingDamage",
   "ink",
   "inkPowers",
+  "inkedCard",
   "deckCycle",
   "endTurn",
 ] as const;
@@ -26,6 +27,10 @@ export function useFirstCombatTutorial({
 }: UseFirstCombatTutorialParams) {
   const [firstCombatTutorialStepIndex, setFirstCombatTutorialStepIndex] =
     useState(0);
+  const [
+    furthestFirstCombatTutorialStepIndex,
+    setFurthestFirstCombatTutorialStepIndex,
+  ] = useState(0);
   const [firstCombatTutorialHidden, setFirstCombatTutorialHidden] =
     useState(false);
 
@@ -53,6 +58,9 @@ export function useFirstCombatTutorial({
   const isInkPowersTutorialStep =
     isFirstCombatTutorialVisible &&
     firstCombatTutorialCurrentStep === "inkPowers";
+  const isInkedCardTutorialStep =
+    isFirstCombatTutorialVisible &&
+    firstCombatTutorialCurrentStep === "inkedCard";
   const isDeckCycleTutorialStep =
     isFirstCombatTutorialVisible &&
     firstCombatTutorialCurrentStep === "deckCycle";
@@ -73,10 +81,19 @@ export function useFirstCombatTutorial({
       dismissFirstCombatTutorial();
       return;
     }
-    setFirstCombatTutorialStepIndex((prev) =>
-      Math.min(FIRST_COMBAT_TUTORIAL_STEPS.length - 1, prev + 1)
+    const nextStepIndex = Math.min(
+      FIRST_COMBAT_TUTORIAL_STEPS.length - 1,
+      firstCombatTutorialStepIndex + 1
     );
-  }, [dismissFirstCombatTutorial, isLastFirstCombatTutorialStep]);
+    setFirstCombatTutorialStepIndex(nextStepIndex);
+    setFurthestFirstCombatTutorialStepIndex((current) =>
+      Math.max(current, nextStepIndex)
+    );
+  }, [
+    dismissFirstCombatTutorial,
+    firstCombatTutorialStepIndex,
+    isLastFirstCombatTutorialStep,
+  ]);
 
   const handleFirstCombatTutorialPrevious = useCallback(() => {
     setFirstCombatTutorialStepIndex((prev) => Math.max(0, prev - 1));
@@ -84,6 +101,7 @@ export function useFirstCombatTutorial({
 
   return {
     firstCombatTutorialStepIndex,
+    furthestFirstCombatTutorialStepIndex,
     firstCombatTutorialCurrentStep,
     firstCombatTutorialTotalSteps: FIRST_COMBAT_TUTORIAL_STEPS.length,
     isFirstCombatTutorialVisible,
@@ -94,6 +112,7 @@ export function useFirstCombatTutorial({
     isIncomingDamageTutorialStep,
     isInkTutorialStep,
     isInkPowersTutorialStep,
+    isInkedCardTutorialStep,
     isDeckCycleTutorialStep,
     isEndTurnTutorialStep,
     dismissFirstCombatTutorial,

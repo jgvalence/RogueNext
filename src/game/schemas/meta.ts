@@ -72,6 +72,7 @@ export type Histoire = z.infer<typeof HistoireSchema>;
 export const MetaProgressSchema = z.object({
   resources: z.record(z.string(), z.number().int()).default({}),
   unlockedStoryIds: z.array(z.string()).default([]),
+  totalRuns: z.number().int().nonnegative().default(0),
   winsByDifficulty: z.record(z.string(), z.number().int()).optional(),
   bestTimeByDifficultyMs: z.record(z.string(), z.number().int()).optional(),
 });

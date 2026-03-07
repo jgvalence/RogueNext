@@ -17,6 +17,7 @@ interface FloorMapProps {
   enemyDefs: Map<string, EnemyDefinition>;
   onSelectRoom: (choiceIndex: number) => void;
   showFirstMapTutorial?: boolean;
+  forcedChoiceIndex?: number | null;
   onDismissFirstMapTutorial?: () => void;
 }
 
@@ -132,6 +133,7 @@ export function FloorMap({
   enemyDefs,
   onSelectRoom,
   showFirstMapTutorial = false,
+  forcedChoiceIndex = null,
   onDismissFirstMapTutorial,
 }: FloorMapProps) {
   const { t } = useTranslation();
@@ -166,15 +168,21 @@ export function FloorMap({
             <p className="mt-1.5 text-xs text-cyan-100/85">
               {t("map.firstMapTutorial.tip")}
             </p>
-            <div className="mt-3 flex justify-end">
-              <RogueButton
-                type="text"
-                className="!h-auto !rounded-md !border !border-cyan-500/65 !bg-cyan-700/25 !px-3 !py-1.5 !text-[10px] !font-bold !uppercase !tracking-[0.1em] !text-cyan-100 hover:!bg-cyan-600/35"
-                onClick={() => onDismissFirstMapTutorial?.()}
-              >
-                {t("map.firstMapTutorial.gotIt")}
-              </RogueButton>
-            </div>
+            {forcedChoiceIndex == null ? (
+              <div className="mt-3 flex justify-end">
+                <RogueButton
+                  type="text"
+                  className="!h-auto !rounded-md !border !border-cyan-500/65 !bg-cyan-700/25 !px-3 !py-1.5 !text-[10px] !font-bold !uppercase !tracking-[0.1em] !text-cyan-100 hover:!bg-cyan-600/35"
+                  onClick={() => onDismissFirstMapTutorial?.()}
+                >
+                  {t("map.firstMapTutorial.gotIt")}
+                </RogueButton>
+              </div>
+            ) : (
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-200/90">
+                {t("map.firstMapTutorial.forcedChoice")}
+              </p>
+            )}
           </div>
         )}
 
@@ -208,6 +216,10 @@ export function FloorMap({
 
             return rooms.map(({ room, originalIndex: i }) => {
               const isBossRoom = currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
+              const isForcedChoice =
+                forcedChoiceIndex !== null && i === forcedChoiceIndex;
+              const isChoiceLocked =
+                forcedChoiceIndex !== null && i !== forcedChoiceIndex;
               const enemyCount = room.enemyIds?.length ?? 0;
               const baseResourceAmount = 1 + (floor - 1);
               const guaranteedResourceAmount = isBossRoom
@@ -254,16 +266,21 @@ export function FloorMap({
                   className={cn(
                     "!group !flex !h-auto !w-72 !flex-col !gap-4 !whitespace-normal !rounded-xl !border !bg-[#0A1118]/80 !p-7 !text-left !transition-all !duration-150",
                     isBossRoom ? "border-red-500/20" : "border-amber-100/12",
+                    isForcedChoice &&
+                      "!border-cyan-300/70 !ring-2 !ring-cyan-300/85 !ring-offset-2 !ring-offset-slate-950",
+                    isChoiceLocked && "!cursor-not-allowed !opacity-45",
                     cfg.hoverBorder,
                     cfg.hoverBg,
                     cfg.hoverShadow
                   )}
+                  disabled={isChoiceLocked}
                   onClick={() => onSelectRoom(i)}
                 >
                   {/* Barre d'accent animée */}
                   <div
                     className={cn(
                       "h-1 w-8 rounded-full transition-all duration-200 group-hover:w-16",
+                      isChoiceLocked && "group-hover:w-8",
                       cfg.accentBar
                     )}
                   />

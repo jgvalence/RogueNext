@@ -1,4 +1,8 @@
-import type { RunState, RoomNode } from "../schemas/run-state";
+import type {
+  RunState,
+  RoomNode,
+  FirstRunScriptState,
+} from "../schemas/run-state";
 import type { CombatState } from "../schemas/combat-state";
 import type { CardDefinition, CardInstance } from "../schemas/cards";
 import type { BiomeType, BiomeResource } from "../schemas/enums";
@@ -38,6 +42,7 @@ import {
   type EncounteredEnemyType,
 } from "./bestiary";
 import { addRelicToRunState } from "./relics";
+import { createFirstRunScriptedMap } from "./first-run-script";
 
 type EnemyDef = (typeof enemyDefinitions)[0];
 const DISRUPTION_EFFECT_TYPES = new Set([
@@ -152,7 +157,8 @@ export function createNewRun(
   unlockedRelicIdsSnapshot: string[] = relicDefinitions.map((r) => r.id),
   initialEnemyKillCounts: Record<string, number> = {},
   availableCharacters: string[] = ["scribe"],
-  difficultyMaxByCharacter: Record<string, number> = {}
+  difficultyMaxByCharacter: Record<string, number> = {},
+  firstRunScript: FirstRunScriptState | null = null
 ): RunState {
   // Build starter deck instances
   const deck: CardInstance[] = starterCards.map((card) => ({
@@ -177,7 +183,11 @@ export function createNewRun(
     }
   }
 
-  const map = generateFloorMap(1, rng, "LIBRARY");
+  const baseMap = generateFloorMap(1, rng, "LIBRARY");
+  const map =
+    firstRunScript?.enabled === true
+      ? createFirstRunScriptedMap(baseMap)
+      : baseMap;
   const pendingRunConditionChoices = drawRunConditionChoices(
     unlockedRunConditionIds,
     createRNG(`${seed}-run-conditions`)
@@ -222,6 +232,7 @@ export function createNewRun(
     usableItemCapacity: GAME_CONSTANTS.MAX_USABLE_ITEMS,
     freeUpgradeUsed: false,
     survivalOnceUsed: false,
+    firstRunScript,
     map,
     combat: null,
     currentBiome: "LIBRARY",

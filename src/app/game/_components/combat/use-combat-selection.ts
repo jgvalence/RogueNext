@@ -87,6 +87,14 @@ export function useCombatSelection({
     setSelectedCardId(null);
     setPendingInked(false);
   }, []);
+  const clearAllSelections = useCallback(() => {
+    setSelectedCardId(null);
+    setSelectedUsableItemId(null);
+    setPendingInked(false);
+    setPendingDiscardTargetInkPower(null);
+    setPendingEnemyTargetInkPower(null);
+    setIsSelectingCheatKillTarget(false);
+  }, []);
   const clearInkPowerTargets = useCallback(() => {
     setPendingDiscardTargetInkPower(null);
     setPendingEnemyTargetInkPower(null);
@@ -288,6 +296,7 @@ export function useCombatSelection({
     handleUseItemClick,
     handleGlobalClick,
     clearCardSelection,
+    clearAllSelections,
     clearInkPowerTargets,
     disableCheatKillTargeting,
     toggleCheatKillTargeting,

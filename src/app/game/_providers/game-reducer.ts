@@ -53,6 +53,8 @@ import {
 } from "@/game/engine/merchant";
 import { applyUsableItem } from "@/game/engine/items";
 import { getCharacterById } from "@/game/data/characters";
+import { ensureFirstCombatTutorialInkedCardInHand } from "@/game/engine/first-combat-tutorial";
+import { applyFirstRunOpeningCombatAdvantage } from "@/game/engine/first-run-script";
 import { nanoid } from "nanoid";
 
 // ============================
@@ -75,9 +77,17 @@ export type GameAction =
     }
   | { type: "END_TURN" }
   | {
+      type: "SYNC_FIRST_COMBAT_TUTORIAL_STATE";
+      payload: {
+        ensureInkedCardInHand?: boolean;
+        minimumInkCurrent?: number;
+      };
+    }
+  | {
       type: "RESOLVE_HAND_OVERFLOW_EXHAUST";
       payload: { cardInstanceId: string };
     }
+  | { type: "FORCE_TUTORIAL_COMBAT_DEFEAT" }
   | {
       type: "USE_USABLE_ITEM";
       payload: { itemInstanceId: string; targetId: string | null };
@@ -180,6 +190,15 @@ export function createGameReducer(deps: ReducerDeps) {
           );
         }
 
+        if (
+          state.firstRunScript?.enabled &&
+          state.firstRunScript.step === "FIRST_COMBAT" &&
+          state.floor === 1 &&
+          state.currentRoom === 0
+        ) {
+          combat = applyFirstRunOpeningCombatAdvantage(combat);
+        }
+
         return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
 
@@ -219,6 +238,40 @@ export function createGameReducer(deps: ReducerDeps) {
         }
         combat = checkCombatEnd(combat);
         return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
+      }
+
+      case "SYNC_FIRST_COMBAT_TUTORIAL_STATE": {
+        if (!state.combat) return state;
+
+        let combat = state.combat;
+
+        if (action.payload.ensureInkedCardInHand) {
+          combat = ensureFirstCombatTutorialInkedCardInHand(combat, cardDefs);
+        }
+
+        if (action.payload.minimumInkCurrent != null) {
+          const minimumInkCurrent = Math.max(
+            0,
+            Math.floor(action.payload.minimumInkCurrent)
+          );
+          const nextInkCurrent = Math.min(
+            combat.player.inkMax,
+            Math.max(combat.player.inkCurrent, minimumInkCurrent)
+          );
+
+          if (nextInkCurrent !== combat.player.inkCurrent) {
+            combat = {
+              ...combat,
+              player: {
+                ...combat.player,
+                inkCurrent: nextInkCurrent,
+              },
+            };
+          }
+        }
+
+        if (combat === state.combat) return state;
+        return { ...state, combat };
       }
 
       case "USE_USABLE_ITEM":
@@ -321,8 +374,28 @@ export function createGameReducer(deps: ReducerDeps) {
       }
 
       case "SELECT_ROOM":
+        if (
+          state.firstRunScript?.enabled &&
+          state.firstRunScript.step === "MAP_INTRO" &&
+          state.floor === 1 &&
+          state.currentRoom === 1 &&
+          action.payload.choiceIndex !== 2
+        ) {
+          return state;
+        }
         return {
           ...selectRoom(state, action.payload.choiceIndex),
+          firstRunScript:
+            state.firstRunScript?.enabled &&
+            state.firstRunScript.step === "MAP_INTRO" &&
+            state.floor === 1 &&
+            state.currentRoom === 1 &&
+            action.payload.choiceIndex === 2
+              ? {
+                  ...state.firstRunScript,
+                  step: "FORCED_ELITE" as const,
+                }
+              : state.firstRunScript,
           merchantRerollCount: 0,
         };
 
@@ -336,7 +409,7 @@ export function createGameReducer(deps: ReducerDeps) {
 
       case "COMPLETE_COMBAT": {
         if (!state.combat) return state;
-        return completeCombat(
+        const nextState = completeCombat(
           state,
           state.combat,
           action.payload.goldReward,
@@ -346,6 +419,46 @@ export function createGameReducer(deps: ReducerDeps) {
           state.relicIds,
           action.payload.usableItemDropDefinitionId
         );
+
+        if (
+          state.firstRunScript?.enabled &&
+          state.firstRunScript.step === "FIRST_COMBAT" &&
+          state.floor === 1 &&
+          state.currentRoom === 0
+        ) {
+          return {
+            ...nextState,
+            firstRunScript: {
+              ...state.firstRunScript,
+              step: "MAP_INTRO",
+            },
+          };
+        }
+
+        return nextState;
+      }
+
+      case "FORCE_TUTORIAL_COMBAT_DEFEAT": {
+        if (!state.combat) return state;
+        if (
+          !state.firstRunScript?.enabled ||
+          state.firstRunScript.step !== "FORCED_ELITE"
+        ) {
+          return state;
+        }
+
+        return {
+          ...state,
+          combat: {
+            ...state.combat,
+            phase: "COMBAT_LOST",
+            player: {
+              ...state.combat.player,
+              currentHp: 0,
+              block: 0,
+            },
+          },
+        };
       }
 
       case "CHOOSE_CHARACTER": {

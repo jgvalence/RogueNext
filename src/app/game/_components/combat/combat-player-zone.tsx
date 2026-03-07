@@ -33,12 +33,14 @@ interface CombatPlayerZoneProps {
   enemyRowRef: RefObject<HTMLDivElement | null>;
   isInkTutorialStep: boolean;
   isInkPowersTutorialStep: boolean;
+  isInkedCardTutorialStep: boolean;
   isEnergyTutorialStep: boolean;
   isCardsTutorialStep: boolean;
   isEndTurnTutorialStep: boolean;
   isDeckCycleTutorialStep: boolean;
   reshuffleFx: boolean;
   unlockedInkPowers?: InkPowerType[];
+  allowedInkPowers?: InkPowerType[] | null;
   onUseInkPower: (power: InkPowerType) => void;
   onOpenDrawPile: () => void;
   onOpenDiscardPile: () => void;
@@ -46,7 +48,10 @@ interface CombatPlayerZoneProps {
   usableItems: UsableItemInstance[];
   usableItemDefs: Map<string, UsableItemDefinition>;
   selectedUsableItemId: string | null;
-  canAct: boolean;
+  disableCardInteractions?: boolean;
+  tutorialPlayableInkedCardId?: string | null;
+  canUseItems: boolean;
+  canEndTurn: boolean;
   onUseItemClick: (itemInstanceId: string) => void;
   onEndTurn: () => void;
   endTurnClass: string;
@@ -68,12 +73,14 @@ export function CombatPlayerZone({
   enemyRowRef,
   isInkTutorialStep,
   isInkPowersTutorialStep,
+  isInkedCardTutorialStep,
   isEnergyTutorialStep,
   isCardsTutorialStep,
   isEndTurnTutorialStep,
   isDeckCycleTutorialStep,
   reshuffleFx,
   unlockedInkPowers,
+  allowedInkPowers = null,
   onUseInkPower,
   onOpenDrawPile,
   onOpenDiscardPile,
@@ -81,7 +88,10 @@ export function CombatPlayerZone({
   usableItems,
   usableItemDefs,
   selectedUsableItemId,
-  canAct,
+  disableCardInteractions = false,
+  tutorialPlayableInkedCardId = null,
+  canUseItems,
+  canEndTurn,
   onUseItemClick,
   onEndTurn,
   endTurnClass,
@@ -133,6 +143,7 @@ export function CombatPlayerZone({
                 combatState={combat}
                 onUsePower={onUseInkPower}
                 unlockedPowers={unlockedInkPowers}
+                allowedPowers={allowedInkPowers}
               />
             </div>
 
@@ -180,6 +191,8 @@ export function CombatPlayerZone({
               selectedCardId={selectedCardId}
               pendingInked={pendingInked}
               onPlayCard={onPlayCard}
+              disableCardInteractions={disableCardInteractions}
+              tutorialPlayableInkedCardId={tutorialPlayableInkedCardId}
               isDiscarding={isDiscarding}
               discardBtnRef={discardBtnRef}
               playingCardId={playingCardId}
@@ -218,9 +231,9 @@ export function CombatPlayerZone({
                             isSelected
                               ? "!border-amber-300 !bg-amber-700/50 !text-amber-50"
                               : "!border-amber-700/70 !bg-slate-900/80 !text-amber-200 hover:!border-amber-400 hover:!bg-amber-950/60",
-                            !canAct && "!cursor-not-allowed !opacity-50"
+                            !canUseItems && "!cursor-not-allowed !opacity-50"
                           )}
-                          disabled={!canAct}
+                          disabled={!canUseItems}
                         >
                           {localizeUsableItemName(def.id, def.name)}
                         </RogueButton>
@@ -237,9 +250,11 @@ export function CombatPlayerZone({
                 "!h-12 !rounded-lg !px-3 !py-2 !text-[10px] !font-black !uppercase !tracking-wide !transition-all lg:!text-sm",
                 isEndTurnTutorialStep &&
                   "!ring-2 !ring-emerald-300/85 !ring-offset-2 !ring-offset-slate-950",
+                isInkedCardTutorialStep &&
+                  "!opacity-60 !ring-1 !ring-slate-700 !ring-offset-2 !ring-offset-slate-950",
                 endTurnClass
               )}
-              disabled={!canAct}
+              disabled={!canEndTurn}
               onClick={onEndTurn}
             >
               {t("combat.endTurn")}

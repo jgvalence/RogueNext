@@ -9,6 +9,7 @@ import {
 import type { RunState } from "@/game/schemas/run-state";
 import type { BiomeType } from "@/game/schemas/enums";
 import { VANILLA_RUN_CONDITION_ID } from "@/game/engine/run-conditions";
+import { getFirstRunForcedMapChoiceIndex } from "@/game/engine/first-run-script";
 import type { GameAction } from "../_providers/game-reducer";
 import type { GamePhase } from "../_services/run-phase";
 import type { RunSetupDraft } from "../_components/run-setup/RunSetupScreen";
@@ -36,6 +37,13 @@ export function useRunRoomActions({
 }: UseRunRoomActionsParams) {
   const handleSelectRoom = useCallback(
     (choiceIndex: number) => {
+      const forcedChoiceIndex = getFirstRunForcedMapChoiceIndex(
+        stateRef.current
+      );
+      if (forcedChoiceIndex != null && choiceIndex !== forcedChoiceIndex) {
+        return;
+      }
+
       const room = currentRoomChoices?.[choiceIndex];
       if (!room) return;
 

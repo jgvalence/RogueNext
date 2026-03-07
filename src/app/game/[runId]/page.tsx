@@ -47,6 +47,11 @@ import type { CardDefinition } from "@/game/schemas/cards";
 import { startMusic, stopMusic } from "@/lib/music";
 import { getUsableItemDefinitionsMap } from "@/game/engine/items";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
+import {
+  getFirstRunForcedMapChoiceIndex,
+  isFirstRunScriptedEliteRoom,
+  shouldShowFirstRunMapTutorial,
+} from "@/game/engine/first-run-script";
 
 export default function RunPage() {
   const { t } = useTranslation();
@@ -143,8 +148,6 @@ function GameContent({
     useState(false);
   const [firstRewardTutorialDismissed, setFirstRewardTutorialDismissed] =
     useState(false);
-  const [firstMapTutorialDismissed, setFirstMapTutorialDismissed] =
-    useState(false);
   const [newBestiaryEntries, setNewBestiaryEntries] = useState<string[]>([]);
   const runEndedRef = useRef(false);
   // Always-current ref to avoid stale closures in callbacks
@@ -171,6 +174,8 @@ function GameContent({
   );
   const isDevBuild = process.env.NODE_ENV !== "production";
   const usableItemDefs = useMemo(() => getUsableItemDefinitionsMap(), []);
+  const showGuidedFirstRunMapTutorial = shouldShowFirstRunMapTutorial(state);
+  const forcedFirstRunMapChoiceIndex = getFirstRunForcedMapChoiceIndex(state);
 
   const newBestiaryEntryNames = useMemo(
     () =>
@@ -239,6 +244,7 @@ function GameContent({
     setPhase,
     setNewBestiaryEntries,
     onCombatLost: cancelEnemyTurnFlow,
+    onScriptedFirstRunDefeat: () => router.push("/library"),
   });
 
   const queueVictoryRunEnd = useCallback(() => {
@@ -338,13 +344,8 @@ function GameContent({
             floor={state.floor}
             currentBiome={state.currentBiome}
             enemyDefs={enemyDefs}
-            showFirstMapTutorial={
-              isFirstRun &&
-              !firstMapTutorialDismissed &&
-              state.floor === 1 &&
-              state.currentRoom === 1
-            }
-            onDismissFirstMapTutorial={() => setFirstMapTutorialDismissed(true)}
+            showFirstMapTutorial={showGuidedFirstRunMapTutorial}
+            forcedChoiceIndex={forcedFirstRunMapChoiceIndex}
             onSelectRoom={handleSelectRoom}
           />
         )}
@@ -441,6 +442,7 @@ function GameContent({
             isResolvingEndTurn={isResolvingEndTurn}
             attackBonus={state.metaBonuses?.attackBonus ?? 0}
             biome={state.currentBiome}
+            shouldAutoLoseFirstRunElite={isFirstRunScriptedEliteRoom(state)}
             debugEnemySelection={debugEnemySelection ?? undefined}
             debugDrawInfo={debugDrawInfo ?? undefined}
           />

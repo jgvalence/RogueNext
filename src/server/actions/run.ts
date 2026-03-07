@@ -11,6 +11,7 @@ import {
   getActiveRunSnapshotForUser,
 } from "@/server/services/run/run-lifecycle.service";
 import { saveRunStateForUser } from "@/server/services/run/run-persistence.service";
+import { FIRST_RUN_ENERGY_TUTORIAL_OUTCOME } from "@/game/engine/first-run-script";
 
 const createRunSchema = z.object({
   seed: z.string().optional(),
@@ -57,6 +58,7 @@ const endRunSchema = z.object({
   status: z.enum(["VICTORY", "DEFEAT", "ABANDONED"]),
   earnedResources: z.record(z.string(), z.number()).optional(),
   startMerchantSpentResources: z.record(z.string(), z.number()).optional(),
+  scriptedOutcome: z.enum([FIRST_RUN_ENERGY_TUTORIAL_OUTCOME]).optional(),
   encounteredEnemies: z
     .record(z.string(), z.enum(["NORMAL", "ELITE", "BOSS"]))
     .optional(),
@@ -73,6 +75,7 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       status: validated.status,
       earnedResources: validated.earnedResources,
       startMerchantSpentResources: validated.startMerchantSpentResources,
+      scriptedOutcome: validated.scriptedOutcome,
       encounteredEnemies: validated.encounteredEnemies,
       enemyKillCounts: validated.enemyKillCounts,
     });

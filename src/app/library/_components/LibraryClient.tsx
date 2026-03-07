@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { RogueButton, RogueCard, RogueTag } from "@/components/ui/rogue";
@@ -9,7 +9,16 @@ import type { SlotState } from "./constants";
 import { ResourceBar } from "./ResourceBar";
 import { BiomeSection } from "./BiomeSection";
 import { HistoireModal } from "./HistoireModal";
+import { LibraryIntroTutorial } from "./LibraryIntroTutorial";
 import type { Histoire, MetaProgress } from "@/game/schemas/meta";
+import {
+  hasPendingFirstRunEnergyStoryTutorial,
+  hasSeenLibraryIntroTutorial,
+  markLibraryIntroTutorialSeen,
+} from "@/game/engine/library-tutorial";
+import { dismissLibraryIntroTutorialAction } from "@/server/actions/progression";
+import { cn } from "@/lib/utils/cn";
+import { FIRST_RUN_ENERGY_STORY_ID } from "@/game/engine/first-run-script";
 
 interface LibraryClientProps {
   initialProgression: MetaProgress;
@@ -41,6 +50,13 @@ export function LibraryClient({
   const [progression, setProgression] =
     useState<MetaProgress>(initialProgression);
   const [selected, setSelected] = useState<Histoire | null>(null);
+  const [isLibraryIntroVisible, setIsLibraryIntroVisible] = useState(
+    () =>
+      initialProgression.totalRuns > 0 &&
+      !hasSeenLibraryIntroTutorial(initialProgression.resources)
+  );
+  const [isDismissingLibraryIntro, setIsDismissingLibraryIntro] =
+    useState(false);
 
   const histoiresByBiome = BIOME_ORDER.reduce<Record<string, Histoire[]>>(
     (acc, biome) => {
@@ -52,6 +68,41 @@ export function LibraryClient({
 
   const totalUnlocked = progression.unlockedStoryIds.length;
   const totalHistoires = histoires.length;
+  const firstRunEnergyStory = histoires.find(
+    (story) => story.id === FIRST_RUN_ENERGY_STORY_ID
+  );
+  const isFirstRunEnergyStoryTutorialVisible =
+    hasPendingFirstRunEnergyStoryTutorial(progression.resources) &&
+    !progression.unlockedStoryIds.includes(FIRST_RUN_ENERGY_STORY_ID);
+
+  useEffect(() => {
+    if (isLibraryIntroVisible) return;
+    if (!isFirstRunEnergyStoryTutorialVisible) return;
+    if (!firstRunEnergyStory) return;
+    if (selected?.id === firstRunEnergyStory.id) return;
+    setSelected(firstRunEnergyStory);
+  }, [
+    firstRunEnergyStory,
+    isFirstRunEnergyStoryTutorialVisible,
+    isLibraryIntroVisible,
+    selected,
+  ]);
+
+  async function handleDismissLibraryIntro() {
+    if (isDismissingLibraryIntro) return;
+    setIsDismissingLibraryIntro(true);
+    setIsLibraryIntroVisible(false);
+    setProgression((current) => ({
+      ...current,
+      resources: markLibraryIntroTutorialSeen(current.resources),
+    }));
+
+    try {
+      await dismissLibraryIntroTutorialAction();
+    } finally {
+      setIsDismissingLibraryIntro(false);
+    }
+  }
 
   return (
     <div className="relative flex min-h-screen flex-col bg-gray-950 text-white">
@@ -117,13 +168,25 @@ export function LibraryClient({
       </header>
 
       <div className="relative z-10 border-b border-slate-800/50 px-6 py-3">
-        <div className="mx-auto max-w-6xl">
+        <div
+          className={cn(
+            "mx-auto max-w-6xl transition-all duration-300",
+            isLibraryIntroVisible &&
+              "rounded-2xl shadow-[0_0_0_1px_rgba(251,191,36,0.05)] ring-1 ring-amber-400/25"
+          )}
+        >
           <ResourceBar resources={progression.resources} />
         </div>
       </div>
 
       <main className="relative z-10 flex-1 px-6 py-6">
-        <div className="mx-auto max-w-6xl">
+        <div
+          className={cn(
+            "mx-auto max-w-6xl transition-all duration-300",
+            isLibraryIntroVisible &&
+              "rounded-2xl shadow-[0_0_0_1px_rgba(34,211,238,0.04)] ring-1 ring-cyan-400/20"
+          )}
+        >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {BIOME_ORDER.map((biome) => {
               const biomHistoires = histoiresByBiome[biome] ?? [];
@@ -148,11 +211,22 @@ export function LibraryClient({
           histoires={histoires}
           progression={progression}
           slotState={getSlotState(selected, progression)}
+          showFirstRunEnergyStoryTutorial={
+            isFirstRunEnergyStoryTutorialVisible &&
+            selected.id === FIRST_RUN_ENERGY_STORY_ID
+          }
           onClose={() => setSelected(null)}
           onUnlocked={(updated) => {
             setProgression(updated);
             setSelected(null);
           }}
+        />
+      )}
+
+      {isLibraryIntroVisible && (
+        <LibraryIntroTutorial
+          isPending={isDismissingLibraryIntro}
+          onDismiss={handleDismissLibraryIntro}
         />
       )}
     </div>

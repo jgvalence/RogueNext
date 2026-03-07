@@ -21,6 +21,7 @@ export interface EndRunForUserInput {
   status: RunCompletionStatus;
   earnedResources?: Record<string, number>;
   startMerchantSpentResources?: Record<string, number>;
+  scriptedOutcome?: "FIRST_RUN_ENERGY_TUTORIAL";
   encounteredEnemies?: RunState["encounteredEnemies"];
   enemyKillCounts?: RunState["enemyKillCounts"];
 }
@@ -68,6 +69,7 @@ export async function endRunForUser(
     status: input.status,
     earnedResources: input.earnedResources,
     startMerchantSpentResources: input.startMerchantSpentResources,
+    scriptedOutcome: input.scriptedOutcome,
     encounteredEnemies: input.encounteredEnemies,
     enemyKillCounts: input.enemyKillCounts,
   });

@@ -10,6 +10,12 @@ import { histoireDefinitions } from "@/game/data/histoires";
 import type { MetaProgress } from "@/game/schemas/meta";
 import { getBestInfiniteFloor } from "@/game/engine/difficulty";
 import {
+  clearFirstRunEnergyStoryTutorial,
+  hasSeenLibraryIntroTutorial,
+  markLibraryIntroTutorialSeen,
+} from "@/game/engine/library-tutorial";
+import { FIRST_RUN_ENERGY_STORY_ID } from "@/game/engine/first-run-script";
+import {
   buildRunConditionCollectionRows,
   type RunConditionCollectionRow,
 } from "@/game/engine/run-conditions";
@@ -42,6 +48,7 @@ async function getOrCreateProgression(userId: string): Promise<MetaProgress> {
     select: {
       resources: true,
       unlockedStoryIds: true,
+      totalRuns: true,
       winsByDifficulty: true,
       bestTimeByDifficultyMs: true,
     },
@@ -50,6 +57,7 @@ async function getOrCreateProgression(userId: string): Promise<MetaProgress> {
     return {
       resources: (row.resources as Record<string, number>) ?? {},
       unlockedStoryIds: (row.unlockedStoryIds as string[]) ?? [],
+      totalRuns: row.totalRuns ?? 0,
       winsByDifficulty: normalizeDifficultyMap(row.winsByDifficulty),
       bestTimeByDifficultyMs: normalizeDifficultyMap(
         row.bestTimeByDifficultyMs
@@ -62,6 +70,7 @@ async function getOrCreateProgression(userId: string): Promise<MetaProgress> {
   return {
     resources: {},
     unlockedStoryIds: [],
+    totalRuns: 0,
     winsByDifficulty: {},
     bestTimeByDifficultyMs: {},
   };
@@ -129,6 +138,30 @@ export async function getComputedBonusesAction() {
     const progression = await getOrCreateProgression(user.id!);
     const bonuses = computeMetaBonuses(progression.unlockedStoryIds);
     return success({ bonuses });
+  } catch (error) {
+    return handleServerActionError(error);
+  }
+}
+
+export async function dismissLibraryIntroTutorialAction() {
+  try {
+    const user = await requireAuth();
+    const progression = await getOrCreateProgression(user.id!);
+
+    if (hasSeenLibraryIntroTutorial(progression.resources)) {
+      return success({ dismissed: true });
+    }
+
+    await prisma.userProgression.update({
+      where: { userId: user.id! },
+      data: {
+        resources: markLibraryIntroTutorialSeen(
+          progression.resources
+        ) as Prisma.InputJsonValue,
+      },
+    });
+
+    return success({ dismissed: true });
   } catch (error) {
     return handleServerActionError(error);
   }
@@ -345,19 +378,23 @@ export async function unlockStoryAction(
     for (const [resource, cost] of Object.entries(histoire.cout)) {
       updatedResources[resource] = (updatedResources[resource] ?? 0) - cost;
     }
+    const finalResources =
+      storyId === FIRST_RUN_ENERGY_STORY_ID
+        ? clearFirstRunEnergyStoryTutorial(updatedResources)
+        : updatedResources;
     const updatedStoryIds = [...progression.unlockedStoryIds, storyId];
 
     await prisma.userProgression.update({
       where: { userId: user.id! },
       data: {
-        resources: updatedResources as Prisma.InputJsonValue,
+        resources: finalResources as Prisma.InputJsonValue,
         unlockedStoryIds: updatedStoryIds as Prisma.InputJsonValue,
       },
     });
 
     return success({
       unlockedStoryId: storyId,
-      resources: updatedResources,
+      resources: finalResources,
       unlockedStoryIds: updatedStoryIds,
     });
   } catch (error) {

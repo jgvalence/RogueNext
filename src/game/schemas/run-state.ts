@@ -14,6 +14,19 @@ const CardUnlockProgressSchema = z.object({
 
 const EncounteredEnemyTypeSchema = z.enum(["NORMAL", "ELITE", "BOSS"]);
 
+export const FirstRunScriptStepSchema = z.enum([
+  "FIRST_COMBAT",
+  "MAP_INTRO",
+  "FORCED_ELITE",
+]);
+export type FirstRunScriptStep = z.infer<typeof FirstRunScriptStepSchema>;
+
+export const FirstRunScriptStateSchema = z.object({
+  enabled: z.boolean().default(false),
+  step: FirstRunScriptStepSchema.default("FIRST_COMBAT"),
+});
+export type FirstRunScriptState = z.infer<typeof FirstRunScriptStateSchema>;
+
 export const RoomNodeSchema = z.object({
   index: z.number().int(),
   type: RoomType,
@@ -53,6 +66,7 @@ export const RunStateSchema = z.object({
   difficultyMaxByCharacter: z
     .record(z.string(), z.number().int().min(0))
     .default({}),
+  firstRunScript: FirstRunScriptStateSchema.nullable().default(null),
   // Difficulty flow at run start: pick one unlocked level first
   pendingDifficultyLevels: z.array(z.number().int().min(0)).default([]),
   selectedDifficultyLevel: z.number().int().min(0).nullable().default(null),
