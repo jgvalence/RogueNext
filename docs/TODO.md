@@ -185,6 +185,9 @@
   - A la decouverte : nom, illustration (asset SVG existant), stats de base, description lore
   - Filtres par biome + type (normal / elite / boss)
 - [x] **Notification** premiere decouverte en fin de combat ("Nouvelle entree dans le Bestiaire")
+- [ ] **Remplacer le lore bestiaire genere** — ecrire de vraies entrees uniques, non generiques, pour chaque ennemi et chaque palier de lore
+  - Supprimer progressivement les fallbacks auto-generes au profit de textes auteurises
+  - Prioriser au minimum les ennemis les plus vus du biome `LIBRARY`
 
 ### UX / technique
 

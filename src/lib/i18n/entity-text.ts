@@ -1,4 +1,5 @@
 import { getCurrentLocale, i18n } from "@/lib/i18n";
+import { getEnemyTextEntry } from "@/lib/i18n/enemy-text-resources";
 
 function getLocaleString(key: string): string | null {
   const locale = getCurrentLocale();
@@ -431,8 +432,10 @@ export function localizeEnemyName(
 ): string {
   const fallbackValue = fallback ?? enemyId ?? "";
   if (!enemyId) return maybeTranslateFallbackText(fallbackValue);
+  const localizedEntry = getEnemyTextEntry(getCurrentLocale(), enemyId);
   return (
     getLocaleString(`enemies.${enemyId}.name`) ??
+    localizedEntry?.name ??
     maybeTranslateFallbackText(fallbackValue)
   );
 }
@@ -443,8 +446,12 @@ export function localizeEnemyLore(
 ): string {
   const fallbackValue = fallback ?? "";
   if (!enemyId) return maybeTranslateFallbackText(fallbackValue);
+  const localizedEntry = getEnemyTextEntry(getCurrentLocale(), enemyId);
   return (
     getLocaleString(`enemies.${enemyId}.lore`) ??
+    getLocaleString(`enemies.${enemyId}.loreEntries.1`) ??
+    localizedEntry?.lore ??
+    localizedEntry?.loreEntries[0] ??
     maybeTranslateFallbackText(fallbackValue)
   );
 }
@@ -457,14 +464,22 @@ export function localizeEnemyLoreEntry(
   const fallbackValue = fallback ?? "";
   if (!enemyId) return maybeTranslateFallbackText(fallbackValue);
   const normalizedIndex = Math.max(0, Math.floor(entryIndex));
+  const localizedEntry = getEnemyTextEntry(getCurrentLocale(), enemyId);
 
-  const indexedLore = getLocaleString(
-    `enemies.${enemyId}.lore.${normalizedIndex + 1}`
-  );
+  const indexedLore =
+    getLocaleString(`enemies.${enemyId}.loreEntries.${normalizedIndex + 1}`) ??
+    getLocaleString(`enemies.${enemyId}.lore.${normalizedIndex + 1}`);
   if (indexedLore) return indexedLore;
 
+  const generatedLore = localizedEntry?.loreEntries[normalizedIndex];
+  if (generatedLore) return generatedLore;
+
   if (normalizedIndex === 0) {
-    const baseLore = getLocaleString(`enemies.${enemyId}.lore`);
+    const baseLore =
+      getLocaleString(`enemies.${enemyId}.lore`) ??
+      getLocaleString(`enemies.${enemyId}.loreEntries.1`) ??
+      localizedEntry?.lore ??
+      localizedEntry?.loreEntries[0];
     if (baseLore) return baseLore;
   }
 

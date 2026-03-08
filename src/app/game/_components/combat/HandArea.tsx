@@ -15,6 +15,7 @@ interface HandAreaProps {
   selectedCardId: string | null;
   pendingInked: boolean;
   onPlayCard: (instanceId: string, useInked: boolean) => void;
+  onDoublePlayCard?: (instanceId: string, useInked: boolean) => void;
   disableCardInteractions?: boolean;
   tutorialPlayableInkedCardId?: string | null;
   isDiscarding?: boolean;
@@ -30,6 +31,7 @@ export function HandArea({
   selectedCardId,
   pendingInked,
   onPlayCard,
+  onDoublePlayCard,
   disableCardInteractions = false,
   tutorialPlayableInkedCardId = null,
   isDiscarding = false,
@@ -146,7 +148,13 @@ export function HandArea({
                     .filter(Boolean)
                     .join(" ")}
                   onClick={() => onPlayCard(card.instanceId, false)}
+                  onDoubleClick={() =>
+                    onDoublePlayCard?.(card.instanceId, false)
+                  }
                   onInkedClick={() => onPlayCard(card.instanceId, true)}
+                  onInkedDoubleClick={() =>
+                    onDoublePlayCard?.(card.instanceId, true)
+                  }
                 />
               </div>
             );
@@ -251,7 +259,11 @@ export function HandArea({
                     : undefined
                 }
                 onClick={() => onPlayCard(card.instanceId, false)}
+                onDoubleClick={() => onDoublePlayCard?.(card.instanceId, false)}
                 onInkedClick={() => onPlayCard(card.instanceId, true)}
+                onInkedDoubleClick={() =>
+                  onDoublePlayCard?.(card.instanceId, true)
+                }
               />
             </div>
           );

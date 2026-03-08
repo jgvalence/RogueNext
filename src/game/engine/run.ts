@@ -11,6 +11,7 @@ import { GAME_CONSTANTS } from "../constants";
 import { enemyDefinitions } from "../data/enemies";
 import { relicDefinitions } from "../data/relics";
 import type { CardUnlockProgress } from "./card-unlocks";
+import { matchesCardCharacter } from "./card-filters";
 import {
   computeUnlockedCardIds,
   onBossKilled,
@@ -71,6 +72,17 @@ function weightedPick<T>(
     if (roll <= 0) return items[i]!;
   }
   return items[items.length - 1]!;
+}
+
+function inferRunCharacterId(starterCards: CardDefinition[]): string {
+  const characterIds = Array.from(
+    new Set(
+      starterCards
+        .map((card) => card.characterId)
+        .filter((characterId): characterId is string => Boolean(characterId))
+    )
+  );
+  return characterIds.length === 1 ? characterIds[0]! : "scribe";
 }
 
 function getEnemySelectionWeight(
@@ -160,6 +172,7 @@ export function createNewRun(
   difficultyMaxByCharacter: Record<string, number> = {},
   firstRunScript: FirstRunScriptState | null = null
 ): RunState {
+  const runCharacterId = inferRunCharacterId(starterCards);
   // Build starter deck instances
   const deck: CardInstance[] = starterCards.map((card) => ({
     instanceId: nanoid(),
@@ -171,7 +184,8 @@ export function createNewRun(
       (card) =>
         card.rarity === "RARE" &&
         !card.isStarterCard &&
-        card.isCollectible !== false
+        card.isCollectible !== false &&
+        matchesCardCharacter(card, runCharacterId)
     );
     if (rarePool.length > 0) {
       const rareCard = rng.pick(rarePool);
@@ -196,12 +210,17 @@ export function createNewRun(
   const startingGold =
     GAME_CONSTANTS.STARTING_GOLD + (metaBonuses?.startingGold ?? 0);
   const extraHp = metaBonuses?.extraHp ?? 0;
-  const unlockProgress = initialUnlockProgress ?? {
+  const baseUnlockProgress = initialUnlockProgress ?? {
     enteredBiomes: { LIBRARY: 1 },
     biomeRunsCompleted: {},
     eliteKillsByBiome: {},
     bossKillsByBiome: {},
+    byCharacter: {},
   };
+  const unlockProgress =
+    availableCharacters.length > 1
+      ? baseUnlockProgress
+      : onEnterBiome(baseUnlockProgress, "LIBRARY", runCharacterId);
   const unlockedCardIdsRaw = allCards
     ? computeUnlockedCardIds(
         allCards,
@@ -217,6 +236,7 @@ export function createNewRun(
     seed,
     status: "IN_PROGRESS",
     runStartedAtMs: Date.now(),
+    activePlayMs: 0,
     floor: 1,
     currentRoom: 0,
     gold: startingGold,
@@ -236,7 +256,7 @@ export function createNewRun(
     map,
     combat: null,
     currentBiome: "LIBRARY",
-    characterId: "scribe",
+    characterId: runCharacterId,
     pendingCharacterChoices:
       availableCharacters.length > 1 ? availableCharacters : null,
     difficultyMaxByCharacter,
@@ -705,7 +725,11 @@ export function applyRunConditionToRun(
   if (!condition) return runState;
 
   const cardMap = new Map(allCards.map((card) => [card.id, card]));
-  const bonusCards = buildConditionStarterCards(normalizedConditionId, cardMap);
+  const activeCharacterId = runState.characterId ?? "scribe";
+  const bonusCards = buildConditionStarterCards(
+    normalizedConditionId,
+    cardMap
+  ).filter((card) => matchesCardCharacter(card, activeCharacterId));
   const bonusDeck: CardInstance[] = bonusCards.map((card) => ({
     instanceId: nanoid(),
     definitionId: card.id,
@@ -736,6 +760,7 @@ export function applyRunConditionToRun(
     (card) =>
       !card.isStarterCard &&
       card.isCollectible !== false &&
+      matchesCardCharacter(card, activeCharacterId) &&
       ((runState.unlockedCardIds?.length ?? 0) === 0 ||
         runState.unlockedCardIds.includes(card.id))
   );
@@ -996,15 +1021,24 @@ export function completeCombat(
     biomeRunsCompleted: {},
     eliteKillsByBiome: {},
     bossKillsByBiome: {},
+    byCharacter: {},
   };
   const roomChoices = runState.map[runState.currentRoom];
   const selectedRoom =
     roomChoices?.find((r) => r.completed) ?? roomChoices?.[0];
   if (selectedRoom?.isElite) {
-    unlockProgress = onEliteKilled(unlockProgress, runState.currentBiome);
+    unlockProgress = onEliteKilled(
+      unlockProgress,
+      runState.currentBiome,
+      runState.characterId
+    );
   }
   if (isBossRoom) {
-    unlockProgress = onBossKilled(unlockProgress, runState.currentBiome);
+    unlockProgress = onBossKilled(
+      unlockProgress,
+      runState.currentBiome,
+      runState.characterId
+    );
   }
   const unlockedCardIdsRaw = computeUnlockedCardIds(
     allCards ?? [],
@@ -1120,8 +1154,10 @@ export function advanceFloor(
       biomeRunsCompleted: {},
       eliteKillsByBiome: {},
       bossKillsByBiome: {},
+      byCharacter: {},
     },
-    biome
+    biome,
+    state.characterId
   );
   const unlockedCardIdsRaw = computeUnlockedCardIds(
     allCards ?? [],

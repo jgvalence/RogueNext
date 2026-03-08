@@ -27,6 +27,12 @@ import {
 type BestiaryFilterBiome = BiomeType | "ALL";
 type BestiaryFilterType = EncounteredEnemyType | "ALL";
 
+const BESTIARY_TYPE_ORDER: Record<EncounteredEnemyType, number> = {
+  NORMAL: 0,
+  ELITE: 1,
+  BOSS: 2,
+};
+
 export interface BestiaryEnemyRow {
   id: string;
   name: string;
@@ -45,10 +51,11 @@ interface BestiaryClientProps {
 }
 
 export function BestiaryClient({ enemies }: BestiaryClientProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const [biomeFilter, setBiomeFilter] = useState<BestiaryFilterBiome>("ALL");
   const [typeFilter, setTypeFilter] = useState<BestiaryFilterType>("ALL");
+  const locale = i18n.resolvedLanguage ?? i18n.language;
 
   const biomeOptions = useMemo(
     () => [
@@ -78,8 +85,22 @@ export function BestiaryClient({ enemies }: BestiaryClientProps) {
         )
         .filter((enemy) =>
           typeFilter === "ALL" ? true : enemy.type === typeFilter
-        ),
-    [enemies, biomeFilter, typeFilter]
+        )
+        .sort((left, right) => {
+          const biomeDelta =
+            BIOME_ORDER.indexOf(left.biome) - BIOME_ORDER.indexOf(right.biome);
+          if (biomeDelta !== 0) return biomeDelta;
+
+          const typeDelta =
+            BESTIARY_TYPE_ORDER[left.type] - BESTIARY_TYPE_ORDER[right.type];
+          if (typeDelta !== 0) return typeDelta;
+
+          return localizeEnemyName(left.id, left.name).localeCompare(
+            localizeEnemyName(right.id, right.name),
+            locale
+          );
+        }),
+    [enemies, biomeFilter, typeFilter, locale]
   );
 
   const discoveredCount = useMemo(
@@ -152,12 +173,9 @@ export function BestiaryClient({ enemies }: BestiaryClientProps) {
                 enemy.type,
                 effectiveKillCount
               );
-              const loreIndex = Math.min(
-                Math.max(
-                  0,
-                  getLoreEntryIndexForKillCount(enemy.type, effectiveKillCount)
-                ),
-                Math.max(0, enemy.loreEntries.length - 1)
+              const loreIndex = Math.max(
+                0,
+                getLoreEntryIndexForKillCount(enemy.type, effectiveKillCount)
               );
               const selectedLoreFallback =
                 enemy.loreEntries[loreIndex] ?? enemy.loreEntries[0] ?? "";

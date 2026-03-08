@@ -12,6 +12,7 @@ import { relicDefinitions } from "../data/relics";
 import { allyDefinitions } from "../data/allies";
 import { usableItemDefinitions, createUsableItemInstance } from "./items";
 import { GAME_CONSTANTS } from "../constants";
+import { matchesCardCharacter } from "./card-filters";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 import { addRelicToRunState } from "./relics";
 
@@ -187,7 +188,8 @@ export function generateShopInventory(
   usableItemCapacity: number = GAME_CONSTANTS.MAX_USABLE_ITEMS,
   unlockedRelicIds?: string[],
   currentAllyIds: string[] = [],
-  allySlots = 0
+  allySlots = 0,
+  characterId?: string
 ): ShopItem[] {
   const items: ShopItem[] = [];
   const lootLuck = getTotalLootLuck(ownedRelicIds);
@@ -206,6 +208,7 @@ export function generateShopInventory(
       (c) =>
         !c.isStarterCard &&
         c.isCollectible !== false &&
+        matchesCardCharacter(c, characterId) &&
         (unlockedCardIds ? unlockedCardIds.includes(c.id) : true)
     ),
     3,
@@ -601,7 +604,8 @@ export function generateStartMerchantOffers(
   runState: RunState,
   allCards: CardDefinition[],
   allAllies: AllyDefinition[],
-  rng: RNG
+  rng: RNG,
+  characterId?: string
 ): StartMerchantOffer[] {
   if (runState.startMerchantCompleted) return [];
   const resourcePool = sanitizeResourcePool(
@@ -616,12 +620,14 @@ export function generateStartMerchantOffers(
     runState.relicIds,
     runState.metaBonuses?.lootLuck ?? 0
   );
+  const activeCharacterId = characterId ?? runState.characterId ?? "scribe";
 
   const cardPool = weightedSampleByRarity(
     allCards.filter(
       (card) =>
         !card.isStarterCard &&
         card.isCollectible !== false &&
+        matchesCardCharacter(card, activeCharacterId) &&
         (unlockedCardIds.size === 0 || unlockedCardIds.has(card.id))
     ),
     8,

@@ -2,11 +2,13 @@ import type { CardDefinition } from "../schemas/cards";
 import { relicDefinitions, type RelicDefinitionData } from "../data/relics";
 import { RELIC_UNLOCK_REQUIREMENTS_FROM_DOC } from "../data/relic-unlocks";
 import { GAME_CONSTANTS } from "../constants";
+import { characterDefinitions } from "../data/characters";
 
 export const MAX_RUN_DIFFICULTY_LEVEL = 5;
 const DIFFICULTY_UNLOCK_KEY = "__RUN_DIFFICULTY_UNLOCKED_MAX";
 const BEST_GOLD_SINGLE_RUN_KEY = "__RUN_BEST_GOLD_SINGLE";
 const BEST_INFINITE_FLOOR_KEY = "__RUN_INFINITE_BEST_FLOOR";
+const CHARACTER_DIFFICULTY_WIN_KEY_PREFIX = "__RUN_CHARACTER_DIFFICULTY_WIN__";
 
 function difficultyUnlockKeyForCharacter(characterId: string): string {
   return `${DIFFICULTY_UNLOCK_KEY}_${characterId}`;
@@ -45,6 +47,11 @@ interface RelicUnlockRequirement {
   totalRuns?: number;
   wonRuns?: number;
   winsByDifficulty?: Record<string, number>;
+  characterWinsByDifficulty?: {
+    characterId: string;
+    difficulty: number;
+    count?: number;
+  };
   bestGoldInSingleRun?: number;
   enemyKills?: {
     enemyId: string;
@@ -62,6 +69,7 @@ export interface RelicUnlockProgress {
   wonRuns: number;
   unlockedDifficultyMax: number;
   winsByDifficulty?: Record<string, number>;
+  characterWinsByDifficulty?: Record<string, Record<string, number>>;
   bestGoldInSingleRun?: number;
   enemyKillCounts?: Record<string, number>;
 }
@@ -116,6 +124,81 @@ export function computeEnemyKillUnlockedRelicIds(
 
 function clampDifficulty(level: number): number {
   return Math.min(MAX_RUN_DIFFICULTY_LEVEL, Math.max(0, Math.floor(level)));
+}
+
+function characterDifficultyWinKey(
+  characterId: string,
+  difficultyLevel: number
+): string {
+  return `${CHARACTER_DIFFICULTY_WIN_KEY_PREFIX}${characterId}__${clampDifficulty(difficultyLevel)}`;
+}
+
+function parseCharacterDifficultyWinKey(key: string): {
+  characterId: string;
+  difficultyLevel: number;
+} | null {
+  if (!key.startsWith(CHARACTER_DIFFICULTY_WIN_KEY_PREFIX)) return null;
+
+  const [characterId, difficultyRaw] = key
+    .slice(CHARACTER_DIFFICULTY_WIN_KEY_PREFIX.length)
+    .split("__");
+  if (!characterId || difficultyRaw == null) return null;
+
+  const difficultyLevel = Number(difficultyRaw);
+  if (!Number.isInteger(difficultyLevel)) return null;
+
+  return {
+    characterId,
+    difficultyLevel: clampDifficulty(difficultyLevel),
+  };
+}
+
+export function readCharacterWinsByDifficultyFromResources(
+  resources: Record<string, number>
+): Record<string, Record<string, number>> {
+  const result: Record<string, Record<string, number>> = {};
+
+  for (const [key, rawWins] of Object.entries(resources)) {
+    const parsed = parseCharacterDifficultyWinKey(key);
+    if (!parsed) continue;
+    const characterWins = result[parsed.characterId] ?? {};
+    characterWins[String(parsed.difficultyLevel)] = Math.max(
+      0,
+      Math.floor(rawWins ?? 0)
+    );
+    result[parsed.characterId] = characterWins;
+  }
+
+  // Soft backfill: unlocked max difficulty proves prior clears up to max - 1.
+  for (const character of characterDefinitions) {
+    const maxUnlocked = getUnlockedMaxDifficultyForCharacter(
+      resources,
+      character.id
+    );
+    if (maxUnlocked <= 0) continue;
+    const characterWins = result[character.id] ?? {};
+    for (let difficulty = 0; difficulty < maxUnlocked; difficulty += 1) {
+      characterWins[String(difficulty)] = Math.max(
+        1,
+        Math.floor(characterWins[String(difficulty)] ?? 0)
+      );
+    }
+    result[character.id] = characterWins;
+  }
+
+  return result;
+}
+
+export function recordCharacterDifficultyVictory(
+  resources: Record<string, number>,
+  characterId: string,
+  difficultyLevel: number
+): Record<string, number> {
+  const key = characterDifficultyWinKey(characterId, difficultyLevel);
+  return {
+    ...resources,
+    [key]: Math.max(0, Math.floor(resources[key] ?? 0)) + 1,
+  };
 }
 
 export function getUnlockedMaxDifficultyFromResources(
@@ -342,6 +425,22 @@ export function isRelicUnlocked(
   )) {
     const requiredWins = Math.max(0, Math.floor(requiredWinsRaw));
     if ((winsByDifficulty[difficulty] ?? 0) < requiredWins) {
+      return false;
+    }
+  }
+
+  if (requirements.characterWinsByDifficulty) {
+    const {
+      characterId,
+      difficulty,
+      count = 1,
+    } = requirements.characterWinsByDifficulty;
+    const characterWins =
+      progress.characterWinsByDifficulty?.[characterId] ?? {};
+    const requiredWins = Math.max(0, Math.floor(count));
+    if (
+      (characterWins[String(clampDifficulty(difficulty))] ?? 0) < requiredWins
+    ) {
       return false;
     }
   }

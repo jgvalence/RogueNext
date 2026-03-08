@@ -56,6 +56,7 @@ export async function saveRunStateAction(
 const endRunSchema = z.object({
   runId: z.string(),
   status: z.enum(["VICTORY", "DEFEAT", "ABANDONED"]),
+  runDurationMs: z.number().int().nonnegative().optional(),
   earnedResources: z.record(z.string(), z.number()).optional(),
   startMerchantSpentResources: z.record(z.string(), z.number()).optional(),
   scriptedOutcome: z.enum([FIRST_RUN_ENERGY_TUTORIAL_OUTCOME]).optional(),
@@ -73,6 +74,7 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       userId: user.id!,
       runId: validated.runId,
       status: validated.status,
+      runDurationMs: validated.runDurationMs,
       earnedResources: validated.earnedResources,
       startMerchantSpentResources: validated.startMerchantSpentResources,
       scriptedOutcome: validated.scriptedOutcome,

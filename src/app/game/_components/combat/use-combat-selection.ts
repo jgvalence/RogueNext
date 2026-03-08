@@ -127,6 +127,33 @@ export function useCombatSelection({
     [clearCardSelection, onPlayCard]
   );
 
+  const handleDoublePlayCard = useCallback(
+    (instanceId: string, useInked: boolean) => {
+      if (!canAct) return;
+      const card = combat.hand.find((entry) => entry.instanceId === instanceId);
+      if (!card) return;
+      const def = cardDefs.get(card.definitionId);
+      if (!def || def.targeting !== "SINGLE_ENEMY") return;
+
+      const livingEnemies = combat.enemies.filter(
+        (enemy) => enemy.currentHp > 0
+      );
+      if (livingEnemies.length !== 1) return;
+
+      clearInkPowerTargets();
+      setSelectedUsableItemId(null);
+      triggerCardPlay(instanceId, livingEnemies[0]!.instanceId, useInked);
+    },
+    [
+      canAct,
+      combat.enemies,
+      combat.hand,
+      cardDefs,
+      clearInkPowerTargets,
+      triggerCardPlay,
+    ]
+  );
+
   const handleEnemyClick = useCallback(
     (enemyInstanceId: string) => {
       if (!canAct && !(isSelectingCheatKillTarget && onCheatKillEnemy)) return;
@@ -293,6 +320,7 @@ export function useCombatSelection({
     handleEnemyClick,
     handleAllyClick,
     handlePlayCard,
+    handleDoublePlayCard,
     handleUseItemClick,
     handleGlobalClick,
     clearCardSelection,

@@ -40,6 +40,10 @@ import {
 } from "../engine/run";
 import { generateCombatRewards, addCardToRunDeck } from "../engine/rewards";
 import {
+  generateShopInventory,
+  generateStartMerchantOffers,
+} from "../engine/merchant";
+import {
   applyRelicsOnCardPlayed,
   applyRelicsOnCombatStart,
 } from "../engine/relics";
@@ -48,13 +52,21 @@ import { executeOneEnemyTurn } from "../engine/enemies";
 import {
   computeUnlockedCardIds,
   getCardUnlockDetails,
+  onBossKilled,
+  onEliteKilled,
+  onEnterBiome,
+  readUnlockProgressFromResources,
+  writeUnlockProgressToResources,
 } from "../engine/card-unlocks";
+import type { CardUnlockProgress } from "../engine/card-unlocks";
 import { getLoreEntryIndexForKillCount } from "../engine/bestiary";
 import type { CombatState } from "../schemas/combat-state";
+import type { CardDefinition } from "../schemas/cards";
 import type { Effect } from "../schemas/effects";
 import { DEFAULT_META_BONUSES } from "../schemas/meta";
 import { GAME_CONSTANTS } from "../constants";
 import { buildAllyDefsMap, buildCardDefsMap, buildEnemyDefsMap } from "../data";
+import { getCharacterById } from "../data/characters";
 import { relicDefinitions } from "../data/relics";
 
 // ============================
@@ -129,6 +141,22 @@ function makeMinimalCombat(overrides?: Partial<CombatState>): CombatState {
     },
     ...overrides,
   };
+}
+
+function makeDeterministicRng(seed: string) {
+  return {
+    seed,
+    next: () => 0,
+    nextInt: (min: number, _max: number) => min,
+    shuffle: <T>(arr: readonly T[]) => [...arr],
+    pick: <T>(arr: readonly T[]) => arr[0]!,
+  };
+}
+
+function getStarterCardsForCharacter(characterId: string): CardDefinition[] {
+  return getCharacterById(characterId)
+    .starterDeckIds.map((id) => cardDefs.get(id))
+    .filter((card): card is NonNullable<typeof card> => card != null);
 }
 
 const cardDefs = buildCardDefsMap();
@@ -1411,6 +1439,58 @@ describe("Combat flow", () => {
     expect(nextCombat.allies[0]?.currentHp).toBe(20);
   });
 
+  it("temporary card upgrades do not persist to the next combat", () => {
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const runState = createNewRun(
+      "run-temp-upgrade-reset",
+      "run-temp-upgrade-reset",
+      starterCards,
+      createRNG("run-temp-upgrade-reset")
+    );
+
+    const firstCombat = initCombat(
+      runState,
+      ["ink_slime"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("run-temp-upgrade-reset-1")
+    );
+    expect(firstCombat.hand.length).toBeGreaterThan(0);
+
+    const upgradedCardId = firstCombat.hand[0]!.instanceId;
+    const upgradedCombat = {
+      ...firstCombat,
+      phase: "COMBAT_WON" as const,
+      hand: firstCombat.hand.map((card) =>
+        card.instanceId === upgradedCardId ? { ...card, upgraded: true } : card
+      ),
+    };
+
+    const afterCombat = completeCombat(
+      runState,
+      upgradedCombat,
+      0,
+      createRNG("run-temp-upgrade-reset-2"),
+      { PAGES: 1 },
+      [...cardDefs.values()]
+    );
+
+    expect(afterCombat.deck.some((card) => card.upgraded)).toBe(false);
+
+    const nextCombat = initCombat(
+      afterCombat,
+      ["ink_slime"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("run-temp-upgrade-reset-3")
+    );
+    expect(nextCombat.hand.some((card) => card.upgraded)).toBe(false);
+    expect(nextCombat.drawPile.some((card) => card.upgraded)).toBe(false);
+    expect(nextCombat.discardPile.some((card) => card.upgraded)).toBe(false);
+  });
+
   it("chapter guardian triggers phase 2 once at half HP", () => {
     const rng = createRNG("chapter-phase2");
     const def = enemyDefs.get("chapter_guardian");
@@ -1991,6 +2071,111 @@ describe("Run management", () => {
     );
   });
 
+  it("createNewRun filters starting rare card to the inferred run character", () => {
+    const rng = makeDeterministicRng("new-run-starting-rare");
+    const bibliStarterCards = getStarterCardsForCharacter("bibliothecaire").map(
+      (card) => ({
+        ...card,
+        characterId: "bibliothecaire",
+      })
+    );
+    const scribeRare = cardDefs.get("mythic_blow");
+    const bibliRare = cardDefs.get("saga_keeper");
+    expect(scribeRare).toBeDefined();
+    expect(bibliRare).toBeDefined();
+    if (!scribeRare || !bibliRare) return;
+
+    const run = createNewRun(
+      "run-biblio-starting-rare",
+      "run-biblio-starting-rare",
+      bibliStarterCards,
+      rng,
+      { ...DEFAULT_META_BONUSES, startingRareCard: true },
+      [],
+      undefined,
+      [scribeRare, bibliRare]
+    );
+
+    expect(run.characterId).toBe("bibliothecaire");
+    expect(run.deck.some((card) => card.definitionId === bibliRare.id)).toBe(
+      true
+    );
+    expect(run.deck.some((card) => card.definitionId === scribeRare.id)).toBe(
+      false
+    );
+  });
+
+  it("applyRunConditionToRun filters explicit bonus cards to the current character", () => {
+    const bibliStarterCards = getStarterCardsForCharacter("bibliothecaire");
+    const run = createNewRun(
+      "run-biblio-forbidden-contract",
+      "run-biblio-forbidden-contract",
+      bibliStarterCards,
+      createRNG("run-biblio-forbidden-contract")
+    );
+
+    const applied = applyRunConditionToRun(
+      {
+        ...run,
+        characterId: "bibliothecaire",
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "forbidden_contract",
+          "vanilla_run",
+          "quiet_pockets",
+        ],
+      },
+      "forbidden_contract",
+      createRNG("run-biblio-forbidden-contract-apply"),
+      [...cardDefs.values()]
+    );
+
+    expect(
+      applied.deck.some((card) => card.definitionId === "haunting_regret")
+    ).toBe(true);
+    expect(
+      applied.deck.some((card) => card.definitionId === "mythic_blow")
+    ).toBe(false);
+  });
+
+  it("applyRunConditionToRun filters random replacement pools to the current character", () => {
+    const rng = makeDeterministicRng("run-condition-chaos-draft-biblio");
+    const bibliStarterCards = getStarterCardsForCharacter("bibliothecaire");
+    const scribeRare = cardDefs.get("mythic_blow");
+    const bibliRare = cardDefs.get("saga_keeper");
+    expect(scribeRare).toBeDefined();
+    expect(bibliRare).toBeDefined();
+    if (!scribeRare || !bibliRare) return;
+
+    const run = createNewRun(
+      "run-chaos-biblio",
+      "run-chaos-biblio",
+      bibliStarterCards,
+      createRNG("run-chaos-biblio")
+    );
+    const applied = applyRunConditionToRun(
+      {
+        ...run,
+        characterId: "bibliothecaire",
+        selectedDifficultyLevel: 0,
+        unlockedCardIds: [scribeRare.id, bibliRare.id],
+        pendingRunConditionChoices: [
+          "chaos_draft",
+          "vanilla_run",
+          "quiet_pockets",
+        ],
+      },
+      "chaos_draft",
+      rng,
+      [...bibliStarterCards, scribeRare, bibliRare]
+    );
+
+    expect(applied.deck).toHaveLength(10);
+    expect(
+      applied.deck.every((card) => card.definitionId === bibliRare.id)
+    ).toBe(true);
+  });
+
   it("applyRunConditionToRun battle_manual upgrades two random starter cards", () => {
     const rng = createRNG("run-condition-battle-manual");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
@@ -2362,11 +2547,37 @@ describe("Card unlock rules", () => {
       biomeRunsCompleted: {},
       eliteKillsByBiome: {},
       bossKillsByBiome: {},
+      byCharacter: {},
     };
     const unlocked = computeUnlockedCardIds(shuffled, progress, []);
     expect(unlocked.includes("berserker_charge")).toBe(true);
     expect(unlocked.includes("shield_wall")).toBe(true);
     expect(unlocked.includes("rune_strike")).toBe(false);
+    expect(unlocked.includes("iron_verse")).toBe(false);
+    expect(unlocked.includes("nordic_treatise")).toBe(false);
+  });
+
+  it("unlocks character biome cards only from the matching character progress", () => {
+    const allCards = [...cardDefs.values()];
+    const progress = {
+      enteredBiomes: { LIBRARY: 1 },
+      biomeRunsCompleted: {},
+      eliteKillsByBiome: {},
+      bossKillsByBiome: {},
+      byCharacter: {
+        bibliothecaire: {
+          enteredBiomes: { VIKING: 1 },
+          biomeRunsCompleted: {},
+          eliteKillsByBiome: {},
+          bossKillsByBiome: {},
+        },
+      },
+    };
+
+    const unlocked = computeUnlockedCardIds(allCards, progress, []);
+    expect(unlocked.includes("nordic_treatise")).toBe(true);
+    expect(unlocked.includes("iron_verse")).toBe(false);
+    expect(unlocked.includes("berserker_charge")).toBe(false);
   });
 
   it("returns missing condition for locked cards in details", () => {
@@ -2376,10 +2587,15 @@ describe("Card unlock rules", () => {
       biomeRunsCompleted: {},
       eliteKillsByBiome: {},
       bossKillsByBiome: {},
+      byCharacter: {},
     };
     const details = getCardUnlockDetails(allCards, progress, []);
     expect(details["rune_strike"]?.unlocked).toBe(false);
     expect(details["rune_strike"]?.missingCondition).toContain("elite");
+    expect(details["iron_verse"]?.missingCondition).toContain("avec Scribe");
+    expect(details["nordic_treatise"]?.missingCondition).toContain(
+      "avec Bibliothecaire"
+    );
   });
 
   it("unlocks bestiary enemy cards from per-enemy kill thresholds", () => {
@@ -2389,6 +2605,7 @@ describe("Card unlock rules", () => {
       biomeRunsCompleted: {},
       eliteKillsByBiome: {},
       bossKillsByBiome: {},
+      byCharacter: {},
     };
 
     const locked = computeUnlockedCardIds(allCards, progress, [], {
@@ -2413,6 +2630,7 @@ describe("Card unlock rules", () => {
       biomeRunsCompleted: {},
       eliteKillsByBiome: {},
       bossKillsByBiome: {},
+      byCharacter: {},
     };
     const unlocked = computeUnlockedCardIds(allCards, startProgress, []);
     expect(unlocked.includes("mythic_blow")).toBe(false);
@@ -2426,12 +2644,62 @@ describe("Card unlock rules", () => {
       biomeRunsCompleted: { LIBRARY: 1 },
       eliteKillsByBiome: { LIBRARY: 1 },
       bossKillsByBiome: { LIBRARY: 0 },
+      byCharacter: {},
     };
     const details = getCardUnlockDetails(allCards, progress, []);
     expect(details["forbidden_appendix"]?.unlocked).toBe(false);
     expect(details["forbidden_appendix"]?.progress).toBe("0/2 objectifs");
     expect(details["forbidden_appendix"]?.missingCondition).toContain(
       "grimoire_des_index"
+    );
+  });
+
+  it("tracks and serializes biome progress per character alongside global progress", () => {
+    let progress: CardUnlockProgress = {
+      enteredBiomes: { LIBRARY: 1 },
+      biomeRunsCompleted: {},
+      eliteKillsByBiome: {},
+      bossKillsByBiome: {},
+      byCharacter: {},
+    };
+
+    progress = onEnterBiome(progress, "VIKING", "bibliothecaire");
+    progress = onEliteKilled(progress, "VIKING", "bibliothecaire");
+    progress = onBossKilled(progress, "VIKING", "bibliothecaire");
+
+    expect(progress.enteredBiomes.VIKING).toBe(1);
+    expect(progress.biomeRunsCompleted.VIKING).toBe(1);
+    expect(progress.eliteKillsByBiome.VIKING).toBe(1);
+    expect(progress.bossKillsByBiome.VIKING).toBe(1);
+    expect(progress.byCharacter.bibliothecaire?.enteredBiomes.VIKING).toBe(1);
+    expect(progress.byCharacter.bibliothecaire?.biomeRunsCompleted.VIKING).toBe(
+      1
+    );
+    expect(progress.byCharacter.bibliothecaire?.eliteKillsByBiome.VIKING).toBe(
+      1
+    );
+    expect(progress.byCharacter.bibliothecaire?.bossKillsByBiome.VIKING).toBe(
+      1
+    );
+
+    const restored = readUnlockProgressFromResources(
+      writeUnlockProgressToResources({}, progress)
+    );
+
+    expect(restored.enteredBiomes.LIBRARY).toBe(1);
+    expect(restored.enteredBiomes.VIKING).toBe(1);
+    expect(restored.biomeRunsCompleted.VIKING).toBe(1);
+    expect(restored.eliteKillsByBiome.VIKING).toBe(1);
+    expect(restored.bossKillsByBiome.VIKING).toBe(1);
+    expect(restored.byCharacter?.bibliothecaire?.enteredBiomes.VIKING).toBe(1);
+    expect(
+      restored.byCharacter?.bibliothecaire?.biomeRunsCompleted.VIKING
+    ).toBe(1);
+    expect(restored.byCharacter?.bibliothecaire?.eliteKillsByBiome.VIKING).toBe(
+      1
+    );
+    expect(restored.byCharacter?.bibliothecaire?.bossKillsByBiome.VIKING).toBe(
+      1
     );
   });
 });
@@ -2760,6 +3028,76 @@ describe("Rewards", () => {
 });
 
 // ============================
+// Merchant Tests
+// ============================
+
+describe("Merchant", () => {
+  it("generateShopInventory filters card offers to the current character", () => {
+    const rng = makeDeterministicRng("merchant-character-filter");
+    const scribeRare = cardDefs.get("mythic_blow");
+    const bibliRare = cardDefs.get("saga_keeper");
+    expect(scribeRare).toBeDefined();
+    expect(bibliRare).toBeDefined();
+    if (!scribeRare || !bibliRare) return;
+
+    const inventory = generateShopInventory(
+      1,
+      [scribeRare, bibliRare],
+      [],
+      rng,
+      [scribeRare.id, bibliRare.id],
+      0,
+      0,
+      0,
+      [],
+      GAME_CONSTANTS.MAX_USABLE_ITEMS,
+      undefined,
+      [],
+      0,
+      "bibliothecaire"
+    );
+
+    const offeredCardIds = inventory
+      .filter((item) => item.type === "card")
+      .map((item) => item.cardDef?.id);
+    expect(offeredCardIds).toEqual(["saga_keeper"]);
+  });
+
+  it("generateStartMerchantOffers filters card offers to the active character", () => {
+    const rng = makeDeterministicRng("start-merchant-character-filter");
+    const scribeRare = cardDefs.get("mythic_blow");
+    const bibliRare = cardDefs.get("saga_keeper");
+    expect(scribeRare).toBeDefined();
+    expect(bibliRare).toBeDefined();
+    if (!scribeRare || !bibliRare) return;
+
+    const run = {
+      ...createNewRun(
+        "run-start-merchant-biblio",
+        "run-start-merchant-biblio",
+        getStarterCardsForCharacter("bibliothecaire"),
+        createRNG("start-merchant-base")
+      ),
+      startMerchantResourcePool: { PAGES: 30 },
+      unlockedCardIds: [scribeRare.id, bibliRare.id],
+    };
+
+    const offers = generateStartMerchantOffers(
+      run,
+      [scribeRare, bibliRare],
+      [],
+      rng,
+      "bibliothecaire"
+    );
+
+    const offeredCardIds = offers
+      .filter((offer) => offer.type === "CARD")
+      .map((offer) => offer.cardId);
+    expect(offeredCardIds).toEqual(["saga_keeper"]);
+  });
+});
+
+// ============================
 // Relics Tests
 // ============================
 
@@ -2854,6 +3192,96 @@ describe("Relics", () => {
     expect(result.enemies[1]?.currentHp).toBe(11);
   });
 
+  it("scribe_opening_glyph rewards the first card of the turn based on its type", () => {
+    const attackState = makeMinimalCombat({
+      player: {
+        ...makeMinimalCombat().player,
+        block: 0,
+      },
+    });
+    const attackResult = applyRelicsOnCardPlayed(
+      attackState,
+      ["scribe_opening_glyph"],
+      "ATTACK"
+    );
+    expect(attackResult.player.block).toBe(4);
+
+    const skillState = makeMinimalCombat({
+      player: {
+        ...makeMinimalCombat().player,
+        inkCurrent: 0,
+      },
+    });
+    const skillResult = applyRelicsOnCardPlayed(
+      skillState,
+      ["scribe_opening_glyph"],
+      "SKILL"
+    );
+    expect(skillResult.player.inkCurrent).toBe(1);
+  });
+
+  it("scribe_black_index boosts the first skill and splashes on the first attack", () => {
+    const skillState = makeMinimalCombat({
+      player: {
+        ...makeMinimalCombat().player,
+        energyCurrent: 0,
+      },
+    });
+    const skillResult = applyRelicsOnCardPlayed(
+      skillState,
+      ["scribe_black_index"],
+      "SKILL"
+    );
+    expect(skillResult.player.energyCurrent).toBe(1);
+
+    const attackState = makeMinimalCombat({
+      enemies: [
+        { ...makeMinimalCombat().enemies[0]!, instanceId: "e1" },
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          instanceId: "e2",
+          currentHp: 14,
+          maxHp: 14,
+        },
+      ],
+    });
+    const attackResult = applyRelicsOnCardPlayed(
+      attackState,
+      ["scribe_black_index"],
+      "ATTACK",
+      { targetId: "e1" }
+    );
+    expect(attackResult.enemies[0]?.currentHp).toBe(14);
+    expect(attackResult.enemies[1]?.currentHp).toBe(11);
+  });
+
+  it("bibliothecaire relics reward repeated skill turns", () => {
+    const firstSkill = applyRelicsOnCardPlayed(
+      makeMinimalCombat({
+        drawPile: [
+          { instanceId: "draw-1", definitionId: "strike", upgraded: false },
+        ],
+        player: {
+          ...makeMinimalCombat().player,
+          focus: 0,
+        },
+      }),
+      ["bibliothecaire_quiet_lens", "bibliothecaire_cross_reference"],
+      "SKILL",
+      { rng: createRNG("bibliothecaire-skill-1") }
+    );
+    expect(firstSkill.player.focus).toBe(1);
+    expect(firstSkill.hand).toHaveLength(0);
+
+    const secondSkill = applyRelicsOnCardPlayed(
+      firstSkill,
+      ["bibliothecaire_quiet_lens", "bibliothecaire_cross_reference"],
+      "SKILL",
+      { rng: createRNG("bibliothecaire-skill-2") }
+    );
+    expect(secondSkill.hand.map((card) => card.instanceId)).toContain("draw-1");
+  });
+
   it("phoenix_ash heals at turn start", () => {
     const state = makeMinimalCombat({
       phase: "ALLIES_ENEMIES_TURN",
@@ -2878,6 +3306,37 @@ describe("Relics", () => {
     });
     const result = endPlayerTurn(state, ["ink_spindle"]);
     expect(result.player.focus).toBe(1);
+  });
+
+  it("bibliothecaire_grand_catalogue banks energy for the next turn", () => {
+    const endState = endPlayerTurn(
+      makeMinimalCombat({
+        hand: [
+          { instanceId: "c1", definitionId: "strike", upgraded: false },
+          { instanceId: "c2", definitionId: "defend", upgraded: false },
+        ],
+        player: {
+          ...makeMinimalCombat().player,
+          focus: 0,
+          block: 0,
+        },
+        relicCounters: {
+          turn_skill_count: 2,
+        },
+      }),
+      ["bibliothecaire_grand_catalogue"]
+    );
+
+    expect(endState.player.focus).toBe(1);
+    expect(endState.player.block).toBe(4);
+    expect(endState.relicCounters?.next_turn_energy_bonus).toBe(1);
+
+    const nextTurn = startPlayerTurn(
+      endState,
+      createRNG("bibliothecaire-grand-catalogue"),
+      ["bibliothecaire_grand_catalogue"]
+    );
+    expect(nextTurn.player.energyCurrent).toBe(4);
   });
 });
 

@@ -701,9 +701,6 @@ function applyBossAbilityMechanics(
       if (ability.name === "Page Storm") {
         current = summonEnemyIfPossible(current, "ink_slime", enemyDefs);
       }
-      if (ability.name === "Binding Curse") {
-        current = addCardsToDiscardPile(current, "hexed_parchment", 1);
-      }
       if (ability.name === "Ink Devour") {
         current = applyBonusDamageFromCurseCount(
           current,

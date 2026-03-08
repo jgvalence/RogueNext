@@ -523,6 +523,28 @@ function formatIntentEffects(
           </span>
         );
         break;
+
+      case "ADD_CARD_TO_DRAW":
+        parts.push(
+          <span
+            key={`adddraw-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-indigo-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-200 lg:text-[11px]"
+          >
+            {t("gameCard.effect.addToDraw")}
+          </span>
+        );
+        break;
+
+      case "ADD_CARD_TO_DISCARD":
+        parts.push(
+          <span
+            key={`adddiscard-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-semibold text-slate-100 lg:text-[11px]"
+          >
+            {t("gameCard.effect.addToDiscard")}
+          </span>
+        );
+        break;
     }
   }
 

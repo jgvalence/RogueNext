@@ -25,7 +25,9 @@ interface GameCardProps {
   isFrozen?: boolean;
   upgraded?: boolean;
   onClick?: () => void;
+  onDoubleClick?: () => void;
   onInkedClick?: () => void;
+  onInkedDoubleClick?: () => void;
   size?: "sm" | "md";
   className?: string;
 }
@@ -70,7 +72,9 @@ export function GameCard({
   isFrozen = false,
   upgraded = false,
   onClick,
+  onDoubleClick,
   onInkedClick,
+  onInkedDoubleClick,
   size = "md",
   className,
 }: GameCardProps) {
@@ -125,6 +129,7 @@ export function GameCard({
         className
       )}
       onClick={canPlay ? onClick : undefined}
+      onDoubleClick={canPlay ? onDoubleClick : undefined}
     >
       {upgraded && (
         <>
@@ -269,6 +274,10 @@ export function GameCard({
               onClick={(e) => {
                 e.stopPropagation();
                 onInkedClick?.();
+              }}
+              onDoubleClick={(e) => {
+                e.stopPropagation();
+                onInkedDoubleClick?.();
               }}
             >
               + {t("gameCard.labels.ink")} (

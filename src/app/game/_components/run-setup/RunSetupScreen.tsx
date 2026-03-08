@@ -8,6 +8,10 @@ import type { AllyDefinition } from "@/game/schemas/entities";
 import type { RunState } from "@/game/schemas/run-state";
 import { createRNG } from "@/game/engine/rng";
 import {
+  computeUnlockedCardIds,
+  onEnterBiome,
+} from "@/game/engine/card-unlocks";
+import {
   generateStartMerchantOffers,
   getRemainingStartMerchantResources,
   type StartMerchantOffer,
@@ -108,16 +112,6 @@ export function RunSetupScreen({
 }: RunSetupScreenProps) {
   const { t } = useTranslation();
 
-  const offers = useMemo(
-    () =>
-      generateStartMerchantOffers(
-        runState,
-        [...cardDefs.values()],
-        [...allyDefs.values()],
-        createRNG(`${runState.seed}-start-merchant`)
-      ),
-    [runState, cardDefs, allyDefs]
-  );
   const initialCharacterId = runState.characterId ?? "scribe";
   const initialDifficulty = runState.selectedDifficultyLevel;
   const initialSelectedOfferIds = useMemo(
@@ -136,6 +130,58 @@ export function RunSetupScreen({
   >(null);
   const [draftSelectedOfferIds, setDraftSelectedOfferIds] = useState<string[]>(
     initialSelectedOfferIds
+  );
+  const draftUnlockProgress = useMemo(
+    () =>
+      onEnterBiome(
+        runState.cardUnlockProgress ?? {
+          enteredBiomes: {},
+          biomeRunsCompleted: {},
+          eliteKillsByBiome: {},
+          bossKillsByBiome: {},
+          byCharacter: {},
+        },
+        runState.currentBiome ?? "LIBRARY",
+        draftCharacterId
+      ),
+    [runState.cardUnlockProgress, runState.currentBiome, draftCharacterId]
+  );
+  const draftUnlockedCardIds = useMemo(
+    () =>
+      computeUnlockedCardIds(
+        [...cardDefs.values()],
+        draftUnlockProgress,
+        runState.unlockedStoryIdsSnapshot ?? [],
+        runState.enemyKillCounts ?? {}
+      ),
+    [
+      cardDefs,
+      draftUnlockProgress,
+      runState.unlockedStoryIdsSnapshot,
+      runState.enemyKillCounts,
+    ]
+  );
+  const offers = useMemo(
+    () =>
+      generateStartMerchantOffers(
+        {
+          ...runState,
+          cardUnlockProgress: draftUnlockProgress,
+          unlockedCardIds: draftUnlockedCardIds,
+        },
+        [...cardDefs.values()],
+        [...allyDefs.values()],
+        createRNG(`${runState.seed}-start-merchant`),
+        draftCharacterId
+      ),
+    [
+      runState,
+      cardDefs,
+      allyDefs,
+      draftCharacterId,
+      draftUnlockProgress,
+      draftUnlockedCardIds,
+    ]
   );
 
   const selectedConditionId = normalizeRunConditionId(

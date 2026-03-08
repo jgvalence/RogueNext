@@ -182,7 +182,7 @@ export function CombatDesktopGrid({
               />
               <p className="mt-1 pr-10 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
                 {Math.max(0, ally.currentHp)}/{ally.maxHp}
-                {ally.block > 0 ? ` � ${t("combat.block")} ${ally.block}` : ""}
+                {ally.block > 0 ? ` | ${t("combat.block")} ${ally.block}` : ""}
               </p>
               <ArmorBadge block={ally.block} highlight={isArmorTutorialStep} />
             </button>
@@ -259,7 +259,7 @@ export function CombatDesktopGrid({
           <p className="mt-1 pr-10 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
             {Math.max(0, combat.player.currentHp)}/{combat.player.maxHp}
             {combat.player.block > 0
-              ? ` � ${t("combat.block")} ${combat.player.block}`
+              ? ` | ${t("combat.block")} ${combat.player.block}`
               : ""}
           </p>
           <ArmorBadge
@@ -435,7 +435,7 @@ export function CombatDesktopGrid({
               <p className="mt-1 pr-10 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
                 {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
                 {enemy.block > 0
-                  ? ` � ${t("combat.block")} ${enemy.block}`
+                  ? ` | ${t("combat.block")} ${enemy.block}`
                   : ""}
               </p>
               <ArmorBadge block={enemy.block} highlight={isArmorTutorialStep} />

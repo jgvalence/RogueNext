@@ -2,6 +2,11 @@ export interface RelicUnlockRequirementData {
   totalRuns?: number;
   wonRuns?: number;
   winsByDifficulty?: Record<string, number>;
+  characterWinsByDifficulty?: {
+    characterId: string;
+    difficulty: number;
+    count?: number;
+  };
   bestGoldInSingleRun?: number;
   enemyKills?: {
     enemyId: string;
@@ -197,5 +202,50 @@ export const RELIC_UNLOCK_REQUIREMENTS_FROM_DOC: Record<
   global_labyrinth_spiral: {
     bestGoldInSingleRun: 400,
     winsByDifficulty: { "5": 1 },
+  },
+  scribe_opening_glyph: {
+    characterWinsByDifficulty: { characterId: "scribe", difficulty: 1 },
+  },
+  scribe_last_word: {
+    characterWinsByDifficulty: { characterId: "scribe", difficulty: 2 },
+  },
+  scribe_warfolio: {
+    characterWinsByDifficulty: { characterId: "scribe", difficulty: 3 },
+  },
+  scribe_sealed_edition: {
+    characterWinsByDifficulty: { characterId: "scribe", difficulty: 4 },
+  },
+  scribe_black_index: {
+    characterWinsByDifficulty: { characterId: "scribe", difficulty: 5 },
+  },
+  bibliothecaire_margin_tabs: {
+    characterWinsByDifficulty: {
+      characterId: "bibliothecaire",
+      difficulty: 1,
+    },
+  },
+  bibliothecaire_quiet_lens: {
+    characterWinsByDifficulty: {
+      characterId: "bibliothecaire",
+      difficulty: 2,
+    },
+  },
+  bibliothecaire_cross_reference: {
+    characterWinsByDifficulty: {
+      characterId: "bibliothecaire",
+      difficulty: 3,
+    },
+  },
+  bibliothecaire_restricted_index: {
+    characterWinsByDifficulty: {
+      characterId: "bibliothecaire",
+      difficulty: 4,
+    },
+  },
+  bibliothecaire_grand_catalogue: {
+    characterWinsByDifficulty: {
+      characterId: "bibliothecaire",
+      difficulty: 5,
+    },
   },
 };

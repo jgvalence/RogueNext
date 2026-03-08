@@ -5,11 +5,17 @@ import { CardInstanceSchema } from "./cards";
 import { ComputedMetaBonusesSchema } from "./meta";
 import { UsableItemInstanceSchema } from "./items";
 
-const CardUnlockProgressSchema = z.object({
+const CharacterCardUnlockProgressSchema = z.object({
   enteredBiomes: z.record(z.string(), z.number().int()).default({}),
   biomeRunsCompleted: z.record(z.string(), z.number().int()).default({}),
   eliteKillsByBiome: z.record(z.string(), z.number().int()).default({}),
   bossKillsByBiome: z.record(z.string(), z.number().int()).default({}),
+});
+
+const CardUnlockProgressSchema = CharacterCardUnlockProgressSchema.extend({
+  byCharacter: z
+    .record(z.string(), CharacterCardUnlockProgressSchema)
+    .default({}),
 });
 
 const EncounteredEnemyTypeSchema = z.enum(["NORMAL", "ELITE", "BOSS"]);
@@ -41,6 +47,7 @@ export const RunStateSchema = z.object({
   seed: z.string(),
   status: RunStatus,
   runStartedAtMs: z.number().int().nonnegative().default(0),
+  activePlayMs: z.number().int().nonnegative().default(0),
   floor: z.number().int().default(1),
   currentRoom: z.number().int().default(0),
   gold: z.number().int().default(0),

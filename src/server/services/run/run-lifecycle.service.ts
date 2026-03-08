@@ -19,6 +19,7 @@ export interface EndRunForUserInput {
   userId: string;
   runId: string;
   status: RunCompletionStatus;
+  runDurationMs?: number;
   earnedResources?: Record<string, number>;
   startMerchantSpentResources?: Record<string, number>;
   scriptedOutcome?: "FIRST_RUN_ENERGY_TUTORIAL";
@@ -67,6 +68,7 @@ export async function endRunForUser(
     userId: input.userId,
     run,
     status: input.status,
+    runDurationMs: input.runDurationMs,
     earnedResources: input.earnedResources,
     startMerchantSpentResources: input.startMerchantSpentResources,
     scriptedOutcome: input.scriptedOutcome,

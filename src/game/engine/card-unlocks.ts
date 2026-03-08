@@ -1,11 +1,15 @@
 import type { CardDefinition } from "../schemas/cards";
 import type { BiomeType } from "../schemas/enums";
 
-export interface CardUnlockProgress {
+export interface BiomeUnlockProgress {
   enteredBiomes: Record<string, number>;
   biomeRunsCompleted: Record<string, number>;
   eliteKillsByBiome: Record<string, number>;
   bossKillsByBiome: Record<string, number>;
+}
+
+export interface CardUnlockProgress extends BiomeUnlockProgress {
+  byCharacter: Record<string, BiomeUnlockProgress>;
 }
 
 export type CardUnlockRule =
@@ -39,6 +43,18 @@ const BIOMES: BiomeType[] = [
 
 const BESTIARY_NORMAL_UNLOCK_PREFIX = "bestiary_normal_";
 const BESTIARY_ELITE_UNLOCK_PREFIX = "bestiary_elite_";
+const BIOME_SET = new Set<BiomeType>(BIOMES);
+const CHARACTER_PROGRESS_KEY_PREFIX = "__CARD_UNLOCK_CHAR__";
+const CHARACTER_PROGRESS_METRICS = {
+  BIOME_ENTERED: "enteredBiomes",
+  BIOME_RUNS: "biomeRunsCompleted",
+  BIOME_ELITE_KILLS: "eliteKillsByBiome",
+  BIOME_BOSS_KILLS: "bossKillsByBiome",
+} as const;
+
+type CharacterProgressMetric = keyof typeof CHARACTER_PROGRESS_METRICS;
+type BiomeProgressField =
+  (typeof CHARACTER_PROGRESS_METRICS)[CharacterProgressMetric];
 
 // Explicit unlock rules by card id.
 // Any non-LIBRARY collectible card must appear here.
@@ -325,7 +341,7 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   cosmic_spider: { type: "BIOME_BOSS_KILLS", biome: "AFRICAN", count: 2 },
 };
 
-function defaultProgress(): CardUnlockProgress {
+function defaultBiomeProgress(): BiomeUnlockProgress {
   return {
     enteredBiomes: {},
     biomeRunsCompleted: {},
@@ -334,8 +350,100 @@ function defaultProgress(): CardUnlockProgress {
   };
 }
 
+function defaultProgress(): CardUnlockProgress {
+  return {
+    ...defaultBiomeProgress(),
+    byCharacter: {},
+  };
+}
+
 function progressKey(prefix: string, biome: BiomeType): string {
   return `__${prefix}_${biome}`;
+}
+
+function characterProgressKey(
+  characterId: string,
+  metric: CharacterProgressMetric,
+  biome: BiomeType
+): string {
+  return `${CHARACTER_PROGRESS_KEY_PREFIX}${characterId}__${metric}__${biome}`;
+}
+
+function parseCharacterProgressKey(key: string): {
+  characterId: string;
+  metric: CharacterProgressMetric;
+  biome: BiomeType;
+} | null {
+  if (!key.startsWith(CHARACTER_PROGRESS_KEY_PREFIX)) return null;
+
+  const [characterId, metricRaw, biomeRaw] = key
+    .slice(CHARACTER_PROGRESS_KEY_PREFIX.length)
+    .split("__");
+  if (!characterId || !metricRaw || !biomeRaw) return null;
+  if (!(metricRaw in CHARACTER_PROGRESS_METRICS)) return null;
+  if (!BIOME_SET.has(biomeRaw as BiomeType)) return null;
+
+  return {
+    characterId,
+    metric: metricRaw as CharacterProgressMetric,
+    biome: biomeRaw as BiomeType,
+  };
+}
+
+function cloneBiomeProgress(
+  progress?: Partial<BiomeUnlockProgress> | null
+): BiomeUnlockProgress {
+  return {
+    enteredBiomes: { ...(progress?.enteredBiomes ?? {}) },
+    biomeRunsCompleted: { ...(progress?.biomeRunsCompleted ?? {}) },
+    eliteKillsByBiome: { ...(progress?.eliteKillsByBiome ?? {}) },
+    bossKillsByBiome: { ...(progress?.bossKillsByBiome ?? {}) },
+  };
+}
+
+function getCharacterBiomeProgress(
+  progress: CardUnlockProgress,
+  characterId: string
+): BiomeUnlockProgress {
+  return cloneBiomeProgress(progress.byCharacter[characterId]);
+}
+
+function getBiomeProgressForCard(
+  card: Pick<CardDefinition, "characterId">,
+  progress: CardUnlockProgress
+): BiomeUnlockProgress {
+  return card.characterId
+    ? getCharacterBiomeProgress(progress, card.characterId)
+    : progress;
+}
+
+function formatCharacterLabel(characterId: string): string {
+  switch (characterId) {
+    case "scribe":
+      return "Scribe";
+    case "bibliothecaire":
+      return "Bibliothecaire";
+    default:
+      return characterId;
+  }
+}
+
+function isBiomeRule(rule: CardUnlockRule): boolean {
+  return (
+    rule.type === "BIOME_FIRST_ENTRY" ||
+    rule.type === "BIOME_ELITE_KILLS" ||
+    rule.type === "BIOME_BOSS_KILLS" ||
+    rule.type === "BIOME_RUNS_COMPLETED"
+  );
+}
+
+function formatRuleConditionWithCharacter(
+  condition: string,
+  rule: CardUnlockRule,
+  card: Pick<CardDefinition, "characterId">
+): string {
+  if (!card.characterId || !isBiomeRule(rule)) return condition;
+  return `${condition} avec ${formatCharacterLabel(card.characterId)}`;
 }
 
 export function readUnlockProgressFromResources(
@@ -357,6 +465,22 @@ export function readUnlockProgressFromResources(
     1,
     progress.enteredBiomes.LIBRARY ?? 0
   );
+  for (const [key, rawValue] of Object.entries(resources)) {
+    const parsed = parseCharacterProgressKey(key);
+    if (!parsed) continue;
+    const characterProgress = getCharacterBiomeProgress(
+      progress,
+      parsed.characterId
+    );
+    const field = CHARACTER_PROGRESS_METRICS[
+      parsed.metric
+    ] as BiomeProgressField;
+    characterProgress[field][parsed.biome] = rawValue ?? 0;
+    progress.byCharacter = {
+      ...progress.byCharacter,
+      [parsed.characterId]: characterProgress,
+    };
+  }
   return progress;
 }
 
@@ -374,6 +498,21 @@ export function writeUnlockProgressToResources(
       progress.eliteKillsByBiome[biome] ?? 0;
     next[progressKey("BIOME_BOSS_KILLS", biome)] =
       progress.bossKillsByBiome[biome] ?? 0;
+  }
+  for (const [characterId, rawCharacterProgress] of Object.entries(
+    progress.byCharacter
+  )) {
+    const characterProgress = cloneBiomeProgress(rawCharacterProgress);
+    for (const biome of BIOMES) {
+      next[characterProgressKey(characterId, "BIOME_ENTERED", biome)] =
+        characterProgress.enteredBiomes[biome] ?? 0;
+      next[characterProgressKey(characterId, "BIOME_RUNS", biome)] =
+        characterProgress.biomeRunsCompleted[biome] ?? 0;
+      next[characterProgressKey(characterId, "BIOME_ELITE_KILLS", biome)] =
+        characterProgress.eliteKillsByBiome[biome] ?? 0;
+      next[characterProgressKey(characterId, "BIOME_BOSS_KILLS", biome)] =
+        characterProgress.bossKillsByBiome[biome] ?? 0;
+    }
   }
   return next;
 }
@@ -439,6 +578,7 @@ function getGeneratedBestiaryRule(cardId: string): CardUnlockRule | null {
 
 function isRuleUnlocked(
   rule: CardUnlockRule | undefined,
+  card: Pick<CardDefinition, "characterId">,
   progress: CardUnlockProgress,
   unlockedStoryIds: string[],
   enemyKillCounts: Record<string, number>
@@ -448,20 +588,34 @@ function isRuleUnlocked(
     case "ALWAYS":
       return true;
     case "BIOME_FIRST_ENTRY":
-      return (progress.enteredBiomes[rule.biome] ?? 0) >= 1;
+      return (
+        (getBiomeProgressForCard(card, progress).enteredBiomes[rule.biome] ??
+          0) >= 1
+      );
     case "BIOME_ELITE_KILLS":
-      return (progress.eliteKillsByBiome[rule.biome] ?? 0) >= rule.count;
+      return (
+        (getBiomeProgressForCard(card, progress).eliteKillsByBiome[
+          rule.biome
+        ] ?? 0) >= rule.count
+      );
     case "BIOME_BOSS_KILLS":
-      return (progress.bossKillsByBiome[rule.biome] ?? 0) >= rule.count;
+      return (
+        (getBiomeProgressForCard(card, progress).bossKillsByBiome[rule.biome] ??
+          0) >= rule.count
+      );
     case "BIOME_RUNS_COMPLETED":
-      return (progress.biomeRunsCompleted[rule.biome] ?? 0) >= rule.count;
+      return (
+        (getBiomeProgressForCard(card, progress).biomeRunsCompleted[
+          rule.biome
+        ] ?? 0) >= rule.count
+      );
     case "ENEMY_KILLS":
       return (enemyKillCounts[rule.enemyId] ?? 0) >= rule.count;
     case "STORY_UNLOCK":
       return unlockedStoryIds.includes(rule.storyId);
     case "ALL_OF":
       return rule.rules.every((r) =>
-        isRuleUnlocked(r, progress, unlockedStoryIds, enemyKillCounts)
+        isRuleUnlocked(r, card, progress, unlockedStoryIds, enemyKillCounts)
       );
   }
 }
@@ -470,40 +624,61 @@ function formatBiome(biome: BiomeType): string {
   return biome;
 }
 
-function formatRuleCondition(rule: CardUnlockRule): string {
+function formatRuleCondition(
+  rule: CardUnlockRule,
+  card: Pick<CardDefinition, "characterId">
+): string {
   switch (rule.type) {
     case "ALWAYS":
       return "Toujours debloquee";
     case "BIOME_FIRST_ENTRY":
-      return `Entrer dans le biome ${formatBiome(rule.biome)} (1 fois)`;
+      return formatRuleConditionWithCharacter(
+        `Entrer dans le biome ${formatBiome(rule.biome)} (1 fois)`,
+        rule,
+        card
+      );
     case "BIOME_ELITE_KILLS":
-      return `Tuer ${rule.count} elite dans ${formatBiome(rule.biome)}`;
+      return formatRuleConditionWithCharacter(
+        `Tuer ${rule.count} elite dans ${formatBiome(rule.biome)}`,
+        rule,
+        card
+      );
     case "BIOME_BOSS_KILLS":
-      return `Tuer ${rule.count} boss dans ${formatBiome(rule.biome)}`;
+      return formatRuleConditionWithCharacter(
+        `Tuer ${rule.count} boss dans ${formatBiome(rule.biome)}`,
+        rule,
+        card
+      );
     case "BIOME_RUNS_COMPLETED":
-      return `Finir ${rule.count} run(s) dans ${formatBiome(rule.biome)}`;
+      return formatRuleConditionWithCharacter(
+        `Finir ${rule.count} run(s) dans ${formatBiome(rule.biome)}`,
+        rule,
+        card
+      );
     case "ENEMY_KILLS":
       return `Tuer ${rule.count}x ${rule.enemyId}`;
     case "STORY_UNLOCK":
       return `Debloquer l'histoire ${rule.storyId}`;
     case "ALL_OF":
-      return rule.rules.map((r) => formatRuleCondition(r)).join(" + ");
+      return rule.rules.map((r) => formatRuleCondition(r, card)).join(" + ");
   }
 }
 
 function getMissingRule(
   rule: CardUnlockRule,
+  card: Pick<CardDefinition, "characterId">,
   progress: CardUnlockProgress,
   unlockedStoryIds: string[],
   enemyKillCounts: Record<string, number>
 ): CardUnlockRule | null {
-  if (isRuleUnlocked(rule, progress, unlockedStoryIds, enemyKillCounts)) {
+  if (isRuleUnlocked(rule, card, progress, unlockedStoryIds, enemyKillCounts)) {
     return null;
   }
   if (rule.type !== "ALL_OF") return rule;
   for (const subRule of rule.rules) {
     const missing = getMissingRule(
       subRule,
+      card,
       progress,
       unlockedStoryIds,
       enemyKillCounts
@@ -515,6 +690,7 @@ function getMissingRule(
 
 function formatRuleProgress(
   rule: CardUnlockRule,
+  card: Pick<CardDefinition, "characterId">,
   progress: CardUnlockProgress,
   unlockedStoryIds: string[],
   enemyKillCounts: Record<string, number>
@@ -523,27 +699,34 @@ function formatRuleProgress(
     case "ALWAYS":
       return null;
     case "BIOME_FIRST_ENTRY": {
-      const current = Math.min(1, progress.enteredBiomes[rule.biome] ?? 0);
+      const current = Math.min(
+        1,
+        getBiomeProgressForCard(card, progress).enteredBiomes[rule.biome] ?? 0
+      );
       return `${current}/1`;
     }
     case "BIOME_ELITE_KILLS": {
       const current = Math.min(
         rule.count,
-        progress.eliteKillsByBiome[rule.biome] ?? 0
+        getBiomeProgressForCard(card, progress).eliteKillsByBiome[rule.biome] ??
+          0
       );
       return `${current}/${rule.count}`;
     }
     case "BIOME_BOSS_KILLS": {
       const current = Math.min(
         rule.count,
-        progress.bossKillsByBiome[rule.biome] ?? 0
+        getBiomeProgressForCard(card, progress).bossKillsByBiome[rule.biome] ??
+          0
       );
       return `${current}/${rule.count}`;
     }
     case "BIOME_RUNS_COMPLETED": {
       const current = Math.min(
         rule.count,
-        progress.biomeRunsCompleted[rule.biome] ?? 0
+        getBiomeProgressForCard(card, progress).biomeRunsCompleted[
+          rule.biome
+        ] ?? 0
       );
       return `${current}/${rule.count}`;
     }
@@ -556,7 +739,7 @@ function formatRuleProgress(
     case "ALL_OF": {
       const total = rule.rules.length;
       const done = rule.rules.filter((r) =>
-        isRuleUnlocked(r, progress, unlockedStoryIds, enemyKillCounts)
+        isRuleUnlocked(r, card, progress, unlockedStoryIds, enemyKillCounts)
       ).length;
       return `${done}/${total} objectifs`;
     }
@@ -576,6 +759,7 @@ export function computeUnlockedCardIds(
     if (
       isRuleUnlocked(
         ruleByCardId.get(card.id),
+        card,
         progress,
         unlockedStoryIds,
         enemyKillCounts
@@ -601,19 +785,23 @@ export function getCardUnlockDetails(
     const rule = ruleByCardId.get(card.id) ?? { type: "ALWAYS" as const };
     const unlocked = isRuleUnlocked(
       rule,
+      card,
       progress,
       unlockedStoryIds,
       enemyKillCounts
     );
     const missingRule = unlocked
       ? null
-      : getMissingRule(rule, progress, unlockedStoryIds, enemyKillCounts);
+      : getMissingRule(rule, card, progress, unlockedStoryIds, enemyKillCounts);
     result[card.id] = {
       unlocked,
-      condition: formatRuleCondition(rule),
-      missingCondition: missingRule ? formatRuleCondition(missingRule) : null,
+      condition: formatRuleCondition(rule, card),
+      missingCondition: missingRule
+        ? formatRuleCondition(missingRule, card)
+        : null,
       progress: formatRuleProgress(
         rule,
+        card,
         progress,
         unlockedStoryIds,
         enemyKillCounts
@@ -626,35 +814,70 @@ export function getCardUnlockDetails(
 
 export function onEnterBiome(
   progress: CardUnlockProgress,
-  biome: BiomeType
+  biome: BiomeType,
+  characterId?: string
 ): CardUnlockProgress {
-  return {
+  const nextProgress: CardUnlockProgress = {
     ...progress,
     enteredBiomes: {
       ...progress.enteredBiomes,
       [biome]: Math.max(1, progress.enteredBiomes[biome] ?? 0),
     },
   };
+  if (!characterId) return nextProgress;
+
+  const characterProgress = getCharacterBiomeProgress(progress, characterId);
+  return {
+    ...nextProgress,
+    byCharacter: {
+      ...progress.byCharacter,
+      [characterId]: {
+        ...characterProgress,
+        enteredBiomes: {
+          ...characterProgress.enteredBiomes,
+          [biome]: Math.max(1, characterProgress.enteredBiomes[biome] ?? 0),
+        },
+      },
+    },
+  };
 }
 
 export function onEliteKilled(
   progress: CardUnlockProgress,
-  biome: BiomeType
+  biome: BiomeType,
+  characterId?: string
 ): CardUnlockProgress {
-  return {
+  const nextProgress: CardUnlockProgress = {
     ...progress,
     eliteKillsByBiome: {
       ...progress.eliteKillsByBiome,
       [biome]: (progress.eliteKillsByBiome[biome] ?? 0) + 1,
     },
   };
+  if (!characterId) return nextProgress;
+
+  const characterProgress = getCharacterBiomeProgress(progress, characterId);
+  return {
+    ...nextProgress,
+    byCharacter: {
+      ...progress.byCharacter,
+      [characterId]: {
+        ...characterProgress,
+        eliteKillsByBiome: {
+          ...characterProgress.eliteKillsByBiome,
+          [biome]: (characterProgress.eliteKillsByBiome[biome] ?? 0) + 1,
+        },
+      },
+    },
+  };
 }
 
 export function onBossKilled(
   progress: CardUnlockProgress,
-  biome: BiomeType
+  biome: BiomeType,
+  characterId?: string
 ): CardUnlockProgress {
-  return {
+  const nextProgress: CardUnlockProgress = {
     ...progress,
     bossKillsByBiome: {
       ...progress.bossKillsByBiome,
@@ -663,6 +886,26 @@ export function onBossKilled(
     biomeRunsCompleted: {
       ...progress.biomeRunsCompleted,
       [biome]: (progress.biomeRunsCompleted[biome] ?? 0) + 1,
+    },
+  };
+  if (!characterId) return nextProgress;
+
+  const characterProgress = getCharacterBiomeProgress(progress, characterId);
+  return {
+    ...nextProgress,
+    byCharacter: {
+      ...progress.byCharacter,
+      [characterId]: {
+        ...characterProgress,
+        bossKillsByBiome: {
+          ...characterProgress.bossKillsByBiome,
+          [biome]: (characterProgress.bossKillsByBiome[biome] ?? 0) + 1,
+        },
+        biomeRunsCompleted: {
+          ...characterProgress.biomeRunsCompleted,
+          [biome]: (characterProgress.biomeRunsCompleted[biome] ?? 0) + 1,
+        },
+      },
     },
   };
 }

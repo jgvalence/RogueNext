@@ -302,6 +302,7 @@ export function CombatView({
     handleAllyClick,
     handleMobileAllyPress,
     handlePlayCard,
+    handleDoublePlayCard,
     handleUseItemClick,
     handleOpenDrawPile,
     handleOpenDiscardPile,
@@ -526,6 +527,7 @@ export function CombatView({
         selectedCardId={selectedCardId}
         pendingInked={pendingInked}
         onPlayCard={handlePlayCard}
+        onDoublePlayCard={handleDoublePlayCard}
         isDiscarding={isDiscarding}
         playingCardId={playingCardId}
         drawBtnRef={drawBtnRef}

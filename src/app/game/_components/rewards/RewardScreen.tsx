@@ -342,6 +342,10 @@ function formatEffect(effect: Effect, t: TFunction): string {
       });
     case "DRAIN_INK":
       return t("reward.effect.drainInk", { value: effect.value });
+    case "ADD_CARD_TO_DRAW":
+      return t("gameCard.effect.addToDraw");
+    case "ADD_CARD_TO_DISCARD":
+      return t("gameCard.effect.addToDiscard");
     default:
       return t("reward.effect.fallback", {
         type: effect.type.toLowerCase(),

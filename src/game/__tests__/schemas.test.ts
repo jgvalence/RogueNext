@@ -253,6 +253,7 @@ describe("RunStateSchema", () => {
     expect(result.currentRoom).toBe(0);
     expect(result.gold).toBe(0);
     expect(result.runStartedAtMs).toBe(0);
+    expect(result.activePlayMs).toBe(0);
     expect(result.allyIds).toEqual([]);
     expect(result.relicIds).toEqual([]);
     expect(result.combat).toBeNull();

@@ -32,6 +32,7 @@ interface UseCombatOutcomeParams {
   cardDefs: Map<string, CardDefinition>;
   isInfiniteMode: boolean;
   buildEndRunPayload: () => {
+    runDurationMs?: number;
     earnedResources?: Record<string, number>;
     startMerchantSpentResources?: Record<string, number>;
     encounteredEnemies?: Record<string, "NORMAL" | "ELITE" | "BOSS">;

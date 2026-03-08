@@ -12,6 +12,7 @@ import {
 } from "@/lib/query/hooks/use-game-data";
 import { GameProvider, useGame } from "../_providers/game-provider";
 import { useAutoSave } from "../_hooks/use-auto-save";
+import { useActiveRunDuration } from "../_hooks/use-active-run-duration";
 import { useCombatTurnFlow } from "../_hooks/use-combat-turn-flow";
 import { useCombatOutcome } from "../_hooks/use-combat-outcome";
 import { useCombatDebugInfo } from "../_hooks/use-combat-debug-info";
@@ -162,20 +163,23 @@ function GameContent({
     cancelEnemyTurnFlow,
   } = useCombatTurnFlow({ dispatch, stateRef });
   const isInfiniteMode = isInfiniteRunConditionId(state.selectedRunConditionId);
+  const isDevBuild = process.env.NODE_ENV !== "production";
+  const usableItemDefs = useMemo(() => getUsableItemDefinitionsMap(), []);
+  const showGuidedFirstRunMapTutorial = shouldShowFirstRunMapTutorial(state);
+  const forcedFirstRunMapChoiceIndex = getFirstRunForcedMapChoiceIndex(state);
+  const { elapsedMs, getCurrentDurationMs, buildStateSnapshot } =
+    useActiveRunDuration(state.activePlayMs);
   const buildEndRunPayload = useCallback(
     () => ({
+      runDurationMs: getCurrentDurationMs(),
       earnedResources: isInfiniteMode ? {} : stateRef.current.earnedResources,
       startMerchantSpentResources:
         stateRef.current.startMerchantSpentResources ?? {},
       encounteredEnemies: stateRef.current.encounteredEnemies ?? {},
       enemyKillCounts: stateRef.current.enemyKillCounts ?? {},
     }),
-    [isInfiniteMode]
+    [getCurrentDurationMs, isInfiniteMode]
   );
-  const isDevBuild = process.env.NODE_ENV !== "production";
-  const usableItemDefs = useMemo(() => getUsableItemDefinitionsMap(), []);
-  const showGuidedFirstRunMapTutorial = shouldShowFirstRunMapTutorial(state);
-  const forcedFirstRunMapChoiceIndex = getFirstRunForcedMapChoiceIndex(state);
 
   const newBestiaryEntryNames = useMemo(
     () =>
@@ -185,7 +189,7 @@ function GameContent({
     [newBestiaryEntries, enemyDefs]
   );
 
-  useAutoSave(state);
+  useAutoSave(state, buildStateSnapshot);
 
   // Music — start/stop based on phase, clean up on unmount
   useEffect(() => {
@@ -313,7 +317,7 @@ function GameContent({
   });
 
   return (
-    <GameLayout onAbandonRun={handleAbandonRun}>
+    <GameLayout elapsedMs={elapsedMs} onAbandonRun={handleAbandonRun}>
       <div
         className={cn(
           "flex min-h-0 flex-col",
@@ -487,6 +491,7 @@ function GameContent({
             }
             selectedDifficultyLevel={state.selectedDifficultyLevel ?? 0}
             relicDiscount={state.metaBonuses?.relicDiscount ?? 0}
+            characterId={state.characterId ?? "scribe"}
             cardDefs={cardDefs}
             rng={rng}
             deck={state.deck}

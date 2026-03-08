@@ -1068,4 +1068,71 @@ export const relicDefinitions: RelicDefinitionData[] = [
       "Bonus cyclique par tour: T1 +1 Energy, T2 +1 draw, T3 +1 Strength, puis recommence.",
     rarity: "BOSS",
   },
+  {
+    id: "scribe_opening_glyph",
+    name: "Glyphe d Ouverture",
+    description:
+      "Premiere carte de chaque tour: si ATTACK, gagnez 4 Block; si SKILL, gagnez 1 Ink.",
+    rarity: "COMMON",
+  },
+  {
+    id: "scribe_last_word",
+    name: "Dernier Mot",
+    description:
+      "Premiere fois que votre main devient vide dans un tour: gagnez 1 Focus.",
+    rarity: "COMMON",
+  },
+  {
+    id: "scribe_warfolio",
+    name: "Folio de Guerre",
+    description:
+      "Fin de tour: si vous avez joue au moins 4 cartes ce tour, gagnez 1 Ink et 5 Block.",
+    rarity: "UNCOMMON",
+  },
+  {
+    id: "scribe_sealed_edition",
+    name: "Edition Scellee",
+    description:
+      "Toutes les 6 cartes jouees en combat: gagnez 1 Energy et piochez 1.",
+    rarity: "RARE",
+  },
+  {
+    id: "scribe_black_index",
+    name: "Index Noir",
+    description:
+      "Chaque tour, la premiere SKILL donne +1 Energy et la premiere ATTACK inflige 3 degats aux autres ennemis.",
+    rarity: "RARE",
+  },
+  {
+    id: "bibliothecaire_margin_tabs",
+    name: "Onglets de Marge",
+    description:
+      "Fin de tour: si vous gardez au moins 3 cartes en main, gagnez 5 Block.",
+    rarity: "COMMON",
+  },
+  {
+    id: "bibliothecaire_quiet_lens",
+    name: "Lentille Silencieuse",
+    description: "Premiere SKILL de chaque tour: gagnez 1 Focus.",
+    rarity: "COMMON",
+  },
+  {
+    id: "bibliothecaire_cross_reference",
+    name: "Renvoi Croise",
+    description: "Toutes les 2 SKILL jouees dans un tour: piochez 1.",
+    rarity: "UNCOMMON",
+  },
+  {
+    id: "bibliothecaire_restricted_index",
+    name: "Index Restreint",
+    description: "A la 3e SKILL d un tour: gagnez 1 Energy et 6 Block.",
+    rarity: "RARE",
+  },
+  {
+    id: "bibliothecaire_grand_catalogue",
+    name: "Grand Catalogue",
+    description:
+      "Fin de tour: si vous avez joue au moins 2 SKILL et gardez au moins 2 cartes en main, gagnez 1 Focus, 4 Block et +1 Energy au prochain tour.",
+    rarity: "RARE",
+  },
 ];

@@ -30,10 +30,15 @@ function formatRunDuration(totalMs: number): string {
 
 interface GameLayoutProps {
   children: ReactNode;
+  elapsedMs: number;
   onAbandonRun?: () => void | Promise<void>;
 }
 
-export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
+export function GameLayout({
+  children,
+  elapsedMs,
+  onAbandonRun,
+}: GameLayoutProps) {
   const { t, i18n } = useTranslation();
   const { state, cardDefs } = useGame();
   const [muted, setMuted] = useState(false);
@@ -42,9 +47,6 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
   const [showRules, setShowRules] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [elapsedMs, setElapsedMs] = useState(() =>
-    Math.max(0, Date.now() - (state.runStartedAtMs ?? Date.now()))
-  );
 
   useEffect(() => {
     const syncFullscreenState = () => {
@@ -55,15 +57,6 @@ export function GameLayout({ children, onAbandonRun }: GameLayoutProps) {
     return () =>
       document.removeEventListener("fullscreenchange", syncFullscreenState);
   }, []);
-
-  useEffect(() => {
-    const runStart = state.runStartedAtMs ?? Date.now();
-    const updateElapsed = () =>
-      setElapsedMs(Math.max(0, Date.now() - runStart));
-    updateElapsed();
-    const interval = window.setInterval(updateElapsed, 1000);
-    return () => window.clearInterval(interval);
-  }, [state.runStartedAtMs]);
 
   const ownedRelics = state.relicIds
     .map((id) => relicDefinitions.find((r) => r.id === id))

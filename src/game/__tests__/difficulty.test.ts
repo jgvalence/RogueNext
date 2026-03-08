@@ -11,9 +11,11 @@ import {
   getDifficultyModifiers,
   getEnemyStartingBlock,
   getPostFloorFiveEscalation,
+  isRelicUnlocked,
+  readCharacterWinsByDifficultyFromResources,
+  recordCharacterDifficultyVictory,
   getUnlockedDifficultyLevels,
   getUnlockedMaxDifficultyFromResources,
-  isRelicUnlocked,
   shouldHideEnemyIntent,
   unlockNextDifficultyOnVictory,
   updateBestInfiniteFloor,
@@ -81,6 +83,64 @@ describe("Run difficulty progression", () => {
       "menders_charm",
       "global_codex_prime",
     ]);
+  });
+
+  it("unlocks character difficulty relics only for the matching character", () => {
+    let resources = unlockNextDifficultyOnVictory({}, 0, "scribe");
+    resources = unlockNextDifficultyOnVictory(resources, 1, "scribe");
+    resources = recordCharacterDifficultyVictory(resources, "scribe", 1);
+    const characterWinsByDifficulty =
+      readCharacterWinsByDifficultyFromResources(resources);
+
+    expect(
+      isRelicUnlocked("scribe_opening_glyph", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 5,
+        characterWinsByDifficulty,
+      })
+    ).toBe(true);
+
+    expect(
+      isRelicUnlocked("bibliothecaire_margin_tabs", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 5,
+        characterWinsByDifficulty,
+      })
+    ).toBe(false);
+  });
+
+  it("soft-backfills character clears from unlocked difficulty max for prior wins", () => {
+    const resources = {
+      __RUN_DIFFICULTY_UNLOCKED_MAX_scribe: 3,
+    };
+    const characterWinsByDifficulty =
+      readCharacterWinsByDifficultyFromResources(resources);
+
+    expect(characterWinsByDifficulty.scribe).toMatchObject({
+      "0": 1,
+      "1": 1,
+      "2": 1,
+    });
+
+    expect(
+      isRelicUnlocked("scribe_last_word", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 5,
+        characterWinsByDifficulty,
+      })
+    ).toBe(true);
+
+    expect(
+      isRelicUnlocked("scribe_warfolio", {
+        totalRuns: 0,
+        wonRuns: 0,
+        unlockedDifficultyMax: 5,
+        characterWinsByDifficulty,
+      })
+    ).toBe(false);
   });
 
   it("tracks and uses best gold from a single run for relic unlocks", () => {

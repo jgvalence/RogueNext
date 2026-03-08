@@ -13,6 +13,7 @@ import { readEnemyKillCountsFromResources } from "@/game/engine/bestiary";
 import {
   computeUnlockedRelicIds,
   getBestGoldInSingleRun,
+  readCharacterWinsByDifficultyFromResources,
   getUnlockedMaxDifficultyFromResources,
 } from "@/game/engine/difficulty";
 import { relicDefinitions } from "@/game/data/relics";
@@ -89,6 +90,9 @@ export default async function CardCollectionPage() {
           progression.resources
         ),
         winsByDifficulty: progression.winsByDifficulty ?? {},
+        characterWinsByDifficulty: readCharacterWinsByDifficultyFromResources(
+          progression.resources
+        ),
         bestGoldInSingleRun: getBestGoldInSingleRun(progression.resources),
         enemyKillCounts,
       }

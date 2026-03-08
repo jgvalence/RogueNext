@@ -30,6 +30,10 @@ import {
 } from "@/game/engine/relics";
 import { drawCards, exhaustCardFromHandForOverflow } from "@/game/engine/deck";
 import {
+  computeUnlockedCardIds,
+  onEnterBiome,
+} from "@/game/engine/card-unlocks";
+import {
   selectRoom,
   applyDifficultyToRun,
   applyRunConditionToRun,
@@ -52,6 +56,7 @@ import {
   type StartMerchantOffer,
 } from "@/game/engine/merchant";
 import { applyUsableItem } from "@/game/engine/items";
+import { matchesCardCharacter } from "@/game/engine/card-filters";
 import { getCharacterById } from "@/game/data/characters";
 import { ensureFirstCombatTutorialInkedCardInHand } from "@/game/engine/first-combat-tutorial";
 import { applyFirstRunOpeningCombatAdvantage } from "@/game/engine/first-run-script";
@@ -463,6 +468,23 @@ export function createGameReducer(deps: ReducerDeps) {
 
       case "CHOOSE_CHARACTER": {
         const char = getCharacterById(action.payload.characterId);
+        const nextUnlockProgress = onEnterBiome(
+          state.cardUnlockProgress ?? {
+            enteredBiomes: {},
+            biomeRunsCompleted: {},
+            eliteKillsByBiome: {},
+            bossKillsByBiome: {},
+            byCharacter: {},
+          },
+          state.currentBiome ?? "LIBRARY",
+          char.id
+        );
+        const unlockedCardIds = computeUnlockedCardIds(
+          [...cardDefs.values()],
+          nextUnlockProgress,
+          state.unlockedStoryIdsSnapshot ?? [],
+          state.enemyKillCounts ?? {}
+        );
         const newDeck = char.starterDeckIds
           .map((id) => cardDefs.get(id))
           .filter((def): def is NonNullable<typeof def> => def != null)
@@ -476,7 +498,8 @@ export function createGameReducer(deps: ReducerDeps) {
             (card) =>
               card.rarity === "RARE" &&
               !card.isStarterCard &&
-              card.isCollectible !== false
+              card.isCollectible !== false &&
+              matchesCardCharacter(card, char.id)
           );
           if (rarePool.length > 0) {
             const rareCard = rng.pick(rarePool);
@@ -500,6 +523,8 @@ export function createGameReducer(deps: ReducerDeps) {
           ...state,
           characterId: char.id,
           deck: newDeck,
+          unlockedCardIds,
+          cardUnlockProgress: nextUnlockProgress,
           pendingCharacterChoices: null,
           pendingDifficultyLevels: charDiffLevels,
           selectedDifficultyLevel: null,

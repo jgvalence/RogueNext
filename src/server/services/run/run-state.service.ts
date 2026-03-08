@@ -17,6 +17,7 @@ import { readUnlockProgressFromResources } from "@/game/engine/card-unlocks";
 import {
   computeUnlockedRelicIds,
   getBestGoldInSingleRun,
+  readCharacterWinsByDifficultyFromResources,
   getUnlockedDifficultyLevelsForCharacter,
   getUnlockedMaxDifficultyForCharacter,
   getUnlockedMaxDifficultyFromResources,
@@ -83,6 +84,8 @@ export async function buildInitialRunStateForUser(
       wonRuns: progression?.wonRuns ?? 0,
       unlockedDifficultyMax: unlockedDifficultyLevelMax,
       winsByDifficulty,
+      characterWinsByDifficulty:
+        readCharacterWinsByDifficultyFromResources(resources),
       bestGoldInSingleRun: getBestGoldInSingleRun(resources),
       enemyKillCounts: initialEnemyKillCounts,
     }
@@ -194,6 +197,8 @@ export async function getActiveRunSnapshotForUser(
       wonRuns: progression?.wonRuns ?? 0,
       unlockedDifficultyMax: unlockedDifficultyLevelMax,
       winsByDifficulty,
+      characterWinsByDifficulty:
+        readCharacterWinsByDifficultyFromResources(resources),
       bestGoldInSingleRun: getBestGoldInSingleRun(resources),
       enemyKillCounts: mergedEnemyKillCounts,
     }
@@ -238,6 +243,7 @@ export async function getActiveRunSnapshotForUser(
   const stateWithFreshBonuses: RunState = {
     ...state,
     currentRoom: normalizedCurrentRoom,
+    activePlayMs: Math.max(0, state.activePlayMs ?? 0),
     playerMaxHp: normalizedHp.playerMaxHp,
     playerCurrentHp: normalizedHp.playerCurrentHp,
     runStartedAtMs:

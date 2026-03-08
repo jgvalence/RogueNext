@@ -1454,6 +1454,48 @@ export function applyRelicsOnTurnEnd(
           };
         }
         break;
+      case "scribe_warfolio":
+        if (getCounter(current, "turn_cards_played") >= 4) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              inkCurrent: Math.min(
+                current.player.inkMax,
+                current.player.inkCurrent + 1
+              ),
+              block: current.player.block + 5,
+            },
+          };
+        }
+        break;
+      case "bibliothecaire_margin_tabs":
+        if (current.hand.length >= 3) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              block: current.player.block + 5,
+            },
+          };
+        }
+        break;
+      case "bibliothecaire_grand_catalogue":
+        if (
+          getCounter(current, "turn_skill_count") >= 2 &&
+          current.hand.length >= 2
+        ) {
+          current = incrementCounter(current, "next_turn_energy_bonus", 1);
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              focus: current.player.focus + 1,
+              block: current.player.block + 4,
+            },
+          };
+        }
+        break;
     }
   }
 
@@ -1539,6 +1581,8 @@ export function applyRelicsOnCardPlayed(
     cardType === "ATTACK" && getCounter(current, "turn_attack_count") === 1;
   const firstAttackThisCombat =
     cardType === "ATTACK" && getCounter(current, "combat_attack_count") === 1;
+  const firstSkillThisTurn =
+    cardType === "SKILL" && getCounter(current, "turn_skill_count") === 1;
 
   if (
     cardType === "SKILL" &&
@@ -1611,6 +1655,110 @@ export function applyRelicsOnCardPlayed(
             player: {
               ...current.player,
               block: current.player.block + 2,
+            },
+          };
+        }
+        break;
+
+      case "scribe_opening_glyph":
+        if (getCounter(current, "turn_cards_played") === 1) {
+          if (cardType === "ATTACK") {
+            current = {
+              ...current,
+              player: {
+                ...current.player,
+                block: current.player.block + 4,
+              },
+            };
+          }
+          if (cardType === "SKILL") {
+            current = {
+              ...current,
+              player: {
+                ...current.player,
+                inkCurrent: Math.min(
+                  current.player.inkMax,
+                  current.player.inkCurrent + 1
+                ),
+              },
+            };
+          }
+        }
+        break;
+
+      case "scribe_sealed_edition":
+        if (getCounter(current, "combat_cards_played") % 6 === 0) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              energyCurrent: current.player.energyCurrent + 1,
+            },
+          };
+          if (rng) {
+            current = drawCards(
+              current,
+              1,
+              rng,
+              "SYSTEM",
+              "RELIC_SCRIBE_SEALED_EDITION"
+            );
+          }
+        }
+        break;
+
+      case "scribe_black_index":
+        if (firstSkillThisTurn) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              energyCurrent: current.player.energyCurrent + 1,
+            },
+          };
+        }
+        break;
+
+      case "bibliothecaire_quiet_lens":
+        if (firstSkillThisTurn) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              focus: current.player.focus + 1,
+            },
+          };
+        }
+        break;
+
+      case "bibliothecaire_cross_reference":
+        if (
+          cardType === "SKILL" &&
+          getCounter(current, "turn_skill_count") > 0 &&
+          getCounter(current, "turn_skill_count") % 2 === 0 &&
+          rng
+        ) {
+          current = drawCards(
+            current,
+            1,
+            rng,
+            "SYSTEM",
+            "RELIC_BIBLIOTHECAIRE_CROSS_REFERENCE"
+          );
+        }
+        break;
+
+      case "bibliothecaire_restricted_index":
+        if (
+          cardType === "SKILL" &&
+          getCounter(current, "turn_skill_count") === 3
+        ) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              energyCurrent: current.player.energyCurrent + 1,
+              block: current.player.block + 6,
             },
           };
         }
@@ -1863,6 +2011,9 @@ export function applyRelicsOnCardPlayed(
     if (relicIds.includes("greek_cyclops_iris") && firstAttackThisTurn) {
       applyDamageToAllEnemies(3, targetAfter.instanceId);
     }
+    if (relicIds.includes("scribe_black_index") && firstAttackThisTurn) {
+      applyDamageToAllEnemies(3, targetAfter.instanceId);
+    }
   }
 
   if (targetBlockBroken && relicIds.includes("greek_minotaur_labrys")) {
@@ -1995,6 +2146,19 @@ export function applyRelicsOnCardPlayed(
     current.hand.length === 0 &&
     current.phase === "PLAYER_TURN";
   if (handBecameEmpty) {
+    if (
+      relicIds.includes("scribe_last_word") &&
+      getCounter(current, "turn_empty_hand_draws") === 0
+    ) {
+      current = {
+        ...current,
+        player: {
+          ...current.player,
+          focus: current.player.focus + 1,
+        },
+      };
+      current = incrementCounter(current, "turn_empty_hand_draws", 1);
+    }
     if (relicIds.includes("russian_snow_charm")) {
       const drawsThisTurn = getCounter(current, "turn_snow_charm_draws");
       if (drawsThisTurn < 2 && rng) {

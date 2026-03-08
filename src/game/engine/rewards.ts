@@ -8,6 +8,7 @@ import { getResourcesForCombat } from "./meta";
 import { relicDefinitions, type RelicDefinitionData } from "../data/relics";
 import { allyDefinitions } from "../data/allies";
 import type { AllyDefinition } from "../schemas/entities";
+import { matchesCardCharacter } from "./card-filters";
 import { eliteCanDropRelic } from "./difficulty";
 import { pickRandomUsableItemDefinitionId } from "./items";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
@@ -78,7 +79,7 @@ export function generateCombatRewards(
       !c.isStarterCard &&
       c.isCollectible !== false &&
       (c.biome === biome || c.biome === "LIBRARY") &&
-      (!c.characterId || !characterId || c.characterId === characterId) &&
+      matchesCardCharacter(c, characterId) &&
       (unlockedCardIds ? unlockedCardIds.includes(c.id) : true)
   );
   const shuffledCards = rng.shuffle(lootableCards);

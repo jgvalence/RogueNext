@@ -27,6 +27,10 @@ import {
   localizeCardName,
   localizeCardType,
 } from "@/lib/i18n/card-text";
+import {
+  localizeRelicDescription,
+  localizeRelicName,
+} from "@/lib/i18n/entity-text";
 import { RogueButton } from "@/components/ui/rogue";
 
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
@@ -524,10 +528,13 @@ function EventRoom({
               "font-semibold tracking-wide text-amber-100"
             )}
           >
-            {relicPreview.name}
+            {localizeRelicName(relicPreview.id, relicPreview.name)}
           </p>
           <p className="mt-1 text-xs leading-relaxed text-amber-200/55">
-            {relicPreview.description}
+            {localizeRelicDescription(
+              relicPreview.id,
+              relicPreview.description
+            )}
           </p>
         </div>
       )}

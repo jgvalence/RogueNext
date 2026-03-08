@@ -26,6 +26,7 @@ interface CombatPlayerZoneProps {
   selectedCardId: string | null;
   pendingInked: boolean;
   onPlayCard: (instanceId: string, useInked: boolean) => void;
+  onDoublePlayCard: (instanceId: string, useInked: boolean) => void;
   isDiscarding: boolean;
   playingCardId: string | null;
   drawBtnRef: RefObject<HTMLButtonElement | null>;
@@ -66,6 +67,7 @@ export function CombatPlayerZone({
   selectedCardId,
   pendingInked,
   onPlayCard,
+  onDoublePlayCard,
   isDiscarding,
   playingCardId,
   drawBtnRef,
@@ -191,6 +193,7 @@ export function CombatPlayerZone({
               selectedCardId={selectedCardId}
               pendingInked={pendingInked}
               onPlayCard={onPlayCard}
+              onDoublePlayCard={onDoublePlayCard}
               disableCardInteractions={disableCardInteractions}
               tutorialPlayableInkedCardId={tutorialPlayableInkedCardId}
               isDiscarding={isDiscarding}

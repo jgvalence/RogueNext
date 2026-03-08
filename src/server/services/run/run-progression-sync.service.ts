@@ -13,6 +13,7 @@ import {
   writeUnlockProgressToResources,
 } from "@/game/engine/card-unlocks";
 import {
+  recordCharacterDifficultyVictory,
   unlockNextDifficultyOnVictory,
   updateBestGoldInSingleRun,
   updateBestInfiniteFloor,
@@ -30,6 +31,7 @@ const EMPTY_CARD_UNLOCK_PROGRESS = {
   biomeRunsCompleted: {},
   eliteKillsByBiome: {},
   bossKillsByBiome: {},
+  byCharacter: {},
 };
 
 const SCRIBE_RESOURCE_KEYS: Record<string, string> = {
@@ -49,6 +51,7 @@ export interface SyncRunEndProgressionInput {
   userId: string;
   run: Run;
   status: "VICTORY" | "DEFEAT" | "ABANDONED";
+  runDurationMs?: number;
   earnedResources?: Record<string, number>;
   startMerchantSpentResources?: Record<string, number>;
   scriptedOutcome?: "FIRST_RUN_ENERGY_TUTORIAL";
@@ -98,6 +101,54 @@ function mergeProgressMap(
   }
 }
 
+function mergeCharacterProgressMap(
+  target: Record<
+    string,
+    {
+      enteredBiomes: Record<string, number>;
+      biomeRunsCompleted: Record<string, number>;
+      eliteKillsByBiome: Record<string, number>;
+      bossKillsByBiome: Record<string, number>;
+    }
+  >,
+  source:
+    | Record<
+        string,
+        {
+          enteredBiomes: Record<string, number>;
+          biomeRunsCompleted: Record<string, number>;
+          eliteKillsByBiome: Record<string, number>;
+          bossKillsByBiome: Record<string, number>;
+        }
+      >
+    | undefined
+): void {
+  if (!source) return;
+
+  for (const [characterId, characterProgress] of Object.entries(source)) {
+    const nextTarget = target[characterId] ?? {
+      enteredBiomes: {},
+      biomeRunsCompleted: {},
+      eliteKillsByBiome: {},
+      bossKillsByBiome: {},
+    };
+    mergeProgressMap(nextTarget.enteredBiomes, characterProgress.enteredBiomes);
+    mergeProgressMap(
+      nextTarget.biomeRunsCompleted,
+      characterProgress.biomeRunsCompleted
+    );
+    mergeProgressMap(
+      nextTarget.eliteKillsByBiome,
+      characterProgress.eliteKillsByBiome
+    );
+    mergeProgressMap(
+      nextTarget.bossKillsByBiome,
+      characterProgress.bossKillsByBiome
+    );
+    target[characterId] = nextTarget;
+  }
+}
+
 function buildStandardRunResources(
   currentResources: Record<string, number>,
   runState: RunState,
@@ -112,6 +163,7 @@ function buildStandardRunResources(
     biomeRunsCompleted: { ...currentUnlockProgress.biomeRunsCompleted },
     eliteKillsByBiome: { ...currentUnlockProgress.eliteKillsByBiome },
     bossKillsByBiome: { ...currentUnlockProgress.bossKillsByBiome },
+    byCharacter: { ...(currentUnlockProgress.byCharacter ?? {}) },
   };
 
   mergeProgressMap(
@@ -130,6 +182,10 @@ function buildStandardRunResources(
     mergedUnlockProgress.bossKillsByBiome,
     runUnlockProgress.bossKillsByBiome
   );
+  mergeCharacterProgressMap(
+    mergedUnlockProgress.byCharacter,
+    runUnlockProgress.byCharacter
+  );
 
   const resourcesWithUnlocks = writeUnlockProgressToResources(
     currentResources,
@@ -146,9 +202,17 @@ function buildStandardRunResources(
           characterIdForUnlock
         )
       : resourcesWithUnlocks;
+  const resourcesWithCharacterDifficultyWin =
+    status === "VICTORY"
+      ? recordCharacterDifficultyVictory(
+          resourcesWithDifficultyUnlock,
+          characterIdForUnlock,
+          difficultyLevelForUnlock
+        )
+      : resourcesWithDifficultyUnlock;
 
   return updateBestGoldInSingleRun(
-    resourcesWithDifficultyUnlock,
+    resourcesWithCharacterDifficultyWin,
     Math.max(runState.maxGoldReached ?? 0, runState.gold ?? 0)
   );
 }
@@ -245,7 +309,14 @@ export async function syncRunEndProgression(
     },
   });
 
-  const runDurationMs = Math.max(0, Date.now() - input.run.createdAt.getTime());
+  const runDurationMs = Math.max(
+    0,
+    Math.floor(
+      input.runDurationMs ??
+        runState.activePlayMs ??
+        Date.now() - input.run.createdAt.getTime()
+    )
+  );
   await incrementRunStatsInternal(input.userId, input.status, 1, {
     difficultyLevel: runState.selectedDifficultyLevel ?? 0,
     runDurationMs,

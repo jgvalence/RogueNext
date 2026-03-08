@@ -205,6 +205,14 @@ export function renderEnemyIntentEffects(
         });
         colorClass = "bg-purple-900/70 text-purple-200";
         break;
+      case "ADD_CARD_TO_DRAW":
+        label = t("gameCard.effect.addToDraw");
+        colorClass = "bg-indigo-950/80 text-indigo-200";
+        break;
+      case "ADD_CARD_TO_DISCARD":
+        label = t("gameCard.effect.addToDiscard");
+        colorClass = "bg-slate-800 text-slate-100";
+        break;
       default:
         label = t("reward.effect.fallback", {
           type: effect.type.toLowerCase(),
@@ -266,6 +274,10 @@ export function formatAllyIntent(
         });
       case "DRAIN_INK":
         return t("reward.effect.drainInk", { value: effect.value });
+      case "ADD_CARD_TO_DRAW":
+        return t("gameCard.effect.addToDraw");
+      case "ADD_CARD_TO_DISCARD":
+        return t("gameCard.effect.addToDiscard");
       default:
         return t("reward.effect.fallback", {
           type: effect.type.toLowerCase(),
@@ -326,6 +338,10 @@ export function buildMobileEnemyIntentChips(
         return `BUF ${effect.value}`;
       case "DRAIN_INK":
         return `INK-${effect.value}`;
+      case "ADD_CARD_TO_DRAW":
+        return translate("gameCard.effect.addToDraw");
+      case "ADD_CARD_TO_DISCARD":
+        return translate("gameCard.effect.addToDiscard");
       default:
         return `${effect.type.slice(0, 3)} ${effect.value}`;
     }

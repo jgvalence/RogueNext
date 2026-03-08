@@ -37,6 +37,7 @@ interface ShopViewProps {
   unlockedDifficultyLevelSnapshot: number;
   selectedDifficultyLevel: number;
   relicDiscount: number;
+  characterId: string;
   cardDefs: Map<string, CardDefinition>;
   rng: RNG;
   deck: CardInstance[];
@@ -72,6 +73,7 @@ export function ShopView({
   unlockedDifficultyLevelSnapshot,
   selectedDifficultyLevel,
   relicDiscount,
+  characterId,
   cardDefs,
   rng,
   deck,
@@ -111,7 +113,8 @@ export function ShopView({
         usableItemCapacity,
         unlockedRelicIds,
         allyIds,
-        allySlots
+        allySlots,
+        characterId
       ),
     [
       floor,
@@ -123,6 +126,7 @@ export function ShopView({
       unlockedDifficultyLevelSnapshot,
       selectedDifficultyLevel,
       relicDiscount,
+      characterId,
       usableItems,
       usableItemCapacity,
       allyIds,
@@ -160,7 +164,8 @@ export function ShopView({
             usableItemCapacity,
             unlockedRelicIds,
             allyIds,
-            allySlots
+            allySlots,
+            characterId
           )
         );
         setSoldIds(new Set());
@@ -199,7 +204,8 @@ export function ShopView({
         usableItemCapacity,
         unlockedRelicIds,
         allyIds,
-        allySlots
+        allySlots,
+        characterId
       )
     );
     setSoldIds(new Set());
