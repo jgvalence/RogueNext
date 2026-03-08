@@ -24,6 +24,7 @@ interface GameCardProps {
   isPendingInked?: boolean;
   isFrozen?: boolean;
   upgraded?: boolean;
+  costModifier?: number;
   onClick?: () => void;
   onDoubleClick?: () => void;
   onInkedClick?: () => void;
@@ -71,6 +72,7 @@ export function GameCard({
   isPendingInked = false,
   isFrozen = false,
   upgraded = false,
+  costModifier = 0,
   onClick,
   onDoubleClick,
   onInkedClick,
@@ -82,6 +84,11 @@ export function GameCard({
   const displayDefinition = upgraded
     ? buildUpgradedCardDefinition(definition)
     : definition;
+  const displayedEnergyCost = Math.max(
+    0,
+    displayDefinition.energyCost + costModifier
+  );
+  const hasModifiedCost = costModifier > 0;
   const isMd = size === "md";
   const artH = isMd ? "h-9 lg:h-14 xl:h-[72px]" : "h-8 lg:h-12 xl:h-14";
   const inkBtnVariant = isPendingInked
@@ -140,12 +147,16 @@ export function GameCard({
 
       <div
         className={cn(
-          "absolute -left-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-900 bg-amber-500 text-[10px] font-black text-white shadow-md lg:-left-1.5 lg:-top-1.5 lg:h-7 lg:w-7 lg:text-sm",
+          "absolute -left-1 -top-1 z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-900 text-[10px] font-black shadow-md lg:-left-1.5 lg:-top-1.5 lg:h-7 lg:w-7 lg:text-sm",
+          hasModifiedCost
+            ? "bg-gradient-to-br from-amber-300 to-orange-500 text-slate-950"
+            : "bg-amber-500 text-white",
           upgraded &&
+            !hasModifiedCost &&
             "border-amber-100 bg-gradient-to-br from-yellow-200 to-amber-500 text-slate-950"
         )}
       >
-        {displayDefinition.energyCost}
+        {displayedEnergyCost}
       </div>
 
       {upgraded && (

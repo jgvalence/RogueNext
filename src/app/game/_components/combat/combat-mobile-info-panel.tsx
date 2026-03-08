@@ -6,10 +6,11 @@ import type { EnemyDefinition, AllyDefinition } from "@/game/schemas/entities";
 import { useTranslation } from "react-i18next";
 import { RogueButton } from "@/components/ui/rogue";
 import {
-  buildPlayerMarkerBuffs,
+  buildPlayerStatusMarkers,
   formatAllyIntent,
   renderBuffTooltipDetails,
   renderEnemyIntentEffects,
+  renderStatusMarkerDetailsForPlayer,
   resolveEnemyIntentTargetLabel,
 } from "./combat-view-helpers";
 import type { MobileInfoPanelState } from "./combat-view-types";
@@ -237,7 +238,11 @@ export function CombatMobileInfoPanel({
               player.maxHp > 0
                 ? Math.max(0, player.currentHp) / player.maxHp
                 : 0;
-            const playerBuffs = buildPlayerMarkerBuffs(player);
+            const playerStatusMarkers = buildPlayerStatusMarkers(
+              player,
+              combat.playerDisruption,
+              combat.nextPlayerDisruption
+            );
 
             return (
               <>
@@ -312,13 +317,15 @@ export function CombatMobileInfoPanel({
                     </div>
                   </div>
 
-                  {playerBuffs.length > 0 && (
+                  {playerStatusMarkers.length > 0 && (
                     <div>
                       <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-500">
                         Effets actifs
                       </p>
                       <div className="rounded-2xl border border-slate-800/60 bg-slate-900/40 px-4 py-3">
-                        {renderBuffTooltipDetails(playerBuffs)}
+                        {renderStatusMarkerDetailsForPlayer(
+                          playerStatusMarkers
+                        )}
                       </div>
                     </div>
                   )}

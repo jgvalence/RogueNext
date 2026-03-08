@@ -17,31 +17,38 @@ import {
   hasPlayerDebuffForEnemyBonus,
 } from "@/game/engine/enemy-intent-preview";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
+import { i18n } from "@/lib/i18n";
 
-export function renderCompactBuffs(buffs: BuffInstance[]): ReactNode {
-  if (buffs.length === 0) return null;
+export interface StatusMarker {
+  key: string;
+  colorClass: string;
+  compactLabel: string;
+  symbolLabel: string;
+  detailLabel: string;
+  detailText?: string;
+  pending?: boolean;
+}
 
-  const visible = buffs.slice(0, 3);
-  const remaining = buffs.length - visible.length;
+function renderCompactStatusMarkers(markers: StatusMarker[]): ReactNode {
+  if (markers.length === 0) return null;
+
+  const visible = markers.slice(0, 3);
+  const remaining = markers.length - visible.length;
 
   return (
     <>
-      {visible.map((buff, index) => {
-        const meta = buffMeta[buff.type];
-        const label = (meta?.label() ?? buff.type).slice(0, 2).toUpperCase();
-        return (
-          <span
-            key={`${buff.type}-${index}`}
-            className={cn(
-              "rounded border border-slate-950/60 px-1 py-0.5 text-[9px] font-bold",
-              meta?.color ?? "bg-slate-700 text-slate-200"
-            )}
-          >
-            {label}
-            {buff.stacks > 1 ? ` ${buff.stacks}` : ""}
-          </span>
-        );
-      })}
+      {visible.map((marker) => (
+        <span
+          key={marker.key}
+          className={cn(
+            "rounded border border-slate-950/60 px-1 py-0.5 text-[9px] font-bold",
+            marker.colorClass,
+            marker.pending && "border-dashed"
+          )}
+        >
+          {marker.compactLabel}
+        </span>
+      ))}
       {remaining > 0 && (
         <span className="rounded bg-slate-900/80 px-1 py-0.5 text-[9px] font-bold text-slate-200">
           +{remaining}
@@ -51,29 +58,26 @@ export function renderCompactBuffs(buffs: BuffInstance[]): ReactNode {
   );
 }
 
-export function renderBuffSymbols(buffs: BuffInstance[]): ReactNode {
-  if (buffs.length === 0) return null;
+function renderStatusMarkerSymbols(markers: StatusMarker[]): ReactNode {
+  if (markers.length === 0) return null;
 
-  const visible = buffs.slice(0, 4);
-  const remaining = buffs.length - visible.length;
+  const visible = markers.slice(0, 4);
+  const remaining = markers.length - visible.length;
 
   return (
     <>
-      {visible.map((buff, index) => {
-        const meta = buffMeta[buff.type];
-        return (
-          <span
-            key={`${buff.type}-symbol-${index}`}
-            className={cn(
-              "inline-flex h-4 min-w-4 items-center justify-center rounded-full border border-slate-950/70 px-1 text-[9px] font-black leading-none",
-              meta?.color ?? "bg-slate-700 text-slate-200"
-            )}
-          >
-            {getBuffSymbol(buff.type)}
-            {buff.stacks > 1 ? buff.stacks : ""}
-          </span>
-        );
-      })}
+      {visible.map((marker) => (
+        <span
+          key={`${marker.key}-symbol`}
+          className={cn(
+            "inline-flex h-4 min-w-4 items-center justify-center rounded-full border border-slate-950/70 px-1 text-[9px] font-black leading-none",
+            marker.colorClass,
+            marker.pending && "border-dashed"
+          )}
+        >
+          {marker.symbolLabel}
+        </span>
+      ))}
       {remaining > 0 && (
         <span className="inline-flex h-4 min-w-4 items-center justify-center rounded-full border border-slate-900/70 bg-slate-900/85 px-1 text-[9px] font-black text-slate-200">
           +{remaining}
@@ -81,6 +85,191 @@ export function renderBuffSymbols(buffs: BuffInstance[]): ReactNode {
       )}
     </>
   );
+}
+
+function renderStatusMarkerDetails(markers: StatusMarker[]): ReactNode {
+  if (markers.length === 0) return null;
+
+  return (
+    <div className="space-y-0.5">
+      {markers.map((marker) => (
+        <p key={`${marker.key}-detail`} className="text-[11px] text-slate-200">
+          <span
+            className={cn(
+              "rounded px-1 py-px font-semibold",
+              marker.colorClass
+            )}
+          >
+            {marker.detailLabel}
+          </span>
+          {marker.detailText ? ` - ${marker.detailText}` : ""}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function formatTurnCounter(duration?: number): string | null {
+  if (duration === undefined || duration <= 0) return null;
+  return `${duration}t`;
+}
+
+function usesDurationAsPrimaryCounter(buff: BuffInstance): boolean {
+  return (
+    buff.type === "WEAK" ||
+    buff.type === "VULNERABLE" ||
+    buff.type === "STUN" ||
+    buff.type === "STUN_IMMUNITY"
+  );
+}
+
+function formatCompactBuffCounter(buff: BuffInstance): string | null {
+  const turnCounter = formatTurnCounter(buff.duration);
+
+  if (usesDurationAsPrimaryCounter(buff)) {
+    return turnCounter ?? (buff.stacks > 1 ? `${buff.stacks}` : null);
+  }
+
+  if (turnCounter) {
+    return `${buff.stacks}/${turnCounter}`;
+  }
+
+  return buff.stacks > 1 ? `${buff.stacks}` : null;
+}
+
+function formatSymbolBuffCounter(buff: BuffInstance): string {
+  if (usesDurationAsPrimaryCounter(buff)) {
+    return buff.duration !== undefined && buff.duration > 0
+      ? `${buff.duration}`
+      : buff.stacks > 1
+        ? `${buff.stacks}`
+        : "";
+  }
+
+  if (buff.duration !== undefined && buff.duration > 0) {
+    return `${buff.stacks}/${buff.duration}`;
+  }
+
+  return buff.stacks > 1 ? `${buff.stacks}` : "";
+}
+
+function buildBuffStatusMarker(buff: BuffInstance, key: string): StatusMarker {
+  const meta = buffMeta[buff.type];
+  const label = meta?.label() ?? buff.type;
+  const description = meta?.description(buff.stacks) ?? "";
+  const shortLabel = label.slice(0, 2).toUpperCase();
+  const compactCounter = formatCompactBuffCounter(buff);
+  const compactLabel = compactCounter
+    ? `${shortLabel} ${compactCounter}`
+    : shortLabel;
+  const symbolCounter = formatSymbolBuffCounter(buff);
+  const symbolLabel = `${getBuffSymbol(buff.type)}${symbolCounter}`;
+  const durationLabel = formatTurnCounter(buff.duration);
+  const detailParts: string[] = [];
+
+  if (buff.stacks > 1) {
+    detailParts.push(`x${buff.stacks}`);
+  }
+  if (durationLabel) {
+    detailParts.push(`(${durationLabel})`);
+  }
+
+  const detailLabel = [label, ...detailParts].join(" ");
+  const durationNote =
+    buff.duration !== undefined && buff.duration > 0
+      ? i18n.t("buff.durationNote", { count: buff.duration })
+      : "";
+
+  return {
+    key,
+    colorClass: meta?.color ?? "bg-slate-700 text-slate-200",
+    compactLabel,
+    symbolLabel,
+    detailLabel,
+    detailText: [description, durationNote].filter(Boolean).join(" "),
+  };
+}
+
+function buildBuffStatusMarkers(buffs: BuffInstance[]): StatusMarker[] {
+  return buffs.map((buff, index) =>
+    buildBuffStatusMarker(buff, `${buff.type}-${index}`)
+  );
+}
+
+function buildPlayerDisruptionMarkers(
+  disruption:
+    | CombatState["playerDisruption"]
+    | CombatState["nextPlayerDisruption"]
+    | undefined,
+  scope: "current" | "next"
+): StatusMarker[] {
+  if (!disruption) return [];
+
+  const pending = scope === "next";
+  const prefix = pending ? ">" : "";
+  const markers: StatusMarker[] = [];
+
+  if ((disruption.extraCardCost ?? 0) > 0) {
+    const value = disruption.extraCardCost;
+    markers.push({
+      key: `${scope}-extra-card-cost`,
+      colorClass: pending
+        ? "bg-amber-950/85 text-amber-200"
+        : "bg-amber-900/85 text-amber-100",
+      compactLabel: `${prefix}+${value}C`,
+      symbolLabel: `${prefix}+${value}C`,
+      detailLabel: pending
+        ? i18n.t("reward.effect.increaseCardCostNextTurn", { value })
+        : i18n.t("reward.effect.increaseCardCostThisTurn", { value }),
+      pending,
+    });
+  }
+
+  if ((disruption.drawPenalty ?? 0) > 0) {
+    const value = disruption.drawPenalty;
+    markers.push({
+      key: `${scope}-draw-penalty`,
+      colorClass: pending
+        ? "bg-slate-800/90 text-slate-200"
+        : "bg-slate-700 text-slate-100",
+      compactLabel: `${prefix}-${value}D`,
+      symbolLabel: `${prefix}-${value}D`,
+      detailLabel: pending
+        ? i18n.t("reward.effect.reduceDrawNextTurn", { value })
+        : i18n.t("reward.effect.reduceDrawThisTurn", { value }),
+      pending,
+    });
+  }
+
+  if (!pending && (disruption.drawsToDiscardRemaining ?? 0) > 0) {
+    markers.push({
+      key: `${scope}-draw-to-discard`,
+      colorClass: "bg-purple-900/85 text-purple-100",
+      compactLabel: "D>DIS",
+      symbolLabel: "D>",
+      detailLabel: i18n.t("reward.effect.nextDrawToDiscardThisTurn"),
+    });
+  }
+
+  if (!pending && (disruption.disabledInkPowers ?? []).length > 0) {
+    markers.push({
+      key: `${scope}-ink-power-locked`,
+      colorClass: "bg-cyan-900/85 text-cyan-100",
+      compactLabel: "INK X",
+      symbolLabel: "IX",
+      detailLabel: i18n.t("playerStats.inkPowerLocked"),
+    });
+  }
+
+  return markers;
+}
+
+export function renderCompactBuffs(buffs: BuffInstance[]): ReactNode {
+  return renderCompactStatusMarkers(buildBuffStatusMarkers(buffs));
+}
+
+export function renderBuffSymbols(buffs: BuffInstance[]): ReactNode {
+  return renderStatusMarkerSymbols(buildBuffStatusMarkers(buffs));
 }
 
 function getBuffSymbol(buffType: string): string {
@@ -109,29 +298,7 @@ function getBuffSymbol(buffType: string): string {
 }
 
 export function renderBuffTooltipDetails(buffs: BuffInstance[]): ReactNode {
-  return (
-    <div className="space-y-0.5">
-      {buffs.map((buff, index) => {
-        const meta = buffMeta[buff.type];
-        const label = meta?.label() ?? buff.type;
-        const description = meta?.description(buff.stacks) ?? "";
-        return (
-          <p
-            key={`${buff.type}-${index}`}
-            className="text-[11px] text-slate-200"
-          >
-            <span
-              className={cn("font-semibold", meta?.color ?? "text-slate-200")}
-            >
-              {label}
-              {buff.stacks > 1 ? ` x${buff.stacks}` : ""}
-            </span>
-            {description ? ` - ${description}` : ""}
-          </p>
-        );
-      })}
-    </div>
-  );
+  return renderStatusMarkerDetails(buildBuffStatusMarkers(buffs));
 }
 
 export function buildPlayerMarkerBuffs(player: PlayerState): BuffInstance[] {
@@ -143,6 +310,55 @@ export function buildPlayerMarkerBuffs(player: PlayerState): BuffInstance[] {
     markers.push({ type: "FOCUS", stacks: player.focus });
   }
   return markers;
+}
+
+export function buildPlayerStatusMarkers(
+  player: PlayerState,
+  disruption?: CombatState["playerDisruption"],
+  nextDisruption?: CombatState["nextPlayerDisruption"]
+): StatusMarker[] {
+  const markers: StatusMarker[] = [
+    ...buildPlayerDisruptionMarkers(disruption, "current"),
+    ...buildPlayerDisruptionMarkers(nextDisruption, "next"),
+    ...buildBuffStatusMarkers(player.buffs),
+  ];
+
+  if (player.strength > 0) {
+    markers.push(
+      buildBuffStatusMarker(
+        { type: "STRENGTH", stacks: player.strength },
+        "player-strength"
+      )
+    );
+  }
+  if (player.focus > 0) {
+    markers.push(
+      buildBuffStatusMarker(
+        { type: "FOCUS", stacks: player.focus },
+        "player-focus"
+      )
+    );
+  }
+
+  return markers;
+}
+
+export function renderCompactStatusMarkersForPlayer(
+  markers: StatusMarker[]
+): ReactNode {
+  return renderCompactStatusMarkers(markers);
+}
+
+export function renderStatusMarkerSymbolsForPlayer(
+  markers: StatusMarker[]
+): ReactNode {
+  return renderStatusMarkerSymbols(markers);
+}
+
+export function renderStatusMarkerDetailsForPlayer(
+  markers: StatusMarker[]
+): ReactNode {
+  return renderStatusMarkerDetails(markers);
 }
 
 export function renderEnemyIntentEffects(

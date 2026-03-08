@@ -45,6 +45,7 @@ export function HandArea({
     () => hand.findIndex((c) => c.instanceId === hoveredCardId),
     [hand, hoveredCardId]
   );
+  const costModifier = combatState.playerDisruption?.extraCardCost ?? 0;
 
   const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -133,6 +134,7 @@ export function HandArea({
                 <GameCard
                   instanceId={card.instanceId}
                   definition={def}
+                  costModifier={costModifier}
                   canPlay={displayedCanPlay}
                   canPlayInked={displayedCanPlayInked}
                   isSelected={isSelected}
@@ -247,6 +249,7 @@ export function HandArea({
               <GameCard
                 instanceId={card.instanceId}
                 definition={def}
+                costModifier={costModifier}
                 canPlay={displayedCanPlay}
                 canPlayInked={displayedCanPlayInked}
                 isSelected={isSelected}

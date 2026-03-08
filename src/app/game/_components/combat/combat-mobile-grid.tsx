@@ -6,9 +6,10 @@ import { cn } from "@/lib/utils/cn";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
 import {
-  buildPlayerMarkerBuffs,
+  buildPlayerStatusMarkers,
   computeEnemyDamagePreview,
   renderBuffSymbols,
+  renderStatusMarkerSymbolsForPlayer,
 } from "./combat-view-helpers";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
@@ -63,6 +64,15 @@ export function CombatMobileGrid({
   isArmorTutorialStep,
 }: CombatMobileGridProps) {
   const { t } = useTranslation();
+  const playerStatusMarkers = useMemo(
+    () =>
+      buildPlayerStatusMarkers(
+        combat.player,
+        combat.playerDisruption,
+        combat.nextPlayerDisruption
+      ),
+    [combat.nextPlayerDisruption, combat.player, combat.playerDisruption]
+  );
 
   const mobileOccupiedSlots = useMemo<
     Array<
@@ -176,7 +186,7 @@ export function CombatMobileGrid({
                 )}
               >
                 <div className="absolute -top-1 left-1 flex max-w-[90%] items-center gap-1 overflow-hidden">
-                  {renderBuffSymbols(buildPlayerMarkerBuffs(combat.player))}
+                  {renderStatusMarkerSymbolsForPlayer(playerStatusMarkers)}
                 </div>
                 <div
                   className={cn(

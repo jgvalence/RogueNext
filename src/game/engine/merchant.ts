@@ -35,13 +35,20 @@ const PURGE_DISCOUNT_RELIC_ID = "library_catalog_discount";
 const FREE_REROLL_RELIC_ID = "african_legba_key";
 const FORBIDDEN_CONTRACT_RELIC_ID = "love_forbidden_contract";
 const SHOP_REROLL_GROWTH = 1.6;
-const START_MERCHANT_COST_RANGES = {
-  CARD: { min: 4, max: 7 },
-  RELIC: { min: 10, max: 16 },
-  USABLE_ITEM: { min: 5, max: 9 },
-  ALLY: { min: 9, max: 15 },
-  BONUS_GOLD: { min: 4, max: 8 },
-  BONUS_MAX_HP: { min: 4, max: 8 },
+type StartMerchantCostProfile = {
+  minFlat: number;
+  maxFlat: number;
+  minShare: number;
+  maxShare: number;
+};
+
+const START_MERCHANT_COST_PROFILES = {
+  CARD: { minFlat: 2, maxFlat: 5, minShare: 0.35, maxShare: 0.5 },
+  RELIC: { minFlat: 4, maxFlat: 12, minShare: 0.65, maxShare: 0.8 },
+  USABLE_ITEM: { minFlat: 2, maxFlat: 5, minShare: 0.4, maxShare: 0.55 },
+  ALLY: { minFlat: 4, maxFlat: 10, minShare: 0.55, maxShare: 0.75 },
+  BONUS_GOLD: { minFlat: 2, maxFlat: 5, minShare: 0.35, maxShare: 0.5 },
+  BONUS_MAX_HP: { minFlat: 2, maxFlat: 5, minShare: 0.35, maxShare: 0.5 },
 } as const;
 
 function scaleShopPrice(price: number): number {
@@ -132,6 +139,41 @@ function sanitizeResourcePool(
     clean[key as BiomeResource] = Math.max(0, Math.floor(value));
   }
   return clean;
+}
+
+function getStartMerchantResourceTotal(
+  resourcePool: Record<string, number>
+): number {
+  return Object.values(resourcePool).reduce(
+    (sum, amount) => sum + Math.max(0, Math.floor(amount)),
+    0
+  );
+}
+
+function resolveStartMerchantCostRange(
+  resourcePool: Record<string, number>,
+  profile: StartMerchantCostProfile
+): { min: number; max: number } | null {
+  const totalAvailable = getStartMerchantResourceTotal(resourcePool);
+  if (totalAvailable < profile.minFlat) return null;
+
+  const minCost = Math.min(
+    Math.min(
+      profile.maxFlat,
+      Math.max(profile.minFlat, Math.ceil(totalAvailable * profile.minShare))
+    )
+  );
+  const maxCost = Math.min(
+    totalAvailable,
+    Math.min(
+      profile.maxFlat,
+      Math.max(minCost, Math.ceil(totalAvailable * profile.maxShare))
+    )
+  );
+
+  if (maxCost < minCost || totalAvailable < minCost) return null;
+
+  return { min: minCost, max: maxCost };
 }
 
 function getShopRelicRarity(
@@ -650,6 +692,16 @@ function buildStartMerchantCost(
   return cost;
 }
 
+function buildStartMerchantCostForProfile(
+  rng: RNG,
+  resourcePool: Record<string, number>,
+  profile: StartMerchantCostProfile
+): Partial<Record<BiomeResource, number>> | null {
+  const range = resolveStartMerchantCostRange(resourcePool, profile);
+  if (!range) return null;
+  return buildStartMerchantCost(rng, resourcePool, range.min, range.max);
+}
+
 export function generateStartMerchantOffers(
   runState: RunState,
   allCards: CardDefinition[],
@@ -685,11 +737,10 @@ export function generateStartMerchantOffers(
     lootLuck
   );
   for (let i = 0; i < 2 && i < cardPool.length; i++) {
-    const cost = buildStartMerchantCost(
+    const cost = buildStartMerchantCostForProfile(
       rng,
       resourcePool,
-      START_MERCHANT_COST_RANGES.CARD.min,
-      START_MERCHANT_COST_RANGES.CARD.max
+      START_MERCHANT_COST_PROFILES.CARD
     );
     if (!cost) break;
     offers.push({
@@ -720,11 +771,10 @@ export function generateStartMerchantOffers(
       lootLuck
     )[0];
     if (relic) {
-      const cost = buildStartMerchantCost(
+      const cost = buildStartMerchantCostForProfile(
         rng,
         resourcePool,
-        START_MERCHANT_COST_RANGES.RELIC.min,
-        START_MERCHANT_COST_RANGES.RELIC.max
+        START_MERCHANT_COST_PROFILES.RELIC
       );
       if (cost) {
         offers.push({
@@ -746,11 +796,10 @@ export function generateStartMerchantOffers(
     usableItemDefinitions.length
   ) {
     const usable = rng.pick(usableItemDefinitions);
-    const cost = buildStartMerchantCost(
+    const cost = buildStartMerchantCostForProfile(
       rng,
       resourcePool,
-      START_MERCHANT_COST_RANGES.USABLE_ITEM.min,
-      START_MERCHANT_COST_RANGES.USABLE_ITEM.max
+      START_MERCHANT_COST_PROFILES.USABLE_ITEM
     );
     if (cost) {
       offers.push({
@@ -774,11 +823,10 @@ export function generateStartMerchantOffers(
     );
     if (allyPool.length > 0) {
       const ally = rng.pick(allyPool);
-      const cost = buildStartMerchantCost(
+      const cost = buildStartMerchantCostForProfile(
         rng,
         resourcePool,
-        START_MERCHANT_COST_RANGES.ALLY.min,
-        START_MERCHANT_COST_RANGES.ALLY.max
+        START_MERCHANT_COST_PROFILES.ALLY
       );
       if (cost) {
         offers.push({
@@ -793,11 +841,10 @@ export function generateStartMerchantOffers(
     }
   }
 
-  const goldCost = buildStartMerchantCost(
+  const goldCost = buildStartMerchantCostForProfile(
     rng,
     resourcePool,
-    START_MERCHANT_COST_RANGES.BONUS_GOLD.min,
-    START_MERCHANT_COST_RANGES.BONUS_GOLD.max
+    START_MERCHANT_COST_PROFILES.BONUS_GOLD
   );
   if (goldCost) {
     offers.push({
@@ -810,11 +857,10 @@ export function generateStartMerchantOffers(
     });
   }
 
-  const hpCost = buildStartMerchantCost(
+  const hpCost = buildStartMerchantCostForProfile(
     rng,
     resourcePool,
-    START_MERCHANT_COST_RANGES.BONUS_MAX_HP.min,
-    START_MERCHANT_COST_RANGES.BONUS_MAX_HP.max
+    START_MERCHANT_COST_PROFILES.BONUS_MAX_HP
   );
   if (hpCost) {
     offers.push({

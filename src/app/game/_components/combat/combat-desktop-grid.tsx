@@ -9,11 +9,13 @@ import { HpBar } from "../shared/HpBar";
 import { ArmorBadge, IncomingDamageBadge } from "./combat-badges";
 import {
   buildMobileEnemyIntentChips,
-  buildPlayerMarkerBuffs,
+  buildPlayerStatusMarkers,
   formatAllyIntent,
   renderBuffTooltipDetails,
   renderCompactBuffs,
   renderEnemyIntentEffects,
+  renderCompactStatusMarkersForPlayer,
+  renderStatusMarkerDetailsForPlayer,
   resolveEnemyIntentTargetLabel,
 } from "./combat-view-helpers";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
@@ -80,6 +82,11 @@ export function CombatDesktopGrid({
   isIncomingDamageTutorialStep,
 }: CombatDesktopGridProps) {
   const { t } = useTranslation();
+  const playerStatusMarkers = buildPlayerStatusMarkers(
+    combat.player,
+    combat.playerDisruption,
+    combat.nextPlayerDisruption
+  );
 
   return (
     <div className="hidden w-full max-w-[1500px] grid-cols-4 gap-1.5 lg:grid lg:grid-cols-8 lg:gap-3">
@@ -207,7 +214,7 @@ export function CombatDesktopGrid({
               <p className="font-semibold text-slate-100">
                 {t("combat.activeEffects")}
               </p>
-              {renderBuffTooltipDetails(buildPlayerMarkerBuffs(combat.player))}
+              {renderStatusMarkerDetailsForPlayer(playerStatusMarkers)}
             </div>
           </div>
         }
@@ -225,7 +232,7 @@ export function CombatDesktopGrid({
           )}
         >
           <div className="absolute -top-2 left-2 flex max-w-[90%] items-center gap-1 overflow-hidden">
-            {renderCompactBuffs(buildPlayerMarkerBuffs(combat.player))}
+            {renderCompactStatusMarkersForPlayer(playerStatusMarkers)}
           </div>
           {incomingDamage.player > 0 && (
             <IncomingDamageBadge

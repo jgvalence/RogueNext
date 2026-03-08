@@ -1,5 +1,4 @@
 import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
 import { en } from "./messages/en";
 import { fr } from "./messages/fr";
 
@@ -37,7 +36,7 @@ function detectInitialLocale(): SupportedLocale {
 }
 
 if (!i18n.isInitialized) {
-  i18n.use(initReactI18next).init({
+  i18n.init({
     resources,
     lng: detectInitialLocale(),
     fallbackLng: fallbackLocale,

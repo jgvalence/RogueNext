@@ -3318,7 +3318,44 @@ describe("Merchant", () => {
 
     const relicOffer = offers.find((offer) => offer.type === "RELIC");
     expect(relicOffer).toBeDefined();
-    expect(relicOffer?.cost).toEqual({ PAGES: 4, RUNES: 6 });
+    const relicCost = relicOffer?.cost ?? {};
+    const relicResources = Object.entries(relicCost).filter(
+      ([, amount]) => (amount ?? 0) > 0
+    );
+    const relicTotalCost = Object.values(relicCost).reduce(
+      (sum, amount) => sum + (amount ?? 0),
+      0
+    );
+    expect(relicResources.length).toBeGreaterThan(1);
+    expect(relicTotalCost).toBeGreaterThanOrEqual(8);
+    expect(relicTotalCost).toBeLessThanOrEqual(10);
+  });
+
+  it("generateStartMerchantOffers keeps relics expensive even with a small resource pool", () => {
+    const run = {
+      ...createNewRun(
+        "run-start-merchant-small-pool",
+        "run-start-merchant-small-pool",
+        getStarterCardsForCharacter("scribe"),
+        createRNG("start-merchant-small-pool")
+      ),
+      startMerchantResourcePool: { PAGES: 3, RUNES: 2 },
+    };
+
+    const offers = generateStartMerchantOffers(
+      run,
+      [...cardDefs.values()],
+      [...allyDefs.values()],
+      makeDeterministicRng("start-merchant-small-pool-offers")
+    );
+
+    const relicOffer = offers.find((offer) => offer.type === "RELIC");
+    expect(relicOffer).toBeDefined();
+    const relicTotalCost = Object.values(relicOffer?.cost ?? {}).reduce(
+      (sum, amount) => sum + (amount ?? 0),
+      0
+    );
+    expect(relicTotalCost).toBeGreaterThanOrEqual(4);
   });
 });
 
