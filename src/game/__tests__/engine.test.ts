@@ -1031,7 +1031,9 @@ describe("Ink system", () => {
       createRNG("silence-elite-recovery")
     );
 
-    expect(afterRecovery.player.currentHp).toBeLessThan(lockedTurn.player.currentHp);
+    expect(afterRecovery.player.currentHp).toBeLessThan(
+      lockedTurn.player.currentHp
+    );
     expect(
       afterRecovery.enemies[0]!.buffs.some(
         (buff) => buff.type === "STUN_IMMUNITY"
@@ -2780,9 +2782,9 @@ describe("Card unlock rules", () => {
     const details = getCardUnlockDetails(allCards, progress, [], {
       anubis_champion: 0,
     });
-    expect(details["bestiary_elite_anubis_champion"]?.missingCondition).not.toContain(
-      "anubis_champion"
-    );
+    expect(
+      details["bestiary_elite_anubis_champion"]?.missingCondition
+    ).not.toContain("anubis_champion");
   });
 
   it("keeps selected LIBRARY cards locked at run start", () => {
@@ -2877,7 +2879,9 @@ describe("Card unlock rules", () => {
 
     expect(progress.enteredBiomes.LIBRARY).toBe(1);
     expect(progress.byCharacter.scribe?.enteredBiomes.LIBRARY).toBe(1);
-    expect(() => writeUnlockProgressToResources({}, legacyProgress)).not.toThrow();
+    expect(() =>
+      writeUnlockProgressToResources({}, legacyProgress)
+    ).not.toThrow();
   });
 });
 
@@ -3271,6 +3275,50 @@ describe("Merchant", () => {
       .filter((offer) => offer.type === "CARD")
       .map((offer) => offer.cardId);
     expect(offeredCardIds).toEqual(["saga_keeper"]);
+  });
+
+  it("generateStartMerchantOffers does not create underpriced offers below the minimum total cost", () => {
+    const run = {
+      ...createNewRun(
+        "run-start-merchant-low-pool",
+        "run-start-merchant-low-pool",
+        getStarterCardsForCharacter("scribe"),
+        createRNG("start-merchant-low-pool")
+      ),
+      startMerchantResourcePool: { PAGES: 1 },
+    };
+
+    const offers = generateStartMerchantOffers(
+      run,
+      [...cardDefs.values()],
+      [...allyDefs.values()],
+      makeDeterministicRng("start-merchant-low-pool-offers")
+    );
+
+    expect(offers).toEqual([]);
+  });
+
+  it("generateStartMerchantOffers can split relic costs across multiple resources", () => {
+    const run = {
+      ...createNewRun(
+        "run-start-merchant-multi-resource",
+        "run-start-merchant-multi-resource",
+        getStarterCardsForCharacter("scribe"),
+        createRNG("start-merchant-multi-resource")
+      ),
+      startMerchantResourcePool: { PAGES: 6, RUNES: 6 },
+    };
+
+    const offers = generateStartMerchantOffers(
+      run,
+      [...cardDefs.values()],
+      [...allyDefs.values()],
+      makeDeterministicRng("start-merchant-multi-resource-offers")
+    );
+
+    const relicOffer = offers.find((offer) => offer.type === "RELIC");
+    expect(relicOffer).toBeDefined();
+    expect(relicOffer?.cost).toEqual({ PAGES: 4, RUNES: 6 });
   });
 });
 

@@ -35,6 +35,14 @@ const PURGE_DISCOUNT_RELIC_ID = "library_catalog_discount";
 const FREE_REROLL_RELIC_ID = "african_legba_key";
 const FORBIDDEN_CONTRACT_RELIC_ID = "love_forbidden_contract";
 const SHOP_REROLL_GROWTH = 1.6;
+const START_MERCHANT_COST_RANGES = {
+  CARD: { min: 4, max: 7 },
+  RELIC: { min: 10, max: 16 },
+  USABLE_ITEM: { min: 5, max: 9 },
+  ALLY: { min: 9, max: 15 },
+  BONUS_GOLD: { min: 4, max: 8 },
+  BONUS_MAX_HP: { min: 4, max: 8 },
+} as const;
 
 function scaleShopPrice(price: number): number {
   return Math.max(1, Math.round(price * SHOP_PRICE_MULTIPLIER));
@@ -582,22 +590,64 @@ export function completeStartMerchant(runState: RunState): RunState {
   };
 }
 
-function buildSingleResourceCost(
+function buildStartMerchantCost(
   rng: RNG,
   resourcePool: Record<string, number>,
   minCost: number,
   maxCost: number
 ): Partial<Record<BiomeResource, number>> | null {
-  const candidates = Object.entries(resourcePool)
-    .filter(([, amount]) => amount > 0)
-    .map(([resource]) => resource as BiomeResource);
-  if (candidates.length === 0) return null;
+  const shuffledCandidates = rng.shuffle(
+    Object.entries(resourcePool)
+      .filter(([, amount]) => amount > 0)
+      .map(([resource, amount]) => ({
+        resource: resource as BiomeResource,
+        amount: Math.max(0, Math.floor(amount)),
+      }))
+  );
+  if (shuffledCandidates.length === 0) return null;
 
-  const resource = rng.pick(candidates);
-  const available = resourcePool[resource] ?? 0;
-  const target = rng.nextInt(minCost, maxCost);
-  const amount = Math.max(1, Math.min(available, target));
-  return { [resource]: amount };
+  const totalAvailable = shuffledCandidates.reduce(
+    (sum, candidate) => sum + candidate.amount,
+    0
+  );
+  if (totalAvailable < minCost) return null;
+
+  const target = rng.nextInt(minCost, Math.min(maxCost, totalAvailable));
+  const candidates = shuffledCandidates
+    .map((candidate, index) => ({ ...candidate, index }))
+    .sort((a, b) => {
+      if (b.amount !== a.amount) return b.amount - a.amount;
+      return a.index - b.index;
+    });
+
+  const selected: Array<(typeof candidates)[number]> = [];
+  let coveredAmount = 0;
+  for (const candidate of candidates) {
+    selected.push(candidate);
+    coveredAmount += candidate.amount;
+    if (coveredAmount >= target) break;
+  }
+
+  if (coveredAmount < target) return null;
+
+  const cost: Partial<Record<BiomeResource, number>> = {};
+  let remainingTarget = target;
+  for (let i = 0; i < selected.length; i++) {
+    const candidate = selected[i]!;
+    const remainingCapacity = selected
+      .slice(i + 1)
+      .reduce((sum, nextCandidate) => sum + nextCandidate.amount, 0);
+    const minForThisResource = Math.max(1, remainingTarget - remainingCapacity);
+    const maxForThisResource = Math.min(candidate.amount, remainingTarget);
+    const amount =
+      i === selected.length - 1
+        ? remainingTarget
+        : rng.nextInt(minForThisResource, maxForThisResource);
+    cost[candidate.resource] = amount;
+    remainingTarget -= amount;
+  }
+
+  return cost;
 }
 
 export function generateStartMerchantOffers(
@@ -635,7 +685,12 @@ export function generateStartMerchantOffers(
     lootLuck
   );
   for (let i = 0; i < 2 && i < cardPool.length; i++) {
-    const cost = buildSingleResourceCost(rng, resourcePool, 4, 7);
+    const cost = buildStartMerchantCost(
+      rng,
+      resourcePool,
+      START_MERCHANT_COST_RANGES.CARD.min,
+      START_MERCHANT_COST_RANGES.CARD.max
+    );
     if (!cost) break;
     offers.push({
       id: `start-card-${cardPool[i]!.id}`,
@@ -665,7 +720,12 @@ export function generateStartMerchantOffers(
       lootLuck
     )[0];
     if (relic) {
-      const cost = buildSingleResourceCost(rng, resourcePool, 8, 14);
+      const cost = buildStartMerchantCost(
+        rng,
+        resourcePool,
+        START_MERCHANT_COST_RANGES.RELIC.min,
+        START_MERCHANT_COST_RANGES.RELIC.max
+      );
       if (cost) {
         offers.push({
           id: `start-relic-${relic.id}`,
@@ -686,7 +746,12 @@ export function generateStartMerchantOffers(
     usableItemDefinitions.length
   ) {
     const usable = rng.pick(usableItemDefinitions);
-    const cost = buildSingleResourceCost(rng, resourcePool, 5, 9);
+    const cost = buildStartMerchantCost(
+      rng,
+      resourcePool,
+      START_MERCHANT_COST_RANGES.USABLE_ITEM.min,
+      START_MERCHANT_COST_RANGES.USABLE_ITEM.max
+    );
     if (cost) {
       offers.push({
         id: `start-usable-${usable.id}`,
@@ -709,7 +774,12 @@ export function generateStartMerchantOffers(
     );
     if (allyPool.length > 0) {
       const ally = rng.pick(allyPool);
-      const cost = buildSingleResourceCost(rng, resourcePool, 9, 15);
+      const cost = buildStartMerchantCost(
+        rng,
+        resourcePool,
+        START_MERCHANT_COST_RANGES.ALLY.min,
+        START_MERCHANT_COST_RANGES.ALLY.max
+      );
       if (cost) {
         offers.push({
           id: `start-ally-${ally.id}`,
@@ -723,7 +793,12 @@ export function generateStartMerchantOffers(
     }
   }
 
-  const goldCost = buildSingleResourceCost(rng, resourcePool, 4, 8);
+  const goldCost = buildStartMerchantCost(
+    rng,
+    resourcePool,
+    START_MERCHANT_COST_RANGES.BONUS_GOLD.min,
+    START_MERCHANT_COST_RANGES.BONUS_GOLD.max
+  );
   if (goldCost) {
     offers.push({
       id: "start-bonus-gold",
@@ -735,7 +810,12 @@ export function generateStartMerchantOffers(
     });
   }
 
-  const hpCost = buildSingleResourceCost(rng, resourcePool, 4, 8);
+  const hpCost = buildStartMerchantCost(
+    rng,
+    resourcePool,
+    START_MERCHANT_COST_RANGES.BONUS_MAX_HP.min,
+    START_MERCHANT_COST_RANGES.BONUS_MAX_HP.max
+  );
   if (hpCost) {
     offers.push({
       id: "start-bonus-hp",
