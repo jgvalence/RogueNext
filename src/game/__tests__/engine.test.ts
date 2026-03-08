@@ -2857,6 +2857,21 @@ describe("Card unlock rules", () => {
       1
     );
   });
+
+  it("handles legacy progress objects missing byCharacter when entering a biome", () => {
+    const legacyProgress = {
+      enteredBiomes: { LIBRARY: 1 },
+      biomeRunsCompleted: {},
+      eliteKillsByBiome: {},
+      bossKillsByBiome: {},
+    } as unknown as CardUnlockProgress;
+
+    const progress = onEnterBiome(legacyProgress, "LIBRARY", "scribe");
+
+    expect(progress.enteredBiomes.LIBRARY).toBe(1);
+    expect(progress.byCharacter.scribe?.enteredBiomes.LIBRARY).toBe(1);
+    expect(() => writeUnlockProgressToResources({}, legacyProgress)).not.toThrow();
+  });
 });
 
 // ============================

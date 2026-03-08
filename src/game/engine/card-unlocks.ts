@@ -401,11 +401,17 @@ function cloneBiomeProgress(
   };
 }
 
+function getByCharacterProgressMap(
+  progress?: Partial<CardUnlockProgress> | null
+): Record<string, BiomeUnlockProgress> {
+  return progress?.byCharacter ?? {};
+}
+
 function getCharacterBiomeProgress(
   progress: CardUnlockProgress,
   characterId: string
 ): BiomeUnlockProgress {
-  return cloneBiomeProgress(progress.byCharacter[characterId]);
+  return cloneBiomeProgress(getByCharacterProgressMap(progress)[characterId]);
 }
 
 function getBiomeProgressForCard(
@@ -500,7 +506,7 @@ export function writeUnlockProgressToResources(
       progress.bossKillsByBiome[biome] ?? 0;
   }
   for (const [characterId, rawCharacterProgress] of Object.entries(
-    progress.byCharacter
+    getByCharacterProgressMap(progress)
   )) {
     const characterProgress = cloneBiomeProgress(rawCharacterProgress);
     for (const biome of BIOMES) {
@@ -830,7 +836,7 @@ export function onEnterBiome(
   return {
     ...nextProgress,
     byCharacter: {
-      ...progress.byCharacter,
+      ...getByCharacterProgressMap(progress),
       [characterId]: {
         ...characterProgress,
         enteredBiomes: {
@@ -860,7 +866,7 @@ export function onEliteKilled(
   return {
     ...nextProgress,
     byCharacter: {
-      ...progress.byCharacter,
+      ...getByCharacterProgressMap(progress),
       [characterId]: {
         ...characterProgress,
         eliteKillsByBiome: {
@@ -894,7 +900,7 @@ export function onBossKilled(
   return {
     ...nextProgress,
     byCharacter: {
-      ...progress.byCharacter,
+      ...getByCharacterProgressMap(progress),
       [characterId]: {
         ...characterProgress,
         bossKillsByBiome: {
