@@ -2776,6 +2776,13 @@ describe("Card unlock rules", () => {
     });
     expect(unlocked.includes("bestiary_normal_draugr")).toBe(true);
     expect(unlocked.includes("bestiary_elite_valkyrie")).toBe(true);
+
+    const details = getCardUnlockDetails(allCards, progress, [], {
+      anubis_champion: 0,
+    });
+    expect(details["bestiary_elite_anubis_champion"]?.missingCondition).not.toContain(
+      "anubis_champion"
+    );
   });
 
   it("keeps selected LIBRARY cards locked at run start", () => {

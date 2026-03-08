@@ -5,6 +5,8 @@ import {
   NORMAL_ENEMY_MASTERY_KILL_THRESHOLD,
   getEnemyMasteryKillThreshold,
 } from "../data/enemy-mastery";
+import { enemyDefinitions } from "../data/enemies";
+import { localizeEnemyName } from "../../lib/i18n/entity-text";
 
 export interface BiomeUnlockProgress {
   enteredBiomes: Record<string, number>;
@@ -45,6 +47,9 @@ const BIOMES: BiomeType[] = [
   "RUSSIAN",
   "AFRICAN",
 ];
+const ENEMY_NAME_BY_ID = new Map(
+  enemyDefinitions.map((enemy) => [enemy.id, enemy.name] as const)
+);
 
 const BESTIARY_NORMAL_UNLOCK_PREFIX = "bestiary_normal_";
 const BESTIARY_ELITE_UNLOCK_PREFIX = "bestiary_elite_";
@@ -641,6 +646,10 @@ function formatBiome(biome: BiomeType): string {
   return biome;
 }
 
+function formatEnemy(enemyId: string): string {
+  return localizeEnemyName(enemyId, ENEMY_NAME_BY_ID.get(enemyId) ?? enemyId);
+}
+
 function formatRuleCondition(
   rule: CardUnlockRule,
   card: Pick<CardDefinition, "characterId">
@@ -673,7 +682,7 @@ function formatRuleCondition(
         card
       );
     case "ENEMY_KILLS":
-      return `Tuer ${rule.count}x ${rule.enemyId}`;
+      return `Tuer ${rule.count}x ${formatEnemy(rule.enemyId)}`;
     case "STORY_UNLOCK":
       return `Debloquer l'histoire ${rule.storyId}`;
     case "ALL_OF":
