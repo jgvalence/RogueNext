@@ -205,9 +205,15 @@ export const en = {
     relicSourceBoss: "Source: boss {{boss}}",
     relicSourceGeneral: "Source: general",
     whyLocked: "Why this card is locked",
+    whyRelicLocked: "Why this relic is locked",
     missingCondition: "Missing condition",
     progress: "Progress",
     alwaysUnlocked: "Always unlocked",
+    relicUnlockBestGold: "Reach {{gold}} gold in a single run",
+    relicUnlockDifficultyWins:
+      "Win {{wins}} run(s) on difficulty {{difficulty}}",
+    relicUnlockCharacterDifficultyWins:
+      "Win {{wins}} run(s) on difficulty {{difficulty}} with {{character}}",
     runConditions: {
       title: "Starting options",
       summary:

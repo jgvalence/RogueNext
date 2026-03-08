@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   computeEnemyKillUnlockedRelicIds,
-  computeUnlockedRelicIds,
   eliteCanDropRelic,
   filterCardIdsByDifficulty,
   filterRelicsByDifficulty,
@@ -11,6 +10,7 @@ import {
   getDifficultyModifiers,
   getEnemyStartingBlock,
   getPostFloorFiveEscalation,
+  getRelicUnlockDetails,
   isRelicUnlocked,
   readCharacterWinsByDifficultyFromResources,
   recordCharacterDifficultyVictory,
@@ -20,6 +20,7 @@ import {
   unlockNextDifficultyOnVictory,
   updateBestInfiniteFloor,
   updateBestGoldInSingleRun,
+  computeUnlockedRelicIds,
 } from "../engine/difficulty";
 
 describe("Run difficulty progression", () => {
@@ -83,6 +84,46 @@ describe("Run difficulty progression", () => {
       "menders_charm",
       "global_codex_prime",
     ]);
+  });
+
+  it("exposes relic unlock conditions and progress for the collection view", () => {
+    const details = getRelicUnlockDetails(
+      ["global_codex_prime", "guardians_seal", "vital_flask"],
+      {
+        totalRuns: 12,
+        wonRuns: 9,
+        unlockedDifficultyMax: 5,
+        winsByDifficulty: { "3": 1 },
+        enemyKillCounts: { chapter_guardian: 2 },
+      }
+    );
+    const globalCodexPrime = details.global_codex_prime!;
+    const guardiansSeal = details.guardians_seal!;
+    const vitalFlask = details.vital_flask!;
+
+    expect(globalCodexPrime.unlocked).toBe(false);
+    expect(globalCodexPrime.requirements).toEqual([
+      { type: "WON_RUNS", required: 10, current: 9 },
+      { type: "WINS_BY_DIFFICULTY", difficulty: 4, required: 1, current: 0 },
+    ]);
+    expect(globalCodexPrime.missingRequirement).toEqual({
+      type: "WON_RUNS",
+      required: 10,
+      current: 9,
+    });
+
+    expect(guardiansSeal.missingRequirement).toEqual({
+      type: "ENEMY_KILLS",
+      enemyId: "chapter_guardian",
+      required: 3,
+      current: 2,
+    });
+
+    expect(vitalFlask).toEqual({
+      unlocked: true,
+      requirements: [],
+      missingRequirement: null,
+    });
   });
 
   it("unlocks character difficulty relics only for the matching character", () => {

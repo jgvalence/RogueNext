@@ -11,8 +11,8 @@ import {
 } from "@/game/engine/card-unlocks";
 import { readEnemyKillCountsFromResources } from "@/game/engine/bestiary";
 import {
-  computeUnlockedRelicIds,
   getBestGoldInSingleRun,
+  getRelicUnlockDetails,
   readCharacterWinsByDifficultyFromResources,
   getUnlockedMaxDifficultyFromResources,
 } from "@/game/engine/difficulty";
@@ -80,23 +80,22 @@ export default async function CardCollectionPage() {
       unlockProgress: details[c.id]?.progress ?? null,
     }));
 
-  const unlockedRelicIds = new Set(
-    computeUnlockedRelicIds(
-      relicDefinitions.map((relic) => relic.id),
-      {
-        totalRuns: runStats.totalRuns,
-        wonRuns: runStats.wonRuns,
-        unlockedDifficultyMax: getUnlockedMaxDifficultyFromResources(
-          progression.resources
-        ),
-        winsByDifficulty: progression.winsByDifficulty ?? {},
-        characterWinsByDifficulty: readCharacterWinsByDifficultyFromResources(
-          progression.resources
-        ),
-        bestGoldInSingleRun: getBestGoldInSingleRun(progression.resources),
-        enemyKillCounts,
-      }
-    )
+  const relicUnlockProgress = {
+    totalRuns: runStats.totalRuns,
+    wonRuns: runStats.wonRuns,
+    unlockedDifficultyMax: getUnlockedMaxDifficultyFromResources(
+      progression.resources
+    ),
+    winsByDifficulty: progression.winsByDifficulty ?? {},
+    characterWinsByDifficulty: readCharacterWinsByDifficultyFromResources(
+      progression.resources
+    ),
+    bestGoldInSingleRun: getBestGoldInSingleRun(progression.resources),
+    enemyKillCounts,
+  };
+  const relicUnlockDetails = getRelicUnlockDetails(
+    relicDefinitions.map((relic) => relic.id),
+    relicUnlockProgress
   );
 
   const relics: CollectionRelicRow[] = relicDefinitions.map((relic) => ({
@@ -105,7 +104,10 @@ export default async function CardCollectionPage() {
     description: relic.description,
     rarity: relic.rarity,
     sourceBossId: relic.sourceBossId,
-    unlocked: unlockedRelicIds.has(relic.id),
+    unlocked: relicUnlockDetails[relic.id]?.unlocked ?? true,
+    unlockRequirements: relicUnlockDetails[relic.id]?.requirements ?? [],
+    missingUnlockRequirement:
+      relicUnlockDetails[relic.id]?.missingRequirement ?? null,
   }));
 
   return (

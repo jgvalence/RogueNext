@@ -33,6 +33,7 @@ import {
   localizeRunConditionDescription,
   localizeRunConditionName,
 } from "@/lib/i18n/run-condition-text";
+import type { RelicUnlockRequirementState } from "@/game/engine/difficulty";
 
 type CollectionTab = "RUN_OPTIONS" | "CARDS" | "RELICS";
 type CollectionTypeFilter = "ALL" | "ATTACK" | "DEFENSE" | "POWER";
@@ -62,6 +63,8 @@ export interface CollectionRelicRow {
   rarity: RelicRarity;
   sourceBossId?: string;
   unlocked: boolean;
+  unlockRequirements: RelicUnlockRequirementState[];
+  missingUnlockRequirement: RelicUnlockRequirementState | null;
 }
 
 interface CardCollectionClientProps {
@@ -607,6 +610,34 @@ export function CardCollectionClient({
                     <p className="mt-2 text-sm text-gray-300">
                       {localizeRelicDescription(relic.id, relic.description)}
                     </p>
+
+                    {!relic.unlocked && (
+                      <div className="mt-3 rounded border border-rose-900 bg-rose-950/30 p-2 text-xs text-rose-200">
+                        <p className="font-semibold">
+                          {t("collection.whyRelicLocked")}
+                        </p>
+                        <p>
+                          {t("collection.missingCondition")}:{" "}
+                          {relic.missingUnlockRequirement
+                            ? formatRelicUnlockRequirement(
+                                relic.missingUnlockRequirement,
+                                t
+                              )
+                            : formatRelicUnlockRequirements(
+                                relic.unlockRequirements,
+                                t
+                              )}
+                        </p>
+                        {relic.missingUnlockRequirement && (
+                          <p className="mt-1 text-rose-300">
+                            {t("collection.progress")}:{" "}
+                            {formatRelicUnlockProgress(
+                              relic.missingUnlockRequirement
+                            )}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -652,4 +683,67 @@ function formatRunConditionUnlock(
     return parts[0]!;
   }
   return parts.join(" + ");
+}
+
+function formatRelicUnlockRequirements(
+  requirements: RelicUnlockRequirementState[],
+  t: TFunction
+): string {
+  if (requirements.length === 0) {
+    return t("collection.alwaysUnlocked");
+  }
+  if (requirements.length === 1) {
+    return formatRelicUnlockRequirement(requirements[0]!, t);
+  }
+  return requirements
+    .map((requirement) => formatRelicUnlockRequirement(requirement, t))
+    .join(" + ");
+}
+
+function formatRelicUnlockRequirement(
+  requirement: RelicUnlockRequirementState,
+  t: TFunction
+): string {
+  switch (requirement.type) {
+    case "TOTAL_RUNS":
+      return t("collection.runConditions.unlockRuns", {
+        runs: requirement.required,
+      });
+    case "WON_RUNS":
+      return t("collection.runConditions.unlockWins", {
+        wins: requirement.required,
+      });
+    case "BEST_GOLD_IN_SINGLE_RUN":
+      return t("collection.relicUnlockBestGold", {
+        gold: requirement.required,
+      });
+    case "ENEMY_KILLS":
+      return t("collection.runConditions.unlockEnemyKills", {
+        kills: requirement.required,
+        enemy: localizeEnemyName(
+          requirement.enemyId,
+          formatRunConditionFallback(requirement.enemyId)
+        ),
+      });
+    case "WINS_BY_DIFFICULTY":
+      return t("collection.relicUnlockDifficultyWins", {
+        wins: requirement.required,
+        difficulty: requirement.difficulty,
+      });
+    case "CHARACTER_WINS_BY_DIFFICULTY":
+      return t("collection.relicUnlockCharacterDifficultyWins", {
+        wins: requirement.required,
+        difficulty: requirement.difficulty,
+        character: t(
+          `characters.${requirement.characterId}.name`,
+          formatRunConditionFallback(requirement.characterId)
+        ),
+      });
+  }
+}
+
+function formatRelicUnlockProgress(
+  requirement: RelicUnlockRequirementState
+): string {
+  return `${Math.min(requirement.current, requirement.required)}/${requirement.required}`;
 }

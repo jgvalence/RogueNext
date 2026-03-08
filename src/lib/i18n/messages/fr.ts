@@ -208,9 +208,15 @@ export const fr = {
     relicSourceBoss: "Source: boss {{boss}}",
     relicSourceGeneral: "Source: generale",
     whyLocked: "Pourquoi cette carte est bloquee",
+    whyRelicLocked: "Pourquoi cette relique est bloquee",
     missingCondition: "Condition manquante",
     progress: "Progression",
     alwaysUnlocked: "Toujours debloquee",
+    relicUnlockBestGold: "Atteindre {{gold}} or sur un meme run",
+    relicUnlockDifficultyWins:
+      "Gagner {{wins}} run(s) en difficulte {{difficulty}}",
+    relicUnlockCharacterDifficultyWins:
+      "Gagner {{wins}} run(s) en difficulte {{difficulty}} avec {{character}}",
     runConditions: {
       title: "Options de depart",
       summary:

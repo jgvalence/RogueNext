@@ -43,7 +43,7 @@ export function getUnlockedDifficultyLevelsForCharacter(
   return Array.from({ length: maxUnlocked + 1 }, (_, idx) => idx);
 }
 
-interface RelicUnlockRequirement {
+export interface RelicUnlockRequirement {
   totalRuns?: number;
   wonRuns?: number;
   winsByDifficulty?: Record<string, number>;
@@ -63,6 +63,48 @@ type EnemyKillRequirement = NonNullable<RelicUnlockRequirement["enemyKills"]>;
 
 const RELIC_UNLOCK_REQUIREMENTS: Record<string, RelicUnlockRequirement> =
   RELIC_UNLOCK_REQUIREMENTS_FROM_DOC;
+
+export type RelicUnlockRequirementState =
+  | {
+      type: "TOTAL_RUNS";
+      required: number;
+      current: number;
+    }
+  | {
+      type: "WON_RUNS";
+      required: number;
+      current: number;
+    }
+  | {
+      type: "BEST_GOLD_IN_SINGLE_RUN";
+      required: number;
+      current: number;
+    }
+  | {
+      type: "ENEMY_KILLS";
+      enemyId: string;
+      required: number;
+      current: number;
+    }
+  | {
+      type: "WINS_BY_DIFFICULTY";
+      difficulty: number;
+      required: number;
+      current: number;
+    }
+  | {
+      type: "CHARACTER_WINS_BY_DIFFICULTY";
+      characterId: string;
+      difficulty: number;
+      required: number;
+      current: number;
+    };
+
+export interface RelicUnlockDetail {
+  unlocked: boolean;
+  requirements: RelicUnlockRequirementState[];
+  missingRequirement: RelicUnlockRequirementState | null;
+}
 
 export interface RelicUnlockProgress {
   totalRuns: number;
@@ -446,6 +488,122 @@ export function isRelicUnlocked(
   }
 
   return true;
+}
+
+function buildRelicUnlockRequirementStates(
+  relicId: string,
+  progress: RelicUnlockProgress
+): RelicUnlockRequirementState[] {
+  const requirements = getRelicUnlockRequirement(relicId);
+  if (!requirements) return [];
+
+  const result: RelicUnlockRequirementState[] = [];
+
+  const totalRunsRequired = Math.max(0, requirements.totalRuns ?? 0);
+  if (totalRunsRequired > 0) {
+    result.push({
+      type: "TOTAL_RUNS",
+      required: totalRunsRequired,
+      current: Math.max(0, Math.floor(progress.totalRuns ?? 0)),
+    });
+  }
+
+  const wonRunsRequired = Math.max(0, requirements.wonRuns ?? 0);
+  if (wonRunsRequired > 0) {
+    result.push({
+      type: "WON_RUNS",
+      required: wonRunsRequired,
+      current: Math.max(0, Math.floor(progress.wonRuns ?? 0)),
+    });
+  }
+
+  const bestGoldRequired = Math.max(0, requirements.bestGoldInSingleRun ?? 0);
+  if (bestGoldRequired > 0) {
+    result.push({
+      type: "BEST_GOLD_IN_SINGLE_RUN",
+      required: bestGoldRequired,
+      current: Math.max(0, Math.floor(progress.bestGoldInSingleRun ?? 0)),
+    });
+  }
+
+  if (requirements.enemyKills) {
+    result.push({
+      type: "ENEMY_KILLS",
+      enemyId: requirements.enemyKills.enemyId,
+      required: Math.max(0, Math.floor(requirements.enemyKills.count)),
+      current: Math.max(
+        0,
+        Math.floor(
+          progress.enemyKillCounts?.[requirements.enemyKills.enemyId] ?? 0
+        )
+      ),
+    });
+  }
+
+  for (const [difficultyRaw, requiredWinsRaw] of Object.entries(
+    requirements.winsByDifficulty ?? {}
+  ).sort(([left], [right]) => Number(left) - Number(right))) {
+    result.push({
+      type: "WINS_BY_DIFFICULTY",
+      difficulty: clampDifficulty(Number(difficultyRaw)),
+      required: Math.max(0, Math.floor(requiredWinsRaw)),
+      current: Math.max(
+        0,
+        Math.floor(progress.winsByDifficulty?.[difficultyRaw] ?? 0)
+      ),
+    });
+  }
+
+  if (requirements.characterWinsByDifficulty) {
+    const {
+      characterId,
+      difficulty,
+      count = 1,
+    } = requirements.characterWinsByDifficulty;
+    const normalizedDifficulty = clampDifficulty(difficulty);
+    result.push({
+      type: "CHARACTER_WINS_BY_DIFFICULTY",
+      characterId,
+      difficulty: normalizedDifficulty,
+      required: Math.max(0, Math.floor(count)),
+      current: Math.max(
+        0,
+        Math.floor(
+          progress.characterWinsByDifficulty?.[characterId]?.[
+            String(normalizedDifficulty)
+          ] ?? 0
+        )
+      ),
+    });
+  }
+
+  return result;
+}
+
+function isRelicUnlockRequirementMet(
+  requirement: RelicUnlockRequirementState
+): boolean {
+  return requirement.current >= requirement.required;
+}
+
+export function getRelicUnlockDetails(
+  relicIds: string[],
+  progress: RelicUnlockProgress
+): Record<string, RelicUnlockDetail> {
+  const result: Record<string, RelicUnlockDetail> = {};
+
+  for (const relicId of relicIds) {
+    const requirements = buildRelicUnlockRequirementStates(relicId, progress);
+    result[relicId] = {
+      unlocked: isRelicUnlocked(relicId, progress),
+      requirements,
+      missingRequirement:
+        requirements.find((requirement) => !isRelicUnlockRequirementMet(requirement)) ??
+        null,
+    };
+  }
+
+  return result;
 }
 
 export function computeUnlockedRelicIds(
