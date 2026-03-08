@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth/helpers";
 import { handleServerActionError, success } from "@/lib/errors/handlers";
-import { Prisma } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { computeMetaBonuses } from "@/game/engine/meta";
 import { histoireDefinitions } from "@/game/data/histoires";
@@ -209,6 +209,11 @@ export async function getLeaderboardAction(
     const rows = await prisma.userProgression.findMany({
       where: {
         totalRuns: { gt: 0 },
+        user: {
+          role: {
+            not: UserRole.ADMIN,
+          },
+        },
       },
       orderBy: [
         { wonRuns: "desc" },
