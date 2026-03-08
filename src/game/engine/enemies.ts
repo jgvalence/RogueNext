@@ -133,11 +133,22 @@ export function executeOneEnemyTurn(
 
   // STUN : l'ennemi passe son tour
   if (getBuffStacks(enemy.buffs, "STUN") > 0) {
+    const shouldGainStunImmunity = Boolean(enemy.isElite || enemy.isBoss);
     return {
       ...state,
       enemies: state.enemies.map((e) =>
         e.instanceId === enemy.instanceId
-          ? { ...e, buffs: removeBuff(e.buffs, "STUN") }
+          ? {
+              ...e,
+              buffs: shouldGainStunImmunity
+                ? applyBuff(
+                    removeBuff(removeBuff(e.buffs, "STUN"), "STUN_IMMUNITY"),
+                    "STUN_IMMUNITY",
+                    1,
+                    2
+                  )
+                : removeBuff(e.buffs, "STUN"),
+            }
           : e
       ),
     };

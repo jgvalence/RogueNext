@@ -22,6 +22,17 @@ export const buffMeta: Record<string, BuffMetaEntry> = {
     label: () => i18n.t("buff.VULNERABLE.label"),
     description: (stacks) => i18n.t("buff.VULNERABLE.description", { stacks }),
   },
+  STUN: {
+    color: "bg-slate-700 text-slate-100",
+    label: () => i18n.t("buff.STUN.label"),
+    description: (stacks) => i18n.t("buff.STUN.description", { stacks }),
+  },
+  STUN_IMMUNITY: {
+    color: "bg-cyan-950 text-cyan-200",
+    label: () => i18n.t("buff.STUN_IMMUNITY.label"),
+    description: (stacks) =>
+      i18n.t("buff.STUN_IMMUNITY.description", { stacks }),
+  },
   STRENGTH: {
     color: "bg-red-900 text-red-300",
     label: () => i18n.t("buff.STRENGTH.label"),
@@ -58,6 +69,8 @@ export function getBuffLabelToKeyMap(): Record<string, string> {
   labels.Weak = "WEAK";
   labels.Faible = "WEAK";
   labels.Vulnerable = "VULNERABLE";
+  labels.Stun = "STUN";
+  labels.Etourdi = "STUN";
   labels.Strength = "STRENGTH";
   labels.Force = "STRENGTH";
   labels.Focus = "FOCUS";

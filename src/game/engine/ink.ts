@@ -4,6 +4,7 @@ import type { CardDefinition } from "../schemas/cards";
 import { GAME_CONSTANTS } from "../constants";
 import { moveFromDiscardToHand, drawCards } from "./deck";
 import { applyDamage } from "./damage";
+import { getBuffStacks } from "./buffs";
 import { applyBuff } from "./buffs";
 import type { RNG } from "./rng";
 
@@ -61,7 +62,9 @@ export function canUseInkPower(
     case "INDEX":
       return state.discardPile.length > 0;
     case "SILENCE":
-      return state.enemies.some((e) => e.currentHp > 0);
+      return state.enemies.some(
+        (e) => e.currentHp > 0 && getBuffStacks(e.buffs, "STUN_IMMUNITY") <= 0
+      );
     // Legacy
     case "REWRITE":
       return state.discardPile.length > 0;
@@ -77,7 +80,7 @@ export function canUseInkPower(
  * - SEAL         : gagne 8 armure
  * - VISION       : pioche 2 cartes
  * - INDEX        : récupère une carte de la défausse (targetInstanceId = card)
- * - SILENCE      : étourdis un ennemi 1 tour (targetInstanceId = enemy instanceId)
+ * - SILENCE      : étourdis un ennemi 1 tour (élites/boss résistants 1 tour ensuite)
  * - REWRITE/LOST_CHAPTER : legacy, comportement conservé
  */
 export function applyInkPower(
@@ -88,6 +91,20 @@ export function applyInkPower(
   rng: RNG
 ): CombatState {
   if (!canUseInkPower(state, power)) return state;
+
+  if (power === "SILENCE") {
+    if (!targetInstanceId) return state;
+    const targetEnemy = state.enemies.find(
+      (enemy) => enemy.instanceId === targetInstanceId
+    );
+    if (
+      !targetEnemy ||
+      targetEnemy.currentHp <= 0 ||
+      getBuffStacks(targetEnemy.buffs, "STUN_IMMUNITY") > 0
+    ) {
+      return state;
+    }
+  }
 
   const cost = GAME_CONSTANTS.INK_POWER_COSTS[power];
   const afterSpend = spendInk(state, cost);

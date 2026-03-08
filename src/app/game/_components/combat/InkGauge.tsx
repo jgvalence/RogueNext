@@ -37,7 +37,7 @@ const ALL_INK_POWERS: { type: InkPowerType; label: string; desc: string }[] = [
   {
     type: "SILENCE",
     label: "Silence",
-    desc: "Apply Stun to the targeted enemy",
+    desc: "Make the target lose its next turn; elites and bosses resist stun for 1 turn after that",
   },
   // Legacy
   { type: "REWRITE", label: "Rewrite", desc: "Retrieve a card from discard" },

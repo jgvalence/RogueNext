@@ -91,6 +91,10 @@ function getBuffSymbol(buffType: string): string {
       return "\u2304";
     case "VULNERABLE":
       return "\u25C9";
+    case "STUN":
+      return "Z";
+    case "STUN_IMMUNITY":
+      return "R";
     case "STRENGTH":
       return "\u2694";
     case "FOCUS":

@@ -1106,6 +1106,14 @@ export const en = {
       label: "Vulnerable",
       description: "Increases damage taken by 50%.",
     },
+    STUN: {
+      label: "Stunned",
+      description: "Loses the next turn.",
+    },
+    STUN_IMMUNITY: {
+      label: "Stun Ward",
+      description: "Cannot be stunned this turn.",
+    },
     STRENGTH: {
       label: "Strength",
       description: "Increases all damage dealt by {{stacks}}.",
@@ -1339,7 +1347,7 @@ export const en = {
       },
       SILENCE: {
         label: "Shhh",
-        desc: "An enemy loses their next turn",
+        desc: "An enemy loses their next turn. Elites and bosses resist stun for 1 turn after that",
       },
       // Legacy
       REWRITE: {

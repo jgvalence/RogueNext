@@ -919,6 +919,122 @@ describe("Ink system", () => {
     expect(result.player.inkCurrent).toBe(0); // 7 - 7
   });
 
+  it("applyInkPower SILENCE does not spend ink on an elite already under stun immunity", () => {
+    const rng = createRNG("silence-immune-target");
+    const enemy = {
+      instanceId: "e1",
+      definitionId: "ink_slime",
+      name: "Elite Test",
+      currentHp: 30,
+      maxHp: 30,
+      block: 0,
+      speed: 5,
+      buffs: [{ type: "STUN_IMMUNITY" as const, stacks: 1, duration: 1 }],
+      intentIndex: 0,
+      isElite: true,
+    };
+    const altEnemy = {
+      instanceId: "e2",
+      definitionId: "ink_slime",
+      name: "Backup",
+      currentHp: 20,
+      maxHp: 20,
+      block: 0,
+      speed: 4,
+      buffs: [],
+      intentIndex: 0,
+    };
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 7 },
+      enemies: [enemy, altEnemy],
+    });
+
+    expect(canUseInkPower(state, "SILENCE")).toBe(true);
+
+    const result = applyInkPower(state, "SILENCE", "e1", cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(7);
+    expect(result.inkPowerUsedThisTurn).toBe(false);
+    expect(result.enemies[0]!.buffs).toEqual(enemy.buffs);
+  });
+
+  it("SILENCE cannot chain-lock an elite every turn", () => {
+    const enemy = {
+      instanceId: "e1",
+      definitionId: "ink_slime",
+      name: "Elite Test",
+      currentHp: 30,
+      maxHp: 30,
+      block: 0,
+      speed: 5,
+      buffs: [],
+      intentIndex: 0,
+      isElite: true,
+    };
+    const state = makeMinimalCombat({
+      player: {
+        ...makeMinimalCombat().player,
+        currentHp: 40,
+        maxHp: 40,
+        inkCurrent: 7,
+      },
+      enemies: [enemy],
+    });
+
+    const stunned = applyInkPower(
+      state,
+      "SILENCE",
+      "e1",
+      cardDefs,
+      createRNG("silence-elite-open")
+    );
+    const afterSkip = executeAlliesEnemiesTurn(
+      { ...stunned, phase: "ALLIES_ENEMIES_TURN" },
+      enemyDefs,
+      allyDefs,
+      createRNG("silence-elite-skip")
+    );
+
+    expect(afterSkip.player.currentHp).toBe(40);
+    expect(
+      afterSkip.enemies[0]!.buffs.find((buff) => buff.type === "STUN")
+    ).toBeUndefined();
+    expect(
+      afterSkip.enemies[0]!.buffs.find((buff) => buff.type === "STUN_IMMUNITY")
+        ?.duration
+    ).toBe(1);
+
+    const lockedTurn = {
+      ...afterSkip,
+      phase: "PLAYER_TURN" as const,
+      inkPowerUsedThisTurn: false,
+      player: { ...afterSkip.player, inkCurrent: 7 },
+    };
+    expect(canUseInkPower(lockedTurn, "SILENCE")).toBe(false);
+
+    const afterRecovery = executeAlliesEnemiesTurn(
+      { ...lockedTurn, phase: "ALLIES_ENEMIES_TURN" },
+      enemyDefs,
+      allyDefs,
+      createRNG("silence-elite-recovery")
+    );
+
+    expect(afterRecovery.player.currentHp).toBeLessThan(lockedTurn.player.currentHp);
+    expect(
+      afterRecovery.enemies[0]!.buffs.some(
+        (buff) => buff.type === "STUN_IMMUNITY"
+      )
+    ).toBe(false);
+
+    const recoveredTurn = {
+      ...afterRecovery,
+      phase: "PLAYER_TURN" as const,
+      inkPowerUsedThisTurn: false,
+      player: { ...afterRecovery.player, inkCurrent: 7 },
+    };
+    expect(canUseInkPower(recoveredTurn, "SILENCE")).toBe(true);
+  });
+
   it("applyInkPower VISION draws 2 cards", () => {
     const rng = createRNG("vision-test");
     const state = makeMinimalCombat({

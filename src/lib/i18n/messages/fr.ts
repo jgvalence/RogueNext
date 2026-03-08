@@ -1074,6 +1074,14 @@ export const fr = {
       label: "Vulnerable",
       description: "Augmente les degats subis de 50%.",
     },
+    STUN: {
+      label: "Etourdi",
+      description: "Passe son prochain tour.",
+    },
+    STUN_IMMUNITY: {
+      label: "Anti-stun",
+      description: "Ne peut pas etre etourdi ce tour-ci.",
+    },
     STRENGTH: {
       label: "Force",
       description: "Augmente tous les degats infliges de {{stacks}}.",
@@ -1316,7 +1324,7 @@ export const fr = {
       },
       SILENCE: {
         label: "Chhhut",
-        desc: "Un ennemi passe son prochain tour",
+        desc: "Un ennemi passe son prochain tour. Les elites et boss resistent 1 tour ensuite",
       },
       // Legacy
       REWRITE: {

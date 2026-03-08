@@ -68,6 +68,7 @@ export const BuffType = z.enum([
   "THORNS",
   "BLEED",
   "STUN",
+  "STUN_IMMUNITY",
 ]);
 export type BuffType = z.infer<typeof BuffType>;
 
