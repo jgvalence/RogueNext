@@ -1,5 +1,10 @@
 import type { CardDefinition } from "../schemas/cards";
 import type { BiomeType } from "../schemas/enums";
+import {
+  ELITE_ENEMY_MASTERY_KILL_THRESHOLD,
+  NORMAL_ENEMY_MASTERY_KILL_THRESHOLD,
+  getEnemyMasteryKillThreshold,
+} from "../data/enemy-mastery";
 
 export interface BiomeUnlockProgress {
   enteredBiomes: Record<string, number>;
@@ -565,7 +570,10 @@ function getGeneratedBestiaryRule(cardId: string): CardUnlockRule | null {
     return {
       type: "ENEMY_KILLS",
       enemyId,
-      count: 15,
+      count: getEnemyMasteryKillThreshold(
+        enemyId,
+        NORMAL_ENEMY_MASTERY_KILL_THRESHOLD
+      ),
     };
   }
 
@@ -575,7 +583,10 @@ function getGeneratedBestiaryRule(cardId: string): CardUnlockRule | null {
     return {
       type: "ENEMY_KILLS",
       enemyId,
-      count: 5,
+      count: getEnemyMasteryKillThreshold(
+        enemyId,
+        ELITE_ENEMY_MASTERY_KILL_THRESHOLD
+      ),
     };
   }
 

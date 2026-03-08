@@ -2764,15 +2764,15 @@ describe("Card unlock rules", () => {
     };
 
     const locked = computeUnlockedCardIds(allCards, progress, [], {
-      draugr: 14,
-      valkyrie: 4,
+      draugr: 4,
+      valkyrie: 2,
     });
     expect(locked.includes("bestiary_normal_draugr")).toBe(false);
     expect(locked.includes("bestiary_elite_valkyrie")).toBe(false);
 
     const unlocked = computeUnlockedCardIds(allCards, progress, [], {
-      draugr: 15,
-      valkyrie: 5,
+      draugr: 5,
+      valkyrie: 3,
     });
     expect(unlocked.includes("bestiary_normal_draugr")).toBe(true);
     expect(unlocked.includes("bestiary_elite_valkyrie")).toBe(true);

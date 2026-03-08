@@ -3,6 +3,10 @@ import { relicDefinitions, type RelicDefinitionData } from "../data/relics";
 import { RELIC_UNLOCK_REQUIREMENTS_FROM_DOC } from "../data/relic-unlocks";
 import { GAME_CONSTANTS } from "../constants";
 import { characterDefinitions } from "../data/characters";
+import {
+  BOSS_ENEMY_MASTERY_KILL_THRESHOLD,
+  getEnemyMasteryKillThreshold,
+} from "../data/enemy-mastery";
 
 export const MAX_RUN_DIFFICULTY_LEVEL = 5;
 const DIFFICULTY_UNLOCK_KEY = "__RUN_DIFFICULTY_UNLOCKED_MAX";
@@ -64,6 +68,15 @@ type EnemyKillRequirement = NonNullable<RelicUnlockRequirement["enemyKills"]>;
 const RELIC_UNLOCK_REQUIREMENTS: Record<string, RelicUnlockRequirement> =
   RELIC_UNLOCK_REQUIREMENTS_FROM_DOC;
 
+function normalizeEnemyKillRequirement(
+  requirement: EnemyKillRequirement
+): EnemyKillRequirement {
+  return {
+    ...requirement,
+    count: getEnemyMasteryKillThreshold(requirement.enemyId, requirement.count),
+  };
+}
+
 export type RelicUnlockRequirementState =
   | {
       type: "TOTAL_RUNS";
@@ -120,7 +133,13 @@ function getRelicUnlockRequirement(
   relicId: string
 ): RelicUnlockRequirement | undefined {
   const base = RELIC_UNLOCK_REQUIREMENTS[relicId];
-  if (base) return base;
+  if (base) {
+    if (!base.enemyKills) return base;
+    return {
+      ...base,
+      enemyKills: normalizeEnemyKillRequirement(base.enemyKills),
+    };
+  }
 
   const sourceBossId = relicDefinitions.find(
     (r) => r.id === relicId
@@ -131,7 +150,10 @@ function getRelicUnlockRequirement(
   return {
     enemyKills: {
       enemyId: sourceBossId,
-      count: 3,
+      count: getEnemyMasteryKillThreshold(
+        sourceBossId,
+        BOSS_ENEMY_MASTERY_KILL_THRESHOLD
+      ),
     },
   };
 }
@@ -140,7 +162,7 @@ export function getEnemyKillRequirementForRelic(
   relicId: string
 ): EnemyKillRequirement | null {
   const fromDoc = RELIC_UNLOCK_REQUIREMENTS[relicId]?.enemyKills;
-  if (fromDoc) return fromDoc;
+  if (fromDoc) return normalizeEnemyKillRequirement(fromDoc);
 
   const sourceBossId = relicDefinitions.find(
     (r) => r.id === relicId
@@ -148,7 +170,10 @@ export function getEnemyKillRequirementForRelic(
   if (!sourceBossId) return null;
   return {
     enemyId: sourceBossId,
-    count: 3,
+    count: getEnemyMasteryKillThreshold(
+      sourceBossId,
+      BOSS_ENEMY_MASTERY_KILL_THRESHOLD
+    ),
   };
 }
 

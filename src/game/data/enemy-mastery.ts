@@ -1,5 +1,8 @@
-export const NORMAL_ENEMY_MASTERY_KILL_THRESHOLD = 15;
-export const ELITE_ENEMY_MASTERY_KILL_THRESHOLD = 5;
+import { enemyDefinitions } from "./enemies";
+
+export const NORMAL_ENEMY_MASTERY_KILL_THRESHOLD = 5;
+export const ELITE_ENEMY_MASTERY_KILL_THRESHOLD = 3;
+export const BOSS_ENEMY_MASTERY_KILL_THRESHOLD = 2;
 
 export const ENEMIES_WITHOUT_BESTIARY_CARDS = [
   // LIBRARY
@@ -54,6 +57,21 @@ export interface EnemyMasteryRelicUnlockDefinition {
   enemyId: string;
   relicId: string;
   count: number;
+}
+
+const ENEMY_BY_ID = new Map(
+  enemyDefinitions.map((enemy) => [enemy.id, enemy] as const)
+);
+
+export function getEnemyMasteryKillThreshold(
+  enemyId: string,
+  fallback = NORMAL_ENEMY_MASTERY_KILL_THRESHOLD
+): number {
+  const enemy = ENEMY_BY_ID.get(enemyId);
+  if (enemy?.isBoss) return BOSS_ENEMY_MASTERY_KILL_THRESHOLD;
+  if (enemy?.isElite) return ELITE_ENEMY_MASTERY_KILL_THRESHOLD;
+  if (enemy) return NORMAL_ENEMY_MASTERY_KILL_THRESHOLD;
+  return fallback;
 }
 
 // One enemy mastery relic per enemy that no longer has a bestiary card.

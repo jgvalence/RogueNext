@@ -94,7 +94,7 @@ describe("Run difficulty progression", () => {
         wonRuns: 9,
         unlockedDifficultyMax: 5,
         winsByDifficulty: { "3": 1 },
-        enemyKillCounts: { chapter_guardian: 2 },
+        enemyKillCounts: { chapter_guardian: 1 },
       }
     );
     const globalCodexPrime = details.global_codex_prime!;
@@ -115,8 +115,8 @@ describe("Run difficulty progression", () => {
     expect(guardiansSeal.missingRequirement).toEqual({
       type: "ENEMY_KILLS",
       enemyId: "chapter_guardian",
-      required: 3,
-      current: 2,
+      required: 2,
+      current: 1,
     });
 
     expect(vitalFlask).toEqual({
@@ -215,13 +215,13 @@ describe("Run difficulty progression", () => {
     ).toBe(true);
   });
 
-  it("requires 3 kills of each boss to unlock its boss relic", () => {
+  it("requires 2 kills of each boss to unlock its boss relic", () => {
     expect(
       isRelicUnlocked("guardians_seal", {
         totalRuns: 0,
         wonRuns: 0,
         unlockedDifficultyMax: 0,
-        enemyKillCounts: { chapter_guardian: 2 },
+        enemyKillCounts: { chapter_guardian: 1 },
       })
     ).toBe(false);
 
@@ -230,7 +230,7 @@ describe("Run difficulty progression", () => {
         totalRuns: 0,
         wonRuns: 0,
         unlockedDifficultyMax: 0,
-        enemyKillCounts: { chapter_guardian: 3 },
+        enemyKillCounts: { chapter_guardian: 2 },
       })
     ).toBe(true);
   });
@@ -241,7 +241,7 @@ describe("Run difficulty progression", () => {
         totalRuns: 0,
         wonRuns: 0,
         unlockedDifficultyMax: 0,
-        enemyKillCounts: { ink_slime: 14 },
+        enemyKillCounts: { ink_slime: 4 },
       })
     ).toBe(false);
 
@@ -250,7 +250,7 @@ describe("Run difficulty progression", () => {
         totalRuns: 0,
         wonRuns: 0,
         unlockedDifficultyMax: 0,
-        enemyKillCounts: { ink_slime: 15 },
+        enemyKillCounts: { ink_slime: 5 },
       })
     ).toBe(true);
 
@@ -259,7 +259,7 @@ describe("Run difficulty progression", () => {
         totalRuns: 0,
         wonRuns: 0,
         unlockedDifficultyMax: 0,
-        enemyKillCounts: { oya_harbinger: 4 },
+        enemyKillCounts: { oya_harbinger: 2 },
       })
     ).toBe(false);
 
@@ -268,14 +268,14 @@ describe("Run difficulty progression", () => {
         totalRuns: 0,
         wonRuns: 0,
         unlockedDifficultyMax: 0,
-        enemyKillCounts: { oya_harbinger: 5 },
+        enemyKillCounts: { oya_harbinger: 3 },
       })
     ).toBe(true);
 
     expect(
       computeEnemyKillUnlockedRelicIds(
         ["slime_ink_vial", "harbinger_storm_bell"],
-        { ink_slime: 15, oya_harbinger: 5 }
+        { ink_slime: 5, oya_harbinger: 3 }
       )
     ).toEqual(["slime_ink_vial", "harbinger_storm_bell"]);
   });
