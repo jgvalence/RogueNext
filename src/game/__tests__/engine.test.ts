@@ -536,6 +536,18 @@ describe("Buffs", () => {
     expect(getBuffStacks(buffs, "STRENGTH")).toBe(5);
   });
 
+  it("does not apply STUN while stun immunity is active", () => {
+    const buffs = applyBuff(
+      [{ type: "STUN_IMMUNITY" as const, stacks: 1, duration: 1 }],
+      "STUN",
+      1,
+      1
+    );
+
+    expect(getBuffStacks(buffs, "STUN")).toBe(0);
+    expect(getBuffStacks(buffs, "STUN_IMMUNITY")).toBe(1);
+  });
+
   it("tickBuffs decrements durations", () => {
     const buffs = [{ type: "VULNERABLE" as const, stacks: 1, duration: 2 }];
     const ticked = tickBuffs(buffs);
@@ -2442,6 +2454,33 @@ describe("Run management", () => {
 
     expect(withNormalMode.selectedRunConditionId).toBe("vanilla_run");
     expect(swappedToInfinite.selectedRunConditionId).toBe("infinite_mode");
+  });
+
+  it("applyRunConditionToRun blocks infinite mode during the first run tutorial", () => {
+    const rng = createRNG("run-condition-first-run-infinite");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-first-run-infinite",
+      "run-first-run-infinite",
+      starterCards,
+      rng
+    );
+
+    const blocked = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        firstRunScript: {
+          enabled: true,
+          step: "FIRST_COMBAT",
+        },
+      },
+      "infinite_mode",
+      createRNG("run-condition-first-run-infinite-apply"),
+      [...cardDefs.values()]
+    );
+
+    expect(blocked.selectedRunConditionId).toBeNull();
   });
 
   it("applyRunConditionToRun can apply a normal condition after choosing normal mode", () => {

@@ -7,6 +7,10 @@ export function applyBuff(
   stacks: number,
   duration?: number
 ): BuffInstance[] {
+  if (type === "STUN" && getBuffStacks(buffs, "STUN_IMMUNITY") > 0) {
+    return buffs;
+  }
+
   const existing = buffs.find((b) => b.type === type);
 
   if (existing) {

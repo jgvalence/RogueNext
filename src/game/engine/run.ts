@@ -679,6 +679,12 @@ export function applyRunConditionToRun(
   if (runState.selectedDifficultyLevel === null) return runState;
   const normalizedConditionId = normalizeRunConditionId(conditionId);
   if (!normalizedConditionId) return runState;
+  if (
+    runState.firstRunScript?.enabled &&
+    isInfiniteRunConditionId(normalizedConditionId)
+  ) {
+    return runState;
+  }
   const isAtRunSetupStart =
     runState.floor === 1 &&
     runState.currentRoom === 0 &&

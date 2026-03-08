@@ -427,10 +427,10 @@ export const fr = {
       kicker: "Premier run",
       title: "Mini tutoriel",
       subtitle:
-        "Cette partie sert a prendre en main les bases. Tu peux jouer tranquillement en difficulte 0 pour decouvrir les systemes.",
+        "Cette partie sert a prendre en main les bases. Pour ce premier run, la difficulte 0 est la seule disponible.",
       steps: {
         chooseDifficulty:
-          "Choisis une difficulte. Le niveau 0 est ideal pour apprendre.",
+          "Choisis le niveau 0. C'est la seule difficulte disponible pour ce premier run.",
         pickMode: "Selectionne Normal pour un run classique en 5 etages.",
         planRoute:
           "Sur la carte, vise des combats pour renforcer ton deck, et passe au marchand si tu as assez d'or.",

@@ -421,9 +421,10 @@ export const en = {
       kicker: "First run",
       title: "Quick tutorial",
       subtitle:
-        "This first run is meant to teach the core loop. Difficulty 0 is the safest way to learn the systems.",
+        "This first run is meant to teach the core loop. Difficulty 0 is the only available chapter for now.",
       steps: {
-        chooseDifficulty: "Choose a difficulty. Level 0 is ideal for learning.",
+        chooseDifficulty:
+          "Choose level 0. It is the only difficulty available for this first run.",
         pickMode: "Pick Normal for a classic 5-floor run.",
         planRoute:
           "On the map, prioritize fights to grow your deck, then visit merchants when you can afford upgrades.",

@@ -103,6 +103,13 @@ const FIRST_RUN_TUTORIAL_STEP_KEYS = [
   "endOfRun",
 ] as const;
 
+const FIRST_RUN_TUTORIAL_RESTRICTED_STEP_KEYS = [
+  "chooseDifficulty",
+  "planRoute",
+  "combatFlow",
+  "endOfRun",
+] as const;
+
 export function RunSetupScreen({
   runState,
   cardDefs,
@@ -131,6 +138,12 @@ export function RunSetupScreen({
   const [draftSelectedOfferIds, setDraftSelectedOfferIds] = useState<string[]>(
     initialSelectedOfferIds
   );
+  const isFirstRunSetupRestricted =
+    showFirstRunTutorial || Boolean(runState.firstRunScript?.enabled);
+  const showRunTypeChoice = !isFirstRunSetupRestricted;
+  const tutorialStepKeys = isFirstRunSetupRestricted
+    ? FIRST_RUN_TUTORIAL_RESTRICTED_STEP_KEYS
+    : FIRST_RUN_TUTORIAL_STEP_KEYS;
   const draftUnlockProgress = useMemo(
     () =>
       onEnterBiome(
@@ -250,6 +263,12 @@ export function RunSetupScreen({
       setDraftDifficulty(null);
     }
   }, [draftDifficulty, difficultyChoices]);
+
+  useEffect(() => {
+    if (!isFirstRunSetupRestricted) return;
+    setDraftModeConditionId(VANILLA_RUN_CONDITION_ID);
+    setDraftNormalConditionId((current) => current ?? VANILLA_RUN_CONDITION_ID);
+  }, [isFirstRunSetupRestricted]);
 
   const normalConditionChoices = useMemo(() => {
     const pending = normalizeRunConditionIds(
@@ -410,7 +429,7 @@ export function RunSetupScreen({
               {t("runSetup.firstRunTutorial.subtitle")}
             </p>
             <ol className="mt-4 grid gap-2 sm:grid-cols-2">
-              {FIRST_RUN_TUTORIAL_STEP_KEYS.map((stepKey, index) => (
+              {tutorialStepKeys.map((stepKey, index) => (
                 <li
                   key={stepKey}
                   className="flex items-start gap-2 rounded-lg border border-sky-200/20 bg-sky-900/35 px-3 py-2 text-sm text-sky-50/90"
@@ -567,74 +586,76 @@ export function RunSetupScreen({
           </div>
         </section>
 
-        <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100/80">
-              {t("runSetup.sections.runType")}
-            </h3>
-            {draftModeConditionId && (
-              <RogueTag
-                bordered
-                className="!m-0 rounded border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-cyan-100"
-              >
-                {t("runSetup.selected")}
-              </RogueTag>
-            )}
-          </div>
-          <p className="mb-3 text-xs text-amber-100/65">
-            {t("runSetup.modeHint")}
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {[VANILLA_RUN_CONDITION_ID, INFINITE_RUN_CONDITION_ID].map(
-              (modeConditionId) => {
-                const isSelected = draftModeConditionId === modeConditionId;
-                const title =
-                  modeConditionId === INFINITE_RUN_CONDITION_ID
-                    ? t("runSetup.modeInfinite")
-                    : t("runSetup.modeNormal");
-                const description =
-                  modeConditionId === INFINITE_RUN_CONDITION_ID
-                    ? t("runSetup.modeInfiniteDescription")
-                    : t("runSetup.modeNormalDescription");
-                return (
-                  <RogueButton
-                    key={modeConditionId}
-                    type="text"
-                    onClick={() => {
-                      if (modeConditionId === INFINITE_RUN_CONDITION_ID) {
-                        setDraftModeConditionId(INFINITE_RUN_CONDITION_ID);
-                        return;
-                      }
-                      setDraftModeConditionId(VANILLA_RUN_CONDITION_ID);
-                      setDraftNormalConditionId(
-                        (current) => current ?? VANILLA_RUN_CONDITION_ID
-                      );
-                    }}
-                    disabled={draftDifficulty === null}
-                    className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition ${
-                      isSelected
-                        ? "!border-cyan-300/60 !bg-cyan-300/10"
-                        : "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
-                    } disabled:!cursor-not-allowed disabled:!opacity-65`}
-                  >
-                    <RogueTag
-                      bordered
-                      className="!m-0 rounded border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-cyan-100"
+        {showRunTypeChoice && (
+          <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100/80">
+                {t("runSetup.sections.runType")}
+              </h3>
+              {draftModeConditionId && (
+                <RogueTag
+                  bordered
+                  className="!m-0 rounded border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-cyan-100"
+                >
+                  {t("runSetup.selected")}
+                </RogueTag>
+              )}
+            </div>
+            <p className="mb-3 text-xs text-amber-100/65">
+              {t("runSetup.modeHint")}
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[VANILLA_RUN_CONDITION_ID, INFINITE_RUN_CONDITION_ID].map(
+                (modeConditionId) => {
+                  const isSelected = draftModeConditionId === modeConditionId;
+                  const title =
+                    modeConditionId === INFINITE_RUN_CONDITION_ID
+                      ? t("runSetup.modeInfinite")
+                      : t("runSetup.modeNormal");
+                  const description =
+                    modeConditionId === INFINITE_RUN_CONDITION_ID
+                      ? t("runSetup.modeInfiniteDescription")
+                      : t("runSetup.modeNormalDescription");
+                  return (
+                    <RogueButton
+                      key={modeConditionId}
+                      type="text"
+                      onClick={() => {
+                        if (modeConditionId === INFINITE_RUN_CONDITION_ID) {
+                          setDraftModeConditionId(INFINITE_RUN_CONDITION_ID);
+                          return;
+                        }
+                        setDraftModeConditionId(VANILLA_RUN_CONDITION_ID);
+                        setDraftNormalConditionId(
+                          (current) => current ?? VANILLA_RUN_CONDITION_ID
+                        );
+                      }}
+                      disabled={draftDifficulty === null}
+                      className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition ${
+                        isSelected
+                          ? "!border-cyan-300/60 !bg-cyan-300/10"
+                          : "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
+                      } disabled:!cursor-not-allowed disabled:!opacity-65`}
                     >
-                      {t("runSetup.modeType")}
-                    </RogueTag>
-                    <p className="mt-2 text-base font-bold text-amber-50">
-                      {title}
-                    </p>
-                    <p className="mt-1 text-xs text-amber-100/70">
-                      {description}
-                    </p>
-                  </RogueButton>
-                );
-              }
-            )}
-          </div>
-        </section>
+                      <RogueTag
+                        bordered
+                        className="!m-0 rounded border-cyan-300/35 bg-cyan-300/15 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-cyan-100"
+                      >
+                        {t("runSetup.modeType")}
+                      </RogueTag>
+                      <p className="mt-2 text-base font-bold text-amber-50">
+                        {title}
+                      </p>
+                      <p className="mt-1 text-xs text-amber-100/70">
+                        {description}
+                      </p>
+                    </RogueButton>
+                  );
+                }
+              )}
+            </div>
+          </section>
+        )}
 
         {draftModeConditionId === VANILLA_RUN_CONDITION_ID && (
           <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
