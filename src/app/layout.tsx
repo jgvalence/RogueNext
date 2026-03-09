@@ -8,6 +8,7 @@ import { env } from "@/lib/env";
 import { AntdProvider } from "@/components/providers/AntdProvider";
 import { I18nProvider } from "@/components/providers/I18nProvider";
 import { GlobalLanguageDock } from "@/components/shared/GlobalLanguageDock";
+import { RouteMusicGuard } from "@/components/shared/RouteMusicGuard";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -59,6 +60,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <I18nProvider>
           <AntdProvider>
+            <RouteMusicGuard />
             <GlobalLanguageDock />
             <QueryProvider>
               {children}

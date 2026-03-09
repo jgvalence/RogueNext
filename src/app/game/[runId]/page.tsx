@@ -211,8 +211,6 @@ function GameContent({
     else stopMusic(); // VICTORY or DEFEAT
   }, [phase, state.combat?.enemies]);
 
-  useEffect(() => () => stopMusic(0.3), []);
-
   useEffect(() => {
     if (newBestiaryEntries.length === 0) return;
     const timer = window.setTimeout(() => setNewBestiaryEntries([]), 4200);
