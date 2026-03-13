@@ -172,6 +172,10 @@ export function InkGauge({
           const canUse =
             isAllowedByTutorial && canUseInkPower(combatState, power.type);
           const cost = GAME_CONSTANTS.INK_POWER_COSTS[power.type];
+          const localizedLabel = t(
+            `inkGauge.powers.${power.type}.label`,
+            power.label
+          );
           const tooltip = t("inkGauge.powerTooltip", {
             description: t(`inkGauge.powers.${power.type}.desc`, power.desc),
             cost,
@@ -186,7 +190,8 @@ export function InkGauge({
               <RogueButton
                 type="text"
                 className={cn(
-                  "!h-auto !w-full !min-w-0 !whitespace-normal !rounded !px-1 !py-0.5 !text-center !text-[9px] !font-medium !leading-tight !transition lg:!px-1.5 lg:!py-1 lg:!text-[11px]",
+                  "!h-auto !w-full !min-w-0 !overflow-hidden !rounded !px-1 !py-1 !text-center !transition lg:!px-1.5 lg:!py-1.5",
+                  "[&>span]:!inline-flex [&>span]:!w-full [&>span]:!min-w-0 [&>span]:!items-center [&>span]:!justify-center",
                   canUse
                     ? readyPowerClassName ??
                         "!bg-cyan-700 !text-cyan-100 hover:!bg-cyan-600"
@@ -195,7 +200,14 @@ export function InkGauge({
                 disabled={!canUse}
                 onClick={() => onUsePower(power.type)}
               >
-                {t(`inkGauge.powers.${power.type}.label`, power.label)} ({cost})
+                <span className="flex min-w-0 flex-col items-center gap-1 text-center">
+                  <span className="block max-w-full text-[9px] font-semibold leading-tight [overflow-wrap:anywhere] lg:text-[10px]">
+                    {localizedLabel}
+                  </span>
+                  <span className="inline-flex min-w-[22px] items-center justify-center rounded-full border border-current/20 bg-black/20 px-1.5 py-0.5 text-[9px] font-black leading-none text-current">
+                    {cost}
+                  </span>
+                </span>
               </RogueButton>
             </RogueTooltip>
           );
