@@ -1,12 +1,15 @@
 {
   "name": "base-nextjs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Base Next.js project template with best practices for professional applications",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "audit:cards": "tsx scripts/audit-card-pool.ts",
+    "audit:stories": "tsx scripts/audit-story-descriptions.ts",
+    "audit:signatures": "tsx scripts/audit-signature-cadence.ts",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "antd:first:check": "node scripts/check-antd-first.mjs",

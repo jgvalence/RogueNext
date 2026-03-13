@@ -38,6 +38,14 @@ export function calculateDamage(
   return Math.max(0, damage);
 }
 
+export function computeDamageFromTargetBlock(
+  targetBlock: number,
+  divisor: number
+): number {
+  const safeDivisor = Math.max(1, Math.floor(divisor));
+  return Math.max(0, Math.floor(Math.max(0, targetBlock) / safeDivisor));
+}
+
 /**
  * Apply damage to a target, accounting for block.
  * Returns new HP, block, and overkill amount.
@@ -54,6 +62,18 @@ export function applyDamage(
   return {
     currentHp: newHp,
     block: newBlock,
+    overkill: Math.max(0, -newHp),
+  };
+}
+
+export function applyDirectDamage(
+  target: { currentHp: number; block: number },
+  damage: number
+): { currentHp: number; block: number; overkill: number } {
+  const newHp = target.currentHp - damage;
+  return {
+    currentHp: newHp,
+    block: target.block,
     overkill: Math.max(0, -newHp),
   };
 }

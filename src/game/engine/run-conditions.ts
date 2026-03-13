@@ -216,7 +216,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
       startingGoldDelta: -20,
       addMetaBonuses: {
         startingInk: 2,
-        inkPerCardValue: 1,
+        inkPerCardChance: 100,
       },
     },
   },

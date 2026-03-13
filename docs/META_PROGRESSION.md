@@ -11,14 +11,22 @@ Chaque combat donne la ressource principale du biome.
 Scaling actuel:
 
 - Normal: base
-- Elite: x2
-- Boss: x4
-- Bonus run gagne: x1.5 sur le total en fin de run
+- Elite: ~x1.35
+- Boss: ~x2.2
+- Multiplicateur biome:
+  - `LIBRARY`: x1.5
+  - autres biomes: x0.7
+- Bonus run gagne: x1.25 sur les ressources gagnees
+- Re-clear d'une difficulte deja validee: multiplicateur final x0.7
 - Bonus cross-biome: 25% de chance de gagner +1 ressource d'un autre biome
 
 ## Histoires et bonus
 
 - 45 histoires (9 biomes x 5)
+- Les couts ne suivent plus une matrice strictement fixe:
+  - les noeuds les plus puissants ont ete remontes
+  - certains tier 2 plus modestes ont ete legerement abaisses
+  - les cross-cost `PAGES` les plus favorises ont ete augmentes
 - Bonus permanents agreges via `computeMetaBonuses()`
 - Application des bonus en debut de combat via `applyMetaBonusesToCombat()`
 
@@ -26,7 +34,10 @@ Bonus notables maintenant actifs:
 
 - `HEAL_AFTER_COMBAT` (heal applique a chaque fin de combat)
 - `STARTING_REGEN` (regen en debut de tour)
+- `STARTING_FOCUS`
 - `FIRST_HIT_DAMAGE_REDUCTION` (reduction sur le premier hit subi du combat)
+- `ALLY_SLOTS` (capes a 3 au total)
+- `LOOT_LUCK`
 - Ink per card separe en:
   - `INK_PER_CARD_CHANCE`
   - `INK_PER_CARD_VALUE`
@@ -35,9 +46,14 @@ Bonus notables maintenant actifs:
 
 Systeme de difficulte progressif entre runs:
 
-- 4 niveaux (0-3), niveau 0 toujours disponible
-- Unlock: niveau 1 apres 1 victoire, niveau 2 apres 3 victoires, niveau 3 apres 5 victoires
-- La difficulte choisie filtre les cartes et reliques disponibles pendant le run
+- 6 niveaux (0-5), niveau 0 toujours disponible
+- Unlock progressif: gagner a la difficulte max actuelle debloque la suivante
+- Deblocage suivi par personnage, avec retrocompat pour le Scribe
+- Plus de gating cartes/reliques par difficulte
+- Paliers gameplay notables:
+  - diff 3: intents d'elite/boss caches tous les 3 tours, bosses avec block de depart par floor, debuffs boss qui bypass le block
+  - diff 4: memes regles etendues aux elites, +1 stack sur les debuffs de boss
+  - diff 5: plus de pression sur elites/packs/events, debuffs de tous les ennemis qui bypass le block, elites pouvant ne pas drop de relique
 - Fichier: `src/game/engine/difficulty.ts`
 
 ## Run Conditions (modificateurs de run)

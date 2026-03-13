@@ -23,7 +23,7 @@ interface HistoireModalProps {
   histoires: Histoire[];
   progression: MetaProgress;
   slotState: SlotState;
-  showFirstRunEnergyStoryTutorial?: boolean;
+  showFirstRunGuidedStoryTutorial?: boolean;
   onClose: () => void;
   onUnlocked: (updatedProgression: MetaProgress) => void;
 }
@@ -49,6 +49,8 @@ function formatBonus(
       return t("library.bonus.startingBlock", { value: bonus.value });
     case "STARTING_STRENGTH":
       return t("library.bonus.startingStrength", { value: bonus.value });
+    case "STARTING_FOCUS":
+      return t("library.bonus.startingFocus", { value: bonus.value });
     case "STARTING_REGEN":
       return t("library.bonus.startingRegen", { value: bonus.value });
     case "FIRST_HIT_DAMAGE_REDUCTION":
@@ -67,6 +69,8 @@ function formatBonus(
       return t("library.bonus.extraCardRewardChoices", { value: bonus.value });
     case "RELIC_DISCOUNT":
       return t("library.bonus.relicDiscount", { value: bonus.value });
+    case "LOOT_LUCK":
+      return t("library.bonus.lootLuck", { value: bonus.value });
     case "UNLOCK_POWER_SLOT":
       return t("library.bonus.unlockPowerSlot", { slot: bonus.slot });
     case "HEAL_AFTER_COMBAT":
@@ -91,7 +95,7 @@ export function HistoireModal({
   histoires,
   progression,
   slotState,
-  showFirstRunEnergyStoryTutorial = false,
+  showFirstRunGuidedStoryTutorial = false,
   onClose,
   onUnlocked,
 }: HistoireModalProps) {
@@ -159,13 +163,13 @@ export function HistoireModal({
       className="[&_.ant-modal-content]:!rounded-2xl [&_.ant-modal-content]:!border [&_.ant-modal-content]:!border-slate-800 [&_.ant-modal-content]:!bg-slate-950 [&_.ant-modal-header]:!bg-transparent [&_.ant-modal-title]:!text-white"
     >
       <div className="space-y-4">
-        {showFirstRunEnergyStoryTutorial && (
+        {showFirstRunGuidedStoryTutorial && (
           <div className="rounded-lg border border-cyan-500/45 bg-cyan-950/35 p-3">
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-cyan-200/90">
-              {t("library.energyStoryTutorial.kicker")}
+              {t("library.guidedStoryTutorial.kicker")}
             </p>
             <p className="mt-1 text-sm leading-relaxed text-cyan-50">
-              {t("library.energyStoryTutorial.description")}
+              {t("library.guidedStoryTutorial.description")}
             </p>
           </div>
         )}

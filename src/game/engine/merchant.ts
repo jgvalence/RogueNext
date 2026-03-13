@@ -13,6 +13,7 @@ import { allyDefinitions } from "../data/allies";
 import { usableItemDefinitions, createUsableItemInstance } from "./items";
 import { GAME_CONSTANTS } from "../constants";
 import { matchesCardCharacter } from "./card-filters";
+import { weightedSampleCardsForOffers } from "./card-offers";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 import { addRelicToRunState } from "./relics";
 
@@ -253,7 +254,7 @@ export function generateShopInventory(
     Math.max(1, Math.round(price * merchantPriceMultiplier));
 
   // 3 random non-starter cards
-  const lootable = weightedSampleByRarity(
+  const lootable = weightedSampleCardsForOffers(
     allCards.filter(
       (c) =>
         !c.isStarterCard &&
@@ -263,7 +264,8 @@ export function generateShopInventory(
     ),
     3,
     rng,
-    lootLuck
+    lootLuck,
+    "MERCHANT"
   );
   for (let i = 0; i < lootable.length; i++) {
     const card = lootable[i]!;

@@ -30,8 +30,7 @@ import {
   isInfiniteRunConditionId,
   normalizeRunConditionIds,
 } from "@/game/engine/run-conditions";
-import { createNewRun } from "@/game/engine/run";
-import type { BiomeType } from "@/game/schemas/enums";
+import { createNewRun, drawRandomBiomeChoices } from "@/game/engine/run";
 import type { RunState } from "@/game/schemas/run-state";
 import { findLatestActiveRunForUser } from "./run-persistence.service";
 import {
@@ -95,14 +94,9 @@ export async function buildInitialRunStateForUser(
     wonRuns: progression?.wonRuns ?? 0,
     enemyKillCounts: initialEnemyKillCounts,
   });
-  const startingBiomeChoices: [BiomeType, BiomeType] | null =
+  const startingBiomeChoices =
     totalRuns > 0
-      ? ([
-          "LIBRARY",
-          createRNG(`${seed}-opening-biome`).pick(
-            GAME_CONSTANTS.AVAILABLE_BIOMES
-          ),
-        ] as [BiomeType, BiomeType])
+      ? drawRandomBiomeChoices(createRNG(`${seed}-opening-biome`))
       : null;
   const availableCharacters = getAvailableCharacters(totalRuns).map(
     (character) => character.id

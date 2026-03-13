@@ -20,6 +20,7 @@ import {
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 import { getDifficultyModifiers } from "./difficulty";
+import { isCurseCardDefinitionId } from "./status-cards";
 
 const SPLIT_ASSAULT_NAME = "Split Assault";
 const PREDATOR_FORMATION_NAME = "Predator Formation";
@@ -43,6 +44,8 @@ function evaluateCondition(
       return state.player.buffs.some(
         (b) => b.type === condition.buff && b.stacks > 0
       );
+    case "PLAYER_BLOCK_ABOVE":
+      return state.player.block > condition.value;
     case "PLAYER_INK_ABOVE":
       return state.player.inkCurrent > condition.value;
     case "PLAYER_INK_BELOW":
@@ -208,7 +211,10 @@ export function executeOneEnemyTurn(
 function hasOffensivePressure(ability: EnemyAbility): boolean {
   return ability.effects.some(
     (e) =>
-      e.type === "DAMAGE" || e.type === "DRAIN_INK" || e.type === "APPLY_DEBUFF"
+      e.type === "DAMAGE" ||
+      e.type === "DAMAGE_PER_TARGET_BLOCK" ||
+      e.type === "DRAIN_INK" ||
+      e.type === "APPLY_DEBUFF"
   );
 }
 
@@ -459,7 +465,9 @@ export function resolveEnemyAbilityTarget(
       }
       return "player";
     default: {
-      const hasDamage = ability.effects.some((e) => e.type === "DAMAGE");
+      const hasDamage = ability.effects.some(
+        (e) => e.type === "DAMAGE" || e.type === "DAMAGE_PER_TARGET_BLOCK"
+      );
       if (hasDamage && shouldPressureAllies(state, ability)) {
         return pickAllyPriorityTarget(state);
       }
@@ -472,7 +480,9 @@ function shouldPressureAllies(
   state: CombatState,
   ability: EnemyAbility
 ): boolean {
-  const hasDamage = ability.effects.some((e) => e.type === "DAMAGE");
+  const hasDamage = ability.effects.some(
+    (e) => e.type === "DAMAGE" || e.type === "DAMAGE_PER_TARGET_BLOCK"
+  );
   const livingAllies = state.allies.filter((a) => a.currentHp > 0).length;
   if (!hasDamage || livingAllies === 0) return false;
 
@@ -561,7 +571,8 @@ function maybeTriggerBossPhase(
       // Ink Overload: floods deck with curses + raises card costs next turn
       current = healEnemy(current, enemy.instanceId, 16);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
-      current = addCardsToDrawPile(current, "haunting_regret", 2);
+      current = addCardsToDrawPile(current, "haunting_regret", 1);
+      current = addCardsToDrawPile(current, "binding_curse", 1);
       current = applyNextTurnCardCostIncrease(current, 1);
       return current;
     case "fenrir":
@@ -591,7 +602,8 @@ function maybeTriggerBossPhase(
       current = healEnemy(current, enemy.instanceId, 15);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
       current = summonEnemyIfPossible(current, "void_tendril", enemyDefs);
-      current = addCardsToDrawPile(current, "haunting_regret", 2);
+      current = addCardsToDrawPile(current, "haunting_regret", 1);
+      current = addCardsToDrawPile(current, "echo_curse", 1);
       current = freezePlayerHandCards(current, 2);
       return current;
     case "tezcatlipoca_echo":
@@ -627,7 +639,8 @@ function maybeTriggerBossPhase(
       current = grantEnemyStrength(current, enemy.instanceId, 2);
       current = drainAllPlayerInk(current);
       current = freezePlayerHandCards(current, 2);
-      current = addCardsToDrawPile(current, "haunting_regret", 2);
+      current = addCardsToDrawPile(current, "haunting_regret", 1);
+      current = addCardsToDrawPile(current, "binding_curse", 1);
       return current;
     case "hel_queen":
       // Realm of the Dead: summon draugr + heavy BLEED + Weak
@@ -690,7 +703,8 @@ function maybeTriggerBossPhase(
       current = applyBuffToPlayer(current, "WEAK", 2, 3);
       current = applyBuffToPlayer(current, "VULNERABLE", 2, 3);
       current = freezePlayerHandCards(current, 2);
-      current = addCardsToDiscardPile(current, "hexed_parchment", 2);
+      current = addCardsToDiscardPile(current, "shrouded_omen", 1);
+      current = addCardsToDiscardPile(current, "binding_curse", 1);
       return current;
     default:
       return current;
@@ -760,7 +774,7 @@ function applyBossAbilityMechanics(
       return current;
     case "nyarlathotep_shard":
       if (ability.name === "Mad Prophecy") {
-        current = addCardsToDrawPile(current, "haunting_regret", 1);
+        current = addCardsToDrawPile(current, "echo_curse", 1);
       }
       if (ability.name === "Void Mantle") {
         current = summonEnemyIfPossible(current, "cultist_scribe", enemyDefs);
@@ -787,7 +801,7 @@ function applyBossAbilityMechanics(
       return current;
     case "baba_yaga_hut":
       if (ability.name === "Witchfire") {
-        current = addCardsToDiscardPile(current, "ink_burn", 1);
+        current = addCardsToDiscardPile(current, "smudged_lens", 1);
       }
       if (ability.name === "Soul Stew") {
         current = healEnemy(current, enemy.instanceId, 10);
@@ -803,7 +817,7 @@ function applyBossAbilityMechanics(
       return current;
     case "the_archivist":
       if (ability.name === "Corrupted Index") {
-        current = addCardsToDrawPile(current, "haunting_regret", 1);
+        current = addCardsToDrawPile(current, "binding_curse", 1);
       }
       if (ability.name === "Void Library") {
         if (current.player.inkCurrent <= 1) {
@@ -947,15 +961,12 @@ function summonEnemyIfPossible(
 }
 
 function countBossCurseCards(state: CombatState): number {
-  const isBossCurse = (definitionId: string) =>
-    definitionId === "haunting_regret" || definitionId === "hexed_parchment";
-
   return [
     ...state.hand,
     ...state.drawPile,
     ...state.discardPile,
     ...state.exhaustPile,
-  ].filter((c) => isBossCurse(c.definitionId)).length;
+  ].filter((c) => isCurseCardDefinitionId(c.definitionId)).length;
 }
 
 function markBossPhaseTriggered(

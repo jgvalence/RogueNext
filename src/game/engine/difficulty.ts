@@ -1,4 +1,4 @@
-import type { CardDefinition } from "../schemas/cards";
+import type { CardDefinition, CardInstance } from "../schemas/cards";
 import { relicDefinitions, type RelicDefinitionData } from "../data/relics";
 import { RELIC_UNLOCK_REQUIREMENTS_FROM_DOC } from "../data/relic-unlocks";
 import { GAME_CONSTANTS } from "../constants";
@@ -13,6 +13,7 @@ const DIFFICULTY_UNLOCK_KEY = "__RUN_DIFFICULTY_UNLOCKED_MAX";
 const BEST_GOLD_SINGLE_RUN_KEY = "__RUN_BEST_GOLD_SINGLE";
 const BEST_INFINITE_FLOOR_KEY = "__RUN_INFINITE_BEST_FLOOR";
 const CHARACTER_DIFFICULTY_WIN_KEY_PREFIX = "__RUN_CHARACTER_DIFFICULTY_WIN__";
+const ENEMY_INTENT_HIDE_CURSE_CARD_IDS = new Set(["shrouded_omen"]);
 
 function difficultyUnlockKeyForCharacter(characterId: string): string {
   return `${DIFFICULTY_UNLOCK_KEY}_${characterId}`;
@@ -416,11 +417,25 @@ export function enemyDebuffsBypassBlock(
   return false;
 }
 
+export function handHidesEnemyIntent(
+  hand: Array<Pick<CardInstance, "definitionId">>
+): boolean {
+  return hand.some((card) =>
+    ENEMY_INTENT_HIDE_CURSE_CARD_IDS.has(card.definitionId)
+  );
+}
+
 export function shouldHideEnemyIntent(
   level: number,
   turnNumber: number,
-  source: { isBoss?: boolean; isElite?: boolean }
+  source: { isBoss?: boolean; isElite?: boolean },
+  options?: {
+    playerHand?: Array<Pick<CardInstance, "definitionId">>;
+  }
 ): boolean {
+  if (options?.playerHand && handHidesEnemyIntent(options.playerHand)) {
+    return true;
+  }
   const l = clampDifficulty(level);
   if (l < 3) return false;
   if (!source.isBoss && !source.isElite) return false;
@@ -448,6 +463,39 @@ export function eliteCanDropRelic(level: number, rngRoll: number): boolean {
   const l = clampDifficulty(level);
   if (l < 5) return true;
   return rngRoll >= 0.5;
+}
+
+export function hasClearedDifficultyBefore(
+  resources: Record<string, number>,
+  characterId: string,
+  difficultyLevel: number
+): boolean {
+  const normalizedDifficulty = clampDifficulty(difficultyLevel);
+  const characterWins =
+    readCharacterWinsByDifficultyFromResources(resources)[characterId] ?? {};
+  if ((characterWins[String(normalizedDifficulty)] ?? 0) > 0) {
+    return true;
+  }
+
+  return (
+    getUnlockedMaxDifficultyForCharacter(resources, characterId) >
+    normalizedDifficulty
+  );
+}
+
+export function getEarnedResourceMultiplierForRun(
+  resources: Record<string, number>,
+  characterId: string,
+  difficultyLevel: number,
+  status: "VICTORY" | "DEFEAT" | "ABANDONED"
+): number {
+  const victoryMultiplier = status === "VICTORY" ? 1.25 : 1;
+  if (
+    !hasClearedDifficultyBefore(resources, characterId, difficultyLevel)
+  ) {
+    return victoryMultiplier;
+  }
+  return victoryMultiplier * 0.7;
 }
 
 export function isRelicUnlockedForDifficulty(

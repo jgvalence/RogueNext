@@ -33,6 +33,7 @@ const AbilityConditionSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("PLAYER_HP_BELOW_PCT"), threshold: z.number() }),
   z.object({ type: z.literal("ENEMY_HP_BELOW_PCT"), threshold: z.number() }),
   z.object({ type: z.literal("PLAYER_HAS_DEBUFF"), buff: z.string() }),
+  z.object({ type: z.literal("PLAYER_BLOCK_ABOVE"), value: z.number() }),
   z.object({ type: z.literal("PLAYER_INK_ABOVE"), value: z.number() }),
   z.object({ type: z.literal("PLAYER_INK_BELOW"), value: z.number() }),
   z.object({ type: z.literal("TURN_MULTIPLE"), n: z.number() }),

@@ -13,6 +13,7 @@ import {
   writeUnlockProgressToResources,
 } from "@/game/engine/card-unlocks";
 import {
+  getEarnedResourceMultiplierForRun,
   recordCharacterDifficultyVictory,
   unlockNextDifficultyOnVictory,
   updateBestGoldInSingleRun,
@@ -20,11 +21,8 @@ import {
 } from "@/game/engine/difficulty";
 import { isInfiniteRunConditionId } from "@/game/engine/run-conditions";
 import type { RunState } from "@/game/schemas/run-state";
-import {
-  addResourcesInternal,
-  incrementRunStatsInternal,
-} from "@/server/actions/progression";
-import { markFirstRunEnergyStoryTutorialPending } from "@/game/engine/library-tutorial";
+import { incrementRunStatsInternal } from "@/server/actions/progression";
+import { markFirstRunGuidedStoryTutorialPending } from "@/game/engine/library-tutorial";
 
 const EMPTY_CARD_UNLOCK_PROGRESS = {
   enteredBiomes: {},
@@ -61,9 +59,8 @@ export interface SyncRunEndProgressionInput {
 
 function scaleEarnedResources(
   earnedResources: Record<string, number>,
-  status: SyncRunEndProgressionInput["status"]
+  multiplier: number
 ): Record<string, number> {
-  const multiplier = status === "VICTORY" ? 1.25 : 1;
   const scaledResources: Record<string, number> = {};
 
   for (const [key, amount] of Object.entries(earnedResources)) {
@@ -71,6 +68,19 @@ function scaleEarnedResources(
   }
 
   return scaledResources;
+}
+
+function addScaledResources(
+  baseResources: Record<string, number>,
+  earnedResources: Record<string, number>
+): Record<string, number> {
+  const nextResources = { ...baseResources };
+
+  for (const [key, amount] of Object.entries(earnedResources)) {
+    nextResources[key] = (nextResources[key] ?? 0) + Math.round(amount);
+  }
+
+  return nextResources;
 }
 
 function applySpentStartMerchantResources(
@@ -248,19 +258,20 @@ export async function syncRunEndProgression(
     ? {}
     : (input.earnedResources ?? runState.earnedResources ?? {});
 
-  if (Object.keys(earnedResources).length > 0) {
-    await addResourcesInternal(
-      input.userId,
-      scaleEarnedResources(earnedResources, input.status)
-    );
-  }
-
   const progression = await prisma.userProgression.findUnique({
     where: { userId: input.userId },
     select: { resources: true, unlockedStoryIds: true },
   });
   const currentResourcesBase =
     (progression?.resources as Record<string, number>) ?? {};
+  const characterId = (runState.characterId as string | undefined) ?? "scribe";
+  const difficultyLevel = runState.selectedDifficultyLevel ?? 0;
+  const earnedResourceMultiplier = getEarnedResourceMultiplierForRun(
+    currentResourcesBase,
+    characterId,
+    difficultyLevel,
+    input.status
+  );
   const startMerchantSpentResources =
     input.startMerchantSpentResources ??
     runState.startMerchantSpentResources ??
@@ -269,14 +280,22 @@ export async function syncRunEndProgression(
     currentResourcesBase,
     startMerchantSpentResources
   );
+  const currentResourcesWithEarned = addScaledResources(
+    currentResources,
+    scaleEarnedResources(earnedResources, earnedResourceMultiplier)
+  );
 
   let nextResources = isInfiniteRun
-    ? updateBestInfiniteFloor(currentResources, runState.floor)
-    : buildStandardRunResources(currentResources, runState, input.status);
+    ? updateBestInfiniteFloor(currentResourcesWithEarned, runState.floor)
+    : buildStandardRunResources(
+        currentResourcesWithEarned,
+        runState,
+        input.status
+      );
 
   nextResources = applyScribeChoices(nextResources, runState);
   if (input.scriptedOutcome === "FIRST_RUN_ENERGY_TUTORIAL") {
-    nextResources = markFirstRunEnergyStoryTutorialPending(nextResources);
+    nextResources = markFirstRunGuidedStoryTutorialPending(nextResources);
   }
 
   const mergedEncounteredEnemies = mergeEncounteredEnemies(

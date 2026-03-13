@@ -2,6 +2,12 @@ import type { CombatState } from "../schemas/combat-state";
 import type { CardInstance } from "../schemas/cards";
 import { GAME_CONSTANTS } from "../constants";
 import type { RNG } from "./rng";
+import { nanoid } from "nanoid";
+import {
+  isClogCardDefinitionId as isTypedClogCardDefinitionId,
+  isCurseCardDefinitionId,
+  shouldExhaustAtEndOfTurn,
+} from "./status-cards";
 
 export type DrawSource = "PLAYER" | "ENEMY" | "SYSTEM";
 const MAX_DRAW_DEBUG_EVENTS = 20;
@@ -19,6 +25,92 @@ export function reshuffleDiscardIntoDraw(
     ...state,
     drawPile: newDrawPile,
     discardPile: [],
+  };
+}
+
+export function isCurseLikeDefinitionId(definitionId: string): boolean {
+  return isCurseCardDefinitionId(definitionId);
+}
+
+export function isClogCardDefinitionId(definitionId: string): boolean {
+  return isTypedClogCardDefinitionId(definitionId);
+}
+
+function applyDrawnCardSideEffects(
+  state: CombatState,
+  card: CardInstance,
+  hand: CardInstance[],
+  frozen: Set<string>,
+  drawsToDiscard: number,
+  freezeRemaining: number,
+  rng: RNG
+): {
+  state: CombatState;
+  drawsToDiscard: number;
+  freezeRemaining: number;
+} {
+  let current = state;
+  let nextDrawsToDiscard = drawsToDiscard;
+  let nextFreezeRemaining = freezeRemaining;
+
+  switch (card.definitionId) {
+    case "ink_burn":
+      current = {
+        ...current,
+        player: {
+          ...current.player,
+          inkCurrent: Math.max(0, current.player.inkCurrent - 1),
+        },
+      };
+      break;
+    case "torn_index":
+      nextFreezeRemaining += 1;
+      break;
+    case "smudged_lens":
+      current = {
+        ...current,
+        nextPlayerDisruption: {
+          ...current.nextPlayerDisruption,
+          drawPenalty: (current.nextPlayerDisruption?.drawPenalty ?? 0) + 1,
+        },
+      };
+      break;
+    case "hexed_parchment":
+      current = {
+        ...current,
+        playerDisruption: {
+          ...current.playerDisruption,
+          extraCardCost: (current.playerDisruption?.extraCardCost ?? 0) + 1,
+        },
+      };
+      break;
+    case "haunting_regret":
+      nextDrawsToDiscard += 1;
+      break;
+    case "binding_curse": {
+      const frozenCard = rng.pick(hand);
+      frozen.add(frozenCard.instanceId);
+      break;
+    }
+    case "echo_curse":
+      current = {
+        ...current,
+        discardPile: [
+          ...current.discardPile,
+          {
+            instanceId: nanoid(),
+            definitionId: "dazed",
+            upgraded: false,
+          },
+        ],
+      };
+      break;
+  }
+
+  return {
+    state: current,
+    drawsToDiscard: nextDrawsToDiscard,
+    freezeRemaining: nextFreezeRemaining,
   };
 }
 
@@ -40,10 +132,6 @@ export function drawCards(
   const frozen = new Set(current.playerDisruption?.frozenHandCardIds ?? []);
   let freezeRemaining = current.playerDisruption?.freezeNextDrawsRemaining ?? 0;
   let drawsToDiscard = current.playerDisruption?.drawsToDiscardRemaining ?? 0;
-  const isCurseLikeDefinitionId = (definitionId: string): boolean =>
-    definitionId === "haunting_regret" ||
-    definitionId === "hexed_parchment" ||
-    definitionId.includes("curse");
 
   while (remaining > 0) {
     if (current.drawPile.length === 0 && current.discardPile.length === 0) {
@@ -103,6 +191,18 @@ export function drawCards(
           frozen.add(card.instanceId);
           freezeRemaining--;
         }
+        const drawResolution = applyDrawnCardSideEffects(
+          current,
+          card,
+          drawn,
+          frozen,
+          drawsToDiscard,
+          freezeRemaining,
+          rng
+        );
+        current = drawResolution.state;
+        drawsToDiscard = drawResolution.drawsToDiscard;
+        freezeRemaining = drawResolution.freezeRemaining;
       }
     }
     current = {
@@ -179,9 +279,21 @@ export function drawCards(
 }
 
 export function discardHand(state: CombatState): CombatState {
+  const discardCards: CardInstance[] = [];
+  const exhaustCards: CardInstance[] = [];
+
+  for (const card of state.hand) {
+    if (shouldExhaustAtEndOfTurn(card.definitionId)) {
+      exhaustCards.push(card);
+    } else {
+      discardCards.push(card);
+    }
+  }
+
   return {
     ...state,
-    discardPile: [...state.discardPile, ...state.hand],
+    discardPile: [...state.discardPile, ...discardCards],
+    exhaustPile: [...state.exhaustPile, ...exhaustCards],
     hand: [],
   };
 }

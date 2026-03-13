@@ -10,6 +10,7 @@ import { COMBAT_BACKGROUNDS } from "@/lib/assets";
 import { FirstCombatTutorialOverlay } from "./first-combat-tutorial";
 import { CombatMobileGrid } from "./combat-mobile-grid";
 import { CombatDesktopGrid } from "./combat-desktop-grid";
+import { getCombatBiomeTheme } from "./combat-biome-theme";
 
 interface CombatBattlefieldProps {
   biome: BiomeType;
@@ -41,6 +42,7 @@ interface CombatBattlefieldProps {
   isSelectingCheatKillTarget: boolean;
   newlySummonedIds: Set<string>;
   enemyArtFailures: Set<string>;
+  attackBonus: number;
   playerHit: boolean;
   avatarFailed: boolean;
   onAvatarError: () => void;
@@ -93,6 +95,7 @@ export function CombatBattlefield({
   isSelectingCheatKillTarget,
   newlySummonedIds,
   enemyArtFailures,
+  attackBonus,
   playerHit,
   avatarFailed,
   onAvatarError,
@@ -112,30 +115,56 @@ export function CombatBattlefield({
   children,
 }: CombatBattlefieldProps) {
   const { t } = useTranslation();
+  const theme = getCombatBiomeTheme(biome);
 
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col items-center justify-between overflow-hidden bg-gradient-to-b from-[#030712] via-[#041235] to-[#020617] px-2 py-2 lg:px-6 lg:py-4 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:py-1">
+    <div
+      className={cn(
+        "relative flex min-h-0 flex-1 flex-col items-center justify-between overflow-hidden px-1.5 py-2 lg:px-6 lg:py-4 [@media(max-height:540px)]:px-1 [@media(max-height:540px)]:py-0.75",
+        theme.sceneBase
+      )}
+    >
       {!bgFailed && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={COMBAT_BACKGROUNDS[biome]}
           alt=""
           aria-hidden
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-screen"
           onError={onBackgroundError}
         />
       )}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_0%,rgba(56,189,248,0.12),transparent)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-cyan-500/5 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950 to-transparent" />
+      <div
+        className={cn("pointer-events-none absolute inset-0", theme.sceneAtmosphere)}
+      />
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b",
+          theme.sceneTopGlow
+        )}
+      />
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t",
+          theme.sceneBottomGlow
+        )}
+      />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/8" />
 
       <div className="relative z-10 flex items-center gap-1.5 self-start lg:gap-2 [@media(max-height:540px)]:hidden">
-        <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-medium text-slate-500 lg:px-2 lg:text-xs">
+        <span
+          className={cn(
+            "rounded-full px-1.5 py-0.5 text-[10px] font-medium lg:px-2 lg:text-xs",
+            theme.turnChip,
+            theme.turnFrame
+          )}
+        >
           {t("combat.turn")} {turnNumber}
         </span>
         <span
           className={cn(
             "rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide transition-colors lg:px-3 lg:text-xs lg:tracking-widest",
+            theme.turnFrame,
             turnBadgeClass
           )}
         >
@@ -156,14 +185,19 @@ export function CombatBattlefield({
       />
 
       {summonAnnouncement && (
-        <div className="pointer-events-none absolute left-1/2 top-2 z-20 -translate-x-1/2 rounded-full border border-orange-400/60 bg-orange-950/80 px-3 py-1 text-xs font-semibold text-orange-200 shadow-lg shadow-orange-900/50">
+        <div
+          className={cn(
+            "pointer-events-none absolute left-1/2 top-2 z-20 -translate-x-1/2 rounded-full px-3 py-1 text-xs font-semibold",
+            theme.summonBanner
+          )}
+        >
           {summonAnnouncement}
         </div>
       )}
 
       <div
         ref={enemyRowRef}
-        className="relative z-10 flex min-h-0 w-full flex-1 items-center justify-center py-0.5 lg:py-4 [@media(max-height:540px)]:py-0"
+        className="relative z-10 flex min-h-[176px] w-full flex-1 items-center justify-center py-1 lg:min-h-0 lg:py-4 [@media(max-height:540px)]:min-h-[150px]"
       >
         <CombatMobileGrid
           combat={combat}
@@ -178,6 +212,7 @@ export function CombatBattlefield({
           isSelectingCheatKillTarget={isSelectingCheatKillTarget}
           newlySummonedIds={newlySummonedIds}
           enemyArtFailures={enemyArtFailures}
+          attackBonus={attackBonus}
           playerHit={playerHit}
           avatarFailed={avatarFailed}
           onAvatarError={onAvatarError}
@@ -206,6 +241,7 @@ export function CombatBattlefield({
           enemyArtFailures={enemyArtFailures}
           incomingDamage={incomingDamage}
           incomingDamageByEnemyId={incomingDamageByEnemyId}
+          attackBonus={attackBonus}
           playerHit={playerHit}
           avatarFailed={avatarFailed}
           onAvatarError={onAvatarError}

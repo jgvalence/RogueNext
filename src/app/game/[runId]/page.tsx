@@ -301,7 +301,7 @@ function GameContent({
     cancelEnemyTurnFlow,
   });
 
-  const { earnedResourcesSummary, newlyUnlockedCardNames } =
+  const { earnedResourcesSummary, newlyUnlockedCards, newlyUnlockedRelics } =
     useRunOutcomeSummary({
       state,
       isInfiniteMode,
@@ -556,7 +556,8 @@ function GameContent({
             deckSize={state.deck.length}
             relicCount={state.relicIds.length}
             earnedResourcesSummary={earnedResourcesSummary}
-            newlyUnlockedCardNames={newlyUnlockedCardNames}
+            newlyUnlockedCards={newlyUnlockedCards}
+            newlyUnlockedRelics={newlyUnlockedRelics}
             onBackToLibrary={() => handleEndRun("VICTORY")}
           />
         )}
@@ -570,7 +571,8 @@ function GameContent({
             deckSize={state.deck.length}
             relicCount={state.relicIds.length}
             earnedResourcesSummary={earnedResourcesSummary}
-            newlyUnlockedCardNames={newlyUnlockedCardNames}
+            newlyUnlockedCards={newlyUnlockedCards}
+            newlyUnlockedRelics={newlyUnlockedRelics}
             onBackToLibrary={() => handleEndRun("DEFEAT")}
           />
         )}
@@ -584,7 +586,8 @@ function GameContent({
             deckSize={state.deck.length}
             relicCount={state.relicIds.length}
             earnedResourcesSummary={earnedResourcesSummary}
-            newlyUnlockedCardNames={newlyUnlockedCardNames}
+            newlyUnlockedCards={newlyUnlockedCards}
+            newlyUnlockedRelics={newlyUnlockedRelics}
             onBackToLibrary={() => handleEndRun("ABANDONED", "/library")}
           />
         )}

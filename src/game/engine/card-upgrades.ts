@@ -16,6 +16,9 @@ export function boostEffectsForUpgrade(effects: Effect[]): Effect[] {
       case "GAIN_ENERGY":
       case "GAIN_STRENGTH":
       case "GAIN_FOCUS":
+      case "DAMAGE_PER_DEBUFF":
+      case "BLOCK_PER_DEBUFF":
+      case "APPLY_BUFF_PER_DEBUFF":
       case "APPLY_BUFF":
       case "APPLY_DEBUFF":
         return { ...effect, value: effect.value + 1 };
@@ -75,6 +78,8 @@ export function buildUpgradedCardDefinition(
           ? def.upgrade.energyCost
           : def.energyCost,
       effects: def.upgrade.effects,
+      onRandomDiscardEffects:
+        def.upgrade.onRandomDiscardEffects ?? def.onRandomDiscardEffects,
       inkedVariant: upgradedInkedVariant,
     };
   }
@@ -83,6 +88,9 @@ export function buildUpgradedCardDefinition(
     ...def,
     description: buildUpgradedDescriptionFromEffects(def),
     effects: boostEffectsForUpgrade(def.effects),
+    onRandomDiscardEffects: boostEffectsForUpgrade(
+      def.onRandomDiscardEffects ?? []
+    ),
     inkedVariant: upgradedInkedVariant,
   };
 }

@@ -8,9 +8,11 @@ import {
   getBestInfiniteFloor,
   getBestGoldInSingleRun,
   getDifficultyModifiers,
+  getEarnedResourceMultiplierForRun,
   getEnemyStartingBlock,
   getPostFloorFiveEscalation,
   getRelicUnlockDetails,
+  hasClearedDifficultyBefore,
   isRelicUnlocked,
   readCharacterWinsByDifficultyFromResources,
   recordCharacterDifficultyVictory,
@@ -44,11 +46,30 @@ describe("Run difficulty progression", () => {
   it("applies new gameplay rules at difficulty 3/4/5", () => {
     expect(shouldHideEnemyIntent(3, 3, { isElite: true })).toBe(true);
     expect(shouldHideEnemyIntent(3, 2, { isBoss: true })).toBe(false);
+    expect(
+      shouldHideEnemyIntent(0, 1, { isElite: true }, {
+        playerHand: [{ definitionId: "shrouded_omen" }],
+      })
+    ).toBe(true);
     expect(getEnemyStartingBlock(3, 2, { isBoss: true })).toBe(10);
     expect(getEnemyStartingBlock(4, 2, { isElite: true })).toBe(10);
     expect(getBossDebuffBonus(4)).toBe(1);
     expect(eliteCanDropRelic(5, 0.2)).toBe(false);
     expect(eliteCanDropRelic(5, 0.8)).toBe(true);
+  });
+
+  it("reduces resource gains when the selected difficulty was already cleared", () => {
+    let resources = unlockNextDifficultyOnVictory({}, 0, "scribe");
+    resources = recordCharacterDifficultyVictory(resources, "scribe", 0);
+
+    expect(hasClearedDifficultyBefore(resources, "scribe", 0)).toBe(true);
+    expect(hasClearedDifficultyBefore(resources, "scribe", 1)).toBe(false);
+    expect(
+      getEarnedResourceMultiplierForRun(resources, "scribe", 0, "VICTORY")
+    ).toBe(0.875);
+    expect(
+      getEarnedResourceMultiplierForRun({}, "scribe", 0, "VICTORY")
+    ).toBe(1.25);
   });
 
   it("increases elite encounter pressure at difficulty 5", () => {

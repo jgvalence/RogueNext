@@ -26,7 +26,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Traité de l'Énergie",
     biome: "LIBRARY",
     tier: 1,
-    cout: { PAGES: 14 },
+    cout: { PAGES: 16 },
     prerequis: [],
     bonus: { type: "EXTRA_ENERGY_MAX", value: 1 },
     description:
@@ -38,11 +38,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Grimoire des Index",
     biome: "LIBRARY",
     tier: 2,
-    cout: { PAGES: 24 },
+    cout: { PAGES: 30 },
     prerequis: ["encyclopedie_du_savoir"],
-    bonus: { type: "EXTRA_HAND_AT_START", value: 2 },
+    bonus: { type: "EXTRA_HAND_AT_START", value: 1 },
     description:
-      "Un système d'indexation occulte qui accélère la préparation au combat. Commence chaque combat avec 2 cartes supplémentaires en main.",
+      "Un système d'indexation occulte qui accélère la préparation au combat. Commence chaque combat avec 1 carte supplémentaire en main.",
     visuel: "grimoire",
   },
   {
@@ -62,11 +62,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Codex Infini",
     biome: "LIBRARY",
     tier: 3,
-    cout: { PAGES: 72, LAURIERS: 8 },
+    cout: { PAGES: 84, LAURIERS: 12 },
     prerequis: ["grimoire_des_index", "manuel_de_revision"],
-    bonus: { type: "EXTRA_DRAW", value: 1 },
+    bonus: { type: "LOOT_LUCK", value: 1 },
     description:
-      "L'œuvre maîtresse de la Bibliothèque – un codex qui se réécrit lui-même. +1 carte piochée supplémentaire et récompenses de cartes avec un choix de plus.",
+      "L'œuvre maîtresse de la Bibliothèque – un codex qui se réécrit lui-même. Ses pages réordonnent les trouvailles les plus rares. +1 qualité de butin.",
     visuel: "grimoire",
   },
 
@@ -114,7 +114,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Runes du Valhalla",
     biome: "VIKING",
     tier: 2,
-    cout: { RUNES: 26 },
+    cout: { RUNES: 30 },
     prerequis: ["edda_des_berserkers"],
     bonus: { type: "SURVIVAL_ONCE" },
     description:
@@ -126,11 +126,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Poème de Beowulf",
     biome: "VIKING",
     tier: 3,
-    cout: { RUNES: 72, PAGES: 8 },
+    cout: { RUNES: 78, PAGES: 12 },
     prerequis: ["chant_de_skald", "runes_du_valhalla"],
     bonus: { type: "STARTING_STRENGTH", value: 2 },
     description:
-      "L'épopée du grand héros germanique. +2 Force de départ et les ennemis élites ont 15% de HP en moins.",
+      "L'épopée du grand héros germanique. +2 Force de départ.",
     visuel: "livre",
   },
 
@@ -156,7 +156,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Platon",
     biome: "GREEK",
     tier: 1,
-    cout: { LAURIERS: 14 },
+    cout: { LAURIERS: 16 },
     prerequis: [],
     bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
     description:
@@ -181,7 +181,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Homère",
     biome: "GREEK",
     tier: 2,
-    cout: { LAURIERS: 26 },
+    cout: { LAURIERS: 28 },
     prerequis: ["la_republique"],
     bonus: { type: "STARTING_RARE_CARD" },
     description:
@@ -194,11 +194,11 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Platon",
     biome: "GREEK",
     tier: 3,
-    cout: { LAURIERS: 72, PAGES: 8 },
+    cout: { LAURIERS: 80, PAGES: 12 },
     prerequis: ["les_travaux_d_heracles", "hymnes_homeriques"],
-    bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
+    bonus: { type: "ALLY_SLOTS", value: 1 },
     description:
-      "Le dialogue sur l'amour et la sagesse. Toutes les récompenses offrent un choix supplémentaire.",
+      "Le dialogue sur l'amour et la sagesse. +1 emplacement allié supplémentaire.",
     visuel: "livre",
   },
 
@@ -222,7 +222,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Hymne à Rê",
     biome: "EGYPTIAN",
     tier: 1,
-    cout: { GLYPHES: 14 },
+    cout: { GLYPHES: 16 },
     prerequis: [],
     bonus: { type: "INK_PER_CARD_CHANCE", value: 35 },
     description:
@@ -234,7 +234,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Textes des Pyramides",
     biome: "EGYPTIAN",
     tier: 2,
-    cout: { GLYPHES: 24 },
+    cout: { GLYPHES: 30 },
     prerequis: ["livre_des_morts"],
     bonus: { type: "UNLOCK_POWER_SLOT", slot: 2 },
     description:
@@ -258,7 +258,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Rituel du Soleil",
     biome: "EGYPTIAN",
     tier: 3,
-    cout: { GLYPHES: 72, PAGES: 8 },
+    cout: { GLYPHES: 86, PAGES: 14 },
     prerequis: ["textes_des_pyramides", "papyrus_d_ani"],
     bonus: { type: "UNLOCK_POWER_SLOT", slot: 3 },
     description:
@@ -298,7 +298,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Chant de Quetzalcoatl",
     biome: "AZTEC",
     tier: 2,
-    cout: { OBSIDIENNE: 24 },
+    cout: { OBSIDIENNE: 22 },
     prerequis: ["codex_fejerváry"],
     bonus: { type: "EXTRA_HP", value: 10 },
     description:
@@ -310,11 +310,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Rite du Soleil Noir",
     biome: "AZTEC",
     tier: 2,
-    cout: { OBSIDIENNE: 26 },
+    cout: { OBSIDIENNE: 24 },
     prerequis: ["calendrier_de_pierre"],
-    bonus: { type: "HEAL_AFTER_COMBAT_FLAT", value: 3 },
+    bonus: { type: "ATTACK_BONUS", value: 1 },
     description:
-      "Le rituel qui honore Tezcatlipoca, maître du miroir sombre. +3 PV récupérés supplémentaires après chaque combat.",
+      "Le rituel qui honore Tezcatlipoca, maître du miroir sombre. +1 dégâts de base sur toutes les cartes Attaque.",
     visuel: "tablette",
   },
   {
@@ -322,11 +322,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Sacrifice Cosmique",
     biome: "AZTEC",
     tier: 3,
-    cout: { OBSIDIENNE: 72, RUNES: 8 },
+    cout: { OBSIDIENNE: 76, RUNES: 10 },
     prerequis: ["chant_de_quetzalcoatl", "rite_du_soleil_noir"],
-    bonus: { type: "EXTRA_HP", value: 10 },
+    bonus: { type: "STARTING_STRENGTH", value: 2 },
     description:
-      "Le sacrifice ultime qui maintient le soleil en mouvement. +10 HP max et les boss ont une chance de dropper une relique supplémentaire.",
+      "Le sacrifice ultime qui maintient le soleil en mouvement. +2 Force de départ.",
     visuel: "tablette",
   },
 
@@ -339,7 +339,7 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Abdul Alhazred",
     biome: "LOVECRAFTIAN",
     tier: 1,
-    cout: { FRAGMENTS: 11 },
+    cout: { FRAGMENTS: 16 },
     prerequis: [],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 30 },
     description:
@@ -364,11 +364,11 @@ export const histoireDefinitions: Histoire[] = [
     auteur: "Von Junzt",
     biome: "LOVECRAFTIAN",
     tier: 2,
-    cout: { FRAGMENTS: 24 },
+    cout: { FRAGMENTS: 28 },
     prerequis: ["necronomicon_fragment"],
-    bonus: { type: "EXHAUST_KEEP_CHANCE", value: 30 },
+    bonus: { type: "STARTING_FOCUS", value: 1 },
     description:
-      "Le traité secret sur les cultes anciens. +30% de chance supplémentaire de ne pas exhaustée une carte.",
+      "Le traité secret sur les cultes anciens. Commence chaque combat avec +1 Focus.",
     visuel: "grimoire",
   },
   {
@@ -376,7 +376,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Mondes Sans Nom",
     biome: "LOVECRAFTIAN",
     tier: 2,
-    cout: { FRAGMENTS: 26 },
+    cout: { FRAGMENTS: 30 },
     prerequis: ["journal_de_miskatonic"],
     bonus: { type: "SURVIVAL_ONCE" },
     description:
@@ -388,11 +388,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Signe des Anciens",
     biome: "LOVECRAFTIAN",
     tier: 3,
-    cout: { FRAGMENTS: 72, GLYPHES: 8 },
+    cout: { FRAGMENTS: 78, GLYPHES: 10 },
     prerequis: ["cultes_innommables", "mondes_sans_nom"],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 20 },
     description:
-      "Le signe mystique qui permet de manipuler les lois du cosmos. Les variantes Inked coûtent 1 Ink de moins.",
+      "Le signe mystique qui permet de manipuler les lois du cosmos. +20% de chance supplémentaire de ne pas exhaust une carte.",
     visuel: "tablette",
   },
 
@@ -428,11 +428,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Taliesin",
     biome: "CELTIC",
     tier: 2,
-    cout: { AMBRE: 24 },
+    cout: { AMBRE: 22 },
     prerequis: ["mabinogion"],
-    bonus: { type: "STARTING_BLOCK", value: 3 },
+    bonus: { type: "STARTING_REGEN", value: 1 },
     description:
-      "Les poèmes du barde légendaire Taliesin. +3 Block supplémentaires au début de chaque combat.",
+      "Les poèmes du barde légendaire Taliesin. Récupère 1 HP supplémentaire au début de chaque tour.",
     visuel: "livre",
   },
   {
@@ -452,11 +452,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Chaudron de Dagda",
     biome: "CELTIC",
     tier: 3,
-    cout: { AMBRE: 72, OBSIDIENNE: 8 },
+    cout: { AMBRE: 74, OBSIDIENNE: 10 },
     prerequis: ["taliesin", "les_triades_galloises"],
-    bonus: { type: "STARTING_BLOCK", value: 4 },
+    bonus: { type: "HEAL_AFTER_COMBAT", value: 5 },
     description:
-      "Le chaudron magique qui nourrit et soigne tous ceux qui en ont besoin. +4 Block et +1 Strength de départ.",
+      "Le chaudron magique qui nourrit et soigne tous ceux qui en ont besoin. Récupère 5% des PV max après chaque combat.",
     visuel: "grimoire",
   },
 
@@ -492,7 +492,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "L'Oiseau de Feu",
     biome: "RUSSIAN",
     tier: 2,
-    cout: { SCEAUX: 24 },
+    cout: { SCEAUX: 22 },
     prerequis: ["byliny_de_ilya"],
     bonus: { type: "STARTING_GOLD", value: 20 },
     description:
@@ -504,7 +504,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Domovoi",
     biome: "RUSSIAN",
     tier: 2,
-    cout: { SCEAUX: 26 },
+    cout: { SCEAUX: 22 },
     prerequis: ["contes_de_baba_yaga"],
     bonus: { type: "STARTING_BLOCK", value: 4 },
     description:
@@ -516,11 +516,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Grand Livre des Sorts",
     biome: "RUSSIAN",
     tier: 3,
-    cout: { SCEAUX: 72, AMBRE: 8 },
+    cout: { SCEAUX: 74, AMBRE: 10 },
     prerequis: ["l_oiseau_de_feu", "domovoi"],
-    bonus: { type: "EXTRA_ENERGY_MAX", value: 1 },
+    bonus: { type: "LOOT_LUCK", value: 2 },
     description:
-      "Le grimoire interdit de la tradition russe. +1 énergie max et +5 Block de départ supplémentaires.",
+      "Le grimoire interdit de la tradition russe. Ses marges cachent des chemins vers les récompenses les plus rares. +2 qualité de butin.",
     visuel: "grimoire",
   },
 
@@ -546,9 +546,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { MASQUES: 14 },
     prerequis: [],
-    bonus: { type: "EXTRA_CARD_REWARD_CHOICES", value: 1 },
+    bonus: { type: "LOOT_LUCK", value: 1 },
     description:
-      "Les ruses de l'araignée trickster, maître des histoires. +1 choix lors des récompenses de cartes.",
+      "Les ruses de l'araignée trickster, maître des histoires. +1 qualité de butin.",
     visuel: "livre",
   },
   {
@@ -556,11 +556,11 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Rites de Passage",
     biome: "AFRICAN",
     tier: 2,
-    cout: { MASQUES: 24 },
+    cout: { MASQUES: 22 },
     prerequis: ["epopee_de_soundiata"],
-    bonus: { type: "ALLY_SLOTS", value: 1 },
+    bonus: { type: "STARTING_REGEN", value: 1 },
     description:
-      "Les rituels initiatiques de nombreuses cultures africaines. +1 emplacement allié (max 2).",
+      "Les rituels initiatiques de nombreuses cultures africaines. Récupère 1 HP au début de chaque tour.",
     visuel: "tablette",
   },
   {
@@ -568,7 +568,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Masque de Légba",
     biome: "AFRICAN",
     tier: 2,
-    cout: { MASQUES: 26 },
+    cout: { MASQUES: 24 },
     prerequis: ["contes_d_anansi"],
     bonus: { type: "STARTING_STRENGTH", value: 1 },
     description:
@@ -580,7 +580,7 @@ export const histoireDefinitions: Histoire[] = [
     titre: "Le Griot Immortel",
     biome: "AFRICAN",
     tier: 3,
-    cout: { MASQUES: 72, LAURIERS: 8 },
+    cout: { MASQUES: 80, LAURIERS: 10 },
     prerequis: ["rites_de_passage", "masque_de_legba"],
     bonus: { type: "ALLY_SLOTS", value: 1 },
     description:

@@ -187,7 +187,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 7 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
           { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
-          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "hexed_parchment" },
+          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "shrouded_omen" },
         ],
       },
     ],
@@ -214,12 +214,18 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         effects: [{ type: "BLOCK", value: 14 }],
       },
       {
-        name: "Shatter",
+        name: "Armor Shatter",
         weight: 1,
-        target: "LOWEST_HP_ENEMY",
+        target: "PLAYER",
         effects: [
-          { type: "DAMAGE", value: 12 },
+          { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_BLOCK_ABOVE", value: 12 },
+            weightMultiplier: 4,
+          },
         ],
       },
       {
@@ -297,6 +303,9 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "DAMAGE", value: 10 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
+        conditionalWeights: [
+          { condition: { type: "NO_OTHER_ENEMIES" }, weightMultiplier: 3 },
+        ],
       },
       {
         name: "Fortify Binding",
@@ -348,6 +357,9 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
           { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
           { type: "ADD_CARD_TO_DRAW", value: 1, cardId: "haunting_regret" },
+        ],
+        conditionalWeights: [
+          { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2 },
         ],
       },
     ],
@@ -414,6 +426,12 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         effects: [
           { type: "DAMAGE", value: 7 },
           { type: "NEXT_DRAW_TO_DISCARD_THIS_TURN", value: 1 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_INK_BELOW", value: 2 },
+            weightMultiplier: 3,
+          },
         ],
       },
     ],
@@ -846,6 +864,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
             condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 35 },
             weightMultiplier: 3,
           },
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "BLEED" },
+            weightMultiplier: 2.5,
+          },
         ],
       },
     ],
@@ -1198,6 +1220,12 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 3 },
           { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 3 },
         ],
+        conditionalWeights: [
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 60 },
+            weightMultiplier: 2.5,
+          },
+        ],
       },
     ],
     isBoss: true,
@@ -1485,8 +1513,14 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Soul Weighing",
         weight: 1,
         effects: [
-          { type: "DAMAGE", value: 12 },
+          { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_BLOCK_ABOVE", value: 10 },
+            weightMultiplier: 4,
+          },
         ],
       },
       {
@@ -1584,6 +1618,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
             condition: { type: "PLAYER_INK_ABOVE", value: 3 },
             weightMultiplier: 4,
           },
+          {
+            condition: { type: "PLAYER_INK_BELOW", value: 3 },
+            weightMultiplier: 2.5,
+          },
         ],
       },
     ],
@@ -1659,6 +1697,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
             condition: { type: "PLAYER_INK_ABOVE", value: 3 },
             weightMultiplier: 4,
           },
+          {
+            condition: { type: "PLAYER_INK_BELOW", value: 3 },
+            weightMultiplier: 2.5,
+          },
         ],
       },
       {
@@ -1670,6 +1712,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           {
             condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
             weightMultiplier: 3,
+          },
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "VULNERABLE" },
+            weightMultiplier: 2,
           },
         ],
       },
@@ -1967,6 +2013,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         effects: [{ type: "DAMAGE", value: 18 }],
         conditionalWeights: [
           { condition: { type: "NO_OTHER_ENEMIES" }, weightMultiplier: 2 },
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "POISON" },
+            weightMultiplier: 3,
+          },
         ],
       },
       {
@@ -1994,6 +2044,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         ],
         conditionalWeights: [
           { condition: { type: "TURN_MULTIPLE", n: 4 }, weightMultiplier: 2.5 },
+          { condition: { type: "NO_OTHER_ENEMIES" }, weightMultiplier: 3 },
         ],
       },
       {
@@ -2259,6 +2310,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         effects: [{ type: "DAMAGE", value: 19 }],
         conditionalWeights: [
           { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
+          {
+            condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 45 },
+            weightMultiplier: 2,
+          },
         ],
       },
       {
@@ -2296,6 +2351,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
             condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
             weightMultiplier: 3,
           },
+          { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
         ],
       },
     ],
@@ -2742,6 +2798,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
             condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
             weightMultiplier: 2,
           },
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "BLEED" },
+            weightMultiplier: 2.5,
+          },
         ],
       },
     ],
@@ -3019,6 +3079,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
             condition: { type: "PLAYER_INK_ABOVE", value: 3 },
             weightMultiplier: 4,
           },
+          {
+            condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 60 },
+            weightMultiplier: 2,
+          },
         ],
       },
     ],
@@ -3046,6 +3110,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         conditionalWeights: [
           {
             condition: { type: "PLAYER_HP_BELOW_PCT", threshold: 40 },
+            weightMultiplier: 2.5,
+          },
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "VULNERABLE" },
             weightMultiplier: 2.5,
           },
         ],
@@ -3393,7 +3461,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         target: "PLAYER",
         effects: [
           { type: "DAMAGE", value: 9 },
-          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "hexed_parchment" },
+          { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "shrouded_omen" },
         ],
         conditionalWeights: [
           { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2.5 },
@@ -3457,6 +3525,10 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
             weightMultiplier: 3,
           },
           { condition: { type: "NO_OTHER_ENEMIES" }, weightMultiplier: 2 },
+          {
+            condition: { type: "PLAYER_HAS_DEBUFF", buff: "VULNERABLE" },
+            weightMultiplier: 2.5,
+          },
         ],
       },
     ],

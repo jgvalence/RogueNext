@@ -106,6 +106,8 @@ export const RunStateSchema = z.object({
   unlockedCardIds: z.array(z.string()).default([]),
   // Snapshot of unlocked cards at run start (for end-of-run summary)
   initialUnlockedCardIds: z.array(z.string()).default([]),
+  // Snapshot of unlocked relics at run start (for end-of-run summary)
+  initialUnlockedRelicIds: z.array(z.string()).optional(),
   // Detailed unlock progression state
   cardUnlockProgress: CardUnlockProgressSchema.default({}),
   // Events already seen this run (used to prevent once-per-run events from repeating)

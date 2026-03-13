@@ -54,6 +54,49 @@ function mergeDisruptions(
   };
 }
 
+function getEliteEscortChance(difficultyLevel: number): number {
+  if (difficultyLevel >= 5) return 0.85;
+  if (difficultyLevel >= 4) return 0.55;
+  if (difficultyLevel >= 3) return 0.3;
+  return 0;
+}
+
+function buildEliteEscortIds(
+  enemyIds: string[],
+  difficultyLevel: number,
+  enemyDefs: Map<string, EnemyDefinition>,
+  rng: RNG
+): string[] {
+  const escortChance = getEliteEscortChance(difficultyLevel);
+  if (escortChance <= 0) return [];
+
+  const eliteDefs = enemyIds
+    .map((id) => enemyDefs.get(id))
+    .filter(
+      (enemy): enemy is EnemyDefinition =>
+        enemy != null && enemy.isElite === true && enemy.isBoss !== true
+    );
+  if (eliteDefs.length !== 1) return [];
+  if (rng.next() >= escortChance) return [];
+
+  const leader = eliteDefs[0];
+  if (!leader) return [];
+  const normalPool = [...enemyDefs.values()].filter(
+    (enemy) =>
+      !enemy.isBoss &&
+      !enemy.isElite &&
+      !enemyIds.includes(enemy.id) &&
+      (enemy.biome === leader.biome || enemy.biome === "LIBRARY")
+  );
+  if (normalPool.length === 0) return [];
+
+  const supportPool = normalPool.filter(
+    (enemy) => enemy.role === "SUPPORT" || enemy.role === "CONTROL"
+  );
+  const escortPool = supportPool.length > 0 ? supportPool : normalPool;
+  return [rng.pick(escortPool).id];
+}
+
 /**
  * Initialize a new combat encounter.
  */
@@ -82,9 +125,13 @@ export function initCombat(
     difficultyMods.enemyDamageMultiplier *
     postFloorEscalation.enemyDamageMultiplier;
   const enemySpawnCountByDef: Record<string, number> = {};
+  const encounterEnemyIds = [
+    ...enemyIds,
+    ...buildEliteEscortIds(enemyIds, difficultyLevel, enemyDefs, rng),
+  ].slice(0, 4);
 
   // Create enemy instances
-  const enemies: EnemyState[] = enemyIds.map((id) => {
+  const enemies: EnemyState[] = encounterEnemyIds.map((id) => {
     const def = enemyDefs.get(id);
     if (!def) throw new Error(`Unknown enemy definition: ${id}`);
     const spawnedCount = enemySpawnCountByDef[id] ?? 0;

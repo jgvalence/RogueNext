@@ -143,7 +143,13 @@ export function playCard(
   current = resolveEffects(
     current,
     effects,
-    { source: "player", target, drawReason: `CARD:${def.id}` },
+    {
+      source: "player",
+      target,
+      drawReason: `CARD:${def.id}`,
+      cardDefs,
+      sourceCardInstanceId: instanceId,
+    },
     rng
   );
 

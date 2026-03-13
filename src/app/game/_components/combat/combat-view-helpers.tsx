@@ -10,12 +10,21 @@ import type {
 import type { Effect } from "@/game/schemas/effects";
 import { buffMeta } from "../shared/buff-meta";
 import { boostEffectsForUpgrade } from "@/game/engine/card-upgrades";
-import { calculateDamage } from "@/game/engine/damage";
+import {
+  calculateDamage,
+  computeDamageFromTargetBlock,
+} from "@/game/engine/damage";
 import { applyBuff } from "@/game/engine/buffs";
 import {
-  getBonusDamageIfPlayerDebuffed,
-  hasPlayerDebuffForEnemyBonus,
+  getEnemyIntentAbilityExtraEffects,
+  getEnemyIntentActiveDamageBonusTotal,
+  getEnemyIntentDamageBonuses,
+  getEnemyIntentPendingPhaseExtraEffects,
+  type EnemyIntentDamageBonus,
+  type EnemyIntentExtraEffect,
 } from "@/game/engine/enemy-intent-preview";
+import { getCardDefinitionById } from "@/game/data";
+import { localizeCardName } from "@/lib/i18n/card-text";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
 import { i18n } from "@/lib/i18n";
 
@@ -315,7 +324,8 @@ export function buildPlayerMarkerBuffs(player: PlayerState): BuffInstance[] {
 export function buildPlayerStatusMarkers(
   player: PlayerState,
   disruption?: CombatState["playerDisruption"],
-  nextDisruption?: CombatState["nextPlayerDisruption"]
+  nextDisruption?: CombatState["nextPlayerDisruption"],
+  attackBonus = 0
 ): StatusMarker[] {
   const markers: StatusMarker[] = [
     ...buildPlayerDisruptionMarkers(disruption, "current"),
@@ -339,6 +349,20 @@ export function buildPlayerStatusMarkers(
       )
     );
   }
+  if (attackBonus > 0) {
+    markers.push({
+      key: "player-attack-bonus",
+      colorClass: "bg-red-950/85 text-red-100",
+      compactLabel: i18n.t("playerStats.attackBonusBadge", {
+        value: attackBonus,
+      }),
+      symbolLabel: `A+${attackBonus}`,
+      detailLabel: i18n.t("library.bonus.attackBonus", { value: attackBonus }),
+      detailText: i18n.t("playerStats.attackBonusTooltip", {
+        value: attackBonus,
+      }),
+    });
+  }
 
   return markers;
 }
@@ -361,6 +385,432 @@ export function renderStatusMarkerDetailsForPlayer(
   return renderStatusMarkerDetails(markers);
 }
 
+type EnemyIntentEntry = {
+  key: string;
+  label: string;
+  colorClass: string;
+};
+
+function formatIntentFallbackLabel(id: string): string {
+  return id
+    .split("_")
+    .map((chunk) =>
+      chunk.length > 0 ? chunk[0]!.toUpperCase() + chunk.slice(1) : chunk
+    )
+    .join(" ");
+}
+
+function getLocalizedIntentCardName(
+  cardId: string,
+  t: (key: string, options?: Record<string, unknown>) => string
+): string {
+  const definition = getCardDefinitionById(cardId);
+  return definition
+    ? localizeCardName(definition, t as never)
+    : formatIntentFallbackLabel(cardId);
+}
+
+function getLocalizedIntentEnemyName(enemyId: string): string {
+  return localizeEnemyName(enemyId, formatIntentFallbackLabel(enemyId));
+}
+
+function applyPhasePrefix(
+  label: string,
+  source: EnemyIntentExtraEffect["source"],
+  t: (key: string, options?: Record<string, unknown>) => string
+): string {
+  if (source !== "phase2") return label;
+  return `${t("enemyCard.phase2Badge")} ${label}`;
+}
+
+function buildEffectIntentEntry(
+  effect: Effect,
+  index: number,
+  t: (key: string, options?: Record<string, unknown>) => string,
+  combat: CombatState,
+  enemy: CombatState["enemies"][number],
+  ability: EnemyAbility | undefined,
+  resolvedTarget:
+    | "player"
+    | "all_enemies"
+    | "all_allies"
+    | { type: "enemy"; instanceId: string }
+    | { type: "ally"; instanceId: string }
+): EnemyIntentEntry {
+  let label = "";
+  let colorClass = "bg-slate-700 text-slate-100";
+
+  switch (effect.type) {
+    case "DAMAGE":
+    case "DAMAGE_PER_TARGET_BLOCK":
+      label = `${t("enemyCard.dmg")} ${computeEnemyEffectDamagePreview(
+        combat,
+        enemy,
+        resolvedTarget,
+        effect,
+        ability
+      )}`;
+      colorClass = "bg-red-900/70 text-red-200";
+      break;
+    case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
+      label = t("reward.effect.damageBonusIfUpgradedInHand", {
+        value: effect.value,
+      });
+      colorClass = "bg-red-900/70 text-red-200";
+      break;
+    case "DAMAGE_PER_DEBUFF":
+      label = t("reward.effect.damagePerDebuff", {
+        buff: buffMeta[effect.buff ?? ""]?.label() ?? effect.buff ?? "status",
+        value: effect.value,
+      });
+      colorClass = "bg-red-900/70 text-red-200";
+      break;
+    case "DAMAGE_PER_CURRENT_INK":
+      label = t("reward.effect.damagePerCurrentInk", { value: effect.value });
+      colorClass = "bg-cyan-950/80 text-cyan-200";
+      break;
+    case "DAMAGE_PER_CLOG_IN_DISCARD":
+      label = t("reward.effect.damagePerClogInDiscard", {
+        value: effect.value,
+      });
+      colorClass = "bg-purple-950/80 text-purple-200";
+      break;
+    case "DAMAGE_PER_EXHAUSTED_CARD":
+      label = t("reward.effect.damagePerExhaustedCard", {
+        value: effect.value,
+      });
+      colorClass = "bg-amber-950/80 text-amber-200";
+      break;
+    case "DAMAGE_PER_DRAWN_THIS_TURN":
+      label = t("reward.effect.damagePerDrawnThisTurn", {
+        value: effect.value,
+      });
+      colorClass = "bg-indigo-950/80 text-indigo-200";
+      break;
+    case "HEAL":
+      label = t("reward.effect.heal", { value: effect.value });
+      colorClass = "bg-emerald-900/70 text-emerald-200";
+      break;
+    case "BLOCK":
+      label = t("reward.effect.block", { value: effect.value });
+      colorClass = "bg-blue-900/70 text-blue-200";
+      break;
+    case "BLOCK_PER_CURRENT_INK":
+      label = t("reward.effect.blockPerCurrentInk", { value: effect.value });
+      colorClass = "bg-cyan-950/80 text-cyan-200";
+      break;
+    case "BLOCK_PER_DEBUFF":
+      label = t("reward.effect.blockPerDebuff", {
+        buff: buffMeta[effect.buff ?? ""]?.label() ?? effect.buff ?? "status",
+        value: effect.value,
+      });
+      colorClass = "bg-blue-900/70 text-blue-200";
+      break;
+    case "BLOCK_PER_EXHAUSTED_CARD":
+      label = t("reward.effect.blockPerExhaustedCard", {
+        value: effect.value,
+      });
+      colorClass = "bg-blue-950/80 text-blue-200";
+      break;
+    case "APPLY_BUFF_PER_EXHAUSTED_CARD":
+      label = t("reward.effect.applyBuffPerExhaustedCard", {
+        buff: buffMeta[effect.buff ?? ""]?.label() ?? effect.buff ?? "status",
+        value: effect.value,
+      });
+      colorClass = "bg-amber-950/80 text-amber-200";
+      break;
+    case "RETRIGGER_THORNS_ON_WEAK_ATTACK":
+      label = t("reward.effect.retriggerThornsOnWeakAttack", {
+        value: effect.value,
+      });
+      colorClass = "bg-amber-900/70 text-amber-200";
+      break;
+    case "DRAW_CARDS":
+      label = t("reward.effect.drawCards", { value: effect.value });
+      colorClass = "bg-indigo-900/70 text-indigo-200";
+      break;
+    case "GAIN_INK":
+      label = t("reward.effect.gainInk", { value: effect.value });
+      colorClass = "bg-cyan-900/70 text-cyan-200";
+      break;
+    case "APPLY_BUFF":
+      label = t("reward.effect.applyBuff", {
+        buff: buffMeta[effect.buff ?? ""]?.label() ?? effect.buff ?? "status",
+        value: effect.value,
+      });
+      colorClass = "bg-amber-900/70 text-amber-200";
+      break;
+    case "APPLY_DEBUFF":
+      label = t("reward.effect.applyDebuff", {
+        buff: buffMeta[effect.buff ?? ""]?.label() ?? effect.buff ?? "status",
+        value: effect.value,
+      });
+      colorClass = "bg-purple-900/70 text-purple-200";
+      break;
+    case "DRAIN_INK":
+      label = t("reward.effect.drainInk", { value: effect.value });
+      colorClass = "bg-cyan-900/70 text-cyan-200";
+      break;
+    case "ADD_CARD_TO_DRAW":
+      label = effect.cardId
+        ? t("enemyCard.addCardToDrawNamed", {
+            value: effect.value,
+            card: getLocalizedIntentCardName(effect.cardId, t),
+          })
+        : t("gameCard.effect.addToDraw");
+      colorClass = "bg-indigo-950/80 text-indigo-200";
+      break;
+    case "ADD_CARD_TO_DISCARD":
+      label = effect.cardId
+        ? t("enemyCard.addCardToDiscardNamed", {
+            value: effect.value,
+            card: getLocalizedIntentCardName(effect.cardId, t),
+          })
+        : t("gameCard.effect.addToDiscard");
+      colorClass = "bg-slate-800 text-slate-100";
+      break;
+    case "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND":
+      label = t("reward.effect.moveRandomNonClogDiscardToHand", {
+        value: effect.value,
+      });
+      colorClass = "bg-purple-950/80 text-purple-200";
+      break;
+    case "FREEZE_HAND_CARDS":
+      label = t("reward.effect.freezeHandCards", { value: effect.value });
+      colorClass = "bg-cyan-950/80 text-cyan-200";
+      break;
+    case "NEXT_DRAW_TO_DISCARD_THIS_TURN":
+      label = t("reward.effect.nextDrawToDiscardThisTurn");
+      colorClass = "bg-purple-950/80 text-purple-200";
+      break;
+    case "DISABLE_INK_POWER_THIS_TURN":
+      label = t("enemyCard.lockInk", { power: effect.inkPower ?? "all" });
+      colorClass = "bg-cyan-900/80 text-cyan-100";
+      break;
+    case "INCREASE_CARD_COST_THIS_TURN":
+      label = t("reward.effect.increaseCardCostThisTurn", {
+        value: effect.value,
+      });
+      colorClass = "bg-amber-900/80 text-amber-100";
+      break;
+    case "INCREASE_CARD_COST_NEXT_TURN":
+      label = t("reward.effect.increaseCardCostNextTurn", {
+        value: effect.value,
+      });
+      colorClass = "bg-amber-900/80 text-amber-100";
+      break;
+    case "REDUCE_DRAW_THIS_TURN":
+      label = t("reward.effect.reduceDrawThisTurn", { value: effect.value });
+      colorClass = "bg-slate-700 text-slate-100";
+      break;
+    case "REDUCE_DRAW_NEXT_TURN":
+      label = t("reward.effect.reduceDrawNextTurn", { value: effect.value });
+      colorClass = "bg-slate-700 text-slate-100";
+      break;
+    case "FORCE_DISCARD_RANDOM":
+      label = t("enemyCard.randomDiscard", { value: effect.value });
+      colorClass = "bg-rose-900/80 text-rose-100";
+      break;
+    default:
+      label = t("reward.effect.fallback", {
+        type: effect.type.toLowerCase(),
+        value: effect.value,
+      });
+      colorClass = "bg-slate-700 text-slate-100";
+      break;
+  }
+
+  return {
+    key: `${effect.type}-${index}`,
+    label,
+    colorClass,
+  };
+}
+
+function buildDamageBonusIntentEntry(
+  bonus: EnemyIntentDamageBonus,
+  index: number,
+  t: (key: string, options?: Record<string, unknown>) => string
+): EnemyIntentEntry {
+  switch (bonus.type) {
+    case "FLAT":
+      return {
+        key: `bonus-flat-${index}`,
+        label: t("enemyCard.bonusDamageFlat", { bonus: bonus.value }),
+        colorClass: "bg-amber-900/70 text-amber-100",
+      };
+    case "PLAYER_DEBUFFED":
+      return {
+        key: `bonus-debuff-${index}`,
+        label: t("enemyCard.conditionalBonusVsDebuffed", {
+          bonus: bonus.value,
+        }),
+        colorClass: bonus.active
+          ? "bg-amber-800/70 text-amber-100 ring-1 ring-amber-300/50"
+          : "bg-gray-700/80 text-gray-200",
+      };
+    case "PLAYER_INK_BELOW":
+      return {
+        key: `bonus-low-ink-${index}`,
+        label: t("enemyCard.conditionalBonusVsLowInk", {
+          bonus: bonus.value,
+          threshold: bonus.threshold,
+        }),
+        colorClass: bonus.active
+          ? "bg-cyan-900/75 text-cyan-100 ring-1 ring-cyan-300/40"
+          : "bg-slate-700/80 text-slate-200",
+      };
+    case "PER_CURSE_CARD":
+      return {
+        key: `bonus-curse-${index}`,
+        label: t("enemyCard.conditionalBonusPerCurse", {
+          perCurse: bonus.valuePerCurse,
+          total: bonus.totalBonus,
+        }),
+        colorClass:
+          bonus.totalBonus > 0
+            ? "bg-purple-900/75 text-purple-100 ring-1 ring-purple-300/40"
+            : "bg-slate-700/80 text-slate-200",
+      };
+    default:
+      return {
+        key: `bonus-fallback-${index}`,
+        label: "",
+        colorClass: "bg-slate-700 text-slate-100",
+      };
+  }
+}
+
+function buildExtraIntentEntry(
+  extra: EnemyIntentExtraEffect,
+  index: number,
+  t: (key: string, options?: Record<string, unknown>) => string
+): EnemyIntentEntry {
+  let label = "";
+  let colorClass = "bg-slate-700 text-slate-100";
+
+  switch (extra.type) {
+    case "SUMMON_ENEMY":
+      label = `${t("enemyCard.summon")} ${getLocalizedIntentEnemyName(
+        extra.enemyId
+      )}`;
+      colorClass = "bg-orange-900/70 text-orange-200";
+      break;
+    case "ADD_CARD_TO_DRAW":
+      label = t("enemyCard.addCardToDrawNamed", {
+        value: extra.value,
+        card: getLocalizedIntentCardName(extra.cardId, t),
+      });
+      colorClass = "bg-indigo-950/80 text-indigo-200";
+      break;
+    case "ADD_CARD_TO_DISCARD":
+      label = t("enemyCard.addCardToDiscardNamed", {
+        value: extra.value,
+        card: getLocalizedIntentCardName(extra.cardId, t),
+      });
+      colorClass = "bg-slate-800 text-slate-100";
+      break;
+    case "HEAL_SELF":
+      label = t("reward.effect.heal", { value: extra.value });
+      colorClass = "bg-emerald-900/70 text-emerald-200";
+      break;
+    case "GAIN_STRENGTH_SELF":
+      label = `${buffMeta.STRENGTH?.label() ?? "Strength"} +${extra.value}`;
+      colorClass = "bg-red-900/70 text-red-200";
+      break;
+    case "GAIN_THORNS_SELF":
+      label = `${buffMeta.THORNS?.label() ?? "Thorns"} +${extra.value}`;
+      colorClass = "bg-rose-900/70 text-rose-200";
+      break;
+    case "APPLY_DEBUFF_TO_PLAYER": {
+      const buffLabel = buffMeta[extra.buff]?.label() ?? extra.buff;
+      const durationText =
+        typeof extra.duration === "number" && extra.duration > 0
+          ? ` (${extra.duration}t)`
+          : "";
+      label = `${t("reward.effect.applyDebuff", {
+        buff: buffLabel,
+        value: extra.value,
+      })}${durationText}`;
+      colorClass = "bg-purple-900/70 text-purple-200";
+      break;
+    }
+    case "FREEZE_HAND":
+      label = t("reward.effect.freezeHandCards", { value: extra.value });
+      colorClass = "bg-cyan-950/80 text-cyan-200";
+      break;
+    case "INCREASE_CARD_COST_NEXT_TURN":
+      label = t("reward.effect.increaseCardCostNextTurn", {
+        value: extra.value,
+      });
+      colorClass = "bg-amber-900/80 text-amber-100";
+      break;
+    case "DRAIN_ALL_INK":
+      label = t("enemyCard.drainAllInk");
+      colorClass = "bg-cyan-900/80 text-cyan-100";
+      break;
+    case "SELF_DAMAGE":
+      label = t("enemyCard.selfDamage", { value: extra.value });
+      colorClass = "bg-rose-950/80 text-rose-100";
+      break;
+    case "GAIN_STRENGTH_ALL_ENEMIES":
+      label = t("enemyCard.alliesGainBuff", {
+        buff: buffMeta.STRENGTH?.label() ?? "Strength",
+        value: extra.value,
+      });
+      colorClass = "bg-red-950/80 text-red-100";
+      break;
+    case "GAIN_BLOCK_ALL_ENEMIES":
+      label = t("enemyCard.alliesGainBlock", { value: extra.value });
+      colorClass = "bg-blue-950/80 text-blue-100";
+      break;
+    default:
+      break;
+  }
+
+  return {
+    key: `extra-${extra.type}-${index}`,
+    label: applyPhasePrefix(label, extra.source, t),
+    colorClass,
+  };
+}
+
+function buildEnemyIntentEntries(
+  combat: CombatState,
+  enemy: CombatState["enemies"][number],
+  resolvedTarget:
+    | "player"
+    | "all_enemies"
+    | "all_allies"
+    | { type: "enemy"; instanceId: string }
+    | { type: "ally"; instanceId: string },
+  ability: EnemyAbility,
+  t: (key: string, options?: Record<string, unknown>) => string
+): EnemyIntentEntry[] {
+  const baseEntries = ability.effects.map((effect, index) =>
+    buildEffectIntentEntry(
+      effect,
+      index,
+      t,
+      combat,
+      enemy,
+      ability,
+      resolvedTarget
+    )
+  );
+  const bonusEntries = getEnemyIntentDamageBonuses(combat, enemy, ability).map(
+    (bonus, index) => buildDamageBonusIntentEntry(bonus, index, t)
+  );
+  const extraEntries = [
+    ...getEnemyIntentAbilityExtraEffects(enemy, ability),
+    ...getEnemyIntentPendingPhaseExtraEffects(enemy),
+  ].map((extra, index) => buildExtraIntentEntry(extra, index, t));
+
+  return [...baseEntries, ...bonusEntries, ...extraEntries].filter(
+    (entry) => entry.label.length > 0
+  );
+}
+
 export function renderEnemyIntentEffects(
   effects: Effect[],
   t: (key: string, options?: Record<string, unknown>) => string,
@@ -374,86 +824,30 @@ export function renderEnemyIntentEffects(
     | { type: "enemy"; instanceId: string }
     | { type: "ally"; instanceId: string }
 ): ReactNode[] {
-  return effects.map((effect, index) => {
-    let label = "";
-    let colorClass = "bg-slate-700 text-slate-100";
+  const effectiveAbility =
+    ability ?? {
+      name: "",
+      weight: 1,
+      effects,
+    };
 
-    switch (effect.type) {
-      case "DAMAGE":
-        label = `${t("enemyCard.dmg")} ${computeEnemyDamagePreview(
-          combat,
-          enemy,
-          resolvedTarget,
-          effect.value,
-          ability
-        )}`;
-        colorClass = "bg-red-900/70 text-red-200";
-        break;
-      case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
-        label = t("reward.effect.damageBonusIfUpgradedInHand", {
-          value: effect.value,
-        });
-        colorClass = "bg-red-900/70 text-red-200";
-        break;
-      case "HEAL":
-        label = `${t("reward.effect.heal", { value: effect.value })}`;
-        colorClass = "bg-emerald-900/70 text-emerald-200";
-        break;
-      case "BLOCK":
-        label = `${t("reward.effect.block", { value: effect.value })}`;
-        colorClass = "bg-blue-900/70 text-blue-200";
-        break;
-      case "DRAW_CARDS":
-        label = t("reward.effect.drawCards", { value: effect.value });
-        colorClass = "bg-indigo-900/70 text-indigo-200";
-        break;
-      case "GAIN_INK":
-        label = t("reward.effect.gainInk", { value: effect.value });
-        colorClass = "bg-cyan-900/70 text-cyan-200";
-        break;
-      case "APPLY_BUFF":
-        label = t("reward.effect.applyBuff", {
-          buff: effect.buff ?? "status",
-          value: effect.value,
-        });
-        colorClass = "bg-amber-900/70 text-amber-200";
-        break;
-      case "APPLY_DEBUFF":
-        label = t("reward.effect.applyDebuff", {
-          buff: effect.buff ?? "status",
-          value: effect.value,
-        });
-        colorClass = "bg-purple-900/70 text-purple-200";
-        break;
-      case "ADD_CARD_TO_DRAW":
-        label = t("gameCard.effect.addToDraw");
-        colorClass = "bg-indigo-950/80 text-indigo-200";
-        break;
-      case "ADD_CARD_TO_DISCARD":
-        label = t("gameCard.effect.addToDiscard");
-        colorClass = "bg-slate-800 text-slate-100";
-        break;
-      default:
-        label = t("reward.effect.fallback", {
-          type: effect.type.toLowerCase(),
-          value: effect.value,
-        });
-        colorClass = "bg-slate-700 text-slate-100";
-        break;
-    }
-
-    return (
-      <span
-        key={`${effect.type}-${index}`}
-        className={cn(
-          "rounded px-1.5 py-0.5 text-[10px] font-bold",
-          colorClass
-        )}
-      >
-        {label}
-      </span>
-    );
-  });
+  return buildEnemyIntentEntries(
+    combat,
+    enemy,
+    resolvedTarget,
+    effectiveAbility,
+    t
+  ).map((entry) => (
+    <span
+      key={entry.key}
+      className={cn(
+        "rounded px-1.5 py-0.5 text-[10px] font-bold",
+        entry.colorClass
+      )}
+    >
+      {entry.label}
+    </span>
+  ));
 }
 
 export function formatAllyIntent(
@@ -468,10 +862,43 @@ export function formatAllyIntent(
         return t("reward.effect.damageBonusIfUpgradedInHand", {
           value: effect.value,
         });
+      case "DAMAGE_PER_CURRENT_INK":
+        return t("reward.effect.damagePerCurrentInk", {
+          value: effect.value,
+        });
+      case "DAMAGE_PER_CLOG_IN_DISCARD":
+        return t("reward.effect.damagePerClogInDiscard", {
+          value: effect.value,
+        });
+      case "DAMAGE_PER_EXHAUSTED_CARD":
+        return t("reward.effect.damagePerExhaustedCard", {
+          value: effect.value,
+        });
+      case "DAMAGE_PER_DRAWN_THIS_TURN":
+        return t("reward.effect.damagePerDrawnThisTurn", {
+          value: effect.value,
+        });
       case "HEAL":
         return t("reward.effect.heal", { value: effect.value });
       case "BLOCK":
         return t("reward.effect.block", { value: effect.value });
+      case "BLOCK_PER_CURRENT_INK":
+        return t("reward.effect.blockPerCurrentInk", {
+          value: effect.value,
+        });
+      case "BLOCK_PER_EXHAUSTED_CARD":
+        return t("reward.effect.blockPerExhaustedCard", {
+          value: effect.value,
+        });
+      case "APPLY_BUFF_PER_EXHAUSTED_CARD":
+        return t("reward.effect.applyBuffPerExhaustedCard", {
+          buff: effect.buff ?? "status",
+          value: effect.value,
+        });
+      case "RETRIGGER_THORNS_ON_WEAK_ATTACK":
+        return t("reward.effect.retriggerThornsOnWeakAttack", {
+          value: effect.value,
+        });
       case "DRAW_CARDS":
         return t("reward.effect.drawCards", { value: effect.value });
       case "GAIN_INK":
@@ -494,10 +921,18 @@ export function formatAllyIntent(
         });
       case "DRAIN_INK":
         return t("reward.effect.drainInk", { value: effect.value });
+      case "EXHAUST":
+        return t("reward.effect.exhaust");
       case "ADD_CARD_TO_DRAW":
         return t("gameCard.effect.addToDraw");
       case "ADD_CARD_TO_DISCARD":
         return t("gameCard.effect.addToDiscard");
+      case "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND":
+        return t("reward.effect.moveRandomNonClogDiscardToHand", {
+          value: effect.value,
+        });
+      case "FORCE_DISCARD_RANDOM":
+        return t("reward.effect.forceDiscardRandom", { value: effect.value });
       default:
         return t("reward.effect.fallback", {
           type: effect.type.toLowerCase(),
@@ -536,50 +971,13 @@ export function buildMobileEnemyIntentChips(
   const translate = typeof t === "function" ? t : (key: string) => key;
   if (!ability || hideIntent) return [translate("enemyCard.intentHidden")];
 
-  const chips = ability.effects.map((effect) => {
-    switch (effect.type) {
-      case "DAMAGE":
-        return `${translate("enemyCard.dmg")} ${computeEnemyDamagePreview(
-          combat,
-          enemy,
-          resolvedTarget,
-          effect.value,
-          ability
-        )}`;
-      case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
-        return `DMG+${effect.value}`;
-      case "BLOCK":
-        return `${translate("enemyCard.blk")} ${effect.value}`;
-      case "HEAL":
-        return `HEAL ${effect.value}`;
-      case "APPLY_DEBUFF":
-        return `DEB ${effect.value}`;
-      case "APPLY_BUFF":
-        return `BUF ${effect.value}`;
-      case "DRAIN_INK":
-        return `INK-${effect.value}`;
-      case "ADD_CARD_TO_DRAW":
-        return translate("gameCard.effect.addToDraw");
-      case "ADD_CARD_TO_DISCARD":
-        return translate("gameCard.effect.addToDiscard");
-      default:
-        return `${effect.type.slice(0, 3)} ${effect.value}`;
-    }
-  });
-
-  const bonusIfPlayerDebuffed = getBonusDamageIfPlayerDebuffed(
-    enemy.definitionId,
-    ability.name
-  );
-  if (bonusIfPlayerDebuffed) {
-    chips.push(
-      translate("enemyCard.conditionalBonusVsDebuffed", {
-        bonus: bonusIfPlayerDebuffed,
-      })
-    );
-  }
-
-  return chips;
+  return buildEnemyIntentEntries(
+    combat,
+    enemy,
+    resolvedTarget,
+    ability,
+    translate
+  ).map((entry) => entry.label);
 }
 
 export function computeEnemyDamagePreview(
@@ -596,16 +994,11 @@ export function computeEnemyDamagePreview(
 ): number {
   let effectiveBaseDamage = baseDamage;
   if (ability && resolvedTarget === "player") {
-    const bonusIfPlayerDebuffed = getBonusDamageIfPlayerDebuffed(
-      enemy.definitionId,
-      ability.name
+    effectiveBaseDamage += getEnemyIntentActiveDamageBonusTotal(
+      combat,
+      enemy,
+      ability
     );
-    if (
-      bonusIfPlayerDebuffed &&
-      hasPlayerDebuffForEnemyBonus(combat.player.buffs)
-    ) {
-      effectiveBaseDamage += bonusIfPlayerDebuffed;
-    }
   }
 
   const scaledBaseDamage = Math.max(
@@ -615,6 +1008,75 @@ export function computeEnemyDamagePreview(
   const targetBuffs = resolveEnemyIntentTargetBuffs(combat, resolvedTarget);
   return calculateDamage(
     scaledBaseDamage,
+    { strength: getStrengthFromBuffs(enemy.buffs), buffs: enemy.buffs },
+    { buffs: targetBuffs }
+  );
+}
+
+function resolveEnemyIntentTargetBlock(
+  combat: CombatState,
+  resolvedTarget:
+    | "player"
+    | "all_enemies"
+    | "all_allies"
+    | { type: "enemy"; instanceId: string }
+    | { type: "ally"; instanceId: string }
+): number {
+  if (resolvedTarget === "player") return combat.player.block;
+
+  if (resolvedTarget === "all_enemies") {
+    return combat.enemies.find((entry) => entry.currentHp > 0)?.block ?? 0;
+  }
+
+  if (resolvedTarget === "all_allies") {
+    return combat.allies.find((entry) => entry.currentHp > 0)?.block ?? 0;
+  }
+
+  if (resolvedTarget.type === "ally") {
+    return (
+      combat.allies.find(
+        (entry) => entry.instanceId === resolvedTarget.instanceId
+      )?.block ?? 0
+    );
+  }
+
+  return (
+    combat.enemies.find(
+      (entry) => entry.instanceId === resolvedTarget.instanceId
+    )?.block ?? 0
+  );
+}
+
+export function computeEnemyEffectDamagePreview(
+  combat: CombatState,
+  enemy: CombatState["enemies"][number],
+  resolvedTarget:
+    | "player"
+    | "all_enemies"
+    | "all_allies"
+    | { type: "enemy"; instanceId: string }
+    | { type: "ally"; instanceId: string },
+  effect: Effect,
+  ability?: EnemyAbility
+): number {
+  if (effect.type === "DAMAGE") {
+    return computeEnemyDamagePreview(
+      combat,
+      enemy,
+      resolvedTarget,
+      effect.value,
+      ability
+    );
+  }
+
+  if (effect.type !== "DAMAGE_PER_TARGET_BLOCK") {
+    return 0;
+  }
+
+  const targetBlock = resolveEnemyIntentTargetBlock(combat, resolvedTarget);
+  const targetBuffs = resolveEnemyIntentTargetBuffs(combat, resolvedTarget);
+  return calculateDamage(
+    computeDamageFromTargetBlock(targetBlock, effect.value),
     { strength: getStrengthFromBuffs(enemy.buffs), buffs: enemy.buffs },
     { buffs: targetBuffs }
   );

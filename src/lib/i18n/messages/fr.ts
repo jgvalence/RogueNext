@@ -131,10 +131,10 @@ export const fr = {
       tip: "Commence par les noeuds accessibles du biome Bibliotheque, puis ouvre les autres branches au fil de tes expeditions.",
       gotIt: "Explorer la bibliotheque",
     },
-    energyStoryTutorial: {
+    guidedStoryTutorial: {
       kicker: "Premier achat",
       description:
-        "Tu as recupere juste assez de Pages pour debloquer le Traite de l'Energie. Cette histoire te donnera +1 energie max sur tous tes prochains runs.",
+        "Tu as recupere juste assez de Pages pour debloquer l'Encyclopedie du Savoir. Cette histoire te donnera +1 pioche sur tous tes prochains runs.",
     },
     bonus: {
       extraDraw: "+{{value}} pioche par tour",
@@ -146,6 +146,7 @@ export const fr = {
       startingInk: "Commence le combat avec +{{value}} encre",
       startingBlock: "+{{value}} armure au debut du combat",
       startingStrength: "+{{value}} force au debut du combat",
+      startingFocus: "+{{value}} focus au debut du combat",
       startingRegen: "Recupere +{{value}} PV au debut du tour",
       firstHitDamageReduction: "Premier coup subi : -{{value}}% degats",
       extraHp: "+{{value}} PV max",
@@ -155,6 +156,7 @@ export const fr = {
       startingGold: "+{{value}} or de depart a chaque run",
       extraCardRewardChoices: "+{{value}} choix de carte en recompense",
       relicDiscount: "{{value}}% de reduction sur les reliques",
+      lootLuck: "+{{value}} qualite du butin",
       unlockInkPower: "Debloque le pouvoir d'encre {{power}}",
       unlockPowerSlot: "Debloque le pouvoir de rang {{slot}}",
       healAfterCombat: "Recupere {{value}}% des PV max apres combat",
@@ -559,6 +561,21 @@ export const fr = {
     },
   },
   stories: {
+    encyclopedie_du_savoir: {
+      title: "Encyclopedie du Savoir",
+      description:
+        "Un traite exhaustif consignant les techniques de memorisation rapide. +1 carte piochee par tour.",
+    },
+    traite_de_lenergie: {
+      title: "Traite de l'Energie",
+      description:
+        "Un manuel hermetique sur la canalisation de l'energie vitale. +1 energie max.",
+    },
+    le_grand_livre_des_sorts: {
+      title: "Le Grand Livre des Sorts",
+      description:
+        "Le grimoire interdit de la tradition russe. Ses marges cachent des chemins vers les recompenses les plus rares. +2 qualite du butin.",
+    },
     saga_de_ragnar: {
       title: "Saga de Ragnar",
       author: "Anonyme",
@@ -594,6 +611,15 @@ export const fr = {
     ink_surge: { name: "Afflux d'encre" },
     exploit_weakness: { name: "Marge Exposée" },
     iron_will: { name: "Résolution du Scribe" },
+    dazed: { name: "Hebete" },
+    ink_burn: { name: "Brulure d'encre" },
+    torn_index: { name: "Index dechire" },
+    smudged_lens: { name: "Lentille maculee" },
+    hexed_parchment: { name: "Parchemin maudit" },
+    haunting_regret: { name: "Regret hantant" },
+    binding_curse: { name: "Malediction de lien" },
+    echo_curse: { name: "Malediction d'echo" },
+    shrouded_omen: { name: "Presage voile" },
     berserker_charge: { name: "Charge berserker" },
     shield_wall: { name: "Mur de boucliers" },
     rune_strike: { name: "Frappe runique" },
@@ -775,10 +801,6 @@ export const fr = {
     trickster_lore: { name: "Sagesse du Filou" },
     ancestor_archive: { name: "Archives Ancestrales" },
     cosmic_spider: { name: "Codex d'Anansi" },
-    dazed: { name: "Hebete" },
-    ink_burn: { name: "Brulure d'encre" },
-    hexed_parchment: { name: "Parchemin maudit" },
-    haunting_regret: { name: "Regret hantant" },
     strike: { name: "Frappe" },
     defend: { name: "Defense" },
   },
@@ -1031,9 +1053,29 @@ export const fr = {
       damage: "Inflige {{value}} degats",
       damageAll: "Inflige {{value}} degats a tous les ennemis",
       damageEqualBlock: "Inflige des degats egaux a votre armure",
+      damagePerDebuff: "Inflige {{value}} degats par {{buff}} sur la cible",
+      damagePerCurrentInk:
+        "Inflige {{value}} degats par encre actuelle, puis retire toute votre encre",
+      damagePerClogInDiscard:
+        "Inflige {{value}} degats par statut/malediction dans votre defausse",
+      damagePerExhaustedCard:
+        "Inflige {{value}} degats par carte dans votre pile d'epuisement",
+      damagePerDrawnThisTurn:
+        "Inflige {{value}} degats par carte piochee ce tour",
       damageBonusIfUpgradedInHand:
         "Si cette carte est amelioree en main : +{{value}} degats",
       block: "Gagne {{value}} armure",
+      blockPerCurrentInk:
+        "Gagne {{value}} armure par encre actuelle, puis retire toute votre encre",
+      blockPerDebuff: "Gagne {{value}} armure par {{buff}} sur les ennemis",
+      blockPerExhaustedCard:
+        "Gagne {{value}} armure par carte dans votre pile d'epuisement",
+      applyBuffPerExhaustedCard:
+        "Gagne {{value}} {{buff}} par carte dans votre pile d'epuisement",
+      applyBuffPerDebuff:
+        "Gagne {{value}} {{buff}} par {{scalingBuff}} sur les ennemis",
+      retriggerThornsOnWeakAttack:
+        "Quand un ennemi Affaibli vous attaque, vos Epines se declenchent {{value}} fois de plus ce combat",
       heal: "Soigne {{value}} PV",
       draw: "Pioche {{value}} cartes",
       doublePoison: "Double le Poison de la cible",
@@ -1050,6 +1092,8 @@ export const fr = {
       unplayable: "Injouable",
       addToDraw: "Ajoute une carte a la pioche",
       addToDiscard: "Ajoute une carte a la defausse",
+      moveRandomNonClogDiscardToHand:
+        "Remonte {{value}} carte(s) aleatoire(s) non statut/malediction de votre defausse vers votre main",
       freezeHandCards: "Gele {{value}} carte(s) en main",
       nextDrawToDiscardThisTurn:
         "Votre prochaine pioche va en defausse ce tour-ci",
@@ -1061,6 +1105,8 @@ export const fr = {
       reduceDrawThisTurn: "Pioche -{{value}} ce tour-ci",
       reduceDrawNextTurn: "Pioche -{{value}} au prochain tour",
       forceDiscardRandom: "Defausse {{value}} carte(s) aleatoire(s)",
+      whenRandomlyDiscarded:
+        "Si cette carte est defaussee aleatoirement : {{effects}}",
       upgradeRandomCardInHand: "Ameliore une carte aleatoire en main",
     },
   },
@@ -1140,10 +1186,23 @@ export const fr = {
     effect: {
       damage: "degats {{value}}",
       damageEqualBlock: "degats egaux a votre armure",
+      damagePerDebuff: "degats {{value}} par {{buff}}",
+      damagePerCurrentInk: "degats {{value}} par encre actuelle, retire tout",
+      damagePerClogInDiscard: "degats {{value}} par statut/malediction defausse",
+      damagePerExhaustedCard: "degats {{value}} par carte epuisee",
+      damagePerDrawnThisTurn: "degats {{value}} par carte piochee ce tour",
       damageBonusIfUpgradedInHand:
         "si cette carte est amelioree en main : +{{value}} degats",
       heal: "soin {{value}}",
       block: "armure {{value}}",
+      blockPerCurrentInk:
+        "armure {{value}} par encre actuelle, retire tout",
+      blockPerDebuff: "armure {{value}} par {{buff}}",
+      blockPerExhaustedCard: "armure {{value}} par carte epuisee",
+      applyBuffPerExhaustedCard:
+        "gagne {{value}} {{buff}} par carte epuisee",
+      retriggerThornsOnWeakAttack:
+        "epines retrigger contre faible +{{value}}",
       drawCards: "pioche {{value}}",
       doublePoison: "double le poison",
       gainInk: "gagne {{value}} encre",
@@ -1153,6 +1212,18 @@ export const fr = {
       applyBuff: "buff {{buff}} {{value}}",
       applyDebuff: "debuff {{buff}} {{value}}",
       drainInk: "retire {{value}} encre",
+      exhaust: "epuisement",
+      moveRandomNonClogDiscardToHand:
+        "remonte {{value}} carte non clog de la defausse",
+      freezeHandCards: "gele {{value}} carte(s) en main",
+      nextDrawToDiscardThisTurn:
+        "votre prochaine pioche va en defausse ce tour",
+      increaseCardCostThisTurn: "les cartes coutent +{{value}} ce tour",
+      increaseCardCostNextTurn:
+        "les cartes coutent +{{value}} au prochain tour",
+      reduceDrawThisTurn: "pioche -{{value}} ce tour",
+      reduceDrawNextTurn: "pioche -{{value}} au prochain tour",
+      forceDiscardRandom: "defausse aleatoire {{value}}",
       fallback: "{{type}} {{value}}",
     },
     resources: {
@@ -1192,8 +1263,11 @@ export const fr = {
     deckSize: "Taille du deck : {{count}} cartes",
     relicCount: "Reliques : {{count}}",
     reachedRoom: "Atteint : Salle {{room}}/{{total}}",
+    unlockCount_one: "{{count}} debloquage",
+    unlockCount_other: "{{count}} debloquages",
     resourcesGained: "Ressources gagnees pendant ce run",
     cardsUnlocked: "Cartes debloquees pendant ce run",
+    relicsUnlocked: "Reliques debloquees pendant ce run",
     newBestiaryEntryTitle: "Nouvelle entree du Bestiaire",
     newBestiaryEntrySingle: "{{name}} ajoute au Bestiaire",
     newBestiaryEntryMultiple:
@@ -1490,7 +1564,18 @@ export const fr = {
     drawDown: "Pioche -{{value}}",
     randomDiscard: "Defausse aleatoire {{value}}",
     summon: "Invoque",
+    addCardToDrawNamed: "Pioche +{{value}} {{card}}",
+    addCardToDiscardNamed: "Defausse +{{value}} {{card}}",
+    drainAllInk: "Vide toute l'encre",
+    selfDamage: "Perd {{value}} PV",
+    alliesGainBlock: "Allies +{{value}} BLK",
+    alliesGainBuff: "Allies +{{value}} {{buff}}",
+    bonusDamageFlat: "+{{bonus}} bonus",
     conditionalBonusVsDebuffed: "+{{bonus}} si le joueur est affaibli",
+    conditionalBonusVsLowInk: "+{{bonus}} si <= {{threshold}} encre",
+    conditionalBonusPerCurse:
+      "+{{perCurse}}/maled. (actuel +{{total}})",
+    phase2Badge: "P2",
     phase2Summon: "Phase 2 (<50% PV) : invoque {{label}}",
   },
   playerStats: {
@@ -1501,6 +1586,9 @@ export const fr = {
       "Absorbe les degats entrants ce tour. Reinitialise au debut de votre tour.",
     strengthTooltip: "Augmente tous les degats infliges de {{value}}.",
     focusTooltip: "Augmente l'armure gagnee de {{value}}.",
+    attackBonusBadge: "ATQ +{{value}}",
+    attackBonusTooltip:
+      "Vos cartes Attaque infligent {{value}} degat(s) supplementaire(s).",
     extraCardCost: "Cartes +{{value}} cout",
     drawPenalty: "Pioche -{{value}}",
     nextDrawDiscard: "Prochaine pioche en defausse",

@@ -15,6 +15,7 @@ export const MetaBonusSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("STARTING_INK"), value: z.number().int() }),
   z.object({ type: z.literal("STARTING_BLOCK"), value: z.number().int() }),
   z.object({ type: z.literal("STARTING_STRENGTH"), value: z.number().int() }),
+  z.object({ type: z.literal("STARTING_FOCUS"), value: z.number().int() }),
   z.object({ type: z.literal("STARTING_REGEN"), value: z.number().int() }),
   z.object({
     type: z.literal("FIRST_HIT_DAMAGE_REDUCTION"),
@@ -93,6 +94,7 @@ export const ComputedMetaBonusesSchema = z.object({
   startingInk: z.number().int().default(0),
   startingBlock: z.number().int().default(0),
   startingStrength: z.number().int().default(0),
+  startingFocus: z.number().int().default(0),
   startingRegen: z.number().int().default(0),
   firstHitDamageReduction: z.number().int().default(0),
   extraHp: z.number().int().default(0),

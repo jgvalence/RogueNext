@@ -10,6 +10,10 @@ import { allyDefinitions } from "../data/allies";
 import type { AllyDefinition } from "../schemas/entities";
 import { matchesCardCharacter } from "./card-filters";
 import { eliteCanDropRelic } from "./difficulty";
+import {
+  weightedSampleCardsForOffers,
+  type CardOfferSource,
+} from "./card-offers";
 import { pickRandomUsableItemDefinitionId } from "./items";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 
@@ -21,6 +25,65 @@ export interface CombatRewards {
   allyChoices: AllyDefinition[];
   bossMaxHpBonus: number | null;
   usableItemDropDefinitionId: string | null;
+}
+
+function filterRewardCards(
+  allCards: CardDefinition[],
+  unlockedCardIds?: string[],
+  characterId?: string
+): CardDefinition[] {
+  return allCards.filter(
+    (card) =>
+      !card.isStarterCard &&
+      card.isCollectible !== false &&
+      matchesCardCharacter(card, characterId) &&
+      (unlockedCardIds ? unlockedCardIds.includes(card.id) : true)
+  );
+}
+
+function drawMixedCardChoices(
+  cards: CardDefinition[],
+  biome: BiomeType,
+  count: number,
+  rng: RNG,
+  lootLuck: number,
+  source: CardOfferSource
+): CardDefinition[] {
+  if (count <= 0 || cards.length === 0) return [];
+
+  const sameBiomePool = cards.filter((card) => card.biome === biome);
+  const offBiomePool = cards.filter((card) => card.biome !== biome);
+  const picks: CardDefinition[] = [];
+  const pickedIds = new Set<string>();
+
+  const addPicks = (pool: CardDefinition[], amount: number) => {
+    if (amount <= 0 || pool.length === 0) return;
+    const sampled = weightedSampleCardsForOffers(
+      pool,
+      amount,
+      rng,
+      lootLuck,
+      source,
+      biome
+    );
+    for (const card of sampled) {
+      if (pickedIds.has(card.id)) continue;
+      pickedIds.add(card.id);
+      picks.push(card);
+    }
+  };
+
+  addPicks(sameBiomePool, 1);
+  addPicks(
+    offBiomePool.filter((card) => !pickedIds.has(card.id)),
+    count - picks.length
+  );
+  addPicks(
+    cards.filter((card) => !pickedIds.has(card.id)),
+    count - picks.length
+  );
+
+  return picks;
 }
 
 /**
@@ -73,16 +136,16 @@ export function generateCombatRewards(
   const rewardMultiplier = Math.max(1, combatRewardMultiplier);
   gold = Math.max(0, Math.round(gold * relicGoldMultiplier * rewardMultiplier));
 
-  // Card reward
-  const lootableCards = allCards.filter(
-    (c) =>
-      !c.isStarterCard &&
-      c.isCollectible !== false &&
-      (c.biome === biome || c.biome === "LIBRARY") &&
-      matchesCardCharacter(c, characterId) &&
-      (unlockedCardIds ? unlockedCardIds.includes(c.id) : true)
+  // Card reward: keep one choice anchored in the current biome when possible,
+  // then fill the rest from unlocked off-biome / neutral cards for variety.
+  const rewardEligibleCards = filterRewardCards(
+    allCards,
+    unlockedCardIds,
+    characterId
   );
-  const shuffledCards = rng.shuffle(lootableCards);
+  const rareRewardCards = rewardEligibleCards.filter(
+    (card) => card.rarity === "RARE"
+  );
 
   const extraChoices =
     Math.max(0, Math.floor(extraCardRewardChoices)) +
@@ -94,17 +157,32 @@ export function generateCombatRewards(
     cardChoices = []; // Boss: no card choice
   } else if (isElite) {
     // Elite: 1 rare card option
-    const rareCards = shuffledCards.filter((c) => c.rarity === "RARE");
     cardChoices =
-      rareCards.length > 0
-        ? rareCards.slice(0, Math.max(1, 1 + extraChoices))
-        : shuffledCards.slice(0, Math.max(1, 1 + extraChoices));
+      rareRewardCards.length > 0
+        ? drawMixedCardChoices(
+            rareRewardCards,
+            biome,
+            Math.max(1, 1 + extraChoices),
+            rng,
+            lootLuck,
+            "ELITE_REWARD"
+          )
+        : drawMixedCardChoices(
+            rewardEligibleCards,
+            biome,
+            Math.max(1, 1 + extraChoices),
+            rng,
+            lootLuck,
+            "ELITE_REWARD"
+          );
   } else {
-    cardChoices = weightedSampleByRarity(
-      shuffledCards,
+    cardChoices = drawMixedCardChoices(
+      rewardEligibleCards,
+      biome,
       GAME_CONSTANTS.CARD_REWARD_CHOICES + extraChoices,
       rng,
-      lootLuck
+      lootLuck,
+      "NORMAL_REWARD"
     );
   }
 
@@ -186,11 +264,22 @@ export function generateCombatRewards(
       relicChoices = [];
     }
     if (relicChoices.length === 0) {
-      const rareCards = shuffledCards.filter((c) => c.rarity === "RARE");
       const existingCardIds = new Set(cardChoices.map((c) => c.id));
-      const extraRare =
-        rareCards.find((c) => !existingCardIds.has(c.id)) ??
-        shuffledCards.find((c) => !existingCardIds.has(c.id));
+      const remainingRareRewardCards = rareRewardCards.filter(
+        (card) => !existingCardIds.has(card.id)
+      );
+      const extraRarePool =
+        remainingRareRewardCards.length > 0
+          ? remainingRareRewardCards
+          : rewardEligibleCards.filter((card) => !existingCardIds.has(card.id));
+      const extraRare = drawMixedCardChoices(
+        extraRarePool,
+        biome,
+        1,
+        rng,
+        lootLuck,
+        "ELITE_REWARD"
+      )[0];
       if (extraRare) {
         cardChoices = [...cardChoices, extraRare];
       }

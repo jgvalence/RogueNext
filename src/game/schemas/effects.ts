@@ -5,6 +5,7 @@ export const EffectSchema = z.object({
   type: EffectType,
   value: z.number(),
   buff: BuffType.optional(),
+  scalingBuff: BuffType.optional(),
   duration: z.number().optional(),
   cardId: z.string().optional(),
   inkPower: z.union([InkPowerType, z.literal("ALL")]).optional(),

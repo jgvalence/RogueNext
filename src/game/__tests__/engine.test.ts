@@ -33,6 +33,7 @@ import {
   applyRunConditionToRun,
   createGuaranteedRelicEvent,
   createNewRun,
+  drawRandomBiomeChoices,
   generateFloorMap,
   selectRoom,
   completeCombat,
@@ -43,6 +44,10 @@ import {
   generateShopInventory,
   generateStartMerchantOffers,
 } from "../engine/merchant";
+import {
+  getCardOfferWeight,
+  weightedSampleCardsForOffers,
+} from "../engine/card-offers";
 import {
   applyRelicsOnCardPlayed,
   applyRelicsOnCombatStart,
@@ -60,12 +65,18 @@ import {
 } from "../engine/card-unlocks";
 import type { CardUnlockProgress } from "../engine/card-unlocks";
 import { getLoreEntryIndexForKillCount } from "../engine/bestiary";
+import { getLootRarityWeight } from "../engine/loot";
 import type { CombatState } from "../schemas/combat-state";
 import type { CardDefinition } from "../schemas/cards";
 import type { Effect } from "../schemas/effects";
 import { DEFAULT_META_BONUSES } from "../schemas/meta";
 import { GAME_CONSTANTS } from "../constants";
-import { buildAllyDefsMap, buildCardDefsMap, buildEnemyDefsMap } from "../data";
+import {
+  buildAllyDefsMap,
+  buildCardDefsMap,
+  buildEnemyDefsMap,
+  statusCardDefinitionIds,
+} from "../data";
 import { getCharacterById } from "../data/characters";
 import { relicDefinitions } from "../data/relics";
 
@@ -236,6 +247,101 @@ describe("Deck operations", () => {
     expect(result.hand).toHaveLength(1);
   });
 
+  it("ink_burn and hexed_parchment apply immediate penalties when drawn", () => {
+    const rng = createRNG("draw-immediate-penalties");
+    const state = makeMinimalCombat({
+      hand: [],
+      drawPile: [
+        { instanceId: "s1", definitionId: "ink_burn", upgraded: false },
+        {
+          instanceId: "c1",
+          definitionId: "hexed_parchment",
+          upgraded: false,
+        },
+      ],
+      player: {
+        ...makeMinimalCombat().player,
+        inkCurrent: 2,
+      },
+    });
+
+    const result = drawCards(state, 2, rng);
+
+    expect(result.hand.map((card) => card.definitionId)).toEqual([
+      "ink_burn",
+      "hexed_parchment",
+    ]);
+    expect(result.player.inkCurrent).toBe(1);
+    expect(result.playerDisruption.extraCardCost).toBe(1);
+  });
+
+  it("haunting_regret sends the next drawn card to discard", () => {
+    const rng = createRNG("haunting-regret-draw");
+    const state = makeMinimalCombat({
+      hand: [],
+      drawPile: [
+        {
+          instanceId: "c1",
+          definitionId: "haunting_regret",
+          upgraded: false,
+        },
+        { instanceId: "c2", definitionId: "strike", upgraded: false },
+      ],
+      discardPile: [],
+    });
+
+    const result = drawCards(state, 2, rng);
+
+    expect(result.hand.map((card) => card.definitionId)).toEqual([
+      "haunting_regret",
+    ]);
+    expect(result.discardPile.map((card) => card.definitionId)).toContain(
+      "strike"
+    );
+  });
+
+  it("torn_index and binding_curse freeze future or current hand cards", () => {
+    const rng = createRNG("freeze-draw-clog");
+    const state = makeMinimalCombat({
+      hand: [],
+      drawPile: [
+        { instanceId: "s1", definitionId: "torn_index", upgraded: false },
+        { instanceId: "c1", definitionId: "strike", upgraded: false },
+        { instanceId: "c2", definitionId: "binding_curse", upgraded: false },
+      ],
+      discardPile: [],
+    });
+
+    const result = drawCards(state, 3, rng);
+
+    expect(result.hand.map((card) => card.definitionId)).toEqual([
+      "torn_index",
+      "strike",
+      "binding_curse",
+    ]);
+    expect(result.playerDisruption.frozenHandCardIds).toContain("c1");
+    expect(result.playerDisruption.frozenHandCardIds.length).toBe(2);
+  });
+
+  it("smudged_lens and echo_curse add delayed disruption and extra clog", () => {
+    const rng = createRNG("delayed-draw-clog");
+    const state = makeMinimalCombat({
+      hand: [],
+      drawPile: [
+        { instanceId: "s1", definitionId: "smudged_lens", upgraded: false },
+        { instanceId: "c1", definitionId: "echo_curse", upgraded: false },
+      ],
+      discardPile: [],
+    });
+
+    const result = drawCards(state, 2, rng);
+
+    expect(result.nextPlayerDisruption.drawPenalty).toBe(1);
+    expect(result.discardPile.map((card) => card.definitionId)).toContain(
+      "dazed"
+    );
+  });
+
   it("player overdraw sets pending exhaust choices", () => {
     const rng = createRNG("hand-cap-overflow");
     const baseHand = Array.from({
@@ -358,6 +464,27 @@ describe("Deck operations", () => {
     const result = discardHand(state);
     expect(result.hand).toHaveLength(0);
     expect(result.discardPile).toHaveLength(2);
+  });
+
+  it("discardHand exhausts dazed at end of turn", () => {
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "c1", definitionId: "dazed", upgraded: false },
+        { instanceId: "c2", definitionId: "strike", upgraded: false },
+      ],
+      discardPile: [],
+      exhaustPile: [],
+    });
+
+    const result = discardHand(state);
+
+    expect(result.hand).toHaveLength(0);
+    expect(result.discardPile.map((card) => card.definitionId)).toEqual([
+      "strike",
+    ]);
+    expect(result.exhaustPile.map((card) => card.definitionId)).toEqual([
+      "dazed",
+    ]);
   });
 
   it("moveCardToDiscard moves specific card", () => {
@@ -611,6 +738,17 @@ describe("Card playing", () => {
     expect(canPlayCard(state, "c1", cardDefs)).toBe(false);
   });
 
+  it("canPlayCard returns false without enough ink for inkCost cards", () => {
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "book_of_the_dead", upgraded: false }],
+      player: {
+        ...makeMinimalCombat().player,
+        inkCurrent: 1,
+      },
+    });
+    expect(canPlayCard(state, "c1", cardDefs)).toBe(false);
+  });
+
   it("cannot play CURSE cards", () => {
     const state = makeMinimalCombat({
       hand: [
@@ -702,7 +840,40 @@ describe("Card playing", () => {
     expect(result.enemies[0]?.currentHp).toBe(14 - 27);
   });
 
-  it("playCard inked trickster_snare applies Vulnerable to all surviving enemies", () => {
+  it("book_of_the_dead spends ink for a zero-energy setup swing", () => {
+    const rng = createRNG("book-of-the-dead");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkCurrent: 3,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "book_of_the_dead", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.energyCurrent).toBe(3);
+    expect(result.player.inkCurrent).toBe(1);
+    expect(result.player.strength).toBe(2);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(result.exhaustPile[0]?.definitionId).toBe("book_of_the_dead");
+  });
+
+  it("playCard inked trickster_snare applies Vulnerable and Poison to all surviving enemies", () => {
     const rng = createRNG("inked-trickster-snare-test");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
@@ -733,11 +904,13 @@ describe("Card playing", () => {
 
     const result = playCard(state, "c1", null, true, cardDefs, rng);
 
-    // trickster_snare inked: 6 dmg AOE + VULN 2 ALL
-    expect(result.enemies[0]?.currentHp).toBe(24);
-    expect(result.enemies[1]?.currentHp).toBe(22);
+    // trickster_snare inked: 5 dmg AOE + VULN 2 ALL + POISON 2 ALL
+    expect(result.enemies[0]?.currentHp).toBe(25);
+    expect(result.enemies[1]?.currentHp).toBe(23);
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
     expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "POISON")).toBe(2);
   });
 
   it("playCard exhausts POWER cards for the rest of combat", () => {
@@ -784,9 +957,9 @@ describe("Card playing", () => {
     });
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(6);
-    expect(result.exhaustPile).toHaveLength(1);
-    expect(result.exhaustPile[0]?.definitionId).toBe("venom_echo");
-    expect(result.discardPile).toHaveLength(0);
+    expect(result.exhaustPile).toHaveLength(0);
+    expect(result.discardPile).toHaveLength(1);
+    expect(result.discardPile[0]?.definitionId).toBe("venom_echo");
   });
 
   it("venom_echo+ triples poison stacks on target", () => {
@@ -802,8 +975,1657 @@ describe("Card playing", () => {
     });
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(9);
+    expect(result.exhaustPile).toHaveLength(0);
+    expect(result.discardPile).toHaveLength(1);
+    expect(result.discardPile[0]?.definitionId).toBe("venom_echo");
+  });
+
+  it("heros_challenge grants player block while targeting an enemy", () => {
+    const rng = createRNG("heros-challenge");
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "c1", definitionId: "heros_challenge", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(8);
+    expect(result.player.block).toBe(4);
+  });
+
+  it("titans_wrath cashes in existing vulnerable before applying more", () => {
+    const rng = createRNG("titans-wrath");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "titans_wrath", upgraded: false }],
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          currentHp: 40,
+          maxHp: 40,
+          buffs: [{ type: "VULNERABLE", stacks: 2, duration: 2 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(25);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(3);
+  });
+
+  it("winter_inscription turns existing weak into a simple thorns payoff", () => {
+    const rng = createRNG("winter-inscription");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "c1", definitionId: "winter_inscription", upgraded: false },
+      ],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          buffs: [{ type: "WEAK", stacks: 2, duration: 2 }],
+        },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+          buffs: [{ type: "WEAK", stacks: 1, duration: 2 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(5);
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(3);
+  });
+
+  it("spider_web turns team-wide weak into thorns", () => {
+    const rng = createRNG("spider-web");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "spider_web", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          instanceId: "e1",
+          currentHp: 14,
+          maxHp: 14,
+          buffs: [],
+        },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+          buffs: [],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(11);
+    expect(result.enemies[1]?.currentHp).toBe(15);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "WEAK")).toBe(1);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "WEAK")).toBe(1);
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+  });
+
+  it("wild_gale converts existing weak into thorns", () => {
+    const rng = createRNG("wild-gale");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "wild_gale", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          buffs: [{ type: "WEAK", stacks: 2, duration: 2 }],
+        },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+          buffs: [{ type: "WEAK", stacks: 1, duration: 2 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(3);
+    expect(result.hand).toHaveLength(1);
+  });
+
+  it("frost_witch cashes in weak across enemies as thorns", () => {
+    const rng = createRNG("frost-witch");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "frost_witch", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          buffs: [{ type: "WEAK", stacks: 1, duration: 2 }],
+        },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+          buffs: [],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "WEAK")).toBe(3);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "WEAK")).toBe(2);
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(5);
+    expect(result.exhaustPile[0]?.definitionId).toBe("frost_witch");
+  });
+
+  it("epic_saga cashes in bleed across all enemies", () => {
+    const rng = createRNG("epic-saga");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "epic_saga", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          currentHp: 20,
+          maxHp: 20,
+          buffs: [{ type: "BLEED", stacks: 2, duration: 4 }],
+        },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+          buffs: [{ type: "BLEED", stacks: 1, duration: 4 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(12);
+    expect(result.enemies[1]?.currentHp).toBe(12);
+    expect(result.exhaustPile[0]?.definitionId).toBe("epic_saga");
+  });
+
+  it("olympian_scripture turns draw and upgrade into a burst combo window", () => {
+    const rng = createRNG("olympian-scripture");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "c1", definitionId: "olympian_scripture", upgraded: false },
+      ],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+        { instanceId: "d3", definitionId: "strike", upgraded: false },
+      ],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          instanceId: "e1",
+          currentHp: 30,
+          maxHp: 30,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.energyCurrent).toBe(2);
+    expect(result.enemies[0]?.currentHp).toBe(18);
+    expect(result.hand).toHaveLength(3);
+    expect(result.hand.some((card) => card.upgraded)).toBe(true);
+    expect(
+      result.exhaustPile.some(
+        (card) => card.definitionId === "olympian_scripture" && card.upgraded
+      )
+    ).toBe(false);
+    expect(result.exhaustPile[0]?.definitionId).toBe("olympian_scripture");
+  });
+
+  it("void_scripture converts clog in discard into a burst payoff", () => {
+    const rng = createRNG("void-scripture");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "void_scripture", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+        { instanceId: "d3", definitionId: "strike", upgraded: false },
+      ],
+      discardPile: [{ instanceId: "x1", definitionId: "dazed", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          instanceId: "e1",
+          currentHp: 40,
+          maxHp: 40,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(25);
+    expect(result.hand).toHaveLength(2);
+    expect(result.discardPile).toHaveLength(2);
+    expect(
+      result.discardPile.some((card) => card.definitionId === "haunting_regret")
+    ).toBe(true);
+    expect(result.exhaustPile[0]?.definitionId).toBe("void_scripture");
+  });
+
+  it("battle_inscription cashes out stored ink into defense and hand quality", () => {
+    const rng = createRNG("battle-inscription");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+        inkCurrent: 3,
+      },
+      hand: [
+        { instanceId: "c1", definitionId: "battle_inscription", upgraded: false },
+        { instanceId: "c2", definitionId: "strike", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(0);
+    expect(result.player.block).toBe(14);
+    expect(result.hand).toHaveLength(1);
+    expect(result.hand[0]?.definitionId).toBe("strike");
+    expect(result.hand[0]?.upgraded).toBe(true);
+    expect(
+      result.discardPile.some(
+        (card) => card.definitionId === "battle_inscription" && card.upgraded
+      )
+    ).toBe(false);
+  });
+
+  it("odin_script converts prior exhaust into a burst payoff", () => {
+    const rng = createRNG("odin-script");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "odin_script", upgraded: false }],
+      exhaustPile: [
+        { instanceId: "x1", definitionId: "strike", upgraded: false },
+        { instanceId: "x2", definitionId: "defend", upgraded: false },
+      ],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          instanceId: "e1",
+          currentHp: 40,
+          maxHp: 40,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(26);
+    expect(result.discardPile[0]?.definitionId).toBe("dazed");
+    expect(result.exhaustPile).toHaveLength(3);
+    expect(result.exhaustPile.some((card) => card.definitionId === "odin_script")).toBe(
+      true
+    );
+  });
+
+  it("cosmic_archive turns prior exhaust into a defensive payoff", () => {
+    const rng = createRNG("cosmic-archive");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "cosmic_archive", upgraded: false }],
+      exhaustPile: [
+        { instanceId: "x1", definitionId: "strike", upgraded: false },
+        { instanceId: "x2", definitionId: "defend", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(12);
+    expect(result.player.focus).toBe(1);
+    expect(result.discardPile[0]?.definitionId).toBe("dazed");
+    expect(result.exhaustPile.some((card) => card.definitionId === "cosmic_archive")).toBe(
+      true
+    );
+  });
+
+  it("saga_keeper turns prior exhaust into lasting strength scaling", () => {
+    const rng = createRNG("saga-keeper");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "saga_keeper", upgraded: false }],
+      exhaustPile: [
+        { instanceId: "x1", definitionId: "strike", upgraded: false },
+        { instanceId: "x2", definitionId: "defend", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.focus).toBe(1);
+    expect(result.player.strength).toBe(2);
+    expect(result.hand).toHaveLength(1);
+    expect(result.hand[0]?.definitionId).toBe("strike");
+    expect(result.exhaustPile.some((card) => card.definitionId === "saga_keeper")).toBe(
+      true
+    );
+  });
+
+  it("folk_epic sets up a weak-thorns retaliation payoff", () => {
+    const rng = createRNG("folk-epic");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "folk_epic", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(6);
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+    expect(result.exhaustPile[0]?.definitionId).toBe("folk_epic");
+  });
+
+  it("folk_epic makes weak attackers trigger thorns twice", () => {
+    const rng = createRNG("folk-epic-retaliation");
+    const base = makeMinimalCombat();
+    const afterFolkEpic = playCard(
+      makeMinimalCombat({
+        hand: [{ instanceId: "c1", definitionId: "folk_epic", upgraded: false }],
+      }),
+      "c1",
+      null,
+      false,
+      cardDefs,
+      rng
+    );
+
+    const state = {
+      ...afterFolkEpic,
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          buffs: applyBuff([], "WEAK", 1, 2),
+        },
+      ],
+    };
+
+    const result = resolveEffects(
+      state,
+      [{ type: "DAMAGE", value: 8 }],
+      {
+        source: { type: "enemy", instanceId: "e1" },
+        target: "player",
+      },
+      rng
+    );
+
+    expect(result.player.currentHp).toBe(80);
+    expect(result.player.block).toBe(0);
+    expect(result.enemies[0]?.currentHp).toBe(10);
+  });
+
+  it("ink_surge upgrades a card in hand while granting ink and draw", () => {
+    const rng = createRNG("ink-surge");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [
+        { instanceId: "c1", definitionId: "ink_surge", upgraded: false },
+        { instanceId: "c2", definitionId: "strike", upgraded: false },
+      ],
+      drawPile: [{ instanceId: "d1", definitionId: "defend", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(2);
+    expect(result.hand).toHaveLength(2);
+    expect(result.hand.some((card) => card.upgraded)).toBe(true);
+    expect(
+      result.discardPile.some(
+        (card) => card.definitionId === "ink_surge" && card.upgraded
+      )
+    ).toBe(false);
+  });
+
+  it("ink_surge does not upgrade itself when no other card is available", () => {
+    const rng = createRNG("ink-surge-no-self-upgrade");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "ink_surge", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(
+      result.discardPile.some(
+        (card) => card.definitionId === "ink_surge" && card.upgraded
+      )
+    ).toBe(false);
+  });
+
+  it("book_of_ra turns draw and ink into vulnerable burst setup", () => {
+    const rng = createRNG("book-of-ra");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "book_of_ra", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(2);
+    expect(result.player.strength).toBe(1);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+  });
+
+  it("scald_cry bridges draw and strength into bleed pressure", () => {
+    const rng = createRNG("scald-cry");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "scald_cry", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.strength).toBe(1);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(2);
+  });
+
+  it("bardic_verse bridges draw and ink into poison", () => {
+    const rng = createRNG("bardic-verse");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "bardic_verse", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(2);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
+  });
+
+  it("byliny_verse bridges draw and ink into team-wide weak", () => {
+    const rng = createRNG("byliny-verse");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "byliny_verse", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(2);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "WEAK")).toBe(1);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "WEAK")).toBe(1);
+  });
+
+  it("eye_of_ra opens a vulnerable combo window with ink and an upgrade", () => {
+    const rng = createRNG("eye-of-ra");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [
+        { instanceId: "c1", definitionId: "eye_of_ra", upgraded: false },
+        { instanceId: "c2", definitionId: "strike", upgraded: false },
+      ],
+      drawPile: [
+        { instanceId: "d1", definitionId: "defend", upgraded: false },
+        { instanceId: "d2", definitionId: "strike", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(2);
+    expect(result.hand).toHaveLength(3);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(
+      result.hand.some((card) => card.upgraded) ||
+        result.discardPile.some(
+          (card) => card.definitionId === "eye_of_ra" && card.upgraded
+        )
+    ).toBe(true);
+  });
+
+  it("anansis_web turns team-wide vulnerable into strength tempo", () => {
+    const rng = createRNG("anansis-web");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "anansis_web", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.strength).toBe(1);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(2);
+  });
+
+  it("void_librarian trades clean setup for focus and clog", () => {
+    const rng = createRNG("void-librarian");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "void_librarian", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(2);
+    expect(result.player.focus).toBe(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(result.discardPile.some((card) => card.definitionId === "dazed")).toBe(
+      true
+    );
+  });
+
+  it("sphinx_riddle turns team-wide vulnerable into focus", () => {
+    const rng = createRNG("sphinx-riddle");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "sphinx_riddle", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.focus).toBe(1);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(2);
+  });
+
+  it("norn_prophecy turns vulnerable setup into focus-backed card flow", () => {
+    const rng = createRNG("norn-prophecy");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "norn_prophecy", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(2);
+    expect(result.player.focus).toBe(1);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+  });
+
+  it("forbidden_index trades team-wide setup for draw plus clog", () => {
+    const rng = createRNG("forbidden-index");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "forbidden_index", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+      ],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.hand).toHaveLength(2);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(1);
+    expect(result.discardPile.some((card) => card.definitionId === "dazed")).toBe(
+      true
+    );
+  });
+
+  it("sacrificial_word turns team-wide vulnerable damage into an ink bridge", () => {
+    const rng = createRNG("sacrificial-word");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "sacrificial_word", upgraded: false }],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(2);
+    expect(result.enemies[0]?.currentHp).toBe(10);
+    expect(result.enemies[1]?.currentHp).toBe(14);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(1);
+  });
+
+  it("snowstorm_trap turns team-wide vulnerable damage into focus tempo", () => {
+    const rng = createRNG("snowstorm-trap");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "snowstorm_trap", upgraded: false }],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.focus).toBe(1);
+    expect(result.enemies[0]?.currentHp).toBe(10);
+    expect(result.enemies[1]?.currentHp).toBe(14);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(2);
+  });
+
+  it("morrigan_curse turns team-wide vulnerable damage into sustain", () => {
+    const rng = createRNG("morrigan-curse");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 50,
+      },
+      hand: [{ instanceId: "c1", definitionId: "morrigan_curse", upgraded: false }],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(53);
+    expect(result.enemies[0]?.currentHp).toBe(10);
+    expect(result.enemies[1]?.currentHp).toBe(14);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(2);
+  });
+
+  it("iron_bard turns a heavy bleed hit into card flow", () => {
+    const rng = createRNG("iron-bard");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "iron_bard", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.hand).toHaveLength(1);
+    expect(result.enemies[0]?.currentHp).toBe(4);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(3);
+  });
+
+  it("koschei_strike cashes in existing bleed on the target", () => {
+    const rng = createRNG("koschei-strike");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "koschei_strike", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          currentHp: 30,
+          maxHp: 30,
+          buffs: [{ type: "BLEED", stacks: 1, duration: 4 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(14);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(4);
+  });
+
+  it("buffalo_charge turns a heavy bleed hit into strength tempo", () => {
+    const rng = createRNG("buffalo-charge");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "buffalo_charge", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.strength).toBe(1);
+    expect(result.enemies[0]?.currentHp).toBe(3);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(2);
+  });
+
+  it("celtic_illumination turns draw and ink burst into poison pressure", () => {
+    const rng = createRNG("celtic-illumination");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "celtic_illumination", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(4);
+    expect(result.hand).toHaveLength(2);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
+    expect(result.exhaustPile[0]?.definitionId).toBe("celtic_illumination");
+  });
+
+  it("ancestor_archive turns draw and energy burst into team-wide vulnerable", () => {
+    const rng = createRNG("ancestor-archive");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "ancestor_archive", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+      ],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.energyCurrent).toBe(3);
+    expect(result.hand).toHaveLength(2);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(1);
+    expect(result.exhaustPile[0]?.definitionId).toBe("ancestor_archive");
+  });
+
+  it("folklore_archive turns draw and energy burst into focus", () => {
+    const rng = createRNG("folklore-archive");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "folklore_archive", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.energyCurrent).toBe(3);
+    expect(result.player.focus).toBe(2);
+    expect(result.hand).toHaveLength(2);
+    expect(result.exhaustPile[0]?.definitionId).toBe("folklore_archive");
+  });
+
+  it("embalmed_tome turns draw and ink burst into team-wide weak", () => {
+    const rng = createRNG("embalmed-tome");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "embalmed_tome", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+      ],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(4);
+    expect(result.hand).toHaveLength(2);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "WEAK")).toBe(1);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "WEAK")).toBe(1);
+    expect(result.exhaustPile[0]?.definitionId).toBe("embalmed_tome");
+  });
+
+  it("pythian_codex cashes out current ink into damage and hand quality", () => {
+    const rng = createRNG("pythian-codex");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+        inkCurrent: 4,
+      },
+      hand: [
+        { instanceId: "c1", definitionId: "pythian_codex", upgraded: false },
+        { instanceId: "c2", definitionId: "strike", upgraded: false },
+      ],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          instanceId: "e1",
+          currentHp: 40,
+          maxHp: 40,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(0);
+    expect(result.enemies[0]?.currentHp).toBe(24);
+    expect(result.hand).toHaveLength(1);
+    expect(result.hand.some((card) => card.upgraded)).toBe(true);
+    expect(
+      result.exhaustPile.some(
+        (card) => card.definitionId === "pythian_codex" && card.upgraded
+      )
+    ).toBe(false);
+    expect(result.exhaustPile.some((card) => card.definitionId === "pythian_codex")).toBe(
+      true
+    );
+  });
+
+  it("saga_archive turns draw and energy burst into strength tempo", () => {
+    const rng = createRNG("saga-archive");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "saga_archive", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.energyCurrent).toBe(3);
+    expect(result.player.strength).toBe(1);
+    expect(result.hand).toHaveLength(2);
+    expect(result.exhaustPile[0]?.definitionId).toBe("saga_archive");
+  });
+
+  it("annotated_thesis turns defense into hand quality", () => {
+    const rng = makeDeterministicRng("annotated-thesis");
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "c1", definitionId: "annotated_thesis", upgraded: false },
+        { instanceId: "c2", definitionId: "strike", upgraded: false },
+      ],
+      drawPile: [{ instanceId: "d1", definitionId: "defend", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(6);
+    expect(result.hand).toHaveLength(2);
+    expect(
+      result.hand.some((card) => card.upgraded) ||
+        result.discardPile.some((card) => card.upgraded)
+    ).toBe(true);
+  });
+
+  it("sacred_ink_burst turns poison stacks into a defensive payoff", () => {
+    const rng = createRNG("sacred-ink-burst");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "sacred_ink_burst", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          buffs: applyBuff([], "POISON", 3),
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(3);
+    expect(result.player.block).toBe(6);
+    expect(result.enemies[0]?.currentHp).toBe(8);
+  });
+
+  it("quetzal_shield turns defense into team-wide weak setup", () => {
+    const rng = createRNG("quetzal-shield");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "quetzal_shield", upgraded: false }],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.inkCurrent).toBe(2);
+    expect(result.player.block).toBe(7);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "WEAK")).toBe(2);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "WEAK")).toBe(2);
+  });
+
+  it("baobab_shield converts sustain into a thorny counter stance", () => {
+    const rng = createRNG("baobab-shield");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 70,
+      },
+      hand: [{ instanceId: "c1", definitionId: "baobab_shield", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(73);
+    expect(result.player.block).toBe(7);
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+  });
+
+  it("leshy_ward cashes in weak stacks into scaling defense", () => {
+    const rng = createRNG("leshy-ward");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 70,
+      },
+      hand: [{ instanceId: "c1", definitionId: "leshy_ward", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          buffs: applyBuff([], "WEAK", 2, 2),
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(73);
+    expect(result.player.block).toBe(12);
+  });
+
+  it("gorgons_gaze turns a flat AOE debuff attack into vulnerable setup and draw", () => {
+    const rng = createRNG("gorgons-gaze");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "gorgons_gaze", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+      enemies: [
+        { ...base.enemies[0]! },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.hand).toHaveLength(1);
+    expect(result.enemies[0]?.currentHp).toBe(base.enemies[0]!.currentHp - 3);
+    expect(result.enemies[1]?.currentHp).toBe(15);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(1);
+  });
+
+  it("jaguars_blood bridges bleed pressure into strength", () => {
+    const rng = createRNG("jaguars-blood");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "jaguars_blood", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.strength).toBe(1);
+    expect(result.enemies[0]?.currentHp).toBe(9);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(3);
+  });
+
+  it("frost_nail cashes in existing weak on its target", () => {
+    const rng = createRNG("frost-nail");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "frost_nail", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          currentHp: 20,
+          maxHp: 20,
+          buffs: [{ type: "WEAK", stacks: 2, duration: 2 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(10);
+  });
+
+  it("iron_verse applies bleed first, then scales damage from total bleed", () => {
+    const rng = createRNG("iron-verse");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "iron_verse", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          currentHp: 20,
+          maxHp: 20,
+          buffs: [{ type: "BLEED", stacks: 1, duration: 4 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(14);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(3);
+  });
+
+  it("logos_strike turns vulnerable into a cantrip setup", () => {
+    const rng = createRNG("logos-strike");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "logos_strike", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.hand).toHaveLength(1);
+    expect(result.enemies[0]?.currentHp).toBe(9);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
+  });
+
+  it("kells_strike turns poison pressure into a cantrip attack", () => {
+    const rng = createRNG("kells-strike");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "kells_strike", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.hand).toHaveLength(1);
+    expect(result.enemies[0]?.currentHp).toBe(9);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
+  });
+
+  it("drum_strike turns bleed pressure into a cantrip attack", () => {
+    const rng = createRNG("drum-strike");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "drum_strike", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.hand).toHaveLength(1);
+    expect(result.enemies[0]?.currentHp).toBe(10);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(2);
+  });
+
+  it("death_scroll both stacks poison and cashes it in immediately", () => {
+    const rng = createRNG("death-scroll");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "death_scroll", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          currentHp: 30,
+          maxHp: 30,
+          buffs: [{ type: "POISON", stacks: 2 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(23);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(4);
+  });
+
+  it("void_shield trades clean defense for clog", () => {
+    const rng = createRNG("void-shield");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "void_shield", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(11);
+    expect(result.discardPile.some((card) => card.definitionId === "dazed")).toBe(
+      true
+    );
+  });
+
+  it("sacred_papyrus scales defense from poison already on enemies", () => {
+    const rng = createRNG("sacred-papyrus");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "sacred_papyrus", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          buffs: [{ type: "POISON", stacks: 2 }],
+        },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+          buffs: [{ type: "POISON", stacks: 1 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(11);
+  });
+
+  it("fairy_veil bridges block into thorns", () => {
+    const rng = createRNG("fairy-veil");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "fairy_veil", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(6);
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+  });
+
+  it("sealed_tome gives block and focus while adding a dazed", () => {
+    const rng = createRNG("sealed-tome");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "sealed_tome", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(7);
+    expect(result.player.focus).toBe(1);
+    expect(result.discardPile.some((card) => card.definitionId === "dazed")).toBe(
+      true
+    );
+  });
+
+  it("calendric_ward turns defense into vulnerable-based scaling", () => {
+    const rng = createRNG("calendric-ward");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "calendric_ward", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          buffs: applyBuff([], "VULNERABLE", 2, 2),
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(10);
+    expect(result.hand).toHaveLength(1);
+  });
+
+  it("nordic_treatise turns defense into draw and focus", () => {
+    const rng = createRNG("nordic-treatise");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "nordic_treatise", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(6);
+    expect(result.player.focus).toBe(1);
+    expect(result.hand).toHaveLength(1);
+  });
+
+  it("healing_rhythm turns sustain into draw, ink, and strength", () => {
+    const rng = createRNG("healing-rhythm");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 50,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "healing_rhythm", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(55);
+    expect(result.player.inkCurrent).toBe(1);
+    expect(result.player.strength).toBe(1);
+    expect(result.hand).toHaveLength(1);
+  });
+
+  it("cauldron_lore bridges sustain into poison pressure", () => {
+    const rng = createRNG("cauldron-lore");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 50,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "cauldron_lore", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(53);
+    expect(result.player.inkCurrent).toBe(1);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
+  });
+
+  it("druids_breath turns sustain into focus and a replacement card", () => {
+    const rng = createRNG("druids-breath");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 50,
+      },
+      hand: [{ instanceId: "c1", definitionId: "druids_breath", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(54);
+    expect(result.player.focus).toBe(1);
+    expect(result.hand).toHaveLength(1);
+  });
+
+  it("herb_lore heals the player while setting up weak on the target", () => {
+    const rng = createRNG("herb-lore");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 50,
+      },
+      hand: [{ instanceId: "c1", definitionId: "herb_lore", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(56);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "WEAK")).toBe(1);
+  });
+
+  it("selkie_song bridges sustain into draw and thorns", () => {
+    const rng = createRNG("selkie-song");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 50,
+      },
+      hand: [{ instanceId: "c1", definitionId: "selkie_song", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(54);
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+    expect(result.hand).toHaveLength(2);
+  });
+
+  it("temple_archive upgrades a drawn card while healing", () => {
+    const rng = createRNG("temple-archive");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 50,
+      },
+      hand: [{ instanceId: "c1", definitionId: "temple_archive", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(54);
+    expect(result.hand).toHaveLength(1);
+    expect(
+      result.hand.some((card) => card.upgraded) ||
+        result.discardPile.some(
+          (card) => card.definitionId === "temple_archive" && card.upgraded
+        )
+    ).toBe(true);
+  });
+
+  it("osiris_archive turns sustain into a one-shot draw and ink burst", () => {
+    const rng = createRNG("osiris-archive");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 50,
+        inkPerCardChance: 0,
+      },
+      hand: [{ instanceId: "c1", definitionId: "osiris_archive", upgraded: false }],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(53);
+    expect(result.player.inkCurrent).toBe(1);
+    expect(result.hand).toHaveLength(2);
+    expect(result.exhaustPile[0]?.definitionId).toBe("osiris_archive");
+  });
+
+  it("funerary_rite heals the player while setting up vulnerable", () => {
+    const rng = createRNG("funerary-rite");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        currentHp: 50,
+      },
+      hand: [{ instanceId: "c1", definitionId: "funerary_rite", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(55);
+    expect(result.hand).toHaveLength(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
+  });
+
+  it("written_prophecy turns draw volume into burst and sets the next draw to discard", () => {
+    const rng = createRNG("written-prophecy");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [
+        { instanceId: "c1", definitionId: "written_prophecy", upgraded: false },
+      ],
+      drawPile: [
+        { instanceId: "d1", definitionId: "strike", upgraded: false },
+        { instanceId: "d2", definitionId: "defend", upgraded: false },
+        { instanceId: "d3", definitionId: "strike", upgraded: false },
+      ],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          instanceId: "e1",
+          currentHp: 40,
+          maxHp: 40,
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.hand).toHaveLength(2);
+    expect(result.enemies[0]?.currentHp).toBe(34);
+    expect(result.playerDisruption.drawsToDiscardRemaining).toBe(1);
     expect(result.exhaustPile).toHaveLength(1);
-    expect(result.exhaustPile[0]?.definitionId).toBe("venom_echo");
+    expect(result.exhaustPile[0]?.definitionId).toBe("written_prophecy");
+  });
+
+  it("fates_decree turns vulnerable stacks into an all-enemies finisher", () => {
+    const rng = createRNG("fates-decree");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "fates_decree", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          instanceId: "e1",
+          currentHp: 40,
+          maxHp: 40,
+          buffs: [{ type: "VULNERABLE", stacks: 2 }],
+        },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 40,
+          maxHp: 40,
+          buffs: [{ type: "VULNERABLE", stacks: 1 }],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", "all_enemies", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(27);
+    expect(result.enemies[1]?.currentHp).toBe(32);
+    expect(result.exhaustPile[0]?.definitionId).toBe("fates_decree");
+  });
+
+  it("curator_pact replays a real discard card while adding Hexed Parchment", () => {
+    const rng = createRNG("curator-pact");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "curator_pact", upgraded: false }],
+      discardPile: [
+        { instanceId: "d1", definitionId: "hexed_parchment", upgraded: false },
+        { instanceId: "d2", definitionId: "strike", upgraded: false },
+        { instanceId: "d3", definitionId: "dazed", upgraded: false },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.energyCurrent).toBe(4);
+    expect(result.player.inkCurrent).toBe(1);
+    expect(result.hand).toHaveLength(1);
+    expect(result.hand[0]?.definitionId).toBe("strike");
+    expect(result.discardPile.map((card) => card.definitionId)).toEqual([
+      "hexed_parchment",
+      "dazed",
+      "hexed_parchment",
+    ]);
+    expect(result.exhaustPile).toHaveLength(1);
+    expect(result.exhaustPile[0]?.definitionId).toBe("curator_pact");
+  });
+
+  it("iron_samovar grants block and poisons all enemies", () => {
+    const rng = createRNG("iron-samovar");
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "iron_samovar", upgraded: false }],
+      enemies: [
+        {
+          ...base.enemies[0]!,
+          instanceId: "e1",
+          currentHp: 20,
+          maxHp: 20,
+          buffs: [],
+        },
+        {
+          ...base.enemies[0]!,
+          instanceId: "e2",
+          currentHp: 18,
+          maxHp: 18,
+          buffs: [],
+        },
+      ],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(8);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "POISON")).toBe(2);
+  });
+
+  it("xipe_shield marks the next draw to go to discard", () => {
+    const rng = createRNG("xipe-shield");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "xipe_shield", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.block).toBe(8);
+    expect(result.player.inkCurrent).toBe(3);
+    expect(result.playerDisruption.drawsToDiscardRemaining).toBe(1);
+  });
+
+  it("matryoshka_lore rewards being randomly discarded", () => {
+    const rng = createRNG("matryoshka-random-discard");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "matryoshka_lore", upgraded: false }],
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const result = resolveEffects(
+      state,
+      [{ type: "FORCE_DISCARD_RANDOM", value: 1 }],
+      { source: "player", target: "player", cardDefs },
+      rng
+    );
+
+    expect(result.player.energyCurrent).toBe(4);
+    expect(result.hand).toHaveLength(1);
+    expect(result.hand[0]?.definitionId).toBe("strike");
+    expect(
+      result.discardPile.some((card) => card.definitionId === "matryoshka_lore")
+    ).toBe(true);
   });
 });
 
@@ -1170,6 +2992,35 @@ describe("Combat flow", () => {
 
     expect(combat.enemies[0]?.isElite).toBe(true);
     expect(combat.enemies[0]?.block).toBe(15);
+  });
+
+  it("at higher difficulties, elite combats can start with an escort enemy", () => {
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const runState = {
+      ...createNewRun("run-1", "combat-elite-escort", starterCards, createRNG("combat-elite-escort")),
+      floor: 3,
+      selectedDifficultyLevel: 4,
+    };
+    const deterministicEscortRng = {
+      seed: "combat-elite-escort-open",
+      next: () => 0,
+      nextInt: (min: number) => min,
+      shuffle: <T>(arr: readonly T[]) => [...arr],
+      pick: <T>(arr: readonly T[]) => arr[0]!,
+    };
+
+    const combat = initCombat(
+      runState,
+      ["ink_archon"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      deterministicEscortRng
+    );
+
+    expect(combat.enemies).toHaveLength(2);
+    expect(combat.enemies[0]?.definitionId).toBe("ink_archon");
+    expect(combat.enemies[1]?.isElite).not.toBe(true);
   });
 
   it("endPlayerTurn discards hand and changes phase", () => {
@@ -1655,8 +3506,15 @@ describe("Combat flow", () => {
     expect(bossAfterOnce.currentHp).toBeGreaterThan(70);
     expect(bossAfterOnce.mechanicFlags?.chapter_guardian_phase2).toBe(1);
     expect(
-      once.drawPile.filter((c) => c.definitionId === "haunting_regret").length
+      once.drawPile.filter(
+        (c) =>
+          c.definitionId === "haunting_regret" ||
+          c.definitionId === "binding_curse"
+      ).length
     ).toBeGreaterThanOrEqual(2);
+    expect(
+      once.drawPile.some((c) => c.definitionId === "haunting_regret")
+    ).toBe(true);
 
     const twice = executeOneEnemyTurn(
       once,
@@ -1666,9 +3524,17 @@ describe("Combat flow", () => {
       enemyDefs
     );
     expect(
-      twice.drawPile.filter((c) => c.definitionId === "haunting_regret").length
+      twice.drawPile.filter(
+        (c) =>
+          c.definitionId === "haunting_regret" ||
+          c.definitionId === "binding_curse"
+      ).length
     ).toBe(
-      once.drawPile.filter((c) => c.definitionId === "haunting_regret").length
+      once.drawPile.filter(
+        (c) =>
+          c.definitionId === "haunting_regret" ||
+          c.definitionId === "binding_curse"
+      ).length
     );
   });
 
@@ -1930,6 +3796,12 @@ describe("Run management", () => {
     );
 
     expect(run.pendingBiomeChoices).toEqual(["LIBRARY", "VIKING"]);
+  });
+
+  it("drawRandomBiomeChoices does not force LIBRARY into the pair", () => {
+    const choices = drawRandomBiomeChoices(createRNG("alpha"));
+
+    expect(choices).toEqual(["VIKING", "LOVECRAFTIAN"]);
   });
 
   it("generateFloorMap creates 10 room slots", () => {
@@ -2199,6 +4071,60 @@ describe("Run management", () => {
     expect(applied.deck.every((card) => card.definitionId !== "strike")).toBe(
       true
     );
+  });
+
+  it("applyRunConditionToRun ink_lender grants guaranteed ink on card play", () => {
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-ink-lender",
+      "run-ink-lender",
+      starterCards,
+      createRNG("run-ink-lender")
+    );
+    const applied = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "ink_lender",
+          "vanilla_run",
+          "quiet_pockets",
+        ],
+      },
+      "ink_lender",
+      createRNG("run-ink-lender-apply"),
+      [...cardDefs.values()]
+    );
+
+    expect(applied.metaBonuses?.startingInk).toBe(2);
+    expect(applied.metaBonuses?.inkPerCardChance).toBe(100);
+    expect(applied.metaBonuses?.inkPerCardValue).toBe(0);
+
+    const combat = initCombat(
+      applied,
+      ["ink_slime"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("run-ink-lender-combat")
+    );
+    const state = {
+      ...combat,
+      hand: [{ instanceId: "c1", definitionId: "strike", upgraded: false }],
+      drawPile: [],
+      discardPile: [],
+      exhaustPile: [],
+    };
+    const result = playCard(
+      state,
+      "c1",
+      "e1",
+      false,
+      cardDefs,
+      createRNG("run-ink-lender-play")
+    );
+
+    expect(result.player.inkCurrent).toBe(3);
   });
 
   it("createNewRun filters starting rare card to the inferred run character", () => {
@@ -2522,7 +4448,7 @@ describe("Run management", () => {
     expect(withQuietPockets.pendingRunConditionChoices).toHaveLength(0);
   });
 
-  it("completeCombat offers LIBRARY as a guaranteed option after floor 1 boss", () => {
+  it("completeCombat draws 2 random biome choices after floor 1 boss", () => {
     const rng = createRNG("boss-floor-1-biomes");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
     const run = createNewRun("run-1", "boss-floor-1-biomes", starterCards, rng);
@@ -2540,12 +4466,7 @@ describe("Run management", () => {
     );
 
     expect(result.pendingBiomeChoices).not.toBeNull();
-    expect(result.pendingBiomeChoices).toContain("LIBRARY");
-    const nonLibraryChoices = (result.pendingBiomeChoices ?? []).filter(
-      (b) => b !== "LIBRARY"
-    );
-    expect(nonLibraryChoices).toHaveLength(1);
-    expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(nonLibraryChoices[0]);
+    expect(result.pendingBiomeChoices).toEqual(["CELTIC", "LIBRARY"]);
   });
 
   it("completeCombat offers only non-LIBRARY biomes after floor 2+ boss", () => {
@@ -3038,6 +4959,131 @@ describe("Rewards", () => {
     expect(rewards.cardChoices.every((c) => !c.isStarterCard)).toBe(true);
   });
 
+  it("normal rewards keep one current-biome card and fill the rest from other unlocked biomes", () => {
+    const rewardPool = [...cardDefs.values()].filter(
+      (card) =>
+        !card.isStarterCard &&
+        card.isCollectible !== false &&
+        (!card.characterId || card.characterId === "scribe") &&
+        ["VIKING", "GREEK", "LIBRARY"].includes(card.biome)
+    );
+    const unlockedCardIds = rewardPool.map((card) => card.id);
+    const rewards = generateCombatRewards(
+      2,
+      3,
+      false,
+      false,
+      1,
+      rewardPool,
+      createRNG("rewards-viking-mix"),
+      "VIKING",
+      [],
+      unlockedCardIds,
+      [],
+      0,
+      0,
+      undefined,
+      0,
+      0,
+      0,
+      undefined,
+      1,
+      false,
+      "scribe"
+    );
+
+    expect(rewards.cardChoices).toHaveLength(3);
+    expect(
+      rewards.cardChoices.filter((card) => card.biome === "VIKING")
+    ).toHaveLength(1);
+    expect(
+      rewards.cardChoices.filter((card) => card.biome !== "VIKING")
+    ).toHaveLength(2);
+  });
+
+  it("extra reward card choices still preserve the biome anchor", () => {
+    const rewardPool = [...cardDefs.values()].filter(
+      (card) =>
+        !card.isStarterCard &&
+        card.isCollectible !== false &&
+        (!card.characterId || card.characterId === "scribe") &&
+        ["VIKING", "GREEK", "LIBRARY", "EGYPTIAN"].includes(card.biome)
+    );
+    const unlockedCardIds = rewardPool.map((card) => card.id);
+    const rewards = generateCombatRewards(
+      2,
+      4,
+      false,
+      false,
+      1,
+      rewardPool,
+      createRNG("rewards-viking-extra-choices"),
+      "VIKING",
+      ["greek_oracle_drachma", "love_void_compass"],
+      unlockedCardIds,
+      [],
+      0,
+      0,
+      undefined,
+      1,
+      0,
+      0,
+      undefined,
+      1,
+      false,
+      "scribe"
+    );
+
+    expect(rewards.cardChoices).toHaveLength(6);
+    expect(
+      rewards.cardChoices.filter((card) => card.biome === "VIKING")
+    ).toHaveLength(1);
+    expect(
+      rewards.cardChoices.filter((card) => card.biome !== "VIKING").length
+    ).toBeGreaterThanOrEqual(5);
+  });
+
+  it("african_griot_archive adds an extra elite card reward choice", () => {
+    const rewardPool = [...cardDefs.values()].filter(
+      (card) =>
+        !card.isStarterCard &&
+        card.isCollectible !== false &&
+        card.rarity === "RARE" &&
+        (!card.characterId || card.characterId === "scribe") &&
+        ["VIKING", "GREEK", "LIBRARY"].includes(card.biome)
+    );
+    const unlockedCardIds = rewardPool.map((card) => card.id);
+    const rewards = generateCombatRewards(
+      2,
+      4,
+      false,
+      true,
+      1,
+      rewardPool,
+      createRNG("elite-griot-extra-choice"),
+      "VIKING",
+      ["african_griot_archive"],
+      unlockedCardIds,
+      [],
+      0,
+      0,
+      undefined,
+      0,
+      0,
+      0,
+      undefined,
+      1,
+      false,
+      "scribe"
+    );
+
+    expect(rewardPool.length).toBeGreaterThanOrEqual(2);
+    expect(rewards.cardChoices).toHaveLength(2);
+    expect(rewards.cardChoices.every((card) => card.rarity === "RARE")).toBe(
+      true
+    );
+  });
+
   it("elite rewards can offer ally choices when slots are available", () => {
     const rng = createRNG("ally-reward");
     const allCards = [...cardDefs.values()];
@@ -3213,6 +5259,103 @@ describe("Rewards", () => {
 // ============================
 
 describe("Merchant", () => {
+  it("getCardOfferWeight only boosts tuned signatures in their intended offer sources", () => {
+    const boostedRare = cardDefs.get("book_of_the_dead");
+    const controlRare = cardDefs.get("embalmed_tome");
+    expect(boostedRare).toBeDefined();
+    expect(controlRare).toBeDefined();
+    if (!boostedRare || !controlRare) return;
+
+    const baseRareWeight = getLootRarityWeight("RARE", 0);
+
+    expect(
+      getCardOfferWeight(boostedRare, 0, "NORMAL_REWARD", "EGYPTIAN")
+    ).toBe(baseRareWeight * 3);
+    expect(getCardOfferWeight(boostedRare, 0, "NORMAL_REWARD", "GREEK")).toBe(
+      baseRareWeight
+    );
+    expect(
+      getCardOfferWeight(boostedRare, 0, "ELITE_REWARD", "EGYPTIAN")
+    ).toBe(baseRareWeight);
+    expect(getCardOfferWeight(boostedRare, 0, "MERCHANT")).toBe(
+      baseRareWeight * 5
+    );
+    expect(
+      getCardOfferWeight(controlRare, 0, "NORMAL_REWARD", "EGYPTIAN")
+    ).toBe(baseRareWeight);
+    expect(getCardOfferWeight(controlRare, 0, "MERCHANT")).toBe(baseRareWeight);
+  });
+
+  it("weighted normal rewards can bias toward a tuned home-biome signature", () => {
+    const controlRare = cardDefs.get("embalmed_tome");
+    const boostedRare = cardDefs.get("book_of_the_dead");
+    expect(controlRare).toBeDefined();
+    expect(boostedRare).toBeDefined();
+    if (!controlRare || !boostedRare) return;
+
+    const rng = {
+      seed: "offer-weight-home-biome",
+      next: () => 0.4,
+      nextInt: (min: number) => min,
+      shuffle: <T>(arr: readonly T[]) => [...arr],
+      pick: <T>(arr: readonly T[]) => arr[0]!,
+    };
+
+    const homeBiomePick = weightedSampleCardsForOffers(
+      [controlRare, boostedRare],
+      1,
+      rng,
+      0,
+      "NORMAL_REWARD",
+      "EGYPTIAN"
+    );
+    const offBiomePick = weightedSampleCardsForOffers(
+      [controlRare, boostedRare],
+      1,
+      rng,
+      0,
+      "NORMAL_REWARD",
+      "GREEK"
+    );
+
+    expect(homeBiomePick.map((card) => card.id)).toEqual(["book_of_the_dead"]);
+    expect(offBiomePick.map((card) => card.id)).toEqual(["embalmed_tome"]);
+  });
+
+  it("weighted merchant offers can bias toward a tuned signature card", () => {
+    const controlRare = cardDefs.get("embalmed_tome");
+    const boostedRare = cardDefs.get("book_of_the_dead");
+    expect(controlRare).toBeDefined();
+    expect(boostedRare).toBeDefined();
+    if (!controlRare || !boostedRare) return;
+
+    const rng = {
+      seed: "offer-weight-merchant",
+      next: () => 0.4,
+      nextInt: (min: number) => min,
+      shuffle: <T>(arr: readonly T[]) => [...arr],
+      pick: <T>(arr: readonly T[]) => arr[0]!,
+    };
+
+    const merchantPick = weightedSampleCardsForOffers(
+      [controlRare, boostedRare],
+      1,
+      rng,
+      0,
+      "MERCHANT"
+    );
+    const elitePick = weightedSampleCardsForOffers(
+      [controlRare, boostedRare],
+      1,
+      rng,
+      0,
+      "ELITE_REWARD"
+    );
+
+    expect(merchantPick.map((card) => card.id)).toEqual(["book_of_the_dead"]);
+    expect(elitePick.map((card) => card.id)).toEqual(["embalmed_tome"]);
+  });
+
   it("generateShopInventory filters card offers to the current character", () => {
     const rng = makeDeterministicRng("merchant-character-filter");
     const scribeRare = cardDefs.get("mythic_blow");
@@ -3395,6 +5538,29 @@ describe("Relics", () => {
     expect(result.player.inkPerCardValue).toBe(2);
   });
 
+  it("opening-turn first-skill relics are armed at combat start", () => {
+    const state = makeMinimalCombat({
+      player: {
+        ...makeMinimalCombat().player,
+        energyCurrent: 0,
+        inkCurrent: 0,
+      },
+    });
+    const started = applyRelicsOnCombatStart(state, [
+      "library_margin_inkpot",
+      "egypt_tomb_censer",
+    ]);
+    const result = applyRelicsOnCardPlayed(
+      started,
+      ["library_margin_inkpot", "egypt_tomb_censer"],
+      "SKILL"
+    );
+
+    expect(result.player.inkCurrent).toBe(1);
+    expect(result.player.energyCurrent).toBe(1);
+    expect(result.relicFlags?.turn_first_skill_relic_active).toBe(false);
+  });
+
   it("cursed_diacrit adds energy and injects a curse", () => {
     const state = makeMinimalCombat();
     const result = applyRelicsOnCombatStart(state, ["cursed_diacrit"]);
@@ -3402,6 +5568,20 @@ describe("Relics", () => {
     expect(
       result.discardPile.some((c) => c.definitionId === "haunting_regret")
     ).toBe(true);
+  });
+
+  it("love_shub_brood_core injects a random status from the richer pool", () => {
+    const state = makeMinimalCombat();
+    const result = applyRelicsOnCombatStart(
+      state,
+      ["love_shub_brood_core"],
+      createRNG("shub-brood-status")
+    );
+
+    const injectedStatus = result.discardPile[0]?.definitionId;
+
+    expect(injectedStatus).toBeDefined();
+    expect(statusCardDefinitionIds).toContain(injectedStatus);
   });
 
   it("runic_bulwark retains half of remaining block on next turn", () => {
@@ -3731,6 +5911,19 @@ describe("Debuff blocked by armor", () => {
     // 4 dmg - 2 block = 2 actual damage
     expect(result.player.currentHp).toBe(state.player.currentHp - 2);
     expect(getBuffStacks(result.player.buffs, "POISON")).toBe(5);
+  });
+
+  it("armor-punish damage scales from player block and bypasses it", () => {
+    const state = makeStateWithBlock(12);
+    const effects: Effect[] = [
+      { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+    ];
+    const result = resolveEffects(state, effects, enemyCtx, rng);
+
+    expect(result.player.currentHp).toBe(state.player.currentHp - 6);
+    expect(result.player.block).toBe(12);
+    expect(getBuffStacks(result.player.buffs, "VULNERABLE")).toBe(2);
   });
 
   it("ink drain is skipped when damage is fully blocked", () => {

@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 import { applyDamage } from "./damage";
 import { drawCards } from "./deck";
 import type { RNG } from "./rng";
+import { pickRandomStatusCardDefinitionId } from "./status-cards";
 
 export function addRelicToRunState(
   runState: RunState,
@@ -84,7 +85,8 @@ function setFlag(state: CombatState, key: string, value = true): CombatState {
  */
 export function applyRelicsOnCombatStart(
   state: CombatState,
-  relicIds: string[]
+  relicIds: string[],
+  rng?: RNG
 ): CombatState {
   let current = state;
 
@@ -882,7 +884,9 @@ export function applyRelicsOnCombatStart(
             ...current.discardPile,
             {
               instanceId: nanoid(),
-              definitionId: "dazed",
+              definitionId: rng
+                ? pickRandomStatusCardDefinitionId(rng)
+                : "dazed",
               upgraded: false,
             },
           ],
@@ -986,6 +990,11 @@ export function applyRelicsOnCombatStart(
             drawCount: current.player.drawCount + 1,
           },
         };
+        break;
+      case "library_margin_inkpot":
+      case "egypt_tomb_censer":
+        // These "first SKILL each turn" relics must already be armed on turn 1.
+        current = setFlag(current, "turn_first_skill_relic_active", true);
         break;
     }
   }
@@ -1443,7 +1452,7 @@ export function applyRelicsOnTurnEnd(
               ...current.discardPile,
               {
                 instanceId: nanoid(),
-                definitionId: "dazed",
+                definitionId: "smudged_lens",
                 upgraded: false,
               },
             ],

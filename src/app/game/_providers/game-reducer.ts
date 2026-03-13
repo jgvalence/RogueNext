@@ -181,7 +181,7 @@ export function createGameReducer(deps: ReducerDeps) {
           cardDefs,
           rng
         );
-        combat = applyRelicsOnCombatStart(combat, state.relicIds);
+        combat = applyRelicsOnCombatStart(combat, state.relicIds, rng);
 
         // initCombat already drew the initial hand before relics are applied.
         // If relics increased drawCount (e.g. Bookmark), top up opening hand.

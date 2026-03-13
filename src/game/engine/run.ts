@@ -85,6 +85,16 @@ function inferRunCharacterId(starterCards: CardDefinition[]): string {
   return characterIds.length === 1 ? characterIds[0]! : "scribe";
 }
 
+const RANDOM_BIOME_CHOICE_POOL = [
+  "LIBRARY",
+  ...GAME_CONSTANTS.AVAILABLE_BIOMES,
+] as BiomeType[];
+
+export function drawRandomBiomeChoices(rng: RNG): [BiomeType, BiomeType] {
+  const shuffled = rng.shuffle(RANDOM_BIOME_CHOICE_POOL);
+  return [shuffled[0]!, shuffled[1]!] as [BiomeType, BiomeType];
+}
+
 function getEnemySelectionWeight(
   enemy: EnemyDef,
   floor: number,
@@ -276,6 +286,7 @@ export function createNewRun(
     unlockedRelicIds: unlockedRelicIdsSnapshot,
     unlockedCardIds,
     initialUnlockedCardIds: unlockedCardIds,
+    initialUnlockedRelicIds: unlockedRelicIdsSnapshot,
     cardUnlockProgress: unlockProgress,
     seenEventIds: [],
     scribeAttitude: 0,
@@ -975,9 +986,7 @@ export function completeCombat(
 
   if (isBossRoom && !isFinalFloor) {
     if (runState.floor === 1) {
-      // First transition (floor 1 -> 2): keep LIBRARY as one safe option.
-      const shuffled = rng.shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);
-      pendingBiomeChoices = ["LIBRARY", shuffled[0]!] as [BiomeType, BiomeType];
+      pendingBiomeChoices = drawRandomBiomeChoices(rng);
     } else {
       // Floors 2+: draw 2 distinct non-LIBRARY biomes.
       const shuffled = rng.shuffle([...GAME_CONSTANTS.AVAILABLE_BIOMES]);

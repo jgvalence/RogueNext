@@ -12,13 +12,13 @@ import { HistoireModal } from "./HistoireModal";
 import { LibraryIntroTutorial } from "./LibraryIntroTutorial";
 import type { Histoire, MetaProgress } from "@/game/schemas/meta";
 import {
-  hasPendingFirstRunEnergyStoryTutorial,
+  hasPendingFirstRunGuidedStoryTutorial,
   hasSeenLibraryIntroTutorial,
   markLibraryIntroTutorialSeen,
 } from "@/game/engine/library-tutorial";
 import { dismissLibraryIntroTutorialAction } from "@/server/actions/progression";
 import { cn } from "@/lib/utils/cn";
-import { FIRST_RUN_ENERGY_STORY_ID } from "@/game/engine/first-run-script";
+import { FIRST_RUN_GUIDED_STORY_ID } from "@/game/engine/first-run-script";
 
 interface LibraryClientProps {
   initialProgression: MetaProgress;
@@ -68,22 +68,22 @@ export function LibraryClient({
 
   const totalUnlocked = progression.unlockedStoryIds.length;
   const totalHistoires = histoires.length;
-  const firstRunEnergyStory = histoires.find(
-    (story) => story.id === FIRST_RUN_ENERGY_STORY_ID
+  const firstRunGuidedStory = histoires.find(
+    (story) => story.id === FIRST_RUN_GUIDED_STORY_ID
   );
-  const isFirstRunEnergyStoryTutorialVisible =
-    hasPendingFirstRunEnergyStoryTutorial(progression.resources) &&
-    !progression.unlockedStoryIds.includes(FIRST_RUN_ENERGY_STORY_ID);
+  const isFirstRunGuidedStoryTutorialVisible =
+    hasPendingFirstRunGuidedStoryTutorial(progression.resources) &&
+    !progression.unlockedStoryIds.includes(FIRST_RUN_GUIDED_STORY_ID);
 
   useEffect(() => {
     if (isLibraryIntroVisible) return;
-    if (!isFirstRunEnergyStoryTutorialVisible) return;
-    if (!firstRunEnergyStory) return;
-    if (selected?.id === firstRunEnergyStory.id) return;
-    setSelected(firstRunEnergyStory);
+    if (!isFirstRunGuidedStoryTutorialVisible) return;
+    if (!firstRunGuidedStory) return;
+    if (selected?.id === firstRunGuidedStory.id) return;
+    setSelected(firstRunGuidedStory);
   }, [
-    firstRunEnergyStory,
-    isFirstRunEnergyStoryTutorialVisible,
+    firstRunGuidedStory,
+    isFirstRunGuidedStoryTutorialVisible,
     isLibraryIntroVisible,
     selected,
   ]);
@@ -211,9 +211,9 @@ export function LibraryClient({
           histoires={histoires}
           progression={progression}
           slotState={getSlotState(selected, progression)}
-          showFirstRunEnergyStoryTutorial={
-            isFirstRunEnergyStoryTutorialVisible &&
-            selected.id === FIRST_RUN_ENERGY_STORY_ID
+          showFirstRunGuidedStoryTutorial={
+            isFirstRunGuidedStoryTutorialVisible &&
+            selected.id === FIRST_RUN_GUIDED_STORY_ID
           }
           onClose={() => setSelected(null)}
           onUnlocked={(updated) => {

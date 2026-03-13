@@ -3,6 +3,7 @@ import type { ComputedMetaBonuses, MetaBonus } from "../schemas/meta";
 import { DEFAULT_META_BONUSES } from "../schemas/meta";
 import type { CombatState } from "../schemas/combat-state";
 import { histoireDefinitions } from "../data/histoires";
+import { GAME_CONSTANTS } from "../constants";
 
 /**
  * Biome → ressource principale produite par ce biome.
@@ -92,7 +93,7 @@ function applyBonusToComputed(
       result.extraDraw += bonus.value;
       break;
     case "EXTRA_ENERGY_MAX":
-      result.extraEnergyMax += bonus.value;
+      result.extraEnergyMax = Math.min(1, result.extraEnergyMax + bonus.value);
       break;
     case "EXTRA_INK_MAX":
       result.extraInkMax += bonus.value;
@@ -112,6 +113,9 @@ function applyBonusToComputed(
     case "STARTING_STRENGTH":
       result.startingStrength += bonus.value;
       break;
+    case "STARTING_FOCUS":
+      result.startingFocus += bonus.value;
+      break;
     case "STARTING_REGEN":
       result.startingRegen += bonus.value;
       break;
@@ -128,7 +132,10 @@ function applyBonusToComputed(
       result.attackBonus += bonus.value;
       break;
     case "ALLY_SLOTS":
-      result.allySlots += bonus.value;
+      result.allySlots = Math.min(
+        GAME_CONSTANTS.MAX_ALLIES,
+        result.allySlots + bonus.value
+      );
       break;
     case "STARTING_GOLD":
       result.startingGold += bonus.value;
@@ -202,6 +209,7 @@ export function applyMetaBonusesToCombat(
       ),
       drawCount: p.drawCount + bonuses.extraDraw,
       strength: p.strength + bonuses.startingStrength,
+      focus: p.focus + bonuses.startingFocus,
       block: p.block + bonuses.startingBlock,
     },
   };

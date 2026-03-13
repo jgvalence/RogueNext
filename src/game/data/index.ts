@@ -34,6 +34,32 @@ export const allCardDefinitions: CardDefinition[] = [
   ...lootableCardDefinitions,
 ];
 
+const allCardDefinitionsMap = new Map(
+  allCardDefinitions.map((card) => [card.id, card])
+);
+
+export const statusCardDefinitions: CardDefinition[] = allCardDefinitions.filter(
+  (card) => card.type === "STATUS"
+);
+
+export const curseCardDefinitions: CardDefinition[] = allCardDefinitions.filter(
+  (card) => card.type === "CURSE"
+);
+
+export const statusCardDefinitionIds = statusCardDefinitions.map(
+  (card) => card.id
+);
+
+export const curseCardDefinitionIds = curseCardDefinitions.map(
+  (card) => card.id
+);
+
+export function getCardDefinitionById(
+  cardId: string
+): CardDefinition | undefined {
+  return allCardDefinitionsMap.get(cardId);
+}
+
 /** Card definitions as a Map for O(1) lookup */
 export function buildCardDefsMap(
   cards: CardDefinition[] = allCardDefinitions

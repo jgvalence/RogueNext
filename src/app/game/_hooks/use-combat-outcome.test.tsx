@@ -59,7 +59,7 @@ vi.mock("@/game/engine/first-run-script", async (importOriginal) => {
   return {
     ...actual,
     FIRST_RUN_ENERGY_TUTORIAL_OUTCOME: "FIRST_RUN_ENERGY_TUTORIAL",
-    getFirstRunScriptedEndResources: vi.fn(() => ({ PAGES: 14 })),
+    getFirstRunScriptedEndResources: vi.fn(() => ({ PAGES: 11 })),
     isFirstRunScriptedEliteRoom: vi.fn(() => false),
   };
 });
@@ -254,7 +254,7 @@ describe("useCombatOutcome", () => {
           runId: state.runId,
           status: "DEFEAT",
           runDurationMs: 1234,
-          earnedResources: { PAGES: 14 },
+          earnedResources: { PAGES: 11 },
           startMerchantSpentResources: {},
           encounteredEnemies: {},
           enemyKillCounts: {},

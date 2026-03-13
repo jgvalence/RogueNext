@@ -3,8 +3,9 @@ import type { CombatState } from "../schemas/combat-state";
 import type { BiomeResource } from "../schemas/enums";
 import type { RoomNode, RunState } from "../schemas/run-state";
 
-export const FIRST_RUN_ENERGY_STORY_ID = "traite_de_lenergie";
-export const FIRST_RUN_ENERGY_TUTORIAL_OUTCOME =
+export const FIRST_RUN_GUIDED_STORY_ID = "encyclopedie_du_savoir";
+// Legacy outcome id kept for compatibility with runs already serialized.
+export const FIRST_RUN_GUIDED_STORY_TUTORIAL_OUTCOME =
   "FIRST_RUN_ENERGY_TUTORIAL" as const;
 export const FIRST_RUN_SCRIPT_MAP_ROOM_INDEX = 1;
 export const FIRST_RUN_SCRIPT_FORCED_CHOICE_INDEX = 2;
@@ -41,7 +42,7 @@ const FIRST_RUN_GUIDED_MAP_ROOM: RoomNode[] = [
   },
 ];
 
-type ScriptedOutcome = typeof FIRST_RUN_ENERGY_TUTORIAL_OUTCOME;
+type ScriptedOutcome = typeof FIRST_RUN_GUIDED_STORY_TUTORIAL_OUTCOME;
 
 export function createFirstRunScriptedMap(baseMap: RoomNode[][]): RoomNode[][] {
   const nextMap = baseMap.map((slot) => slot.map((room) => ({ ...room })));
@@ -109,18 +110,24 @@ export function applyFirstRunOpeningCombatAdvantage(
 export function getFirstRunScriptedEndResources(): Partial<
   Record<BiomeResource, number>
 > {
-  const energyStory = histoireDefinitions.find(
-    (story) => story.id === FIRST_RUN_ENERGY_STORY_ID
+  const guidedStory = histoireDefinitions.find(
+    (story) => story.id === FIRST_RUN_GUIDED_STORY_ID
   );
-  const pagesCost = energyStory?.cout.PAGES ?? 14;
+  const pagesCost = guidedStory?.cout.PAGES ?? 11;
 
   return {
     PAGES: pagesCost,
   };
 }
 
-export function isFirstRunEnergyTutorialOutcome(
+export function isFirstRunGuidedStoryTutorialOutcome(
   value: string | null | undefined
 ): value is ScriptedOutcome {
-  return value === FIRST_RUN_ENERGY_TUTORIAL_OUTCOME;
+  return value === FIRST_RUN_GUIDED_STORY_TUTORIAL_OUTCOME;
 }
+
+export const FIRST_RUN_ENERGY_STORY_ID = FIRST_RUN_GUIDED_STORY_ID;
+export const FIRST_RUN_ENERGY_TUTORIAL_OUTCOME =
+  FIRST_RUN_GUIDED_STORY_TUTORIAL_OUTCOME;
+export const isFirstRunEnergyTutorialOutcome =
+  isFirstRunGuidedStoryTutorialOutcome;

@@ -310,6 +310,27 @@ function formatEffect(effect: Effect, t: TFunction): string {
       return t("reward.effect.damage", { value: effect.value });
     case "DAMAGE_EQUAL_BLOCK":
       return t("reward.effect.damageEqualBlock");
+    case "DAMAGE_PER_DEBUFF":
+      return t("reward.effect.damagePerDebuff", {
+        value: effect.value,
+        buff: effect.buff ?? "status",
+      });
+    case "DAMAGE_PER_CURRENT_INK":
+      return t("reward.effect.damagePerCurrentInk", {
+        value: effect.value,
+      });
+    case "DAMAGE_PER_CLOG_IN_DISCARD":
+      return t("reward.effect.damagePerClogInDiscard", {
+        value: effect.value,
+      });
+    case "DAMAGE_PER_EXHAUSTED_CARD":
+      return t("reward.effect.damagePerExhaustedCard", {
+        value: effect.value,
+      });
+    case "DAMAGE_PER_DRAWN_THIS_TURN":
+      return t("reward.effect.damagePerDrawnThisTurn", {
+        value: effect.value,
+      });
     case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
       return t("reward.effect.damageBonusIfUpgradedInHand", {
         value: effect.value,
@@ -318,6 +339,28 @@ function formatEffect(effect: Effect, t: TFunction): string {
       return t("reward.effect.heal", { value: effect.value });
     case "BLOCK":
       return t("reward.effect.block", { value: effect.value });
+    case "BLOCK_PER_CURRENT_INK":
+      return t("reward.effect.blockPerCurrentInk", {
+        value: effect.value,
+      });
+    case "BLOCK_PER_DEBUFF":
+      return t("reward.effect.blockPerDebuff", {
+        value: effect.value,
+        buff: effect.buff ?? "status",
+      });
+    case "BLOCK_PER_EXHAUSTED_CARD":
+      return t("reward.effect.blockPerExhaustedCard", {
+        value: effect.value,
+      });
+    case "APPLY_BUFF_PER_EXHAUSTED_CARD":
+      return t("reward.effect.applyBuffPerExhaustedCard", {
+        value: effect.value,
+        buff: effect.buff ?? "status",
+      });
+    case "RETRIGGER_THORNS_ON_WEAK_ATTACK":
+      return t("reward.effect.retriggerThornsOnWeakAttack", {
+        value: effect.value,
+      });
     case "DRAW_CARDS":
       return t("reward.effect.drawCards", { value: effect.value });
     case "DOUBLE_POISON":
@@ -342,10 +385,34 @@ function formatEffect(effect: Effect, t: TFunction): string {
       });
     case "DRAIN_INK":
       return t("reward.effect.drainInk", { value: effect.value });
+    case "EXHAUST":
+      return t("reward.effect.exhaust");
     case "ADD_CARD_TO_DRAW":
       return t("gameCard.effect.addToDraw");
     case "ADD_CARD_TO_DISCARD":
       return t("gameCard.effect.addToDiscard");
+    case "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND":
+      return t("reward.effect.moveRandomNonClogDiscardToHand", {
+        value: effect.value,
+      });
+    case "FREEZE_HAND_CARDS":
+      return t("reward.effect.freezeHandCards", { value: effect.value });
+    case "NEXT_DRAW_TO_DISCARD_THIS_TURN":
+      return t("reward.effect.nextDrawToDiscardThisTurn");
+    case "INCREASE_CARD_COST_THIS_TURN":
+      return t("reward.effect.increaseCardCostThisTurn", {
+        value: effect.value,
+      });
+    case "INCREASE_CARD_COST_NEXT_TURN":
+      return t("reward.effect.increaseCardCostNextTurn", {
+        value: effect.value,
+      });
+    case "REDUCE_DRAW_THIS_TURN":
+      return t("reward.effect.reduceDrawThisTurn", { value: effect.value });
+    case "REDUCE_DRAW_NEXT_TURN":
+      return t("reward.effect.reduceDrawNextTurn", { value: effect.value });
+    case "FORCE_DISCARD_RANDOM":
+      return t("reward.effect.forceDiscardRandom", { value: effect.value });
     default:
       return t("reward.effect.fallback", {
         type: effect.type.toLowerCase(),

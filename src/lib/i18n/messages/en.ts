@@ -130,10 +130,10 @@ export const en = {
       tip: "Start with the accessible Library biome nodes, then branch out as your expeditions bring back more resources.",
       gotIt: "Explore the library",
     },
-    energyStoryTutorial: {
+    guidedStoryTutorial: {
       kicker: "First purchase",
       description:
-        "You recovered exactly enough Pages to unlock the Treatise of Energy. This story grants +1 max energy on all your future runs.",
+        "You recovered exactly enough Pages to unlock the Encyclopedia of Knowledge. This story grants +1 draw on all your future runs.",
     },
     bonus: {
       extraDraw: "+{{value}} draw each turn",
@@ -144,6 +144,7 @@ export const en = {
       startingInk: "Start combat with +{{value}} ink",
       startingBlock: "+{{value}} block at combat start",
       startingStrength: "+{{value}} strength at combat start",
+      startingFocus: "+{{value}} focus at combat start",
       startingRegen: "Recover +{{value}} HP at turn start",
       firstHitDamageReduction: "First hit taken: -{{value}}% damage",
       extraHp: "+{{value}} max HP",
@@ -153,6 +154,7 @@ export const en = {
       startingGold: "+{{value}} starting gold each run",
       extraCardRewardChoices: "+{{value}} card reward choices",
       relicDiscount: "{{value}}% relic discount",
+      lootLuck: "+{{value}} loot quality",
       unlockInkPower: "Unlock ink power {{power}}",
       unlockPowerSlot: "Unlock power slot {{slot}}",
       healAfterCombat: "Recover {{value}}% max HP after combat",
@@ -563,7 +565,7 @@ export const en = {
     grimoire_des_index: {
       title: "Grimoire of Indexes",
       description:
-        "An occult indexing system that speeds up combat preparation. Start each combat with 2 additional cards in hand.",
+        "An occult indexing system that speeds up combat preparation. Start each combat with 1 additional card in hand.",
     },
     manuel_de_revision: {
       title: "Revision Manual",
@@ -573,7 +575,7 @@ export const en = {
     le_codex_infini: {
       title: "The Infinite Codex",
       description:
-        "The masterpiece of the Library, a codex that rewrites itself. +1 additional card drawn and card rewards offer one extra choice.",
+        "The masterpiece of the Library, a codex that rewrites itself. Its pages bend the odds toward rarer finds. +1 loot quality.",
     },
     saga_de_ragnar: {
       title: "Saga of Ragnar",
@@ -598,7 +600,7 @@ export const en = {
     le_poeme_de_beowulf: {
       title: "The Poem of Beowulf",
       description:
-        "The epic of the great Germanic hero. +2 starting Strength and elite enemies have 15% less HP.",
+        "The epic of the great Germanic hero. +2 starting Strength.",
     },
     l_odyssee: {
       title: "The Odyssey",
@@ -627,7 +629,7 @@ export const en = {
       title: "The Symposium",
       author: "Plato",
       description:
-        "A dialogue on love and wisdom. All rewards offer one additional choice.",
+        "A dialogue on love and wisdom. +1 additional ally slot.",
     },
     livre_des_morts: {
       title: "Book of the Dead",
@@ -642,7 +644,7 @@ export const en = {
     textes_des_pyramides: {
       title: "Pyramid Texts",
       description:
-        "The oldest religious texts of humanity, carved in stone. Unlocks the LOST_CHAPTER Ink power.",
+        "The oldest religious texts of humanity, carved in stone. Unlocks your character's second power slot.",
     },
     papyrus_d_ani: {
       title: "Papyrus of Ani",
@@ -652,7 +654,7 @@ export const en = {
     le_rituel_du_soleil: {
       title: "The Sun Ritual",
       description:
-        "The secret ritual that seals reality itself. Unlocks the SEAL Ink power and +3 additional max Ink.",
+        "The secret ritual that seals reality itself. Unlocks your character's third power slot.",
     },
     codex_fejerváry: {
       title: "Fejervary Codex",
@@ -672,12 +674,12 @@ export const en = {
     rite_du_soleil_noir: {
       title: "Rite of the Black Sun",
       description:
-        "A ritual honoring Tezcatlipoca, master of the dark mirror. +3 additional HP recovered after each combat.",
+        "A ritual honoring Tezcatlipoca, master of the dark mirror. +1 base damage on all Attack cards.",
     },
     le_sacrifice_cosmique: {
       title: "The Cosmic Sacrifice",
       description:
-        "The ultimate sacrifice that keeps the sun in motion. +10 max HP and bosses have a chance to drop an extra relic.",
+        "The ultimate sacrifice that keeps the sun in motion. +2 starting Strength.",
     },
     necronomicon_fragment: {
       title: "Necronomicon (fragment)",
@@ -694,7 +696,7 @@ export const en = {
       title: "Nameless Cults",
       author: "Von Junzt",
       description:
-        "The secret treatise on ancient cults. +30% additional chance for a card not to be exhausted.",
+        "The secret treatise on ancient cults. Start each combat with +1 Focus.",
     },
     mondes_sans_nom: {
       title: "Nameless Worlds",
@@ -704,7 +706,7 @@ export const en = {
     le_signe_des_anciens: {
       title: "The Sign of the Ancients",
       description:
-        "The mystic sign that bends the laws of the cosmos. Inked variants cost 1 less Ink.",
+        "The mystic sign that bends the laws of the cosmos. +20% additional chance for a card not to be exhausted.",
     },
     mabinogion: {
       title: "Mabinogion",
@@ -714,12 +716,12 @@ export const en = {
     cycle_d_ulster: {
       title: "Ulster Cycle",
       description:
-        "The epics of Cu Chulainn, champion of Ulster. Recover 2 HP at the start of each turn.",
+        "The epics of Cu Chulainn, champion of Ulster. Recover 1 HP at the start of each turn.",
     },
     taliesin: {
       title: "Taliesin",
       description:
-        "Poems of the legendary bard Taliesin. +3 additional Block at the start of each combat.",
+        "Poems of the legendary bard Taliesin. Recover 1 additional HP at the start of each turn.",
     },
     les_triades_galloises: {
       title: "The Welsh Triads",
@@ -729,7 +731,7 @@ export const en = {
     le_chaudron_de_dagda: {
       title: "Dagda's Cauldron",
       description:
-        "The magical cauldron that nourishes and heals all who need it. +4 Block and +1 starting Strength.",
+        "The magical cauldron that nourishes and heals all who need it. Recover 5% max HP after combat.",
     },
     byliny_de_ilya: {
       title: "Byliny of Ilya",
@@ -754,7 +756,7 @@ export const en = {
     le_grand_livre_des_sorts: {
       title: "The Great Book of Spells",
       description:
-        "The forbidden grimoire of Russian tradition. +1 max energy and +5 additional starting Block.",
+        "The forbidden grimoire of Russian tradition. Its margins hide paths to the rarest rewards. +2 loot quality.",
     },
     epopee_de_soundiata: {
       title: "Epic of Sundiata",
@@ -764,12 +766,12 @@ export const en = {
     contes_d_anansi: {
       title: "Tales of Anansi",
       description:
-        "The tricks of the spider trickster, master of stories. +1 choice in card rewards.",
+        "The tricks of the spider trickster, master of stories. +1 loot quality.",
     },
     rites_de_passage: {
       title: "Rites of Passage",
       description:
-        "Initiatory rituals from many African cultures. +1 ally slot (max 2).",
+        "Initiatory rituals from many African cultures. Recover 1 HP at the start of each turn.",
     },
     masque_de_legba: {
       title: "Mask of Legba",
@@ -811,7 +813,14 @@ export const en = {
     exploit_weakness: { name: "Exposed Margin" },
     iron_will: { name: "Scribal Resolve" },
     hexed_parchment: { name: "Hexed Parchment" },
+    dazed: { name: "Dazed" },
+    ink_burn: { name: "Ink Burn" },
+    torn_index: { name: "Torn Index" },
+    smudged_lens: { name: "Smudged Lens" },
     haunting_regret: { name: "Haunting Regret" },
+    binding_curse: { name: "Binding Curse" },
+    echo_curse: { name: "Echo Curse" },
+    shrouded_omen: { name: "Shrouded Omen" },
     // VIKING — Scribe
     iron_verse: { name: "Iron Verse" },
     frost_rune_shield: { name: "Frost Rune Shield" },
@@ -1067,9 +1076,29 @@ export const en = {
       damage: "Deal {{value}} damage",
       damageAll: "Deal {{value}} damage to all enemies",
       damageEqualBlock: "Deal damage equal to your Block",
+      damagePerDebuff: "Deal {{value}} damage per {{buff}} on target",
+      damagePerCurrentInk:
+        "Deal {{value}} damage per current Ink, then drain all Ink",
+      damagePerClogInDiscard:
+        "Deal {{value}} damage per Status/Curse in your discard",
+      damagePerExhaustedCard:
+        "Deal {{value}} damage per card in your Exhaust pile",
+      damagePerDrawnThisTurn:
+        "Deal {{value}} damage per card drawn this turn",
       damageBonusIfUpgradedInHand:
         "If this card is upgraded in hand: +{{value}} damage",
       block: "Gain {{value}} block",
+      blockPerCurrentInk:
+        "Gain {{value}} block per current Ink, then drain all Ink",
+      blockPerDebuff: "Gain {{value}} block per {{buff}} on enemies",
+      blockPerExhaustedCard:
+        "Gain {{value}} block per card in your Exhaust pile",
+      applyBuffPerExhaustedCard:
+        "Gain {{value}} {{buff}} per card in your Exhaust pile",
+      applyBuffPerDebuff:
+        "Gain {{value}} {{buff}} per {{scalingBuff}} on enemies",
+      retriggerThornsOnWeakAttack:
+        "When a Weak enemy attacks you, your Thorns trigger {{value}} extra time(s) this combat",
       heal: "Heal {{value}} HP",
       draw: "Draw {{value}} cards",
       doublePoison: "Double Poison on target",
@@ -1086,6 +1115,8 @@ export const en = {
       unplayable: "Unplayable",
       addToDraw: "Add a card to draw pile",
       addToDiscard: "Add a card to discard pile",
+      moveRandomNonClogDiscardToHand:
+        "Return {{value}} random non-Status/Curse card(s) from your discard to your hand",
       freezeHandCards: "Freeze {{value}} card(s) in hand",
       nextDrawToDiscardThisTurn: "Your next draw goes to discard this turn",
       disableInkPowerThisTurn: "Disable ink power {{power}} this turn",
@@ -1094,6 +1125,7 @@ export const en = {
       reduceDrawThisTurn: "Draw -{{value}} this turn",
       reduceDrawNextTurn: "Draw -{{value}} next turn",
       forceDiscardRandom: "Discard {{value}} random card(s)",
+      whenRandomlyDiscarded: "If randomly discarded: {{effects}}",
       upgradeRandomCardInHand: "Upgrade a random card in hand",
     },
   },
@@ -1173,10 +1205,21 @@ export const en = {
     effect: {
       damage: "damage {{value}}",
       damageEqualBlock: "damage equal to your block",
+      damagePerDebuff: "damage {{value}} per {{buff}}",
+      damagePerCurrentInk: "damage {{value}} per current ink, drain all",
+      damagePerClogInDiscard: "damage {{value}} per status/curse in discard",
+      damagePerExhaustedCard: "damage {{value}} per exhausted card",
+      damagePerDrawnThisTurn: "damage {{value}} per card drawn this turn",
       damageBonusIfUpgradedInHand:
         "if this card is upgraded in hand: +{{value}} damage",
       heal: "heal {{value}}",
       block: "block {{value}}",
+      blockPerCurrentInk: "block {{value}} per current ink, drain all",
+      blockPerDebuff: "block {{value}} per {{buff}}",
+      blockPerExhaustedCard: "block {{value}} per exhausted card",
+      applyBuffPerExhaustedCard:
+        "gain {{value}} {{buff}} per exhausted card",
+      retriggerThornsOnWeakAttack: "thorns retrigger vs weak +{{value}}",
       drawCards: "draw {{value}}",
       doublePoison: "double poison",
       gainInk: "gain {{value}} ink",
@@ -1186,6 +1229,16 @@ export const en = {
       applyBuff: "buff {{buff}} {{value}}",
       applyDebuff: "debuff {{buff}} {{value}}",
       drainInk: "drain {{value}} ink",
+      exhaust: "exhaust",
+      moveRandomNonClogDiscardToHand:
+        "return {{value}} non-clog card from discard",
+      freezeHandCards: "freeze {{value}} card(s) in hand",
+      nextDrawToDiscardThisTurn: "your next draw goes to discard this turn",
+      increaseCardCostThisTurn: "cards cost +{{value}} this turn",
+      increaseCardCostNextTurn: "cards cost +{{value}} next turn",
+      reduceDrawThisTurn: "draw -{{value}} this turn",
+      reduceDrawNextTurn: "draw -{{value}} next turn",
+      forceDiscardRandom: "discard random {{value}}",
       fallback: "{{type}} {{value}}",
     },
     resources: {
@@ -1225,8 +1278,11 @@ export const en = {
     deckSize: "Deck size: {{count}} cards",
     relicCount: "Relics: {{count}}",
     reachedRoom: "Reached: Room {{room}}/{{total}}",
+    unlockCount_one: "{{count}} unlock",
+    unlockCount_other: "{{count}} unlocks",
     resourcesGained: "Resources gained this run",
     cardsUnlocked: "Cards unlocked this run",
+    relicsUnlocked: "Relics unlocked this run",
     newBestiaryEntryTitle: "New Bestiary entry",
     newBestiaryEntrySingle: "{{name}} added to the Bestiary",
     newBestiaryEntryMultiple: "{{count}} new entries added to the Bestiary",
@@ -1513,7 +1569,17 @@ export const en = {
     drawDown: "Draw -{{value}}",
     randomDiscard: "Random discard {{value}}",
     summon: "Summon",
+    addCardToDrawNamed: "Draw +{{value}} {{card}}",
+    addCardToDiscardNamed: "Discard +{{value}} {{card}}",
+    drainAllInk: "Drain all ink",
+    selfDamage: "Lose {{value}} HP",
+    alliesGainBlock: "Allies +{{value}} BLK",
+    alliesGainBuff: "Allies +{{value}} {{buff}}",
+    bonusDamageFlat: "+{{bonus}} bonus",
     conditionalBonusVsDebuffed: "+{{bonus}} if player is debuffed",
+    conditionalBonusVsLowInk: "+{{bonus}} if <= {{threshold}} ink",
+    conditionalBonusPerCurse: "+{{perCurse}}/curse (now +{{total}})",
+    phase2Badge: "P2",
     phase2Summon: "Phase 2 (<50% HP): summons {{label}}",
   },
   playerStats: {
@@ -1524,6 +1590,9 @@ export const en = {
       "Absorbs incoming damage this turn. Resets at the start of your turn.",
     strengthTooltip: "Increases all damage dealt by {{value}}.",
     focusTooltip: "Increases block gained by {{value}}.",
+    attackBonusBadge: "ATK +{{value}}",
+    attackBonusTooltip:
+      "Your Attack cards deal {{value}} additional damage.",
     extraCardCost: "Cards +{{value}} cost",
     drawPenalty: "Draw -{{value}}",
     nextDrawDiscard: "Next draw to discard",

@@ -43,6 +43,7 @@ interface CombatDesktopGridProps {
     allies: Record<string, number>;
   };
   incomingDamageByEnemyId: Map<string, number>;
+  attackBonus: number;
   playerHit: boolean;
   avatarFailed: boolean;
   onAvatarError: () => void;
@@ -71,6 +72,7 @@ export function CombatDesktopGrid({
   enemyArtFailures,
   incomingDamage,
   incomingDamageByEnemyId,
+  attackBonus,
   playerHit,
   avatarFailed,
   onAvatarError,
@@ -85,7 +87,8 @@ export function CombatDesktopGrid({
   const playerStatusMarkers = buildPlayerStatusMarkers(
     combat.player,
     combat.playerDisruption,
-    combat.nextPlayerDisruption
+    combat.nextPlayerDisruption,
+    attackBonus
   );
 
   return (
@@ -296,7 +299,8 @@ export function CombatDesktopGrid({
         const hideIntent = shouldHideEnemyIntent(
           combat.difficultyLevel ?? 0,
           combat.turnNumber,
-          enemy
+          enemy,
+          { playerHand: combat.hand }
         );
         const isTargetable =
           selectingEnemyTarget &&

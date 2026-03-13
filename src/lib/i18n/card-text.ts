@@ -27,6 +27,7 @@ function formatEffect(
 ): string {
   const allEnemies = effectHasAllEnemyTarget(targeting);
   const buffLabel = localizeBuffName(effect.buff, t);
+  const scalingBuffLabel = localizeBuffName(effect.scalingBuff, t);
 
   switch (effect.type) {
     case "DAMAGE":
@@ -35,12 +36,61 @@ function formatEffect(
         : t("gameCard.effect.damage", { value: effect.value });
     case "DAMAGE_EQUAL_BLOCK":
       return t("gameCard.effect.damageEqualBlock");
+    case "DAMAGE_PER_DEBUFF":
+      return t("gameCard.effect.damagePerDebuff", {
+        value: effect.value,
+        buff: buffLabel,
+      });
+    case "DAMAGE_PER_CURRENT_INK":
+      return t("gameCard.effect.damagePerCurrentInk", {
+        value: effect.value,
+      });
+    case "DAMAGE_PER_CLOG_IN_DISCARD":
+      return t("gameCard.effect.damagePerClogInDiscard", {
+        value: effect.value,
+      });
+    case "DAMAGE_PER_EXHAUSTED_CARD":
+      return t("gameCard.effect.damagePerExhaustedCard", {
+        value: effect.value,
+      });
+    case "DAMAGE_PER_DRAWN_THIS_TURN":
+      return t("gameCard.effect.damagePerDrawnThisTurn", {
+        value: effect.value,
+      });
     case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
       return t("gameCard.effect.damageBonusIfUpgradedInHand", {
         value: effect.value,
       });
     case "BLOCK":
       return t("gameCard.effect.block", { value: effect.value });
+    case "BLOCK_PER_CURRENT_INK":
+      return t("gameCard.effect.blockPerCurrentInk", {
+        value: effect.value,
+      });
+    case "BLOCK_PER_DEBUFF":
+      return t("gameCard.effect.blockPerDebuff", {
+        value: effect.value,
+        buff: buffLabel,
+      });
+    case "BLOCK_PER_EXHAUSTED_CARD":
+      return t("gameCard.effect.blockPerExhaustedCard", {
+        value: effect.value,
+      });
+    case "APPLY_BUFF_PER_EXHAUSTED_CARD":
+      return t("gameCard.effect.applyBuffPerExhaustedCard", {
+        value: effect.value,
+        buff: buffLabel,
+      });
+    case "APPLY_BUFF_PER_DEBUFF":
+      return t("gameCard.effect.applyBuffPerDebuff", {
+        value: effect.value,
+        buff: buffLabel,
+        scalingBuff: scalingBuffLabel,
+      });
+    case "RETRIGGER_THORNS_ON_WEAK_ATTACK":
+      return t("gameCard.effect.retriggerThornsOnWeakAttack", {
+        value: effect.value,
+      });
     case "HEAL":
       return t("gameCard.effect.heal", { value: effect.value });
     case "DRAW_CARDS":
@@ -81,6 +131,10 @@ function formatEffect(
       return t("gameCard.effect.addToDraw");
     case "ADD_CARD_TO_DISCARD":
       return t("gameCard.effect.addToDiscard");
+    case "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND":
+      return t("gameCard.effect.moveRandomNonClogDiscardToHand", {
+        value: effect.value,
+      });
     case "FREEZE_HAND_CARDS":
       return t("gameCard.effect.freezeHandCards", { value: effect.value });
     case "NEXT_DRAW_TO_DISCARD_THIS_TURN":
@@ -114,6 +168,7 @@ function buildFromEffects(
   effects: Effect[],
   targeting: Targeting,
   baseDescription: string,
+  onRandomDiscardEffects: Effect[],
   t: TFunction
 ): string {
   const parts = effects.map((effect) => formatEffect(effect, targeting, t));
@@ -133,7 +188,65 @@ function buildFromEffects(
     return baseDescription;
   }
 
-  return `${parts.join(". ")}.`;
+  const baseText = `${parts.join(". ")}.`;
+  if (onRandomDiscardEffects.length === 0) {
+    return baseText;
+  }
+  const onRandomDiscardText = onRandomDiscardEffects
+    .map((effect) => formatEffect(effect, "SELF", t))
+    .join(". ");
+  return `${baseText} ${t("gameCard.effect.whenRandomlyDiscarded", {
+    effects: onRandomDiscardText,
+  })}.`;
+}
+
+function applyAttackBonusToEffects(
+  effects: Effect[],
+  attackBonus: number
+): Effect[] {
+  if (attackBonus <= 0) return effects;
+
+  return effects.map((effect) =>
+    effect.type === "DAMAGE"
+      ? { ...effect, value: effect.value + attackBonus }
+      : effect
+  );
+}
+
+function cardDefinitionHasDirectDamage(definition: CardDefinition): boolean {
+  return (
+    definition.effects.some((effect) => effect.type === "DAMAGE") ||
+    Boolean(
+      definition.inkedVariant?.effects.some((effect) => effect.type === "DAMAGE")
+    )
+  );
+}
+
+export function applyAttackBonusToCardDefinition(
+  definition: CardDefinition,
+  attackBonus: number
+): CardDefinition {
+  if (
+    definition.type !== "ATTACK" ||
+    attackBonus <= 0 ||
+    !cardDefinitionHasDirectDamage(definition)
+  ) {
+    return definition;
+  }
+
+  return {
+    ...definition,
+    effects: applyAttackBonusToEffects(definition.effects, attackBonus),
+    inkedVariant: definition.inkedVariant
+      ? {
+          ...definition.inkedVariant,
+          effects: applyAttackBonusToEffects(
+            definition.inkedVariant.effects,
+            attackBonus
+          ),
+        }
+      : definition.inkedVariant,
+  };
 }
 
 export function localizeCardName(
@@ -160,6 +273,7 @@ export function localizeCardDescription(
     definition.effects,
     definition.targeting,
     definition.description,
+    definition.onRandomDiscardEffects ?? [],
     t
   );
 }
@@ -175,6 +289,7 @@ export function localizeInkedDescription(
     definition.inkedVariant.effects,
     definition.targeting,
     definition.inkedVariant.description,
+    definition.onRandomDiscardEffects ?? [],
     t
   );
 }

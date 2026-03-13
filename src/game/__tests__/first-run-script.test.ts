@@ -108,7 +108,7 @@ describe("first run script helpers", () => {
     );
   });
 
-  it("grants exactly enough pages for the +1 energy story", () => {
-    expect(getFirstRunScriptedEndResources()).toEqual({ PAGES: 14 });
+  it("grants exactly enough pages for the +1 draw story", () => {
+    expect(getFirstRunScriptedEndResources()).toEqual({ PAGES: 11 });
   });
 });

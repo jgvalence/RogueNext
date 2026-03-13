@@ -10,11 +10,11 @@ import { histoireDefinitions } from "@/game/data/histoires";
 import type { MetaProgress } from "@/game/schemas/meta";
 import { getBestInfiniteFloor } from "@/game/engine/difficulty";
 import {
-  clearFirstRunEnergyStoryTutorial,
+  clearFirstRunGuidedStoryTutorial,
   hasSeenLibraryIntroTutorial,
   markLibraryIntroTutorialSeen,
 } from "@/game/engine/library-tutorial";
-import { FIRST_RUN_ENERGY_STORY_ID } from "@/game/engine/first-run-script";
+import { FIRST_RUN_GUIDED_STORY_ID } from "@/game/engine/first-run-script";
 import {
   buildRunConditionCollectionRows,
   type RunConditionCollectionRow,
@@ -384,8 +384,8 @@ export async function unlockStoryAction(
       updatedResources[resource] = (updatedResources[resource] ?? 0) - cost;
     }
     const finalResources =
-      storyId === FIRST_RUN_ENERGY_STORY_ID
-        ? clearFirstRunEnergyStoryTutorial(updatedResources)
+      storyId === FIRST_RUN_GUIDED_STORY_ID
+        ? clearFirstRunGuidedStoryTutorial(updatedResources)
         : updatedResources;
     const updatedStoryIds = [...progression.unlockedStoryIds, storyId];
 

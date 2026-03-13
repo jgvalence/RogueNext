@@ -9,6 +9,9 @@
 - [x] Variantes Inked
 - [x] Buffs/debuffs principaux (POISON, STRENGTH, WEAK, VULNERABLE, FOCUS, THORNS)
 - [x] Buff BLEED (saignement, expire par duree uniquement, distinct du POISON)
+- [x] `venom_echo` ne s'exhaust plus
+- [x] Nouvelle mecanique anti-armure (`DAMAGE_PER_TARGET_BLOCK`) pour punir les runs full block
+- [x] Malediction `Shrouded Omen` : cache les intentions ennemies tant qu'elle reste en main
 - [x] RNG seedee reproductible
 - [x] Preview degats entrants (affichage des intentions ennemies avec estimation de degats)
 
@@ -39,8 +42,9 @@
 
 - [x] 45 histoires (9 biomes x 5)
 - [x] Ressources biome + accumulation en fin de run
-- [x] Gain ressources scale: normal < elite (x2) < boss (x4)
-- [x] Bonus victoire run x1.5
+- [x] Gain ressources scale: normal < elite (~x1.35) < boss (~x2.2), avec multiplicateur biome
+- [x] Bonus victoire run x1.25
+- [x] Difficultes deja validees : gain de ressources reduit sur les re-clears
 - [x] `HEAL_AFTER_COMBAT` implemente
 - [x] Bonus defensifs ajoutes: regen par tour + reduction premier hit
 
@@ -60,7 +64,8 @@
 ### Difficulte et Run Conditions
 
 - [x] 6 niveaux de difficulte (0-5), debloquables progressivement apres victoires
-- [x] Difficulte filtre cartes/reliques disponibles
+- [x] Plus de gating cartes/reliques par difficulte
+- [x] Combats elite renforces par des escorts possibles selon la difficulte
 - [x] Run Conditions de base (modificateurs de run) avec unlock progressif
 - [x] 1 option de debut de fight par boss (deblocage a 3 kills de ce boss)
 - [x] Conditions modifient: or de depart, HP max, cartes de depart, regles de map
@@ -76,7 +81,7 @@
 
 - [x] Bouton `Dev Kill` visible uniquement pour role `ADMIN`
 - [x] Ecran biome select entre floors + transitions
-- [x] Choix de biome a l'ouverture du run (LIBRARY + 1 aleatoire)
+- [x] Choix de biome a l'ouverture du run (2 options aleatoires)
 - [x] Evenement relic garanti une fois par run (Sealed Reliquary)
 - [x] HUD rewards ressources
 - [x] Menu in-game (abandon run, mute, regles, logout)
@@ -97,12 +102,20 @@
 - [ ] Passer d'un calibrage "fonctionnel" a un calibrage fin biome par biome (HP, degats, frequences)
 - [ ] Ajuster les vitesses de progression des unlocks cartes (trop lent/trop rapide selon biome)
 - [ ] Verifier la courbe difficulte floors 4-5 en conditions reelles
+- [x] Reequilibrer l'economie d'action de la meta (`EXTRA_DRAW`, `EXTRA_ENERGY_MAX`, `EXTRA_HAND_AT_START`)
+- [x] Reduire les redondances de l'arbre meta (`STARTING_BLOCK`, `EXTRA_CARD_REWARD_CHOICES`, `EXHAUST_KEEP_CHANCE`)
+- [ ] Verifier en playtest la nouvelle repartition des `ALLY_SLOTS` entre arbres (cap cible `3`)
+- [x] Revoir la grille de cout des histoires (tiers fixes trop homogenes, cross-cost `PAGES` avantageux)
+- [x] Ajouter un garde-fou simple pour detecter les ecarts description/code des histoires
+- [ ] Verifier en playtest le nouveau cluster meta `LIBRARY` (`draw`, `energy`, `opening hand`) apres les nerfs
+- [ ] Verifier si `RUSSIAN` tier 2 reste trop fade apres le pass couts/identite
 
 ### Contenu cartes/enemies
 
-- [ ] Enrichir le pool de cartes STATUS/CURSE (types implementes, peu de cartes)
-- [ ] Enrichir les patterns conditionnels de boss (IA plus contextuelle)
-- [ ] Ajouter des synergies inter-biomes plus marquees
+- [x] Enrichir le pool de cartes STATUS/CURSE (types implementes, pool elargi avec effets de draw/tempo/hand disruption)
+- [x] Enrichir les patterns conditionnels de boss (IA plus contextuelle + intentions alignees sur les mecanique speciales)
+- [x] Poser une base de synergies inter-biomes et de bridges de build (couverture transverse deja satisfaite)
+- [ ] Verifier en playtest et affiner les routes inter-biomes existantes (desirabilite des bridges, ajouter seulement des ponts cibles si besoin)
 
 ### Meta progression
 

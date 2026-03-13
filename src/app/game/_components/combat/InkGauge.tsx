@@ -16,6 +16,10 @@ interface InkGaugeProps {
   unlockedPowers?: InkPowerType[];
   allowedPowers?: InkPowerType[] | null;
   compact?: boolean;
+  shellClassName?: string;
+  labelClassName?: string;
+  fillClassName?: string;
+  readyPowerClassName?: string;
 }
 
 const ALL_INK_POWERS: { type: InkPowerType; label: string; desc: string }[] = [
@@ -51,6 +55,10 @@ export function InkGauge({
   unlockedPowers = ["REWRITE"],
   allowedPowers = null,
   compact = false,
+  shellClassName,
+  labelClassName,
+  fillClassName,
+  readyPowerClassName,
 }: InkGaugeProps) {
   const { t } = useTranslation();
   const inkPowers = ALL_INK_POWERS.filter((p) =>
@@ -63,14 +71,27 @@ export function InkGauge({
 
   if (compact) {
     return (
-      <div className="space-y-1 rounded-lg border border-cyan-700/70 bg-cyan-950/35 p-1">
+      <div
+        className={cn(
+          "space-y-1 rounded-lg border border-cyan-700/70 bg-cyan-950/35 p-1",
+          shellClassName
+        )}
+      >
         <div className="flex items-center gap-1">
-          <span className="text-[9px] font-semibold text-cyan-300">
+          <span
+            className={cn(
+              "text-[9px] font-semibold text-cyan-300",
+              labelClassName
+            )}
+          >
             {t("inkGauge.ink")} {player.inkCurrent}/{player.inkMax}
           </span>
           <div className="relative h-1.5 flex-1 rounded bg-slate-700">
             <div
-              className="h-full rounded bg-cyan-500 transition-all duration-300"
+              className={cn(
+                "h-full rounded bg-cyan-500 transition-all duration-300",
+                fillClassName
+              )}
               style={{ width: `${percent}%` }}
             />
           </div>
@@ -94,7 +115,8 @@ export function InkGauge({
                   className={cn(
                     "!h-auto !max-w-full !shrink-0 !whitespace-normal !rounded !px-1.5 !py-0.5 !text-[9px] !font-semibold !leading-tight !transition",
                     canUse
-                      ? "!bg-cyan-700 !text-cyan-100"
+                      ? readyPowerClassName ??
+                          "!bg-cyan-700 !text-cyan-100 hover:!bg-cyan-600"
                       : "!cursor-not-allowed !bg-gray-700 !text-gray-500"
                   )}
                   disabled={!canUse}
@@ -112,15 +134,28 @@ export function InkGauge({
   }
 
   return (
-    <div className="space-y-1 rounded-lg border border-cyan-700/70 bg-cyan-950/40 p-1.5 lg:space-y-1.5 lg:p-2">
+    <div
+      className={cn(
+        "space-y-1 rounded-lg border border-cyan-700/70 bg-cyan-950/40 p-1.5 lg:space-y-1.5 lg:p-2",
+        shellClassName
+      )}
+    >
       {/* Ink bar */}
       <div className="flex items-center gap-1.5 lg:gap-2">
-        <span className="text-[10px] font-medium text-cyan-400 lg:text-xs">
+        <span
+          className={cn(
+            "text-[10px] font-medium text-cyan-400 lg:text-xs",
+            labelClassName
+          )}
+        >
           {t("inkGauge.ink")}
         </span>
         <div className="relative h-2.5 flex-1 rounded bg-slate-700 lg:h-3">
           <div
-            className="h-full rounded bg-cyan-500 transition-all duration-300"
+            className={cn(
+              "h-full rounded bg-cyan-500 transition-all duration-300",
+              fillClassName
+            )}
             style={{ width: `${percent}%` }}
           />
           <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white drop-shadow lg:text-xs">
@@ -153,7 +188,8 @@ export function InkGauge({
                 className={cn(
                   "!h-auto !w-full !min-w-0 !whitespace-normal !rounded !px-1 !py-0.5 !text-center !text-[9px] !font-medium !leading-tight !transition lg:!px-1.5 lg:!py-1 lg:!text-[11px]",
                   canUse
-                    ? "!bg-cyan-700 !text-cyan-100 hover:!bg-cyan-600"
+                    ? readyPowerClassName ??
+                        "!bg-cyan-700 !text-cyan-100 hover:!bg-cyan-600"
                     : "!cursor-not-allowed !bg-gray-700 !text-gray-500"
                 )}
                 disabled={!canUse}

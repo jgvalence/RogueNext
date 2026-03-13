@@ -1,6 +1,6 @@
 import type { CombatState } from "../schemas/combat-state";
 import type { EnemyDefinition } from "../schemas/entities";
-import { calculateDamage } from "./damage";
+import { calculateDamage, computeDamageFromTargetBlock } from "./damage";
 import { resolveEnemyAbilityTarget } from "./enemies";
 
 export interface IncomingDamagePreview {
@@ -33,23 +33,27 @@ export function computeIncomingDamage(
     const ability = def.abilities[enemy.intentIndex];
     if (!ability) continue;
 
-    const damageEffects = ability.effects.filter((e) => e.type === "DAMAGE");
+    const damageEffects = ability.effects.filter(
+      (e) =>
+        e.type === "DAMAGE" || e.type === "DAMAGE_PER_TARGET_BLOCK"
+    );
     if (damageEffects.length === 0) continue;
 
     const target = resolveEnemyAbilityTarget(state, enemy, ability);
     const sourceStats = { strength: 0, buffs: enemy.buffs };
 
     for (const effect of damageEffects) {
-      const scaledBase = Math.max(
-        1,
-        Math.round(effect.value * (state.enemyDamageScale ?? 1))
-      );
+      const scaledBaseDamage =
+        effect.type === "DAMAGE"
+          ? Math.max(1, Math.round(effect.value * (state.enemyDamageScale ?? 1)))
+          : null;
 
       if (target === "player") {
         const playerVulnerableMultiplier =
           state.relicModifiers?.playerVulnerableDamageMultiplier ?? 1.5;
         result.player += calculateDamage(
-          scaledBase,
+          scaledBaseDamage ??
+            computeDamageFromTargetBlock(state.player.block, effect.value),
           sourceStats,
           {
             buffs: state.player.buffs,
@@ -61,9 +65,14 @@ export function computeIncomingDamage(
       } else if (target === "all_allies") {
         for (const ally of state.allies) {
           if (ally.currentHp <= 0) continue;
-          const dmg = calculateDamage(scaledBase, sourceStats, {
-            buffs: ally.buffs,
-          });
+          const dmg = calculateDamage(
+            scaledBaseDamage ??
+              computeDamageFromTargetBlock(ally.block, effect.value),
+            sourceStats,
+            {
+              buffs: ally.buffs,
+            }
+          );
           result.allies[ally.instanceId] =
             (result.allies[ally.instanceId] ?? 0) + dmg;
         }
@@ -72,9 +81,14 @@ export function computeIncomingDamage(
           (a) => a.instanceId === target.instanceId
         );
         if (ally && ally.currentHp > 0) {
-          const dmg = calculateDamage(scaledBase, sourceStats, {
-            buffs: ally.buffs,
-          });
+          const dmg = calculateDamage(
+            scaledBaseDamage ??
+              computeDamageFromTargetBlock(ally.block, effect.value),
+            sourceStats,
+            {
+              buffs: ally.buffs,
+            }
+          );
           result.allies[ally.instanceId] =
             (result.allies[ally.instanceId] ?? 0) + dmg;
         }

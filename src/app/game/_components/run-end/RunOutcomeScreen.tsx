@@ -1,10 +1,23 @@
 "use client";
 
 import Link from "next/link";
+import { Cinzel } from "next/font/google";
 import { useTranslation } from "react-i18next";
+import type { CardDefinition } from "@/game/schemas/cards";
+import type { RelicDefinitionData } from "@/game/data/relics";
 import { GAME_CONSTANTS } from "@/game/constants";
+import { cn } from "@/lib/utils/cn";
+import { localizeCardName, localizeCardType } from "@/lib/i18n/card-text";
+import {
+  localizeRelicDescription,
+  localizeRelicName,
+} from "@/lib/i18n/entity-text";
+import { GameCard } from "../combat/GameCard";
+import { Tooltip } from "../shared/Tooltip";
 
 type RunOutcomeStatus = "VICTORY" | "DEFEAT" | "ABANDONED";
+
+const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
 interface RunOutcomeScreenProps {
   status: RunOutcomeStatus;
@@ -14,7 +27,8 @@ interface RunOutcomeScreenProps {
   deckSize: number;
   relicCount: number;
   earnedResourcesSummary: Array<[string, number]>;
-  newlyUnlockedCardNames: string[];
+  newlyUnlockedCards: CardDefinition[];
+  newlyUnlockedRelics: RelicDefinitionData[];
   onBackToLibrary: () => Promise<void> | void;
 }
 
@@ -26,17 +40,12 @@ export function RunOutcomeScreen({
   deckSize,
   relicCount,
   earnedResourcesSummary,
-  newlyUnlockedCardNames,
+  newlyUnlockedCards,
+  newlyUnlockedRelics,
   onBackToLibrary,
 }: RunOutcomeScreenProps) {
   const { t } = useTranslation();
-
-  const titleClass =
-    status === "VICTORY"
-      ? "text-green-400"
-      : status === "DEFEAT"
-        ? "text-red-400"
-        : "text-amber-400";
+  const totalNewUnlocks = newlyUnlockedCards.length + newlyUnlockedRelics.length;
 
   const titleKey =
     status === "VICTORY"
@@ -52,64 +61,184 @@ export function RunOutcomeScreen({
         ? t("run.defeatSubtitle")
         : t("run.abandonedSubtitle");
 
-  return (
-    <div className="flex flex-col items-center gap-4 py-4 sm:py-16">
-      <h2 className={`text-4xl font-bold ${titleClass}`}>{t(titleKey)}</h2>
-      <p className="text-gray-400">{subtitle}</p>
-      {status === "VICTORY" ? (
-        <div className="space-y-1 text-sm text-gray-500">
-          <p>{t("run.goldEarned", { gold })}</p>
-          <p>{t("run.deckSize", { count: deckSize })}</p>
-          <p>{t("run.relicCount", { count: relicCount })}</p>
-        </div>
-      ) : (
-        <div className="space-y-1 text-sm text-gray-500">
-          <p>
-            {t("run.reachedRoom", {
-              room: currentRoom,
-              total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
-            })}
-          </p>
-          <p>{t("run.goldSimple", { gold })}</p>
-        </div>
-      )}
+  const accentClass =
+    status === "VICTORY"
+      ? "text-emerald-300"
+      : status === "DEFEAT"
+        ? "text-rose-300"
+        : "text-amber-300";
 
-      <div className="w-full max-w-2xl space-y-3 rounded-lg border border-gray-700 bg-gray-900/60 p-4 text-sm">
-        <div>
-          <p className="mb-1 font-semibold text-gray-300">
-            {t("run.resourcesGained")}
-          </p>
-          {earnedResourcesSummary.length === 0 ? (
-            <p className="text-gray-500">{t("run.none")}</p>
-          ) : (
-            <ul className="space-y-0.5 text-gray-400">
-              {earnedResourcesSummary.map(([resource, amount]) => (
-                <li key={resource}>
-                  {resource}: +{amount}
-                </li>
-              ))}
-            </ul>
+  const accentGlow =
+    status === "VICTORY"
+      ? "from-emerald-500/18 via-emerald-300/10 to-transparent"
+      : status === "DEFEAT"
+        ? "from-rose-500/18 via-rose-300/10 to-transparent"
+        : "from-amber-500/18 via-amber-300/10 to-transparent";
+
+  const badgeClass =
+    status === "VICTORY"
+      ? "border-emerald-400/35 bg-emerald-500/10 text-emerald-200"
+      : status === "DEFEAT"
+        ? "border-rose-400/35 bg-rose-500/10 text-rose-200"
+        : "border-amber-400/35 bg-amber-500/10 text-amber-200";
+
+  return (
+    <div className="relative isolate px-4 py-4 sm:px-6 sm:py-8">
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-x-8 top-0 h-64 rounded-full bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.16),transparent_68%)] blur-3xl" />
+        <div
+          className={cn(
+            "absolute -left-12 top-10 h-56 w-56 rounded-full blur-[90px]",
+            status === "VICTORY"
+              ? "bg-emerald-500/18"
+              : status === "DEFEAT"
+                ? "bg-rose-500/18"
+                : "bg-amber-500/18"
           )}
-        </div>
-        <div>
-          <p className="mb-1 font-semibold text-gray-300">
-            {t("run.cardsUnlocked")}
-          </p>
-          {newlyUnlockedCardNames.length === 0 ? (
-            <p className="text-gray-500">{t("run.none")}</p>
-          ) : (
-            <ul className="space-y-0.5 text-gray-400">
-              {newlyUnlockedCardNames.map((name) => (
-                <li key={name}>{name}</li>
-              ))}
-            </ul>
-          )}
-        </div>
+        />
+        <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-sky-500/8 blur-[110px]" />
       </div>
-      <div className="flex gap-3">
+
+      <section className="relative overflow-hidden rounded-[28px] border border-amber-500/20 bg-[#071019]/88 shadow-[0_22px_90px_rgba(0,0,0,0.42)]">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(250,204,21,0.08),transparent_34%,rgba(56,189,248,0.08))]" />
+        <div
+          className={cn(
+            "pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-r",
+            accentGlow
+          )}
+        />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:linear-gradient(rgba(251,191,36,0.24)_1px,transparent_1px),linear-gradient(90deg,rgba(251,191,36,0.24)_1px,transparent_1px)] [background-size:34px_34px]" />
+
+        <div className="relative flex flex-col gap-8 p-6 sm:p-8 xl:flex-row xl:items-end xl:justify-between">
+          <div className="max-w-2xl space-y-4">
+            <span
+              className={cn(
+                "inline-flex w-fit items-center rounded-full border px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.34em]",
+                badgeClass
+              )}
+            >
+              {t(titleKey)}
+            </span>
+            <div className="space-y-3">
+              <h2
+                className={cn(
+                  cinzel.className,
+                  "text-4xl font-semibold uppercase tracking-[0.08em] sm:text-5xl",
+                  accentClass
+                )}
+              >
+                {t(titleKey)}
+              </h2>
+              <p className="max-w-xl text-sm leading-relaxed text-slate-300 sm:text-base">
+                {subtitle}
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.26em] text-amber-100/40">
+              <span>{t("map.floorLabel", { floor })}</span>
+              <span>
+                {t("run.reachedRoom", {
+                  room: currentRoom,
+                  total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
+                })}
+              </span>
+              <span>{t("run.unlockCount", { count: totalNewUnlocks })}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:min-w-[32rem]">
+            <OutcomeStatCard label={t("layout.gold")} value={`${gold}`} />
+            <OutcomeStatCard
+              label={t("layout.deck")}
+              value={`${deckSize}`}
+              detail={t("run.deckSize", { count: deckSize })}
+            />
+            <OutcomeStatCard
+              label={t("layout.relics")}
+              value={`${relicCount}`}
+              detail={t("run.relicCount", { count: relicCount })}
+            />
+            <OutcomeStatCard
+              label={t("map.floorLabel", { floor })}
+              value={`${currentRoom}/${GAME_CONSTANTS.ROOMS_PER_FLOOR}`}
+              detail={t("run.reachedRoom", {
+                room: currentRoom,
+                total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
+              })}
+            />
+          </div>
+        </div>
+      </section>
+
+      <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <section className="rounded-[24px] border border-slate-800 bg-slate-950/78 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.3)]">
+          <SectionTitle className={cinzel.className}>
+            {t("run.resourcesGained")}
+          </SectionTitle>
+          {earnedResourcesSummary.length === 0 ? (
+            <EmptyPanel>{t("run.none")}</EmptyPanel>
+          ) : (
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {earnedResourcesSummary.map(([resource, amount]) => (
+                <div
+                  key={resource}
+                  className="rounded-2xl border border-amber-500/12 bg-gradient-to-br from-slate-900/90 to-slate-950 px-4 py-3"
+                >
+                  <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">
+                    {t(`reward.resources.${resource}`, { defaultValue: resource })}
+                  </p>
+                  <p className="mt-2 text-2xl font-semibold text-amber-100">
+                    +{amount}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-[24px] border border-slate-800 bg-slate-950/78 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.3)]">
+          <div className="grid gap-5 lg:grid-cols-2">
+            <div className="space-y-4">
+              <SectionTitle className={cinzel.className}>
+                {t("run.cardsUnlocked")}
+              </SectionTitle>
+              {newlyUnlockedCards.length === 0 ? (
+                <EmptyPanel>{t("run.none")}</EmptyPanel>
+              ) : (
+                <div className="grid gap-3">
+                  {newlyUnlockedCards.map((card) => (
+                    <UnlockedCardTile key={card.id} definition={card} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <SectionTitle className={cinzel.className}>
+                {t("run.relicsUnlocked", {
+                  defaultValue: t("layout.relics"),
+                })}
+              </SectionTitle>
+              {newlyUnlockedRelics.length === 0 ? (
+                <EmptyPanel>{t("run.none")}</EmptyPanel>
+              ) : (
+                <div className="grid gap-3">
+                  {newlyUnlockedRelics.map((relic) => (
+                    <UnlockedRelicTile key={relic.id} relic={relic} />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div className="mt-6 flex justify-center">
         <Link
           href="/library"
-          className="rounded-lg border border-amber-700 px-6 py-3 font-bold text-amber-400 hover:border-amber-500 hover:text-amber-300"
+          className={cn(
+            cinzel.className,
+            "inline-flex items-center rounded-full border border-amber-400/30 bg-amber-500/10 px-7 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-amber-100 transition hover:-translate-y-0.5 hover:border-amber-300/60 hover:bg-amber-500/16"
+          )}
           onClick={async (event) => {
             event.preventDefault();
             await onBackToLibrary();
@@ -118,6 +247,135 @@ export function RunOutcomeScreen({
           {t("run.backToLibrary")}
         </Link>
       </div>
+    </div>
+  );
+}
+
+function OutcomeStatCard({
+  label,
+  value,
+  detail,
+}: {
+  label: string;
+  value: string;
+  detail?: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/8 bg-black/20 p-4 backdrop-blur-sm">
+      <p className="text-[10px] uppercase tracking-[0.3em] text-slate-400">
+        {label}
+      </p>
+      <p className="mt-2 text-2xl font-semibold text-amber-50">{value}</p>
+      {detail ? (
+        <p className="mt-1 text-xs leading-relaxed text-slate-400">{detail}</p>
+      ) : null}
+    </div>
+  );
+}
+
+function SectionTitle({
+  children,
+  className,
+}: {
+  children: string;
+  className?: string;
+}) {
+  return (
+    <p
+      className={cn(
+        className,
+        "text-sm font-semibold uppercase tracking-[0.22em] text-amber-100"
+      )}
+    >
+      {children}
+    </p>
+  );
+}
+
+function EmptyPanel({ children }: { children: string }) {
+  return (
+    <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/55 px-4 py-6 text-sm text-slate-500">
+      {children}
+    </div>
+  );
+}
+
+function UnlockedCardTile({ definition }: { definition: CardDefinition }) {
+  const { t } = useTranslation();
+  const localizedName = localizeCardName(definition, t);
+  const localizedType = localizeCardType(definition.type, t);
+
+  return (
+    <Tooltip
+      content={
+        <div className="p-1">
+          <GameCard definition={definition} size="md" className="shadow-none" />
+        </div>
+      }
+      className="block"
+    >
+      <div className="group rounded-2xl border border-amber-500/14 bg-gradient-to-br from-slate-900/95 to-slate-950 px-4 py-3 transition duration-150 hover:-translate-y-1 hover:border-amber-300/28 hover:shadow-[0_18px_30px_rgba(251,191,36,0.08)]">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[10px] uppercase tracking-[0.28em] text-amber-300/55">
+              {definition.rarity}
+            </p>
+            <p className="mt-1 text-sm font-semibold text-amber-50">
+              {localizedName}
+            </p>
+          </div>
+          <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-200/80">
+            {definition.energyCost}
+          </span>
+        </div>
+        <p className="mt-2 text-xs text-slate-400">{localizedType}</p>
+      </div>
+    </Tooltip>
+  );
+}
+
+function UnlockedRelicTile({ relic }: { relic: RelicDefinitionData }) {
+  const localizedName = localizeRelicName(relic.id, relic.name);
+  const localizedDescription = localizeRelicDescription(
+    relic.id,
+    relic.description
+  );
+
+  return (
+    <Tooltip content={<RelicPreview relic={relic} />} className="block">
+      <div className="group rounded-2xl border border-sky-500/14 bg-gradient-to-br from-slate-900/95 to-slate-950 px-4 py-3 transition duration-150 hover:-translate-y-1 hover:border-sky-300/28 hover:shadow-[0_18px_30px_rgba(56,189,248,0.08)]">
+        <p className="text-[10px] uppercase tracking-[0.28em] text-sky-300/55">
+          {relic.rarity}
+        </p>
+        <p className="mt-1 text-sm font-semibold text-slate-100">
+          {localizedName}
+        </p>
+        <p className="mt-2 text-xs leading-relaxed text-slate-400">
+          {localizedDescription}
+        </p>
+      </div>
+    </Tooltip>
+  );
+}
+
+function RelicPreview({ relic }: { relic: RelicDefinitionData }) {
+  const localizedName = localizeRelicName(relic.id, relic.name);
+  const localizedDescription = localizeRelicDescription(
+    relic.id,
+    relic.description
+  );
+
+  return (
+    <div className="w-[220px] rounded-2xl border border-sky-400/25 bg-slate-950/95 p-4">
+      <p className="text-[10px] uppercase tracking-[0.3em] text-sky-300/60">
+        {relic.rarity}
+      </p>
+      <p className={cn(cinzel.className, "mt-2 text-base text-slate-100")}>
+        {localizedName}
+      </p>
+      <p className="mt-3 text-xs leading-relaxed text-slate-300">
+        {localizedDescription}
+      </p>
     </div>
   );
 }

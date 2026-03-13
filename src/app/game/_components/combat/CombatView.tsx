@@ -437,10 +437,6 @@ export function CombatView({
     getEnemyDisplayName,
   });
 
-  const endTurnClass = canEndTurn
-    ? "border border-emerald-300/30 bg-emerald-600 text-white shadow-[0_0_18px_rgba(16,185,129,0.35)] hover:bg-emerald-500"
-    : "cursor-not-allowed border border-slate-700 bg-slate-700 text-slate-500 opacity-50";
-
   let turnBadgeClass = "bg-slate-700 text-slate-400";
   if (isPlayerTurn) turnBadgeClass = "bg-emerald-900/80 text-emerald-300";
   else if (combat.phase === "ALLIES_ENEMIES_TURN")
@@ -458,7 +454,7 @@ export function CombatView({
 
   return (
     <div
-      className="relative flex h-full min-h-0 flex-col overflow-y-auto overflow-x-hidden lg:overflow-hidden"
+      className="relative flex h-full min-h-0 flex-col overflow-hidden"
       onClick={handleGlobalClick}
     >
       <CombatBattlefield
@@ -491,6 +487,7 @@ export function CombatView({
         isSelectingCheatKillTarget={isSelectingCheatKillTarget}
         newlySummonedIds={newlySummonedIds}
         enemyArtFailures={enemyArtFailures}
+        attackBonus={attackBonus}
         playerHit={playerHit}
         avatarFailed={avatarFailed}
         onAvatarError={() => setAvatarFailed(true)}
@@ -524,8 +521,10 @@ export function CombatView({
       <CombatPlayerZone
         combat={combat}
         cardDefs={cardDefs}
+        biome={biome}
         selectedCardId={selectedCardId}
         pendingInked={pendingInked}
+        attackBonus={attackBonus}
         onPlayCard={handlePlayCard}
         onDoublePlayCard={handleDoublePlayCard}
         isDiscarding={isDiscarding}
@@ -558,7 +557,6 @@ export function CombatView({
         canEndTurn={canEndTurn}
         onUseItemClick={handleUseItemClick}
         onEndTurn={handleTutorialEndTurn}
-        endTurnClass={endTurnClass}
         showCheatKillButton={Boolean(onCheatKillEnemy)}
         isSelectingCheatKillTarget={isSelectingCheatKillTarget}
         onToggleCheatKill={handleToggleCheatKill}
@@ -574,6 +572,7 @@ export function CombatView({
         selfCanRetargetToAlly={selfCanRetargetToAlly}
         selectedCardId={selectedCardId}
         actingEnemyId={actingEnemyId}
+        attackBonus={attackBonus}
         getEnemyDisplayName={getEnemyDisplayName}
         onEnemyTarget={handleEnemyClick}
         onAllyTarget={handleAllyClick}
@@ -583,6 +582,7 @@ export function CombatView({
       <MobileInkPanelOverlay
         isOpen={mobileInkPanelOpen}
         combat={combat}
+        biome={biome}
         unlockedInkPowers={unlockedInkPowers}
         allowedInkPowers={allowedInkPowers}
         onUsePower={handleMobileInkPowerUse}
@@ -590,6 +590,7 @@ export function CombatView({
       />
       <MobileInventoryPanelOverlay
         isOpen={mobileInventoryPanelOpen}
+        biome={biome}
         usableItems={usableItems}
         usableItemDefs={usableItemDefs}
         selectedUsableItemId={selectedUsableItemId}

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CardType, Rarity, Targeting, BiomeType } from "./enums";
-import { EffectSchema } from "./effects";
+import { EffectSchema, type Effect } from "./effects";
 
 export const InkedVariantSchema = z.object({
   description: z.string(),
@@ -14,6 +14,7 @@ export const CardUpgradeSchema = z.object({
   energyCost: z.number().int().min(0).optional(), // override cost; absent = unchanged
   description: z.string(),
   effects: z.array(EffectSchema),
+  onRandomDiscardEffects: z.array(EffectSchema).optional(),
 });
 export type CardUpgrade = z.infer<typeof CardUpgradeSchema>;
 
@@ -27,6 +28,7 @@ export const CardDefinitionSchema = z.object({
   rarity: Rarity,
   description: z.string(),
   effects: z.array(EffectSchema),
+  onRandomDiscardEffects: z.array(EffectSchema).default([]),
   inkedVariant: InkedVariantSchema.nullable().default(null),
   upgrade: CardUpgradeSchema.nullable().default(null),
   isStarterCard: z.boolean().default(false),
@@ -39,11 +41,12 @@ export const CardDefinitionSchema = z.object({
 });
 export type CardDefinition = Omit<
   z.infer<typeof CardDefinitionSchema>,
-  "isCollectible" | "isStatusCard" | "isCurseCard"
+  "isCollectible" | "isStatusCard" | "isCurseCard" | "onRandomDiscardEffects"
 > & {
   isCollectible?: boolean;
   isStatusCard?: boolean;
   isCurseCard?: boolean;
+  onRandomDiscardEffects?: Effect[];
   upgrade?: CardUpgrade | null;
 };
 

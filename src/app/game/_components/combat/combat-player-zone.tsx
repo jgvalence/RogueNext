@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { CardDefinition } from "@/game/schemas/cards";
-import type { InkPowerType } from "@/game/schemas/enums";
+import type { InkPowerType, BiomeType } from "@/game/schemas/enums";
 import type {
   UsableItemDefinition,
   UsableItemInstance,
@@ -19,12 +19,15 @@ import { InkGauge } from "./InkGauge";
 import { EnergyOrb } from "../shared/EnergyOrb";
 import { Tooltip } from "../shared/Tooltip";
 import { RogueButton } from "@/components/ui/rogue";
+import { getCombatBiomeTheme } from "./combat-biome-theme";
 
 interface CombatPlayerZoneProps {
   combat: CombatState;
   cardDefs: Map<string, CardDefinition>;
+  biome: BiomeType;
   selectedCardId: string | null;
   pendingInked: boolean;
+  attackBonus?: number;
   onPlayCard: (instanceId: string, useInked: boolean) => void;
   onDoublePlayCard: (instanceId: string, useInked: boolean) => void;
   isDiscarding: boolean;
@@ -55,7 +58,6 @@ interface CombatPlayerZoneProps {
   canEndTurn: boolean;
   onUseItemClick: (itemInstanceId: string) => void;
   onEndTurn: () => void;
-  endTurnClass: string;
   showCheatKillButton: boolean;
   isSelectingCheatKillTarget: boolean;
   onToggleCheatKill: () => void;
@@ -64,8 +66,10 @@ interface CombatPlayerZoneProps {
 export function CombatPlayerZone({
   combat,
   cardDefs,
+  biome,
   selectedCardId,
   pendingInked,
+  attackBonus = 0,
   onPlayCard,
   onDoublePlayCard,
   isDiscarding,
@@ -96,16 +100,29 @@ export function CombatPlayerZone({
   canEndTurn,
   onUseItemClick,
   onEndTurn,
-  endTurnClass,
   showCheatKillButton,
   isSelectingCheatKillTarget,
   onToggleCheatKill,
 }: CombatPlayerZoneProps) {
   const { t } = useTranslation();
+  const theme = getCombatBiomeTheme(biome);
+  const endTurnClass = canEndTurn
+    ? theme.endTurnReady
+    : theme.endTurnDisabled;
 
   return (
-    <div className="relative z-20 shrink-0 border-t border-cyan-500/20 bg-slate-950/95 backdrop-blur-sm [@media(max-height:540px)]:border-t-slate-800/70">
-      <div className="relative border-t border-cyan-500/10 px-2 pb-1 pt-1 lg:px-4 lg:pb-3 lg:pt-2.5 [@media(max-height:540px)]:px-1.5 [@media(max-height:540px)]:pb-0.5 [@media(max-height:540px)]:pt-0.5">
+    <div
+      className={cn(
+        "relative z-20 shrink-0 backdrop-blur-sm [@media(max-height:540px)]:border-t-slate-800/70",
+        theme.playerZoneShell
+      )}
+    >
+      <div
+        className={cn(
+          "relative border-t px-1.5 pb-0.75 pt-0.75 lg:px-4 lg:pb-3 lg:pt-2.5 [@media(max-height:540px)]:px-1.25 [@media(max-height:540px)]:pb-0.5 [@media(max-height:540px)]:pt-0.5",
+          theme.playerZoneRule
+        )}
+      >
         <div className="flex items-start gap-2 lg:gap-4">
           <div
             className={cn(
@@ -116,12 +133,18 @@ export function CombatPlayerZone({
           >
             <div
               className={cn(
-                "rounded-xl border border-yellow-500/40 bg-gradient-to-b from-yellow-900/30 to-slate-900/80 p-2 shadow-[0_0_16px_rgba(250,204,21,0.12)]",
+                "rounded-xl p-2",
+                theme.sidePanelShell,
                 isEnergyTutorialStep &&
                   "ring-2 ring-yellow-300/85 ring-offset-2 ring-offset-slate-950"
               )}
             >
-              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.16em] text-yellow-300/80">
+              <p
+                className={cn(
+                  "mb-1 text-[9px] font-bold uppercase tracking-[0.16em]",
+                  theme.sidePanelTitle
+                )}
+              >
                 Energie
               </p>
               <EnergyOrb
@@ -146,16 +169,18 @@ export function CombatPlayerZone({
                 onUsePower={onUseInkPower}
                 unlockedPowers={unlockedInkPowers}
                 allowedPowers={allowedInkPowers}
+                shellClassName={theme.inkGaugeShell}
+                labelClassName={theme.inkGaugeLabel}
+                fillClassName={theme.inkGaugeFill}
+                readyPowerClassName={theme.inkPowerReady}
               />
             </div>
 
             <button
               ref={drawBtnRef}
-              style={{
-                boxShadow: "2px 2px 0 1px #334155, 4px 4px 0 1px #1e293b",
-              }}
               className={cn(
-                "flex h-12 flex-col items-center justify-center gap-0.5 rounded-lg border border-slate-500/70 bg-slate-800 transition hover:border-slate-300",
+                "flex h-12 flex-col items-center justify-center gap-0.5 rounded-lg border transition",
+                theme.pileButton,
                 isDeckCycleTutorialStep &&
                   "ring-2 ring-indigo-300/85 ring-offset-2 ring-offset-slate-950",
                 reshuffleFx &&
@@ -164,17 +189,24 @@ export function CombatPlayerZone({
               onClick={onOpenDrawPile}
               type="button"
             >
-              <span className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+              <span
+                className={cn(
+                  "text-[9px] font-semibold uppercase tracking-wider",
+                  theme.sidePanelTitle
+                )}
+              >
                 {t("combat.draw")}
               </span>
-              <span className="text-xl font-black text-slate-100">
+              <span className={cn("text-xl font-black", theme.pileButtonValue)}>
                 {combat.drawPile.length}
               </span>
             </button>
 
             {reshuffleFx && (
-              <div className="pointer-events-none flex animate-bounce items-center justify-center text-lg font-black text-cyan-300">
-                ?
+              <div className="pointer-events-none flex animate-bounce items-center justify-center">
+                <span className="rounded-full border border-cyan-300/45 bg-cyan-950/85 px-2 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.18)]">
+                  {t("combat.reshuffle", { defaultValue: "Melange" })}
+                </span>
               </div>
             )}
           </div>
@@ -192,6 +224,7 @@ export function CombatPlayerZone({
               cardDefs={cardDefs}
               selectedCardId={selectedCardId}
               pendingInked={pendingInked}
+              attackBonus={attackBonus}
               onPlayCard={onPlayCard}
               onDoublePlayCard={onDoublePlayCard}
               disableCardInteractions={disableCardInteractions}
@@ -204,13 +237,23 @@ export function CombatPlayerZone({
           </div>
 
           <div className="hidden w-56 flex-shrink-0 flex-col gap-2 lg:flex">
-            <div className="rounded-xl border border-amber-500/40 bg-gradient-to-b from-amber-900/30 to-slate-900/80 px-2 py-1.5 shadow-[0_0_16px_rgba(251,191,36,0.15)]">
-              <p className="mb-1 text-[9px] font-bold uppercase tracking-[0.16em] text-amber-300/80">
+            <div className={cn("rounded-xl px-2 py-1.5", theme.sidePanelShell)}>
+              <p
+                className={cn(
+                  "mb-1 text-[9px] font-bold uppercase tracking-[0.16em]",
+                  theme.sidePanelTitle
+                )}
+              >
                 Inventaire
               </p>
               <div data-keep-selection="true" className="flex flex-wrap gap-1">
                 {usableItems.length === 0 ? (
-                  <div className="h-9 w-full rounded-lg border border-amber-900/60 bg-slate-900/70 px-2 py-2 text-[9px] font-semibold uppercase tracking-wide text-amber-200/60">
+                  <div
+                    className={cn(
+                      "h-9 w-full rounded-lg border px-2 py-2 text-[9px] font-semibold uppercase tracking-wide",
+                      theme.inventoryButton
+                    )}
+                  >
                     Vide
                   </div>
                 ) : (
@@ -232,8 +275,8 @@ export function CombatPlayerZone({
                           className={cn(
                             "!h-9 !min-w-24 !rounded-lg !border !px-2 !text-[9px] !font-semibold !uppercase !tracking-wide !transition",
                             isSelected
-                              ? "!border-amber-300 !bg-amber-700/50 !text-amber-50"
-                              : "!border-amber-700/70 !bg-slate-900/80 !text-amber-200 hover:!border-amber-400 hover:!bg-amber-950/60",
+                              ? theme.inventoryButtonSelected
+                              : theme.inventoryButton,
                             !canUseItems && "!cursor-not-allowed !opacity-50"
                           )}
                           disabled={!canUseItems}
@@ -265,11 +308,9 @@ export function CombatPlayerZone({
 
             <button
               ref={discardBtnRef}
-              style={{
-                boxShadow: "2px 2px 0 1px #7f1d1d, 4px 4px 0 1px #450a0a",
-              }}
               className={cn(
-                "flex h-12 flex-col items-center justify-center gap-0.5 rounded-lg border border-red-700/60 bg-slate-800 transition hover:border-red-400",
+                "flex h-12 flex-col items-center justify-center gap-0.5 rounded-lg border transition",
+                theme.pileButton,
                 isDeckCycleTutorialStep &&
                   "ring-2 ring-indigo-300/85 ring-offset-2 ring-offset-slate-950",
                 reshuffleFx &&
@@ -278,10 +319,15 @@ export function CombatPlayerZone({
               onClick={onOpenDiscardPile}
               type="button"
             >
-              <span className="text-[9px] font-semibold uppercase tracking-wider text-red-400/80">
+              <span
+                className={cn(
+                  "text-[9px] font-semibold uppercase tracking-wider",
+                  theme.sidePanelTitle
+                )}
+              >
                 Defausse
               </span>
-              <span className="text-xl font-black text-slate-100">
+              <span className={cn("text-xl font-black", theme.pileButtonValue)}>
                 {combat.discardPile.length}
               </span>
             </button>
@@ -289,20 +335,23 @@ export function CombatPlayerZone({
             {combat.exhaustPile.length > 0 && (
               <RogueButton
                 type="text"
-                style={{
-                  boxShadow: "2px 2px 0 1px #4c1d95, 4px 4px 0 1px #2e1065",
-                }}
                 className={cn(
-                  "!flex !h-12 !flex-col !items-center !justify-center !gap-0.5 !rounded-lg !border !border-purple-700/60 !bg-slate-800 !transition hover:!border-purple-400",
+                  "!flex !h-12 !flex-col !items-center !justify-center !gap-0.5 !rounded-lg !border !transition",
+                  theme.pileButton,
                   isDeckCycleTutorialStep &&
                     "!ring-2 !ring-indigo-300/85 !ring-offset-2 !ring-offset-slate-950"
                 )}
                 onClick={onOpenExhaustPile}
               >
-                <span className="text-[9px] font-semibold uppercase tracking-wider text-purple-400/80">
+                <span
+                  className={cn(
+                    "text-[9px] font-semibold uppercase tracking-wider",
+                    theme.sidePanelTitle
+                  )}
+                >
                   Epuise
                 </span>
-                <span className="text-xl font-black text-slate-100">
+                <span className={cn("text-xl font-black", theme.pileButtonValue)}>
                   {combat.exhaustPile.length}
                 </span>
               </RogueButton>

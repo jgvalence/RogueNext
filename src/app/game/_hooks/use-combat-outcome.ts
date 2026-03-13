@@ -18,7 +18,7 @@ import { GAME_CONSTANTS } from "@/game/constants";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { RunState } from "@/game/schemas/run-state";
 import {
-  FIRST_RUN_ENERGY_TUTORIAL_OUTCOME,
+  FIRST_RUN_GUIDED_STORY_TUTORIAL_OUTCOME,
   getFirstRunScriptedEndResources,
   isFirstRunScriptedEliteRoom,
 } from "@/game/engine/first-run-script";
@@ -160,7 +160,7 @@ export function useCombatOutcome({
               status: "DEFEAT",
               ...buildEndRunPayload(),
               earnedResources: getFirstRunScriptedEndResources(),
-              scriptedOutcome: FIRST_RUN_ENERGY_TUTORIAL_OUTCOME,
+              scriptedOutcome: FIRST_RUN_GUIDED_STORY_TUTORIAL_OUTCOME,
             });
 
             if (result.success) {

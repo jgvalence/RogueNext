@@ -28,6 +28,7 @@ interface CombatMobileInfoPanelProps {
   selfCanRetargetToAlly: boolean;
   selectedCardId: string | null;
   actingEnemyId: string | null;
+  attackBonus: number;
   getEnemyDisplayName: (enemy: CombatState["enemies"][number]) => string;
   onEnemyTarget: (enemyInstanceId: string) => void;
   onAllyTarget: (allyInstanceId: string) => void;
@@ -44,6 +45,7 @@ export function CombatMobileInfoPanel({
   selfCanRetargetToAlly,
   selectedCardId,
   actingEnemyId,
+  attackBonus,
   getEnemyDisplayName,
   onEnemyTarget,
   onAllyTarget,
@@ -94,7 +96,8 @@ export function CombatMobileInfoPanel({
             const hideIntent = shouldHideEnemyIntent(
               combat.difficultyLevel ?? 0,
               combat.turnNumber,
-              enemy
+              enemy,
+              { playerHand: combat.hand }
             );
             const hpRatio =
               enemy.maxHp > 0 ? Math.max(0, enemy.currentHp) / enemy.maxHp : 0;
@@ -241,7 +244,8 @@ export function CombatMobileInfoPanel({
             const playerStatusMarkers = buildPlayerStatusMarkers(
               player,
               combat.playerDisruption,
-              combat.nextPlayerDisruption
+              combat.nextPlayerDisruption,
+              attackBonus
             );
 
             return (

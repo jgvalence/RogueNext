@@ -226,11 +226,13 @@ export function useCombatSelection({
       if (!sameSelection) {
         if (
           isSameCardSelected &&
+          pendingInked &&
+          !useInked &&
           def.targeting !== "SINGLE_ENEMY" &&
           def.targeting !== "SINGLE_ALLY"
         ) {
           // Avoid accidental downgrade from inked -> normal on second tap.
-          triggerCardPlay(instanceId, null, pendingInked || useInked);
+          triggerCardPlay(instanceId, null, true);
           return;
         }
         setSelectedCardId(instanceId);

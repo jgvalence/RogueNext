@@ -376,6 +376,17 @@ function formatIntentEffects(
         break;
       }
 
+      case "DAMAGE_PER_TARGET_BLOCK":
+        parts.push(
+          <span
+            key={`d-block-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-red-950/70 px-1.5 py-0.5 text-sm font-black text-red-200 lg:text-base"
+          >
+            {t("enemyCard.dmg")} ARM/{effect.value}
+          </span>
+        );
+        break;
+
       case "BLOCK":
         parts.push(
           <span
@@ -452,6 +463,94 @@ function formatIntentEffects(
             className="inline-flex items-center gap-0.5 rounded bg-cyan-900/60 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-300 lg:text-[11px]"
           >
             INK -{effect.value}
+          </span>
+        );
+        break;
+
+      case "BLOCK_PER_CURRENT_INK":
+        parts.push(
+          <span
+            key={`b-ink-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-cyan-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 lg:text-[11px]"
+          >
+            BLK/INK {effect.value}
+          </span>
+        );
+        break;
+
+      case "BLOCK_PER_EXHAUSTED_CARD":
+        parts.push(
+          <span
+            key={`b-exh-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-blue-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-blue-200 lg:text-[11px]"
+          >
+            BLK/EXH {effect.value}
+          </span>
+        );
+        break;
+
+      case "APPLY_BUFF_PER_EXHAUSTED_CARD":
+        parts.push(
+          <span
+            key={`buf-exh-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-amber-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-amber-200 lg:text-[11px]"
+          >
+            BUF/EXH {effect.value}
+          </span>
+        );
+        break;
+
+      case "DAMAGE_PER_CURRENT_INK":
+        parts.push(
+          <span
+            key={`dmg-ink-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-cyan-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-cyan-200 lg:text-[11px]"
+          >
+            DMG/INK {effect.value}
+          </span>
+        );
+        break;
+
+      case "DAMAGE_PER_CLOG_IN_DISCARD":
+        parts.push(
+          <span
+            key={`dmg-clog-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-purple-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-purple-200 lg:text-[11px]"
+          >
+            DMG/CLOG {effect.value}
+          </span>
+        );
+        break;
+
+      case "DAMAGE_PER_EXHAUSTED_CARD":
+        parts.push(
+          <span
+            key={`dmg-exh-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-amber-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-amber-200 lg:text-[11px]"
+          >
+            DMG/EXH {effect.value}
+          </span>
+        );
+        break;
+
+      case "DAMAGE_PER_DRAWN_THIS_TURN":
+        parts.push(
+          <span
+            key={`dmg-draw-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-indigo-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-indigo-200 lg:text-[11px]"
+          >
+            DMG/DRAW {effect.value}
+          </span>
+        );
+        break;
+
+      case "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND":
+        parts.push(
+          <span
+            key={`recall-${parts.length}`}
+            className="inline-flex items-center gap-0.5 rounded bg-purple-950/80 px-1.5 py-0.5 text-[10px] font-semibold text-purple-200 lg:text-[11px]"
+          >
+            RECALL {effect.value}
           </span>
         );
         break;
