@@ -44,7 +44,7 @@ export const fr = {
     kicker: "Classement global",
     title: "Hall des Archivistes",
     subtitle:
-      "Top joueurs selon le meilleur etage infini atteint, puis les victoires, la difficulte et le meilleur temps.",
+      "Compare la progression infinie ou les meilleurs temps de victoire par difficulte.",
     backHome: "Accueil",
     loadError: "Impossible de charger le classement: {{message}}",
     empty: "Aucune statistique de run disponible pour le moment.",
@@ -52,6 +52,23 @@ export const fr = {
     you: "Vous",
     noTime: "-",
     none: "-",
+    filters: {
+      kicker: "Tri du classement",
+      limit: "Top {{count}} joueurs affiches.",
+      sortLabel: "Trier par",
+      difficultyLabel: "Difficulte du temps",
+      allDifficulties: "Toutes les difficultes",
+      summaryProgression:
+        "Classement progression: etage infini, puis victoires, difficulte max et temps.",
+      summaryVictoryTimeAll:
+        "Classement par meilleur temps de victoire, toutes difficultes confondues.",
+      summaryVictoryTimeDifficulty:
+        "Classement par meilleur temps de victoire en D{{difficulty}}.",
+      sortOptions: {
+        progression: "Progression",
+        victoryTime: "Temps de victoire",
+      },
+    },
     columns: {
       rank: "Rang",
       player: "Joueur",
@@ -61,6 +78,8 @@ export const fr = {
       bestInfiniteFloor: "Etage infini max",
       bestDifficulty: "Difficulte max",
       bestTime: "Temps par diff",
+      bestTimeVictory: "Temps victoire",
+      bestTimeDifficulty: "Temps victoire D{{difficulty}}",
     },
   },
   auth: {

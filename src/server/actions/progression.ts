@@ -38,6 +38,13 @@ export interface LeaderboardEntry {
   }>;
 }
 
+export const LEADERBOARD_SORT_MODES = [
+  "progression",
+  "victory_time",
+] as const;
+export type LeaderboardSortMode = (typeof LEADERBOARD_SORT_MODES)[number];
+const MAX_LEADERBOARD_TIME_DIFFICULTY = 5;
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -110,6 +117,23 @@ function extractBestTimesByDifficulty(
     }))
     .filter((entry) => Number.isInteger(entry.difficulty) && entry.timeMs > 0)
     .sort((a, b) => a.difficulty - b.difficulty);
+}
+
+function getBestTimeForDifficulty(
+  bestTimesByDifficulty: Array<{ difficulty: number; timeMs: number }>,
+  difficulty: number | null
+): number | null {
+  if (difficulty == null) {
+    return bestTimesByDifficulty.reduce<number | null>(
+      (best, entry) => (best == null ? entry.timeMs : Math.min(best, entry.timeMs)),
+      null
+    );
+  }
+
+  return (
+    bestTimesByDifficulty.find((entry) => entry.difficulty === difficulty)
+      ?.timeMs ?? null
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -198,13 +222,25 @@ export async function getRunConditionCollectionAction() {
 
 const getLeaderboardSchema = z.object({
   limit: z.number().int().min(1).max(100).optional(),
+  sort: z.enum(LEADERBOARD_SORT_MODES).optional(),
+  timeDifficulty: z
+    .number()
+    .int()
+    .min(0)
+    .max(MAX_LEADERBOARD_TIME_DIFFICULTY)
+    .nullable()
+    .optional(),
 });
 
 export async function getLeaderboardAction(
   input?: z.infer<typeof getLeaderboardSchema>
 ) {
   try {
-    const { limit = 25 } = getLeaderboardSchema.parse(input ?? {});
+    const {
+      limit = 25,
+      sort = "progression",
+      timeDifficulty = null,
+    } = getLeaderboardSchema.parse(input ?? {});
 
     const rows = await prisma.userProgression.findMany({
       where: {
@@ -235,7 +271,9 @@ export async function getLeaderboardAction(
       },
     });
 
-    type LeaderboardCandidate = Omit<LeaderboardEntry, "rank">;
+    type LeaderboardCandidate = Omit<LeaderboardEntry, "rank"> & {
+      selectedVictoryTimeMs: number | null;
+    };
 
     const sorted: LeaderboardCandidate[] = rows
       .map((row) => {
@@ -274,9 +312,45 @@ export async function getLeaderboardAction(
           bestTimeAtHighestDifficultyMs:
             bestTimeAtHighestDifficultyMs ?? bestTimeMs,
           bestTimesByDifficulty,
+          selectedVictoryTimeMs: getBestTimeForDifficulty(
+            bestTimesByDifficulty,
+            timeDifficulty
+          ),
         };
       })
       .sort((a, b) => {
+        if (sort === "victory_time") {
+          if (a.selectedVictoryTimeMs == null && b.selectedVictoryTimeMs != null) {
+            return 1;
+          }
+          if (a.selectedVictoryTimeMs != null && b.selectedVictoryTimeMs == null) {
+            return -1;
+          }
+          if (
+            a.selectedVictoryTimeMs != null &&
+            b.selectedVictoryTimeMs != null &&
+            a.selectedVictoryTimeMs !== b.selectedVictoryTimeMs
+          ) {
+            return a.selectedVictoryTimeMs - b.selectedVictoryTimeMs;
+          }
+
+          const aDifficulty = a.highestDifficulty ?? -1;
+          const bDifficulty = b.highestDifficulty ?? -1;
+          if (bDifficulty !== aDifficulty) {
+            return bDifficulty - aDifficulty;
+          }
+
+          if (b.bestInfiniteFloor !== a.bestInfiniteFloor) {
+            return b.bestInfiniteFloor - a.bestInfiniteFloor;
+          }
+
+          if (b.wonRuns !== a.wonRuns) {
+            return b.wonRuns - a.wonRuns;
+          }
+
+          return a.userId.localeCompare(b.userId);
+        }
+
         if (b.bestInfiniteFloor !== a.bestInfiniteFloor) {
           return b.bestInfiniteFloor - a.bestInfiniteFloor;
         }

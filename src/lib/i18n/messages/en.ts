@@ -43,7 +43,7 @@ export const en = {
     kicker: "Global Ranking",
     title: "Archivists Hall",
     subtitle:
-      "Top players ranked by best infinite floor first, then victories, difficulty progression, and best clear time.",
+      "Compare infinite progression or best victory times by difficulty.",
     backHome: "Home",
     loadError: "Unable to load leaderboard: {{message}}",
     empty: "No run statistics available yet.",
@@ -51,6 +51,23 @@ export const en = {
     you: "You",
     noTime: "-",
     none: "-",
+    filters: {
+      kicker: "Leaderboard Sorting",
+      limit: "Showing top {{count}} players.",
+      sortLabel: "Sort by",
+      difficultyLabel: "Time difficulty",
+      allDifficulties: "All difficulties",
+      summaryProgression:
+        "Progression ranking: infinite floor first, then wins, highest difficulty, and time.",
+      summaryVictoryTimeAll:
+        "Ranking by fastest victory time across all difficulties.",
+      summaryVictoryTimeDifficulty:
+        "Ranking by fastest victory time on D{{difficulty}}.",
+      sortOptions: {
+        progression: "Progression",
+        victoryTime: "Victory Time",
+      },
+    },
     columns: {
       rank: "Rank",
       player: "Player",
@@ -60,6 +77,8 @@ export const en = {
       bestInfiniteFloor: "Best Infinite Floor",
       bestDifficulty: "Highest Difficulty",
       bestTime: "Times by Diff",
+      bestTimeVictory: "Victory Time",
+      bestTimeDifficulty: "Victory Time D{{difficulty}}",
     },
   },
   auth: {

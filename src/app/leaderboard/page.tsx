@@ -1,11 +1,64 @@
 import { auth } from "@/lib/auth/config";
-import { getLeaderboardAction } from "@/server/actions/progression";
+import {
+  getLeaderboardAction,
+  type LeaderboardSortMode,
+} from "@/server/actions/progression";
 import { LeaderboardClient } from "./_components/LeaderboardClient";
 
-export default async function LeaderboardPage() {
+const LEADERBOARD_ENTRY_LIMIT = 50;
+const LEADERBOARD_TIME_DIFFICULTY_MAX = 5;
+
+type LeaderboardPageProps = {
+  searchParams?: Promise<{
+    sort?: string | string[];
+    difficulty?: string | string[];
+  }>;
+};
+
+function readFirstParam(
+  value: string | string[] | undefined
+): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function parseSortMode(rawSort: string | undefined): LeaderboardSortMode {
+  return rawSort === "victory_time" ? "victory_time" : "progression";
+}
+
+function parseTimeDifficulty(rawDifficulty: string | undefined): number | null {
+  if (rawDifficulty == null || rawDifficulty === "") return null;
+
+  const difficulty = Number(rawDifficulty);
+  if (
+    !Number.isInteger(difficulty) ||
+    difficulty < 0 ||
+    difficulty > LEADERBOARD_TIME_DIFFICULTY_MAX
+  ) {
+    return null;
+  }
+
+  return difficulty;
+}
+
+export default async function LeaderboardPage({
+  searchParams,
+}: LeaderboardPageProps) {
+  const resolvedSearchParams = await searchParams;
+  const sortMode = parseSortMode(
+    readFirstParam(resolvedSearchParams?.sort)
+  );
+  const timeDifficulty =
+    sortMode === "victory_time"
+      ? parseTimeDifficulty(readFirstParam(resolvedSearchParams?.difficulty))
+      : null;
+
   const [session, leaderboardResult] = await Promise.all([
     auth(),
-    getLeaderboardAction({ limit: 50 }),
+    getLeaderboardAction({
+      limit: LEADERBOARD_ENTRY_LIMIT,
+      sort: sortMode,
+      timeDifficulty,
+    }),
   ]);
 
   const currentUserId = session?.user?.id ?? null;
@@ -30,6 +83,9 @@ export default async function LeaderboardPage() {
           entries={entries}
           currentUserId={currentUserId}
           loadError={loadError}
+          entryLimit={LEADERBOARD_ENTRY_LIMIT}
+          sortMode={sortMode}
+          timeDifficulty={timeDifficulty}
         />
       </div>
     </main>
