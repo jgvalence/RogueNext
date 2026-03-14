@@ -11,7 +11,7 @@ import type { BiomeType } from "@/game/schemas/enums";
 import { VANILLA_RUN_CONDITION_ID } from "@/game/engine/run-conditions";
 import { getFirstRunForcedMapChoiceIndex } from "@/game/engine/first-run-script";
 import type { GameAction } from "../_providers/game-reducer";
-import type { GamePhase } from "../_services/run-phase";
+import { isRunStartState, type GamePhase } from "../_services/run-phase";
 import type { RunSetupDraft } from "../_components/run-setup/RunSetupScreen";
 
 interface UseRunRoomActionsParams {
@@ -125,9 +125,12 @@ export function useRunRoomActions({
       if (!state.startMerchantCompleted) {
         dispatch({ type: "COMPLETE_START_MERCHANT" });
       }
+      const shouldShowOpeningBiomeChoice =
+        hasOpeningBiomeChoice &&
+        !(difficultyLevel === 0 && isRunStartState(state));
       if (canOfferFreeUpgradeAtStart) {
         setPhase("RUN_FREE_UPGRADE");
-      } else if (hasOpeningBiomeChoice) {
+      } else if (shouldShowOpeningBiomeChoice) {
         setPhase("BIOME_SELECT");
       } else {
         setPhase("MAP");
