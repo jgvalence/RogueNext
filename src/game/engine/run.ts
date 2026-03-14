@@ -673,11 +673,17 @@ export function applyDifficultyToRun(
   if (runState.selectedDifficultyLevel !== null) return runState;
   const pendingLevels = runState.pendingDifficultyLevels ?? [];
   if (!pendingLevels.includes(difficultyLevel)) return runState;
+  const isOpeningBiomeSelection =
+    runState.floor === 1 &&
+    runState.currentRoom === 0 &&
+    runState.combat === null;
+  const forcedOpeningLibrary = difficultyLevel === 0 && isOpeningBiomeSelection;
 
   return {
     ...runState,
     selectedDifficultyLevel: difficultyLevel,
     pendingDifficultyLevels: [],
+    pendingBiomeChoices: forcedOpeningLibrary ? null : runState.pendingBiomeChoices,
   };
 }
 

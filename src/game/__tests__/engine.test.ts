@@ -30,6 +30,7 @@ import {
   checkCombatEnd,
 } from "../engine/combat";
 import {
+  applyDifficultyToRun,
   applyRunConditionToRun,
   createGuaranteedRelicEvent,
   createNewRun,
@@ -3802,6 +3803,31 @@ describe("Run management", () => {
     const choices = drawRandomBiomeChoices(createRNG("alpha"));
 
     expect(choices).toEqual(["VIKING", "LOVECRAFTIAN"]);
+  });
+
+  it("at displayed difficulty 1, the opening floor is forced to LIBRARY", () => {
+    const rng = createRNG("forced-library-opening");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-1",
+      "forced-library-opening",
+      starterCards,
+      rng,
+      undefined,
+      [],
+      undefined,
+      undefined,
+      [],
+      [0, 1],
+      1,
+      ["LIBRARY", "VIKING"]
+    );
+
+    const result = applyDifficultyToRun(run, 0);
+
+    expect(result.selectedDifficultyLevel).toBe(0);
+    expect(result.currentBiome).toBe("LIBRARY");
+    expect(result.pendingBiomeChoices).toBeNull();
   });
 
   it("generateFloorMap creates 10 room slots", () => {
