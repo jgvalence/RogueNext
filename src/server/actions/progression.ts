@@ -38,10 +38,7 @@ export interface LeaderboardEntry {
   }>;
 }
 
-export const LEADERBOARD_SORT_MODES = [
-  "progression",
-  "victory_time",
-] as const;
+const LEADERBOARD_SORT_MODES = ["progression", "victory_time"] as const;
 export type LeaderboardSortMode = (typeof LEADERBOARD_SORT_MODES)[number];
 const MAX_LEADERBOARD_TIME_DIFFICULTY = 5;
 
