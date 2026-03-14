@@ -58,7 +58,7 @@ function scaleShopPrice(price: number): number {
 
 function getDifficultyShopPriceMultiplier(difficultyLevel: number): number {
   if (difficultyLevel >= 5) return 1.3;
-  if (difficultyLevel >= 4) return 1.15;
+  if (difficultyLevel >= 4) return 1.25;
   return 1;
 }
 

@@ -413,7 +413,10 @@ export function CombatView({
     () =>
       combat.phase === "PLAYER_TURN"
         ? computeIncomingDamage(combat, enemyDefs)
-        : { player: 0, allies: {} as Record<string, number> },
+        : {
+            player: { total: 0, hpLoss: 0 },
+            allies: {} as Record<string, { total: number; hpLoss: number }>,
+          },
     [combat, enemyDefs]
   );
 

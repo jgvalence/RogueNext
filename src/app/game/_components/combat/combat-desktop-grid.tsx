@@ -39,8 +39,17 @@ interface CombatDesktopGridProps {
   newlySummonedIds: Set<string>;
   enemyArtFailures: Set<string>;
   incomingDamage: {
-    player: number;
-    allies: Record<string, number>;
+    player: {
+      total: number;
+      hpLoss: number;
+    };
+    allies: Record<
+      string,
+      {
+        total: number;
+        hpLoss: number;
+      }
+    >;
   };
   incomingDamageByEnemyId: Map<string, number>;
   attackBonus: number;
@@ -170,10 +179,10 @@ export function CombatDesktopGrid({
                   </span>
                 </div>
               )}
-              {!isDead && (incomingDamage.allies[ally.instanceId] ?? 0) > 0 && (
+              {!isDead &&
+                (incomingDamage.allies[ally.instanceId]?.total ?? 0) > 0 && (
                 <IncomingDamageBadge
-                  damage={incomingDamage.allies[ally.instanceId]!}
-                  block={ally.block}
+                  incoming={incomingDamage.allies[ally.instanceId]!}
                   highlight={isIncomingDamageTutorialStep}
                 />
               )}
@@ -237,10 +246,9 @@ export function CombatDesktopGrid({
           <div className="absolute -top-2 left-2 flex max-w-[90%] items-center gap-1 overflow-hidden">
             {renderCompactStatusMarkersForPlayer(playerStatusMarkers)}
           </div>
-          {incomingDamage.player > 0 && (
+          {incomingDamage.player.total > 0 && (
             <IncomingDamageBadge
-              damage={incomingDamage.player}
-              block={combat.player.block}
+              incoming={incomingDamage.player}
               highlight={isIncomingDamageTutorialStep}
             />
           )}

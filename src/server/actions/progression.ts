@@ -291,10 +291,6 @@ export async function getLeaderboardAction(
           return bDifficulty - aDifficulty;
         }
 
-        if (b.winRate !== a.winRate) {
-          return b.winRate - a.winRate;
-        }
-
         if (
           a.bestTimeAtHighestDifficultyMs == null &&
           b.bestTimeAtHighestDifficultyMs != null
@@ -315,10 +311,6 @@ export async function getLeaderboardAction(
           return (
             a.bestTimeAtHighestDifficultyMs - b.bestTimeAtHighestDifficultyMs
           );
-        }
-
-        if (b.totalRuns !== a.totalRuns) {
-          return b.totalRuns - a.totalRuns;
         }
 
         return a.userId.localeCompare(b.userId);

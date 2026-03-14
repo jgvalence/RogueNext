@@ -51,7 +51,7 @@ describe("Run difficulty progression", () => {
         playerHand: [{ definitionId: "shrouded_omen" }],
       })
     ).toBe(true);
-    expect(getEnemyStartingBlock(3, 2, { isBoss: true })).toBe(10);
+    expect(getEnemyStartingBlock(3, 2, { isBoss: true })).toBe(12);
     expect(getEnemyStartingBlock(4, 2, { isElite: true })).toBe(10);
     expect(getBossDebuffBonus(4)).toBe(1);
     expect(eliteCanDropRelic(5, 0.2)).toBe(false);
@@ -72,8 +72,18 @@ describe("Run difficulty progression", () => {
     ).toBe(1.25);
   });
 
-  it("increases elite encounter pressure at difficulty 5", () => {
-    expect(getDifficultyModifiers(4).eliteChanceBonus).toBe(0.08);
+  it("hardens high-end difficulties 4 and 5", () => {
+    expect(getDifficultyModifiers(3)).toMatchObject({
+      enemyDamageMultiplier: 1.35,
+      disruptionWeightBonus: 2.2,
+    });
+    expect(getDifficultyModifiers(4)).toMatchObject({
+      enemyHpMultiplier: 1.6,
+      enemyDamageMultiplier: 1.55,
+      eliteChanceBonus: 0.16,
+      specialRoomHealWeightMultiplier: 0.35,
+      disruptionWeightBonus: 3.2,
+    });
     expect(getDifficultyModifiers(5).eliteChanceBonus).toBe(0.24);
   });
 

@@ -218,6 +218,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         weight: 1,
         target: "PLAYER",
         effects: [
+          { type: "DAMAGE", value: 2 },
           { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
@@ -1513,6 +1514,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Soul Weighing",
         weight: 1,
         effects: [
+          { type: "DAMAGE", value: 2 },
           { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         ],

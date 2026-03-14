@@ -18,11 +18,6 @@ interface LeaderboardClientProps {
   loadError: string | null;
 }
 
-function formatPercent(value: number): string {
-  const safeValue = Number.isFinite(value) ? value : 0;
-  return `${(safeValue * 100).toFixed(1)}%`;
-}
-
 function formatDurationMs(ms: number): string {
   const totalSeconds = Math.max(0, Math.floor(ms / 1000));
   const hours = Math.floor(totalSeconds / 3600);
@@ -123,18 +118,6 @@ export function LeaderboardClient({
         key: "wins",
         dataIndex: "wonRuns",
         render: (value: number) => value.toLocaleString(),
-      },
-      {
-        title: t("leaderboard.columns.runs"),
-        key: "runs",
-        dataIndex: "totalRuns",
-        render: (value: number) => value.toLocaleString(),
-      },
-      {
-        title: t("leaderboard.columns.winRate"),
-        key: "winRate",
-        dataIndex: "winRate",
-        render: (value: number) => formatPercent(value),
       },
       {
         title: t("leaderboard.columns.bestInfiniteFloor"),
@@ -263,22 +246,6 @@ export function LeaderboardClient({
                       </p>
                       <p className="mt-1 text-sm text-amber-50">
                         {entry.wonRuns.toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="uppercase tracking-[0.14em] text-amber-100/50">
-                        {t("leaderboard.columns.runs")}
-                      </p>
-                      <p className="mt-1 text-sm text-amber-50">
-                        {entry.totalRuns.toLocaleString()}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="uppercase tracking-[0.14em] text-amber-100/50">
-                        {t("leaderboard.columns.winRate")}
-                      </p>
-                      <p className="mt-1 text-sm text-amber-50">
-                        {formatPercent(entry.winRate)}
                       </p>
                     </div>
                     <div>

@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.1.1 - 2026-03-14
+
+### Correctifs combat
+
+- Les attaques anti-armure `Armor Shatter` et `Soul Weighing` infligent maintenant un hit de base avant leurs degats directs scales sur l'armure, pour vraiment punir les builds full armure.
+- Le preview des degats entrants sur desktop distingue mieux la pression totale et la perte reelle de PV quand une partie des degats bypass l'armure.
+
+### Equilibrage hautes difficultes
+
+- Difficultes 4 et 5 durcies avec plus de degats, plus de PV ennemis, plus de poids sur les intents de disruption, moins de salles de soin et davantage de pression elite.
+- Les boss gagnent plus d'armure de depart a partir de la difficulte 4, et la boutique devient plus chere sur les paliers les plus eleves.
+
+### Interface et classement
+
+- Le leaderboard retire les colonnes `Runs` et `Winrate` pour se concentrer sur les victoires, la meilleure difficulte, l'infini et les meilleurs temps par difficulte.
+- Le tri du classement a ete aligne sur ces criteres visibles.
+
 ## 1.1.0 - 2026-03-13
 
 ### Ajouts et ameliorations

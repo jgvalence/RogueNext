@@ -55,8 +55,17 @@ interface CombatBattlefieldProps {
   allySlots: Array<CombatState["allies"][number] | null>;
   enemySlots: Array<CombatState["enemies"][number] | null>;
   incomingDamage: {
-    player: number;
-    allies: Record<string, number>;
+    player: {
+      total: number;
+      hpLoss: number;
+    };
+    allies: Record<
+      string,
+      {
+        total: number;
+        hpLoss: number;
+      }
+    >;
   };
   incomingDamageByEnemyId: Map<string, number>;
   onAllyClick: (allyInstanceId: string) => void;

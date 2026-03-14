@@ -388,16 +388,21 @@ export function getDifficultyModifiers(level: number): {
   disruptionWeightBonus: number;
 } {
   const l = clampDifficulty(level);
-  const eliteChanceBonus = l >= 5 ? 0.24 : l >= 4 ? 0.08 : 0;
-  const specialRoomHealWeightMultiplier = l >= 5 ? 0.25 : l >= 4 ? 0.5 : 1;
+  const enemyHpMultiplier =
+    ([1, 1.12, 1.24, 1.36, 1.6, 1.72] as const)[l] ?? 1;
+  const enemyDamageMultiplier =
+    ([1, 1.1, 1.2, 1.35, 1.55, 1.7] as const)[l] ?? 1;
+  const eliteChanceBonus = l >= 5 ? 0.24 : l >= 4 ? 0.16 : 0;
+  const specialRoomHealWeightMultiplier = l >= 5 ? 0.25 : l >= 4 ? 0.35 : 1;
   const specialRoomEventWeightBonus = l >= 5 ? 0.2 : l >= 4 ? 0.12 : 0;
   const enemyPackSizeBonus = l >= 5 ? 1 : 0;
   // Boost the weight of enemy disruption abilities by difficulty
   // Diff 0: none, Diff 1: light, Diff 3+: marked
-  const disruptionWeightBonus = ([0, 0.3, 0.6, 1.5, 2.0, 3.0] as const)[l] ?? 0;
+  const disruptionWeightBonus =
+    ([0, 0.3, 0.6, 2.2, 3.2, 4.4] as const)[l] ?? 0;
   return {
-    enemyHpMultiplier: 1 + l * 0.12,
-    enemyDamageMultiplier: 1 + l * 0.1,
+    enemyHpMultiplier,
+    enemyDamageMultiplier,
     eliteChanceBonus,
     specialRoomHealWeightMultiplier,
     specialRoomEventWeightBonus,
@@ -449,7 +454,7 @@ export function getEnemyStartingBlock(
 ): number {
   const l = clampDifficulty(level);
   if (l < 3) return 0;
-  if (source.isBoss) return Math.max(0, floor) * 5;
+  if (source.isBoss) return Math.max(0, floor) * 6;
   if (l >= 4 && source.isElite) return Math.max(0, floor) * 5;
   return 0;
 }

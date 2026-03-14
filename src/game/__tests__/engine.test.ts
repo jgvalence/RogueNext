@@ -2950,7 +2950,7 @@ describe("Combat flow", () => {
     expect(combat.allies[0]?.definitionId).toBe("scribe_apprentice");
   });
 
-  it("at difficulty 3, bosses start combat with +5 block per floor", () => {
+  it("at difficulty 3, bosses start combat with +6 block per floor", () => {
     const rng = createRNG("combat-boss-start-block");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
     const runState = {
@@ -2969,7 +2969,7 @@ describe("Combat flow", () => {
     );
 
     expect(combat.enemies[0]?.isBoss).toBe(true);
-    expect(combat.enemies[0]?.block).toBe(10);
+    expect(combat.enemies[0]?.block).toBe(12);
   });
 
   it("at difficulty 4, elites also start combat with +5 block per floor", () => {
@@ -5923,6 +5923,20 @@ describe("Debuff blocked by armor", () => {
 
     expect(result.player.currentHp).toBe(state.player.currentHp - 6);
     expect(result.player.block).toBe(12);
+    expect(getBuffStacks(result.player.buffs, "VULNERABLE")).toBe(2);
+  });
+
+  it("mixed base damage and armor-punish damage punishes stacking block", () => {
+    const state = makeStateWithBlock(12);
+    const effects: Effect[] = [
+      { type: "DAMAGE", value: 2 },
+      { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+    ];
+    const result = resolveEffects(state, effects, enemyCtx, rng);
+
+    expect(result.player.currentHp).toBe(state.player.currentHp - 5);
+    expect(result.player.block).toBe(10);
     expect(getBuffStacks(result.player.buffs, "VULNERABLE")).toBe(2);
   });
 

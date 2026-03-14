@@ -6,15 +6,17 @@ import { cn } from "@/lib/utils/cn";
  * Green = current block fully absorbs the hit.
  */
 export function IncomingDamageBadge({
-  damage,
-  block,
+  incoming,
   highlight = false,
 }: {
-  damage: number;
-  block: number;
+  incoming: {
+    total: number;
+    hpLoss: number;
+  };
   highlight?: boolean;
 }) {
-  const covered = block >= damage;
+  const covered = incoming.hpLoss <= 0;
+  const displayedDamage = covered ? incoming.total : incoming.hpLoss;
   return (
     <div
       className={cn(
@@ -26,7 +28,7 @@ export function IncomingDamageBadge({
           : "border-red-700/80 bg-red-950/90 text-red-300"
       )}
     >
-      {covered ? "\uD83D\uDEE1" : "\u2694"} {damage}
+      {covered ? "\uD83D\uDEE1" : "\u2694"} {displayedDamage}
     </div>
   );
 }
