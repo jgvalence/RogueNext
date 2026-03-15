@@ -44,6 +44,7 @@ import {
 } from "./bestiary";
 import { addRelicToRunState } from "./relics";
 import { createFirstRunScriptedMap } from "./first-run-script";
+import { isClogCardDefinitionId } from "./status-cards";
 
 type EnemyDef = (typeof enemyDefinitions)[0];
 const TRACKED_ENEMY_DEFINITION_IDS = new Set(
@@ -857,7 +858,9 @@ export function applyRunConditionToRun(
   conditionedDeck = [...conditionedDeck, ...bonusDeck];
 
   if (upgradeRandomDeckCardsCount > 0) {
-    const upgradableCards = conditionedDeck.filter((card) => !card.upgraded);
+    const upgradableCards = conditionedDeck.filter(
+      (card) => !card.upgraded && !isClogCardDefinitionId(card.definitionId)
+    );
     const upgradeCount = Math.min(
       upgradeRandomDeckCardsCount,
       upgradableCards.length

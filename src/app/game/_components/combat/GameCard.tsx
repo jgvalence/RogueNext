@@ -320,7 +320,7 @@ export function GameCard({
     defaultValue: displayDefinition.biome,
   });
   const isCondensed = detailMode === "condensed";
-  const isScrollablePreview = size === "lg" && !isCondensed;
+  const isScrollablePreview = size !== "sm" && !isCondensed;
   const showArtworkMeta = size !== "lg";
   const activeDescription =
     isPendingInked && displayDefinition.inkedVariant

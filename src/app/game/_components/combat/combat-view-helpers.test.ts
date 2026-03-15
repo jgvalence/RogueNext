@@ -1,15 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { i18n } from "@/lib/i18n";
 import { buildEnemyDefsMap } from "@/game/data";
-import type {
-  CombatState,
-  TurnDisruption,
-} from "@/game/schemas/combat-state";
+import type { CombatState, TurnDisruption } from "@/game/schemas/combat-state";
 import type { EnemyState, PlayerState } from "@/game/schemas/entities";
 import {
   buildMobileEnemyIntentChips,
   buildPlayerStatusMarkers,
   computeEnemyEffectDamagePreview,
+  summarizeEnemyIntentLabels,
 } from "./combat-view-helpers";
 
 const emptyDisruption = (): TurnDisruption => ({
@@ -122,7 +120,9 @@ describe("buildPlayerStatusMarkers", () => {
     expect(markers[0]?.detailLabel).toBe("les cartes coutent +1 ce tour");
     expect(markers[1]?.compactLabel).toBe(">+2C");
     expect(markers[1]?.pending).toBe(true);
-    expect(markers[1]?.detailLabel).toBe("les cartes coutent +2 au prochain tour");
+    expect(markers[1]?.detailLabel).toBe(
+      "les cartes coutent +2 au prochain tour"
+    );
     expect(markers[2]?.compactLabel).toBe(">-1D");
     expect(markers[2]?.detailLabel).toBe("pioche -1 au prochain tour");
     expect(markers.some((marker) => marker.compactLabel === "SA 3/4t")).toBe(
@@ -174,14 +174,26 @@ describe("buildPlayerStatusMarkers", () => {
     expect(attackBonusMarker).toBeDefined();
     expect(attackBonusMarker?.compactLabel).toBe("ATQ +2");
     expect(attackBonusMarker?.symbolLabel).toBe("A+2");
-    expect(attackBonusMarker?.detailLabel).toBe(
-      "+2 degats des cartes Attaque"
-    );
+    expect(attackBonusMarker?.detailLabel).toBe("+2 degats des cartes Attaque");
     expect(attackBonusMarker?.detailText).toContain("2");
   });
 });
 
 describe("enemy intent previews", () => {
+  it("summarizes overflowing intent labels for compact cards", () => {
+    const summary = summarizeEnemyIntentLabels(
+      ["DMG 10", "Binding Curse", "Restores Black Inkwell", "Redact +1 cost"],
+      3
+    );
+
+    expect(summary.visibleLabels).toEqual([
+      "DMG 10",
+      "Binding Curse",
+      "Restores Black Inkwell",
+    ]);
+    expect(summary.remaining).toBe(1);
+  });
+
   it("includes hidden flat bonus damage in boss damage previews", async () => {
     await i18n.changeLanguage("en");
 
@@ -270,6 +282,118 @@ describe("enemy intent previews", () => {
     );
 
     expect(chips.some((chip) => chip.startsWith("P2 "))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Binding Curse"))).toBe(true);
+  });
+
+  it("shows archivist cost redactions in intent chips when the black inkwell lives", async () => {
+    await i18n.changeLanguage("en");
+
+    const archivist = buildEnemyState("the_archivist", 1);
+    const blackInkwell = buildEnemyState("archivist_black_inkwell", 0);
+    const paleInkwell = buildEnemyState("archivist_pale_inkwell", 0);
+    const ability = enemyDefs.get("the_archivist")?.abilities[1];
+    const combat = buildCombatState(archivist, {
+      enemies: [archivist, blackInkwell, paleInkwell],
+    });
+
+    expect(ability).toBeDefined();
+
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      archivist,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(chips.some((chip) => chip.includes("+1 cost"))).toBe(true);
+  });
+
+  it("shows inkwell restore info in intent chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const blackInkwell = buildEnemyState("archivist_black_inkwell", 0);
+    const ability = enemyDefs.get("archivist_black_inkwell")?.abilities[0];
+    const combat = buildCombatState(blackInkwell);
+
+    expect(ability).toBeDefined();
+
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      blackInkwell,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(
+      chips.some((chip) => chip.includes("restore cost-redacted cards"))
+    ).toBe(true);
+  });
+
+  it("shows archivist reinvokes in phase-two previews when an inkwell is missing", async () => {
+    await i18n.changeLanguage("en");
+
+    const archivist = buildEnemyState("the_archivist", 0, { currentHp: 70 });
+    const blackInkwell = buildEnemyState("archivist_black_inkwell", 0);
+    const paleInkwell = buildEnemyState("archivist_pale_inkwell", 0, {
+      currentHp: 0,
+    });
+    const ability = enemyDefs.get("the_archivist")?.abilities[0];
+    const combat = buildCombatState(archivist, {
+      enemies: [archivist, blackInkwell, paleInkwell],
+    });
+
+    expect(ability).toBeDefined();
+
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      archivist,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(chips.some((chip) => chip.includes("P2"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Restores Pale Inkwell"))).toBe(
+      true
+    );
+    expect(chips.some((chip) => chip.includes("+1 cost"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("upgrade/inked disabled"))).toBe(
+      true
+    );
+  });
+
+  it("shows Corrupted Index restoring a missing inkwell before redacting", async () => {
+    await i18n.changeLanguage("en");
+
+    const archivist = buildEnemyState("the_archivist", 2);
+    const blackInkwell = buildEnemyState("archivist_black_inkwell", 0, {
+      currentHp: 0,
+    });
+    const paleInkwell = buildEnemyState("archivist_pale_inkwell", 0);
+    const ability = enemyDefs.get("the_archivist")?.abilities[2];
+    const combat = buildCombatState(archivist, {
+      enemies: [archivist, blackInkwell, paleInkwell],
+    });
+
+    expect(ability).toBeDefined();
+
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      archivist,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(chips.some((chip) => chip.includes("Restores Black Inkwell"))).toBe(
+      true
+    );
     expect(chips.some((chip) => chip.includes("Binding Curse"))).toBe(true);
   });
 });

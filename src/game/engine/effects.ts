@@ -1902,7 +1902,10 @@ export function resolveEffect(
 
     case "UPGRADE_RANDOM_CARD_IN_HAND": {
       const upgradeable = state.hand.filter(
-        (c) => !c.upgraded && c.instanceId !== ctx.sourceCardInstanceId
+        (c) =>
+          !c.upgraded &&
+          !isClogCardDefinitionId(c.definitionId) &&
+          c.instanceId !== ctx.sourceCardInstanceId
       );
       if (upgradeable.length === 0) return state;
       const picked = rng.pick(upgradeable);

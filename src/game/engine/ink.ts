@@ -2,7 +2,11 @@ import type { CombatState } from "../schemas/combat-state";
 import type { InkPowerType } from "../schemas/enums";
 import type { CardDefinition } from "../schemas/cards";
 import { GAME_CONSTANTS } from "../constants";
-import { moveFromDiscardToHand, drawCards } from "./deck";
+import {
+  drawCards,
+  isClogCardDefinitionId,
+  moveFromDiscardToHand,
+} from "./deck";
 import { applyDamage } from "./damage";
 import { getBuffStacks } from "./buffs";
 import { applyBuff } from "./buffs";
@@ -51,7 +55,9 @@ export function canUseInkPower(
   switch (power) {
     // Scribe
     case "CALLIGRAPHIE":
-      return state.hand.length > 0;
+      return state.hand.some(
+        (card) => !card.upgraded && !isClogCardDefinitionId(card.definitionId)
+      );
     case "ENCRE_NOIRE":
       return state.enemies.some((e) => e.currentHp > 0);
     case "SEAL":
@@ -115,10 +121,11 @@ export function applyInkPower(
   switch (power) {
     case "CALLIGRAPHIE": {
       // Améliore une carte aléatoire en main (combat uniquement)
-      const upgradable = marked.hand.filter((c) => !c.upgraded);
-      const pool = upgradable.length > 0 ? upgradable : marked.hand;
-      if (pool.length === 0) return marked;
-      const target = rng.pick(pool);
+      const upgradable = marked.hand.filter(
+        (card) => !card.upgraded && !isClogCardDefinitionId(card.definitionId)
+      );
+      if (upgradable.length === 0) return state;
+      const target = rng.pick(upgradable);
       return {
         ...marked,
         hand: marked.hand.map((c) =>

@@ -11,6 +11,7 @@ import {
   formatAllyIntent,
   renderCompactBuffs,
   renderCompactStatusMarkersForPlayer,
+  summarizeEnemyIntentLabels,
 } from "./combat-view-helpers";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
@@ -71,7 +72,8 @@ function MobileValuePill({
     <span
       className={cn(
         "inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[8px] font-black uppercase tracking-[0.12em]",
-        highlight && "ring-1 ring-cyan-200/80 ring-offset-1 ring-offset-slate-950",
+        highlight &&
+          "ring-1 ring-cyan-200/80 ring-offset-1 ring-offset-slate-950",
         className
       )}
     >
@@ -88,8 +90,7 @@ function MobileIntentPreview({
   labels: string[];
   className: string;
 }) {
-  const visibleLabels = labels.slice(0, 2);
-  const remaining = Math.max(0, labels.length - visibleLabels.length);
+  const { visibleLabels, remaining } = summarizeEnemyIntentLabels(labels, 2);
 
   return (
     <div className="mt-1.5 flex min-h-[42px] flex-wrap gap-1">
@@ -152,7 +153,12 @@ export function CombatMobileGrid({
         combat.nextPlayerDisruption,
         attackBonus
       ),
-    [attackBonus, combat.nextPlayerDisruption, combat.player, combat.playerDisruption]
+    [
+      attackBonus,
+      combat.nextPlayerDisruption,
+      combat.player,
+      combat.playerDisruption,
+    ]
   );
 
   const mobileOccupiedSlots = useMemo<
@@ -225,11 +231,11 @@ export function CombatMobileGrid({
                     ? "border-slate-800/80 bg-slate-950/70 opacity-45 grayscale"
                     : "border-cyan-500/45 bg-[linear-gradient(180deg,rgba(8,145,178,0.22),rgba(2,6,23,0.88))]",
                   canTarget &&
-                    "border-cyan-300 ring-2 ring-cyan-300/70 shadow-[0_0_22px_rgba(34,211,238,0.3)]"
+                    "border-cyan-300 shadow-[0_0_22px_rgba(34,211,238,0.3)] ring-2 ring-cyan-300/70"
                 )}
               >
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_55%)]" />
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/12" />
+                <div className="bg-white/12 pointer-events-none absolute inset-x-0 top-0 h-px" />
 
                 <div className="relative flex h-full flex-col">
                   <div className="flex items-start justify-between gap-2">
@@ -325,7 +331,7 @@ export function CombatMobileGrid({
                 )}
               >
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(129,140,248,0.16),transparent_58%)]" />
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/12" />
+                <div className="bg-white/12 pointer-events-none absolute inset-x-0 top-0 h-px" />
 
                 <div className="relative flex h-full flex-col">
                   <div className="flex items-start justify-between gap-2">
@@ -385,7 +391,9 @@ export function CombatMobileGrid({
 
                     <div className="min-w-0 flex-1">
                       <div className="flex min-h-[20px] flex-wrap gap-1 overflow-hidden">
-                        {renderCompactStatusMarkersForPlayer(playerStatusMarkers)}
+                        {renderCompactStatusMarkersForPlayer(
+                          playerStatusMarkers
+                        )}
                       </div>
 
                       <div className="mt-1.5 rounded-2xl border border-indigo-300/15 bg-black/20 px-2 py-2">
@@ -461,7 +469,7 @@ export function CombatMobileGrid({
                   ? "border-slate-800/80 bg-slate-950/70 opacity-45 grayscale"
                   : "border-rose-500/45 bg-[linear-gradient(180deg,rgba(159,18,57,0.22),rgba(15,23,42,0.92))]",
                 (isTargetable || isCheatSelectable) &&
-                  "border-red-300 ring-2 ring-red-300/70 shadow-[0_0_24px_rgba(248,113,113,0.36)]",
+                  "border-red-300 shadow-[0_0_24px_rgba(248,113,113,0.36)] ring-2 ring-red-300/70",
                 isActing && "animate-enemy-acting",
                 attackingEnemyId === enemy.instanceId && "animate-enemy-attack",
                 newlySummonedIds.has(enemy.instanceId) &&
@@ -469,7 +477,7 @@ export function CombatMobileGrid({
               )}
             >
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(251,113,133,0.15),transparent_56%)]" />
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/12" />
+              <div className="bg-white/12 pointer-events-none absolute inset-x-0 top-0 h-px" />
 
               <div className="relative flex h-full flex-col">
                 <div className="flex items-start justify-between gap-2">

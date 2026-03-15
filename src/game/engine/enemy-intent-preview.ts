@@ -1,5 +1,13 @@
 import type { CombatState } from "../schemas/combat-state";
-import type { BuffInstance, EnemyAbility, EnemyState } from "../schemas/entities";
+import type {
+  BuffInstance,
+  EnemyAbility,
+  EnemyState,
+} from "../schemas/entities";
+import {
+  ARCHIVIST_BLACK_INKWELL_ID,
+  ARCHIVIST_PALE_INKWELL_ID,
+} from "./archivist";
 import { isCurseCardDefinitionId } from "./status-cards";
 
 export type EnemyIntentDamageBonus =
@@ -31,6 +39,11 @@ export type EnemyIntentExtraEffect =
   | {
       source: "ability" | "phase2";
       type: "SUMMON_ENEMY";
+      enemyId: string;
+    }
+  | {
+      source: "ability" | "phase2";
+      type: "REINVOKE_ENEMY";
       enemyId: string;
     }
   | {
@@ -95,6 +108,17 @@ export type EnemyIntentExtraEffect =
       source: "ability" | "phase2";
       type: "GAIN_BLOCK_ALL_ENEMIES";
       value: number;
+    }
+  | {
+      source: "ability" | "phase2";
+      type: "REDACT_CARD";
+      redaction: "COST" | "TEXT" | "COST_OR_TEXT";
+      value: number;
+    }
+  | {
+      source: "ability" | "phase2";
+      type: "RESTORE_REDACTIONS_ON_DEFEAT";
+      redaction: "COST" | "TEXT";
     };
 
 function countTrackedCurseCards(state: CombatState): number {
@@ -104,6 +128,147 @@ function countTrackedCurseCards(state: CombatState): number {
     ...state.discardPile,
     ...state.exhaustPile,
   ].filter((card) => isCurseCardDefinitionId(card.definitionId)).length;
+}
+
+function hasLivingEnemyDefinitionId(
+  state: CombatState,
+  definitionId: string
+): boolean {
+  return state.enemies.some(
+    (enemy) => enemy.definitionId === definitionId && enemy.currentHp > 0
+  );
+}
+
+function countRedactionsFromSource(
+  state: CombatState,
+  sourceEnemyDefinitionId: string
+): number {
+  return (state.cardRedactions ?? []).filter(
+    (redaction) => redaction.sourceEnemyDefinitionId === sourceEnemyDefinitionId
+  ).length;
+}
+
+function getMissingArchivistInkwellIds(state: CombatState): string[] {
+  return [ARCHIVIST_BLACK_INKWELL_ID, ARCHIVIST_PALE_INKWELL_ID].filter(
+    (definitionId) => !hasLivingEnemyDefinitionId(state, definitionId)
+  );
+}
+
+function getArchivistRedactionTypeForSource(
+  sourceEnemyDefinitionId: string
+): "COST" | "TEXT" {
+  return sourceEnemyDefinitionId === ARCHIVIST_BLACK_INKWELL_ID
+    ? "COST"
+    : "TEXT";
+}
+
+function getArchivistCorruptedIndexPreviewRedaction(
+  state: CombatState
+): "COST" | "TEXT" | "COST_OR_TEXT" | null {
+  const livingInkwellIds = [
+    ARCHIVIST_BLACK_INKWELL_ID,
+    ARCHIVIST_PALE_INKWELL_ID,
+  ].filter((definitionId) => hasLivingEnemyDefinitionId(state, definitionId));
+  const missingInkwellIds = getMissingArchivistInkwellIds(state);
+
+  if (missingInkwellIds.length >= 2 && livingInkwellIds.length === 0) {
+    return "COST_OR_TEXT";
+  }
+
+  if (livingInkwellIds.length === 1 && missingInkwellIds.length === 1) {
+    const livingId = livingInkwellIds[0]!;
+    const missingId = missingInkwellIds[0]!;
+    const livingCount = countRedactionsFromSource(state, livingId);
+    return livingCount > 0
+      ? getArchivistRedactionTypeForSource(missingId)
+      : "COST_OR_TEXT";
+  }
+
+  const blackAlive = livingInkwellIds.includes(ARCHIVIST_BLACK_INKWELL_ID);
+  const paleAlive = livingInkwellIds.includes(ARCHIVIST_PALE_INKWELL_ID);
+  if (blackAlive && paleAlive) {
+    const blackCount = countRedactionsFromSource(
+      state,
+      ARCHIVIST_BLACK_INKWELL_ID
+    );
+    const paleCount = countRedactionsFromSource(
+      state,
+      ARCHIVIST_PALE_INKWELL_ID
+    );
+    if (blackCount === paleCount) return "COST_OR_TEXT";
+    return blackCount < paleCount ? "COST" : "TEXT";
+  }
+  if (blackAlive) return "COST";
+  if (paleAlive) return "TEXT";
+  return null;
+}
+
+function getArchivistCorruptedIndexPreviewExtras(
+  state: CombatState
+): EnemyIntentExtraEffect[] {
+  const extras: EnemyIntentExtraEffect[] = [];
+  const missingInkwellIds = getMissingArchivistInkwellIds(state);
+
+  if (missingInkwellIds.length === 1) {
+    extras.push({
+      source: "ability",
+      type: "REINVOKE_ENEMY",
+      enemyId: missingInkwellIds[0]!,
+    });
+  }
+
+  const redaction = getArchivistCorruptedIndexPreviewRedaction(state);
+  if (redaction) {
+    extras.push({
+      source: "ability",
+      type: "REDACT_CARD",
+      redaction,
+      value: 1,
+    });
+  }
+
+  return extras;
+}
+
+function getArchivistPhaseTwoPreviewRedactions(
+  state: CombatState
+): EnemyIntentExtraEffect[] {
+  const extras: EnemyIntentExtraEffect[] = [];
+
+  if (
+    hasLivingEnemyDefinitionId(state, ARCHIVIST_BLACK_INKWELL_ID) ||
+    getMissingArchivistInkwellIds(state).includes(ARCHIVIST_BLACK_INKWELL_ID)
+  ) {
+    extras.push({
+      source: "phase2",
+      type: "REDACT_CARD",
+      redaction: "COST",
+      value: 1,
+    });
+  }
+  if (
+    hasLivingEnemyDefinitionId(state, ARCHIVIST_PALE_INKWELL_ID) ||
+    getMissingArchivistInkwellIds(state).includes(ARCHIVIST_PALE_INKWELL_ID)
+  ) {
+    extras.push({
+      source: "phase2",
+      type: "REDACT_CARD",
+      redaction: "TEXT",
+      value: 1,
+    });
+  }
+
+  return extras;
+}
+
+function getArchivistPhaseTwoPreviewReinvokes(
+  state: CombatState
+): EnemyIntentExtraEffect[] {
+  return getMissingArchivistInkwellIds(state).map((enemyId) => ({
+    source: "phase2" as const,
+    type: "REINVOKE_ENEMY" as const,
+    enemyId,
+  }));
 }
 
 export function hasPlayerDebuffForEnemyBonus(
@@ -239,6 +404,7 @@ export function getEnemyIntentActiveDamageBonusTotal(
 }
 
 export function getEnemyIntentAbilityExtraEffects(
+  state: CombatState,
   enemy: EnemyState,
   ability: EnemyAbility
 ): EnemyIntentExtraEffect[] {
@@ -246,12 +412,19 @@ export function getEnemyIntentAbilityExtraEffects(
 
   switch (key) {
     case "chapter_guardian:Page Storm":
-      return [{ source: "ability", type: "SUMMON_ENEMY", enemyId: "ink_slime" }];
+      return [
+        { source: "ability", type: "SUMMON_ENEMY", enemyId: "ink_slime" },
+      ];
     case "fenrir:Pack Howl":
       return [{ source: "ability", type: "SUMMON_ENEMY", enemyId: "draugr" }];
     case "fenrir:World's End":
       return [
-        { source: "ability", type: "ADD_CARD_TO_DRAW", cardId: "dazed", value: 2 },
+        {
+          source: "ability",
+          type: "ADD_CARD_TO_DRAW",
+          cardId: "dazed",
+          value: 2,
+        },
       ];
     case "medusa:Petrifying Gaze":
       return [
@@ -319,6 +492,33 @@ export function getEnemyIntentAbilityExtraEffects(
           value: 8,
         },
       ];
+    case "archivist_black_inkwell:Seal Reservoir":
+      return [
+        {
+          source: "ability",
+          type: "RESTORE_REDACTIONS_ON_DEFEAT",
+          redaction: "COST",
+        },
+      ];
+    case "archivist_pale_inkwell:Blank Reservoir":
+      return [
+        {
+          source: "ability",
+          type: "RESTORE_REDACTIONS_ON_DEFEAT",
+          redaction: "TEXT",
+        },
+      ];
+    case "the_archivist:Ink Erasure":
+      return hasLivingEnemyDefinitionId(state, ARCHIVIST_BLACK_INKWELL_ID)
+        ? [
+            {
+              source: "ability",
+              type: "REDACT_CARD",
+              redaction: "COST",
+              value: 1,
+            },
+          ]
+        : [];
     case "the_archivist:Corrupted Index":
       return [
         {
@@ -327,7 +527,19 @@ export function getEnemyIntentAbilityExtraEffects(
           cardId: "binding_curse",
           value: 1,
         },
+        ...getArchivistCorruptedIndexPreviewExtras(state),
       ];
+    case "the_archivist:Void Library":
+      return hasLivingEnemyDefinitionId(state, ARCHIVIST_PALE_INKWELL_ID)
+        ? [
+            {
+              source: "ability",
+              type: "REDACT_CARD",
+              redaction: "TEXT",
+              value: 1,
+            },
+          ]
+        : [];
     case "osiris_judgment:Anubis Seal":
       return [{ source: "ability", type: "HEAL_SELF", value: 12 }];
     case "shub_spawn:Spawn Eruption":
@@ -382,6 +594,7 @@ function phaseBuffExtra(
 }
 
 export function getEnemyIntentPendingPhaseExtraEffects(
+  state: CombatState,
   enemy: EnemyState
 ): EnemyIntentExtraEffect[] {
   if (!shouldPreviewEnemyPhaseTwo(enemy)) return [];
@@ -500,20 +713,14 @@ export function getEnemyIntentPendingPhaseExtraEffects(
       return [
         { source: "phase2", type: "HEAL_SELF", value: 12 },
         phaseBuffExtra("GAIN_STRENGTH_SELF", 2),
-        { source: "phase2", type: "DRAIN_ALL_INK" },
-        { source: "phase2", type: "FREEZE_HAND", value: 2 },
-        {
-          source: "phase2",
-          type: "ADD_CARD_TO_DRAW",
-          cardId: "haunting_regret",
-          value: 1,
-        },
+        ...getArchivistPhaseTwoPreviewReinvokes(state),
         {
           source: "phase2",
           type: "ADD_CARD_TO_DRAW",
           cardId: "binding_curse",
           value: 1,
         },
+        ...getArchivistPhaseTwoPreviewRedactions(state),
       ];
     case "hel_queen":
       return [

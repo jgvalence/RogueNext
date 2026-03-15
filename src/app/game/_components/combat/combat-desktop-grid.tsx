@@ -17,6 +17,7 @@ import {
   renderCompactStatusMarkersForPlayer,
   renderStatusMarkerDetailsForPlayer,
   resolveEnemyIntentTargetLabel,
+  summarizeEnemyIntentLabels,
 } from "./combat-view-helpers";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
@@ -181,11 +182,11 @@ export function CombatDesktopGrid({
               )}
               {!isDead &&
                 (incomingDamage.allies[ally.instanceId]?.total ?? 0) > 0 && (
-                <IncomingDamageBadge
-                  incoming={incomingDamage.allies[ally.instanceId]!}
-                  highlight={isIncomingDamageTutorialStep}
-                />
-              )}
+                  <IncomingDamageBadge
+                    incoming={incomingDamage.allies[ally.instanceId]!}
+                    highlight={isIncomingDamageTutorialStep}
+                  />
+                )}
               <div className="mb-1 flex h-14 items-center justify-center rounded-lg border border-cyan-900/60 bg-cyan-950/70 text-2xl sm:h-16 lg:h-28">
                 *
               </div>
@@ -320,6 +321,18 @@ export function CombatDesktopGrid({
         const isActing = actingEnemyId === enemy.instanceId;
         const enemyArtSrc = getEnemyImageSrc(enemy.definitionId);
         const enemyArtFailed = enemyArtFailures.has(enemy.definitionId);
+        const intentChips = buildMobileEnemyIntentChips(
+          combat,
+          enemy,
+          resolvedTarget,
+          ability,
+          hideIntent,
+          t
+        );
+        const { visibleLabels, remaining } = summarizeEnemyIntentLabels(
+          intentChips,
+          def.isBoss ? 3 : 2
+        );
 
         return (
           <Tooltip
@@ -424,26 +437,30 @@ export function CombatDesktopGrid({
               <p className="truncate text-[11px] font-bold text-rose-100 lg:text-xs">
                 {getEnemyDisplayName(enemy)}
               </p>
-              <div className="mt-1 flex min-h-5 flex-wrap gap-0.5">
-                {buildMobileEnemyIntentChips(
-                  combat,
-                  enemy,
-                  resolvedTarget,
-                  ability,
-                  hideIntent,
-                  t
-                ).map((chip, chipIndex) => (
+              <div className="mt-1 flex max-h-[3.4rem] min-h-[2.25rem] flex-wrap content-start gap-0.5 overflow-hidden">
+                {visibleLabels.map((chip, chipIndex) => (
                   <span
                     key={`${enemy.instanceId}-desktop-intent-${chipIndex}`}
                     className={cn(
-                      "rounded border border-rose-800/70 bg-rose-950/70 px-1 py-0.5 text-[8px] font-semibold text-rose-100",
+                      "block max-w-full rounded border border-rose-800/70 bg-rose-950/70 px-1 py-0.5 text-[8px] font-semibold leading-tight text-rose-100",
                       isIncomingDamageTutorialStep &&
                         "border-rose-300/80 bg-rose-800/70 text-rose-50"
                     )}
+                    style={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 2,
+                      overflow: "hidden",
+                    }}
                   >
                     {chip}
                   </span>
                 ))}
+                {remaining > 0 && (
+                  <span className="inline-flex items-center rounded border border-slate-600/80 bg-slate-900/80 px-1 py-0.5 text-[8px] font-black text-slate-100">
+                    +{remaining}
+                  </span>
+                )}
               </div>
               <HpBar
                 current={Math.max(0, enemy.currentHp)}

@@ -103,7 +103,10 @@ function formatEffect(
     case "HEAL":
       return t("gameCard.effect.heal", { value: effect.value });
     case "DRAW_CARDS":
-      return t("gameCard.effect.draw", { value: effect.value });
+      return t("gameCard.effect.draw", {
+        count: effect.value,
+        value: effect.value,
+      });
     case "DOUBLE_POISON":
       if (effect.value >= 3) {
         return t("gameCard.effect.triplePoison");
@@ -137,9 +140,27 @@ function formatEffect(
     case "EXHAUST":
       return t("gameCard.effect.exhaust");
     case "ADD_CARD_TO_DRAW":
-      return t("gameCard.effect.addToDraw");
+      if (effect.copySourceCard) {
+        return t("gameCard.effect.addThisCardToDraw", {
+          count: effect.value,
+          value: effect.value,
+        });
+      }
+      return t("gameCard.effect.addToDrawCount", {
+        count: effect.value,
+        value: effect.value,
+      });
     case "ADD_CARD_TO_DISCARD":
-      return t("gameCard.effect.addToDiscard");
+      if (effect.copySourceCard) {
+        return t("gameCard.effect.addThisCardToDiscard", {
+          count: effect.value,
+          value: effect.value,
+        });
+      }
+      return t("gameCard.effect.addToDiscardCount", {
+        count: effect.value,
+        value: effect.value,
+      });
     case "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND":
       return t("gameCard.effect.moveRandomNonClogDiscardToHand", {
         value: effect.value,
@@ -226,7 +247,9 @@ function cardDefinitionHasDirectDamage(definition: CardDefinition): boolean {
   return (
     definition.effects.some((effect) => effect.type === "DAMAGE") ||
     Boolean(
-      definition.inkedVariant?.effects.some((effect) => effect.type === "DAMAGE")
+      definition.inkedVariant?.effects.some(
+        (effect) => effect.type === "DAMAGE"
+      )
     )
   );
 }

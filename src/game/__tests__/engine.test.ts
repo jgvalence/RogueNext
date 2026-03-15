@@ -1440,6 +1440,37 @@ describe("Card playing", () => {
     ).toBe(false);
   });
 
+  it("ink_surge does not upgrade STATUS cards in hand", () => {
+    const rng = createRNG("ink-surge-status");
+    const statusCardId = statusCardDefinitionIds[0]!;
+    const base = makeMinimalCombat();
+    const state = makeMinimalCombat({
+      player: {
+        ...base.player,
+        inkPerCardChance: 0,
+      },
+      hand: [
+        { instanceId: "c1", definitionId: "ink_surge", upgraded: false },
+        {
+          instanceId: "status-1",
+          definitionId: statusCardId,
+          upgraded: false,
+        },
+        { instanceId: "c2", definitionId: "strike", upgraded: false },
+      ],
+      drawPile: [{ instanceId: "d1", definitionId: "defend", upgraded: false }],
+    });
+
+    const result = playCard(state, "c1", null, false, cardDefs, rng);
+
+    expect(
+      result.hand.find((card) => card.instanceId === "status-1")?.upgraded
+    ).toBe(false);
+    expect(result.hand.find((card) => card.instanceId === "c2")?.upgraded).toBe(
+      true
+    );
+  });
+
   it("ink_surge does not upgrade itself when no other card is available", () => {
     const rng = createRNG("ink-surge-no-self-upgrade");
     const state = makeMinimalCombat({
@@ -2820,17 +2851,54 @@ describe("Ink system", () => {
 
   it("applyInkPower CALLIGRAPHIE upgrades a random card in hand", () => {
     const rng = createRNG("calligraphie-test");
+    const statusCardId = statusCardDefinitionIds[0]!;
     const state = makeMinimalCombat({
       player: { ...makeMinimalCombat().player, inkCurrent: 5 },
       hand: [
+        {
+          instanceId: "status-1",
+          definitionId: statusCardId,
+          upgraded: false,
+        },
         { instanceId: "h1", definitionId: "strike", upgraded: false },
-        { instanceId: "h2", definitionId: "defend", upgraded: false },
+        { instanceId: "h2", definitionId: "defend", upgraded: true },
       ],
     });
+
+    expect(canUseInkPower(state, "CALLIGRAPHIE")).toBe(true);
+
     const result = applyInkPower(state, "CALLIGRAPHIE", null, cardDefs, rng);
+
+    expect(
+      result.hand.find((card) => card.instanceId === "status-1")?.upgraded
+    ).toBe(false);
+    expect(result.hand.find((card) => card.instanceId === "h1")?.upgraded).toBe(
+      true
+    );
     const upgradedCount = result.hand.filter((c) => c.upgraded).length;
-    expect(upgradedCount).toBe(1);
+    expect(upgradedCount).toBe(2);
     expect(result.player.inkCurrent).toBe(2); // 5 - 3
+  });
+
+  it("cannot use CALLIGRAPHIE when only STATUS cards are in hand", () => {
+    const rng = createRNG("calligraphie-status-only");
+    const statusCardId = statusCardDefinitionIds[0]!;
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 5 },
+      hand: [
+        {
+          instanceId: "status-1",
+          definitionId: statusCardId,
+          upgraded: false,
+        },
+      ],
+    });
+
+    expect(canUseInkPower(state, "CALLIGRAPHIE")).toBe(false);
+
+    const result = applyInkPower(state, "CALLIGRAPHIE", null, cardDefs, rng);
+
+    expect(result).toEqual(state);
   });
 
   it("applyInkPower ENCRE_NOIRE deals inkCurrent*2 damage to all enemies", () => {
@@ -4437,12 +4505,24 @@ describe("Run management", () => {
   it("applyRunConditionToRun battle_manual upgrades two random starter cards", () => {
     const rng = createRNG("run-condition-battle-manual");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
-    const run = createNewRun(
+    const statusCardId = statusCardDefinitionIds[0]!;
+    const baseRun = createNewRun(
       "run-battle-manual",
       "run-battle-manual",
       starterCards,
       rng
     );
+    const run = {
+      ...baseRun,
+      deck: [
+        ...baseRun.deck,
+        {
+          instanceId: "status-1",
+          definitionId: statusCardId,
+          upgraded: false,
+        },
+      ],
+    };
     const applied = applyRunConditionToRun(
       {
         ...run,
@@ -4460,6 +4540,9 @@ describe("Run management", () => {
 
     expect(applied.selectedRunConditionId).toBe("battle_manual");
     expect(applied.deck.filter((card) => card.upgraded)).toHaveLength(2);
+    expect(
+      applied.deck.find((card) => card.instanceId === "status-1")?.upgraded
+    ).toBe(false);
   });
 
   it("applyRunConditionToRun packed_supplies removes one starter card and adds one random collectible", () => {

@@ -1011,7 +1011,7 @@ export const en = {
     },
     warded_ribbon: {
       name: "Warded Ribbon",
-      description: "Start each combat with 6 Block.",
+      description: "Start each combat with 4 Block and 1 Thorn.",
     },
     inkwell_reservoir: {
       name: "Inkwell Reservoir",
@@ -1129,7 +1129,8 @@ export const en = {
       retriggerThornsOnWeakAttack:
         "When a Weak enemy attacks you, your Thorns trigger {{value}} extra time(s) this combat",
       heal: "Heal {{value}} HP",
-      draw: "Draw {{value}} cards",
+      draw_one: "Draw {{count}} card",
+      draw_other: "Draw {{count}} cards",
       doublePoison: "Double Poison on target",
       triplePoison: "Triple Poison on target",
       gainEnergy: "Gain {{value}} energy",
@@ -1143,7 +1144,19 @@ export const en = {
       exhaust: "Exhaust",
       unplayable: "Unplayable",
       addToDraw: "Add a card to draw pile",
+      addToDrawCount_one: "Add {{count}} card to draw pile",
+      addToDrawCount_other: "Add {{count}} cards to draw pile",
+      addThisCardToDraw_one:
+        "Add {{count}} copy of this card to your draw pile",
+      addThisCardToDraw_other:
+        "Add {{count}} copies of this card to your draw pile",
       addToDiscard: "Add a card to discard pile",
+      addToDiscardCount_one: "Add {{count}} card to discard pile",
+      addToDiscardCount_other: "Add {{count}} cards to discard pile",
+      addThisCardToDiscard_one:
+        "Add {{count}} copy of this card to your discard pile",
+      addThisCardToDiscard_other:
+        "Add {{count}} copies of this card to your discard pile",
       moveRandomNonClogDiscardToHand:
         "Return {{value}} random non-Status/Curse card(s) from your discard to your hand",
       freezeHandCards: "Freeze {{value}} card(s) in hand",
@@ -1618,12 +1631,18 @@ export const en = {
     drawDown: "Draw -{{value}}",
     randomDiscard: "Random discard {{value}}",
     summon: "Summon",
+    reinvokeEnemy: "Restores {{enemy}}",
     addCardToDrawNamed: "Draw +{{value}} {{card}}",
     addCardToDiscardNamed: "Discard +{{value}} {{card}}",
     drainAllInk: "Drain all ink",
     selfDamage: "Lose {{value}} HP",
     alliesGainBlock: "Allies +{{value}} BLK",
     alliesGainBuff: "Allies +{{value}} {{buff}}",
+    redactCardCost: "Redacts {{value}} card: +1 cost",
+    redactCardText: "Redacts {{value}} card: upgrade/inked disabled",
+    redactCardFlexible: "Redacts {{value}} card: cost or text",
+    restoreCostRedactionsOnDefeat: "Destroy: restore cost-redacted cards",
+    restoreTextRedactionsOnDefeat: "Destroy: restore text-redacted cards",
     bonusDamageFlat: "+{{bonus}} bonus",
     conditionalBonusVsDebuffed: "+{{bonus}} if player is debuffed",
     conditionalBonusVsLowInk: "+{{bonus}} if <= {{threshold}} ink",

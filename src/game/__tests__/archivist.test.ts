@@ -273,4 +273,116 @@ describe("the corrupted archivist", () => {
       },
     ]);
   });
+
+  it("phase 2 restores missing inkwells before applying fresh redactions", () => {
+    const baseDef = enemyDefs.get("the_archivist");
+    expect(baseDef).toBeDefined();
+    if (!baseDef) return;
+
+    const state = makeMinimalCombat({
+      phase: "ALLIES_ENEMIES_TURN",
+      drawPile: [
+        { instanceId: "mythic", definitionId: "mythic_blow", upgraded: false },
+        { instanceId: "fort", definitionId: "fortify", upgraded: true },
+      ],
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          currentHp: 70,
+          maxHp: 140,
+          intentIndex: 0,
+        },
+        {
+          ...makeMinimalCombat().enemies[1]!,
+          currentHp: 0,
+          block: 0,
+        },
+        makeMinimalCombat().enemies[2]!,
+      ],
+    });
+
+    const result = executeOneEnemyTurn(
+      state,
+      state.enemies[0]!,
+      baseDef,
+      makeDeterministicRng("archivist-phase-two-revive"),
+      enemyDefs
+    );
+
+    expect(
+      result.enemies.find(
+        (enemy) => enemy.definitionId === ARCHIVIST_BLACK_INKWELL_ID
+      )?.currentHp
+    ).toBe(22);
+    expect(
+      result.cardRedactions?.some(
+        (redaction) =>
+          redaction.sourceEnemyDefinitionId === ARCHIVIST_BLACK_INKWELL_ID &&
+          redaction.type === "COST"
+      )
+    ).toBe(true);
+    expect(
+      result.cardRedactions?.some(
+        (redaction) =>
+          redaction.sourceEnemyDefinitionId === ARCHIVIST_PALE_INKWELL_ID &&
+          redaction.type === "TEXT"
+      )
+    ).toBe(true);
+  });
+
+  it("Corrupted Index restores one missing inkwell before redacting", () => {
+    const baseDef = enemyDefs.get("the_archivist");
+    expect(baseDef).toBeDefined();
+    if (!baseDef) return;
+
+    const state = makeMinimalCombat({
+      phase: "ALLIES_ENEMIES_TURN",
+      drawPile: [
+        { instanceId: "fort", definitionId: "fortify", upgraded: false },
+        { instanceId: "strike-1", definitionId: "strike", upgraded: false },
+      ],
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          intentIndex: 0,
+        },
+        {
+          ...makeMinimalCombat().enemies[1]!,
+          currentHp: 0,
+          block: 0,
+        },
+        makeMinimalCombat().enemies[2]!,
+      ],
+    });
+
+    const corruptedIndexOnlyDef = {
+      ...baseDef,
+      abilities: [
+        baseDef.abilities.find(
+          (ability) => ability.name === "Corrupted Index"
+        )!,
+      ],
+    };
+
+    const result = executeOneEnemyTurn(
+      state,
+      state.enemies[0]!,
+      corruptedIndexOnlyDef,
+      makeDeterministicRng("archivist-corrupted-index-revive"),
+      enemyDefs
+    );
+
+    expect(
+      result.enemies.find(
+        (enemy) => enemy.definitionId === ARCHIVIST_BLACK_INKWELL_ID
+      )?.currentHp
+    ).toBe(22);
+    expect(
+      result.cardRedactions?.some(
+        (redaction) =>
+          redaction.sourceEnemyDefinitionId === ARCHIVIST_BLACK_INKWELL_ID &&
+          redaction.type === "COST"
+      )
+    ).toBe(true);
+  });
 });

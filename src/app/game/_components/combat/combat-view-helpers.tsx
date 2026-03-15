@@ -696,6 +696,12 @@ function buildExtraIntentEntry(
       )}`;
       colorClass = "bg-orange-900/70 text-orange-200";
       break;
+    case "REINVOKE_ENEMY":
+      label = t("enemyCard.reinvokeEnemy", {
+        enemy: getLocalizedIntentEnemyName(extra.enemyId),
+      });
+      colorClass = "bg-orange-950/80 text-amber-100";
+      break;
     case "ADD_CARD_TO_DRAW":
       label = t("enemyCard.addCardToDrawNamed", {
         value: extra.value,
@@ -764,6 +770,30 @@ function buildExtraIntentEntry(
       label = t("enemyCard.alliesGainBlock", { value: extra.value });
       colorClass = "bg-blue-950/80 text-blue-100";
       break;
+    case "REDACT_CARD":
+      label =
+        extra.redaction === "COST"
+          ? t("enemyCard.redactCardCost", { value: extra.value })
+          : extra.redaction === "TEXT"
+            ? t("enemyCard.redactCardText", { value: extra.value })
+            : t("enemyCard.redactCardFlexible", { value: extra.value });
+      colorClass =
+        extra.redaction === "COST"
+          ? "bg-amber-950/80 text-amber-100"
+          : extra.redaction === "TEXT"
+            ? "bg-slate-700 text-slate-100"
+            : "bg-stone-800 text-stone-100";
+      break;
+    case "RESTORE_REDACTIONS_ON_DEFEAT":
+      label =
+        extra.redaction === "COST"
+          ? t("enemyCard.restoreCostRedactionsOnDefeat")
+          : t("enemyCard.restoreTextRedactionsOnDefeat");
+      colorClass =
+        extra.redaction === "COST"
+          ? "bg-emerald-950/80 text-emerald-100"
+          : "bg-teal-950/80 text-teal-100";
+      break;
     default:
       break;
   }
@@ -802,8 +832,8 @@ function buildEnemyIntentEntries(
     (bonus, index) => buildDamageBonusIntentEntry(bonus, index, t)
   );
   const extraEntries = [
-    ...getEnemyIntentAbilityExtraEffects(enemy, ability),
-    ...getEnemyIntentPendingPhaseExtraEffects(enemy),
+    ...getEnemyIntentAbilityExtraEffects(combat, enemy, ability),
+    ...getEnemyIntentPendingPhaseExtraEffects(combat, enemy),
   ].map((extra, index) => buildExtraIntentEntry(extra, index, t));
 
   return [...baseEntries, ...bonusEntries, ...extraEntries].filter(
@@ -824,12 +854,11 @@ export function renderEnemyIntentEffects(
     | { type: "enemy"; instanceId: string }
     | { type: "ally"; instanceId: string }
 ): ReactNode[] {
-  const effectiveAbility =
-    ability ?? {
-      name: "",
-      weight: 1,
-      effects,
-    };
+  const effectiveAbility = ability ?? {
+    name: "",
+    weight: 1,
+    effects,
+  };
 
   return buildEnemyIntentEntries(
     combat,
@@ -978,6 +1007,21 @@ export function buildMobileEnemyIntentChips(
     ability,
     translate
   ).map((entry) => entry.label);
+}
+
+export function summarizeEnemyIntentLabels(
+  labels: string[],
+  maxVisible: number
+): {
+  visibleLabels: string[];
+  remaining: number;
+} {
+  const safeMaxVisible = Math.max(1, Math.floor(maxVisible));
+
+  return {
+    visibleLabels: labels.slice(0, safeMaxVisible),
+    remaining: Math.max(0, labels.length - safeMaxVisible),
+  };
 }
 
 export function computeEnemyDamagePreview(

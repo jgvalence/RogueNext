@@ -4,7 +4,8 @@ import type {
   CombatState,
 } from "../schemas/combat-state";
 import type { CardDefinition, CardInstance } from "../schemas/cards";
-import { buildCardDefsMap } from "../data";
+import { buildCardDefsMap, buildEnemyDefsMap } from "../data";
+import { nanoid } from "nanoid";
 import type { RNG } from "./rng";
 
 export const ARCHIVIST_ID = "the_archivist";
@@ -13,6 +14,7 @@ export const ARCHIVIST_PALE_INKWELL_ID = "archivist_pale_inkwell";
 
 const TEXT_REDACTION_SOURCE_IDS = new Set([ARCHIVIST_PALE_INKWELL_ID]);
 const cardDefs = buildCardDefsMap();
+const enemyDefs = buildEnemyDefsMap();
 
 function getAllCardInstances(state: CombatState): CardInstance[] {
   return [
@@ -36,6 +38,84 @@ function getLivingInkwellIds(state: CombatState): string[] {
   return [ARCHIVIST_BLACK_INKWELL_ID, ARCHIVIST_PALE_INKWELL_ID].filter((id) =>
     isLivingEnemyDefinitionId(state, id)
   );
+}
+
+function reviveArchivistInkwell(
+  state: CombatState,
+  definitionId: string
+): CombatState {
+  const existingEnemy = state.enemies.find(
+    (enemy) => enemy.definitionId === definitionId
+  );
+  if (existingEnemy) {
+    if (existingEnemy.currentHp > 0) return state;
+    return {
+      ...state,
+      enemies: state.enemies.map((enemy) =>
+        enemy.instanceId === existingEnemy.instanceId
+          ? {
+              ...enemy,
+              currentHp: enemy.maxHp,
+              block: 0,
+              buffs: [],
+              mechanicFlags: {},
+              intentIndex: 0,
+            }
+          : enemy
+      ),
+    };
+  }
+
+  if (state.enemies.length >= 4) return state;
+  const definition = enemyDefs.get(definitionId);
+  if (!definition) return state;
+
+  return {
+    ...state,
+    enemies: [
+      ...state.enemies,
+      {
+        instanceId: nanoid(),
+        definitionId: definition.id,
+        name: definition.name,
+        isBoss: definition.isBoss,
+        isElite: definition.isElite,
+        currentHp: definition.maxHp,
+        maxHp: definition.maxHp,
+        block: 0,
+        mechanicFlags: {},
+        speed: definition.speed,
+        buffs: [],
+        intentIndex: 0,
+      },
+    ],
+  };
+}
+
+function restoreMissingArchivistInkwells(
+  state: CombatState,
+  missingDefinitionIds: string[]
+): CombatState {
+  let current = state;
+  for (const definitionId of missingDefinitionIds) {
+    current = reviveArchivistInkwell(current, definitionId);
+  }
+  return current;
+}
+
+function getMissingArchivistInkwellIds(state: CombatState): string[] {
+  return [ARCHIVIST_BLACK_INKWELL_ID, ARCHIVIST_PALE_INKWELL_ID].filter(
+    (definitionId) => !isLivingEnemyDefinitionId(state, definitionId)
+  );
+}
+
+function restoreOneMissingArchivistInkwell(
+  state: CombatState,
+  rng: RNG
+): CombatState {
+  const missingInkwellIds = getMissingArchivistInkwellIds(state);
+  if (missingInkwellIds.length === 0) return state;
+  return reviveArchivistInkwell(state, rng.pick(missingInkwellIds));
 }
 
 function getEffectiveCardEnergyCostForSelection(
@@ -246,6 +326,10 @@ export function initializeArchivistCombat(state: CombatState): CombatState {
 
 export function triggerArchivistPhaseTwo(state: CombatState): CombatState {
   let current = synchronizeArchivistCombatState(state);
+  current = restoreMissingArchivistInkwells(
+    current,
+    getMissingArchivistInkwellIds(current)
+  );
   current = applyArchivistRedaction(
     current,
     ARCHIVIST_BLACK_INKWELL_ID,
@@ -260,7 +344,7 @@ export function applyArchivistAbilityMechanics(
   abilityName: string,
   rng: RNG
 ): CombatState {
-  const current = synchronizeArchivistCombatState(state);
+  let current = synchronizeArchivistCombatState(state);
 
   switch (abilityName) {
     case "Ink Erasure":
@@ -276,6 +360,7 @@ export function applyArchivistAbilityMechanics(
         "TEXT"
       );
     case "Corrupted Index": {
+      current = restoreOneMissingArchivistInkwell(current, rng);
       const livingSources = getLivingInkwellIds(current);
       if (livingSources.length === 0) return current;
 

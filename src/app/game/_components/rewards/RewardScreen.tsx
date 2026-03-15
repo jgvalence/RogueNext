@@ -143,15 +143,15 @@ export function RewardScreen({
               <RogueButton
                 onClick={() => onPickMaxHp(bossMaxHpBonus)}
                 type="text"
-                className="!flex !h-auto !w-36 !flex-col !items-center !gap-2 !rounded-xl !border-2 !border-red-700 !bg-red-950/40 !p-4 !text-center !transition hover:!border-red-500 hover:!bg-red-950/60"
+                className="!flex !h-auto !w-40 !min-w-0 !flex-col !items-center !gap-2 !whitespace-normal !rounded-xl !border-2 !border-red-700 !bg-red-950/40 !p-4 !text-center !transition hover:!border-red-500 hover:!bg-red-950/60"
               >
                 <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
                   {t("reward.vitality")}
                 </span>
-                <span className="text-sm font-bold text-white">
+                <span className="block w-full whitespace-normal break-words text-sm font-bold leading-tight text-white [overflow-wrap:anywhere]">
                   +{bossMaxHpBonus} {t("reward.maxHp")}
                 </span>
-                <span className="text-xs text-red-200">
+                <span className="block w-full whitespace-normal break-words text-xs leading-relaxed text-red-200 [overflow-wrap:anywhere]">
                   {t("reward.maxHpDescription")}
                 </span>
               </RogueButton>

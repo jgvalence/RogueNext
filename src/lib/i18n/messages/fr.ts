@@ -872,7 +872,7 @@ export const fr = {
     },
     warded_ribbon: {
       name: "Ruban de garde",
-      description: "Commence chaque combat avec 6 armure.",
+      description: "Commence chaque combat avec 4 armure et 1 epine.",
     },
     inkwell_reservoir: {
       name: "Reservoir d'encrier",
@@ -1109,7 +1109,8 @@ export const fr = {
       retriggerThornsOnWeakAttack:
         "Quand un ennemi Affaibli vous attaque, vos Epines se declenchent {{value}} fois de plus ce combat",
       heal: "Soigne {{value}} PV",
-      draw: "Pioche {{value}} cartes",
+      draw_one: "Pioche {{count}} carte",
+      draw_other: "Pioche {{count}} cartes",
       doublePoison: "Double le Poison de la cible",
       triplePoison: "Triple le Poison de la cible",
       gainEnergy: "Gagne {{value}} energie",
@@ -1123,7 +1124,19 @@ export const fr = {
       exhaust: "Epuisement",
       unplayable: "Injouable",
       addToDraw: "Ajoute une carte a la pioche",
+      addToDrawCount_one: "Ajoute {{count}} carte a la pioche",
+      addToDrawCount_other: "Ajoute {{count}} cartes a la pioche",
+      addThisCardToDraw_one:
+        "Ajoute {{count}} copie de cette carte a votre pioche",
+      addThisCardToDraw_other:
+        "Ajoute {{count}} copies de cette carte a votre pioche",
       addToDiscard: "Ajoute une carte a la defausse",
+      addToDiscardCount_one: "Ajoute {{count}} carte a la defausse",
+      addToDiscardCount_other: "Ajoute {{count}} cartes a la defausse",
+      addThisCardToDiscard_one:
+        "Ajoute {{count}} copie de cette carte a votre defausse",
+      addThisCardToDiscard_other:
+        "Ajoute {{count}} copies de cette carte a votre defausse",
       moveRandomNonClogDiscardToHand:
         "Remonte {{value}} carte(s) aleatoire(s) non statut/malediction de votre defausse vers votre main",
       freezeHandCards: "Gele {{value}} carte(s) en main",
@@ -1615,12 +1628,20 @@ export const fr = {
     drawDown: "Pioche -{{value}}",
     randomDiscard: "Defausse aleatoire {{value}}",
     summon: "Invoque",
+    reinvokeEnemy: "Retablit {{enemy}}",
     addCardToDrawNamed: "Pioche +{{value}} {{card}}",
     addCardToDiscardNamed: "Defausse +{{value}} {{card}}",
     drainAllInk: "Vide toute l'encre",
     selfDamage: "Perd {{value}} PV",
     alliesGainBlock: "Allies +{{value}} BLK",
     alliesGainBuff: "Allies +{{value}} {{buff}}",
+    redactCardCost: "Redige {{value}} carte : +1 cout",
+    redactCardText: "Redige {{value}} carte : upgrade/encre coupes",
+    redactCardFlexible: "Redige {{value}} carte : cout ou texte",
+    restoreCostRedactionsOnDefeat:
+      "Detruire : restaure les cartes a cout augmente",
+    restoreTextRedactionsOnDefeat:
+      "Detruire : restaure les cartes au texte redige",
     bonusDamageFlat: "+{{bonus}} bonus",
     conditionalBonusVsDebuffed: "+{{bonus}} si le joueur est affaibli",
     conditionalBonusVsLowInk: "+{{bonus}} si <= {{threshold}} encre",
