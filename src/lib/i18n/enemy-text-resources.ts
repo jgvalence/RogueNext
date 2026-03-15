@@ -281,6 +281,7 @@ export function getMissingFrenchEnemyNameIds(): string[] {
   return enemyDefinitions
     .filter(
       (definition) =>
+        !definition.isScriptedOnly &&
         !Object.prototype.hasOwnProperty.call(FR_ENEMY_NAMES, definition.id)
     )
     .map((definition) => definition.id);

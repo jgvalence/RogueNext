@@ -42,6 +42,16 @@ export const TurnDisruptionSchema = z.object({
 });
 export type TurnDisruption = z.infer<typeof TurnDisruptionSchema>;
 
+export const CardRedactionTypeSchema = z.enum(["COST", "TEXT"]);
+export type CardRedactionType = z.infer<typeof CardRedactionTypeSchema>;
+
+export const CardRedactionSchema = z.object({
+  cardInstanceId: z.string(),
+  sourceEnemyDefinitionId: z.string(),
+  type: CardRedactionTypeSchema,
+});
+export type CardRedaction = z.infer<typeof CardRedactionSchema>;
+
 export const CombatStateSchema = z.object({
   floor: z.number().int().default(1),
   difficultyLevel: z.number().int().min(0).optional(),
@@ -61,6 +71,7 @@ export const CombatStateSchema = z.object({
   firstHitReductionUsed: z.boolean().default(false),
   playerDisruption: TurnDisruptionSchema.default({}),
   nextPlayerDisruption: TurnDisruptionSchema.default({}),
+  cardRedactions: z.array(CardRedactionSchema).optional(),
   relicFlags: z.record(z.string(), z.boolean()).optional(),
   relicCounters: z.record(z.string(), z.number()).optional(),
   relicModifiers: z

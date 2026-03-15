@@ -5,6 +5,11 @@ import type { PointerEvent as ReactPointerEvent, RefObject } from "react";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
 import type { CombatState } from "@/game/schemas/combat-state";
 import { canPlayCard, canPlayCardInked } from "@/game/engine/cards";
+import {
+  getArchivistCardCostModifier,
+  getArchivistEffectiveCardDefinition,
+  getArchivistEffectiveUpgradeState,
+} from "@/game/engine/archivist";
 import { GameCard } from "./GameCard";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
@@ -63,8 +68,7 @@ const MOBILE_HAND_STYLES: Record<
     shell: "from-[#1f2732] via-[#0f141c] to-[#090a0e]",
     inkButton:
       "border-cyan-300/35 bg-gradient-to-r from-cyan-900/70 to-slate-900/65 text-cyan-50",
-    inkButtonDisabled:
-      "border-slate-500/20 bg-slate-900/35 text-slate-100/65",
+    inkButtonDisabled: "border-slate-500/20 bg-slate-900/35 text-slate-100/65",
   },
   CURSE: {
     border: "border-rose-600/75",
@@ -91,6 +95,29 @@ interface MobileHandCardProps {
 
 const MOBILE_CARD_LONG_PRESS_MS = 420;
 const MOBILE_CARD_LONG_PRESS_MOVE_TOLERANCE_PX = 12;
+
+function getDisplayedCardState(
+  combatState: CombatState,
+  card: CardInstance,
+  definition: CardDefinition
+) {
+  return {
+    definition: getArchivistEffectiveCardDefinition(
+      combatState,
+      card.instanceId,
+      definition
+    ),
+    upgraded: getArchivistEffectiveUpgradeState(
+      combatState,
+      card.instanceId,
+      card.upgraded
+    ),
+    archivistCostModifier: getArchivistCardCostModifier(
+      combatState,
+      card.instanceId
+    ),
+  };
+}
 
 function MobileHandCard({
   definition,
@@ -193,11 +220,11 @@ function MobileHandCard({
       onPointerCancel={handlePointerEnd}
       onPointerLeave={handlePointerEnd}
       className={cn(
-        "relative flex h-[136px] w-[94px] shrink-0 cursor-pointer flex-col overflow-hidden rounded-[18px] border bg-slate-950/96 p-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.45)] transition-all duration-200 [@media(max-height:540px)]:h-[124px] [@media(max-height:540px)]:w-[86px]",
+        "bg-slate-950/96 relative flex h-[136px] w-[94px] shrink-0 cursor-pointer flex-col overflow-hidden rounded-[18px] border p-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.45)] transition-all duration-200 [@media(max-height:540px)]:h-[124px] [@media(max-height:540px)]:w-[86px]",
         style.border,
         isSelected &&
           (isPendingInked
-            ? "ring-2 ring-cyan-300/90 ring-offset-2 ring-offset-slate-950 shadow-[0_0_18px_rgba(34,211,238,0.24)]"
+            ? "shadow-[0_0_18px_rgba(34,211,238,0.24)] ring-2 ring-cyan-300/90 ring-offset-2 ring-offset-slate-950"
             : "ring-2 ring-amber-200/90 ring-offset-2 ring-offset-slate-950"),
         upgraded &&
           "shadow-[0_0_18px_rgba(251,191,36,0.24)] before:absolute before:inset-x-0 before:top-0 before:h-[3px] before:bg-gradient-to-r before:from-amber-400 before:via-yellow-200 before:to-amber-400",
@@ -217,7 +244,7 @@ function MobileHandCard({
           {displayedEnergyCost}
         </div>
         {upgraded && (
-          <span className="pointer-events-none absolute right-1 top-1 rounded-full border border-amber-200/70 bg-amber-300/24 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-amber-50 shadow-[0_0_12px_rgba(245,158,11,0.2)]">
+          <span className="bg-amber-300/24 pointer-events-none absolute right-1 top-1 rounded-full border border-amber-200/70 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-amber-50 shadow-[0_0_12px_rgba(245,158,11,0.2)]">
             +
           </span>
         )}
@@ -238,7 +265,7 @@ function MobileHandCard({
             {localizedName}
           </p>
           {isFrozen && (
-            <span className="mt-1.5 inline-flex rounded-full border border-cyan-200/45 bg-cyan-300/12 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.14em] text-cyan-50">
+            <span className="bg-cyan-300/12 mt-1.5 inline-flex rounded-full border border-cyan-200/45 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.14em] text-cyan-50">
               Frozen
             </span>
           )}
@@ -316,7 +343,7 @@ export function HandArea({
     () => hand.findIndex((c) => c.instanceId === hoveredCardId),
     [hand, hoveredCardId]
   );
-  const costModifier = combatState.playerDisruption?.extraCardCost ?? 0;
+  const globalCostModifier = combatState.playerDisruption?.extraCardCost ?? 0;
   const desktopOverlapPx =
     hand.length <= 3
       ? 0
@@ -328,9 +355,9 @@ export function HandArea({
             ? 110
             : 122;
   const desktopHoverSpreadPx = hand.length >= 8 ? 38 : 32;
-  const mobileOverlapPx =
-    hand.length <= 5 ? 14 : hand.length <= 7 ? 18 : 21;
-  const mobileFanRotationDeg = hand.length <= 5 ? 1.4 : hand.length <= 7 ? 1.8 : 2.2;
+  const mobileOverlapPx = hand.length <= 5 ? 14 : hand.length <= 7 ? 18 : 21;
+  const mobileFanRotationDeg =
+    hand.length <= 5 ? 1.4 : hand.length <= 7 ? 1.8 : 2.2;
 
   const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mobilePreviewRef = useRef<HTMLDivElement | null>(null);
@@ -339,8 +366,15 @@ export function HandArea({
     [hand, mobilePreviewCardId]
   );
   const mobilePreviewDef = mobilePreviewCard
-    ? cardDefs.get(mobilePreviewCard.definitionId) ?? null
+    ? (cardDefs.get(mobilePreviewCard.definitionId) ?? null)
     : null;
+  const mobilePreviewDisplay =
+    mobilePreviewCard && mobilePreviewDef
+      ? getDisplayedCardState(combatState, mobilePreviewCard, mobilePreviewDef)
+      : null;
+  const mobilePreviewCanInked = mobilePreviewCard
+    ? canPlayCardInked(combatState, mobilePreviewCard.instanceId, cardDefs)
+    : false;
 
   useEffect(() => {
     if (
@@ -415,19 +449,26 @@ export function HandArea({
             className="fixed bottom-[3.75rem] left-1/2 z-[140] -translate-x-1/2 [@media(max-height:540px)]:bottom-[3.15rem]"
           >
             <GameCard
-              definition={mobilePreviewDef}
-              upgraded={mobilePreviewCard.upgraded}
-              costModifier={costModifier}
+              definition={mobilePreviewDisplay?.definition ?? mobilePreviewDef}
+              upgraded={
+                mobilePreviewDisplay?.upgraded ?? mobilePreviewCard.upgraded
+              }
+              costModifier={
+                globalCostModifier +
+                (mobilePreviewDisplay?.archivistCostModifier ?? 0)
+              }
               attackBonus={attackBonus}
               canPlay
-              canPlayInked={Boolean(mobilePreviewDef.inkedVariant)}
+              canPlayInked={mobilePreviewCanInked}
               isSelected={selectedCardId === mobilePreviewCard.instanceId}
               isPendingInked={
                 selectedCardId === mobilePreviewCard.instanceId && pendingInked
               }
-              onInkedClick={() => onPlayCard(mobilePreviewCard.instanceId, true)}
+              onInkedClick={() =>
+                onPlayCard(mobilePreviewCard.instanceId, true)
+              }
               size="lg"
-              className="!h-[288px] !w-[176px] !cursor-default !opacity-100 !saturate-100 shadow-[0_26px_54px_rgba(2,6,23,0.82)]"
+              className="!h-[288px] !w-[176px] !cursor-default !opacity-100 shadow-[0_26px_54px_rgba(2,6,23,0.82)] !saturate-100"
             />
             {(mobilePreviewDef.targeting === "SINGLE_ENEMY" ||
               mobilePreviewDef.targeting === "SINGLE_ALLY") && (
@@ -441,73 +482,81 @@ export function HandArea({
         )}
         <div className="flex h-[168px] w-full min-w-0 touch-pan-x items-end gap-0 overflow-x-auto overflow-y-hidden overscroll-x-contain px-1.5 pb-1 pr-1.5 [-webkit-overflow-scrolling:touch] [@media(max-height:540px)]:h-[154px]">
           <div className="mx-auto flex h-full w-max min-w-full items-end justify-center">
-          {hand.map((card, index) => {
-            const def = cardDefs.get(card.definitionId);
-            if (!def) return null;
+            {hand.map((card, index) => {
+              const def = cardDefs.get(card.definitionId);
+              if (!def) return null;
+              const display = getDisplayedCardState(combatState, card, def);
 
-            const canPlay = canPlayCard(combatState, card.instanceId, cardDefs);
-            const canInked = canPlayCardInked(
-              combatState,
-              card.instanceId,
-              cardDefs
-            );
-            const isTutorialPlayableInkedCard =
-              tutorialPlayableInkedCardId === card.instanceId;
-            const cardInteractionsBlocked =
-              disableCardInteractions ||
-              (tutorialPlayableInkedCardId !== null &&
-                !isTutorialPlayableInkedCard);
-            const displayedCanPlay =
-              tutorialPlayableInkedCardId !== null
-                ? false
-                : !cardInteractionsBlocked && canPlay;
-            const displayedCanPlayInked = !cardInteractionsBlocked && canInked;
-            const isFrozen = (
-              combatState.playerDisruption?.frozenHandCardIds ?? []
-            ).includes(card.instanceId);
-            const isSelected = selectedCardId === card.instanceId;
-            const fanOffset = index - (hand.length - 1) / 2;
-            const fanRotateDeg = fanOffset * mobileFanRotationDeg;
-            const fanLiftPx = Math.max(0, 3.5 - Math.abs(fanOffset) * 0.9);
-            const selectedLiftPx = isSelected ? 9 : fanLiftPx;
+              const canPlay = canPlayCard(
+                combatState,
+                card.instanceId,
+                cardDefs
+              );
+              const canInked = canPlayCardInked(
+                combatState,
+                card.instanceId,
+                cardDefs
+              );
+              const isTutorialPlayableInkedCard =
+                tutorialPlayableInkedCardId === card.instanceId;
+              const cardInteractionsBlocked =
+                disableCardInteractions ||
+                (tutorialPlayableInkedCardId !== null &&
+                  !isTutorialPlayableInkedCard);
+              const displayedCanPlay =
+                tutorialPlayableInkedCardId !== null
+                  ? false
+                  : !cardInteractionsBlocked && canPlay;
+              const displayedCanPlayInked =
+                !cardInteractionsBlocked && canInked;
+              const isFrozen = (
+                combatState.playerDisruption?.frozenHandCardIds ?? []
+              ).includes(card.instanceId);
+              const isSelected = selectedCardId === card.instanceId;
+              const fanOffset = index - (hand.length - 1) / 2;
+              const fanRotateDeg = fanOffset * mobileFanRotationDeg;
+              const fanLiftPx = Math.max(0, 3.5 - Math.abs(fanOffset) * 0.9);
+              const selectedLiftPx = isSelected ? 9 : fanLiftPx;
 
-            return (
-              <div
-                key={`mobile-card-${card.instanceId}`}
-                className="relative shrink-0 origin-bottom snap-start transition-all duration-200 ease-out"
-                style={{
-                  marginLeft: index === 0 ? 0 : -mobileOverlapPx,
-                  transform: `translateY(-${selectedLiftPx}px) rotate(${fanRotateDeg}deg) scale(${isSelected ? 1.04 : 1})`,
-                  zIndex: isSelected ? 90 : 30 + index,
-                }}
-              >
-                <MobileHandCard
-                  definition={def}
-                  upgraded={card.upgraded}
-                  costModifier={costModifier}
-                  isSelected={isSelected}
-                  isPendingInked={isSelected && pendingInked}
-                  isFrozen={isFrozen}
-                  canPlay={displayedCanPlay}
-                  canPlayInked={displayedCanPlayInked}
-                  onOpenPreview={() => {
-                    setMobilePreviewCardId(card.instanceId);
+              return (
+                <div
+                  key={`mobile-card-${card.instanceId}`}
+                  className="relative shrink-0 origin-bottom snap-start transition-all duration-200 ease-out"
+                  style={{
+                    marginLeft: index === 0 ? 0 : -mobileOverlapPx,
+                    transform: `translateY(-${selectedLiftPx}px) rotate(${fanRotateDeg}deg) scale(${isSelected ? 1.04 : 1})`,
+                    zIndex: isSelected ? 90 : 30 + index,
                   }}
-                  onPlay={() => onPlayCard(card.instanceId, false)}
-                  onPlayInked={() => onPlayCard(card.instanceId, true)}
-                />
-                {isTutorialPlayableInkedCard && (
-                  <div className="pointer-events-none absolute inset-0 rounded-[18px] ring-2 ring-cyan-300/85 ring-offset-2 ring-offset-slate-950" />
-                )}
-              </div>
-            );
-          })}
+                >
+                  <MobileHandCard
+                    definition={display.definition}
+                    upgraded={display.upgraded}
+                    costModifier={
+                      globalCostModifier + display.archivistCostModifier
+                    }
+                    isSelected={isSelected}
+                    isPendingInked={isSelected && pendingInked}
+                    isFrozen={isFrozen}
+                    canPlay={displayedCanPlay}
+                    canPlayInked={displayedCanPlayInked}
+                    onOpenPreview={() => {
+                      setMobilePreviewCardId(card.instanceId);
+                    }}
+                    onPlay={() => onPlayCard(card.instanceId, false)}
+                    onPlayInked={() => onPlayCard(card.instanceId, true)}
+                  />
+                  {isTutorialPlayableInkedCard && (
+                    <div className="pointer-events-none absolute inset-0 rounded-[18px] ring-2 ring-cyan-300/85 ring-offset-2 ring-offset-slate-950" />
+                  )}
+                </div>
+              );
+            })}
 
-          {hand.length === 0 && (
-            <p className="self-center text-xs text-gray-500">
-              {t("combat.noCardsInHand")}
-            </p>
-          )}
+            {hand.length === 0 && (
+              <p className="self-center text-xs text-gray-500">
+                {t("combat.noCardsInHand")}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -516,6 +565,7 @@ export function HandArea({
         {hand.map((card, index) => {
           const def = cardDefs.get(card.definitionId);
           if (!def) return null;
+          const display = getDisplayedCardState(combatState, card, def);
 
           const canPlay = canPlayCard(combatState, card.instanceId, cardDefs);
           const canInked = canPlayCardInked(
@@ -596,15 +646,17 @@ export function HandArea({
             >
               <GameCard
                 instanceId={card.instanceId}
-                definition={def}
-                costModifier={costModifier}
+                definition={display.definition}
+                costModifier={
+                  globalCostModifier + display.archivistCostModifier
+                }
                 attackBonus={attackBonus}
                 canPlay={displayedCanPlay}
                 canPlayInked={displayedCanPlayInked}
                 isSelected={isSelected}
                 isPendingInked={isSelected && pendingInked}
                 isFrozen={isFrozen}
-                upgraded={card.upgraded}
+                upgraded={display.upgraded}
                 detailMode={isHovered || isSelected ? "full" : "condensed"}
                 className={
                   isTutorialPlayableInkedCard

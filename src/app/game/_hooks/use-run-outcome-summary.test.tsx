@@ -14,6 +14,7 @@ describe("useRunOutcomeSummary", () => {
       earnedResources: {
         PAGES: 2,
         RUNES: 1,
+        __RUN_CONDITION_CARD__war_dance: 1,
       },
     });
 

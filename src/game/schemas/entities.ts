@@ -71,11 +71,17 @@ export const EnemyDefinitionSchema = z.object({
   abilities: z.array(EnemyAbilitySchema),
   isBoss: z.boolean().default(false),
   isElite: z.boolean().default(false),
+  isScriptedOnly: z.boolean().default(false),
   role: EnemyRole.default("HYBRID"),
   tier: z.number().int().default(1),
   biome: BiomeType.default("LIBRARY"),
 });
-export type EnemyDefinition = z.infer<typeof EnemyDefinitionSchema>;
+export type EnemyDefinition = Omit<
+  z.infer<typeof EnemyDefinitionSchema>,
+  "isScriptedOnly"
+> & {
+  isScriptedOnly?: boolean;
+};
 
 export const EnemyStateSchema = z.object({
   instanceId: z.string(),

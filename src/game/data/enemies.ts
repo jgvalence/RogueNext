@@ -283,7 +283,8 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
   // =========================================================
   // LIBRARY biome — boss
   // =========================================================
-  // Cycle (6 turns): 18 + 10 + 14 + 16 + 18 + 12 = 88 raw damage.
+  // Core cycle (6 turns): 18 + 10 + 14 + 16 + 18 + 12 = 88 raw damage.
+  // Rebind Chapter is a forced mechanic turn, not part of the normal rotation.
   {
     id: "chapter_guardian",
     name: "Chapter Guardian",
@@ -363,6 +364,12 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
           { condition: { type: "TURN_MULTIPLE", n: 3 }, weightMultiplier: 2 },
         ],
       },
+      {
+        name: "Rebind Chapter",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 12 }],
+      },
     ],
     isBoss: true,
     isElite: false,
@@ -438,6 +445,44 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: true,
     isElite: false,
+    tier: 1,
+    biome: "LIBRARY",
+  },
+  {
+    id: "archivist_black_inkwell",
+    name: "Black Inkwell",
+    maxHp: 22,
+    speed: 1,
+    abilities: [
+      {
+        name: "Seal Reservoir",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 7 }],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    isScriptedOnly: true,
+    tier: 1,
+    biome: "LIBRARY",
+  },
+  {
+    id: "archivist_pale_inkwell",
+    name: "Pale Inkwell",
+    maxHp: 18,
+    speed: 1,
+    abilities: [
+      {
+        name: "Blank Reservoir",
+        weight: 1,
+        target: "SELF",
+        effects: [{ type: "BLOCK", value: 5 }],
+      },
+    ],
+    isBoss: false,
+    isElite: false,
+    isScriptedOnly: true,
     tier: 1,
     biome: "LIBRARY",
   },

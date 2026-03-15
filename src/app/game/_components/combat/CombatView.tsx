@@ -26,6 +26,10 @@ import {
 import { CombatMobileInfoPanel } from "./combat-mobile-info-panel";
 import { CombatOverlays } from "./combat-overlays";
 import { computeIncomingDamage } from "@/game/engine/incoming-damage";
+import {
+  getArchivistEffectiveCardDefinition,
+  getArchivistEffectiveUpgradeState,
+} from "@/game/engine/archivist";
 import { useTranslation } from "react-i18next";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
 import { useGame } from "@/app/game/_providers/game-provider";
@@ -375,25 +379,42 @@ export function CombatView({
     return () => window.clearTimeout(timeoutId);
   }, [combat.phase, dispatch, shouldAutoLoseFirstRunElite]);
 
-  const previewEffects = useMemo(
-    () =>
-      selectedDef && selectedCardId
-        ? getPreviewEffectsForSelectedCard(
-            selectedDef,
-            combat.hand.find((card) => card.instanceId === selectedCardId)
-              ?.upgraded ?? false,
-            pendingInked,
-            attackBonus
-          )
-        : [],
-    [selectedDef, selectedCardId, combat.hand, pendingInked, attackBonus]
-  );
+  const previewEffects = useMemo(() => {
+    if (!selectedDef || !selectedCardId) return [];
+    const selectedCard =
+      combat.hand.find((card) => card.instanceId === selectedCardId) ?? null;
+    if (!selectedCard) return [];
+
+    const effectiveDefinition = getArchivistEffectiveCardDefinition(
+      combat,
+      selectedCardId,
+      selectedDef
+    );
+    const effectiveUpgraded = getArchivistEffectiveUpgradeState(
+      combat,
+      selectedCardId,
+      selectedCard.upgraded
+    );
+
+    return getPreviewEffectsForSelectedCard(
+      effectiveDefinition,
+      effectiveUpgraded,
+      pendingInked,
+      attackBonus
+    );
+  }, [selectedDef, selectedCardId, combat, pendingInked, attackBonus]);
 
   const incomingDamageByEnemyId = useMemo(
     () =>
       buildIncomingDamagePreviewMap(
         combat,
-        selectedDef,
+        selectedDef && selectedCardId
+          ? getArchivistEffectiveCardDefinition(
+              combat,
+              selectedCardId,
+              selectedDef
+            )
+          : selectedDef,
         previewEffects,
         selectedCardId
       ),

@@ -66,8 +66,16 @@ const RUN_CONDITION_ID_ALIASES: Record<string, string> = {
   vanilla: VANILLA_RUN_CONDITION_ID,
 };
 
-export function getRunConditionCardLootUnlockResourceKey(cardId: string): string {
+export function getRunConditionCardLootUnlockResourceKey(
+  cardId: string
+): string {
   return `${RUN_CONDITION_CARD_LOOT_UNLOCK_PREFIX}${cardId}`;
+}
+
+export function isRunConditionCardLootUnlockResourceKey(
+  resourceKey: string
+): boolean {
+  return resourceKey.startsWith(RUN_CONDITION_CARD_LOOT_UNLOCK_PREFIX);
 }
 
 const baseRunConditionDefinitions: RunConditionDefinition[] = [
@@ -519,7 +527,9 @@ export function computeUnlockedRunConditionIds(
     .map((condition) => condition.id);
 }
 
-function hasNoUnlockRequirements(unlock: RunConditionUnlockRequirement): boolean {
+function hasNoUnlockRequirements(
+  unlock: RunConditionUnlockRequirement
+): boolean {
   return (
     !unlock.totalRuns &&
     !unlock.wonRuns &&

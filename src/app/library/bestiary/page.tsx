@@ -46,6 +46,7 @@ export default async function BestiaryPage() {
   );
 
   const enemies: BestiaryEnemyRow[] = enemyDefinitions
+    .filter((definition) => !definition.isScriptedOnly)
     .map((definition) => {
       const derivedType = deriveEncounteredEnemyType({
         isBoss: definition.isBoss,

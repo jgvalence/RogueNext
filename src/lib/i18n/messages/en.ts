@@ -623,8 +623,7 @@ export const en = {
     },
     le_poeme_de_beowulf: {
       title: "The Poem of Beowulf",
-      description:
-        "The epic of the great Germanic hero. +2 starting Strength.",
+      description: "The epic of the great Germanic hero. +2 starting Strength.",
     },
     l_odyssee: {
       title: "The Odyssey",
@@ -652,8 +651,7 @@ export const en = {
     le_banquet: {
       title: "The Symposium",
       author: "Plato",
-      description:
-        "A dialogue on love and wisdom. +1 additional ally slot.",
+      description: "A dialogue on love and wisdom. +1 additional ally slot.",
     },
     livre_des_morts: {
       title: "Book of the Dead",
@@ -1095,6 +1093,10 @@ export const en = {
       ink: "Ink",
       current: "Current",
       upgraded: "Upgraded",
+      redaction: {
+        COST: "Cost +1",
+        TEXT: "Text Redacted",
+      },
     },
     effect: {
       damage: "Deal {{value}} damage",
@@ -1111,8 +1113,7 @@ export const en = {
         "Deal {{value}} damage per Status/Curse in your discard",
       damagePerExhaustedCard:
         "Deal {{value}} damage per card in your Exhaust pile",
-      damagePerDrawnThisTurn:
-        "Deal {{value}} damage per card drawn this turn",
+      damagePerDrawnThisTurn: "Deal {{value}} damage per card drawn this turn",
       damageBonusIfUpgradedInHand:
         "If this card is upgraded in hand: +{{value}} damage",
       block: "Gain {{value}} block",
@@ -1266,8 +1267,7 @@ export const en = {
       blockPerCurrentInk: "block {{value}} per current ink, drain all",
       blockPerDebuff: "block {{value}} per {{buff}}",
       blockPerExhaustedCard: "block {{value}} per exhausted card",
-      applyBuffPerExhaustedCard:
-        "gain {{value}} {{buff}} per exhausted card",
+      applyBuffPerExhaustedCard: "gain {{value}} {{buff}} per exhausted card",
       retriggerThornsOnWeakAttack: "thorns retrigger vs weak +{{value}}",
       drawCards: "draw {{value}}",
       doublePoison: "double poison",
@@ -1640,8 +1640,7 @@ export const en = {
     strengthTooltip: "Increases all damage dealt by {{value}}.",
     focusTooltip: "Increases block gained by {{value}}.",
     attackBonusBadge: "ATK +{{value}}",
-    attackBonusTooltip:
-      "Your Attack cards deal {{value}} additional damage.",
+    attackBonusTooltip: "Your Attack cards deal {{value}} additional damage.",
     extraCardCost: "Cards +{{value}} cost",
     drawPenalty: "Draw -{{value}}",
     nextDrawDiscard: "Next draw to discard",

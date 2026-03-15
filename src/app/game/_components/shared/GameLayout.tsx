@@ -9,6 +9,7 @@ import { setLocale, supportedLocales, type SupportedLocale } from "@/lib/i18n";
 import { RogueButton, RogueModal, RogueTag } from "@/components/ui/rogue";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { relicDefinitions } from "@/game/data/relics";
+import { isRunConditionCardLootUnlockResourceKey } from "@/game/engine/run-conditions";
 import { DeckViewerModal } from "./DeckViewerModal";
 import { RulesModal } from "./RulesModal";
 import {
@@ -74,6 +75,12 @@ export function GameLayout({
   const canRequestCombatEndTurn =
     state.combat?.phase === "PLAYER_TURN" &&
     (state.combat.pendingHandOverflowExhaust ?? 0) <= 0;
+  const visibleEarnedResources = Object.entries(
+    state.earnedResources ?? {}
+  ).filter(
+    ([resourceKey, amount]) =>
+      amount > 0 && !isRunConditionCardLootUnlockResourceKey(resourceKey)
+  );
 
   const toggleMute = () => {
     const next = !muted;
@@ -188,21 +195,17 @@ export function GameLayout({
             </span>
           </div>
 
-          {Object.entries(state.earnedResources ?? {}).some(
-            ([, v]) => v > 0
-          ) && (
+          {visibleEarnedResources.length > 0 && (
             <div className="hidden items-center gap-1 sm:flex [@media(max-height:540px)]:hidden">
-              {Object.entries(state.earnedResources ?? {})
-                .filter(([, v]) => v > 0)
-                .map(([key, val]) => (
-                  <RogueTag
-                    key={key}
-                    bordered={false}
-                    className="rounded bg-slate-700/60 px-1.5 py-0.5 text-xs text-amber-400/80"
-                  >
-                    {val} {key.charAt(0) + key.slice(1).toLowerCase()}
-                  </RogueTag>
-                ))}
+              {visibleEarnedResources.map(([key, val]) => (
+                <RogueTag
+                  key={key}
+                  bordered={false}
+                  className="rounded bg-slate-700/60 px-1.5 py-0.5 text-xs text-amber-400/80"
+                >
+                  {val} {key.charAt(0) + key.slice(1).toLowerCase()}
+                </RogueTag>
+              ))}
             </div>
           )}
 

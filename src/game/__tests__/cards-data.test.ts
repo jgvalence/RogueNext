@@ -12,10 +12,14 @@ describe("bestiary card data", () => {
     const expectedIds = enemyDefinitions
       .filter(
         (enemy) =>
-          !enemy.isBoss && !ENEMIES_WITHOUT_BESTIARY_CARDS_SET.has(enemy.id)
+          !enemy.isBoss &&
+          !enemy.isScriptedOnly &&
+          !ENEMIES_WITHOUT_BESTIARY_CARDS_SET.has(enemy.id)
       )
       .map((enemy) =>
-        enemy.isElite ? `bestiary_elite_${enemy.id}` : `bestiary_normal_${enemy.id}`
+        enemy.isElite
+          ? `bestiary_elite_${enemy.id}`
+          : `bestiary_normal_${enemy.id}`
       )
       .sort();
 

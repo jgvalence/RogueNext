@@ -1095,7 +1095,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Deal 7 damage to ALL enemies. Apply 1 Weak to ALL. Draw 1 card.",
+    description:
+      "Deal 7 damage to ALL enemies. Apply 1 Weak to ALL. Draw 1 card.",
     effects: [
       { type: "DAMAGE", value: 7 },
       { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
@@ -2135,7 +2136,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Apply 2 Vulnerable to ALL enemies. Draw 1 card. Gain 1 Strength.",
+    description:
+      "Apply 2 Vulnerable to ALL enemies. Draw 1 card. Gain 1 Strength.",
     effects: [
       { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
       { type: "DRAW_CARDS", value: 1 },
@@ -2480,22 +2482,20 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     targeting: "SINGLE_ENEMY",
     rarity: "RARE",
     description:
-      "Deal 8 damage. Deal 3 damage per card in your Exhaust pile. Add 1 Dazed to your discard. Exhaust.",
+      "Deal 8 damage. Deal 3 damage per card in your Exhaust pile. Add 1 Dazed to your discard.",
     effects: [
       { type: "DAMAGE", value: 8 },
       { type: "DAMAGE_PER_EXHAUSTED_CARD", value: 3 },
       { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
-      { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: null,
     upgrade: {
       description:
-        "Deal 10 damage. Deal 4 damage per card in your Exhaust pile. Add 1 Dazed to your discard. Exhaust.",
+        "Deal 10 damage. Deal 4 damage per card in your Exhaust pile. Add 1 Dazed to your discard.",
       effects: [
         { type: "DAMAGE", value: 10 },
         { type: "DAMAGE_PER_EXHAUSTED_CARD", value: 4 },
         { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
-        { type: "EXHAUST", value: 0 },
       ],
     },
     isStarterCard: false,
@@ -2932,7 +2932,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Gain 2 ink. Draw 1 card. Apply 2 Vulnerable. Gain 1 Strength.",
+    description:
+      "Gain 2 ink. Draw 1 card. Apply 2 Vulnerable. Gain 1 Strength.",
     effects: [
       { type: "GAIN_INK", value: 2 },
       { type: "DRAW_CARDS", value: 1 },
@@ -2941,7 +2942,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     ],
     inkedVariant: null,
     upgrade: {
-      description: "Gain 2 ink. Draw 2 cards. Apply 2 Vulnerable. Gain 1 Strength.",
+      description:
+        "Gain 2 ink. Draw 2 cards. Apply 2 Vulnerable. Gain 1 Strength.",
       effects: [
         { type: "GAIN_INK", value: 2 },
         { type: "DRAW_CARDS", value: 2 },
@@ -2961,14 +2963,16 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Gain 3 ink. Gain 6 block. Deal 2 damage per Poison on target.",
+    description:
+      "Gain 3 ink. Gain 6 block. Deal 2 damage per Poison on target.",
     effects: [
       { type: "GAIN_INK", value: 3 },
       { type: "BLOCK", value: 6 },
       { type: "DAMAGE_PER_DEBUFF", value: 2, buff: "POISON" },
     ],
     inkedVariant: {
-      description: "Gain 4 ink. Gain 9 block. Deal 3 damage per Poison on target.",
+      description:
+        "Gain 4 ink. Gain 9 block. Deal 3 damage per Poison on target.",
       effects: [
         { type: "GAIN_INK", value: 4 },
         { type: "BLOCK", value: 9 },
@@ -2977,7 +2981,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Gain 3 ink. Gain 8 block. Deal 2 damage per Poison on target.",
+      description:
+        "Gain 3 ink. Gain 8 block. Deal 2 damage per Poison on target.",
       effects: [
         { type: "GAIN_INK", value: 3 },
         { type: "BLOCK", value: 8 },
@@ -3003,7 +3008,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: {
-      description: "Deal 12 damage. Deal 4 damage per Bleed on target. Exhaust.",
+      description:
+        "Deal 12 damage. Deal 4 damage per Bleed on target. Exhaust.",
       effects: [
         { type: "DAMAGE", value: 12 },
         { type: "DAMAGE_PER_DEBUFF", value: 4, buff: "BLEED" },
@@ -3012,7 +3018,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       inkMarkCost: 3,
     },
     upgrade: {
-      description: "Deal 10 damage. Deal 3 damage per Bleed on target. Exhaust.",
+      description:
+        "Deal 10 damage. Deal 3 damage per Bleed on target. Exhaust.",
       effects: [
         { type: "DAMAGE", value: 10 },
         { type: "DAMAGE_PER_DEBUFF", value: 3, buff: "BLEED" },
@@ -3945,7 +3952,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "RARE",
-    description: "Deal 8 damage. Apply 3 Bleed. Deal 2 damage per Bleed on target.",
+    description:
+      "Deal 8 damage. Apply 3 Bleed. Deal 2 damage per Bleed on target.",
     effects: [
       { type: "DAMAGE", value: 8 },
       { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
@@ -4464,7 +4472,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Draw 2 cards. Gain 1 energy. Apply 1 Vulnerable to ALL enemies. Exhaust.",
+    description:
+      "Draw 2 cards. Gain 1 energy. Apply 1 Vulnerable to ALL enemies. Exhaust.",
     effects: [
       { type: "DRAW_CARDS", value: 2 },
       { type: "GAIN_ENERGY", value: 1 },
@@ -4895,7 +4904,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Deal 4 damage to ALL enemies. Apply 2 Vulnerable to ALL. Heal 3.",
+    description:
+      "Deal 4 damage to ALL enemies. Apply 2 Vulnerable to ALL. Heal 3.",
     effects: [
       { type: "DAMAGE", value: 4 },
       { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
@@ -5056,7 +5066,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "COMMON",
-    description: "Gain 6 block. Draw 1 card. Gain 2 block per Vulnerable on enemies.",
+    description:
+      "Gain 6 block. Draw 1 card. Gain 2 block per Vulnerable on enemies.",
     effects: [
       { type: "BLOCK", value: 6 },
       { type: "DRAW_CARDS", value: 1 },
@@ -5517,14 +5528,16 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "COMMON",
-    description: "Deal 3 damage. Apply 2 Poison. Deal 1 damage per Poison on target.",
+    description:
+      "Deal 3 damage. Apply 2 Poison. Deal 1 damage per Poison on target.",
     effects: [
       { type: "DAMAGE", value: 3 },
       { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
       { type: "DAMAGE_PER_DEBUFF", value: 1, buff: "POISON" },
     ],
     inkedVariant: {
-      description: "Deal 5 damage. Apply 3 Poison. Deal 2 damage per Poison on target.",
+      description:
+        "Deal 5 damage. Apply 3 Poison. Deal 2 damage per Poison on target.",
       effects: [
         { type: "DAMAGE", value: 5 },
         { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
@@ -5533,7 +5546,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 5 damage. Apply 2 Poison. Deal 2 damage per Poison on target.",
+      description:
+        "Deal 5 damage. Apply 2 Poison. Deal 2 damage per Poison on target.",
       effects: [
         { type: "DAMAGE", value: 5 },
         { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
@@ -5677,7 +5691,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "UNCOMMON",
-    description: "Gain 7 block. Heal 3. Gain 2 block per Vulnerable on enemies.",
+    description:
+      "Gain 7 block. Heal 3. Gain 2 block per Vulnerable on enemies.",
     effects: [
       { type: "BLOCK", value: 7 },
       { type: "HEAL", value: 3 },
@@ -5714,7 +5729,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "RARE",
-    description: "Gain 4 ink. Draw 2 cards. Apply 1 Weak to ALL enemies. Exhaust.",
+    description:
+      "Gain 4 ink. Draw 2 cards. Apply 1 Weak to ALL enemies. Exhaust.",
     effects: [
       { type: "GAIN_INK", value: 4 },
       { type: "DRAW_CARDS", value: 2 },
@@ -5853,7 +5869,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Apply 2 Vulnerable to ALL enemies. Draw 1 card. Gain 1 Focus.",
+    description:
+      "Apply 2 Vulnerable to ALL enemies. Draw 1 card. Gain 1 Focus.",
     effects: [
       { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
       { type: "DRAW_CARDS", value: 1 },
@@ -5861,7 +5878,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     ],
     inkedVariant: null,
     upgrade: {
-      description: "Apply 3 Vulnerable to ALL enemies. Draw 1 card. Gain 1 Focus.",
+      description:
+        "Apply 3 Vulnerable to ALL enemies. Draw 1 card. Gain 1 Focus.",
       effects: [
         { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
         { type: "DRAW_CARDS", value: 1 },
@@ -5923,8 +5941,7 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "BLOCK", value: 5 },
     ],
     inkedVariant: {
-      description:
-        "Deal 6 damage to ALL. Apply 2 Weak to ALL. Gain 8 Block.",
+      description: "Deal 6 damage to ALL. Apply 2 Weak to ALL. Gain 8 Block.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
@@ -5933,8 +5950,7 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       inkMarkCost: 2,
     },
     upgrade: {
-      description:
-        "Deal 6 damage to ALL. Apply 2 Weak to ALL. Gain 5 Block.",
+      description: "Deal 6 damage to ALL. Apply 2 Weak to ALL. Gain 5 Block.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
@@ -6060,7 +6076,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     ],
     inkedVariant: null,
     upgrade: {
-      description: "Apply 2 Weak to ALL enemies. Apply 3 Poison to ALL enemies.",
+      description:
+        "Apply 2 Weak to ALL enemies. Apply 3 Poison to ALL enemies.",
       effects: [
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
@@ -6116,7 +6133,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Gain 2 ink. Apply 2 Vulnerable to target. Draw 1 card. Gain 1 Focus.",
+    description:
+      "Gain 2 ink. Apply 2 Vulnerable to target. Draw 1 card. Gain 1 Focus.",
     effects: [
       { type: "GAIN_INK", value: 2 },
       { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
@@ -6125,7 +6143,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     ],
     inkedVariant: null,
     upgrade: {
-      description: "Gain 2 ink. Apply 3 Vulnerable to target. Draw 1 card. Gain 1 Focus.",
+      description:
+        "Gain 2 ink. Apply 3 Vulnerable to target. Draw 1 card. Gain 1 Focus.",
       effects: [
         { type: "GAIN_INK", value: 2 },
         { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
@@ -6239,10 +6258,15 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Deal 8 damage. Add Solar Ascent to your discard pile. Exhaust.",
+    description:
+      "Deal 8 damage. Add Solar Ascent to your discard pile. Exhaust.",
     effects: [
       { type: "DAMAGE", value: 8 },
-      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "eagle_knight_solar_ascent" },
+      {
+        type: "ADD_CARD_TO_DISCARD",
+        value: 1,
+        cardId: "eagle_knight_solar_ascent",
+      },
       { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: null,
@@ -6259,10 +6283,15 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Deal 11 damage. Add Solar Verdict to your discard pile. Exhaust.",
+    description:
+      "Deal 11 damage. Add Solar Verdict to your discard pile. Exhaust.",
     effects: [
       { type: "DAMAGE", value: 11 },
-      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "eagle_knight_solar_verdict" },
+      {
+        type: "ADD_CARD_TO_DISCARD",
+        value: 1,
+        cardId: "eagle_knight_solar_verdict",
+      },
       { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: null,
@@ -6337,7 +6366,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "STARTER",
-    description: "Unplayable. When drawn, freeze the next card you draw this turn.",
+    description:
+      "Unplayable. When drawn, freeze the next card you draw this turn.",
     effects: [],
     inkedVariant: null,
     upgrade: null,
@@ -6509,16 +6539,14 @@ function makeBestiaryCardTemplate(
   };
 }
 
-const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
-  string,
-  BestiaryCardTemplate
-> = {
+const BESTIARY_NORMAL_CARD_OVERRIDES: Record<string, BestiaryCardTemplate> = {
   // VIKING
   draugr: makeBestiaryCardTemplate({
     type: "ATTACK",
     energyCost: 1,
     targeting: "SINGLE_ENEMY",
-    description: "Deal 5 damage. Apply 2 Bleed. Add 1 Dazed to your discard pile.",
+    description:
+      "Deal 5 damage. Apply 2 Bleed. Add 1 Dazed to your discard pile.",
     effects: [
       { type: "DAMAGE", value: 5 },
       { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 2 },
@@ -6766,7 +6794,8 @@ const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
     type: "ATTACK",
     energyCost: 0,
     targeting: "SINGLE_ENEMY",
-    description: "Deal 2 damage. Add a copy of this card to your discard pile. Exhaust.",
+    description:
+      "Deal 2 damage. Add a copy of this card to your discard pile. Exhaust.",
     effects: [
       { type: "DAMAGE", value: 2 },
       { type: "ADD_CARD_TO_DISCARD", value: 1, copySourceCard: true },
@@ -6808,14 +6837,22 @@ const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
     description: "Deal 4 damage. Add Sun Dive to your discard pile. Exhaust.",
     effects: [
       { type: "DAMAGE", value: 4 },
-      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "eagle_knight_sun_dive" },
+      {
+        type: "ADD_CARD_TO_DISCARD",
+        value: 1,
+        cardId: "eagle_knight_sun_dive",
+      },
       { type: "EXHAUST", value: 0 },
     ],
     upgrade: {
       description: "Deal 6 damage. Add Sun Dive to your discard pile. Exhaust.",
       effects: [
         { type: "DAMAGE", value: 6 },
-        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "eagle_knight_sun_dive" },
+        {
+          type: "ADD_CARD_TO_DISCARD",
+          value: 1,
+          cardId: "eagle_knight_sun_dive",
+        },
         { type: "EXHAUST", value: 0 },
       ],
     },
@@ -6847,13 +6884,15 @@ const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
     type: "ATTACK",
     energyCost: 1,
     targeting: "SINGLE_ENEMY",
-    description: "Deal 5 damage. Return 1 random non-Clog card from discard to hand.",
+    description:
+      "Deal 5 damage. Return 1 random non-Clog card from discard to hand.",
     effects: [
       { type: "DAMAGE", value: 5 },
       { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
     ],
     upgrade: {
-      description: "Deal 7 damage. Return 1 random non-Clog card from discard to hand.",
+      description:
+        "Deal 7 damage. Return 1 random non-Clog card from discard to hand.",
       effects: [
         { type: "DAMAGE", value: 7 },
         { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
@@ -6864,7 +6903,8 @@ const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
     type: "SKILL",
     energyCost: 1,
     targeting: "ALL_ENEMIES",
-    description: "Apply 1 Weak to ALL enemies. Gain 1 Thorns per Weak on enemies.",
+    description:
+      "Apply 1 Weak to ALL enemies. Gain 1 Thorns per Weak on enemies.",
     effects: [
       { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
       {
@@ -6899,7 +6939,8 @@ const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
       { type: "APPLY_BUFF", value: 1, buff: "THORNS" },
     ],
     upgrade: {
-      description: "Gain 7 block. Apply 3 Poison to ALL enemies. Gain 1 Thorns.",
+      description:
+        "Gain 7 block. Apply 3 Poison to ALL enemies. Gain 1 Thorns.",
       effects: [
         { type: "BLOCK", value: 7 },
         { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
@@ -6930,7 +6971,8 @@ const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
     type: "SKILL",
     energyCost: 1,
     targeting: "SELF",
-    description: "Gain 1 Ward. Freeze 1 card in your hand. Draw 1 card. Exhaust.",
+    description:
+      "Gain 1 Ward. Freeze 1 card in your hand. Draw 1 card. Exhaust.",
     effects: [
       { type: "APPLY_BUFF", value: 1, buff: "WARD" },
       { type: "FREEZE_HAND_CARDS", value: 1 },
@@ -6938,7 +6980,8 @@ const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
       { type: "EXHAUST", value: 0 },
     ],
     upgrade: {
-      description: "Gain 1 Ward. Freeze 1 card in your hand. Draw 2 cards. Exhaust.",
+      description:
+        "Gain 1 Ward. Freeze 1 card in your hand. Draw 2 cards. Exhaust.",
       effects: [
         { type: "APPLY_BUFF", value: 1, buff: "WARD" },
         { type: "FREEZE_HAND_CARDS", value: 1 },
@@ -7018,7 +7061,8 @@ const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
     type: "ATTACK",
     energyCost: 1,
     targeting: "SINGLE_ENEMY",
-    description: "Deal 4 damage. If target already has Poison, deal 4 damage again. Apply 2 Poison.",
+    description:
+      "Deal 4 damage. If target already has Poison, deal 4 damage again. Apply 2 Poison.",
     effects: [
       { type: "DAMAGE", value: 4 },
       { type: "DAMAGE_IF_TARGET_HAS_DEBUFF", value: 4, buff: "POISON" },
@@ -7063,10 +7107,7 @@ const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
   }),
 };
 
-const BESTIARY_ELITE_CARD_OVERRIDES: Record<
-  string,
-  BestiaryCardTemplate
-> = {
+const BESTIARY_ELITE_CARD_OVERRIDES: Record<string, BestiaryCardTemplate> = {
   // VIKING
   valkyrie: makeBestiaryCardTemplate({
     type: "SKILL",
@@ -7091,7 +7132,8 @@ const BESTIARY_ELITE_CARD_OVERRIDES: Record<
     type: "SKILL",
     energyCost: 2,
     targeting: "SINGLE_ENEMY",
-    description: "Double Poison on target. Apply 1 Weak. Gain 6 block. Exhaust.",
+    description:
+      "Double Poison on target. Apply 1 Weak. Gain 6 block. Exhaust.",
     effects: [
       { type: "DOUBLE_POISON", value: 0 },
       { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
@@ -7099,7 +7141,8 @@ const BESTIARY_ELITE_CARD_OVERRIDES: Record<
       { type: "EXHAUST", value: 0 },
     ],
     upgrade: {
-      description: "Double Poison on target. Apply 2 Weak. Gain 8 block. Exhaust.",
+      description:
+        "Double Poison on target. Apply 2 Weak. Gain 8 block. Exhaust.",
       effects: [
         { type: "DOUBLE_POISON", value: 0 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
@@ -7141,16 +7184,12 @@ const BESTIARY_ELITE_CARD_OVERRIDES: Record<
     targeting: "SELF",
     description:
       "Gain Venom Rite. Venom Rite: Every time your cards apply 6 Poison, deal 5 damage to ALL enemies.",
-    effects: [
-      { type: "APPLY_BUFF", value: 1, buff: "POISON_BURST" },
-    ],
+    effects: [{ type: "APPLY_BUFF", value: 1, buff: "POISON_BURST" }],
     upgrade: {
       energyCost: 1,
       description:
         "Gain Venom Rite. Venom Rite: Every time your cards apply 6 Poison, deal 5 damage to ALL enemies.",
-      effects: [
-        { type: "APPLY_BUFF", value: 1, buff: "POISON_BURST" },
-      ],
+      effects: [{ type: "APPLY_BUFF", value: 1, buff: "POISON_BURST" }],
     },
   }),
   sekhmet_chosen: makeBestiaryCardTemplate({
@@ -7286,7 +7325,8 @@ const BESTIARY_ELITE_CARD_OVERRIDES: Record<
     type: "ATTACK",
     energyCost: 2,
     targeting: "SINGLE_ENEMY",
-    description: "Deal 8 damage. Apply 3 Bleed. Deal 3 more damage per Weak on target. Exhaust.",
+    description:
+      "Deal 8 damage. Apply 3 Bleed. Deal 3 more damage per Weak on target. Exhaust.",
     effects: [
       { type: "DAMAGE", value: 8 },
       { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 3 },
@@ -7356,16 +7396,12 @@ const BESTIARY_ELITE_CARD_OVERRIDES: Record<
     targeting: "SELF",
     description:
       "Gain Ember Flow. Ember Flow: Whenever one of your cards Exhausts, gain 1 energy.",
-    effects: [
-      { type: "APPLY_BUFF", value: 1, buff: "EXHAUST_ENERGY" },
-    ],
+    effects: [{ type: "APPLY_BUFF", value: 1, buff: "EXHAUST_ENERGY" }],
     upgrade: {
       energyCost: 1,
       description:
         "Gain Ember Flow. Ember Flow: Whenever one of your cards Exhausts, gain 1 energy.",
-      effects: [
-        { type: "APPLY_BUFF", value: 1, buff: "EXHAUST_ENERGY" },
-      ],
+      effects: [{ type: "APPLY_BUFF", value: 1, buff: "EXHAUST_ENERGY" }],
     },
   }),
 };
@@ -7622,7 +7658,8 @@ function getBiomeEliteCardTemplate(
         energyCost: 2,
         inkCost: 0,
         targeting: "SINGLE_ENEMY",
-        description: "Deal 10 damage. Deal 2 more per Vulnerable on target. Exhaust.",
+        description:
+          "Deal 10 damage. Deal 2 more per Vulnerable on target. Exhaust.",
         effects: [
           { type: "DAMAGE", value: 10 },
           { type: "DAMAGE_PER_DEBUFF", value: 2, buff: "VULNERABLE" },
@@ -7630,7 +7667,8 @@ function getBiomeEliteCardTemplate(
         ],
         inkedVariant: null,
         upgrade: {
-          description: "Deal 14 damage. Deal 3 more per Vulnerable on target. Exhaust.",
+          description:
+            "Deal 14 damage. Deal 3 more per Vulnerable on target. Exhaust.",
           effects: [
             { type: "DAMAGE", value: 14 },
             { type: "DAMAGE_PER_DEBUFF", value: 3, buff: "VULNERABLE" },
@@ -7805,7 +7843,9 @@ function buildEliteEnemyMasteryCard(enemy: EnemyDefinition): CardDefinition {
 const generatedEnemyMasteryCards: CardDefinition[] = enemyDefinitions
   .filter(
     (enemy) =>
-      !enemy.isBoss && !ENEMIES_WITHOUT_BESTIARY_CARDS_SET.has(enemy.id)
+      !enemy.isBoss &&
+      !enemy.isScriptedOnly &&
+      !ENEMIES_WITHOUT_BESTIARY_CARDS_SET.has(enemy.id)
   )
   .map((enemy) =>
     enemy.isElite

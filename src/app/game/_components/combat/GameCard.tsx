@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
+import type { CardRedactionType } from "@/game/schemas/combat-state";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { BiomeType, CardType, Rarity } from "@/game/schemas/enums";
 import { CARD_IMAGES } from "@/lib/assets";
@@ -20,6 +21,7 @@ import {
 interface GameCardProps {
   definition: CardDefinition;
   instanceId?: string;
+  redactionTypes?: CardRedactionType[];
   canPlay?: boolean;
   canPlayInked?: boolean;
   isSelected?: boolean;
@@ -52,8 +54,7 @@ const typeStyles: Record<
 > = {
   ATTACK: {
     border: "border-red-500/75",
-    shell:
-      "from-[#2b0f15] via-[#14090d] to-[#09070a] text-red-50",
+    shell: "from-[#2b0f15] via-[#14090d] to-[#09070a] text-red-50",
     art: "from-red-950 via-red-900/70 to-[#17070a]",
     badge: "border-red-400/35 bg-red-500/18 text-red-100",
     kicker: "text-red-200/80",
@@ -64,8 +65,7 @@ const typeStyles: Record<
   },
   SKILL: {
     border: "border-sky-500/75",
-    shell:
-      "from-[#0c1b2a] via-[#08111b] to-[#07090d] text-sky-50",
+    shell: "from-[#0c1b2a] via-[#08111b] to-[#07090d] text-sky-50",
     art: "from-sky-950 via-blue-900/70 to-[#091017]",
     badge: "border-sky-400/35 bg-sky-500/18 text-sky-100",
     kicker: "text-sky-200/80",
@@ -76,8 +76,7 @@ const typeStyles: Record<
   },
   POWER: {
     border: "border-violet-500/75",
-    shell:
-      "from-[#231233] via-[#100918] to-[#09070c] text-violet-50",
+    shell: "from-[#231233] via-[#100918] to-[#09070c] text-violet-50",
     art: "from-violet-950 via-fuchsia-900/65 to-[#110812]",
     badge: "border-violet-400/35 bg-violet-500/18 text-violet-100",
     kicker: "text-violet-200/80",
@@ -88,8 +87,7 @@ const typeStyles: Record<
   },
   STATUS: {
     border: "border-slate-500/75",
-    shell:
-      "from-[#1f2732] via-[#0f141c] to-[#090a0e] text-slate-50",
+    shell: "from-[#1f2732] via-[#0f141c] to-[#090a0e] text-slate-50",
     art: "from-slate-800 via-slate-700/70 to-slate-950",
     badge: "border-slate-400/35 bg-slate-500/18 text-slate-100",
     kicker: "text-slate-300/80",
@@ -100,8 +98,7 @@ const typeStyles: Record<
   },
   CURSE: {
     border: "border-rose-600/75",
-    shell:
-      "from-[#2a101c] via-[#140911] to-[#09070b] text-rose-50",
+    shell: "from-[#2a101c] via-[#140911] to-[#09070b] text-rose-50",
     art: "from-rose-950 via-purple-950/70 to-[#130711]",
     badge: "border-rose-400/35 bg-rose-500/18 text-rose-100",
     kicker: "text-rose-200/80",
@@ -124,29 +121,25 @@ const rarityStyles: Record<
   STARTER: {
     badge: "border-slate-400/20 bg-slate-500/12 text-slate-200",
     frame: "border-white/8",
-    glow:
-      "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_48%)]",
+    glow: "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.10),transparent_48%)]",
     cost: "border-slate-200/20 bg-slate-200/10 text-slate-100",
   },
   COMMON: {
     badge: "border-zinc-300/20 bg-zinc-200/10 text-zinc-100",
     frame: "border-white/10",
-    glow:
-      "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_48%)]",
+    glow: "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.12),transparent_48%)]",
     cost: "border-zinc-100/25 bg-zinc-100/10 text-zinc-50",
   },
   UNCOMMON: {
     badge: "border-sky-300/25 bg-sky-400/12 text-sky-100",
     frame: "border-sky-200/20",
-    glow:
-      "bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.20),transparent_52%)]",
+    glow: "bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.20),transparent_52%)]",
     cost: "border-sky-200/30 bg-sky-300/14 text-sky-50",
   },
   RARE: {
     badge: "border-amber-300/30 bg-amber-300/14 text-amber-100",
     frame: "border-amber-200/20",
-    glow:
-      "bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.24),transparent_54%)]",
+    glow: "bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.24),transparent_54%)]",
     cost: "border-amber-200/40 bg-amber-300/18 text-amber-50",
   },
 };
@@ -158,56 +151,47 @@ const biomeStyles: Record<
   LIBRARY: {
     badge: "border-amber-400/25 bg-amber-500/12 text-amber-100",
     edge: "from-amber-300/0 via-amber-300/80 to-amber-300/0",
-    aura:
-      "bg-[radial-gradient(circle_at_50%_0%,rgba(245,158,11,0.16),transparent_42%)]",
+    aura: "bg-[radial-gradient(circle_at_50%_0%,rgba(245,158,11,0.16),transparent_42%)]",
   },
   VIKING: {
     badge: "border-cyan-300/25 bg-cyan-300/12 text-cyan-100",
     edge: "from-cyan-300/0 via-cyan-300/80 to-cyan-300/0",
-    aura:
-      "bg-[radial-gradient(circle_at_50%_0%,rgba(103,232,249,0.16),transparent_42%)]",
+    aura: "bg-[radial-gradient(circle_at_50%_0%,rgba(103,232,249,0.16),transparent_42%)]",
   },
   GREEK: {
     badge: "border-yellow-300/25 bg-yellow-300/12 text-yellow-100",
     edge: "from-yellow-300/0 via-yellow-300/80 to-yellow-300/0",
-    aura:
-      "bg-[radial-gradient(circle_at_50%_0%,rgba(250,204,21,0.15),transparent_42%)]",
+    aura: "bg-[radial-gradient(circle_at_50%_0%,rgba(250,204,21,0.15),transparent_42%)]",
   },
   EGYPTIAN: {
     badge: "border-orange-300/25 bg-orange-300/12 text-orange-100",
     edge: "from-orange-300/0 via-orange-300/80 to-orange-300/0",
-    aura:
-      "bg-[radial-gradient(circle_at_50%_0%,rgba(251,146,60,0.18),transparent_42%)]",
+    aura: "bg-[radial-gradient(circle_at_50%_0%,rgba(251,146,60,0.18),transparent_42%)]",
   },
   LOVECRAFTIAN: {
     badge: "border-fuchsia-300/25 bg-fuchsia-300/12 text-fuchsia-100",
     edge: "from-fuchsia-300/0 via-fuchsia-300/80 to-fuchsia-300/0",
-    aura:
-      "bg-[radial-gradient(circle_at_50%_0%,rgba(217,70,239,0.16),transparent_42%)]",
+    aura: "bg-[radial-gradient(circle_at_50%_0%,rgba(217,70,239,0.16),transparent_42%)]",
   },
   AZTEC: {
     badge: "border-emerald-300/25 bg-emerald-300/12 text-emerald-100",
     edge: "from-emerald-300/0 via-emerald-300/80 to-emerald-300/0",
-    aura:
-      "bg-[radial-gradient(circle_at_50%_0%,rgba(52,211,153,0.16),transparent_42%)]",
+    aura: "bg-[radial-gradient(circle_at_50%_0%,rgba(52,211,153,0.16),transparent_42%)]",
   },
   CELTIC: {
     badge: "border-lime-300/25 bg-lime-300/12 text-lime-100",
     edge: "from-lime-300/0 via-lime-300/80 to-lime-300/0",
-    aura:
-      "bg-[radial-gradient(circle_at_50%_0%,rgba(163,230,53,0.16),transparent_42%)]",
+    aura: "bg-[radial-gradient(circle_at_50%_0%,rgba(163,230,53,0.16),transparent_42%)]",
   },
   RUSSIAN: {
     badge: "border-sky-200/25 bg-sky-200/12 text-sky-50",
     edge: "from-sky-200/0 via-sky-200/80 to-sky-200/0",
-    aura:
-      "bg-[radial-gradient(circle_at_50%_0%,rgba(186,230,253,0.18),transparent_42%)]",
+    aura: "bg-[radial-gradient(circle_at_50%_0%,rgba(186,230,253,0.18),transparent_42%)]",
   },
   AFRICAN: {
     badge: "border-amber-200/25 bg-amber-200/12 text-amber-50",
     edge: "from-amber-200/0 via-amber-200/80 to-amber-200/0",
-    aura:
-      "bg-[radial-gradient(circle_at_50%_0%,rgba(253,230,138,0.18),transparent_42%)]",
+    aura: "bg-[radial-gradient(circle_at_50%_0%,rgba(253,230,138,0.18),transparent_42%)]",
   },
 };
 
@@ -265,8 +249,19 @@ const sizeStyles = {
   },
 } as const;
 
+const redactionBadgeOrder: Record<CardRedactionType, number> = {
+  COST: 0,
+  TEXT: 1,
+};
+
+const redactionBadgeStyles: Record<CardRedactionType, string> = {
+  COST: "border-amber-200/45 bg-amber-300/16 text-amber-50",
+  TEXT: "border-slate-200/30 bg-slate-200/10 text-slate-100",
+};
+
 export function GameCard({
   definition,
+  redactionTypes = [],
   canPlay = true,
   canPlayInked = false,
   isSelected = false,
@@ -284,6 +279,9 @@ export function GameCard({
   className,
 }: GameCardProps) {
   const { t } = useTranslation();
+  const sortedRedactionTypes = [...new Set(redactionTypes)].sort(
+    (left, right) => redactionBadgeOrder[left] - redactionBadgeOrder[right]
+  );
   const displayDefinition = upgraded
     ? buildUpgradedCardDefinition(definition)
     : definition;
@@ -326,7 +324,8 @@ export function GameCard({
   const showArtworkMeta = size !== "lg";
   const activeDescription =
     isPendingInked && displayDefinition.inkedVariant
-      ? localizedInkedDescription ?? displayDefinition.inkedVariant.description
+      ? (localizedInkedDescription ??
+        displayDefinition.inkedVariant.description)
       : localizedDescription;
 
   const bodyTextClass = isPendingInked
@@ -350,12 +349,13 @@ export function GameCard({
         hasInteractiveAction
           ? "cursor-pointer hover:-translate-y-1.5 hover:shadow-[0_18px_34px_rgba(2,6,23,0.62)] lg:hover:-translate-y-2"
           : "cursor-not-allowed opacity-55 saturate-[0.78]",
-        isFrozen && "ring-2 ring-cyan-400/85 shadow-[0_0_22px_rgba(34,211,238,0.2)]",
+        isFrozen &&
+          "shadow-[0_0_22px_rgba(34,211,238,0.2)] ring-2 ring-cyan-400/85",
         isSelected &&
           "z-30 -translate-y-2 ring-2 ring-offset-2 ring-offset-slate-950 lg:-translate-y-3",
         isSelected &&
           (isPendingInked
-            ? "ring-cyan-300 shadow-[0_0_26px_rgba(34,211,238,0.32)]"
+            ? "shadow-[0_0_26px_rgba(34,211,238,0.32)] ring-cyan-300"
             : "ring-amber-100"),
         className
       )}
@@ -411,7 +411,12 @@ export function GameCard({
           sizeStyle.topPad
         )}
       >
-        <div className={cn("flex items-start justify-between gap-1.5", sizeStyle.headerLeftPad)}>
+        <div
+          className={cn(
+            "flex items-start justify-between gap-1.5",
+            sizeStyle.headerLeftPad
+          )}
+        >
           <div className="min-w-0">
             <p
               className={cn(
@@ -436,7 +441,7 @@ export function GameCard({
             {upgraded && (
               <span
                 className={cn(
-                  "rounded-full border border-amber-200/60 bg-amber-300/18 px-1.5 py-0.5 font-black uppercase tracking-[0.18em] text-amber-50 shadow-[0_0_12px_rgba(245,158,11,0.18)]",
+                  "bg-amber-300/18 rounded-full border border-amber-200/60 px-1.5 py-0.5 font-black uppercase tracking-[0.18em] text-amber-50 shadow-[0_0_12px_rgba(245,158,11,0.18)]",
                   sizeStyle.badge
                 )}
               >
@@ -446,13 +451,27 @@ export function GameCard({
             {isFrozen && (
               <span
                 className={cn(
-                  "rounded-full border border-cyan-300/45 bg-cyan-400/14 px-1.5 py-0.5 font-black uppercase tracking-[0.16em] text-cyan-100",
+                  "bg-cyan-400/14 rounded-full border border-cyan-300/45 px-1.5 py-0.5 font-black uppercase tracking-[0.16em] text-cyan-100",
                   sizeStyle.badge
                 )}
               >
                 Frozen
               </span>
             )}
+            {sortedRedactionTypes.map((redactionType) => (
+              <span
+                key={redactionType}
+                className={cn(
+                  "rounded-full border px-1.5 py-0.5 font-black uppercase tracking-[0.14em]",
+                  sizeStyle.badge,
+                  redactionBadgeStyles[redactionType]
+                )}
+              >
+                {t(`gameCard.labels.redaction.${redactionType}`, {
+                  defaultValue: redactionType,
+                })}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -460,7 +479,7 @@ export function GameCard({
           className={cn(
             "mt-2 flex min-h-0 flex-1 flex-col gap-2",
             isScrollablePreview &&
-              "touch-pan-y overflow-y-auto pr-1 overscroll-contain [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/18"
+              "[&::-webkit-scrollbar-thumb]:bg-white/18 touch-pan-y overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-1"
           )}
         >
           <div
@@ -557,13 +576,15 @@ export function GameCard({
           <div
             className={cn(
               "flex flex-col",
-              isScrollablePreview ? "shrink-0 flex-none" : "min-h-0 flex-1"
+              isScrollablePreview ? "flex-none shrink-0" : "min-h-0 flex-1"
             )}
           >
             <div
               className={cn(
-                "relative rounded-[14px] border border-white/8 bg-black/20 px-2 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
-                isScrollablePreview ? "flex-none overflow-visible" : "min-h-0 flex-1 overflow-hidden",
+                "border-white/8 relative rounded-[14px] border bg-black/20 px-2 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+                isScrollablePreview
+                  ? "flex-none overflow-visible"
+                  : "min-h-0 flex-1 overflow-hidden",
                 isCondensed
                   ? size === "md"
                     ? "min-h-[22px] lg:min-h-[30px] xl:min-h-[36px]"
@@ -618,7 +639,7 @@ export function GameCard({
                       isCondensed && "py-1",
                       isPendingInked && "ring-1 ring-cyan-200/55",
                       isPendingInked
-                        ? "animate-pulse border-cyan-200/55 bg-cyan-400/18 shadow-[0_0_18px_rgba(34,211,238,0.22)]"
+                        ? "bg-cyan-400/18 animate-pulse border-cyan-200/55 shadow-[0_0_18px_rgba(34,211,238,0.22)]"
                         : typeStyle.inkPanelActive
                     )}
                     onClick={(e) => {
@@ -670,7 +691,7 @@ export function GameCard({
                       <span className="font-black uppercase tracking-[0.18em] text-cyan-100/80">
                         + {t("gameCard.labels.ink")}
                       </span>
-                      <span className="rounded-full border border-cyan-200/20 bg-cyan-100/8 px-1.5 py-0.5 font-black text-cyan-50/80">
+                      <span className="bg-cyan-100/8 rounded-full border border-cyan-200/20 px-1.5 py-0.5 font-black text-cyan-50/80">
                         {displayDefinition.inkedVariant.inkMarkCost}
                       </span>
                     </div>
@@ -698,7 +719,7 @@ export function GameCard({
             ) : (
               <div
                 className={cn(
-                  "mt-1.5 flex items-center justify-between gap-2 rounded-[14px] border border-white/6 bg-black/10 px-2 py-1.5 text-slate-300/70",
+                  "border-white/6 mt-1.5 flex items-center justify-between gap-2 rounded-[14px] border bg-black/10 px-2 py-1.5 text-slate-300/70",
                   sizeStyle.footer
                 )}
               >

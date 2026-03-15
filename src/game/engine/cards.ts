@@ -5,6 +5,17 @@ import { boostEffectsForUpgrade } from "./card-upgrades";
 import { moveCardToDiscard, moveCardToExhaust } from "./deck";
 import { resolveEffects, type EffectTarget } from "./effects";
 import type { RNG } from "./rng";
+import {
+  getArchivistCardCostModifier,
+  getArchivistEffectiveCardDefinition,
+  getArchivistEffectiveUpgradeState,
+  isArchivistCardTextRedacted,
+  synchronizeArchivistCombatState,
+} from "./archivist";
+import {
+  registerChapterGuardianAttackCardPlayed,
+  registerChapterGuardianInkSpent,
+} from "./chapter-guardian";
 
 function getEffectiveCardEnergyCost(
   definition: CardDefinition,
@@ -26,6 +37,11 @@ export function canPlayCard(
 
   const def = cardDefs.get(cardInst.definitionId);
   if (!def) return false;
+  const effectiveUpgraded = getArchivistEffectiveUpgradeState(
+    state,
+    instanceId,
+    cardInst.upgraded
+  );
   const statusCursePlayable = Boolean(
     state.relicFlags?.statusCursePlayable ?? false
   );
@@ -35,8 +51,9 @@ export function canPlayCard(
     return false;
 
   const effectiveEnergyCost =
-    getEffectiveCardEnergyCost(def, cardInst.upgraded) +
-    (state.playerDisruption?.extraCardCost ?? 0);
+    getEffectiveCardEnergyCost(def, effectiveUpgraded) +
+    (state.playerDisruption?.extraCardCost ?? 0) +
+    getArchivistCardCostModifier(state, instanceId);
   if (state.player.energyCurrent < effectiveEnergyCost) return false;
   if (def.inkCost > 0 && state.player.inkCurrent < def.inkCost) return false;
 
@@ -55,6 +72,7 @@ export function canPlayCardInked(
 
   const def = cardDefs.get(cardInst.definitionId);
   if (!def?.inkedVariant) return false;
+  if (isArchivistCardTextRedacted(state, instanceId)) return false;
 
   return state.player.inkCurrent >= def.inkedVariant.inkMarkCost;
 }
@@ -91,28 +109,49 @@ export function playCard(
 
   const def = cardDefs.get(cardInst.definitionId);
   if (!def) return state;
+  const effectiveDefinition = getArchivistEffectiveCardDefinition(
+    state,
+    instanceId,
+    def
+  );
+  const effectiveUpgraded = getArchivistEffectiveUpgradeState(
+    state,
+    instanceId,
+    cardInst.upgraded
+  );
 
-  const isUsingInkedVariant = Boolean(useInked && def.inkedVariant);
-  let effects = isUsingInkedVariant ? def.inkedVariant!.effects : def.effects;
+  const isUsingInkedVariant = Boolean(
+    useInked && effectiveDefinition.inkedVariant
+  );
+  let effects = isUsingInkedVariant
+    ? effectiveDefinition.inkedVariant!.effects
+    : effectiveDefinition.effects;
   const inkCost = isUsingInkedVariant
-    ? def.inkCost + def.inkedVariant!.inkMarkCost
-    : def.inkCost;
+    ? effectiveDefinition.inkCost +
+      effectiveDefinition.inkedVariant!.inkMarkCost
+    : effectiveDefinition.inkCost;
 
   // Apply upgrade: use card-specific upgrade if defined, else generic boost
-  let energyCost = getEffectiveCardEnergyCost(def, cardInst.upgraded);
-  if (cardInst.upgraded) {
+  let energyCost = getEffectiveCardEnergyCost(
+    effectiveDefinition,
+    effectiveUpgraded
+  );
+  if (effectiveUpgraded) {
     if (isUsingInkedVariant) {
       // Inked branch may define its own upgraded behavior; otherwise use the generic boost.
       effects =
-        def.inkedVariant?.upgradedEffects ?? boostEffectsForUpgrade(effects);
-    } else if (def.upgrade) {
-      effects = def.upgrade.effects;
+        effectiveDefinition.inkedVariant?.upgradedEffects ??
+        boostEffectsForUpgrade(effects);
+    } else if (effectiveDefinition.upgrade) {
+      effects = effectiveDefinition.upgrade.effects;
     } else {
       effects = boostEffectsForUpgrade(effects);
     }
   }
   const attackBonus =
-    def.type === "ATTACK" ? Math.max(0, metaBonuses?.attackBonus ?? 0) : 0;
+    effectiveDefinition.type === "ATTACK"
+      ? Math.max(0, metaBonuses?.attackBonus ?? 0)
+      : 0;
   if (attackBonus > 0) {
     effects = effects.map((effect) =>
       effect.type === "DAMAGE"
@@ -122,6 +161,7 @@ export function playCard(
   }
 
   energyCost += state.playerDisruption?.extraCardCost ?? 0;
+  energyCost += getArchivistCardCostModifier(state, instanceId);
   if (state.playerDisruption?.frozenHandCardIds?.includes(instanceId))
     return state;
 
@@ -139,6 +179,13 @@ export function playCard(
     },
   };
 
+  if (def.type === "ATTACK") {
+    current = registerChapterGuardianAttackCardPlayed(current);
+  }
+  if (inkCost > 0) {
+    current = registerChapterGuardianInkSpent(current, inkCost);
+  }
+
   // Resolve effects
   const target = targetingToEffectTarget(def.targeting, targetId);
   current = resolveEffects(
@@ -153,6 +200,7 @@ export function playCard(
     },
     rng
   );
+  current = synchronizeArchivistCombatState(current);
 
   // Chance-based extra ink on card play.
   if (
@@ -179,10 +227,11 @@ export function playCard(
 
   // Move card to appropriate pile
   const shouldExhaust =
-    def.type === "POWER" ||
+    effectiveDefinition.type === "POWER" ||
     effects.some((e) => e.type === "EXHAUST") ||
     (Boolean(state.relicFlags?.statusCursePlayExhaust) &&
-      (def.type === "STATUS" || def.type === "CURSE"));
+      (effectiveDefinition.type === "STATUS" ||
+        effectiveDefinition.type === "CURSE"));
   if (shouldExhaust) {
     const keepChance = Math.min(
       100,

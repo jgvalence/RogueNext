@@ -741,7 +741,9 @@ describe("Card playing", () => {
 
   it("canPlayCard returns false without enough ink for inkCost cards", () => {
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "book_of_the_dead", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "book_of_the_dead", upgraded: false },
+      ],
       player: {
         ...makeMinimalCombat().player,
         inkCurrent: 1,
@@ -850,7 +852,9 @@ describe("Card playing", () => {
         inkCurrent: 3,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "book_of_the_dead", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "book_of_the_dead", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
       enemies: [
         { ...base.enemies[0]! },
@@ -998,7 +1002,9 @@ describe("Card playing", () => {
   it("titans_wrath cashes in existing vulnerable before applying more", () => {
     const rng = createRNG("titans-wrath");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "titans_wrath", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "titans_wrath", upgraded: false },
+      ],
       enemies: [
         {
           ...makeMinimalCombat().enemies[0]!,
@@ -1020,7 +1026,11 @@ describe("Card playing", () => {
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
       hand: [
-        { instanceId: "c1", definitionId: "winter_inscription", upgraded: false },
+        {
+          instanceId: "c1",
+          definitionId: "winter_inscription",
+          upgraded: false,
+        },
       ],
       enemies: [
         {
@@ -1106,7 +1116,9 @@ describe("Card playing", () => {
     const rng = createRNG("frost-witch");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "frost_witch", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "frost_witch", upgraded: false },
+      ],
       enemies: [
         {
           ...base.enemies[0]!,
@@ -1164,7 +1176,11 @@ describe("Card playing", () => {
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
       hand: [
-        { instanceId: "c1", definitionId: "olympian_scripture", upgraded: false },
+        {
+          instanceId: "c1",
+          definitionId: "olympian_scripture",
+          upgraded: false,
+        },
       ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
@@ -1199,13 +1215,17 @@ describe("Card playing", () => {
     const rng = createRNG("void-scripture");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "void_scripture", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "void_scripture", upgraded: false },
+      ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
         { instanceId: "d2", definitionId: "defend", upgraded: false },
         { instanceId: "d3", definitionId: "strike", upgraded: false },
       ],
-      discardPile: [{ instanceId: "x1", definitionId: "dazed", upgraded: false }],
+      discardPile: [
+        { instanceId: "x1", definitionId: "dazed", upgraded: false },
+      ],
       enemies: [
         {
           ...base.enemies[0]!,
@@ -1237,7 +1257,11 @@ describe("Card playing", () => {
         inkCurrent: 3,
       },
       hand: [
-        { instanceId: "c1", definitionId: "battle_inscription", upgraded: false },
+        {
+          instanceId: "c1",
+          definitionId: "battle_inscription",
+          upgraded: false,
+        },
         { instanceId: "c2", definitionId: "strike", upgraded: false },
       ],
     });
@@ -1256,11 +1280,13 @@ describe("Card playing", () => {
     ).toBe(false);
   });
 
-  it("odin_script converts prior exhaust into a burst payoff", () => {
+  it("odin_script converts prior exhaust into a burst payoff without exhausting itself", () => {
     const rng = createRNG("odin-script");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "odin_script", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "odin_script", upgraded: false },
+      ],
       exhaustPile: [
         { instanceId: "x1", definitionId: "strike", upgraded: false },
         { instanceId: "x2", definitionId: "defend", upgraded: false },
@@ -1278,17 +1304,22 @@ describe("Card playing", () => {
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
 
     expect(result.enemies[0]?.currentHp).toBe(26);
-    expect(result.discardPile[0]?.definitionId).toBe("dazed");
-    expect(result.exhaustPile).toHaveLength(3);
-    expect(result.exhaustPile.some((card) => card.definitionId === "odin_script")).toBe(
-      true
-    );
+    expect(result.discardPile.map((card) => card.definitionId)).toEqual([
+      "dazed",
+      "odin_script",
+    ]);
+    expect(result.exhaustPile).toHaveLength(2);
+    expect(
+      result.exhaustPile.some((card) => card.definitionId === "odin_script")
+    ).toBe(false);
   });
 
   it("cosmic_archive turns prior exhaust into a defensive payoff", () => {
     const rng = createRNG("cosmic-archive");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "cosmic_archive", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "cosmic_archive", upgraded: false },
+      ],
       exhaustPile: [
         { instanceId: "x1", definitionId: "strike", upgraded: false },
         { instanceId: "x2", definitionId: "defend", upgraded: false },
@@ -1300,15 +1331,17 @@ describe("Card playing", () => {
     expect(result.player.block).toBe(12);
     expect(result.player.focus).toBe(1);
     expect(result.discardPile[0]?.definitionId).toBe("dazed");
-    expect(result.exhaustPile.some((card) => card.definitionId === "cosmic_archive")).toBe(
-      true
-    );
+    expect(
+      result.exhaustPile.some((card) => card.definitionId === "cosmic_archive")
+    ).toBe(true);
   });
 
   it("saga_keeper turns prior exhaust into lasting strength scaling", () => {
     const rng = createRNG("saga-keeper");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "saga_keeper", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "saga_keeper", upgraded: false },
+      ],
       exhaustPile: [
         { instanceId: "x1", definitionId: "strike", upgraded: false },
         { instanceId: "x2", definitionId: "defend", upgraded: false },
@@ -1321,9 +1354,9 @@ describe("Card playing", () => {
     expect(result.player.strength).toBe(2);
     expect(result.hand).toHaveLength(1);
     expect(result.hand[0]?.definitionId).toBe("strike");
-    expect(result.exhaustPile.some((card) => card.definitionId === "saga_keeper")).toBe(
-      true
-    );
+    expect(
+      result.exhaustPile.some((card) => card.definitionId === "saga_keeper")
+    ).toBe(true);
   });
 
   it("folk_epic sets up a weak-thorns retaliation payoff", () => {
@@ -1344,7 +1377,9 @@ describe("Card playing", () => {
     const base = makeMinimalCombat();
     const afterFolkEpic = playCard(
       makeMinimalCombat({
-        hand: [{ instanceId: "c1", definitionId: "folk_epic", upgraded: false }],
+        hand: [
+          { instanceId: "c1", definitionId: "folk_epic", upgraded: false },
+        ],
       }),
       "c1",
       null,
@@ -1465,7 +1500,9 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "bardic_verse", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "bardic_verse", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -1484,7 +1521,9 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "byliny_verse", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "byliny_verse", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
       enemies: [
         { ...base.enemies[0]! },
@@ -1540,7 +1579,9 @@ describe("Card playing", () => {
     const rng = createRNG("anansis-web");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "anansis_web", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "anansis_web", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
       enemies: [
         { ...base.enemies[0]! },
@@ -1569,7 +1610,9 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "void_librarian", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "void_librarian", upgraded: false },
+      ],
     });
 
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
@@ -1577,16 +1620,18 @@ describe("Card playing", () => {
     expect(result.player.inkCurrent).toBe(2);
     expect(result.player.focus).toBe(1);
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
-    expect(result.discardPile.some((card) => card.definitionId === "dazed")).toBe(
-      true
-    );
+    expect(
+      result.discardPile.some((card) => card.definitionId === "dazed")
+    ).toBe(true);
   });
 
   it("sphinx_riddle turns team-wide vulnerable into focus", () => {
     const rng = createRNG("sphinx-riddle");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "sphinx_riddle", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "sphinx_riddle", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
       enemies: [
         { ...base.enemies[0]! },
@@ -1615,7 +1660,9 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "norn_prophecy", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "norn_prophecy", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -1631,7 +1678,9 @@ describe("Card playing", () => {
     const rng = createRNG("forbidden-index");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "forbidden_index", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "forbidden_index", upgraded: false },
+      ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
         { instanceId: "d2", definitionId: "defend", upgraded: false },
@@ -1652,9 +1701,9 @@ describe("Card playing", () => {
     expect(result.hand).toHaveLength(2);
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
     expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(1);
-    expect(result.discardPile.some((card) => card.definitionId === "dazed")).toBe(
-      true
-    );
+    expect(
+      result.discardPile.some((card) => card.definitionId === "dazed")
+    ).toBe(true);
   });
 
   it("sacrificial_word turns team-wide vulnerable damage into an ink bridge", () => {
@@ -1665,7 +1714,9 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "sacrificial_word", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "sacrificial_word", upgraded: false },
+      ],
       enemies: [
         { ...base.enemies[0]! },
         {
@@ -1690,7 +1741,9 @@ describe("Card playing", () => {
     const rng = createRNG("snowstorm-trap");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "snowstorm_trap", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "snowstorm_trap", upgraded: false },
+      ],
       enemies: [
         { ...base.enemies[0]! },
         {
@@ -1719,7 +1772,9 @@ describe("Card playing", () => {
         ...base.player,
         currentHp: 50,
       },
-      hand: [{ instanceId: "c1", definitionId: "morrigan_curse", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "morrigan_curse", upgraded: false },
+      ],
       enemies: [
         { ...base.enemies[0]! },
         {
@@ -1758,7 +1813,9 @@ describe("Card playing", () => {
     const rng = createRNG("koschei-strike");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "koschei_strike", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "koschei_strike", upgraded: false },
+      ],
       enemies: [
         {
           ...base.enemies[0]!,
@@ -1778,7 +1835,9 @@ describe("Card playing", () => {
   it("buffalo_charge turns a heavy bleed hit into strength tempo", () => {
     const rng = createRNG("buffalo-charge");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "buffalo_charge", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "buffalo_charge", upgraded: false },
+      ],
     });
 
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
@@ -1796,7 +1855,13 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "celtic_illumination", upgraded: false }],
+      hand: [
+        {
+          instanceId: "c1",
+          definitionId: "celtic_illumination",
+          upgraded: false,
+        },
+      ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
         { instanceId: "d2", definitionId: "defend", upgraded: false },
@@ -1815,7 +1880,9 @@ describe("Card playing", () => {
     const rng = createRNG("ancestor-archive");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "ancestor_archive", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "ancestor_archive", upgraded: false },
+      ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
         { instanceId: "d2", definitionId: "defend", upgraded: false },
@@ -1843,7 +1910,9 @@ describe("Card playing", () => {
   it("folklore_archive turns draw and energy burst into focus", () => {
     const rng = createRNG("folklore-archive");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "folklore_archive", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "folklore_archive", upgraded: false },
+      ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
         { instanceId: "d2", definitionId: "defend", upgraded: false },
@@ -1866,7 +1935,9 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "embalmed_tome", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "embalmed_tome", upgraded: false },
+      ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
         { instanceId: "d2", definitionId: "defend", upgraded: false },
@@ -1925,15 +1996,17 @@ describe("Card playing", () => {
         (card) => card.definitionId === "pythian_codex" && card.upgraded
       )
     ).toBe(false);
-    expect(result.exhaustPile.some((card) => card.definitionId === "pythian_codex")).toBe(
-      true
-    );
+    expect(
+      result.exhaustPile.some((card) => card.definitionId === "pythian_codex")
+    ).toBe(true);
   });
 
   it("saga_archive turns draw and energy burst into strength tempo", () => {
     const rng = createRNG("saga-archive");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "saga_archive", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "saga_archive", upgraded: false },
+      ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
         { instanceId: "d2", definitionId: "defend", upgraded: false },
@@ -1976,7 +2049,9 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "sacred_ink_burst", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "sacred_ink_burst", upgraded: false },
+      ],
       enemies: [
         {
           ...base.enemies[0]!,
@@ -2000,7 +2075,9 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "quetzal_shield", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "quetzal_shield", upgraded: false },
+      ],
       enemies: [
         { ...base.enemies[0]! },
         {
@@ -2028,7 +2105,9 @@ describe("Card playing", () => {
         ...base.player,
         currentHp: 70,
       },
-      hand: [{ instanceId: "c1", definitionId: "baobab_shield", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "baobab_shield", upgraded: false },
+      ],
     });
 
     const result = playCard(state, "c1", null, false, cardDefs, rng);
@@ -2065,7 +2144,9 @@ describe("Card playing", () => {
     const rng = createRNG("gorgons-gaze");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "gorgons_gaze", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "gorgons_gaze", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
       enemies: [
         { ...base.enemies[0]! },
@@ -2090,7 +2171,9 @@ describe("Card playing", () => {
   it("jaguars_blood bridges bleed pressure into strength", () => {
     const rng = createRNG("jaguars-blood");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "jaguars_blood", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "jaguars_blood", upgraded: false },
+      ],
     });
 
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
@@ -2144,7 +2227,9 @@ describe("Card playing", () => {
   it("logos_strike turns vulnerable into a cantrip setup", () => {
     const rng = createRNG("logos-strike");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "logos_strike", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "logos_strike", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -2158,7 +2243,9 @@ describe("Card playing", () => {
   it("kells_strike turns poison pressure into a cantrip attack", () => {
     const rng = createRNG("kells-strike");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "kells_strike", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "kells_strike", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -2172,7 +2259,9 @@ describe("Card playing", () => {
   it("drum_strike turns bleed pressure into a cantrip attack", () => {
     const rng = createRNG("drum-strike");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "drum_strike", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "drum_strike", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -2187,7 +2276,9 @@ describe("Card playing", () => {
     const rng = createRNG("death-scroll");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "death_scroll", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "death_scroll", upgraded: false },
+      ],
       enemies: [
         {
           ...base.enemies[0]!,
@@ -2207,22 +2298,26 @@ describe("Card playing", () => {
   it("void_shield trades clean defense for clog", () => {
     const rng = createRNG("void-shield");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "void_shield", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "void_shield", upgraded: false },
+      ],
     });
 
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
     expect(result.player.block).toBe(11);
-    expect(result.discardPile.some((card) => card.definitionId === "dazed")).toBe(
-      true
-    );
+    expect(
+      result.discardPile.some((card) => card.definitionId === "dazed")
+    ).toBe(true);
   });
 
   it("sacred_papyrus scales defense from poison already on enemies", () => {
     const rng = createRNG("sacred-papyrus");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "sacred_papyrus", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "sacred_papyrus", upgraded: false },
+      ],
       enemies: [
         {
           ...base.enemies[0]!,
@@ -2258,16 +2353,18 @@ describe("Card playing", () => {
   it("sealed_tome gives block and focus while adding a dazed", () => {
     const rng = createRNG("sealed-tome");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "sealed_tome", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "sealed_tome", upgraded: false },
+      ],
     });
 
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
     expect(result.player.block).toBe(7);
     expect(result.player.focus).toBe(1);
-    expect(result.discardPile.some((card) => card.definitionId === "dazed")).toBe(
-      true
-    );
+    expect(
+      result.discardPile.some((card) => card.definitionId === "dazed")
+    ).toBe(true);
   });
 
   it("calendric_ward turns defense into vulnerable-based scaling", () => {
@@ -2278,7 +2375,9 @@ describe("Card playing", () => {
         ...base.player,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "calendric_ward", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "calendric_ward", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
       enemies: [
         {
@@ -2297,7 +2396,9 @@ describe("Card playing", () => {
   it("nordic_treatise turns defense into draw and focus", () => {
     const rng = createRNG("nordic-treatise");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "nordic_treatise", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "nordic_treatise", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -2317,7 +2418,9 @@ describe("Card playing", () => {
         currentHp: 50,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "healing_rhythm", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "healing_rhythm", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -2338,7 +2441,9 @@ describe("Card playing", () => {
         currentHp: 50,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "cauldron_lore", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "cauldron_lore", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -2350,7 +2455,7 @@ describe("Card playing", () => {
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
   });
 
-  it("druids_breath turns sustain into focus and a replacement card", () => {
+  it("druids_breath sustains and draws a replacement card", () => {
     const rng = createRNG("druids-breath");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
@@ -2358,14 +2463,16 @@ describe("Card playing", () => {
         ...base.player,
         currentHp: 50,
       },
-      hand: [{ instanceId: "c1", definitionId: "druids_breath", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "druids_breath", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
-    expect(result.player.currentHp).toBe(54);
-    expect(result.player.focus).toBe(1);
+    expect(result.player.currentHp).toBe(55);
+    expect(result.player.focus).toBe(0);
     expect(result.hand).toHaveLength(1);
   });
 
@@ -2396,7 +2503,9 @@ describe("Card playing", () => {
         ...base.player,
         currentHp: 50,
       },
-      hand: [{ instanceId: "c1", definitionId: "selkie_song", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "selkie_song", upgraded: false },
+      ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
         { instanceId: "d2", definitionId: "defend", upgraded: false },
@@ -2418,7 +2527,9 @@ describe("Card playing", () => {
         ...base.player,
         currentHp: 50,
       },
-      hand: [{ instanceId: "c1", definitionId: "temple_archive", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "temple_archive", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -2443,7 +2554,9 @@ describe("Card playing", () => {
         currentHp: 50,
         inkPerCardChance: 0,
       },
-      hand: [{ instanceId: "c1", definitionId: "osiris_archive", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "osiris_archive", upgraded: false },
+      ],
       drawPile: [
         { instanceId: "d1", definitionId: "strike", upgraded: false },
         { instanceId: "d2", definitionId: "defend", upgraded: false },
@@ -2466,7 +2579,9 @@ describe("Card playing", () => {
         ...base.player,
         currentHp: 50,
       },
-      hand: [{ instanceId: "c1", definitionId: "funerary_rite", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "funerary_rite", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -2512,7 +2627,9 @@ describe("Card playing", () => {
     const rng = createRNG("fates-decree");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "fates_decree", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "fates_decree", upgraded: false },
+      ],
       enemies: [
         {
           ...base.enemies[0]!,
@@ -2541,7 +2658,9 @@ describe("Card playing", () => {
   it("curator_pact replays a real discard card while adding Hexed Parchment", () => {
     const rng = createRNG("curator-pact");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "curator_pact", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "curator_pact", upgraded: false },
+      ],
       discardPile: [
         { instanceId: "d1", definitionId: "hexed_parchment", upgraded: false },
         { instanceId: "d2", definitionId: "strike", upgraded: false },
@@ -2568,7 +2687,9 @@ describe("Card playing", () => {
     const rng = createRNG("iron-samovar");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "iron_samovar", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "iron_samovar", upgraded: false },
+      ],
       enemies: [
         {
           ...base.enemies[0]!,
@@ -2597,7 +2718,9 @@ describe("Card playing", () => {
   it("xipe_shield marks the next draw to go to discard", () => {
     const rng = createRNG("xipe-shield");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "xipe_shield", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "xipe_shield", upgraded: false },
+      ],
     });
 
     const result = playCard(state, "c1", null, false, cardDefs, rng);
@@ -2610,7 +2733,9 @@ describe("Card playing", () => {
   it("matryoshka_lore rewards being randomly discarded", () => {
     const rng = createRNG("matryoshka-random-discard");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "matryoshka_lore", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "matryoshka_lore", upgraded: false },
+      ],
       drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
     });
 
@@ -2998,7 +3123,12 @@ describe("Combat flow", () => {
   it("at higher difficulties, elite combats can start with an escort enemy", () => {
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
     const runState = {
-      ...createNewRun("run-1", "combat-elite-escort", starterCards, createRNG("combat-elite-escort")),
+      ...createNewRun(
+        "run-1",
+        "combat-elite-escort",
+        starterCards,
+        createRNG("combat-elite-escort")
+      ),
       floor: 3,
       selectedDifficultyLevel: 4,
     };
@@ -4072,6 +4202,52 @@ describe("Run management", () => {
     expect(result.encounteredEnemies["chapter_guardian"]).toBe("BOSS");
     expect(result.enemyKillCounts["ink_archon"]).toBe(3);
     expect(result.enemyKillCounts["chapter_guardian"]).toBe(1);
+  });
+
+  it("completeCombat ignores scripted-only enemies for bestiary tracking", () => {
+    const rng = createRNG("bestiary-scripted-enemies");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-bestiary-scripted",
+      "bestiary-scripted-enemies",
+      starterCards,
+      rng
+    );
+    const combatResult = makeMinimalCombat({
+      enemies: [
+        {
+          instanceId: "enemy-boss",
+          definitionId: "the_archivist",
+          name: "The Corrupted Archivist",
+          isBoss: true,
+          currentHp: 0,
+          maxHp: 160,
+          block: 0,
+          speed: 4,
+          buffs: [],
+          intentIndex: 0,
+        },
+        {
+          instanceId: "inkwell-black",
+          definitionId: "archivist_black_inkwell",
+          name: "Black Inkwell",
+          currentHp: 0,
+          maxHp: 30,
+          block: 0,
+          speed: 0,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+
+    const result = completeCombat(run, combatResult, 0, rng, { PAGES: 1 });
+    expect(result.encounteredEnemies["the_archivist"]).toBe("BOSS");
+    expect(result.enemyKillCounts["the_archivist"]).toBe(1);
+    expect(
+      result.encounteredEnemies["archivist_black_inkwell"]
+    ).toBeUndefined();
+    expect(result.enemyKillCounts["archivist_black_inkwell"]).toBeUndefined();
   });
 
   it("applyRunConditionToRun chaos_draft replaces starter deck with 10 random cards", () => {
@@ -5415,9 +5591,9 @@ describe("Merchant", () => {
     expect(getCardOfferWeight(boostedRare, 0, "NORMAL_REWARD", "GREEK")).toBe(
       baseRareWeight
     );
-    expect(
-      getCardOfferWeight(boostedRare, 0, "ELITE_REWARD", "EGYPTIAN")
-    ).toBe(baseRareWeight);
+    expect(getCardOfferWeight(boostedRare, 0, "ELITE_REWARD", "EGYPTIAN")).toBe(
+      baseRareWeight
+    );
     expect(getCardOfferWeight(boostedRare, 0, "MERCHANT")).toBe(
       baseRareWeight * 5
     );
@@ -5784,14 +5960,7 @@ describe("Relics", () => {
       },
     });
 
-    const result = playCard(
-      state,
-      "recursive-1",
-      "e1",
-      false,
-      cardDefs,
-      rng
-    );
+    const result = playCard(state, "recursive-1", "e1", false, cardDefs, rng);
 
     expect(result.exhaustPile).toHaveLength(1);
     expect(result.exhaustPile[0]).toMatchObject({
@@ -5849,13 +6018,17 @@ describe("Relics", () => {
       upgraded: false,
     });
     expect(result.drawPile).toHaveLength(2);
-    expect(result.drawPile.every((card) => card.definitionId === "recursive_scratch")).toBe(true);
+    expect(
+      result.drawPile.every((card) => card.definitionId === "recursive_scratch")
+    ).toBe(true);
     expect(result.drawPile.every((card) => card.upgraded)).toBe(true);
   });
 
   it("addCardToRunDeck tracks recursive_scratch for future run-condition unlocks", () => {
     const rng = createRNG("recursive-scratch-unlock-track");
-    const starterCards = [...cardDefs.values()].filter((card) => card.isStarterCard);
+    const starterCards = [...cardDefs.values()].filter(
+      (card) => card.isStarterCard
+    );
     const run = createNewRun(
       "run-recursive-scratch-unlock-track",
       "run-recursive-scratch-unlock-track",
@@ -5865,12 +6038,16 @@ describe("Relics", () => {
 
     const next = addCardToRunDeck(run, "recursive_scratch");
 
-    expect(next.earnedResources.__RUN_CONDITION_CARD__recursive_scratch).toBe(1);
+    expect(next.earnedResources.__RUN_CONDITION_CARD__recursive_scratch).toBe(
+      1
+    );
   });
 
   it("recursive_scratch_opening starts combat with Recursive Scratch in hand", () => {
     const rng = createRNG("recursive-scratch-opening");
-    const starterCards = [...cardDefs.values()].filter((card) => card.isStarterCard);
+    const starterCards = [...cardDefs.values()].filter(
+      (card) => card.isStarterCard
+    );
     const run = createNewRun(
       "run-recursive-scratch-opening",
       "run-recursive-scratch-opening",
@@ -6631,14 +6808,7 @@ describe("Debuff blocked by armor", () => {
       relicCounters: {},
     });
 
-    const afterAnubis = playCard(
-      state,
-      "anubis-1",
-      null,
-      false,
-      cardDefs,
-      rng
-    );
+    const afterAnubis = playCard(state, "anubis-1", null, false, cardDefs, rng);
     const afterPoison = resolveEffects(
       afterAnubis,
       [{ type: "APPLY_DEBUFF", value: 3, buff: "POISON" }],
@@ -6694,14 +6864,7 @@ describe("Debuff blocked by armor", () => {
       relicCounters: {},
     });
 
-    const afterPlay = playCard(
-      state,
-      "domovoi-1",
-      null,
-      false,
-      cardDefs,
-      rng
-    );
+    const afterPlay = playCard(state, "domovoi-1", null, false, cardDefs, rng);
     const afterExtraBlock = resolveEffects(
       afterPlay,
       [{ type: "BLOCK", value: 10 }],

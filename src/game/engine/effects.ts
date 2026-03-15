@@ -20,6 +20,10 @@ import {
   isClogCardDefinitionId,
   moveFromDiscardToHand,
 } from "./deck";
+import {
+  applyChapterGuardianIncomingDamageModifier,
+  registerChapterGuardianBlockGain,
+} from "./chapter-guardian";
 import { enemyDebuffsBypassBlock, getBossDebuffBonus } from "./difficulty";
 import { nanoid } from "nanoid";
 import type { RNG } from "./rng";
@@ -43,8 +47,7 @@ export interface EffectContext {
   sourceCardInstanceId?: string;
 }
 
-const WEAK_ATTACK_THORNS_RETRIGGER_COUNTER =
-  "weak_attack_thorns_retrigger";
+const WEAK_ATTACK_THORNS_RETRIGGER_COUNTER = "weak_attack_thorns_retrigger";
 
 function getSourceStats(state: CombatState, source: EffectSource) {
   if (source === "player") {
@@ -365,15 +368,19 @@ function applyDamageToTarget(
     let s = state;
     for (const enemy of state.enemies) {
       if (enemy.currentHp <= 0) continue;
-      const finalDmg = calculateDamage(
-        scaledBaseDamage,
-        sourceStats,
-        {
-          buffs: enemy.buffs,
-        },
-        {
-          vulnerableMultiplier: enemyVulnerableMultiplier,
-        }
+      const finalDmg = applyChapterGuardianIncomingDamageModifier(
+        enemy,
+        calculateDamage(
+          scaledBaseDamage,
+          sourceStats,
+          {
+            buffs: enemy.buffs,
+          },
+          {
+            vulnerableMultiplier: enemyVulnerableMultiplier,
+          }
+        ),
+        source === "player" ? "player" : "other"
       );
       const result = applyDamage(enemy, finalDmg);
       s = updateEnemy(s, enemy.instanceId, (e) => ({
@@ -390,15 +397,19 @@ function applyDamageToTarget(
       state.relicModifiers?.enemyVulnerableDamageMultiplier ?? 1.5;
     const enemy = state.enemies.find((e) => e.instanceId === target.instanceId);
     if (!enemy || enemy.currentHp <= 0) return state;
-    const finalDmg = calculateDamage(
-      scaledBaseDamage,
-      sourceStats,
-      {
-        buffs: enemy.buffs,
-      },
-      {
-        vulnerableMultiplier: enemyVulnerableMultiplier,
-      }
+    const finalDmg = applyChapterGuardianIncomingDamageModifier(
+      enemy,
+      calculateDamage(
+        scaledBaseDamage,
+        sourceStats,
+        {
+          buffs: enemy.buffs,
+        },
+        {
+          vulnerableMultiplier: enemyVulnerableMultiplier,
+        }
+      ),
+      source === "player" ? "player" : "other"
     );
     const result = applyDamage(enemy, finalDmg);
     return updateEnemy(state, target.instanceId, (e) => ({
@@ -617,15 +628,19 @@ function applyDirectDamageToTarget(
     let s = state;
     for (const enemy of state.enemies) {
       if (enemy.currentHp <= 0) continue;
-      const finalDmg = calculateDamage(
-        scaledBaseDamage,
-        sourceStats,
-        {
-          buffs: enemy.buffs,
-        },
-        {
-          vulnerableMultiplier: enemyVulnerableMultiplier,
-        }
+      const finalDmg = applyChapterGuardianIncomingDamageModifier(
+        enemy,
+        calculateDamage(
+          scaledBaseDamage,
+          sourceStats,
+          {
+            buffs: enemy.buffs,
+          },
+          {
+            vulnerableMultiplier: enemyVulnerableMultiplier,
+          }
+        ),
+        source === "player" ? "player" : "other"
       );
       const result = applyDirectDamage(enemy, finalDmg);
       s = updateEnemy(s, enemy.instanceId, (e) => ({
@@ -642,15 +657,19 @@ function applyDirectDamageToTarget(
       state.relicModifiers?.enemyVulnerableDamageMultiplier ?? 1.5;
     const enemy = state.enemies.find((e) => e.instanceId === target.instanceId);
     if (!enemy || enemy.currentHp <= 0) return state;
-    const finalDmg = calculateDamage(
-      scaledBaseDamage,
-      sourceStats,
-      {
-        buffs: enemy.buffs,
-      },
-      {
-        vulnerableMultiplier: enemyVulnerableMultiplier,
-      }
+    const finalDmg = applyChapterGuardianIncomingDamageModifier(
+      enemy,
+      calculateDamage(
+        scaledBaseDamage,
+        sourceStats,
+        {
+          buffs: enemy.buffs,
+        },
+        {
+          vulnerableMultiplier: enemyVulnerableMultiplier,
+        }
+      ),
+      source === "player" ? "player" : "other"
     );
     const result = applyDirectDamage(enemy, finalDmg);
     return updateEnemy(state, target.instanceId, (e) => ({
@@ -772,16 +791,25 @@ function applyBlockToTarget(
   state: CombatState,
   target: EffectTarget,
   amount: number,
-  focus: number
+  focus: number,
+  source?: EffectSource
 ): CombatState {
   if (target === "player") {
     if (getBuffStacks(state.player.buffs, "STONEBOUND") > 0) {
       return state;
     }
-    return updatePlayer(state, (p) => ({
+    const nextState = updatePlayer(state, (p) => ({
       ...p,
       block: applyBlock(p.block, amount, focus),
     }));
+    if (source === "player") {
+      const gainedBlock = Math.max(
+        0,
+        nextState.player.block - state.player.block
+      );
+      return registerChapterGuardianBlockGain(nextState, gainedBlock);
+    }
+    return nextState;
   }
 
   if (typeof target === "object" && target.type === "enemy") {
@@ -805,7 +833,9 @@ function applyBlockToTarget(
   }
 
   if (typeof target === "object" && target.type === "ally") {
-    const ally = state.allies.find((entry) => entry.instanceId === target.instanceId);
+    const ally = state.allies.find(
+      (entry) => entry.instanceId === target.instanceId
+    );
     if (getBuffStacks(ally?.buffs ?? [], "STONEBOUND") > 0) {
       return state;
     }
@@ -905,12 +935,7 @@ function applyDamagePerDebuffToTarget(
   if (target === "player") {
     const stacks = getBuffStacks(state.player.buffs, buff);
     if (stacks <= 0) return state;
-    return applyDamageToTarget(
-      state,
-      target,
-      stacks * perStackDamage,
-      source
-    );
+    return applyDamageToTarget(state, target, stacks * perStackDamage, source);
   }
 
   if (target === "all_enemies") {
@@ -949,24 +974,14 @@ function applyDamagePerDebuffToTarget(
     const enemy = state.enemies.find((e) => e.instanceId === target.instanceId);
     const stacks = getBuffStacks(enemy?.buffs ?? [], buff);
     if (stacks <= 0) return state;
-    return applyDamageToTarget(
-      state,
-      target,
-      stacks * perStackDamage,
-      source
-    );
+    return applyDamageToTarget(state, target, stacks * perStackDamage, source);
   }
 
   if (typeof target === "object" && target.type === "ally") {
     const ally = state.allies.find((a) => a.instanceId === target.instanceId);
     const stacks = getBuffStacks(ally?.buffs ?? [], buff);
     if (stacks <= 0) return state;
-    return applyDamageToTarget(
-      state,
-      target,
-      stacks * perStackDamage,
-      source
-    );
+    return applyDamageToTarget(state, target, stacks * perStackDamage, source);
   }
 
   return state;
@@ -988,14 +1003,18 @@ function applyDamageIfTargetHasDebuffToTarget(
   }
 
   if (typeof target === "object" && target.type === "enemy") {
-    const enemy = state.enemies.find((entry) => entry.instanceId === target.instanceId);
+    const enemy = state.enemies.find(
+      (entry) => entry.instanceId === target.instanceId
+    );
     return getBuffStacks(enemy?.buffs ?? [], buff) > 0
       ? applyDamageToTarget(state, target, damage, source)
       : state;
   }
 
   if (typeof target === "object" && target.type === "ally") {
-    const ally = state.allies.find((entry) => entry.instanceId === target.instanceId);
+    const ally = state.allies.find(
+      (entry) => entry.instanceId === target.instanceId
+    );
     return getBuffStacks(ally?.buffs ?? [], buff) > 0
       ? applyDamageToTarget(state, target, damage, source)
       : state;
@@ -1097,7 +1116,8 @@ function applyDamagePerDrawnThisTurnToTarget(
 function applyBlockPerCurrentInkToTarget(
   state: CombatState,
   target: EffectTarget,
-  perInkBlock: number
+  perInkBlock: number,
+  source?: EffectSource
 ): CombatState {
   const currentInk = Math.max(0, state.player.inkCurrent);
   let nextState = state;
@@ -1107,7 +1127,8 @@ function applyBlockPerCurrentInkToTarget(
       nextState,
       target,
       currentInk * perInkBlock,
-      nextState.player.focus
+      nextState.player.focus,
+      source
     );
   }
 
@@ -1120,7 +1141,8 @@ function applyBlockPerCurrentInkToTarget(
 function applyBlockPerExhaustedCardToTarget(
   state: CombatState,
   target: EffectTarget,
-  perCardBlock: number
+  perCardBlock: number,
+  source?: EffectSource
 ): CombatState {
   const exhaustedCount = Math.max(0, state.exhaustPile.length);
   if (exhaustedCount <= 0 || perCardBlock <= 0) return state;
@@ -1128,7 +1150,8 @@ function applyBlockPerExhaustedCardToTarget(
     state,
     target,
     exhaustedCount * perCardBlock,
-    state.player.focus
+    state.player.focus,
+    source
   );
 }
 
@@ -1427,7 +1450,8 @@ export function resolveEffect(
           state,
           getFriendlySupportTarget(ctx.source, ctx.target),
           effect.value,
-          sourceStats.focus
+          sourceStats.focus,
+          ctx.source
         );
       }
       if (typeof ctx.source === "object" && ctx.source.type === "enemy") {
@@ -1435,7 +1459,8 @@ export function resolveEffect(
           state,
           getFriendlySupportTarget(ctx.source, ctx.target),
           effect.value,
-          0
+          0,
+          ctx.source
         );
       }
       if (typeof ctx.source === "object" && ctx.source.type === "ally") {
@@ -1443,7 +1468,8 @@ export function resolveEffect(
           state,
           getFriendlySupportTarget(ctx.source, ctx.target),
           effect.value,
-          0
+          0,
+          ctx.source
         );
       }
       return state;
@@ -1538,7 +1564,8 @@ export function resolveEffect(
       return applyBlockPerCurrentInkToTarget(
         state,
         getFriendlySupportTarget(ctx.source, ctx.target),
-        effect.value
+        effect.value,
+        ctx.source
       );
 
     case "GAIN_ENERGY":
@@ -1591,7 +1618,10 @@ export function resolveEffect(
           ? getBossDebuffBonus(state.difficultyLevel ?? 0)
           : 0;
       const effectValue = effect.value + bossDebuffBonus;
-      const applyPoisonBurst = (nextState: CombatState, appliedPoison: number) =>
+      const applyPoisonBurst = (
+        nextState: CombatState,
+        appliedPoison: number
+      ) =>
         effect.type === "APPLY_DEBUFF" && effect.buff === "POISON"
           ? advancePlayerPoisonBurst(nextState, ctx.source, appliedPoison)
           : nextState;
@@ -1660,13 +1690,18 @@ export function resolveEffect(
     }
 
     case "BLOCK_PER_DEBUFF": {
-      const totalStacks = getOpposingDebuffStacks(state, ctx.source, effect.buff);
+      const totalStacks = getOpposingDebuffStacks(
+        state,
+        ctx.source,
+        effect.buff
+      );
       if (totalStacks <= 0) return state;
       return applyBlockToTarget(
         state,
         getFriendlySupportTarget(ctx.source, ctx.target),
         totalStacks * effect.value,
-        ctx.source === "player" ? sourceStats.focus : 0
+        ctx.source === "player" ? sourceStats.focus : 0,
+        ctx.source
       );
     }
 
@@ -1674,7 +1709,8 @@ export function resolveEffect(
       return applyBlockPerExhaustedCardToTarget(
         state,
         getFriendlySupportTarget(ctx.source, ctx.target),
-        effect.value
+        effect.value,
+        ctx.source
       );
 
     case "APPLY_BUFF_PER_DEBUFF":
@@ -1726,7 +1762,9 @@ export function resolveEffect(
       if (copies <= 0) return state;
       const sourceCard =
         effect.copySourceCard && ctx.sourceCardInstanceId
-          ? state.hand.find((card) => card.instanceId === ctx.sourceCardInstanceId)
+          ? state.hand.find(
+              (card) => card.instanceId === ctx.sourceCardInstanceId
+            )
           : null;
       const definitionId = effect.copySourceCard
         ? sourceCard?.definitionId
@@ -1750,7 +1788,9 @@ export function resolveEffect(
       if (copies <= 0) return state;
       const sourceCard =
         effect.copySourceCard && ctx.sourceCardInstanceId
-          ? state.hand.find((card) => card.instanceId === ctx.sourceCardInstanceId)
+          ? state.hand.find(
+              (card) => card.instanceId === ctx.sourceCardInstanceId
+            )
           : null;
       const definitionId = effect.copySourceCard
         ? sourceCard?.definitionId

@@ -13,6 +13,7 @@ import { getRunConditionById } from "@/game/engine/run-conditions";
 import { computeEnemyKillUnlockedRelicIds } from "@/game/engine/difficulty";
 import { createRNG } from "@/game/engine/rng";
 import { playSound } from "@/lib/sound";
+import { enemyDefinitions } from "@/game/data/enemies";
 import { relicDefinitions } from "@/game/data/relics";
 import { GAME_CONSTANTS } from "@/game/constants";
 import type { CardDefinition } from "@/game/schemas/cards";
@@ -47,6 +48,12 @@ interface UseCombatOutcomeParams {
   onCombatLost: () => void;
   onScriptedFirstRunDefeat: () => void;
 }
+
+const TRACKED_ENEMY_DEFINITION_IDS = new Set(
+  enemyDefinitions
+    .filter((enemy) => !enemy.isScriptedOnly)
+    .map((enemy) => enemy.id)
+);
 
 export function useCombatOutcome({
   state,
@@ -92,6 +99,7 @@ export function useCombatOutcome({
       const defeatedBossId = isBoss ? selectedRoom?.enemyIds?.[0] : undefined;
       const projectedEnemyKillCounts = { ...(state.enemyKillCounts ?? {}) };
       for (const enemy of combat.enemies) {
+        if (!TRACKED_ENEMY_DEFINITION_IDS.has(enemy.definitionId)) continue;
         projectedEnemyKillCounts[enemy.definitionId] =
           (projectedEnemyKillCounts[enemy.definitionId] ?? 0) + 1;
       }

@@ -316,8 +316,7 @@ export const fr = {
       },
       recursive_scratch_opening: {
         name: "Griffure recursive",
-        description:
-          "Commence chaque combat avec Recursive Scratch en main.",
+        description: "Commence chaque combat avec Recursive Scratch en main.",
       },
       inked_beginning: {
         name: "Debut encre",
@@ -1073,6 +1072,10 @@ export const fr = {
       ink: "Encre",
       current: "Actuelle",
       upgraded: "Amelioree",
+      redaction: {
+        COST: "Cout +1",
+        TEXT: "Texte censure",
+      },
     },
     effect: {
       damage: "Inflige {{value}} degats",
@@ -1238,21 +1241,19 @@ export const fr = {
       damagePerThisCardPlayed:
         "degats {{value}} par fois que cette carte a ete jouee ce combat",
       damagePerCurrentInk: "degats {{value}} par encre actuelle, retire tout",
-      damagePerClogInDiscard: "degats {{value}} par statut/malediction defausse",
+      damagePerClogInDiscard:
+        "degats {{value}} par statut/malediction defausse",
       damagePerExhaustedCard: "degats {{value}} par carte epuisee",
       damagePerDrawnThisTurn: "degats {{value}} par carte piochee ce tour",
       damageBonusIfUpgradedInHand:
         "si cette carte est amelioree en main : +{{value}} degats",
       heal: "soin {{value}}",
       block: "armure {{value}}",
-      blockPerCurrentInk:
-        "armure {{value}} par encre actuelle, retire tout",
+      blockPerCurrentInk: "armure {{value}} par encre actuelle, retire tout",
       blockPerDebuff: "armure {{value}} par {{buff}}",
       blockPerExhaustedCard: "armure {{value}} par carte epuisee",
-      applyBuffPerExhaustedCard:
-        "gagne {{value}} {{buff}} par carte epuisee",
-      retriggerThornsOnWeakAttack:
-        "epines retrigger contre faible +{{value}}",
+      applyBuffPerExhaustedCard: "gagne {{value}} {{buff}} par carte epuisee",
+      retriggerThornsOnWeakAttack: "epines retrigger contre faible +{{value}}",
       drawCards: "pioche {{value}}",
       doublePoison: "double le poison",
       gainInk: "gagne {{value}} encre",
@@ -1623,8 +1624,7 @@ export const fr = {
     bonusDamageFlat: "+{{bonus}} bonus",
     conditionalBonusVsDebuffed: "+{{bonus}} si le joueur est affaibli",
     conditionalBonusVsLowInk: "+{{bonus}} si <= {{threshold}} encre",
-    conditionalBonusPerCurse:
-      "+{{perCurse}}/maled. (actuel +{{total}})",
+    conditionalBonusPerCurse: "+{{perCurse}}/maled. (actuel +{{total}})",
     phase2Badge: "P2",
     phase2Summon: "Phase 2 (<50% PV) : invoque {{label}}",
   },

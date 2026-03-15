@@ -18,6 +18,17 @@ import {
   getEnemyStartingBlock,
   getPostFloorFiveEscalation,
 } from "./difficulty";
+import {
+  finalizeChapterGuardianPlayerTurn,
+  initializeChapterGuardianCombat,
+  resetChapterGuardianTurnState,
+} from "./chapter-guardian";
+import {
+  ARCHIVIST_BLACK_INKWELL_ID,
+  ARCHIVIST_PALE_INKWELL_ID,
+  initializeArchivistCombat,
+  synchronizeArchivistCombatState,
+} from "./archivist";
 import { matchesCardCharacter } from "./card-filters";
 import {
   buildConditionCombatStartCards,
@@ -89,6 +100,7 @@ function buildEliteEscortIds(
     (enemy) =>
       !enemy.isBoss &&
       !enemy.isElite &&
+      !enemy.isScriptedOnly &&
       !enemyIds.includes(enemy.id) &&
       (enemy.biome === leader.biome || enemy.biome === "LIBRARY")
   );
@@ -129,8 +141,14 @@ export function initCombat(
     difficultyMods.enemyDamageMultiplier *
     postFloorEscalation.enemyDamageMultiplier;
   const enemySpawnCountByDef: Record<string, number> = {};
+  const scriptedArchivistAdds = enemyIds.includes("the_archivist")
+    ? [ARCHIVIST_BLACK_INKWELL_ID, ARCHIVIST_PALE_INKWELL_ID].filter(
+        (id) => !enemyIds.includes(id)
+      )
+    : [];
   const encounterEnemyIds = [
     ...enemyIds,
+    ...scriptedArchivistAdds,
     ...buildEliteEscortIds(enemyIds, difficultyLevel, enemyDefs, rng),
   ].slice(0, 4);
 
@@ -257,9 +275,10 @@ export function initCombat(
   };
 
   // Apply meta-progression bonuses if any
+  const combatWithChapterGuardian = initializeChapterGuardianCombat(combat);
   const combatWithMeta = bonuses
-    ? applyMetaBonusesToCombat(combat, bonuses)
-    : combat;
+    ? applyMetaBonusesToCombat(combatWithChapterGuardian, bonuses)
+    : combatWithChapterGuardian;
   const startCombatCards = buildConditionCombatStartCards(
     runState.selectedRunConditionId,
     cardDefs
@@ -279,13 +298,14 @@ export function initCombat(
 
   // Draw initial hand (extraHandAtStart included via drawCount bonus)
   const extraHand = bonuses?.extraHandAtStart ?? 0;
-  return drawCards(
+  const combatWithOpeningDraw = drawCards(
     combatWithOpeningCards,
     combatWithOpeningCards.player.drawCount + extraHand,
     rng,
     "SYSTEM",
     "COMBAT_INIT_OPENING_HAND"
   );
+  return initializeArchivistCombat(combatWithOpeningDraw);
 }
 
 /**
@@ -316,6 +336,7 @@ export function startPlayerTurn(
     },
   };
 
+  current = resetChapterGuardianTurnState(current);
   current = applyRelicsOnTurnStart(current, relicIds, rng);
   current = drawCards(
     current,
@@ -338,7 +359,8 @@ export function endPlayerTurn(
   relicIds: string[] = []
 ): CombatState {
   const afterRelics = applyRelicsOnTurnEnd(state, relicIds);
-  const afterDiscard = discardHand(afterRelics);
+  const afterGuardian = finalizeChapterGuardianPlayerTurn(afterRelics);
+  const afterDiscard = discardHand(afterGuardian);
   return {
     ...afterDiscard,
     phase: "ALLIES_ENEMIES_TURN",
@@ -363,7 +385,7 @@ export function executeAlliesEnemiesTurn(
 
   current = executeAlliesTurn(current, allyDefs, rng);
   current = executeEnemiesTurn(current, enemyDefs, rng);
-  return checkCombatEnd(current);
+  return checkCombatEnd(synchronizeArchivistCombatState(current));
 }
 
 /**

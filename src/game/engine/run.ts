@@ -46,6 +46,11 @@ import { addRelicToRunState } from "./relics";
 import { createFirstRunScriptedMap } from "./first-run-script";
 
 type EnemyDef = (typeof enemyDefinitions)[0];
+const TRACKED_ENEMY_DEFINITION_IDS = new Set(
+  enemyDefinitions
+    .filter((enemy) => !enemy.isScriptedOnly)
+    .map((enemy) => enemy.id)
+);
 const DISRUPTION_EFFECT_TYPES = new Set([
   "FREEZE_HAND_CARDS",
   "NEXT_DRAW_TO_DISCARD_THIS_TURN",
@@ -502,7 +507,7 @@ function generateRoomEnemies(
   const difficultyModifiers = getDifficultyModifiers(difficultyLevel);
   const postFloorEscalation = getPostFloorFiveEscalation(floor, isInfiniteMode);
   const canAppear = (e: (typeof enemyDefinitions)[0]) =>
-    e.biome === biome || e.biome === "LIBRARY";
+    !e.isScriptedOnly && (e.biome === biome || e.biome === "LIBRARY");
 
   if (isBoss || bossOnlyCombats) {
     const bossPool = enemyDefinitions
@@ -683,7 +688,9 @@ export function applyDifficultyToRun(
     ...runState,
     selectedDifficultyLevel: difficultyLevel,
     pendingDifficultyLevels: [],
-    pendingBiomeChoices: forcedOpeningLibrary ? null : runState.pendingBiomeChoices,
+    pendingBiomeChoices: forcedOpeningLibrary
+      ? null
+      : runState.pendingBiomeChoices,
   };
 }
 
@@ -1015,6 +1022,7 @@ export function completeCombat(
   const encounteredThisCombat: Record<string, EncounteredEnemyType> = {};
   const updatedEnemyKillCounts = { ...(runState.enemyKillCounts ?? {}) };
   for (const enemy of combatResult.enemies) {
+    if (!TRACKED_ENEMY_DEFINITION_IDS.has(enemy.definitionId)) continue;
     encounteredThisCombat[enemy.definitionId] = deriveEncounteredEnemyType({
       isBoss: enemy.isBoss,
       isElite: enemy.isElite,

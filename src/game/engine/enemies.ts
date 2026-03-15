@@ -21,6 +21,16 @@ import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 import { getDifficultyModifiers } from "./difficulty";
 import { isCurseCardDefinitionId } from "./status-cards";
+import {
+  applyArchivistAbilityMechanics,
+  synchronizeArchivistCombatState,
+  triggerArchivistPhaseTwo,
+} from "./archivist";
+import {
+  CHAPTER_GUARDIAN_REBIND_INTENT_INDEX,
+  isChapterGuardianRebindPending,
+  performChapterGuardianRebind,
+} from "./chapter-guardian";
 
 const SPLIT_ASSAULT_NAME = "Split Assault";
 const PREDATOR_FORMATION_NAME = "Predator Formation";
@@ -98,27 +108,40 @@ export function getNextIntentIndex(
 ): number {
   const abilities = enemyDef.abilities;
   if (abilities.length === 0) return 0;
-  if (abilities.length === 1) return 0;
+  const selectableIndexes = abilities
+    .map((_, index) => index)
+    .filter((index) =>
+      enemyDef.id === "chapter_guardian" &&
+      !isChapterGuardianRebindPending(enemy)
+        ? index !== CHAPTER_GUARDIAN_REBIND_INTENT_INDEX
+        : true
+    );
+  if (selectableIndexes.length === 0) return 0;
+  if (selectableIndexes.length === 1) return selectableIndexes[0]!;
 
-  const repeatPenalty = abilities.length >= 3 ? 0.2 : 0.6;
-  const weights = abilities.map((ability, index) => {
+  const repeatPenalty = selectableIndexes.length >= 3 ? 0.2 : 0.6;
+  const weights = selectableIndexes.map((index) => {
+    const ability = abilities[index]!;
     const base = state
       ? getEffectiveWeight(ability, state, enemy)
       : Math.max(0.01, ability.weight ?? 1);
-    return index === enemy.intentIndex ? base * repeatPenalty : base;
+    return {
+      index,
+      weight: index === enemy.intentIndex ? base * repeatPenalty : base,
+    };
   });
 
-  const total = weights.reduce((sum, w) => sum + w, 0);
+  const total = weights.reduce((sum, entry) => sum + entry.weight, 0);
   if (total <= 0) {
-    return (enemy.intentIndex + 1) % abilities.length;
+    return selectableIndexes[0]!;
   }
 
   let roll = rng.next() * total;
-  for (let i = 0; i < weights.length; i++) {
-    roll -= weights[i]!;
-    if (roll <= 0) return i;
+  for (const entry of weights) {
+    roll -= entry.weight;
+    if (roll <= 0) return entry.index;
   }
-  return weights.length - 1;
+  return weights[weights.length - 1]!.index;
 }
 
 /**
@@ -133,6 +156,10 @@ export function executeOneEnemyTurn(
 ): CombatState {
   if (enemy.currentHp <= 0) return state;
   if (enemyDef.abilities.length === 0) return state;
+  const forcedChapterGuardianRebind =
+    enemyDef.id === "chapter_guardian" && isChapterGuardianRebindPending(enemy)
+      ? (enemyDef.abilities[CHAPTER_GUARDIAN_REBIND_INTENT_INDEX] ?? null)
+      : null;
 
   // STUN : l'ennemi passe son tour
   if (getBuffStacks(enemy.buffs, "STUN") > 0) {
@@ -157,11 +184,12 @@ export function executeOneEnemyTurn(
     };
   }
 
-  const { ability, usedIntentIndex } = pickAbilityForEnemyTurn(
-    state,
-    enemy,
-    enemyDef
-  );
+  const { ability, usedIntentIndex } = forcedChapterGuardianRebind
+    ? {
+        ability: forcedChapterGuardianRebind,
+        usedIntentIndex: CHAPTER_GUARDIAN_REBIND_INTENT_INDEX,
+      }
+    : pickAbilityForEnemyTurn(state, enemy, enemyDef);
   if (!ability) return state;
 
   // Resolve ability effects — enemy attacks target player by default
@@ -181,17 +209,22 @@ export function executeOneEnemyTurn(
 
   current = applyCounterplayAbilityMechanics(current, freshEnemy, ability, rng);
 
-  current = applyBossAbilityMechanics(
-    current,
-    freshEnemy,
-    ability,
-    target,
-    enemyDefs,
-    rng
-  );
+  current = forcedChapterGuardianRebind
+    ? performChapterGuardianRebind(current, freshEnemy.instanceId)
+    : applyBossAbilityMechanics(
+        current,
+        freshEnemy,
+        ability,
+        target,
+        enemyDefs,
+        rng
+      );
 
+  const enemyAfterTurn =
+    current.enemies.find((e) => e.instanceId === freshEnemy.instanceId) ??
+    freshEnemy;
   const nextIntent = getNextIntentIndex(
-    { ...freshEnemy, intentIndex: usedIntentIndex },
+    { ...enemyAfterTurn, intentIndex: usedIntentIndex },
     enemyDef,
     rng,
     current
@@ -205,7 +238,7 @@ export function executeOneEnemyTurn(
     ),
   };
 
-  return current;
+  return synchronizeArchivistCombatState(current);
 }
 
 function hasOffensivePressure(ability: EnemyAbility): boolean {
@@ -634,14 +667,11 @@ function maybeTriggerBossPhase(
       current = grantStrengthToAllEnemies(current, 2);
       return current;
     case "the_archivist":
-      // Archive Corruption: drain all ink + freeze cards + flood deck
+      // Deep Archive: strengthen the boss and let both inkwells redact at once.
       current = healEnemy(current, enemy.instanceId, 12);
       current = grantEnemyStrength(current, enemy.instanceId, 2);
-      current = drainAllPlayerInk(current);
-      current = freezePlayerHandCards(current, 2);
-      current = addCardsToDrawPile(current, "haunting_regret", 1);
       current = addCardsToDrawPile(current, "binding_curse", 1);
-      return current;
+      return triggerArchivistPhaseTwo(current);
     case "hel_queen":
       // Realm of the Dead: summon draugr + heavy BLEED + Weak
       current = healEnemy(current, enemy.instanceId, 18);
@@ -830,7 +860,7 @@ function applyBossAbilityMechanics(
           );
         }
       }
-      return current;
+      return applyArchivistAbilityMechanics(current, ability.name, rng);
     case "hel_queen":
       if (ability.name === "Death's Reckoning") {
         current = applyBonusDamageIfPlayerDebuffed(

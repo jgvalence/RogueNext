@@ -3,6 +3,7 @@ import type { CardDefinition } from "@/game/schemas/cards";
 import type { RunState } from "@/game/schemas/run-state";
 import { buildRelicDefsMap } from "@/game/data";
 import type { RelicDefinitionData } from "@/game/data/relics";
+import { isRunConditionCardLootUnlockResourceKey } from "@/game/engine/run-conditions";
 
 interface UseRunOutcomeSummaryParams {
   state: RunState;
@@ -20,7 +21,10 @@ export function useRunOutcomeSummary({
   const earnedResourcesSummary = useMemo(() => {
     if (isInfiniteMode) return [] as Array<[string, number]>;
     return Object.entries(state.earnedResources ?? {})
-      .filter(([, amount]) => amount > 0)
+      .filter(
+        ([resourceKey, amount]) =>
+          amount > 0 && !isRunConditionCardLootUnlockResourceKey(resourceKey)
+      )
       .sort((a, b) => b[1] - a[1]);
   }, [isInfiniteMode, state.earnedResources]);
 
@@ -42,11 +46,7 @@ export function useRunOutcomeSummary({
       .map((id) => relicDefs.get(id))
       .filter((relic): relic is RelicDefinitionData => Boolean(relic))
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [
-    relicDefs,
-    state.initialUnlockedRelicIds,
-    state.unlockedRelicIds,
-  ]);
+  }, [relicDefs, state.initialUnlockedRelicIds, state.unlockedRelicIds]);
 
   return {
     earnedResourcesSummary,

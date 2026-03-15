@@ -2,12 +2,57 @@
 
 import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
-import type { CombatState } from "@/game/schemas/combat-state";
-import type { CardDefinition } from "@/game/schemas/cards";
+import {
+  getArchivistCardCostModifier,
+  getArchivistEffectiveCardDefinition,
+  getArchivistEffectiveUpgradeState,
+} from "@/game/engine/archivist";
+import type {
+  CardRedactionType,
+  CombatState,
+} from "@/game/schemas/combat-state";
+import type { CardDefinition, CardInstance } from "@/game/schemas/cards";
 import type { InkPowerType } from "@/game/schemas/enums";
 import { GameCard } from "./GameCard";
 import { RogueButton } from "@/components/ui/rogue";
 import type { PileType, ReshuffleCardFx } from "./combat-view-types";
+
+const redactionTypeOrder: Record<CardRedactionType, number> = {
+  COST: 0,
+  TEXT: 1,
+};
+
+function getOverlayCardState(
+  combatState: CombatState,
+  card: CardInstance,
+  definition: CardDefinition
+) {
+  const redactionTypes = [
+    ...new Set(
+      (combatState.cardRedactions ?? [])
+        .filter((redaction) => redaction.cardInstanceId === card.instanceId)
+        .map((redaction) => redaction.type)
+    ),
+  ].sort((left, right) => redactionTypeOrder[left] - redactionTypeOrder[right]);
+
+  return {
+    definition: getArchivistEffectiveCardDefinition(
+      combatState,
+      card.instanceId,
+      definition
+    ),
+    upgraded: getArchivistEffectiveUpgradeState(
+      combatState,
+      card.instanceId,
+      card.upgraded
+    ),
+    archivistCostModifier: getArchivistCardCostModifier(
+      combatState,
+      card.instanceId
+    ),
+    redactionTypes,
+  };
+}
 
 interface CombatOverlaysProps {
   isResolvingHandOverflow: boolean;
@@ -73,6 +118,11 @@ export function CombatOverlays({
                 {combat.hand.map((card) => {
                   const definition = cardDefs.get(card.definitionId);
                   if (!definition) return null;
+                  const displayState = getOverlayCardState(
+                    combat,
+                    card,
+                    definition
+                  );
                   return (
                     <button
                       key={card.instanceId}
@@ -83,8 +133,10 @@ export function CombatOverlays({
                       }
                     >
                       <GameCard
-                        definition={definition}
-                        upgraded={card.upgraded}
+                        definition={displayState.definition}
+                        upgraded={displayState.upgraded}
+                        costModifier={displayState.archivistCostModifier}
+                        redactionTypes={displayState.redactionTypes}
                         size="sm"
                         canPlay={false}
                       />
@@ -141,6 +193,11 @@ export function CombatOverlays({
                   if (!definition) return null;
                   const rewriteSelectable =
                     isSelectingRewriteTarget && openPile === "discard";
+                  const displayState = getOverlayCardState(
+                    combat,
+                    card,
+                    definition
+                  );
 
                   return (
                     <div key={card.instanceId} className="flex justify-center">
@@ -158,15 +215,19 @@ export function CombatOverlays({
                           }}
                         >
                           <GameCard
-                            definition={definition}
-                            upgraded={card.upgraded}
+                            definition={displayState.definition}
+                            upgraded={displayState.upgraded}
+                            costModifier={displayState.archivistCostModifier}
+                            redactionTypes={displayState.redactionTypes}
                             size="sm"
                           />
                         </button>
                       ) : (
                         <GameCard
-                          definition={definition}
-                          upgraded={card.upgraded}
+                          definition={displayState.definition}
+                          upgraded={displayState.upgraded}
+                          costModifier={displayState.archivistCostModifier}
+                          redactionTypes={displayState.redactionTypes}
                           size="sm"
                           canPlay={false}
                         />
