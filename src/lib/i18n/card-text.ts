@@ -41,6 +41,15 @@ function formatEffect(
         value: effect.value,
         buff: buffLabel,
       });
+    case "DAMAGE_IF_TARGET_HAS_DEBUFF":
+      return t("gameCard.effect.damageIfTargetHasDebuff", {
+        value: effect.value,
+        buff: buffLabel,
+      });
+    case "DAMAGE_PER_THIS_CARD_PLAYED":
+      return t("gameCard.effect.damagePerThisCardPlayed", {
+        value: effect.value,
+      });
     case "DAMAGE_PER_CURRENT_INK":
       return t("gameCard.effect.damagePerCurrentInk", {
         value: effect.value,

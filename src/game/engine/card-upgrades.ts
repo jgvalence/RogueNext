@@ -17,6 +17,7 @@ export function boostEffectsForUpgrade(effects: Effect[]): Effect[] {
       case "GAIN_STRENGTH":
       case "GAIN_FOCUS":
       case "DAMAGE_PER_DEBUFF":
+      case "DAMAGE_PER_THIS_CARD_PLAYED":
       case "BLOCK_PER_DEBUFF":
       case "APPLY_BUFF_PER_DEBUFF":
       case "APPLY_BUFF":
@@ -60,12 +61,16 @@ export function buildUpgradedCardDefinition(
   const upgradedInkedVariant = def.inkedVariant
     ? {
         ...def.inkedVariant,
-        effects: boostEffectsForUpgrade(def.inkedVariant.effects),
-        description: replaceValuesInDescription(
-          def.inkedVariant.description,
-          def.inkedVariant.effects,
-          boostEffectsForUpgrade(def.inkedVariant.effects)
-        ),
+        effects:
+          def.inkedVariant.upgradedEffects ??
+          boostEffectsForUpgrade(def.inkedVariant.effects),
+        description:
+          def.inkedVariant.upgradedDescription ??
+          replaceValuesInDescription(
+            def.inkedVariant.description,
+            def.inkedVariant.effects,
+            boostEffectsForUpgrade(def.inkedVariant.effects)
+          ),
       }
     : null;
 

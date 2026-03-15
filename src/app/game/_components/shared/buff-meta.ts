@@ -53,6 +53,28 @@ export const buffMeta: Record<string, BuffMetaEntry> = {
     label: () => i18n.t("buff.BLEED.label"),
     description: (stacks) => i18n.t("buff.BLEED.description", { stacks }),
   },
+  WARD: {
+    color: "bg-cyan-900 text-cyan-200",
+    label: () => i18n.t("buff.WARD.label"),
+    description: (stacks) => i18n.t("buff.WARD.description", { stacks }),
+  },
+  EXHAUST_ENERGY: {
+    color: "bg-amber-900 text-amber-200",
+    label: () => i18n.t("buff.EXHAUST_ENERGY.label"),
+    description: (stacks) =>
+      i18n.t("buff.EXHAUST_ENERGY.description", { stacks }),
+  },
+  POISON_BURST: {
+    color: "bg-emerald-900 text-emerald-200",
+    label: () => i18n.t("buff.POISON_BURST.label"),
+    description: (stacks) =>
+      i18n.t("buff.POISON_BURST.description", { stacks }),
+  },
+  STONEBOUND: {
+    color: "bg-stone-800 text-stone-100",
+    label: () => i18n.t("buff.STONEBOUND.label"),
+    description: (stacks) => i18n.t("buff.STONEBOUND.description", { stacks }),
+  },
 };
 
 export function getBuffLabelToKeyMap(): Record<string, string> {
@@ -79,6 +101,14 @@ export function getBuffLabelToKeyMap(): Record<string, string> {
   labels.Epines = "THORNS";
   labels.Bleed = "BLEED";
   labels.Saignement = "BLEED";
+  labels.Ward = "WARD";
+  labels.Garde = "WARD";
+  labels["Ember Flow"] = "EXHAUST_ENERGY";
+  labels["Flux de braise"] = "EXHAUST_ENERGY";
+  labels["Venom Rite"] = "POISON_BURST";
+  labels["Rite venimeux"] = "POISON_BURST";
+  labels.Stonebound = "STONEBOUND";
+  labels.Petrifie = "STONEBOUND";
 
   return labels;
 }

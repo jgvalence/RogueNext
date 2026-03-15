@@ -43,7 +43,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "warded_ribbon",
     name: "Warded Ribbon",
-    description: "Start each combat with 6 Block.",
+    description: "Start each combat with 4 Block and 1 Thorn.",
     rarity: "COMMON",
   },
   {
@@ -194,7 +194,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "tendril_star_knot",
     name: "NAud Stellaire Tentaculaire",
-    description: "Gain 1 Ink at the start of each turn.",
+    description: "Gain 1 Ink at the start of each turn. Add 1 Dazed to your discard pile.",
     rarity: "UNCOMMON",
   },
   {
@@ -370,7 +370,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "spawn_void_ichor",
     name: "Ichor de Rejeton du Vide",
-    description: "Gain 1 Focus at the start of each turn.",
+    description: "The first time a card Exhausts each turn, gain 1 Ink.",
     rarity: "RARE",
   },
   {
@@ -382,7 +382,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "surgeon_mi_go_tools",
     name: "Instruments du Chirurgien Mi-Go",
-    description: "Retain 75% of your remaining Block each turn.",
+    description:
+      "Retain 50% of your remaining Block each turn. Draw 1 fewer card on turns where Block is retained.",
     rarity: "RARE",
   },
   {
@@ -519,7 +520,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "wolf_fang",
     name: "Wolf Fang",
-    description: "Start each combat with 2 Strength.",
+    description: "Start each combat with 2 Strength and 4 Block.",
     rarity: "BOSS",
     sourceBossId: "fenrir",
   },

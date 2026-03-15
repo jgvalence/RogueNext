@@ -16,6 +16,7 @@ import { matchesCardCharacter } from "./card-filters";
 import { weightedSampleCardsForOffers } from "./card-offers";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 import { addRelicToRunState } from "./relics";
+import { markCardAcquiredForRunConditionUnlock } from "./rewards";
 
 const BIOME_RESOURCE_KEYS: BiomeResource[] = [
   "PAGES",
@@ -421,17 +422,20 @@ export function buyShopItem(
   switch (item.type) {
     case "card": {
       if (!item.cardDef) return null;
-      state = {
-        ...state,
-        deck: [
-          ...state.deck,
-          {
-            instanceId: nanoid(),
-            definitionId: item.cardDef.id,
-            upgraded: false,
-          },
-        ],
-      };
+      state = markCardAcquiredForRunConditionUnlock(
+        {
+          ...state,
+          deck: [
+            ...state.deck,
+            {
+              instanceId: nanoid(),
+              definitionId: item.cardDef.id,
+              upgraded: false,
+            },
+          ],
+        },
+        item.cardDef.id
+      );
       break;
     }
     case "relic": {
@@ -547,17 +551,20 @@ export function applyStartMerchantOffer(
   switch (offer.type) {
     case "CARD": {
       if (!offer.cardId) return runState;
-      next = {
-        ...next,
-        deck: [
-          ...next.deck,
-          {
-            instanceId: nanoid(),
-            definitionId: offer.cardId,
-            upgraded: false,
-          },
-        ],
-      };
+      next = markCardAcquiredForRunConditionUnlock(
+        {
+          ...next,
+          deck: [
+            ...next.deck,
+            {
+              instanceId: nanoid(),
+              definitionId: offer.cardId,
+              upgraded: false,
+            },
+          ],
+        },
+        offer.cardId
+      );
       break;
     }
     case "RELIC": {

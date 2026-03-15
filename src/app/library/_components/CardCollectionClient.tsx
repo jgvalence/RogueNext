@@ -125,6 +125,9 @@ export function CardCollectionClient({
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
   );
+  const cardDefinitionById = new Map(
+    cards.map((card) => [card.id, card.definition] as const)
+  );
 
   const tabItems = useMemo(
     () => [
@@ -383,7 +386,7 @@ export function CardCollectionClient({
                       <p className="font-semibold">
                         {t("collection.runConditions.unlockCondition")}
                       </p>
-                      <p>{formatRunConditionUnlock(row, t)}</p>
+                      <p>{formatRunConditionUnlock(row, t, cardDefinitionById)}</p>
                     </div>
                   )}
                 </div>
@@ -651,11 +654,13 @@ export function CardCollectionClient({
 
 function formatRunConditionUnlock(
   row: RunConditionCollectionRow,
-  t: TFunction
+  t: TFunction,
+  cardDefinitionById: Map<string, CardDefinition>
 ): string {
   const needsRuns = Math.max(0, row.unlock.totalRuns ?? 0);
   const needsWins = Math.max(0, row.unlock.wonRuns ?? 0);
   const needsEnemyKills = row.unlock.enemyKills;
+  const lootedCardId = row.unlock.lootedCardId;
 
   const parts: string[] = [];
   if (needsRuns > 0) {
@@ -672,6 +677,17 @@ function formatRunConditionUnlock(
           needsEnemyKills.enemyId,
           formatRunConditionFallback(needsEnemyKills.enemyId)
         ),
+      })
+    );
+  }
+  if (lootedCardId) {
+    const cardDefinition = cardDefinitionById.get(lootedCardId);
+    const cardName = cardDefinition
+      ? localizeCardName(cardDefinition, t)
+      : formatRunConditionFallback(lootedCardId);
+    parts.push(
+      t("collection.runConditions.unlockLootedCard", {
+        card: cardName,
       })
     );
   }

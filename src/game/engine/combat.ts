@@ -18,7 +18,11 @@ import {
   getEnemyStartingBlock,
   getPostFloorFiveEscalation,
 } from "./difficulty";
-import { isInfiniteRunConditionId } from "./run-conditions";
+import { matchesCardCharacter } from "./card-filters";
+import {
+  buildConditionCombatStartCards,
+  isInfiniteRunConditionId,
+} from "./run-conditions";
 import type { RNG } from "./rng";
 import { nanoid } from "nanoid";
 
@@ -105,7 +109,7 @@ export function initCombat(
   enemyIds: string[],
   enemyDefs: Map<string, EnemyDefinition>,
   allyDefs: Map<string, AllyDefinition>,
-  _cardDefs: Map<string, CardDefinition>,
+  cardDefs: Map<string, CardDefinition>,
   rng: RNG,
   metaBonuses?: ComputedMetaBonuses
 ): CombatState {
@@ -256,12 +260,28 @@ export function initCombat(
   const combatWithMeta = bonuses
     ? applyMetaBonusesToCombat(combat, bonuses)
     : combat;
+  const startCombatCards = buildConditionCombatStartCards(
+    runState.selectedRunConditionId,
+    cardDefs
+  ).filter((card) => matchesCardCharacter(card, runState.characterId));
+  const openingHandCards = startCombatCards.map((card) => ({
+    instanceId: nanoid(),
+    definitionId: card.id,
+    upgraded: false,
+  }));
+  const combatWithOpeningCards =
+    openingHandCards.length > 0
+      ? {
+          ...combatWithMeta,
+          hand: [...combatWithMeta.hand, ...openingHandCards],
+        }
+      : combatWithMeta;
 
   // Draw initial hand (extraHandAtStart included via drawCount bonus)
   const extraHand = bonuses?.extraHandAtStart ?? 0;
   return drawCards(
-    combatWithMeta,
-    combatWithMeta.player.drawCount + extraHand,
+    combatWithOpeningCards,
+    combatWithOpeningCards.player.drawCount + extraHand,
     rng,
     "SYSTEM",
     "COMBAT_INIT_OPENING_HAND"

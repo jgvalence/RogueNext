@@ -315,6 +315,15 @@ function formatEffect(effect: Effect, t: TFunction): string {
         value: effect.value,
         buff: effect.buff ?? "status",
       });
+    case "DAMAGE_IF_TARGET_HAS_DEBUFF":
+      return t("reward.effect.damageIfTargetHasDebuff", {
+        value: effect.value,
+        buff: effect.buff ?? "status",
+      });
+    case "DAMAGE_PER_THIS_CARD_PLAYED":
+      return t("reward.effect.damagePerThisCardPlayed", {
+        value: effect.value,
+      });
     case "DAMAGE_PER_CURRENT_INK":
       return t("reward.effect.damagePerCurrentInk", {
         value: effect.value,

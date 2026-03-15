@@ -11,8 +11,8 @@ import {
 } from "../engine/run-conditions";
 
 describe("Run conditions", () => {
-  it("defines 50 total starting options (including boss starts)", () => {
-    expect(runConditionDefinitions).toHaveLength(50);
+  it("defines 51 total starting options (including boss starts)", () => {
+    expect(runConditionDefinitions).toHaveLength(51);
   });
 
   it("ensures each boss start option has a unique mechanic signature", () => {
@@ -47,7 +47,7 @@ describe("Run conditions", () => {
   });
 
   it("locks advanced custom starts until their specific progression is met", () => {
-    const early = computeUnlockedRunConditionIds({ totalRuns: 3, wonRuns: 1 });
+    const early = computeUnlockedRunConditionIds({ totalRuns: 2, wonRuns: 1 });
     expect(early.includes("chaos_draft")).toBe(false);
     expect(early.includes("boss_rush")).toBe(false);
 
@@ -56,20 +56,38 @@ describe("Run conditions", () => {
     expect(late.includes("boss_rush")).toBe(true);
   });
 
-  it("unlocks boss start options after 3 kills of that boss", () => {
+  it("unlocks boss start options after 2 kills of that boss", () => {
     const locked = computeUnlockedRunConditionIds({
       totalRuns: 20,
       wonRuns: 10,
-      enemyKillCounts: { chapter_guardian: 2 },
+      enemyKillCounts: { chapter_guardian: 1 },
     });
     expect(locked.includes("boss_start_option_chapter_guardian")).toBe(false);
 
     const unlocked = computeUnlockedRunConditionIds({
       totalRuns: 20,
       wonRuns: 10,
-      enemyKillCounts: { chapter_guardian: 3 },
+      enemyKillCounts: { chapter_guardian: 2 },
     });
     expect(unlocked.includes("boss_start_option_chapter_guardian")).toBe(true);
+  });
+
+  it("unlocks recursive_scratch_opening after looting Recursive Scratch once", () => {
+    const locked = computeUnlockedRunConditionIds({
+      totalRuns: 5,
+      wonRuns: 2,
+      resources: {},
+    });
+    expect(locked.includes("recursive_scratch_opening")).toBe(false);
+
+    const unlocked = computeUnlockedRunConditionIds({
+      totalRuns: 5,
+      wonRuns: 2,
+      resources: {
+        __RUN_CONDITION_CARD__recursive_scratch: 1,
+      },
+    });
+    expect(unlocked.includes("recursive_scratch_opening")).toBe(true);
   });
 
   it("normalizes the legacy vanilla identifier", () => {

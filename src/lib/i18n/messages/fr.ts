@@ -246,6 +246,7 @@ export const fr = {
       unlockRuns: "Terminer au moins {{runs}} run(s)",
       unlockWins: "Gagner au moins {{wins}} run(s)",
       unlockEnemyKills: "Vaincre {{enemy}} {{kills}} fois",
+      unlockLootedCard: "Obtenir {{card}} au moins une fois",
       unlockRunsAndWins:
         "Terminer au moins {{runs}} run(s) et gagner {{wins}} run(s)",
     },
@@ -312,6 +313,11 @@ export const fr = {
       open_grimoire: {
         name: "Grimoire ouvert",
         description: "Ajoute Fortify au deck de depart.",
+      },
+      recursive_scratch_opening: {
+        name: "Griffure recursive",
+        description:
+          "Commence chaque combat avec Recursive Scratch en main.",
       },
       inked_beginning: {
         name: "Debut encre",
@@ -1073,6 +1079,10 @@ export const fr = {
       damageAll: "Inflige {{value}} degats a tous les ennemis",
       damageEqualBlock: "Inflige des degats egaux a votre armure",
       damagePerDebuff: "Inflige {{value}} degats par {{buff}} sur la cible",
+      damageIfTargetHasDebuff:
+        "Si la cible a deja {{buff}}, inflige {{value}} degats",
+      damagePerThisCardPlayed:
+        "Inflige {{value}} degats supplementaires pour chaque fois que cette carte a ete jouee ce combat",
       damagePerCurrentInk:
         "Inflige {{value}} degats par encre actuelle, puis retire toute votre encre",
       damagePerClogInDiscard:
@@ -1170,6 +1180,24 @@ export const fr = {
       description:
         "Inflige {{stacks}} degats en fin de tour (ne diminue pas, expire par duree).",
     },
+    WARD: {
+      label: "Garde",
+      description: "Annule le prochain degat subi.",
+    },
+    EXHAUST_ENERGY: {
+      label: "Flux de braise",
+      description:
+        "Chaque fois qu'une de vos cartes est epuisee, gagnez 1 energie.",
+    },
+    POISON_BURST: {
+      label: "Rite venimeux",
+      description:
+        "Chaque fois que vos cartes appliquent 6 Poison au total, inflige 5 degats a tous les ennemis.",
+    },
+    STONEBOUND: {
+      label: "Petrifie",
+      description: "Ne peut pas gagner d'armure.",
+    },
   },
   reward: {
     victory: "Victoire!",
@@ -1206,6 +1234,9 @@ export const fr = {
       damage: "degats {{value}}",
       damageEqualBlock: "degats egaux a votre armure",
       damagePerDebuff: "degats {{value}} par {{buff}}",
+      damageIfTargetHasDebuff: "si la cible a deja {{buff}}: degats {{value}}",
+      damagePerThisCardPlayed:
+        "degats {{value}} par fois que cette carte a ete jouee ce combat",
       damagePerCurrentInk: "degats {{value}} par encre actuelle, retire tout",
       damagePerClogInDiscard: "degats {{value}} par statut/malediction defausse",
       damagePerExhaustedCard: "degats {{value}} par carte epuisee",

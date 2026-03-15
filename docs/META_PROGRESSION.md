@@ -58,20 +58,32 @@ Systeme de difficulte progressif entre runs:
 
 ## Run Conditions (modificateurs de run)
 
-10 conditions selectionnables au debut d'un run, avec unlock progressif:
+Etat reel au 15 mars 2026:
 
-| Condition          | Disponible   | Effet                                             |
-| ------------------ | ------------ | ------------------------------------------------- |
-| Quiet Pockets      | toujours     | +20 or de depart                                  |
-| Tempered Flesh     | toujours     | +12 HP max, -15 or                                |
-| Open Grimoire      | toujours     | +1 carte en main de depart                        |
-| Inked Beginning    | toujours     | +5 ink de depart                                  |
-| Battle Manual      | toujours     | +1 force de depart                                |
-| Packed Supplies    | toujours     | +1 soin supplementaire en salles speciales        |
-| Forbidden Contract | 2+ runs      | +30 or, -10 HP max                                |
-| Single Path        | 3+ runs      | Pas de choix de salle (chemin force)              |
-| Battle Rite        | 2+ victoires | Pas de marchands, ennemis donnent +50% ressources |
-| Eventful Routes    | 5+ runs      | Plus d'evenements, moins de marchands             |
+- `51` conditions definies au total, en comptant les variantes `boss_start_option_*`
+- `8` conditions immediatement disponibles au tout debut
+- progression ensuite par paliers de `1-7 runs`, `1-3 victoires`, loot de carte specifique, ou `2 kills` d'un boss pour les starts de boss
+- cadence volontairement plus front-loaded qu'avant:
+  - premiers nouveaux starts des `runs 1-3`
+  - milieu de progression renforce entre `runs 3-5`
+  - quelques conditions restent plus aspirationales (`boss_rush`, `fateful_manuscript`, starts de boss multiples)
+
+Exemples de conditions de base toujours visibles tres tot:
+
+- `quiet_pockets`
+- `tempered_flesh`
+- `open_grimoire`
+- `inked_beginning`
+- `battle_manual`
+- `packed_supplies`
+
+Exemples de conditions qui arrivent maintenant plus vite:
+
+- `fractured_archive`: `3 runs + 1 win`
+- `chaos_draft`: `3 runs + 1 win`
+- `cursed_compendium`: `3 runs`
+- `inkwell_bargain`: `4 runs + 1 win`
+- `boss_start_option_*`: `2 kills` du boss correspondant
 
 Fichier: `src/game/engine/run-conditions.ts`
 
@@ -95,6 +107,29 @@ Conditions supportees:
 - Kill du boss du biome
 - Nombre de runs completes dans un biome
 - Deblocage conditionne par certaines histoires (arbre meta)
+- Kills d'ennemis specifiques pour les cartes bestiaire
+
+Cadence de design actuelle:
+
+- les commons d'ouverture restent en `BIOME_FIRST_ENTRY`
+- les uncommons de build importants doivent plutot arriver a `elite 1-2`, pas `elite 3` par defaut
+- les rares signatures de build doivent plutot etre visibles au `premier boss clear` du biome que tres tard dans le metagame
+- seules quelques cartes Library / meta restent volontairement plus composees via `ALL_OF`
+
+Ce principe a ete renforce dans le pass du `2026-03-15` pour eviter qu'un build reste injouable faute d'une seule carte marquee trop tardive.
+
+## Progression reliques
+
+Cadence actuelle:
+
+- reliques de mastery ennemi: `5 kills` sur normal, `3 kills` sur elite, `2 kills` sur boss
+- reliques purement "progression de compte": cadence resserree sur `5-8 runs` ou `3-5 wins` selon l'impact
+- reliques vraiment endgame conservees:
+  - milestones de difficulte
+  - reliques globales type `global_codex_prime`
+  - objectifs tres hauts type `global_labyrinth_spiral`
+
+L'objectif est d'avoir quelques reliques debloquees des les premieres runs sans vider toute la collection trop tot.
 
 Effet gameplay:
 

@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "audit:cards": "tsx scripts/audit-card-pool.ts",
+    "audit:relics": "tsx scripts/audit-relic-pool.ts",
     "audit:stories": "tsx scripts/audit-story-descriptions.ts",
     "audit:signatures": "tsx scripts/audit-signature-cadence.ts",
     "lint": "next lint",

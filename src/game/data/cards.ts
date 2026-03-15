@@ -589,16 +589,28 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "COMMON",
-    description: "Gain 5 block.",
-    effects: [{ type: "BLOCK", value: 5 }],
+    description: "Gain 4 block. Heal 2 HP. Exhaust.",
+    effects: [
+      { type: "BLOCK", value: 4 },
+      { type: "HEAL", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
     inkedVariant: {
-      description: "Gain 8 block.",
-      effects: [{ type: "BLOCK", value: 8 }],
+      description: "Gain 7 block. Heal 4 HP. Exhaust.",
+      effects: [
+        { type: "BLOCK", value: 7 },
+        { type: "HEAL", value: 4 },
+        { type: "EXHAUST", value: 0 },
+      ],
       inkMarkCost: 1,
     },
     upgrade: {
-      description: "Gain 8 block.",
-      effects: [{ type: "BLOCK", value: 8 }],
+      description: "Gain 7 block. Heal 2 HP. Exhaust.",
+      effects: [
+        { type: "BLOCK", value: 7 },
+        { type: "HEAL", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
     },
     isStarterCard: false,
     biome: "LIBRARY",
@@ -813,16 +825,25 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "COMMON",
-    description: "Gain 10 block.",
-    effects: [{ type: "BLOCK", value: 10 }],
+    description: "Gain 8 block. Gain 2 block per Weak on enemies.",
+    effects: [
+      { type: "BLOCK", value: 8 },
+      { type: "BLOCK_PER_DEBUFF", value: 2, buff: "WEAK" },
+    ],
     inkedVariant: {
-      description: "Gain 16 block.",
-      effects: [{ type: "BLOCK", value: 16 }],
+      description: "Gain 10 block. Gain 3 block per Weak on enemies.",
+      effects: [
+        { type: "BLOCK", value: 10 },
+        { type: "BLOCK_PER_DEBUFF", value: 3, buff: "WEAK" },
+      ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Gain 15 block.",
-      effects: [{ type: "BLOCK", value: 15 }],
+      description: "Gain 10 block. Gain 2 block per Weak on enemies.",
+      effects: [
+        { type: "BLOCK", value: 10 },
+        { type: "BLOCK_PER_DEBUFF", value: 2, buff: "WEAK" },
+      ],
     },
     isStarterCard: false,
     biome: "VIKING",
@@ -1074,24 +1095,27 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Deal 8 damage to ALL enemies. Apply 1 Weak to ALL.",
+    description: "Deal 7 damage to ALL enemies. Apply 1 Weak to ALL. Draw 1 card.",
     effects: [
-      { type: "DAMAGE", value: 8 },
+      { type: "DAMAGE", value: 7 },
       { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      { type: "DRAW_CARDS", value: 1 },
     ],
     inkedVariant: {
-      description: "Deal 12 damage to ALL. Apply 2 Weak to ALL.",
+      description: "Deal 10 damage to ALL. Apply 2 Weak to ALL. Draw 1 card.",
       effects: [
-        { type: "DAMAGE", value: 12 },
+        { type: "DAMAGE", value: 10 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
       ],
       inkMarkCost: 3,
     },
     upgrade: {
-      description: "Deal 12 damage to ALL. Apply 2 Weak to ALL.",
+      description: "Deal 10 damage to ALL. Apply 1 Weak to ALL. Draw 1 card.",
       effects: [
-        { type: "DAMAGE", value: 12 },
-        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "DAMAGE", value: 10 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
       ],
     },
     isStarterCard: false,
@@ -1109,24 +1133,27 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Deal 15 damage. Apply 2 Vulnerable.",
+    description: "Deal 12 damage. Apply 2 Vulnerable. Gain 2 ink.",
     effects: [
-      { type: "DAMAGE", value: 15 },
+      { type: "DAMAGE", value: 12 },
       { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      { type: "GAIN_INK", value: 2 },
     ],
     inkedVariant: {
-      description: "Deal 22 damage. Apply 3 Vulnerable.",
+      description: "Deal 18 damage. Apply 3 Vulnerable. Gain 3 ink.",
       effects: [
-        { type: "DAMAGE", value: 22 },
+        { type: "DAMAGE", value: 18 },
         { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "GAIN_INK", value: 3 },
       ],
       inkMarkCost: 3,
     },
     upgrade: {
-      description: "Deal 22 damage. Apply 3 Vulnerable.",
+      description: "Deal 18 damage. Apply 3 Vulnerable. Gain 2 ink.",
       effects: [
-        { type: "DAMAGE", value: 22 },
+        { type: "DAMAGE", value: 18 },
         { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "GAIN_INK", value: 2 },
       ],
     },
     isStarterCard: false,
@@ -1292,24 +1319,30 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Deal 5 damage. Apply 4 Vulnerable to target.",
+    description:
+      "Deal 4 damage. Apply 4 Vulnerable to target. Add 1 Dazed to your discard pile.",
     effects: [
-      { type: "DAMAGE", value: 5 },
+      { type: "DAMAGE", value: 4 },
       { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
     ],
     inkedVariant: {
-      description: "Deal 7 damage. Apply 5 Vulnerable to target.",
+      description:
+        "Deal 6 damage. Apply 5 Vulnerable to target. Add 1 Dazed to your discard pile.",
       effects: [
-        { type: "DAMAGE", value: 7 },
+        { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 5, buff: "VULNERABLE", duration: 2 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 7 damage. Apply 4 Vulnerable to target.",
+      description:
+        "Deal 6 damage. Apply 4 Vulnerable to target. Add 1 Dazed to your discard pile.",
       effects: [
-        { type: "DAMAGE", value: 7 },
+        { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
       ],
     },
     isStarterCard: false,
@@ -1414,23 +1447,29 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "COMMON",
-    description: "Deal 6 damage. Apply 2 Vulnerable.",
+    description:
+      "Deal 4 damage. Deal 2 more damage per Vulnerable on target. Apply 1 Vulnerable.",
     effects: [
-      { type: "DAMAGE", value: 6 },
-      { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      { type: "DAMAGE", value: 4 },
+      { type: "DAMAGE_PER_DEBUFF", value: 2, buff: "VULNERABLE" },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
     ],
     inkedVariant: {
-      description: "Deal 9 damage. Apply 3 Vulnerable.",
+      description:
+        "Deal 6 damage. Deal 3 more damage per Vulnerable on target. Apply 2 Vulnerable.",
       effects: [
-        { type: "DAMAGE", value: 9 },
-        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "DAMAGE", value: 6 },
+        { type: "DAMAGE_PER_DEBUFF", value: 3, buff: "VULNERABLE" },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 9 damage. Apply 2 Vulnerable.",
+      description:
+        "Deal 6 damage. Deal 2 more damage per Vulnerable on target. Apply 2 Vulnerable.",
       effects: [
-        { type: "DAMAGE", value: 9 },
+        { type: "DAMAGE", value: 6 },
+        { type: "DAMAGE_PER_DEBUFF", value: 2, buff: "VULNERABLE" },
         { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
       ],
     },
@@ -1471,6 +1510,52 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     isStarterCard: false,
     biome: "LOVECRAFTIAN",
     characterId: "scribe",
+  },
+  {
+    id: "recursive_scratch",
+    name: "Recursive Scratch",
+    type: "ATTACK",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "RARE",
+    description:
+      "Deal 3 damage. Add a copy of this card to your draw pile. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 3 },
+      { type: "ADD_CARD_TO_DRAW", value: 1, copySourceCard: true },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: {
+      description:
+        "Deal 3 damage. Add 2 copies of this card to your draw pile. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 3 },
+        { type: "ADD_CARD_TO_DRAW", value: 2, copySourceCard: true },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 1,
+      upgradedDescription:
+        "Deal 3 damage. Draw 1 card. Add 2 copies of this card to your draw pile. Exhaust.",
+      upgradedEffects: [
+        { type: "DAMAGE", value: 3 },
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "ADD_CARD_TO_DRAW", value: 2, copySourceCard: true },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    upgrade: {
+      description:
+        "Deal 3 damage. Draw 1 card. Add a copy of this card to your draw pile. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 3 },
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "ADD_CARD_TO_DRAW", value: 1, copySourceCard: true },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LOVECRAFTIAN",
   },
 
   // =========================================================
@@ -1557,24 +1642,27 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Deal 16 damage. Apply 1 Weak.",
+    description: "Deal 14 damage. Apply 1 Weak. Apply 3 Bleed.",
     effects: [
-      { type: "DAMAGE", value: 16 },
+      { type: "DAMAGE", value: 14 },
       { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
     ],
     inkedVariant: {
-      description: "Deal 24 damage. Apply 2 Weak.",
+      description: "Deal 20 damage. Apply 2 Weak. Apply 4 Bleed.",
       effects: [
-        { type: "DAMAGE", value: 24 },
+        { type: "DAMAGE", value: 20 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
       ],
       inkMarkCost: 3,
     },
     upgrade: {
-      description: "Deal 22 damage. Apply 2 Weak.",
+      description: "Deal 18 damage. Apply 1 Weak. Apply 4 Bleed.",
       effects: [
-        { type: "DAMAGE", value: 22 },
-        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "DAMAGE", value: 18 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
       ],
     },
     isStarterCard: false,
@@ -1653,24 +1741,27 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "COMMON",
-    description: "Deal 7 damage. Apply 2 Poison.",
+    description: "Deal 5 damage. Apply 2 Poison. Heal 2.",
     effects: [
-      { type: "DAMAGE", value: 7 },
+      { type: "DAMAGE", value: 5 },
       { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+      { type: "HEAL", value: 2 },
     ],
     inkedVariant: {
-      description: "Deal 10 damage. Apply 4 Poison.",
+      description: "Deal 7 damage. Apply 4 Poison. Heal 4.",
       effects: [
-        { type: "DAMAGE", value: 10 },
+        { type: "DAMAGE", value: 7 },
         { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+        { type: "HEAL", value: 4 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 10 damage. Apply 4 Poison.",
+      description: "Deal 7 damage. Apply 3 Poison. Heal 2.",
       effects: [
-        { type: "DAMAGE", value: 10 },
-        { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+        { type: "HEAL", value: 2 },
       ],
     },
     isStarterCard: false,
@@ -1684,27 +1775,24 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "UNCOMMON",
-    description: "Heal 4 HP. Draw 1 card. Gain 1 Focus.",
+    description: "Heal 5 HP. Draw 1 card.",
     effects: [
-      { type: "HEAL", value: 4 },
+      { type: "HEAL", value: 5 },
       { type: "DRAW_CARDS", value: 1 },
-      { type: "GAIN_FOCUS", value: 1 },
     ],
     inkedVariant: {
-      description: "Heal 8 HP. Draw 2 cards. Gain 2 Focus.",
+      description: "Heal 8 HP. Draw 2 cards.",
       effects: [
         { type: "HEAL", value: 8 },
         { type: "DRAW_CARDS", value: 2 },
-        { type: "GAIN_FOCUS", value: 2 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Heal 7 HP. Draw 1 card. Gain 1 Focus.",
+      description: "Heal 8 HP. Draw 1 card.",
       effects: [
-        { type: "HEAL", value: 7 },
+        { type: "HEAL", value: 8 },
         { type: "DRAW_CARDS", value: 1 },
-        { type: "GAIN_FOCUS", value: 1 },
       ],
     },
     isStarterCard: false,
@@ -1835,7 +1923,7 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     id: "iron_samovar",
     name: "Iron Samovar",
     type: "SKILL",
-    energyCost: 1,
+    energyCost: 2,
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "COMMON",
@@ -1925,21 +2013,23 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     id: "ancestral_drum",
     name: "Ancestral Drum",
     type: "SKILL",
-    energyCost: 1,
+    energyCost: 2,
     inkCost: 0,
     targeting: "SELF",
     rarity: "COMMON",
-    description: "Gain 8 block. Gain 1 Focus.",
+    description: "Gain 8 block. Gain 1 Focus. Exhaust.",
     effects: [
       { type: "BLOCK", value: 8 },
       { type: "GAIN_FOCUS", value: 1 },
+      { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: null,
     upgrade: {
-      description: "Gain 12 block. Gain 2 Focus.",
+      description: "Gain 12 block. Gain 2 Focus. Exhaust.",
       effects: [
         { type: "BLOCK", value: 12 },
         { type: "GAIN_FOCUS", value: 2 },
+        { type: "EXHAUST", value: 0 },
       ],
     },
     isStarterCard: false,
@@ -2522,24 +2612,30 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "COMMON",
-    description: "Deal 5 damage to ALL enemies. Apply 1 Weak to ALL enemies.",
+    description:
+      "Deal 4 damage to ALL enemies. Apply 1 Weak to ALL enemies. Gain 1 ink.",
     effects: [
-      { type: "DAMAGE", value: 5 },
+      { type: "DAMAGE", value: 4 },
       { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      { type: "GAIN_INK", value: 1 },
     ],
     inkedVariant: {
-      description: "Deal 7 damage to ALL enemies. Apply 2 Weak to ALL enemies.",
+      description:
+        "Deal 6 damage to ALL enemies. Apply 2 Weak to ALL enemies. Gain 2 ink.",
       effects: [
-        { type: "DAMAGE", value: 7 },
+        { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "GAIN_INK", value: 2 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 7 damage to ALL enemies. Apply 1 Weak to ALL enemies.",
+      description:
+        "Deal 6 damage to ALL enemies. Apply 1 Weak to ALL enemies. Gain 1 ink.",
       effects: [
-        { type: "DAMAGE", value: 7 },
+        { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        { type: "GAIN_INK", value: 1 },
       ],
     },
     isStarterCard: false,
@@ -2801,24 +2897,27 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Deal 12 damage. Apply 3 Poison.",
+    description: "Deal 9 damage. Apply 3 Poison. Gain 2 ink.",
     effects: [
-      { type: "DAMAGE", value: 12 },
+      { type: "DAMAGE", value: 9 },
       { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      { type: "GAIN_INK", value: 2 },
     ],
     inkedVariant: {
-      description: "Deal 16 damage. Apply 4 Poison.",
+      description: "Deal 13 damage. Apply 4 Poison. Gain 3 ink.",
       effects: [
-        { type: "DAMAGE", value: 16 },
+        { type: "DAMAGE", value: 13 },
         { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+        { type: "GAIN_INK", value: 3 },
       ],
       inkMarkCost: 3,
     },
     upgrade: {
-      description: "Deal 16 damage. Apply 3 Poison.",
+      description: "Deal 13 damage. Apply 3 Poison. Gain 2 ink.",
       effects: [
-        { type: "DAMAGE", value: 16 },
+        { type: "DAMAGE", value: 13 },
         { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+        { type: "GAIN_INK", value: 2 },
       ],
     },
     isStarterCard: false,
@@ -2960,24 +3059,30 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "COMMON",
-    description: "Deal 6 damage. Apply 3 Poison.",
+    description:
+      "Deal 5 damage. Apply 3 Poison. Add 1 Dazed to your discard pile.",
     effects: [
-      { type: "DAMAGE", value: 6 },
+      { type: "DAMAGE", value: 5 },
       { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
     ],
     inkedVariant: {
-      description: "Deal 9 damage. Apply 4 Poison.",
+      description:
+        "Deal 7 damage. Apply 4 Poison. Add 1 Dazed to your discard pile.",
       effects: [
-        { type: "DAMAGE", value: 9 },
+        { type: "DAMAGE", value: 7 },
         { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 9 damage. Apply 3 Poison.",
+      description:
+        "Deal 7 damage. Apply 3 Poison. Add 1 Dazed to your discard pile.",
       effects: [
-        { type: "DAMAGE", value: 9 },
+        { type: "DAMAGE", value: 7 },
         { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
       ],
     },
     isStarterCard: false,
@@ -3666,24 +3771,27 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "COMMON",
-    description: "Deal 9 damage. Apply 1 Weak.",
+    description: "Deal 7 damage. Apply 1 Weak. Gain 4 block.",
     effects: [
-      { type: "DAMAGE", value: 9 },
+      { type: "DAMAGE", value: 7 },
       { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      { type: "BLOCK", value: 4 },
     ],
     inkedVariant: {
-      description: "Deal 13 damage. Apply 2 Weak.",
+      description: "Deal 10 damage. Apply 2 Weak. Gain 7 block.",
       effects: [
-        { type: "DAMAGE", value: 13 },
+        { type: "DAMAGE", value: 10 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "BLOCK", value: 7 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 12 damage. Apply 1 Weak.",
+      description: "Deal 10 damage. Apply 1 Weak. Gain 6 block.",
       effects: [
-        { type: "DAMAGE", value: 12 },
+        { type: "DAMAGE", value: 10 },
         { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        { type: "BLOCK", value: 6 },
       ],
     },
     isStarterCard: false,
@@ -3745,24 +3853,30 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Deal 5 damage to ALL enemies. Apply 2 Weak to ALL enemies.",
+    description:
+      "Deal 4 damage to ALL enemies. Apply 2 Weak to ALL enemies. Gain 5 block.",
     effects: [
-      { type: "DAMAGE", value: 5 },
+      { type: "DAMAGE", value: 4 },
       { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "BLOCK", value: 5 },
     ],
     inkedVariant: {
-      description: "Deal 7 damage to ALL enemies. Apply 3 Weak to ALL enemies.",
+      description:
+        "Deal 6 damage to ALL enemies. Apply 3 Weak to ALL enemies. Gain 8 block.",
       effects: [
-        { type: "DAMAGE", value: 7 },
+        { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "BLOCK", value: 8 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 7 damage to ALL enemies. Apply 2 Weak to ALL enemies.",
+      description:
+        "Deal 6 damage to ALL enemies. Apply 2 Weak to ALL enemies. Gain 5 block.",
       effects: [
-        { type: "DAMAGE", value: 7 },
+        { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "BLOCK", value: 5 },
       ],
     },
     isStarterCard: false,
@@ -4532,27 +4646,33 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
-    description: "Deal 4 damage to ALL enemies. Apply 2 Vulnerable to ALL. Gain 1 Focus.",
+    description:
+      "Deal 4 damage to ALL enemies. Apply 2 Vulnerable to ALL. Gain 1 Focus. Exhaust.",
     effects: [
       { type: "DAMAGE", value: 4 },
       { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
       { type: "GAIN_FOCUS", value: 1 },
+      { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: {
-      description: "Deal 6 damage to ALL. Apply 3 Vulnerable to ALL. Gain 2 Focus.",
+      description:
+        "Deal 6 damage to ALL. Apply 3 Vulnerable to ALL. Gain 2 Focus. Exhaust.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
         { type: "GAIN_FOCUS", value: 2 },
+        { type: "EXHAUST", value: 0 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Deal 6 damage to ALL. Apply 2 Vulnerable to ALL. Gain 1 Focus.",
+      description:
+        "Deal 6 damage to ALL. Apply 2 Vulnerable to ALL. Gain 1 Focus. Exhaust.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         { type: "GAIN_FOCUS", value: 1 },
+        { type: "EXHAUST", value: 0 },
       ],
     },
     isStarterCard: false,
@@ -5149,27 +5269,33 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "COMMON",
-    description: "Gain 7 block. Gain 1 Focus. Add 1 Dazed to your discard pile.",
+    description:
+      "Gain 7 block. Gain 1 Focus. Add 1 Dazed to your discard pile. Exhaust.",
     effects: [
       { type: "BLOCK", value: 7 },
       { type: "GAIN_FOCUS", value: 1 },
       { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+      { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: {
-      description: "Gain 10 block. Gain 2 Focus. Add 1 Dazed to your discard pile.",
+      description:
+        "Gain 10 block. Gain 2 Focus. Add 1 Dazed to your discard pile. Exhaust.",
       effects: [
         { type: "BLOCK", value: 10 },
         { type: "GAIN_FOCUS", value: 2 },
         { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+        { type: "EXHAUST", value: 0 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Gain 10 block. Gain 1 Focus. Add 1 Dazed to your discard pile.",
+      description:
+        "Gain 10 block. Gain 1 Focus. Add 1 Dazed to your discard pile. Exhaust.",
       effects: [
         { type: "BLOCK", value: 10 },
         { type: "GAIN_FOCUS", value: 1 },
         { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+        { type: "EXHAUST", value: 0 },
       ],
     },
     isStarterCard: false,
@@ -5185,29 +5311,29 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     targeting: "ALL_ENEMIES",
     rarity: "COMMON",
     description:
-      "Deal 4 damage to ALL enemies. Apply 2 Weak and 1 Vulnerable to ALL.",
+      "Deal 4 damage to ALL enemies. Apply 2 Weak to ALL. Add 1 Dazed to your discard pile.",
     effects: [
       { type: "DAMAGE", value: 4 },
       { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
-      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
     ],
     inkedVariant: {
       description:
-        "Deal 6 damage to ALL. Apply 2 Weak and 2 Vulnerable to ALL.",
+        "Deal 6 damage to ALL. Apply 2 Weak to ALL. Add 1 Dazed to your discard pile.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
-        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
       description:
-        "Deal 6 damage to ALL. Apply 2 Weak and 2 Vulnerable to ALL.",
+        "Deal 6 damage to ALL. Apply 2 Weak to ALL. Add 1 Dazed to your discard pile.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
-        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
       ],
     },
     isStarterCard: false,
@@ -5287,22 +5413,24 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
     description:
-      "Gain 2 ink. Apply 2 Vulnerable to target. Gain 1 Focus. Add 1 Dazed to your discard pile.",
+      "Gain 2 ink. Apply 2 Vulnerable to target. Gain 1 Focus. Add 1 Dazed to your discard pile. Exhaust.",
     effects: [
       { type: "GAIN_INK", value: 2 },
       { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
       { type: "GAIN_FOCUS", value: 1 },
       { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+      { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: null,
     upgrade: {
       description:
-        "Gain 2 ink. Apply 3 Vulnerable to target. Gain 1 Focus. Add 1 Dazed to your discard pile.",
+        "Gain 2 ink. Apply 3 Vulnerable to target. Gain 1 Focus. Add 1 Dazed to your discard pile. Exhaust.",
       effects: [
         { type: "GAIN_INK", value: 2 },
         { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
         { type: "GAIN_FOCUS", value: 1 },
         { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+        { type: "EXHAUST", value: 0 },
       ],
     },
     isStarterCard: false,
@@ -5788,29 +5916,29 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     targeting: "ALL_ENEMIES",
     rarity: "UNCOMMON",
     description:
-      "Deal 4 damage to ALL enemies. Apply 2 Weak and 1 Vulnerable to ALL.",
+      "Deal 4 damage to ALL enemies. Apply 2 Weak to ALL. Gain 5 Block.",
     effects: [
       { type: "DAMAGE", value: 4 },
       { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
-      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      { type: "BLOCK", value: 5 },
     ],
     inkedVariant: {
       description:
-        "Deal 6 damage to ALL. Apply 2 Weak and 2 Vulnerable to ALL.",
+        "Deal 6 damage to ALL. Apply 2 Weak to ALL. Gain 8 Block.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
-        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "BLOCK", value: 8 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
       description:
-        "Deal 6 damage to ALL. Apply 2 Weak and 2 Vulnerable to ALL.",
+        "Deal 6 damage to ALL. Apply 2 Weak to ALL. Gain 5 Block.",
       effects: [
         { type: "DAMAGE", value: 6 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
-        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "BLOCK", value: 5 },
       ],
     },
     isStarterCard: false,
@@ -5887,27 +6015,30 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "COMMON",
-    description: "Gain 6 block. Draw 1 card. Gain 1 Focus.",
+    description: "Gain 5 block. Draw 1 card. Gain 1 Focus. Exhaust.",
     effects: [
-      { type: "BLOCK", value: 6 },
+      { type: "BLOCK", value: 5 },
       { type: "DRAW_CARDS", value: 1 },
       { type: "GAIN_FOCUS", value: 1 },
+      { type: "EXHAUST", value: 0 },
     ],
     inkedVariant: {
-      description: "Gain 8 block. Draw 2 cards. Gain 1 Focus.",
+      description: "Gain 7 block. Draw 2 cards. Gain 1 Focus. Exhaust.",
       effects: [
-        { type: "BLOCK", value: 8 },
+        { type: "BLOCK", value: 7 },
         { type: "DRAW_CARDS", value: 2 },
         { type: "GAIN_FOCUS", value: 1 },
+        { type: "EXHAUST", value: 0 },
       ],
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Gain 9 block. Draw 1 card. Gain 1 Focus.",
+      description: "Gain 8 block. Draw 1 card. Gain 1 Focus. Exhaust.",
       effects: [
-        { type: "BLOCK", value: 9 },
+        { type: "BLOCK", value: 8 },
         { type: "DRAW_CARDS", value: 1 },
         { type: "GAIN_FOCUS", value: 1 },
+        { type: "EXHAUST", value: 0 },
       ],
     },
     isStarterCard: false,
@@ -6100,6 +6231,66 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     biome: "VIKING",
     characterId: "bibliothecaire",
   },
+  {
+    id: "eagle_knight_sun_dive",
+    name: "Sun Dive",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 8 damage. Add Solar Ascent to your discard pile. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "eagle_knight_solar_ascent" },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: null,
+    isStarterCard: false,
+    isCollectible: false,
+    biome: "AZTEC",
+  },
+  {
+    id: "eagle_knight_solar_ascent",
+    name: "Solar Ascent",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Deal 11 damage. Add Solar Verdict to your discard pile. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 11 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "eagle_knight_solar_verdict" },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: null,
+    isStarterCard: false,
+    isCollectible: false,
+    biome: "AZTEC",
+  },
+  {
+    id: "eagle_knight_solar_verdict",
+    name: "Solar Verdict",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "RARE",
+    description: "Deal 14 damage. Apply 5 Bleed. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 14 },
+      { type: "APPLY_DEBUFF", value: 5, buff: "BLEED", duration: 5 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    inkedVariant: null,
+    upgrade: null,
+    isStarterCard: false,
+    isCollectible: false,
+    biome: "AZTEC",
+  },
 
   // =========================================================
   // Status / Curse cards (non-collectible, non-upgradeable)
@@ -6285,6 +6476,900 @@ function getBestiaryCharacterId(enemy: EnemyDefinition): string | undefined {
   return checksum % 2 === 0 ? "scribe" : "bibliothecaire";
 }
 
+type BestiaryCardTemplate = Omit<
+  CardDefinition,
+  "id" | "name" | "rarity" | "biome"
+>;
+
+function makeBestiaryCardTemplate(
+  template: Pick<
+    CardDefinition,
+    | "type"
+    | "energyCost"
+    | "targeting"
+    | "description"
+    | "effects"
+    | "onRandomDiscardEffects"
+  > & {
+    inkCost?: number;
+    upgrade?: CardDefinition["upgrade"];
+  }
+): BestiaryCardTemplate {
+  return {
+    type: template.type,
+    energyCost: template.energyCost,
+    inkCost: template.inkCost ?? 0,
+    targeting: template.targeting,
+    description: template.description,
+    effects: template.effects,
+    onRandomDiscardEffects: template.onRandomDiscardEffects ?? [],
+    inkedVariant: null,
+    upgrade: template.upgrade ?? null,
+    isStarterCard: false,
+  };
+}
+
+const BESTIARY_NORMAL_CARD_OVERRIDES: Record<
+  string,
+  BestiaryCardTemplate
+> = {
+  // VIKING
+  draugr: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 5 damage. Apply 2 Bleed. Add 1 Dazed to your discard pile.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 2 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+    ],
+    upgrade: {
+      description:
+        "Deal 7 damage. Apply 3 Bleed. Add 1 Dazed to your discard pile.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 3 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+      ],
+    },
+  }),
+  frost_troll: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "SELF",
+    description: "Gain 4 block. Gain 2 block per Bleed on enemies.",
+    effects: [
+      { type: "BLOCK", value: 4 },
+      { type: "BLOCK_PER_DEBUFF", value: 2, buff: "BLEED" },
+    ],
+    upgrade: {
+      description: "Gain 6 block. Gain 3 block per Bleed on enemies.",
+      effects: [
+        { type: "BLOCK", value: 6 },
+        { type: "BLOCK_PER_DEBUFF", value: 3, buff: "BLEED" },
+      ],
+    },
+  }),
+  shield_maiden: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Gain 5 block. Deal damage equal to your Block.",
+    effects: [
+      { type: "BLOCK", value: 5 },
+      { type: "DAMAGE_EQUAL_BLOCK", value: 1 },
+    ],
+    upgrade: {
+      description: "Gain 7 block. Deal double your Block as damage.",
+      effects: [
+        { type: "BLOCK", value: 7 },
+        { type: "DAMAGE_EQUAL_BLOCK", value: 2 },
+      ],
+    },
+  }),
+
+  // GREEK
+  satyr: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Draw 1 card. Apply 3 Poison.",
+    effects: [
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+    ],
+    upgrade: {
+      description: "Draw 1 card. Apply 5 Poison.",
+      effects: [
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "APPLY_DEBUFF", value: 5, buff: "POISON" },
+      ],
+    },
+  }),
+  harpy: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 3 damage twice. Apply 1 Weak.",
+    effects: [
+      { type: "DAMAGE", value: 3 },
+      { type: "DAMAGE", value: 3 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+    ],
+    upgrade: {
+      description: "Deal 4 damage twice. Apply 1 Weak.",
+      effects: [
+        { type: "DAMAGE", value: 4 },
+        { type: "DAMAGE", value: 4 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      ],
+    },
+  }),
+  cyclops: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description:
+      "Deal 6 damage. If you have an upgraded card in hand, deal 6 more damage.",
+    effects: [
+      { type: "DAMAGE", value: 6 },
+      { type: "DAMAGE_BONUS_IF_UPGRADED_IN_HAND", value: 6 },
+    ],
+    upgrade: {
+      description:
+        "Deal 8 damage. If you have an upgraded card in hand, deal 8 more damage.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "DAMAGE_BONUS_IF_UPGRADED_IN_HAND", value: 8 },
+      ],
+    },
+  }),
+  gorgon: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "ALL_ENEMIES",
+    description: "Apply 1 Weak and 1 Vulnerable to ALL enemies. Exhaust.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description: "Apply 2 Weak and 1 Vulnerable to ALL enemies. Exhaust.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+
+  // EGYPTIAN
+  scarab_swarm: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "ALL_ENEMIES",
+    description:
+      "Deal 1 damage to ALL enemies. Apply 2 Poison to ALL enemies. Add 1 Dazed to your discard pile.",
+    effects: [
+      { type: "DAMAGE", value: 1 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+    ],
+    upgrade: {
+      description:
+        "Deal 2 damage to ALL enemies. Apply 2 Poison to ALL enemies. Add 1 Dazed to your discard pile.",
+      effects: [
+        { type: "DAMAGE", value: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+      ],
+    },
+  }),
+  tomb_priest: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Gain 2 ink. Apply 1 Vulnerable.",
+    effects: [
+      { type: "GAIN_INK", value: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+    ],
+    upgrade: {
+      description: "Gain 3 ink. Apply 2 Vulnerable.",
+      effects: [
+        { type: "GAIN_INK", value: 3 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+      ],
+    },
+  }),
+  ushabti_servant: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "SELF",
+    description: "Gain 6 block. Upgrade a random card in your hand.",
+    effects: [
+      { type: "BLOCK", value: 6 },
+      { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+    ],
+    upgrade: {
+      description: "Gain 8 block. Upgrade a random card in your hand.",
+      effects: [
+        { type: "BLOCK", value: 8 },
+        { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+      ],
+    },
+  }),
+
+  // LOVECRAFTIAN
+  cultist_scribe: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "SELF",
+    description: "Draw 2 cards. Discard 1 random card. Gain 1 ink.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "FORCE_DISCARD_RANDOM", value: 1 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    upgrade: {
+      description: "Draw 3 cards. Discard 1 random card. Gain 1 ink.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "FORCE_DISCARD_RANDOM", value: 1 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+  }),
+  deep_one: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description:
+      "Deal 4 damage. Deal 3 more damage for each time Deep One Dossier was played this combat.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "DAMAGE_PER_THIS_CARD_PLAYED", value: 3 },
+    ],
+    upgrade: {
+      description:
+        "Deal 5 damage. Deal 4 more damage for each time Deep One Dossier was played this combat.",
+      effects: [
+        { type: "DAMAGE", value: 5 },
+        { type: "DAMAGE_PER_THIS_CARD_PLAYED", value: 4 },
+      ],
+    },
+  }),
+  star_spawn: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description:
+      "Deal 4 damage. Deal 2 more per card in your Exhaust pile. Add 1 Dazed to your discard pile.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "DAMAGE_PER_EXHAUSTED_CARD", value: 2 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+    ],
+    upgrade: {
+      description:
+        "Deal 6 damage. Deal 3 more per card in your Exhaust pile. Add 1 Dazed to your discard pile.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "DAMAGE_PER_EXHAUSTED_CARD", value: 3 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+      ],
+    },
+  }),
+  byakhee: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 0,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 2 damage. Add a copy of this card to your discard pile. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 2 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, copySourceCard: true },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description:
+        "Deal 4 damage. Add a copy of this card to your discard pile. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 4 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, copySourceCard: true },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+
+  // AZTEC
+  jaguar_warrior: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 5 damage. Deal 2 more per Bleed on target.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "DAMAGE_PER_DEBUFF", value: 2, buff: "BLEED" },
+    ],
+    upgrade: {
+      description: "Deal 7 damage. Deal 3 more per Bleed on target.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "DAMAGE_PER_DEBUFF", value: 3, buff: "BLEED" },
+      ],
+    },
+  }),
+  eagle_knight: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 4 damage. Add Sun Dive to your discard pile. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "eagle_knight_sun_dive" },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description: "Deal 6 damage. Add Sun Dive to your discard pile. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "eagle_knight_sun_dive" },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+  tzitzimitl: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "ALL_ENEMIES",
+    description:
+      "Gain 1 ink. Apply 1 Weak to ALL enemies. Add 1 Dazed to your discard pile.",
+    effects: [
+      { type: "GAIN_INK", value: 1 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+    ],
+    upgrade: {
+      description:
+        "Gain 2 ink. Apply 1 Weak to ALL enemies. Add 1 Dazed to your discard pile.",
+      effects: [
+        { type: "GAIN_INK", value: 2 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+      ],
+    },
+  }),
+
+  // CELTIC
+  sidhe_raider: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 5 damage. Return 1 random non-Clog card from discard to hand.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
+    ],
+    upgrade: {
+      description: "Deal 7 damage. Return 1 random non-Clog card from discard to hand.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
+      ],
+    },
+  }),
+  morrigan_wisp: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "ALL_ENEMIES",
+    description: "Apply 1 Weak to ALL enemies. Gain 1 Thorns per Weak on enemies.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      {
+        type: "APPLY_BUFF_PER_DEBUFF",
+        value: 1,
+        buff: "THORNS",
+        scalingBuff: "WEAK",
+      },
+    ],
+    upgrade: {
+      description:
+        "Apply 2 Weak to ALL enemies. Gain 1 Thorns per Weak on enemies.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        {
+          type: "APPLY_BUFF_PER_DEBUFF",
+          value: 1,
+          buff: "THORNS",
+          scalingBuff: "WEAK",
+        },
+      ],
+    },
+  }),
+  briar_beast: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "SELF",
+    description: "Gain 5 block. Apply 2 Poison to ALL enemies. Gain 1 Thorns.",
+    effects: [
+      { type: "BLOCK", value: 5 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+      { type: "APPLY_BUFF", value: 1, buff: "THORNS" },
+    ],
+    upgrade: {
+      description: "Gain 7 block. Apply 3 Poison to ALL enemies. Gain 1 Thorns.",
+      effects: [
+        { type: "BLOCK", value: 7 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+        { type: "APPLY_BUFF", value: 1, buff: "THORNS" },
+      ],
+    },
+  }),
+
+  // RUSSIAN
+  winter_wolf: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 5 damage. Deal 3 more per Weak on target.",
+    effects: [
+      { type: "DAMAGE", value: 5 },
+      { type: "DAMAGE_PER_DEBUFF", value: 3, buff: "WEAK" },
+    ],
+    upgrade: {
+      description: "Deal 7 damage. Deal 4 more per Weak on target.",
+      effects: [
+        { type: "DAMAGE", value: 7 },
+        { type: "DAMAGE_PER_DEBUFF", value: 4, buff: "WEAK" },
+      ],
+    },
+  }),
+  snow_maiden: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "SELF",
+    description: "Gain 1 Ward. Freeze 1 card in your hand. Draw 1 card. Exhaust.",
+    effects: [
+      { type: "APPLY_BUFF", value: 1, buff: "WARD" },
+      { type: "FREEZE_HAND_CARDS", value: 1 },
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description: "Gain 1 Ward. Freeze 1 card in your hand. Draw 2 cards. Exhaust.",
+      effects: [
+        { type: "APPLY_BUFF", value: 1, buff: "WARD" },
+        { type: "FREEZE_HAND_CARDS", value: 1 },
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+  rusalka: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "SELF",
+    description:
+      "Gain 4 block. Return 1 random non-Clog card from discard to hand. If this card is randomly discarded, return 2 random non-Clog cards from discard to hand.",
+    effects: [
+      { type: "BLOCK", value: 4 },
+      { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
+    ],
+    onRandomDiscardEffects: [
+      { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 2 },
+    ],
+    upgrade: {
+      description:
+        "Gain 6 block. Return 1 random non-Clog card from discard to hand. If this card is randomly discarded, return 2 random non-Clog cards from discard to hand.",
+      effects: [
+        { type: "BLOCK", value: 6 },
+        { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
+      ],
+      onRandomDiscardEffects: [
+        { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 2 },
+      ],
+    },
+  }),
+
+  // AFRICAN
+  hyena_pack: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description:
+      "Deal 4 damage. Discard 1 random card. If this card is randomly discarded, draw 2 cards.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "FORCE_DISCARD_RANDOM", value: 1 },
+    ],
+    onRandomDiscardEffects: [{ type: "DRAW_CARDS", value: 2 }],
+    upgrade: {
+      description:
+        "Deal 6 damage. Discard 1 random card. If this card is randomly discarded, draw 2 cards.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "FORCE_DISCARD_RANDOM", value: 1 },
+      ],
+      onRandomDiscardEffects: [{ type: "DRAW_CARDS", value: 2 }],
+    },
+  }),
+  mask_hunter: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 7 damage. Apply 1 Vulnerable. Gain 1 ink.",
+    effects: [
+      { type: "DAMAGE", value: 7 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "VULNERABLE", duration: 2 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    upgrade: {
+      description: "Deal 9 damage. Apply 2 Vulnerable. Gain 1 ink.",
+      effects: [
+        { type: "DAMAGE", value: 9 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+  }),
+  serpent_oracle: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 1,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 4 damage. If target already has Poison, deal 4 damage again. Apply 2 Poison.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "DAMAGE_IF_TARGET_HAS_DEBUFF", value: 4, buff: "POISON" },
+      { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+    ],
+    upgrade: {
+      description:
+        "Deal 5 damage. If target already has Poison, deal 5 damage again. Apply 3 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 5 },
+        { type: "DAMAGE_IF_TARGET_HAS_DEBUFF", value: 5, buff: "POISON" },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      ],
+    },
+  }),
+  tokoloshe: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 1,
+    targeting: "SELF",
+    description:
+      "Draw 1 card. Add 1 Dazed to your discard pile. If this card is randomly discarded, gain 1 energy and 1 ink.",
+    effects: [
+      { type: "DRAW_CARDS", value: 1 },
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+    ],
+    onRandomDiscardEffects: [
+      { type: "GAIN_ENERGY", value: 1 },
+      { type: "GAIN_INK", value: 1 },
+    ],
+    upgrade: {
+      description:
+        "Draw 2 cards. Add 1 Dazed to your discard pile. If this card is randomly discarded, gain 1 energy and 1 ink.",
+      effects: [
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "dazed" },
+      ],
+      onRandomDiscardEffects: [
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "GAIN_INK", value: 1 },
+      ],
+    },
+  }),
+};
+
+const BESTIARY_ELITE_CARD_OVERRIDES: Record<
+  string,
+  BestiaryCardTemplate
+> = {
+  // VIKING
+  valkyrie: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 2,
+    targeting: "SELF",
+    description: "Gain 1 Strength. Gain 6 block. Exhaust.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 1 },
+      { type: "BLOCK", value: 6 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description: "Gain 2 Strength. Gain 8 block. Exhaust.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "BLOCK", value: 8 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+  jormungandr_spawn: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 2,
+    targeting: "SINGLE_ENEMY",
+    description: "Double Poison on target. Apply 1 Weak. Gain 6 block. Exhaust.",
+    effects: [
+      { type: "DOUBLE_POISON", value: 0 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+      { type: "BLOCK", value: 6 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description: "Double Poison on target. Apply 2 Weak. Gain 8 block. Exhaust.",
+      effects: [
+        { type: "DOUBLE_POISON", value: 0 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "BLOCK", value: 8 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+
+  // GREEK
+  minotaur: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 2,
+    targeting: "SINGLE_ENEMY",
+    description:
+      "Deal 8 damage. Deal 2 more per Vulnerable on target. Gain 8 block. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "DAMAGE_PER_DEBUFF", value: 2, buff: "VULNERABLE" },
+      { type: "BLOCK", value: 8 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description:
+        "Deal 10 damage. Deal 3 more per Vulnerable on target. Gain 10 block. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "DAMAGE_PER_DEBUFF", value: 3, buff: "VULNERABLE" },
+        { type: "BLOCK", value: 10 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+
+  // EGYPTIAN
+  anubis_champion: makeBestiaryCardTemplate({
+    type: "POWER",
+    energyCost: 2,
+    targeting: "SELF",
+    description:
+      "Gain Venom Rite. Venom Rite: Every time your cards apply 6 Poison, deal 5 damage to ALL enemies.",
+    effects: [
+      { type: "APPLY_BUFF", value: 1, buff: "POISON_BURST" },
+    ],
+    upgrade: {
+      energyCost: 1,
+      description:
+        "Gain Venom Rite. Venom Rite: Every time your cards apply 6 Poison, deal 5 damage to ALL enemies.",
+      effects: [
+        { type: "APPLY_BUFF", value: 1, buff: "POISON_BURST" },
+      ],
+    },
+  }),
+  sekhmet_chosen: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 2,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 12 damage. Apply 2 Weak. Gain 1 Strength. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 12 },
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "GAIN_STRENGTH", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description: "Deal 15 damage. Apply 2 Weak. Gain 2 Strength. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 15 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+
+  // LOVECRAFTIAN
+  elder_hybrid: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 2,
+    targeting: "SINGLE_ENEMY",
+    description:
+      "Add 1 Haunting Regret to your discard pile. Deal 5 damage. Deal 5 more damage per Status/Curse in your discard. Exhaust.",
+    effects: [
+      { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "haunting_regret" },
+      { type: "DAMAGE", value: 5 },
+      { type: "DAMAGE_PER_CLOG_IN_DISCARD", value: 5 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description:
+        "Add 1 Haunting Regret to your discard pile. Deal 7 damage. Deal 6 more damage per Status/Curse in your discard. Exhaust.",
+      effects: [
+        { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "haunting_regret" },
+        { type: "DAMAGE", value: 7 },
+        { type: "DAMAGE_PER_CLOG_IN_DISCARD", value: 6 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+
+  // AZTEC
+  quetzal_harbinger: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 2,
+    targeting: "SELF",
+    description:
+      "Gain 1 energy. Apply 3 Bleed to ALL enemies. Upgrade a random card in your hand. Exhaust.",
+    effects: [
+      { type: "GAIN_ENERGY", value: 1 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 3 },
+      { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description:
+        "Gain 1 energy. Apply 5 Bleed to ALL enemies. Upgrade a random card in your hand. Exhaust.",
+      effects: [
+        { type: "GAIN_ENERGY", value: 1 },
+        { type: "APPLY_DEBUFF", value: 5, buff: "BLEED", duration: 5 },
+        { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+  huitzilopochtli_enforcer: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 2,
+    targeting: "SINGLE_ENEMY",
+    description:
+      "Deal 10 damage. Apply 5 Bleed. Upgrade a random card in your hand. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 10 },
+      { type: "APPLY_DEBUFF", value: 5, buff: "BLEED", duration: 5 },
+      { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description:
+        "Deal 13 damage. Apply 6 Bleed. Upgrade a random card in your hand. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 13 },
+        { type: "APPLY_DEBUFF", value: 6, buff: "BLEED", duration: 6 },
+        { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+
+  // CELTIC
+  morrigan_chosen: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 2,
+    targeting: "SELF",
+    description:
+      "Apply 2 Weak to ALL enemies. Gain 1 Thorns per Weak on enemies. Weak attackers trigger your Thorns 1 extra time this combat. Exhaust.",
+    effects: [
+      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      {
+        type: "APPLY_BUFF_PER_DEBUFF",
+        value: 1,
+        buff: "THORNS",
+        scalingBuff: "WEAK",
+      },
+      { type: "RETRIGGER_THORNS_ON_WEAK_ATTACK", value: 1 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description:
+        "Apply 3 Weak to ALL enemies. Gain 1 Thorns per Weak on enemies. Weak attackers trigger your Thorns 1 extra time this combat. Exhaust.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        {
+          type: "APPLY_BUFF_PER_DEBUFF",
+          value: 1,
+          buff: "THORNS",
+          scalingBuff: "WEAK",
+        },
+        { type: "RETRIGGER_THORNS_ON_WEAK_ATTACK", value: 1 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+  wild_hunt_hound: makeBestiaryCardTemplate({
+    type: "ATTACK",
+    energyCost: 2,
+    targeting: "SINGLE_ENEMY",
+    description: "Deal 8 damage. Apply 3 Bleed. Deal 3 more damage per Weak on target. Exhaust.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 3 },
+      { type: "DAMAGE_PER_DEBUFF", value: 3, buff: "WEAK" },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description:
+        "Deal 10 damage. Apply 4 Bleed. Deal 4 more damage per Weak on target. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
+        { type: "DAMAGE_PER_DEBUFF", value: 4, buff: "WEAK" },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+
+  // RUSSIAN
+  koschei_herald: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 2,
+    targeting: "SELF",
+    description:
+      "Gain 6 block. Return 2 random non-Clog cards from discard to hand. Exhaust.",
+    effects: [
+      { type: "BLOCK", value: 6 },
+      { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 2 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description:
+        "Gain 8 block. Return 2 random non-Clog cards from discard to hand. Exhaust.",
+      effects: [
+        { type: "BLOCK", value: 8 },
+        { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 2 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+  domovoi_titan: makeBestiaryCardTemplate({
+    type: "SKILL",
+    energyCost: 2,
+    targeting: "SELF",
+    description:
+      "Gain 30 block. Gain Stonebound for 3 turns. Stonebound: you cannot gain block. Exhaust.",
+    effects: [
+      { type: "BLOCK", value: 30 },
+      { type: "APPLY_BUFF", value: 1, buff: "STONEBOUND", duration: 3 },
+      { type: "EXHAUST", value: 0 },
+    ],
+    upgrade: {
+      description:
+        "Gain 36 block. Gain Stonebound for 3 turns. Stonebound: you cannot gain block. Exhaust.",
+      effects: [
+        { type: "BLOCK", value: 36 },
+        { type: "APPLY_BUFF", value: 1, buff: "STONEBOUND", duration: 3 },
+        { type: "EXHAUST", value: 0 },
+      ],
+    },
+  }),
+
+  // AFRICAN
+  legba_emissary: makeBestiaryCardTemplate({
+    type: "POWER",
+    energyCost: 2,
+    targeting: "SELF",
+    description:
+      "Gain Ember Flow. Ember Flow: Whenever one of your cards Exhausts, gain 1 energy.",
+    effects: [
+      { type: "APPLY_BUFF", value: 1, buff: "EXHAUST_ENERGY" },
+    ],
+    upgrade: {
+      energyCost: 1,
+      description:
+        "Gain Ember Flow. Ember Flow: Whenever one of your cards Exhausts, gain 1 energy.",
+      effects: [
+        { type: "APPLY_BUFF", value: 1, buff: "EXHAUST_ENERGY" },
+      ],
+    },
+  }),
+};
+
 function getBiomeNormalCardTemplate(
   biome: BiomeType
 ): Omit<CardDefinition, "id" | "name" | "rarity" | "biome"> {
@@ -6334,21 +7419,21 @@ function getBiomeNormalCardTemplate(
       };
     case "GREEK":
       return {
-        type: "SKILL",
+        type: "ATTACK",
         energyCost: 1,
         inkCost: 0,
-        targeting: "SELF",
-        description: "Gain 7 block. Gain 1 focus.",
+        targeting: "SINGLE_ENEMY",
+        description: "Deal 5 damage. Apply 2 Vulnerable.",
         effects: [
-          { type: "BLOCK", value: 7 },
-          { type: "GAIN_FOCUS", value: 1 },
+          { type: "DAMAGE", value: 5 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
         inkedVariant: null,
         upgrade: {
-          description: "Gain 10 block. Gain 1 focus. Draw 1 card.",
+          description: "Deal 7 damage. Apply 2 Vulnerable. Draw 1 card.",
           effects: [
-            { type: "BLOCK", value: 10 },
-            { type: "GAIN_FOCUS", value: 1 },
+            { type: "DAMAGE", value: 7 },
+            { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
             { type: "DRAW_CARDS", value: 1 },
           ],
         },
@@ -6512,36 +7597,44 @@ function getBiomeEliteCardTemplate(
       };
     case "VIKING":
       return {
-        type: "POWER",
+        type: "SKILL",
         energyCost: 2,
         inkCost: 0,
         targeting: "SELF",
-        description: "Gain 2 Strength.",
-        effects: [{ type: "GAIN_STRENGTH", value: 2 }],
+        description: "Gain 2 Strength. Exhaust.",
+        effects: [
+          { type: "GAIN_STRENGTH", value: 2 },
+          { type: "EXHAUST", value: 0 },
+        ],
         inkedVariant: null,
         upgrade: {
-          description: "Gain 3 Strength.",
-          effects: [{ type: "GAIN_STRENGTH", value: 3 }],
+          description: "Gain 3 Strength. Exhaust.",
+          effects: [
+            { type: "GAIN_STRENGTH", value: 3 },
+            { type: "EXHAUST", value: 0 },
+          ],
         },
         isStarterCard: false,
       };
     case "GREEK":
       return {
-        type: "SKILL",
+        type: "ATTACK",
         energyCost: 2,
         inkCost: 0,
-        targeting: "SELF",
-        description: "Gain 14 block. Gain 2 focus.",
+        targeting: "SINGLE_ENEMY",
+        description: "Deal 10 damage. Deal 2 more per Vulnerable on target. Exhaust.",
         effects: [
-          { type: "BLOCK", value: 14 },
-          { type: "GAIN_FOCUS", value: 2 },
+          { type: "DAMAGE", value: 10 },
+          { type: "DAMAGE_PER_DEBUFF", value: 2, buff: "VULNERABLE" },
+          { type: "EXHAUST", value: 0 },
         ],
         inkedVariant: null,
         upgrade: {
-          description: "Gain 18 block. Gain 3 focus.",
+          description: "Deal 14 damage. Deal 3 more per Vulnerable on target. Exhaust.",
           effects: [
-            { type: "BLOCK", value: 18 },
-            { type: "GAIN_FOCUS", value: 3 },
+            { type: "DAMAGE", value: 14 },
+            { type: "DAMAGE_PER_DEBUFF", value: 3, buff: "VULNERABLE" },
+            { type: "EXHAUST", value: 0 },
           ],
         },
         isStarterCard: false,
@@ -6615,21 +7708,23 @@ function getBiomeEliteCardTemplate(
       };
     case "CELTIC":
       return {
-        type: "POWER",
+        type: "SKILL",
         energyCost: 2,
         inkCost: 0,
         targeting: "SELF",
-        description: "Gain 10 block. Gain 3 Thorns.",
+        description: "Gain 10 block. Gain 3 Thorns. Exhaust.",
         effects: [
           { type: "BLOCK", value: 10 },
           { type: "APPLY_BUFF", value: 3, buff: "THORNS" },
+          { type: "EXHAUST", value: 0 },
         ],
         inkedVariant: null,
         upgrade: {
-          description: "Gain 14 block. Gain 4 Thorns.",
+          description: "Gain 14 block. Gain 4 Thorns. Exhaust.",
           effects: [
             { type: "BLOCK", value: 14 },
             { type: "APPLY_BUFF", value: 4, buff: "THORNS" },
+            { type: "EXHAUST", value: 0 },
           ],
         },
         isStarterCard: false,
@@ -6689,7 +7784,8 @@ function buildNormalEnemyMasteryCard(enemy: EnemyDefinition): CardDefinition {
     rarity: "UNCOMMON",
     biome: enemy.biome,
     ...(characterId ? { characterId } : {}),
-    ...getBiomeNormalCardTemplate(enemy.biome),
+    ...(BESTIARY_NORMAL_CARD_OVERRIDES[enemy.id] ??
+      getBiomeNormalCardTemplate(enemy.biome)),
   };
 }
 
@@ -6701,7 +7797,8 @@ function buildEliteEnemyMasteryCard(enemy: EnemyDefinition): CardDefinition {
     rarity: "RARE",
     biome: enemy.biome,
     ...(characterId ? { characterId } : {}),
-    ...getBiomeEliteCardTemplate(enemy.biome),
+    ...(BESTIARY_ELITE_CARD_OVERRIDES[enemy.id] ??
+      getBiomeEliteCardTemplate(enemy.biome)),
   };
 }
 

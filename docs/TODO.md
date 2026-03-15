@@ -100,7 +100,8 @@
 ### Equilibrage
 
 - [ ] Passer d'un calibrage "fonctionnel" a un calibrage fin biome par biome (HP, degats, frequences)
-- [ ] Ajuster les vitesses de progression des unlocks cartes (trop lent/trop rapide selon biome)
+- [x] Ajuster la cadence des unlocks cartes / reliques / conditions de run (pass progression 2026-03-15)
+- [ ] Verifier en playtest la nouvelle cadence d'unlocks (early runs, builds signatures, starts speciaux)
 - [ ] Verifier la courbe difficulte floors 4-5 en conditions reelles
 - [x] Reequilibrer l'economie d'action de la meta (`EXTRA_DRAW`, `EXTRA_ENERGY_MAX`, `EXTRA_HAND_AT_START`)
 - [x] Reduire les redondances de l'arbre meta (`STARTING_BLOCK`, `EXTRA_CARD_REWARD_CHOICES`, `EXHAUST_KEEP_CHANCE`)

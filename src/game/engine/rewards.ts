@@ -16,6 +16,7 @@ import {
 } from "./card-offers";
 import { pickRandomUsableItemDefinitionId } from "./items";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
+import { getRunConditionCardLootUnlockResourceKey } from "./run-conditions";
 
 export interface CombatRewards {
   gold: number;
@@ -25,6 +26,20 @@ export interface CombatRewards {
   allyChoices: AllyDefinition[];
   bossMaxHpBonus: number | null;
   usableItemDropDefinitionId: string | null;
+}
+
+export function markCardAcquiredForRunConditionUnlock(
+  runState: RunState,
+  definitionId: string
+): RunState {
+  const resourceKey = getRunConditionCardLootUnlockResourceKey(definitionId);
+  return {
+    ...runState,
+    earnedResources: {
+      ...runState.earnedResources,
+      [resourceKey]: (runState.earnedResources?.[resourceKey] ?? 0) + 1,
+    },
+  };
 }
 
 function filterRewardCards(
@@ -332,9 +347,10 @@ export function addCardToRunDeck(
   };
 
   const hpPenalty = runState.relicIds.includes("love_void_compass") ? 2 : 0;
-  return {
+  const nextState = {
     ...runState,
     deck: [...runState.deck, newCard],
     playerCurrentHp: Math.max(1, runState.playerCurrentHp - hpPenalty),
   };
+  return markCardAcquiredForRunConditionUnlock(nextState, definitionId);
 }

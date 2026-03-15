@@ -195,12 +195,16 @@ export function applyRelicsOnCombatStart(
         break;
 
       case "warded_ribbon":
-        // Start combat with block
+        // Start combat with block and a small thorn ward
         current = {
           ...current,
           player: {
             ...current.player,
-            block: current.player.block + 6,
+            block: current.player.block + 4,
+            buffs: [
+              ...current.player.buffs,
+              { type: "THORNS", stacks: 1 },
+            ],
           },
         };
         break;
@@ -491,12 +495,13 @@ export function applyRelicsOnCombatStart(
         break;
 
       case "wolf_fang":
-        // Start with 2 Strength
+        // Start with 2 Strength and a small opening buffer
         current = {
           ...current,
           player: {
             ...current.player,
             strength: current.player.strength + 2,
+            block: current.player.block + 4,
           },
         };
         break;
@@ -1012,7 +1017,7 @@ export function applyRelicsOnTurnStart(
 ): CombatState {
   const retainRatios = [
     relicIds.includes("runic_bulwark") ? 0.5 : 0,
-    relicIds.includes("surgeon_mi_go_tools") ? 0.75 : 0,
+    relicIds.includes("surgeon_mi_go_tools") ? 0.5 : 0,
     relicIds.includes("library_colossus_plate") ? 0.4 : 0,
     relicIds.includes("russian_domovoi_hearth") ? 0.3 : 0,
   ];
@@ -1033,6 +1038,16 @@ export function applyRelicsOnTurnStart(
     },
   };
 
+  if (retainedBlock > 0 && relicIds.includes("surgeon_mi_go_tools")) {
+    current = {
+      ...current,
+      playerDisruption: {
+        ...(current.playerDisruption ?? {}),
+        drawPenalty: (current.playerDisruption?.drawPenalty ?? 0) + 1,
+      },
+    };
+  }
+
   // Reset common per-turn counters used by several relic triggers.
   current = {
     ...current,
@@ -1046,6 +1061,7 @@ export function applyRelicsOnTurnStart(
       turn_attack_count: 0,
       turn_skill_count: 0,
       turn_cards_played: 0,
+      turn_exhaust_triggers: 0,
       turn_kills: 0,
       turn_empty_hand_draws: 0,
       turn_fenrir_triggers: 0,
@@ -1164,16 +1180,6 @@ export function applyRelicsOnTurnStart(
         };
         break;
 
-      case "spawn_void_ichor":
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            focus: current.player.focus + 1,
-          },
-        };
-        break;
-
       case "tendril_star_knot":
         current = {
           ...current,
@@ -1184,6 +1190,10 @@ export function applyRelicsOnTurnStart(
               current.player.inkCurrent + 1
             ),
           },
+          discardPile: [
+            ...current.discardPile,
+            { instanceId: nanoid(), definitionId: "dazed", upgraded: false },
+          ],
         };
         break;
 
@@ -1592,6 +1602,41 @@ export function applyRelicsOnCardPlayed(
     cardType === "ATTACK" && getCounter(current, "combat_attack_count") === 1;
   const firstSkillThisTurn =
     cardType === "SKILL" && getCounter(current, "turn_skill_count") === 1;
+  const exhaustedThisPlay = Math.max(
+    0,
+    current.exhaustPile.length - beforeState.exhaustPile.length
+  );
+
+  if (
+    exhaustedThisPlay > 0 &&
+    relicIds.includes("spawn_void_ichor") &&
+    getCounter(current, "turn_exhaust_triggers") === 0
+  ) {
+    current = incrementCounter(current, "turn_exhaust_triggers", 1);
+    current = {
+      ...current,
+      player: {
+        ...current.player,
+        inkCurrent: Math.min(current.player.inkMax, current.player.inkCurrent + 1),
+      },
+    };
+  }
+
+  const exhaustEnergyStacks = getBuffStacks(
+    current.player.buffs,
+    "EXHAUST_ENERGY"
+  );
+  if (exhaustedThisPlay > 0 && exhaustEnergyStacks > 0) {
+    current = {
+      ...current,
+      player: {
+        ...current.player,
+        energyCurrent:
+          current.player.energyCurrent +
+          exhaustedThisPlay * exhaustEnergyStacks,
+      },
+    };
+  }
 
   if (
     cardType === "SKILL" &&

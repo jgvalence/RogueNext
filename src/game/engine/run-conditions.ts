@@ -9,6 +9,7 @@ export interface RunConditionProgress {
   totalRuns: number;
   wonRuns: number;
   enemyKillCounts?: Record<string, number>;
+  resources?: Record<string, number>;
 }
 
 export interface RunConditionMapRules {
@@ -22,6 +23,7 @@ export interface RunConditionEffects {
   startingGoldDelta?: number;
   maxHpDelta?: number;
   addCardIds?: string[];
+  startCombatCardIds?: string[];
   addRelicIds?: string[];
   addRandomCardsCount?: number;
   addRandomCardRarities?: Exclude<Rarity, "STARTER">[];
@@ -40,6 +42,7 @@ export interface RunConditionUnlockRequirement {
     enemyId: string;
     count: number;
   };
+  lootedCardId?: string;
 }
 
 export interface RunConditionDefinition {
@@ -58,9 +61,14 @@ export interface RunConditionDefinition {
 export const VANILLA_RUN_CONDITION_ID = "vanilla_run";
 export const INFINITE_RUN_CONDITION_ID = "infinite_mode";
 export const BOSS_START_OPTION_CONDITION_PREFIX = "boss_start_option_";
+export const RUN_CONDITION_CARD_LOOT_UNLOCK_PREFIX = "__RUN_CONDITION_CARD__";
 const RUN_CONDITION_ID_ALIASES: Record<string, string> = {
   vanilla: VANILLA_RUN_CONDITION_ID,
 };
+
+export function getRunConditionCardLootUnlockResourceKey(cardId: string): string {
+  return `${RUN_CONDITION_CARD_LOOT_UNLOCK_PREFIX}${cardId}`;
+}
 
 const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
@@ -94,6 +102,12 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     effects: { addCardIds: ["fortify"] },
   },
   {
+    id: "recursive_scratch_opening",
+    category: "UNIQUE_MECHANIC",
+    unlock: { lootedCardId: "recursive_scratch" },
+    effects: { startCombatCardIds: ["recursive_scratch"] },
+  },
+  {
     id: "inked_beginning",
     category: "LIGHT_BOON",
     unlock: {},
@@ -124,7 +138,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "fractured_archive",
     category: "GOOD_BAD_CARD",
-    unlock: { totalRuns: 4, wonRuns: 1 },
+    unlock: { totalRuns: 3, wonRuns: 1 },
     effects: {
       upgradeRandomDeckCardsCount: 3,
       addCardIds: ["haunting_regret", "haunting_regret"],
@@ -133,7 +147,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "severed_index",
     category: "UNIQUE_MECHANIC",
-    unlock: { totalRuns: 5, wonRuns: 2 },
+    unlock: { totalRuns: 4, wonRuns: 2 },
     effects: {
       removeRandomStarterCardsCount: 2,
       addRandomCardsCount: 1,
@@ -144,7 +158,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "merciless_routes",
     category: "SPECIAL_RULE",
-    unlock: { totalRuns: 7, wonRuns: 3 },
+    unlock: { totalRuns: 6, wonRuns: 2 },
     effects: {
       combatRewardMultiplier: 2,
       mapRules: { noMerchants: true, forceSingleChoice: true },
@@ -168,7 +182,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "eventful_routes",
     category: "UNIQUE_MECHANIC",
-    unlock: { totalRuns: 5 },
+    unlock: { totalRuns: 4 },
     effects: { mapRules: { noMerchants: true, extraSpecialRoom: true } },
   },
   {
@@ -185,13 +199,13 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "chaos_draft",
     category: "UNIQUE_MECHANIC",
-    unlock: { totalRuns: 4, wonRuns: 1 },
+    unlock: { totalRuns: 3, wonRuns: 1 },
     effects: { replaceStarterDeckWithRandomCount: 10 },
   },
   {
     id: "boss_rush",
     category: "SPECIAL_RULE",
-    unlock: { totalRuns: 8, wonRuns: 3 },
+    unlock: { totalRuns: 7, wonRuns: 3 },
     effects: {
       combatRewardMultiplier: 2,
       mapRules: { bossOnlyCombats: true },
@@ -269,7 +283,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "cursed_compendium",
     category: "GOOD_BAD_CARD",
-    unlock: { totalRuns: 4 },
+    unlock: { totalRuns: 3 },
     effects: {
       addRandomCardsCount: 2,
       addCardIds: ["haunting_regret", "haunting_regret"],
@@ -278,7 +292,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "crystal_loan",
     category: "GOOD_BAD_CARD",
-    unlock: { totalRuns: 4, wonRuns: 1 },
+    unlock: { totalRuns: 3, wonRuns: 1 },
     effects: {
       addRelicIds: ["energy_crystal"],
       addCardIds: ["haunting_regret"],
@@ -288,7 +302,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "inkwell_bargain",
     category: "BOON_WITH_DRAWBACK",
-    unlock: { totalRuns: 5, wonRuns: 2 },
+    unlock: { totalRuns: 4, wonRuns: 1 },
     effects: {
       addRelicIds: ["inkwell_reservoir"],
       startingGoldDelta: -25,
@@ -297,7 +311,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "forged_lexicon",
     category: "GOOD_BAD_CARD",
-    unlock: { totalRuns: 5, wonRuns: 2 },
+    unlock: { totalRuns: 4, wonRuns: 1 },
     effects: {
       addRelicIds: ["battle_lexicon"],
       addCardIds: ["haunting_regret"],
@@ -306,7 +320,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "isolated_trials",
     category: "SPECIAL_RULE",
-    unlock: { totalRuns: 6, wonRuns: 2 },
+    unlock: { totalRuns: 5, wonRuns: 2 },
     effects: {
       mapRules: { forceSingleChoice: true },
       addRandomCardsCount: 2,
@@ -315,7 +329,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "grim_shortcuts",
     category: "SPECIAL_RULE",
-    unlock: { totalRuns: 7, wonRuns: 3 },
+    unlock: { totalRuns: 6, wonRuns: 2 },
     effects: {
       mapRules: { forceSingleChoice: true, extraSpecialRoom: true },
       startingGoldDelta: 10,
@@ -325,7 +339,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   {
     id: "fateful_manuscript",
     category: "GOOD_BAD_CARD",
-    unlock: { totalRuns: 8, wonRuns: 3 },
+    unlock: { totalRuns: 7, wonRuns: 2 },
     effects: {
       maxHpDelta: -12,
       addCardIds: ["haunting_regret", "haunting_regret"],
@@ -405,7 +419,7 @@ function buildBossStartRunConditions(): RunConditionDefinition[] {
       unlock: {
         enemyKills: {
           enemyId: boss.id,
-          count: 3,
+          count: 2,
         },
       },
       effects: {
@@ -479,22 +493,39 @@ export function computeUnlockedRunConditionIds(
   progress: RunConditionProgress
 ): string[] {
   const enemyKillCounts = progress.enemyKillCounts ?? {};
+  const resources = progress.resources ?? {};
   return runConditionDefinitions
     .filter((condition) => {
       const requiredRuns = condition.unlock.totalRuns ?? 0;
       const requiredWins = condition.unlock.wonRuns ?? 0;
       const requiredEnemyKills = condition.unlock.enemyKills;
+      const requiredLootedCardId = condition.unlock.lootedCardId;
       const hasRequiredEnemyKills = requiredEnemyKills
         ? (enemyKillCounts[requiredEnemyKills.enemyId] ?? 0) >=
           requiredEnemyKills.count
         : true;
+      const hasRequiredLootedCard = requiredLootedCardId
+        ? (resources[
+            getRunConditionCardLootUnlockResourceKey(requiredLootedCardId)
+          ] ?? 0) >= 1
+        : true;
       return (
         progress.totalRuns >= requiredRuns &&
         progress.wonRuns >= requiredWins &&
-        hasRequiredEnemyKills
+        hasRequiredEnemyKills &&
+        hasRequiredLootedCard
       );
     })
     .map((condition) => condition.id);
+}
+
+function hasNoUnlockRequirements(unlock: RunConditionUnlockRequirement): boolean {
+  return (
+    !unlock.totalRuns &&
+    !unlock.wonRuns &&
+    !unlock.enemyKills &&
+    !unlock.lootedCardId
+  );
 }
 
 export function drawRunConditionChoices(
@@ -505,12 +536,7 @@ export function drawRunConditionChoices(
   if (count <= 0) return [];
   const unlocked = normalizeRunConditionIds(unlockedConditionIds);
   const fallback = runConditionDefinitions
-    .filter(
-      (condition) =>
-        !condition.unlock.totalRuns &&
-        !condition.unlock.wonRuns &&
-        !condition.unlock.enemyKills
-    )
+    .filter((condition) => hasNoUnlockRequirements(condition.unlock))
     .map((condition) => condition.id);
   // Infinite mode is selected by a dedicated pre-run toggle, not by the
   // "pick 1 among 3" start-condition choices.
@@ -579,6 +605,17 @@ export function buildConditionStarterCards(
   const condition = getRunConditionById(conditionId);
   if (!condition?.effects.addCardIds?.length) return [];
   return condition.effects.addCardIds
+    .map((cardId) => cardMap.get(cardId))
+    .filter((card): card is CardDefinition => Boolean(card));
+}
+
+export function buildConditionCombatStartCards(
+  conditionId: string | null | undefined,
+  cardMap: Map<string, CardDefinition>
+): CardDefinition[] {
+  const condition = getRunConditionById(conditionId);
+  if (!condition?.effects.startCombatCardIds?.length) return [];
+  return condition.effects.startCombatCardIds
     .map((cardId) => cardMap.get(cardId))
     .filter((card): card is CardDefinition => Boolean(card));
 }

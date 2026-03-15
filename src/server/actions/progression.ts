@@ -204,6 +204,7 @@ export async function getRunConditionCollectionAction() {
         totalRuns,
         wonRuns,
         enemyKillCounts,
+        resources,
       });
     return success({
       runStats: {

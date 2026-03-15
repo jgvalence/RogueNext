@@ -101,8 +101,8 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   final_chapter: {
     type: "ALL_OF",
     rules: [
-      { type: "BIOME_BOSS_KILLS", biome: "LIBRARY", count: 2 },
-      { type: "BIOME_ELITE_KILLS", biome: "LIBRARY", count: 2 },
+      { type: "BIOME_BOSS_KILLS", biome: "LIBRARY", count: 1 },
+      { type: "BIOME_ELITE_KILLS", biome: "LIBRARY", count: 1 },
     ],
   },
   forbidden_appendix: {
@@ -129,8 +129,8 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   curator_pact: {
     type: "ALL_OF",
     rules: [
-      { type: "BIOME_RUNS_COMPLETED", biome: "LIBRARY", count: 2 },
-      { type: "STORY_UNLOCK", storyId: "le_codex_infini" },
+      { type: "BIOME_BOSS_KILLS", biome: "LIBRARY", count: 1 },
+      { type: "STORY_UNLOCK", storyId: "grimoire_des_index" },
     ],
   },
 
@@ -146,7 +146,7 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   frost_rune_shield: { type: "BIOME_FIRST_ENTRY", biome: "VIKING" },
   scald_cry: { type: "BIOME_ELITE_KILLS", biome: "VIKING", count: 1 },
   rune_storm: { type: "BIOME_ELITE_KILLS", biome: "VIKING", count: 2 },
-  battle_inscription: { type: "BIOME_ELITE_KILLS", biome: "VIKING", count: 3 },
+  battle_inscription: { type: "BIOME_ELITE_KILLS", biome: "VIKING", count: 2 },
   odin_script: { type: "BIOME_BOSS_KILLS", biome: "VIKING", count: 1 },
   epic_saga: { type: "BIOME_BOSS_KILLS", biome: "VIKING", count: 2 },
   // VIKING — Bibliothécaire (new)
@@ -180,7 +180,7 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   apollos_archive: { type: "BIOME_ELITE_KILLS", biome: "GREEK", count: 3 },
   labyrinth_trap: { type: "BIOME_ELITE_KILLS", biome: "GREEK", count: 3 },
   pythian_codex: { type: "BIOME_BOSS_KILLS", biome: "GREEK", count: 1 },
-  fates_decree: { type: "BIOME_BOSS_KILLS", biome: "GREEK", count: 2 },
+  fates_decree: { type: "BIOME_BOSS_KILLS", biome: "GREEK", count: 1 },
 
   // EGYPTIAN
   anubis_strike: { type: "BIOME_FIRST_ENTRY", biome: "EGYPTIAN" },
@@ -194,7 +194,7 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   sacred_papyrus: { type: "BIOME_FIRST_ENTRY", biome: "EGYPTIAN" },
   spell_inscription: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 1 },
   book_of_ra: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 2 },
-  sacred_ink_burst: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 3 },
+  sacred_ink_burst: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 2 },
   scribes_judgment: { type: "BIOME_BOSS_KILLS", biome: "EGYPTIAN", count: 1 },
   // EGYPTIAN — Bibliothécaire (new)
   death_scroll: { type: "BIOME_FIRST_ENTRY", biome: "EGYPTIAN" },
@@ -204,10 +204,11 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   funerary_rite: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 3 },
   desert_wisdom: { type: "BIOME_BOSS_KILLS", biome: "EGYPTIAN", count: 1 },
   embalmed_tome: { type: "BIOME_BOSS_KILLS", biome: "EGYPTIAN", count: 1 },
-  book_of_the_dead: { type: "BIOME_BOSS_KILLS", biome: "EGYPTIAN", count: 2 },
+  book_of_the_dead: { type: "BIOME_BOSS_KILLS", biome: "EGYPTIAN", count: 1 },
 
   // LOVECRAFTIAN
   forbidden_whisper: { type: "BIOME_FIRST_ENTRY", biome: "LOVECRAFTIAN" },
+  recursive_scratch: { type: "ALWAYS" },
   madness_spike: { type: "BIOME_ELITE_KILLS", biome: "LOVECRAFTIAN", count: 1 },
   void_touch: { type: "BIOME_ELITE_KILLS", biome: "LOVECRAFTIAN", count: 2 },
   void_shield: { type: "BIOME_BOSS_KILLS", biome: "LOVECRAFTIAN", count: 1 },
@@ -252,7 +253,7 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
     biome: "LOVECRAFTIAN",
     count: 1,
   },
-  cosmic_archive: { type: "BIOME_BOSS_KILLS", biome: "LOVECRAFTIAN", count: 2 },
+  cosmic_archive: { type: "BIOME_BOSS_KILLS", biome: "LOVECRAFTIAN", count: 1 },
 
   // AZTEC
   obsidian_jab: { type: "BIOME_FIRST_ENTRY", biome: "AZTEC" },
@@ -315,7 +316,7 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   firebird_script: { type: "BIOME_ELITE_KILLS", biome: "RUSSIAN", count: 2 },
   baba_yaga_deal: { type: "BIOME_ELITE_KILLS", biome: "RUSSIAN", count: 3 },
   koschei_strike: { type: "BIOME_BOSS_KILLS", biome: "RUSSIAN", count: 1 },
-  folk_epic: { type: "BIOME_BOSS_KILLS", biome: "RUSSIAN", count: 2 },
+  folk_epic: { type: "BIOME_BOSS_KILLS", biome: "RUSSIAN", count: 1 },
   // RUSSIAN — Bibliothécaire (new)
   fur_binding: { type: "BIOME_FIRST_ENTRY", biome: "RUSSIAN" },
   folk_curse: { type: "BIOME_FIRST_ENTRY", biome: "RUSSIAN" },

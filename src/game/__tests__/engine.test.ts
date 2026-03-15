@@ -2303,7 +2303,7 @@ describe("Card playing", () => {
 
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
-    expect(result.player.block).toBe(6);
+    expect(result.player.block).toBe(5);
     expect(result.player.focus).toBe(1);
     expect(result.hand).toHaveLength(1);
   });
@@ -4765,6 +4765,121 @@ describe("Card unlock rules", () => {
     );
   });
 
+  it("unlocks key build signature cards by first boss clears instead of endgame pacing", () => {
+    const allCards = [...cardDefs.values()];
+    const progress = {
+      enteredBiomes: {
+        LIBRARY: 1,
+        GREEK: 1,
+        EGYPTIAN: 1,
+        LOVECRAFTIAN: 1,
+        RUSSIAN: 1,
+      },
+      biomeRunsCompleted: {},
+      eliteKillsByBiome: {
+        LIBRARY: 1,
+      },
+      bossKillsByBiome: {
+        LIBRARY: 1,
+        GREEK: 1,
+        EGYPTIAN: 1,
+        LOVECRAFTIAN: 1,
+        RUSSIAN: 1,
+      },
+      byCharacter: {
+        scribe: {
+          enteredBiomes: {
+            LIBRARY: 1,
+            GREEK: 1,
+            EGYPTIAN: 1,
+            LOVECRAFTIAN: 1,
+            RUSSIAN: 1,
+          },
+          biomeRunsCompleted: {},
+          eliteKillsByBiome: {
+            LIBRARY: 1,
+          },
+          bossKillsByBiome: {
+            LIBRARY: 1,
+            GREEK: 1,
+            EGYPTIAN: 1,
+            LOVECRAFTIAN: 1,
+            RUSSIAN: 1,
+          },
+        },
+        bibliothecaire: {
+          enteredBiomes: {
+            LIBRARY: 1,
+            GREEK: 1,
+            EGYPTIAN: 1,
+            LOVECRAFTIAN: 1,
+            RUSSIAN: 1,
+          },
+          biomeRunsCompleted: {},
+          eliteKillsByBiome: {
+            LIBRARY: 1,
+          },
+          bossKillsByBiome: {
+            LIBRARY: 1,
+            GREEK: 1,
+            EGYPTIAN: 1,
+            LOVECRAFTIAN: 1,
+            RUSSIAN: 1,
+          },
+        },
+      },
+    };
+
+    const unlocked = computeUnlockedCardIds(allCards, progress, [
+      "grimoire_des_index",
+    ]);
+
+    expect(unlocked.includes("final_chapter")).toBe(true);
+    expect(unlocked.includes("curator_pact")).toBe(true);
+    expect(unlocked.includes("fates_decree")).toBe(true);
+    expect(unlocked.includes("book_of_the_dead")).toBe(true);
+    expect(unlocked.includes("cosmic_archive")).toBe(true);
+    expect(unlocked.includes("folk_epic")).toBe(true);
+  });
+
+  it("keeps some bridge cards out of the very first elite band but not the third one anymore", () => {
+    const allCards = [...cardDefs.values()];
+    const progress = {
+      enteredBiomes: { EGYPTIAN: 1, VIKING: 1 },
+      biomeRunsCompleted: {},
+      eliteKillsByBiome: {
+        EGYPTIAN: 2,
+        VIKING: 2,
+      },
+      bossKillsByBiome: {},
+      byCharacter: {
+        scribe: {
+          enteredBiomes: { EGYPTIAN: 1, VIKING: 1 },
+          biomeRunsCompleted: {},
+          eliteKillsByBiome: {
+            EGYPTIAN: 2,
+            VIKING: 2,
+          },
+          bossKillsByBiome: {},
+        },
+        bibliothecaire: {
+          enteredBiomes: { EGYPTIAN: 1, VIKING: 1 },
+          biomeRunsCompleted: {},
+          eliteKillsByBiome: {
+            EGYPTIAN: 2,
+            VIKING: 2,
+          },
+          bossKillsByBiome: {},
+        },
+      },
+    };
+
+    const unlocked = computeUnlockedCardIds(allCards, progress, []);
+
+    expect(unlocked.includes("sacred_ink_burst")).toBe(true);
+    expect(unlocked.includes("battle_inscription")).toBe(true);
+  });
+
   it("tracks and serializes biome progress per character alongside global progress", () => {
     let progress: CardUnlockProgress = {
       enteredBiomes: { LIBRARY: 1 },
@@ -5623,6 +5738,210 @@ describe("Relics", () => {
     expect(result.player.block).toBe(4);
   });
 
+  it("surgeon_mi_go_tools retains 50% block and reduces draw by 1", () => {
+    const rng = createRNG("surgeon-mi-go-tools");
+    const state = makeMinimalCombat({
+      phase: "ALLIES_ENEMIES_TURN",
+      player: {
+        ...makeMinimalCombat().player,
+        block: 9,
+      },
+      drawPile: [
+        { instanceId: "c1", definitionId: "strike", upgraded: false },
+        { instanceId: "c2", definitionId: "strike", upgraded: false },
+        { instanceId: "c3", definitionId: "defend", upgraded: false },
+        { instanceId: "c4", definitionId: "defend", upgraded: false },
+        { instanceId: "c5", definitionId: "ink_surge", upgraded: false },
+      ],
+    });
+
+    const result = startPlayerTurn(state, rng, ["surgeon_mi_go_tools"]);
+
+    expect(result.player.block).toBe(4);
+    expect(result.hand).toHaveLength(4);
+  });
+
+  it("recursive_scratch upgraded draws a card and copies itself into the draw pile", () => {
+    const rng = createRNG("recursive-scratch");
+    const cardDefs = buildCardDefsMap();
+    const state = makeMinimalCombat({
+      hand: [
+        {
+          instanceId: "recursive-1",
+          definitionId: "recursive_scratch",
+          upgraded: true,
+        },
+      ],
+      drawPile: [
+        { instanceId: "draw-1", definitionId: "strike", upgraded: false },
+      ],
+      discardPile: [],
+      exhaustPile: [],
+      player: {
+        ...makeMinimalCombat().player,
+        inkPerCardChance: 0,
+        inkPerCardValue: 0,
+      },
+    });
+
+    const result = playCard(
+      state,
+      "recursive-1",
+      "e1",
+      false,
+      cardDefs,
+      rng
+    );
+
+    expect(result.exhaustPile).toHaveLength(1);
+    expect(result.exhaustPile[0]).toMatchObject({
+      definitionId: "recursive_scratch",
+      upgraded: true,
+    });
+    expect(result.hand).toHaveLength(1);
+    expect(result.hand[0]).toMatchObject({
+      definitionId: "strike",
+      upgraded: false,
+    });
+    expect(result.drawPile).toHaveLength(1);
+    expect(result.drawPile[0]).toMatchObject({
+      definitionId: "recursive_scratch",
+      upgraded: true,
+    });
+  });
+
+  it("recursive_scratch upgraded inked draws a card and adds two copies", () => {
+    const rng = createRNG("recursive-scratch-inked");
+    const cardDefs = buildCardDefsMap();
+    const state = makeMinimalCombat({
+      hand: [
+        {
+          instanceId: "recursive-inked",
+          definitionId: "recursive_scratch",
+          upgraded: true,
+        },
+      ],
+      drawPile: [
+        { instanceId: "draw-1", definitionId: "defend", upgraded: false },
+      ],
+      discardPile: [],
+      exhaustPile: [],
+      player: {
+        ...makeMinimalCombat().player,
+        inkCurrent: 1,
+        inkPerCardChance: 0,
+        inkPerCardValue: 0,
+      },
+    });
+
+    const result = playCard(
+      state,
+      "recursive-inked",
+      "e1",
+      true,
+      cardDefs,
+      rng
+    );
+
+    expect(result.hand).toHaveLength(1);
+    expect(result.hand[0]).toMatchObject({
+      definitionId: "defend",
+      upgraded: false,
+    });
+    expect(result.drawPile).toHaveLength(2);
+    expect(result.drawPile.every((card) => card.definitionId === "recursive_scratch")).toBe(true);
+    expect(result.drawPile.every((card) => card.upgraded)).toBe(true);
+  });
+
+  it("addCardToRunDeck tracks recursive_scratch for future run-condition unlocks", () => {
+    const rng = createRNG("recursive-scratch-unlock-track");
+    const starterCards = [...cardDefs.values()].filter((card) => card.isStarterCard);
+    const run = createNewRun(
+      "run-recursive-scratch-unlock-track",
+      "run-recursive-scratch-unlock-track",
+      starterCards,
+      rng
+    );
+
+    const next = addCardToRunDeck(run, "recursive_scratch");
+
+    expect(next.earnedResources.__RUN_CONDITION_CARD__recursive_scratch).toBe(1);
+  });
+
+  it("recursive_scratch_opening starts combat with Recursive Scratch in hand", () => {
+    const rng = createRNG("recursive-scratch-opening");
+    const starterCards = [...cardDefs.values()].filter((card) => card.isStarterCard);
+    const run = createNewRun(
+      "run-recursive-scratch-opening",
+      "run-recursive-scratch-opening",
+      starterCards,
+      rng
+    );
+    const combat = initCombat(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        selectedRunConditionId: "recursive_scratch_opening",
+      },
+      ["ink_slime"],
+      enemyDefs,
+      allyDefs,
+      cardDefs,
+      createRNG("recursive-scratch-opening-combat")
+    );
+
+    expect(
+      combat.hand.some((card) => card.definitionId === "recursive_scratch")
+    ).toBe(true);
+    expect(combat.hand).toHaveLength(GAME_CONSTANTS.STARTING_DRAW_COUNT + 1);
+  });
+
+  it("spawn_void_ichor grants ink only on the first exhaust each turn", () => {
+    const rng = createRNG("spawn-void-ichor");
+    const cardDefs = buildCardDefsMap();
+    let state = makeMinimalCombat({
+      hand: [
+        {
+          instanceId: "recursive-1",
+          definitionId: "recursive_scratch",
+          upgraded: false,
+        },
+        {
+          instanceId: "recursive-2",
+          definitionId: "recursive_scratch",
+          upgraded: false,
+        },
+      ],
+      drawPile: [],
+      discardPile: [],
+      exhaustPile: [],
+      player: {
+        ...makeMinimalCombat().player,
+        inkPerCardChance: 0,
+        inkPerCardValue: 0,
+        inkCurrent: 0,
+      },
+    });
+
+    const beforeFirst = state;
+    state = playCard(state, "recursive-1", "e1", false, cardDefs, rng);
+    state = applyRelicsOnCardPlayed(state, ["spawn_void_ichor"], "ATTACK", {
+      beforeState: beforeFirst,
+      targetId: "e1",
+      rng,
+    });
+    expect(state.player.inkCurrent).toBe(1);
+
+    const beforeSecond = state;
+    state = playCard(state, "recursive-2", "e1", false, cardDefs, rng);
+    state = applyRelicsOnCardPlayed(state, ["spawn_void_ichor"], "ATTACK", {
+      beforeState: beforeSecond,
+      targetId: "e1",
+      rng,
+    });
+    expect(state.player.inkCurrent).toBe(1);
+  });
+
   it("eternal_hourglass conserves unspent energy between turns", () => {
     const rng = createRNG("eternal-hourglass");
     const state = makeMinimalCombat({
@@ -6195,5 +6514,203 @@ describe("Debuff blocked by armor", () => {
       rng
     );
     expect(result.player.currentHp).toBe(77);
+  });
+
+  it("damage if target has debuff only triggers when the target is already afflicted", () => {
+    const poisonedState = makeMinimalCombat({
+      enemies: [
+        {
+          ...makeMinimalCombat().enemies[0]!,
+          buffs: applyBuff([], "POISON", 2),
+        },
+      ],
+    });
+    const cleanState = makeMinimalCombat();
+    const effects: Effect[] = [
+      { type: "DAMAGE", value: 4 },
+      { type: "DAMAGE_IF_TARGET_HAS_DEBUFF", value: 4, buff: "POISON" },
+    ];
+
+    const poisonedResult = resolveEffects(
+      poisonedState,
+      effects,
+      { source: "player", target: { type: "enemy", instanceId: "e1" } },
+      rng
+    );
+    const cleanResult = resolveEffects(
+      cleanState,
+      effects,
+      { source: "player", target: { type: "enemy", instanceId: "e1" } },
+      rng
+    );
+
+    expect(poisonedResult.enemies[0]?.currentHp).toBe(6);
+    expect(cleanResult.enemies[0]?.currentHp).toBe(10);
+  });
+
+  it("ward negates the next damage taken and is consumed", () => {
+    const state = makeMinimalCombat({
+      player: {
+        ...makeMinimalCombat().player,
+        buffs: applyBuff([], "WARD", 1),
+      },
+    });
+    const result = resolveEffects(
+      state,
+      [{ type: "DAMAGE", value: 9 }],
+      enemyCtx,
+      rng
+    );
+
+    expect(result.player.currentHp).toBe(state.player.currentHp);
+    expect(getBuffStacks(result.player.buffs, "WARD")).toBe(0);
+  });
+
+  it("Deep One Dossier gains damage each time it is played this combat", () => {
+    const rng = createRNG("deep-one-scaling");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, energyCurrent: 2 },
+      hand: [
+        {
+          instanceId: "deep-1",
+          definitionId: "bestiary_normal_deep_one",
+          upgraded: false,
+        },
+        {
+          instanceId: "deep-2",
+          definitionId: "bestiary_normal_deep_one",
+          upgraded: false,
+        },
+      ],
+      drawPile: [],
+      discardPile: [],
+      relicCounters: {},
+    });
+
+    const afterFirst = playCard(state, "deep-1", "e1", false, cardDefs, rng);
+    const afterSecond = playCard(
+      afterFirst,
+      "deep-2",
+      "e1",
+      false,
+      cardDefs,
+      rng
+    );
+
+    expect(afterFirst.enemies[0]?.currentHp).toBe(10);
+    expect(afterSecond.enemies[0]?.currentHp).toBe(3);
+  });
+
+  it("Venom Rite triggers after six poison are applied by player cards", () => {
+    const rng = createRNG("venom-rite");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, energyCurrent: 2 },
+      enemies: [
+        { ...makeMinimalCombat().enemies[0]! },
+        {
+          instanceId: "e2",
+          definitionId: "ink_slime",
+          name: "Ink Slime",
+          currentHp: 14,
+          maxHp: 14,
+          block: 0,
+          speed: 2,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+      hand: [
+        {
+          instanceId: "anubis-1",
+          definitionId: "bestiary_elite_anubis_champion",
+          upgraded: false,
+        },
+      ],
+      drawPile: [],
+      discardPile: [],
+      relicCounters: {},
+    });
+
+    const afterAnubis = playCard(
+      state,
+      "anubis-1",
+      null,
+      false,
+      cardDefs,
+      rng
+    );
+    const afterPoison = resolveEffects(
+      afterAnubis,
+      [{ type: "APPLY_DEBUFF", value: 3, buff: "POISON" }],
+      { source: "player", target: "all_enemies" },
+      rng
+    );
+
+    expect(getBuffStacks(afterAnubis.player.buffs, "POISON_BURST")).toBe(1);
+    expect(afterPoison.enemies[0]?.currentHp).toBe(9);
+    expect(afterPoison.enemies[1]?.currentHp).toBe(9);
+    expect(afterPoison.relicCounters?.poison_burst_progress).toBe(0);
+  });
+
+  it("Ember Flow refunds energy when a card exhausts", () => {
+    const rng = createRNG("ember-flow");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, energyCurrent: 2 },
+      hand: [
+        {
+          instanceId: "legba-1",
+          definitionId: "bestiary_elite_legba_emissary",
+          upgraded: false,
+        },
+      ],
+      drawPile: [],
+      discardPile: [],
+      relicCounters: {},
+    });
+
+    const afterPlay = playCard(state, "legba-1", null, false, cardDefs, rng);
+    const afterTriggers = applyRelicsOnCardPlayed(afterPlay, [], "POWER", {
+      beforeState: state,
+      rng,
+    });
+
+    expect(getBuffStacks(afterTriggers.player.buffs, "EXHAUST_ENERGY")).toBe(1);
+    expect(afterTriggers.player.energyCurrent).toBe(1);
+  });
+
+  it("Stonebound blocks future block gain after Domovoi Titan Trophy", () => {
+    const rng = createRNG("stonebound");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, energyCurrent: 2 },
+      hand: [
+        {
+          instanceId: "domovoi-1",
+          definitionId: "bestiary_elite_domovoi_titan",
+          upgraded: false,
+        },
+      ],
+      drawPile: [],
+      discardPile: [],
+      relicCounters: {},
+    });
+
+    const afterPlay = playCard(
+      state,
+      "domovoi-1",
+      null,
+      false,
+      cardDefs,
+      rng
+    );
+    const afterExtraBlock = resolveEffects(
+      afterPlay,
+      [{ type: "BLOCK", value: 10 }],
+      { source: "player", target: "player" },
+      rng
+    );
+
+    expect(afterPlay.player.block).toBe(30);
+    expect(getBuffStacks(afterPlay.player.buffs, "STONEBOUND")).toBe(1);
+    expect(afterExtraBlock.player.block).toBe(30);
   });
 });

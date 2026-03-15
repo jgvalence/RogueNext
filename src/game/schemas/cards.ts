@@ -6,6 +6,8 @@ export const InkedVariantSchema = z.object({
   description: z.string(),
   effects: z.array(EffectSchema),
   inkMarkCost: z.number().int().min(1),
+  upgradedDescription: z.string().optional(),
+  upgradedEffects: z.array(EffectSchema).optional(),
 });
 export type InkedVariant = z.infer<typeof InkedVariantSchema>;
 

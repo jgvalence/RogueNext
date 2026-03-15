@@ -243,6 +243,7 @@ export const en = {
       unlockRuns: "Complete at least {{runs}} run(s)",
       unlockWins: "Win at least {{wins}} run(s)",
       unlockEnemyKills: "Defeat {{enemy}} {{kills}} time(s)",
+      unlockLootedCard: "Obtain {{card}} at least once",
       unlockRunsAndWins:
         "Complete at least {{runs}} run(s) and win {{wins}} run(s)",
     },
@@ -309,6 +310,10 @@ export const en = {
       open_grimoire: {
         name: "Open Grimoire",
         description: "Add Fortify to your starting deck.",
+      },
+      recursive_scratch_opening: {
+        name: "Recursive Scratch",
+        description: "Start each combat with Recursive Scratch in hand.",
       },
       inked_beginning: {
         name: "Inked Beginning",
@@ -1096,6 +1101,10 @@ export const en = {
       damageAll: "Deal {{value}} damage to all enemies",
       damageEqualBlock: "Deal damage equal to your Block",
       damagePerDebuff: "Deal {{value}} damage per {{buff}} on target",
+      damageIfTargetHasDebuff:
+        "If target already has {{buff}}, deal {{value}} damage",
+      damagePerThisCardPlayed:
+        "Deal {{value}} bonus damage for each time this card was played this combat",
       damagePerCurrentInk:
         "Deal {{value}} damage per current Ink, then drain all Ink",
       damagePerClogInDiscard:
@@ -1189,6 +1198,23 @@ export const en = {
       description:
         "Deals {{stacks}} damage at end of round (does not decrease, expires by duration).",
     },
+    WARD: {
+      label: "Ward",
+      description: "Negates the next damage taken.",
+    },
+    EXHAUST_ENERGY: {
+      label: "Ember Flow",
+      description: "Whenever one of your cards Exhausts, gain 1 energy.",
+    },
+    POISON_BURST: {
+      label: "Venom Rite",
+      description:
+        "Whenever your cards apply 6 total Poison, deal 5 damage to all enemies.",
+    },
+    STONEBOUND: {
+      label: "Stonebound",
+      description: "Cannot gain Block.",
+    },
   },
   reward: {
     victory: "Victory!",
@@ -1225,6 +1251,10 @@ export const en = {
       damage: "damage {{value}}",
       damageEqualBlock: "damage equal to your block",
       damagePerDebuff: "damage {{value}} per {{buff}}",
+      damageIfTargetHasDebuff:
+        "if target already has {{buff}}: damage {{value}}",
+      damagePerThisCardPlayed:
+        "damage {{value}} per time this card was played this combat",
       damagePerCurrentInk: "damage {{value}} per current ink, drain all",
       damagePerClogInDiscard: "damage {{value}} per status/curse in discard",
       damagePerExhaustedCard: "damage {{value}} per exhausted card",

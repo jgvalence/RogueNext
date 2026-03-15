@@ -8,6 +8,7 @@ export const EffectSchema = z.object({
   scalingBuff: BuffType.optional(),
   duration: z.number().optional(),
   cardId: z.string().optional(),
+  copySourceCard: z.boolean().optional(),
   inkPower: z.union([InkPowerType, z.literal("ALL")]).optional(),
 });
 export type Effect = z.infer<typeof EffectSchema>;

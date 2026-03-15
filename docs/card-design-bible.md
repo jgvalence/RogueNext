@@ -243,15 +243,15 @@ Rappel de cadrage actuel:
 
 ## 4. Etat Actuel (Collection vs Pool Actif)
 
-> Date de reference verifiee: 11 mars 2026
+> Date de reference verifiee: 15 mars 2026
 > Source: `src/game/data/cards.ts` via `npm run audit:cards`
-> Audit detaille: `docs/card-pool-audit-2026-03-11.md`
+> Audit detaille: `docs/card-pool-audit-2026-03-15.md`
 
 ### Collection (page /library/collection)
 
 - Filtre actuel: exclut uniquement `STATUS` et `CURSE`
 - Inclut aussi les cartes marquees `isCollectible: false`
-- Total affiche: **232** cartes
+- Total affiche: **236** cartes
 
 | Biome        | Neutres |  Scribe | Bibliothecaire | Total Collection |
 | ------------ | ------: | ------: | -------------: | ---------------: |
@@ -259,18 +259,18 @@ Rappel de cadrage actuel:
 | VIKING       |       5 |      10 |             10 |               25 |
 | GREEK        |       5 |      10 |             10 |               25 |
 | EGYPTIAN     |       5 |      10 |             10 |               25 |
-| LOVECRAFTIAN |       5 |      10 |             10 |               25 |
-| AZTEC        |       5 |      11 |              9 |               25 |
+| LOVECRAFTIAN |       6 |      10 |             10 |               26 |
+| AZTEC        |       8 |      11 |              9 |               28 |
 | CELTIC       |       5 |      10 |             10 |               25 |
 | RUSSIAN      |       5 |      10 |             10 |               25 |
 | AFRICAN      |       5 |      10 |             10 |               25 |
-| **TOTAL**    |  **41** |  **97** |         **94** |          **232** |
+| **TOTAL**    |  **45** |  **97** |         **94** |          **236** |
 
 ### Pool actif (recompenses / marchand)
 
 - Regle metier: `isCollectible !== false`
 - Le quota theorique du bible n'est plus parfaitement respecte partout
-- Total actif: **221** cartes
+- Total actif: **222** cartes
 
 | Biome        | Neutres | Scribe | Bibliothecaire | Total Actif |
 | ------------ | ------: | -----: | -------------: | ----------: |
@@ -278,32 +278,53 @@ Rappel de cadrage actuel:
 | VIKING       |       5 |     10 |             10 |          25 |
 | GREEK        |       5 |     10 |             10 |          25 |
 | EGYPTIAN     |       5 |     10 |             10 |          25 |
-| LOVECRAFTIAN |       5 |     10 |             10 |          25 |
+| LOVECRAFTIAN |       6 |     10 |             10 |          26 |
 | AZTEC        |       5 |     11 |              9 |          25 |
 | CELTIC       |       5 |     10 |             10 |          25 |
 | RUSSIAN      |       5 |     10 |             10 |          25 |
 | AFRICAN      |       5 |     10 |             10 |          25 |
-| **TOTAL**    |  **41** |  **91** |         **89** |         **221** |
+| **TOTAL**    |  **42** |  **91** |         **89** |         **222** |
+
+### Pool actif manuel (hors bestiary)
+
+- Regle de lecture design: ce pool sert de reference pour la couverture des builds
+- Total actif manuel: **182** cartes
+
+| Biome | Neutres | Scribe | Bibliothecaire | Total Actif Manuel |
+| --- | ---: | ---: | ---: | ---: |
+| LIBRARY | 1 | 10 | 10 | 21 |
+| VIKING | 5 | 8 | 7 | 20 |
+| GREEK | 5 | 8 | 7 | 20 |
+| EGYPTIAN | 5 | 6 | 9 | 20 |
+| LOVECRAFTIAN | 6 | 8 | 7 | 21 |
+| AZTEC | 5 | 8 | 7 | 20 |
+| CELTIC | 5 | 8 | 7 | 20 |
+| RUSSIAN | 4 | 8 | 8 | 20 |
+| AFRICAN | 5 | 8 | 7 | 20 |
+| **TOTAL** | **41** | **72** | **69** | **182** |
 
 ### Couverture actuelle des builds (pool actif hors bestiary)
 
 | Biome | Vulnerable | Weak | Poison | Bleed | Ink | Draw | Discard | Exhaust | Manques |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| LIBRARY | 2 | 1 | 1 | 1 | 3 | 6 | 1 | 5 | aucun |
-| VIKING | 1 | 3 | 1 | 6 | 2 | 7 | 1 | 5 | aucun |
-| GREEK | 6 | 4 | 1 | 1 | 4 | 8 | 1 | 5 | aucun |
-| EGYPTIAN | 6 | 2 | 5 | 1 | 9 | 7 | 1 | 4 | aucun |
-| LOVECRAFTIAN | 7 | 3 | 2 | 2 | 7 | 4 | 7 | 4 | aucun |
-| AZTEC | 2 | 3 | 2 | 3 | 8 | 3 | 1 | 2 | aucun |
+| LIBRARY | 2 | 1 | 1 | 1 | 3 | 6 | 1 | 6 | aucun |
+| VIKING | 1 | 4 | 1 | 6 | 2 | 7 | 1 | 6 | aucun |
+| GREEK | 5 | 4 | 1 | 1 | 5 | 9 | 1 | 5 | aucun |
+| EGYPTIAN | 6 | 2 | 5 | 1 | 11 | 7 | 1 | 4 | aucun |
+| LOVECRAFTIAN | 6 | 3 | 2 | 2 | 7 | 4 | 10 | 7 | aucun |
+| AZTEC | 2 | 3 | 2 | 4 | 8 | 3 | 1 | 2 | aucun |
 | CELTIC | 3 | 2 | 6 | 1 | 8 | 11 | 1 | 3 | aucun |
-| RUSSIAN | 2 | 7 | 1 | 1 | 5 | 5 | 3 | 3 | aucun |
-| AFRICAN | 8 | 2 | 1 | 2 | 7 | 12 | 1 | 4 | aucun |
+| RUSSIAN | 2 | 7 | 1 | 1 | 5 | 5 | 3 | 4 | aucun |
+| AFRICAN | 8 | 2 | 1 | 2 | 7 | 12 | 1 | 5 | aucun |
 
-### Etat design au 12 mars 2026
+### Etat design au 15 mars 2026
 
 - La couverture minimale des builds audites est maintenant satisfaite dans tous les biomes.
-- Les gros clusters de similarite ont ete casses; l'audit brut ne remonte plus de hotspot `>= 3 cartes` partageant la meme signature.
-- Le prochain sujet n'est plus la couverture brute ni la casse de signatures, mais la qualite des routes de deck build par build.
+- Le bestiaire actif est propre sur le critere anti-doublons: aucun doublon exact, aucun pattern bestiaire repete.
+- Le pool global n'a plus de doublon mecanique exact.
+- Le pool manuel ne remonte plus de hotspot de similarite a `3 cartes` ou plus.
+- Les cartes `Focus` rejouables hors `POWER` sont maintenant reduites a `sphinx_riddle` et `norn_prophecy`.
+- Le prochain sujet n'est donc plus la couverture brute ni la casse des gros clusters, mais la qualite des routes de deck build par build et, au besoin, le nettoyage de quelques paires encore proches.
 - Reworks de reference recents:
   `annotated_thesis`, `firebird_script`, `sacred_ink_burst`, `illuminated_shield`, `baobab_shield`, `leshy_ward`, `calendric_ward`, `quetzal_shield`, `desert_wisdom`, `frost_rune_shield`, `written_prophecy`, `titans_wrath`, `scribes_judgment`, `winter_inscription`, `wild_gale`, `spider_web`, `frost_witch`, `epic_saga`, `olympian_scripture`, `void_scripture`, `folk_epic`, `ink_surge`, `eye_of_ra`, `book_of_ra`, `void_librarian`, `norn_prophecy`, `anansis_web`, `forbidden_index`, `sphinx_riddle`, `sacrificial_word`, `snowstorm_trap`, `morrigan_curse`, `iron_bard`, `koschei_strike`, `buffalo_charge`, `celtic_illumination`, `embalmed_tome`, `pythian_codex`, `ancestor_archive`, `folklore_archive`, `saga_archive`, `scald_cry`, `bardic_verse`, `byliny_verse`, `matryoshka_lore`, `gorgons_gaze`, `madness_spike`, `jaguars_blood`, `frost_nail`, `iron_verse`, `logos_strike`, `kells_strike`, `drum_strike`, `death_scroll`, `void_shield`, `sacred_papyrus`, `fur_binding`, `fairy_veil`, `sealed_tome`, `shield_of_athena`, `olympian_guard`, `nordic_treatise`, `healing_rhythm`, `cauldron_lore`, `druids_breath`, `herb_lore`, `selkie_song`, `temple_archive`, `osiris_archive`, `funerary_rite`, `folk_curse`, `cosmic_archive`, `curator_pact`, `canopic_ward`, `odin_script`, `philosophers_quill`, `hermes_dash`, `xipe_shield`, `ogham_inscription`, `iron_samovar`, `trickster_snare`, `ink_of_ancestors`, `final_chapter`
 
@@ -571,6 +592,8 @@ Rappel de cadrage actuel:
 
 - Cartes bestiaire visibles en Collection: **40**
 - Cartes bestiaire actives (collectibles): **40**
+- Repartition actuelle: **5** cartes actives par biome non-LIBRARY, **0** en LIBRARY
+- Les cartes bestiaire restent rattachees a un biome via `card.biome`
 - Les trous de couverture build doivent etre juges **hors bestiaire genere**
 
 > Les sections 5 a 12 restent surtout un document d'intention biome par biome.
@@ -879,18 +902,20 @@ Rappel de cadrage actuel:
 
 ## 13. Recapitulatif Actuel
 
-- Collection affichee (hors STATUS/CURSE): **232**
-- Pool actif (collectible): **221**
-- Neutres actifs: **41**
-- Repartition neutres active: **LIBRARY 1**, autres biomes **5**
+- Collection affichee (hors STATUS/CURSE): **236**
+- Pool actif (collectible): **222**
+- Pool actif manuel hors bestiary: **182**
+- Neutres actifs: **42**
+- Repartition neutres active: **LIBRARY 1**, **LOVECRAFTIAN 6**, autres biomes non-LIBRARY a **5**
 - Ecart actif notable: **AZTEC = 11 Scribe / 9 Bibliothecaire**
-- Audit detaille et hotspots de redondance: `docs/card-pool-audit-2026-03-11.md`
+- Audit detaille et hotspots de redondance: `docs/card-pool-audit-2026-03-15.md`
 
 | Segment                                | Quantite |
 | -------------------------------------- | -------: |
-| Collection (visuel)                    |      232 |
-| Pool actif (gameplay)                  |      221 |
-| Ecart non-actif (isCollectible: false) |       11 |
+| Collection (visuel)                    |      236 |
+| Pool actif (gameplay)                  |      222 |
+| Pool actif manuel hors bestiary        |      182 |
+| Ecart non-actif (isCollectible: false) |       14 |
 
 ---
 

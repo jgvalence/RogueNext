@@ -6,6 +6,7 @@ import { createRNG, type RNG } from "./rng";
 import { nanoid } from "nanoid";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 import { addRelicToRunState } from "./relics";
+import { markCardAcquiredForRunConditionUnlock } from "./rewards";
 
 // ============================
 // Random Events
@@ -52,17 +53,20 @@ const RISKY_EVENT_IDS = new Set([
 ]);
 
 function addDeckCard(state: RunState, definitionId: string): RunState {
-  return {
-    ...state,
-    deck: [
-      ...state.deck,
-      {
-        instanceId: nanoid(),
-        definitionId,
-        upgraded: false,
-      },
-    ],
-  };
+  return markCardAcquiredForRunConditionUnlock(
+    {
+      ...state,
+      deck: [
+        ...state.deck,
+        {
+          instanceId: nanoid(),
+          definitionId,
+          upgraded: false,
+        },
+      ],
+    },
+    definitionId
+  );
 }
 
 function addRelicToRun(state: RunState, relicId: string): RunState {

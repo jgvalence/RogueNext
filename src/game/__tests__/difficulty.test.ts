@@ -231,7 +231,7 @@ describe("Run difficulty progression", () => {
         wonRuns: 5,
         unlockedDifficultyMax: 5,
         winsByDifficulty: { "2": 1 },
-        bestGoldInSingleRun: 200,
+        bestGoldInSingleRun: 220,
       })
     ).toBe(false);
 
@@ -241,7 +241,41 @@ describe("Run difficulty progression", () => {
         wonRuns: 5,
         unlockedDifficultyMax: 5,
         winsByDifficulty: { "2": 1 },
-        bestGoldInSingleRun: 300,
+        bestGoldInSingleRun: 240,
+      })
+    ).toBe(true);
+  });
+
+  it("brings pure progression relics into early-mid runs instead of late collection cleanup", () => {
+    expect(
+      isRelicUnlocked("library_catalog_discount", {
+        totalRuns: 4,
+        wonRuns: 0,
+        unlockedDifficultyMax: 0,
+      })
+    ).toBe(false);
+
+    expect(
+      isRelicUnlocked("library_catalog_discount", {
+        totalRuns: 5,
+        wonRuns: 0,
+        unlockedDifficultyMax: 0,
+      })
+    ).toBe(true);
+
+    expect(
+      isRelicUnlocked("african_sunbird_refrain", {
+        totalRuns: 10,
+        wonRuns: 3,
+        unlockedDifficultyMax: 0,
+      })
+    ).toBe(false);
+
+    expect(
+      isRelicUnlocked("african_sunbird_refrain", {
+        totalRuns: 10,
+        wonRuns: 4,
+        unlockedDifficultyMax: 0,
       })
     ).toBe(true);
   });

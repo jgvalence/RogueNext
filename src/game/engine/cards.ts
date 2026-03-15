@@ -102,8 +102,9 @@ export function playCard(
   let energyCost = getEffectiveCardEnergyCost(def, cardInst.upgraded);
   if (cardInst.upgraded) {
     if (isUsingInkedVariant) {
-      // Inked branch should also benefit from upgrades.
-      effects = boostEffectsForUpgrade(effects);
+      // Inked branch may define its own upgraded behavior; otherwise use the generic boost.
+      effects =
+        def.inkedVariant?.upgradedEffects ?? boostEffectsForUpgrade(effects);
     } else if (def.upgrade) {
       effects = def.upgrade.effects;
     } else {
@@ -194,6 +195,19 @@ export function playCard(
   } else {
     current = moveCardToDiscard(current, instanceId);
   }
+
+  const playCountKey = `card_play_count:${def.id}`;
+  const currentPlayCount = Math.max(
+    0,
+    Math.floor(current.relicCounters?.[playCountKey] ?? 0)
+  );
+  current = {
+    ...current,
+    relicCounters: {
+      ...(current.relicCounters ?? {}),
+      [playCountKey]: currentPlayCount + 1,
+    },
+  };
 
   return current;
 }

@@ -93,6 +93,7 @@ export async function buildInitialRunStateForUser(
     totalRuns,
     wonRuns: progression?.wonRuns ?? 0,
     enemyKillCounts: initialEnemyKillCounts,
+    resources,
   });
   const startingBiomeChoices =
     totalRuns > 0
@@ -218,6 +219,7 @@ export async function getActiveRunSnapshotForUser(
     totalRuns: progression?.totalRuns ?? 0,
     wonRuns: progression?.wonRuns ?? 0,
     enemyKillCounts: mergedEnemyKillCounts,
+    resources,
   });
   const backfilledRunConditionChoices = shouldRebuildStartChoices
     ? drawRunConditionChoices(
