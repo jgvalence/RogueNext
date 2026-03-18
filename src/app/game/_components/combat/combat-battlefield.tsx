@@ -129,7 +129,7 @@ export function CombatBattlefield({
   return (
     <div
       className={cn(
-        "relative flex min-h-0 flex-1 flex-col items-center justify-between overflow-hidden px-1.5 py-2 lg:px-6 lg:py-4 [@media(max-height:540px)]:px-1 [@media(max-height:540px)]:py-0.75",
+        "[@media(max-height:540px)]:py-0.75 relative flex min-h-0 flex-1 flex-col items-center justify-between overflow-hidden px-1.5 py-2 lg:px-6 lg:py-4 [@media(max-height:540px)]:px-1",
         theme.sceneBase
       )}
     >
@@ -144,7 +144,10 @@ export function CombatBattlefield({
         />
       )}
       <div
-        className={cn("pointer-events-none absolute inset-0", theme.sceneAtmosphere)}
+        className={cn(
+          "pointer-events-none absolute inset-0",
+          theme.sceneAtmosphere
+        )}
       />
       <div
         className={cn(
@@ -158,7 +161,7 @@ export function CombatBattlefield({
           theme.sceneBottomGlow
         )}
       />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/8" />
+      <div className="bg-white/8 pointer-events-none absolute inset-x-0 top-0 h-px" />
 
       <div className="relative z-10 flex items-center gap-1.5 self-start lg:gap-2 [@media(max-height:540px)]:hidden">
         <span
@@ -206,7 +209,7 @@ export function CombatBattlefield({
 
       <div
         ref={enemyRowRef}
-        className="relative z-10 flex min-h-[176px] w-full flex-1 items-center justify-center py-1 lg:min-h-0 lg:py-4 [@media(max-height:540px)]:min-h-[150px]"
+        className="relative z-10 flex min-h-[220px] w-full flex-1 items-start justify-stretch overflow-y-auto py-1 lg:min-h-0 lg:items-center lg:justify-center lg:overflow-visible lg:py-4 [@media(max-height:540px)]:min-h-[190px]"
       >
         <CombatMobileGrid
           combat={combat}
