@@ -26,10 +26,11 @@ export function recoverPendingBiomeChoices(
   normalizedCurrentRoom: number,
   isInfiniteRun: boolean
 ): RunState["pendingBiomeChoices"] {
+  const totalRooms = state.map?.length ?? GAME_CONSTANTS.ROOMS_PER_FLOOR;
   const needsBiomeChoicesRecovery =
     state.pendingBiomeChoices === null &&
     state.combat === null &&
-    normalizedCurrentRoom >= GAME_CONSTANTS.ROOMS_PER_FLOOR &&
+    normalizedCurrentRoom >= totalRooms &&
     (isInfiniteRun || state.floor < GAME_CONSTANTS.MAX_FLOORS);
 
   if (!needsBiomeChoicesRecovery) {

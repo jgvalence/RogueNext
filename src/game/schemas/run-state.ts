@@ -35,12 +35,24 @@ export type FirstRunScriptState = z.infer<typeof FirstRunScriptStateSchema>;
 
 export const RoomNodeSchema = z.object({
   index: z.number().int(),
+  nodeId: z.string().optional(),
+  lane: z.number().int().min(0).max(4).default(0),
+  nextNodeIds: z.array(z.string()).default([]),
   type: RoomType,
+  specialType: z.enum(["HEAL", "UPGRADE", "EVENT"]).optional(),
   enemyIds: z.array(z.string()).optional(),
   isElite: z.boolean().default(false),
   completed: z.boolean().default(false),
 });
-export type RoomNode = z.infer<typeof RoomNodeSchema>;
+export type RoomNode = Omit<
+  z.infer<typeof RoomNodeSchema>,
+  "nodeId" | "lane" | "nextNodeIds" | "specialType"
+> & {
+  nodeId?: string;
+  lane?: number;
+  nextNodeIds?: string[];
+  specialType?: "HEAL" | "UPGRADE" | "EVENT";
+};
 
 export const RunStateSchema = z.object({
   runId: z.string(),
@@ -71,6 +83,10 @@ export const RunStateSchema = z.object({
   pendingBiomeChoices: z.tuple([BiomeType, BiomeType]).nullable().default(null),
   // Snapshot of max unlocked difficulty per character at run start
   difficultyMaxByCharacter: z
+    .record(z.string(), z.number().int().min(0))
+    .default({}),
+  // Snapshot of global wins by difficulty at run start.
+  winsByDifficultySnapshot: z
     .record(z.string(), z.number().int().min(0))
     .default({}),
   firstRunScript: FirstRunScriptStateSchema.nullable().default(null),
@@ -134,4 +150,6 @@ export const RunStateSchema = z.object({
     })
     .optional(),
 });
-export type RunState = z.infer<typeof RunStateSchema>;
+export type RunState = Omit<z.infer<typeof RunStateSchema>, "map"> & {
+  map: RoomNode[][];
+};

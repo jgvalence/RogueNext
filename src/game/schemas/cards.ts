@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { CardType, Rarity, Targeting, BiomeType } from "./enums";
+import {
+  CardType,
+  Rarity,
+  Targeting,
+  BiomeType,
+  CardArchetypeTag,
+} from "./enums";
 import { EffectSchema, type Effect } from "./effects";
 
 export const InkedVariantSchema = z.object({
@@ -38,17 +44,23 @@ export const CardDefinitionSchema = z.object({
   isStatusCard: z.boolean().default(false),
   isCurseCard: z.boolean().default(false),
   biome: BiomeType.default("LIBRARY"),
+  archetypeTags: z.array(CardArchetypeTag).default([]),
   /** Si défini, la carte n'apparaît qu'en récompense pour ce personnage. */
   characterId: z.string().optional(),
 });
 export type CardDefinition = Omit<
   z.infer<typeof CardDefinitionSchema>,
-  "isCollectible" | "isStatusCard" | "isCurseCard" | "onRandomDiscardEffects"
+  | "isCollectible"
+  | "isStatusCard"
+  | "isCurseCard"
+  | "onRandomDiscardEffects"
+  | "archetypeTags"
 > & {
   isCollectible?: boolean;
   isStatusCard?: boolean;
   isCurseCard?: boolean;
   onRandomDiscardEffects?: Effect[];
+  archetypeTags?: Array<z.infer<typeof CardArchetypeTag>>;
   upgrade?: CardUpgrade | null;
 };
 

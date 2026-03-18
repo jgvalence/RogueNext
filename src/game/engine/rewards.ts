@@ -13,10 +13,12 @@ import { eliteCanDropRelic } from "./difficulty";
 import {
   weightedSampleCardsForOffers,
   type CardOfferSource,
+  type CardOfferContext,
 } from "./card-offers";
 import { pickRandomUsableItemDefinitionId } from "./items";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 import { getRunConditionCardLootUnlockResourceKey } from "./run-conditions";
+import { getDeckArchetypeCounts } from "./card-archetypes";
 
 export interface CombatRewards {
   gold: number;
@@ -62,7 +64,8 @@ function drawMixedCardChoices(
   count: number,
   rng: RNG,
   lootLuck: number,
-  source: CardOfferSource
+  source: CardOfferSource,
+  offerContext?: CardOfferContext
 ): CardDefinition[] {
   if (count <= 0 || cards.length === 0) return [];
 
@@ -79,7 +82,8 @@ function drawMixedCardChoices(
       rng,
       lootLuck,
       source,
-      biome
+      biome,
+      offerContext
     );
     for (const card of sampled) {
       if (pickedIds.has(card.id)) continue;
@@ -93,6 +97,47 @@ function drawMixedCardChoices(
     offBiomePool.filter((card) => !pickedIds.has(card.id)),
     count - picks.length
   );
+  addPicks(
+    cards.filter((card) => !pickedIds.has(card.id)),
+    count - picks.length
+  );
+
+  return picks;
+}
+
+function drawBiomeFocusedCardChoices(
+  cards: CardDefinition[],
+  biome: BiomeType,
+  count: number,
+  rng: RNG,
+  lootLuck: number,
+  offerContext?: CardOfferContext
+): CardDefinition[] {
+  if (count <= 0 || cards.length === 0) return [];
+
+  const sameBiomePool = cards.filter((card) => card.biome === biome);
+  const picks: CardDefinition[] = [];
+  const pickedIds = new Set<string>();
+
+  const addPicks = (pool: CardDefinition[], amount: number) => {
+    if (amount <= 0 || pool.length === 0) return;
+    const sampled = weightedSampleCardsForOffers(
+      pool,
+      amount,
+      rng,
+      lootLuck,
+      "NORMAL_REWARD",
+      biome,
+      offerContext
+    );
+    for (const card of sampled) {
+      if (pickedIds.has(card.id)) continue;
+      pickedIds.add(card.id);
+      picks.push(card);
+    }
+  };
+
+  addPicks(sameBiomePool, Math.min(2, count));
   addPicks(
     cards.filter((card) => !pickedIds.has(card.id)),
     count - picks.length
@@ -129,7 +174,10 @@ export function generateCombatRewards(
   unlockedRelicIds?: string[],
   combatRewardMultiplier = 1,
   disableBiomeResourceRewards = false,
-  characterId?: string
+  characterId?: string,
+  currentDeck: CardInstance[] = [],
+  playerCurrentHp?: number,
+  playerMaxHp?: number
 ): CombatRewards {
   const lootLuck = getTotalLootLuck(currentRelicIds, metaLootLuckBonus);
   const hasOmensCompass = currentRelicIds.includes("omens_compass");
@@ -158,6 +206,15 @@ export function generateCombatRewards(
     unlockedCardIds,
     characterId
   );
+  const allCardDefs = new Map(allCards.map((card) => [card.id, card]));
+  const offerContext: CardOfferContext | undefined =
+    currentDeck.length > 0 || playerCurrentHp != null || playerMaxHp != null
+      ? {
+          archetypeCounts: getDeckArchetypeCounts(currentDeck, allCardDefs),
+          playerCurrentHp,
+          playerMaxHp,
+        }
+      : undefined;
   const rareRewardCards = rewardEligibleCards.filter(
     (card) => card.rarity === "RARE"
   );
@@ -180,7 +237,8 @@ export function generateCombatRewards(
             Math.max(1, 1 + extraChoices),
             rng,
             lootLuck,
-            "ELITE_REWARD"
+            "ELITE_REWARD",
+            offerContext
           )
         : drawMixedCardChoices(
             rewardEligibleCards,
@@ -188,16 +246,17 @@ export function generateCombatRewards(
             Math.max(1, 1 + extraChoices),
             rng,
             lootLuck,
-            "ELITE_REWARD"
+            "ELITE_REWARD",
+            offerContext
           );
   } else {
-    cardChoices = drawMixedCardChoices(
+    cardChoices = drawBiomeFocusedCardChoices(
       rewardEligibleCards,
       biome,
       GAME_CONSTANTS.CARD_REWARD_CHOICES + extraChoices,
       rng,
       lootLuck,
-      "NORMAL_REWARD"
+      offerContext
     );
   }
 
@@ -293,7 +352,8 @@ export function generateCombatRewards(
         1,
         rng,
         lootLuck,
-        "ELITE_REWARD"
+        "ELITE_REWARD",
+        offerContext
       )[0];
       if (extraRare) {
         cardChoices = [...cardChoices, extraRare];

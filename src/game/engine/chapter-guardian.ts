@@ -21,6 +21,25 @@ const OPEN_CHAPTER_DAMAGE_MULTIPLIER = 1.5;
 
 export const CHAPTER_GUARDIAN_REBIND_INTENT_INDEX = 6;
 
+export interface ChapterGuardianUiState {
+  phaseTwo: boolean;
+  martialActive: boolean;
+  martialProgress: number;
+  martialThreshold: number;
+  damageCap: number | null;
+  scriptActive: boolean;
+  scriptProgress: number;
+  scriptThreshold: number;
+  scriptPunishBlock: number;
+  inkActive: boolean;
+  inkProgress: number;
+  inkThreshold: number;
+  inkPunishCardId: string;
+  open: boolean;
+  rebindPending: boolean;
+  openChapterDamageMultiplier: number;
+}
+
 function isChapterGuardianEnemy(
   enemy: Pick<EnemyState, "definitionId" | "currentHp"> | null | undefined
 ): enemy is Pick<EnemyState, "definitionId" | "currentHp"> {
@@ -203,6 +222,38 @@ export function getChapterGuardianDamageCap(enemy: EnemyState): number | null {
   if (isChapterGuardianOpen(chapterGuardian)) return null;
   if (!isBindingActive(chapterGuardian, MARTIAL_ACTIVE_KEY)) return null;
   return isPhaseTwo(chapterGuardian) ? 6 : 8;
+}
+
+export function getChapterGuardianUiState(
+  enemy: EnemyState | null | undefined
+): ChapterGuardianUiState | null {
+  if (!enemy) return null;
+  const chapterGuardian = {
+    ...enemy,
+    mechanicFlags: withDefaultMechanicFlags(enemy.mechanicFlags),
+  };
+  if (!isChapterGuardianEnemy(chapterGuardian)) return null;
+
+  const phaseTwo = isPhaseTwo(chapterGuardian);
+
+  return {
+    phaseTwo,
+    martialActive: isBindingActive(chapterGuardian, MARTIAL_ACTIVE_KEY),
+    martialProgress: getFlag(chapterGuardian, TURN_ATTACKS_KEY),
+    martialThreshold: MARTIAL_ATTACKS_TO_BREAK,
+    damageCap: getChapterGuardianDamageCap(chapterGuardian),
+    scriptActive: isBindingActive(chapterGuardian, SCRIPT_ACTIVE_KEY),
+    scriptProgress: getFlag(chapterGuardian, TURN_BLOCK_GAINED_KEY),
+    scriptThreshold: SCRIPT_BLOCK_TO_BREAK,
+    scriptPunishBlock: getScriptPunishBlock(chapterGuardian),
+    inkActive: isBindingActive(chapterGuardian, INK_ACTIVE_KEY),
+    inkProgress: getFlag(chapterGuardian, TURN_INK_SPENT_KEY),
+    inkThreshold: INK_TO_BREAK,
+    inkPunishCardId: getInkPunishCardId(chapterGuardian),
+    open: isChapterGuardianOpen(chapterGuardian),
+    rebindPending: isChapterGuardianRebindPending(chapterGuardian),
+    openChapterDamageMultiplier: OPEN_CHAPTER_DAMAGE_MULTIPLIER,
+  };
 }
 
 export function applyChapterGuardianIncomingDamageModifier(

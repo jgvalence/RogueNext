@@ -556,6 +556,9 @@ export const en = {
       COMBAT_ELITE: "Elite Trial",
       MERCHANT: "Scriptorium",
       SPECIAL: "Chronicle",
+      SPECIAL_EVENT: "Event",
+      SPECIAL_HEAL: "Rest Site",
+      SPECIAL_UPGRADE: "Forge",
       PRE_BOSS: "Anteroom",
     },
     bossRoom: "Boss Lair",
@@ -1343,6 +1346,10 @@ export const en = {
     unlockCount_one: "{{count}} unlock",
     unlockCount_other: "{{count}} unlocks",
     resourcesGained: "Resources gained this run",
+    resourceModifierBonus:
+      "This was your first clear of difficulty {{level}}. Resources are credited at {{percent}}%.",
+    resourceModifierReduced:
+      "Difficulty {{level}} was already cleared. Only {{percent}}% of resources are credited on repeat runs.",
     cardsUnlocked: "Cards unlocked this run",
     relicsUnlocked: "Relics unlocked this run",
     newBestiaryEntryTitle: "New Bestiary entry",
@@ -1649,6 +1656,22 @@ export const en = {
     conditionalBonusPerCurse: "+{{perCurse}}/curse (now +{{total}})",
     phase2Badge: "P2",
     phase2Summon: "Phase 2 (<50% HP): summons {{label}}",
+    chapterGuardian: {
+      martialLabel: "Martial Binding",
+      martialDetail:
+        "Break: play {{threshold}} attack cards this turn ({{progress}}/{{threshold}}). Your hits are capped at {{cap}} damage while it holds.",
+      scriptLabel: "Script Binding",
+      scriptDetail:
+        "Punish: your first block gain each turn grants the boss +{{punish}} block. Break: gain {{threshold}} block this turn ({{progress}}/{{threshold}}).",
+      inkLabel: "Ink Binding",
+      inkDetail:
+        "Punish: your first ink spend each turn adds {{card}}. Break: spend {{threshold}} ink this turn ({{progress}}/{{threshold}}).",
+      openLabel: "Open Chapter",
+      openDetail:
+        "All bindings are broken. The Guardian takes x{{multiplier}} damage until your turn ends.",
+      rebindLabel: "Rebind Pending",
+      rebindDetail: "The next action restores every binding.",
+    },
   },
   playerStats: {
     block: "Block",
@@ -1694,6 +1717,9 @@ export const en = {
       "Between two rows of grimoires, a stone basin rests flush with the floor. The water flowing from it smells of ink and old parchment. They say the words of destroyed books dissolved within — and that to drink is to let something written mend you from the inside.",
     currentHp: "Current: {{current}}/{{max}}",
     healAction: "Heal",
+    healChoiceHint:
+      "Choose between restoring your health or trimming your deck.",
+    healPurgeAction: "Purge a card",
     upgradeTitle: "Enchanted Anvil",
     upgradeHint: "Hover a card to preview the upgrade",
     upgradeAction: "Upgrade",
@@ -1705,6 +1731,9 @@ export const en = {
       "This card will be permanently removed from your deck.",
     eventContinue: "Continue",
     eventPurgeAction: "Choose a card to remove",
+    eventRewardPickerTitle: "Choose 1 card",
+    eventRewardPickerSubtitle:
+      "The scriptorium offers cards aligned with your chosen archetype.",
   },
   startMerchant: {
     kicker: "Pre-run",
@@ -1744,18 +1773,22 @@ export const en = {
       heal: "Heal",
       maxHp: "Max HP",
       purge: "Purge",
+      bloodPurge: "Blood Purge",
       ally: "Ally",
     },
     itemDescription: {
       heal: "Restore {{amount}} HP",
       maxHp: "+{{amount}} Max HP",
       purge: "Remove 1 card from your deck permanently.",
+      bloodPurge: "Remove 1 card from your deck by sacrificing {{amount}} HP.",
     },
     energyCost: "{{cost}} energy",
     sold: "SOLD",
     soldOut: "SOLD OUT",
     inventoryFull: "Inventory full",
     priceGold: "{{price}} gold",
+    priceHp: "{{price}} HP",
+    requiresMoreHp: "Not enough HP for this sacrifice",
     purgesLeft: "Purges left: {{count}}",
     reroll: "Reroll shop ({{price}} gold)",
     autoRestock: "Haggler's Satchel: auto-restock {{count}} charge left.",
@@ -1928,6 +1961,87 @@ export const en = {
     },
   },
   events: {
+    scriptorium_catalog: {
+      title: "The Scriptorium Catalog",
+      flavorText:
+        "A rotating lectern displays three indexes bound together by threads of ink. Each one opens a different shelf of the Scriptorium, as if the cards were already waiting for your decision.",
+      description:
+        "Choose a discipline. The Scriptorium will then offer three cards aligned with that angle.",
+      choices: [
+        {
+          label: "Open the defensive treatises",
+          description: "Receive 3 Block-focused cards.",
+          outcomeText:
+            "The shelves slide open with the sound of well-oiled chains. Wards, seals, and paper bastions present themselves to you.",
+        },
+        {
+          label: "Consult the restoration manuscripts",
+          description: "Receive 3 Heal-focused cards.",
+          outcomeText:
+            "The smell of balm, dry herbs, and pale ink rises from the shelves. The books that mend flesh have been drawn out for you.",
+        },
+        {
+          label: "Follow the bright ink margins",
+          description: "Receive 3 Ink-focused cards.",
+          outcomeText:
+            "The black filaments begin to glow. The pages selected for you already pulse with liquid power, ready to feed your ink.",
+        },
+      ],
+    },
+    scarlet_index: {
+      title: "The Scarlet Index",
+      flavorText:
+        "A consultation table is covered in red filing slips. Some are stained with blood, others darkened to the edges. All of them point toward harsher ways of telling a story.",
+      description:
+        "Choose an aggressive reading line. The Scarlet Index will then open three matching cards for you.",
+      choices: [
+        {
+          label: "Follow the blood-marked annotations",
+          description: "Receive 3 Bleed-focused cards.",
+          outcomeText:
+            "The slips overlap into a precise trail. Pain becomes a method, and the index hands you pages that know how to extend it.",
+        },
+        {
+          label: "Search the burned pages",
+          description: "Receive 3 Exhaust-focused cards.",
+          outcomeText:
+            "The charred corners crumble under your fingers. What disappears quickly sometimes leaves the most useful trace, and the Scriptorium seems to agree.",
+        },
+        {
+          label: "Seek the iron-ink reserves",
+          description: "Receive 3 Ink-focused cards.",
+          outcomeText:
+            "The ink there feels heavier, almost metallic. The cards drawn from that shelf promise short bursts of dense power.",
+        },
+      ],
+    },
+    war_ledger: {
+      title: "The War Ledger",
+      flavorText:
+        "Beneath a glass bell rests a massive ledger filled with annotated campaigns, orderly retreats, and wounds converted into doctrine. When you open it, three strategies strain against the binding.",
+      description:
+        "Choose a battle plan. The ledger will then offer three cards in that direction.",
+      choices: [
+        {
+          label: "Study the shield lines",
+          description: "Receive 3 Block-focused cards.",
+          outcomeText:
+            "The ledger opens to patient, layered formations. The cards that emerge speak of holding ground, guarding space, and walls that refuse to break.",
+        },
+        {
+          label: "Revisit the wars of attrition",
+          description: "Receive 3 Bleed-focused cards.",
+          outcomeText:
+            "Cards of slow wounds, repeated pressure, and methodical cuts slide free from the pages. Nothing here is quick; everything here is fatal.",
+        },
+        {
+          label: "Examine the doctrines of sacrifice",
+          description: "Receive 3 Exhaust-focused cards.",
+          outcomeText:
+            "Some maneuvers are only useful once. The ledger still ranks them among the most decisive, and entrusts you with three examples.",
+        },
+      ],
+    },
     mysterious_tome: {
       title: "The Sealed Tome",
       flavorText:

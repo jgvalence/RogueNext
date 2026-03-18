@@ -139,7 +139,8 @@ export async function buildInitialRunStateForUser(
           enabled: true,
           step: "FIRST_COMBAT",
         }
-      : null
+      : null,
+    winsByDifficulty
   );
 
   return { seed, state };
@@ -200,7 +201,10 @@ export async function getActiveRunSnapshotForUser(
   );
   const normalizedCurrentRoom = Math.max(
     0,
-    Math.min(state.currentRoom, GAME_CONSTANTS.ROOMS_PER_FLOOR)
+    Math.min(
+      state.currentRoom,
+      state.map?.length ?? GAME_CONSTANTS.ROOMS_PER_FLOOR
+    )
   );
   const selectedDifficultyLevel =
     state.selectedDifficultyLevel ??
@@ -253,6 +257,8 @@ export async function getActiveRunSnapshotForUser(
     selectedDifficultyLevel,
     unlockedDifficultyLevelSnapshot:
       state.unlockedDifficultyLevelSnapshot ?? unlockedDifficultyLevelMax,
+    winsByDifficultySnapshot:
+      state.winsByDifficultySnapshot ?? winsByDifficulty,
     pendingRunConditionChoices: backfilledRunConditionChoices,
     selectedRunConditionId: state.selectedRunConditionId ?? null,
     pendingBiomeChoices: recoverPendingBiomeChoices(

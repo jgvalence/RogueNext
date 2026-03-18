@@ -1,13 +1,14 @@
 import type { BiomeType } from "./schemas/enums";
 
 export const GAME_CONSTANTS = {
-  ROOMS_PER_FLOOR: 10,
-  BOSS_ROOM_INDEX: 9,
+  ROOMS_PER_FLOOR: 16,
+  BOSS_ROOM_INDEX: 15,
+  MAP_LANES: 5,
   MAX_ALLIES: 3,
   MAX_USABLE_ITEMS: 3,
   MAX_ENEMIES: 4,
   MAX_HAND_SIZE: 13,
-  MAX_FLOORS: 5,
+  MAX_FLOORS: 3,
   AVAILABLE_BIOMES: [
     "VIKING",
     "GREEK",

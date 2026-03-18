@@ -13,6 +13,9 @@ export const FIRST_RUN_SCRIPT_FORCED_CHOICE_INDEX = 2;
 const FIRST_RUN_OPENING_ROOM: RoomNode[] = [
   {
     index: 0,
+    nodeId: "script-room-0-0",
+    lane: 2,
+    nextNodeIds: ["script-room-1-0", "script-room-1-1", "script-room-1-2"],
     type: "COMBAT",
     enemyIds: ["ink_slime"],
     isElite: false,
@@ -23,18 +26,28 @@ const FIRST_RUN_OPENING_ROOM: RoomNode[] = [
 const FIRST_RUN_GUIDED_MAP_ROOM: RoomNode[] = [
   {
     index: FIRST_RUN_SCRIPT_MAP_ROOM_INDEX,
+    nodeId: "script-room-1-0",
+    lane: 0,
+    nextNodeIds: [],
     type: "SPECIAL",
+    specialType: "EVENT",
     isElite: false,
     completed: false,
   },
   {
     index: FIRST_RUN_SCRIPT_MAP_ROOM_INDEX,
+    nodeId: "script-room-1-1",
+    lane: 2,
+    nextNodeIds: [],
     type: "MERCHANT",
     isElite: false,
     completed: false,
   },
   {
     index: FIRST_RUN_SCRIPT_MAP_ROOM_INDEX,
+    nodeId: "script-room-1-2",
+    lane: 4,
+    nextNodeIds: [],
     type: "COMBAT",
     enemyIds: ["tome_colossus"],
     isElite: true,
@@ -46,9 +59,15 @@ type ScriptedOutcome = typeof FIRST_RUN_GUIDED_STORY_TUTORIAL_OUTCOME;
 
 export function createFirstRunScriptedMap(baseMap: RoomNode[][]): RoomNode[][] {
   const nextMap = baseMap.map((slot) => slot.map((room) => ({ ...room })));
+  const nextDepthIds = (nextMap[FIRST_RUN_SCRIPT_MAP_ROOM_INDEX + 1] ?? []).map(
+    (room, index) => room.nodeId ?? `${room.index}-${index}`
+  );
   nextMap[0] = FIRST_RUN_OPENING_ROOM.map((room) => ({ ...room }));
   nextMap[FIRST_RUN_SCRIPT_MAP_ROOM_INDEX] = FIRST_RUN_GUIDED_MAP_ROOM.map(
-    (room) => ({ ...room })
+    (room) => ({
+      ...room,
+      nextNodeIds: [...nextDepthIds],
+    })
   );
   return nextMap;
 }

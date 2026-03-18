@@ -30,7 +30,7 @@ const BIOME_RESOURCE_KEYS: BiomeResource[] = [
   "MASQUES",
 ];
 
-const SHOP_PRICE_MULTIPLIER = 1.25;
+const SHOP_PRICE_MULTIPLIER = 1.15;
 const AUTO_RESTOCK_RELIC_ID = "haggler_satchel";
 const EXTRA_PURGE_RELIC_ID = "surgeons_quill";
 const PURGE_DISCOUNT_RELIC_ID = "library_catalog_discount";
@@ -78,7 +78,7 @@ export function getMerchantAutoRestockCharges(relicIds: string[]): number {
 }
 
 export function getMerchantPurgeUsesPerVisit(relicIds: string[]): number {
-  return relicIds.includes(EXTRA_PURGE_RELIC_ID) ? 3 : 1;
+  return relicIds.includes(EXTRA_PURGE_RELIC_ID) ? 3 : 2;
 }
 
 function getMerchantPurgeCostMultiplier(relicIds: string[]): number {
@@ -104,7 +104,7 @@ export function getShopRerollPrice(
 ): number {
   const safeCount = Math.max(0, Math.floor(rerollCount));
   const base = applyDifficultyShopPrice(
-    scaleShopPrice(30 + floor * 6),
+    scaleShopPrice(18 + floor * 5),
     difficultyLevel
   );
   return Math.max(
@@ -188,18 +188,31 @@ function getShopRelicRarity(
 
 export interface ShopItem {
   id: string;
-  type: "card" | "relic" | "heal" | "max_hp" | "purge" | "usable_item" | "ally";
+  type:
+    | "card"
+    | "relic"
+    | "heal"
+    | "max_hp"
+    | "purge"
+    | "blood_purge"
+    | "usable_item"
+    | "ally";
   cardDef?: CardDefinition;
   usableItemDef?: UsableItemDefinition;
   relicId?: string;
   relicName?: string;
   relicDescription?: string;
   healAmount?: number;
+  hpCost?: number;
   maxHpAmount?: number;
   allyId?: string;
   allyName?: string;
   allyDescription?: string;
   price: number;
+}
+
+function getBloodPurgeHpCost(floor: number): number {
+  return Math.min(16, 6 + Math.max(1, floor) * 2);
 }
 
 export type StartMerchantOfferType =
@@ -323,7 +336,7 @@ export function generateShopInventory(
     healAmount: 25,
     price: applyMerchantMultiplier(
       applyDifficultyShopPrice(
-        scaleShopPrice(40 + floor * 6),
+        scaleShopPrice(34 + floor * 5),
         selectedDifficultyLevel
       )
     ),
@@ -336,23 +349,40 @@ export function generateShopInventory(
     maxHpAmount: 10,
     price: applyMerchantMultiplier(
       applyDifficultyShopPrice(
-        scaleShopPrice(95 + floor * 12),
+        scaleShopPrice(78 + floor * 10),
         selectedDifficultyLevel
       )
     ),
   });
 
-  // 1 purge option (permanently remove a card from deck)
+  const purgePrice = applyMerchantMultiplier(
+    applyDifficultyShopPrice(
+      Math.round(scaleShopPrice(68 + floor * 10) * purgeCostMultiplier),
+      selectedDifficultyLevel
+    )
+  );
+  const purgeOfferCount = getMerchantPurgeUsesPerVisit(ownedRelicIds);
+
   items.push({
-    id: nanoid(),
+    id: "purge-gold-1",
     type: "purge",
-    price: applyMerchantMultiplier(
-      applyDifficultyShopPrice(
-        Math.round(scaleShopPrice(95 + floor * 12) * purgeCostMultiplier),
-        selectedDifficultyLevel
-      )
-    ),
+    price: purgePrice,
   });
+
+  items.push({
+    id: "purge-blood-1",
+    type: "blood_purge",
+    price: 0,
+    hpCost: getBloodPurgeHpCost(floor),
+  });
+
+  for (let purgeIndex = 2; purgeIndex <= purgeOfferCount - 1; purgeIndex += 1) {
+    items.push({
+      id: `purge-gold-${purgeIndex}`,
+      type: "purge",
+      price: purgePrice,
+    });
+  }
 
   const hasUsableSlot = (usableItems?.length ?? 0) < usableItemCapacity;
   if (hasUsableSlot && usableItemDefinitions.length > 0) {
@@ -400,9 +430,9 @@ export function generateShopInventory(
 function getCardPrice(rarity: string, floor: number): number {
   const base =
     {
-      COMMON: 40,
-      UNCOMMON: 65,
-      RARE: 100,
+      COMMON: 38,
+      UNCOMMON: 58,
+      RARE: 88,
     }[rarity] ?? 40;
 
   return scaleShopPrice(base + floor * 6);
@@ -466,6 +496,15 @@ export function buyShopItem(
     case "purge": {
       // Gold is deducted above. Card removal is handled by the UI
       // (opens CardPickerModal, then dispatches REMOVE_CARD_FROM_DECK).
+      break;
+    }
+    case "blood_purge": {
+      const hpCost = Math.max(0, Math.floor(item.hpCost ?? 0));
+      if (state.playerCurrentHp <= hpCost) return null;
+      state = {
+        ...state,
+        playerCurrentHp: state.playerCurrentHp - hpCost,
+      };
       break;
     }
     case "ally": {
@@ -892,12 +931,12 @@ function getBaseShopRelicPrice(
     case "BOSS":
       return 260;
     case "RARE":
-      return 180;
+      return 150;
     case "UNCOMMON":
-      return 130;
+      return 110;
     case "COMMON":
     default:
-      return 90;
+      return 80;
   }
 }
 

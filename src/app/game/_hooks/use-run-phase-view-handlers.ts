@@ -120,6 +120,13 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
     [dispatch]
   );
 
+  const handleSpecialEventCardReward = useCallback(
+    (definitionId: string) => {
+      dispatch({ type: "PICK_CARD_REWARD", payload: { definitionId } });
+    },
+    [dispatch]
+  );
+
   const handleSpecialEventContinue = useCallback(() => {
     setPhase("MAP");
   }, [setPhase]);
@@ -173,6 +180,7 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
     handleMerchantLeave,
     handleSpecialUpgrade,
     handleSpecialEventChoice,
+    handleSpecialEventCardReward,
     handleSpecialEventContinue,
     handleSpecialEventPurge,
     handleSpecialSkip,

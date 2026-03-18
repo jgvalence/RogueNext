@@ -1,7 +1,6 @@
 import type { CardDefinition, CardInstance } from "../schemas/cards";
 import { relicDefinitions, type RelicDefinitionData } from "../data/relics";
 import { RELIC_UNLOCK_REQUIREMENTS_FROM_DOC } from "../data/relic-unlocks";
-import { GAME_CONSTANTS } from "../constants";
 import { characterDefinitions } from "../data/characters";
 import {
   BOSS_ENEMY_MASTERY_KILL_THRESHOLD,
@@ -9,6 +8,8 @@ import {
 } from "../data/enemy-mastery";
 
 export const MAX_RUN_DIFFICULTY_LEVEL = 5;
+export const FIRST_CLEAR_RESOURCE_MULTIPLIER = 1.25;
+export const REPEATED_DIFFICULTY_RESOURCE_MULTIPLIER = 0.2;
 const DIFFICULTY_UNLOCK_KEY = "__RUN_DIFFICULTY_UNLOCKED_MAX";
 const BEST_GOLD_SINGLE_RUN_KEY = "__RUN_BEST_GOLD_SINGLE";
 const BEST_INFINITE_FLOOR_KEY = "__RUN_INFINITE_BEST_FLOOR";
@@ -329,7 +330,8 @@ export function getPostFloorFiveEscalation(
   eliteChanceBonus: number;
 } {
   const safeFloor = Math.max(1, Math.floor(floor));
-  if (!enabled || safeFloor <= GAME_CONSTANTS.MAX_FLOORS) {
+  const escalationStartFloor = 5;
+  if (!enabled || safeFloor <= escalationStartFloor) {
     return {
       enemyHpMultiplier: 1,
       enemyDamageMultiplier: 1,
@@ -337,7 +339,7 @@ export function getPostFloorFiveEscalation(
     };
   }
 
-  const extraFloors = safeFloor - GAME_CONSTANTS.MAX_FLOORS;
+  const extraFloors = safeFloor - escalationStartFloor;
   return {
     // Infinite mode is meant to spike hard immediately after floor 5.
     // Floor 6 should feel dramatically harder, then keep ramping quickly.
@@ -388,8 +390,7 @@ export function getDifficultyModifiers(level: number): {
   disruptionWeightBonus: number;
 } {
   const l = clampDifficulty(level);
-  const enemyHpMultiplier =
-    ([1, 1.12, 1.24, 1.36, 1.6, 1.72] as const)[l] ?? 1;
+  const enemyHpMultiplier = ([1, 1.12, 1.24, 1.36, 1.6, 1.72] as const)[l] ?? 1;
   const enemyDamageMultiplier =
     ([1, 1.1, 1.2, 1.35, 1.55, 1.7] as const)[l] ?? 1;
   const eliteChanceBonus = l >= 5 ? 0.24 : l >= 4 ? 0.16 : 0;
@@ -398,8 +399,7 @@ export function getDifficultyModifiers(level: number): {
   const enemyPackSizeBonus = l >= 5 ? 1 : 0;
   // Boost the weight of enemy disruption abilities by difficulty
   // Diff 0: none, Diff 1: light, Diff 3+: marked
-  const disruptionWeightBonus =
-    ([0, 0.3, 0.6, 2.2, 3.2, 4.4] as const)[l] ?? 0;
+  const disruptionWeightBonus = ([0, 0.3, 0.6, 2.2, 3.2, 4.4] as const)[l] ?? 0;
   return {
     enemyHpMultiplier,
     enemyDamageMultiplier,
@@ -488,19 +488,28 @@ export function hasClearedDifficultyBefore(
   );
 }
 
+export function hasClearedDifficultyGloballyBefore(
+  winsByDifficulty: Record<string, number>,
+  difficultyLevel: number
+): boolean {
+  const normalizedDifficulty = clampDifficulty(difficultyLevel);
+  return (
+    Math.max(
+      0,
+      Math.floor(winsByDifficulty[String(normalizedDifficulty)] ?? 0)
+    ) > 0
+  );
+}
+
 export function getEarnedResourceMultiplierForRun(
-  resources: Record<string, number>,
-  characterId: string,
+  winsByDifficulty: Record<string, number>,
   difficultyLevel: number,
   status: "VICTORY" | "DEFEAT" | "ABANDONED"
 ): number {
-  const victoryMultiplier = status === "VICTORY" ? 1.25 : 1;
-  if (
-    !hasClearedDifficultyBefore(resources, characterId, difficultyLevel)
-  ) {
-    return victoryMultiplier;
+  if (hasClearedDifficultyGloballyBefore(winsByDifficulty, difficultyLevel)) {
+    return REPEATED_DIFFICULTY_RESOURCE_MULTIPLIER;
   }
-  return victoryMultiplier * 0.7;
+  return status === "VICTORY" ? FIRST_CLEAR_RESOURCE_MULTIPLIER : 1;
 }
 
 export function isRelicUnlockedForDifficulty(
@@ -676,8 +685,9 @@ export function getRelicUnlockDetails(
       unlocked: isRelicUnlocked(relicId, progress),
       requirements,
       missingRequirement:
-        requirements.find((requirement) => !isRelicUnlockRequirementMet(requirement)) ??
-        null,
+        requirements.find(
+          (requirement) => !isRelicUnlockRequirementMet(requirement)
+        ) ?? null,
     };
   }
 

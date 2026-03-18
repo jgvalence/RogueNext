@@ -5,7 +5,6 @@ import { Cinzel } from "next/font/google";
 import { useTranslation } from "react-i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { RelicDefinitionData } from "@/game/data/relics";
-import { GAME_CONSTANTS } from "@/game/constants";
 import { cn } from "@/lib/utils/cn";
 import { localizeCardName, localizeCardType } from "@/lib/i18n/card-text";
 import {
@@ -23,10 +22,13 @@ interface RunOutcomeScreenProps {
   status: RunOutcomeStatus;
   floor: number;
   currentRoom: number;
+  totalRooms: number;
   gold: number;
   deckSize: number;
   relicCount: number;
+  difficultyLevel: number | null;
   earnedResourcesSummary: Array<[string, number]>;
+  earnedResourceMultiplier: number;
   newlyUnlockedCards: CardDefinition[];
   newlyUnlockedRelics: RelicDefinitionData[];
   onBackToLibrary: () => Promise<void> | void;
@@ -36,16 +38,20 @@ export function RunOutcomeScreen({
   status,
   floor,
   currentRoom,
+  totalRooms,
   gold,
   deckSize,
   relicCount,
+  difficultyLevel,
   earnedResourcesSummary,
+  earnedResourceMultiplier,
   newlyUnlockedCards,
   newlyUnlockedRelics,
   onBackToLibrary,
 }: RunOutcomeScreenProps) {
   const { t } = useTranslation();
-  const totalNewUnlocks = newlyUnlockedCards.length + newlyUnlockedRelics.length;
+  const totalNewUnlocks =
+    newlyUnlockedCards.length + newlyUnlockedRelics.length;
 
   const titleKey =
     status === "VICTORY"
@@ -96,10 +102,10 @@ export function RunOutcomeScreen({
                 : "bg-amber-500/18"
           )}
         />
-        <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-sky-500/8 blur-[110px]" />
+        <div className="bg-sky-500/8 absolute bottom-0 right-0 h-64 w-64 rounded-full blur-[110px]" />
       </div>
 
-      <section className="relative overflow-hidden rounded-[28px] border border-amber-500/20 bg-[#071019]/88 shadow-[0_22px_90px_rgba(0,0,0,0.42)]">
+      <section className="bg-[#071019]/88 relative overflow-hidden rounded-[28px] border border-amber-500/20 shadow-[0_22px_90px_rgba(0,0,0,0.42)]">
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(250,204,21,0.08),transparent_34%,rgba(56,189,248,0.08))]" />
         <div
           className={cn(
@@ -138,7 +144,7 @@ export function RunOutcomeScreen({
               <span>
                 {t("run.reachedRoom", {
                   room: currentRoom,
-                  total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
+                  total: totalRooms,
                 })}
               </span>
               <span>{t("run.unlockCount", { count: totalNewUnlocks })}</span>
@@ -159,10 +165,10 @@ export function RunOutcomeScreen({
             />
             <OutcomeStatCard
               label={t("map.floorLabel", { floor })}
-              value={`${currentRoom}/${GAME_CONSTANTS.ROOMS_PER_FLOOR}`}
+              value={`${currentRoom}/${totalRooms}`}
               detail={t("run.reachedRoom", {
                 room: currentRoom,
-                total: GAME_CONSTANTS.ROOMS_PER_FLOOR,
+                total: totalRooms,
               })}
             />
           </div>
@@ -170,10 +176,30 @@ export function RunOutcomeScreen({
       </section>
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <section className="rounded-[24px] border border-slate-800 bg-slate-950/78 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.3)]">
+        <section className="bg-slate-950/78 rounded-[24px] border border-slate-800 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.3)]">
           <SectionTitle className={cinzel.className}>
             {t("run.resourcesGained")}
           </SectionTitle>
+          {earnedResourceMultiplier !== 1 ? (
+            <div
+              className={cn(
+                "mt-4 rounded-2xl border px-4 py-3 text-sm leading-relaxed",
+                earnedResourceMultiplier < 1
+                  ? "border-amber-400/20 bg-amber-500/10 text-amber-100"
+                  : "border-emerald-400/20 bg-emerald-500/10 text-emerald-100"
+              )}
+            >
+              {earnedResourceMultiplier < 1
+                ? t("run.resourceModifierReduced", {
+                    level: difficultyLevel ?? 0,
+                    percent: Math.round(earnedResourceMultiplier * 100),
+                  })
+                : t("run.resourceModifierBonus", {
+                    level: difficultyLevel ?? 0,
+                    percent: Math.round(earnedResourceMultiplier * 100),
+                  })}
+            </div>
+          ) : null}
           {earnedResourcesSummary.length === 0 ? (
             <EmptyPanel>{t("run.none")}</EmptyPanel>
           ) : (
@@ -181,10 +207,12 @@ export function RunOutcomeScreen({
               {earnedResourcesSummary.map(([resource, amount]) => (
                 <div
                   key={resource}
-                  className="rounded-2xl border border-amber-500/12 bg-gradient-to-br from-slate-900/90 to-slate-950 px-4 py-3"
+                  className="border-amber-500/12 rounded-2xl border bg-gradient-to-br from-slate-900/90 to-slate-950 px-4 py-3"
                 >
                   <p className="text-[11px] uppercase tracking-[0.3em] text-slate-400">
-                    {t(`reward.resources.${resource}`, { defaultValue: resource })}
+                    {t(`reward.resources.${resource}`, {
+                      defaultValue: resource,
+                    })}
                   </p>
                   <p className="mt-2 text-2xl font-semibold text-amber-100">
                     +{amount}
@@ -195,7 +223,7 @@ export function RunOutcomeScreen({
           )}
         </section>
 
-        <section className="rounded-[24px] border border-slate-800 bg-slate-950/78 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.3)]">
+        <section className="bg-slate-950/78 rounded-[24px] border border-slate-800 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.3)]">
           <div className="grid gap-5 lg:grid-cols-2">
             <div className="space-y-4">
               <SectionTitle className={cinzel.className}>
@@ -237,7 +265,7 @@ export function RunOutcomeScreen({
           href="/library"
           className={cn(
             cinzel.className,
-            "inline-flex items-center rounded-full border border-amber-400/30 bg-amber-500/10 px-7 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-amber-100 transition hover:-translate-y-0.5 hover:border-amber-300/60 hover:bg-amber-500/16"
+            "hover:bg-amber-500/16 inline-flex items-center rounded-full border border-amber-400/30 bg-amber-500/10 px-7 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-amber-100 transition hover:-translate-y-0.5 hover:border-amber-300/60"
           )}
           onClick={async (event) => {
             event.preventDefault();
@@ -261,7 +289,7 @@ function OutcomeStatCard({
   detail?: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/8 bg-black/20 p-4 backdrop-blur-sm">
+    <div className="border-white/8 rounded-2xl border bg-black/20 p-4 backdrop-blur-sm">
       <p className="text-[10px] uppercase tracking-[0.3em] text-slate-400">
         {label}
       </p>
@@ -314,7 +342,7 @@ function UnlockedCardTile({ definition }: { definition: CardDefinition }) {
       }
       className="block"
     >
-      <div className="group rounded-2xl border border-amber-500/14 bg-gradient-to-br from-slate-900/95 to-slate-950 px-4 py-3 transition duration-150 hover:-translate-y-1 hover:border-amber-300/28 hover:shadow-[0_18px_30px_rgba(251,191,36,0.08)]">
+      <div className="border-amber-500/14 hover:border-amber-300/28 group rounded-2xl border bg-gradient-to-br from-slate-900/95 to-slate-950 px-4 py-3 transition duration-150 hover:-translate-y-1 hover:shadow-[0_18px_30px_rgba(251,191,36,0.08)]">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-[0.28em] text-amber-300/55">
@@ -343,7 +371,7 @@ function UnlockedRelicTile({ relic }: { relic: RelicDefinitionData }) {
 
   return (
     <Tooltip content={<RelicPreview relic={relic} />} className="block">
-      <div className="group rounded-2xl border border-sky-500/14 bg-gradient-to-br from-slate-900/95 to-slate-950 px-4 py-3 transition duration-150 hover:-translate-y-1 hover:border-sky-300/28 hover:shadow-[0_18px_30px_rgba(56,189,248,0.08)]">
+      <div className="border-sky-500/14 hover:border-sky-300/28 group rounded-2xl border bg-gradient-to-br from-slate-900/95 to-slate-950 px-4 py-3 transition duration-150 hover:-translate-y-1 hover:shadow-[0_18px_30px_rgba(56,189,248,0.08)]">
         <p className="text-[10px] uppercase tracking-[0.28em] text-sky-300/55">
           {relic.rarity}
         </p>

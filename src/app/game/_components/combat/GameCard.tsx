@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import type { CardRedactionType } from "@/game/schemas/combat-state";
@@ -321,6 +321,9 @@ export function GameCard({
   });
   const isCondensed = detailMode === "condensed";
   const isScrollablePreview = size !== "sm" && !isCondensed;
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+  const [showScrollTopFade, setShowScrollTopFade] = useState(false);
+  const [showScrollBottomFade, setShowScrollBottomFade] = useState(false);
   const showArtworkMeta = size !== "lg";
   const activeDescription =
     isPendingInked && displayDefinition.inkedVariant
@@ -337,6 +340,45 @@ export function GameCard({
         : upgraded
           ? "text-amber-50/95"
           : "text-slate-200/90";
+
+  useEffect(() => {
+    if (!isScrollablePreview) {
+      setShowScrollTopFade(false);
+      setShowScrollBottomFade(false);
+      return;
+    }
+
+    const element = scrollAreaRef.current;
+    if (!element) return;
+
+    const updateScrollFades = () => {
+      const canScroll = element.scrollHeight > element.clientHeight + 4;
+      if (!canScroll) {
+        setShowScrollTopFade(false);
+        setShowScrollBottomFade(false);
+        return;
+      }
+
+      setShowScrollTopFade(element.scrollTop > 6);
+      setShowScrollBottomFade(
+        element.scrollTop + element.clientHeight < element.scrollHeight - 6
+      );
+    };
+
+    updateScrollFades();
+    element.addEventListener("scroll", updateScrollFades, { passive: true });
+    window.addEventListener("resize", updateScrollFades);
+
+    return () => {
+      element.removeEventListener("scroll", updateScrollFades);
+      window.removeEventListener("resize", updateScrollFades);
+    };
+  }, [
+    activeDescription,
+    displayDefinition.inkedVariant,
+    isScrollablePreview,
+    localizedInkedDescription,
+  ]);
 
   return (
     <div
@@ -475,265 +517,274 @@ export function GameCard({
           </div>
         </div>
 
-        <div
-          className={cn(
-            "mt-2 flex min-h-0 flex-1 flex-col gap-2",
-            isScrollablePreview &&
-              "[&::-webkit-scrollbar-thumb]:bg-white/18 touch-pan-y overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar]:w-1"
-          )}
-        >
+        <div className="relative mt-2 min-h-0 flex-1">
           <div
+            ref={scrollAreaRef}
             className={cn(
-              "relative overflow-hidden rounded-[14px] border border-white/10 bg-black/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]",
-              isScrollablePreview && "shrink-0",
-              sizeStyle.artH
+              "flex h-full min-h-0 flex-col gap-2",
+              isScrollablePreview &&
+                "card-scrollbar touch-pan-y overflow-y-auto overscroll-contain pr-2"
             )}
           >
             <div
               className={cn(
-                "absolute inset-0 bg-gradient-to-br opacity-95",
-                typeStyle.art
-              )}
-            />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.16),transparent_44%)]" />
-
-            {artImageSrc && !artFailed && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={artImageSrc}
-                alt={localizedName}
-                className={cn(
-                  "absolute inset-0 h-full w-full",
-                  size === "lg"
-                    ? "object-contain object-center p-1.5"
-                    : "object-cover object-center"
-                )}
-                onError={() => setArtFailed(true)}
-              />
-            )}
-
-            {(!artImageSrc || artFailed) && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center px-2 text-center">
-                <span
-                  className={cn(
-                    "font-black uppercase tracking-[0.38em] text-white/30",
-                    sizeStyle.placeholderType
-                  )}
-                >
-                  {localizedType}
-                </span>
-                <span
-                  className={cn(
-                    "mt-1 font-black leading-none text-white/10",
-                    sizeStyle.iconMark
-                  )}
-                >
-                  {typeStyle.fallbackMark}
-                </span>
-                <span
-                  className={cn(
-                    "mt-1 uppercase tracking-[0.24em] text-white/25",
-                    sizeStyle.footer
-                  )}
-                >
-                  {localizedBiome}
-                </span>
-              </div>
-            )}
-
-            <div
-              className={cn(
-                "pointer-events-none absolute inset-0",
-                showArtworkMeta
-                  ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.07),transparent_36%,rgba(2,6,23,0.14)_82%,rgba(2,6,23,0.75))]"
-                  : "bg-[linear-gradient(180deg,rgba(255,255,255,0.07),transparent_36%,rgba(2,6,23,0.22)_78%,rgba(2,6,23,0.72))]"
-              )}
-            />
-            {showArtworkMeta && (
-              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 border-t border-white/10 bg-slate-950/60 px-2 py-1 backdrop-blur-sm">
-                <span
-                  className={cn(
-                    "truncate rounded-full border px-1.5 py-0.5 font-semibold uppercase tracking-[0.16em]",
-                    sizeStyle.badge,
-                    rarityStyle.badge
-                  )}
-                >
-                  {localizedRarity}
-                </span>
-                <span
-                  className={cn(
-                    "truncate rounded-full border px-1.5 py-0.5 font-semibold uppercase tracking-[0.16em]",
-                    sizeStyle.badge,
-                    biomeStyle.badge
-                  )}
-                >
-                  {localizedBiome}
-                </span>
-              </div>
-            )}
-          </div>
-
-          <div
-            className={cn(
-              "flex flex-col",
-              isScrollablePreview ? "flex-none shrink-0" : "min-h-0 flex-1"
-            )}
-          >
-            <div
-              className={cn(
-                "border-white/8 relative rounded-[14px] border bg-black/20 px-2 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
-                isScrollablePreview
-                  ? "flex-none overflow-visible"
-                  : "min-h-0 flex-1 overflow-hidden",
-                isCondensed
-                  ? size === "md"
-                    ? "min-h-[22px] lg:min-h-[30px] xl:min-h-[36px]"
-                    : "min-h-[20px] lg:min-h-[24px] xl:min-h-[30px]"
-                  : sizeStyle.descriptionMin
+                "relative overflow-hidden rounded-[14px] border border-white/10 bg-black/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]",
+                isScrollablePreview && "shrink-0",
+                sizeStyle.artH
               )}
             >
               <div
                 className={cn(
-                  "leading-[1.24]",
-                  sizeStyle.description,
-                  bodyTextClass
+                  "absolute inset-0 bg-gradient-to-br opacity-95",
+                  typeStyle.art
                 )}
-              >
-                {parseDescriptionWithTooltips(activeDescription)}
-              </div>
-              {!isScrollablePreview && (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-black/35 to-transparent" />
+              />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.16),transparent_44%)]" />
+
+              {artImageSrc && !artFailed && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={artImageSrc}
+                  alt={localizedName}
+                  className={cn(
+                    "absolute inset-0 h-full w-full",
+                    size === "lg"
+                      ? "object-contain object-center p-1.5"
+                      : "object-cover object-center"
+                  )}
+                  onError={() => setArtFailed(true)}
+                />
+              )}
+
+              {(!artImageSrc || artFailed) && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center px-2 text-center">
+                  <span
+                    className={cn(
+                      "font-black uppercase tracking-[0.38em] text-white/30",
+                      sizeStyle.placeholderType
+                    )}
+                  >
+                    {localizedType}
+                  </span>
+                  <span
+                    className={cn(
+                      "mt-1 font-black leading-none text-white/10",
+                      sizeStyle.iconMark
+                    )}
+                  >
+                    {typeStyle.fallbackMark}
+                  </span>
+                  <span
+                    className={cn(
+                      "mt-1 uppercase tracking-[0.24em] text-white/25",
+                      sizeStyle.footer
+                    )}
+                  >
+                    {localizedBiome}
+                  </span>
+                </div>
+              )}
+
+              <div
+                className={cn(
+                  "pointer-events-none absolute inset-0",
+                  showArtworkMeta
+                    ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.07),transparent_36%,rgba(2,6,23,0.14)_82%,rgba(2,6,23,0.75))]"
+                    : "bg-[linear-gradient(180deg,rgba(255,255,255,0.07),transparent_36%,rgba(2,6,23,0.22)_78%,rgba(2,6,23,0.72))]"
+                )}
+              />
+              {showArtworkMeta && (
+                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 border-t border-white/10 bg-slate-950/60 px-2 py-1 backdrop-blur-sm">
+                  <span
+                    className={cn(
+                      "truncate rounded-full border px-1.5 py-0.5 font-semibold uppercase tracking-[0.16em]",
+                      sizeStyle.badge,
+                      rarityStyle.badge
+                    )}
+                  >
+                    {localizedRarity}
+                  </span>
+                  <span
+                    className={cn(
+                      "truncate rounded-full border px-1.5 py-0.5 font-semibold uppercase tracking-[0.16em]",
+                      sizeStyle.badge,
+                      biomeStyle.badge
+                    )}
+                  >
+                    {localizedBiome}
+                  </span>
+                </div>
               )}
             </div>
 
-            {displayDefinition.inkedVariant ? (
-              <Tooltip
-                className="mt-1.5 block"
-                content={
-                  <div className="space-y-2">
-                    <div>
-                      <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
-                        {t("gameCard.labels.normal")}
-                      </p>
-                      <p className="text-[11px] text-gray-200">
-                        {localizedDescription}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-cyan-400">
-                        + {t("gameCard.labels.inked")}
-                      </p>
-                      <p className="text-[11px] text-cyan-200">
-                        {localizedInkedDescription ??
-                          displayDefinition.inkedVariant.description}
-                      </p>
-                    </div>
-                  </div>
-                }
-              >
-                {canPlayInked ? (
-                  <button
-                    className={cn(
-                      "mt-1.5 w-full shrink-0 rounded-[14px] border px-2 py-1.5 text-left transition-all duration-150",
-                      sizeStyle.inkMeta,
-                      isCondensed && "py-1",
-                      isPendingInked && "ring-1 ring-cyan-200/55",
-                      isPendingInked
-                        ? "bg-cyan-400/18 animate-pulse border-cyan-200/55 shadow-[0_0_18px_rgba(34,211,238,0.22)]"
-                        : typeStyle.inkPanelActive
-                    )}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onInkedClick?.();
-                    }}
-                    onDoubleClick={(e) => {
-                      e.stopPropagation();
-                      onInkedDoubleClick?.();
-                    }}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-black uppercase tracking-[0.18em] text-cyan-50">
-                        + {t("gameCard.labels.ink")}
-                      </span>
-                      <span className="rounded-full border border-cyan-200/30 bg-cyan-100/10 px-1.5 py-0.5 font-black text-cyan-50">
-                        {displayDefinition.inkedVariant.inkMarkCost}
-                      </span>
-                    </div>
-                    {!isCondensed && (
-                      <p
-                        className="mt-1 leading-[1.2] text-cyan-100/85"
-                        style={
-                          size === "lg"
-                            ? undefined
-                            : {
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
-                                WebkitLineClamp: size === "sm" ? 1 : 2,
-                                overflow: "hidden",
-                              }
-                        }
-                      >
-                        {localizedInkedDescription ??
-                          displayDefinition.inkedVariant.description}
-                      </p>
-                    )}
-                  </button>
-                ) : (
-                  <div
-                    className={cn(
-                      "mt-1.5 w-full shrink-0 rounded-[14px] border px-2 py-1.5 opacity-60",
-                      sizeStyle.inkMeta,
-                      isCondensed && "py-1",
-                      typeStyle.inkPanel
-                    )}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-black uppercase tracking-[0.18em] text-cyan-100/80">
-                        + {t("gameCard.labels.ink")}
-                      </span>
-                      <span className="bg-cyan-100/8 rounded-full border border-cyan-200/20 px-1.5 py-0.5 font-black text-cyan-50/80">
-                        {displayDefinition.inkedVariant.inkMarkCost}
-                      </span>
-                    </div>
-                    {!isCondensed && (
-                      <p
-                        className="mt-1 leading-[1.2] text-slate-300/75"
-                        style={
-                          size === "lg"
-                            ? undefined
-                            : {
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
-                                WebkitLineClamp: size === "sm" ? 1 : 2,
-                                overflow: "hidden",
-                              }
-                        }
-                      >
-                        {localizedInkedDescription ??
-                          displayDefinition.inkedVariant.description}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </Tooltip>
-            ) : (
+            <div
+              className={cn(
+                "flex flex-col",
+                isScrollablePreview ? "flex-none shrink-0" : "min-h-0 flex-1"
+              )}
+            >
               <div
                 className={cn(
-                  "border-white/6 mt-1.5 flex items-center justify-between gap-2 rounded-[14px] border bg-black/10 px-2 py-1.5 text-slate-300/70",
-                  sizeStyle.footer
+                  "border-white/8 relative rounded-[14px] border bg-black/20 px-2 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+                  isScrollablePreview
+                    ? "flex-none overflow-visible"
+                    : "min-h-0 flex-1 overflow-hidden",
+                  isCondensed
+                    ? size === "md"
+                      ? "min-h-[22px] lg:min-h-[30px] xl:min-h-[36px]"
+                      : "min-h-[20px] lg:min-h-[24px] xl:min-h-[30px]"
+                    : sizeStyle.descriptionMin
                 )}
               >
-                <span className="uppercase tracking-[0.18em] text-slate-400/80">
-                  {upgraded
-                    ? t("gameCard.labels.upgraded")
-                    : t("gameCard.labels.normal")}
-                </span>
-                <span className="truncate uppercase tracking-[0.16em] text-slate-500/90">
-                  {localizedBiome}
-                </span>
+                <div
+                  className={cn(
+                    "leading-[1.24]",
+                    sizeStyle.description,
+                    bodyTextClass
+                  )}
+                >
+                  {parseDescriptionWithTooltips(activeDescription)}
+                </div>
+                {!isScrollablePreview && (
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-5 bg-gradient-to-t from-black/35 to-transparent" />
+                )}
               </div>
-            )}
+
+              {displayDefinition.inkedVariant ? (
+                <Tooltip
+                  className="mt-1.5 block"
+                  content={
+                    <div className="space-y-2">
+                      <div>
+                        <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+                          {t("gameCard.labels.normal")}
+                        </p>
+                        <p className="text-[11px] text-gray-200">
+                          {localizedDescription}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-cyan-400">
+                          + {t("gameCard.labels.inked")}
+                        </p>
+                        <p className="text-[11px] text-cyan-200">
+                          {localizedInkedDescription ??
+                            displayDefinition.inkedVariant.description}
+                        </p>
+                      </div>
+                    </div>
+                  }
+                >
+                  {canPlayInked ? (
+                    <button
+                      className={cn(
+                        "mt-1.5 w-full shrink-0 rounded-[14px] border px-2 py-1.5 text-left transition-all duration-150",
+                        sizeStyle.inkMeta,
+                        isCondensed && "py-1",
+                        isPendingInked && "ring-1 ring-cyan-200/55",
+                        isPendingInked
+                          ? "bg-cyan-400/18 animate-pulse border-cyan-200/55 shadow-[0_0_18px_rgba(34,211,238,0.22)]"
+                          : typeStyle.inkPanelActive
+                      )}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onInkedClick?.();
+                      }}
+                      onDoubleClick={(e) => {
+                        e.stopPropagation();
+                        onInkedDoubleClick?.();
+                      }}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-black uppercase tracking-[0.18em] text-cyan-50">
+                          + {t("gameCard.labels.ink")}
+                        </span>
+                        <span className="rounded-full border border-cyan-200/30 bg-cyan-100/10 px-1.5 py-0.5 font-black text-cyan-50">
+                          {displayDefinition.inkedVariant.inkMarkCost}
+                        </span>
+                      </div>
+                      {!isCondensed && (
+                        <p
+                          className="mt-1 leading-[1.2] text-cyan-100/85"
+                          style={
+                            size === "lg"
+                              ? undefined
+                              : {
+                                  display: "-webkit-box",
+                                  WebkitBoxOrient: "vertical",
+                                  WebkitLineClamp: size === "sm" ? 1 : 2,
+                                  overflow: "hidden",
+                                }
+                          }
+                        >
+                          {localizedInkedDescription ??
+                            displayDefinition.inkedVariant.description}
+                        </p>
+                      )}
+                    </button>
+                  ) : (
+                    <div
+                      className={cn(
+                        "mt-1.5 w-full shrink-0 rounded-[14px] border px-2 py-1.5 opacity-60",
+                        sizeStyle.inkMeta,
+                        isCondensed && "py-1",
+                        typeStyle.inkPanel
+                      )}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-black uppercase tracking-[0.18em] text-cyan-100/80">
+                          + {t("gameCard.labels.ink")}
+                        </span>
+                        <span className="bg-cyan-100/8 rounded-full border border-cyan-200/20 px-1.5 py-0.5 font-black text-cyan-50/80">
+                          {displayDefinition.inkedVariant.inkMarkCost}
+                        </span>
+                      </div>
+                      {!isCondensed && (
+                        <p
+                          className="mt-1 leading-[1.2] text-slate-300/75"
+                          style={
+                            size === "lg"
+                              ? undefined
+                              : {
+                                  display: "-webkit-box",
+                                  WebkitBoxOrient: "vertical",
+                                  WebkitLineClamp: size === "sm" ? 1 : 2,
+                                  overflow: "hidden",
+                                }
+                          }
+                        >
+                          {localizedInkedDescription ??
+                            displayDefinition.inkedVariant.description}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </Tooltip>
+              ) : (
+                <div
+                  className={cn(
+                    "border-white/6 mt-1.5 flex items-center justify-between gap-2 rounded-[14px] border bg-black/10 px-2 py-1.5 text-slate-300/70",
+                    sizeStyle.footer
+                  )}
+                >
+                  <span className="uppercase tracking-[0.18em] text-slate-400/80">
+                    {upgraded
+                      ? t("gameCard.labels.upgraded")
+                      : t("gameCard.labels.normal")}
+                  </span>
+                  <span className="truncate uppercase tracking-[0.16em] text-slate-500/90">
+                    {localizedBiome}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
+          {isScrollablePreview && showScrollTopFade ? (
+            <div className="pointer-events-none absolute left-0 right-3 top-0 h-5 rounded-t-[14px] bg-gradient-to-b from-slate-950 via-slate-950/65 to-transparent" />
+          ) : null}
+          {isScrollablePreview && showScrollBottomFade ? (
+            <div className="pointer-events-none absolute bottom-0 left-0 right-3 h-6 rounded-b-[14px] bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
+          ) : null}
         </div>
       </div>
     </div>

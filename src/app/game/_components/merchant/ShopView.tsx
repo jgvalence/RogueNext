@@ -6,7 +6,6 @@ import type { ShopItem } from "@/game/engine/merchant";
 import {
   generateShopInventory,
   getMerchantAutoRestockCharges,
-  getMerchantPurgeUsesPerVisit,
   getShopRerollPrice,
 } from "@/game/engine/merchant";
 import type { CardDefinition, CardInstance } from "@/game/schemas/cards";
@@ -31,6 +30,7 @@ import { allyDefinitions } from "@/game/data/allies";
 interface ShopViewProps {
   floor: number;
   gold: number;
+  playerCurrentHp: number;
   relicIds: string[];
   unlockedCardIds: string[];
   unlockedRelicIds: string[];
@@ -67,6 +67,7 @@ const rarityColors: Record<string, string> = {
 export function ShopView({
   floor,
   gold,
+  playerCurrentHp,
   relicIds,
   unlockedCardIds,
   unlockedRelicIds,
@@ -92,8 +93,6 @@ export function ShopView({
   const [autoRestockChargesLeft, setAutoRestockChargesLeft] = useState(
     getMerchantAutoRestockCharges(relicIds)
   );
-  const purgeUsesPerVisit = getMerchantPurgeUsesPerVisit(relicIds);
-  const [purgeUses, setPurgeUses] = useState(0);
   const [pendingPurgeItemId, setPendingPurgeItemId] = useState<string | null>(
     null
   );
@@ -142,10 +141,11 @@ export function ShopView({
   const canReroll = gold >= rerollPrice;
 
   const handleBuy = (item: ShopItem) => {
+    const isPurge = item.type === "purge" || item.type === "blood_purge";
+    if (isPurge && deck.length <= 1) return;
     if (gold < item.price || soldIds.has(item.id)) return;
-    if (item.type === "purge" && purgeUses >= purgeUsesPerVisit) return;
     onBuy(item);
-    if (item.type === "purge") {
+    if (isPurge) {
       // Gold deducted by onBuy; now open picker so player selects a card to remove
       setPendingPurgeItemId(item.id);
     } else {
@@ -178,11 +178,8 @@ export function ShopView({
 
   const handlePurgePick = (cardInstanceId: string) => {
     onRemoveCard(cardInstanceId);
-    setPurgeUses((prev) => prev + 1);
     if (pendingPurgeItemId) {
-      if (purgeUses + 1 >= purgeUsesPerVisit) {
-        setSoldIds((prev) => new Set(prev).add(pendingPurgeItemId));
-      }
+      setSoldIds((prev) => new Set(prev).add(pendingPurgeItemId));
     }
     setPendingPurgeItemId(null);
   };
@@ -223,35 +220,38 @@ export function ShopView({
         {inventory.map((item) => {
           const isSold = soldIds.has(item.id);
           const canAfford = gold >= item.price;
-          const isPurge = item.type === "purge";
-          const purgeSoldOut = isPurge && purgeUses >= purgeUsesPerVisit;
+          const isPurge = item.type === "purge" || item.type === "blood_purge";
           const isMaxHp = item.type === "max_hp";
           const isUsableItem = item.type === "usable_item";
           const isAlly = item.type === "ally";
+          const canAffordBloodPurge =
+            item.type !== "blood_purge" ||
+            playerCurrentHp > Math.max(0, item.hpCost ?? 0);
           const allyDef = isAlly
             ? (allyDefinitions.find((a) => a.id === item.allyId) ?? null)
             : null;
           const isUsableInventoryFull =
             usableItems.length >= usableItemCapacity;
+          const canPurgeDeck = deck.length > 1;
           const canBuyItem = isUsableItem
             ? canAfford && !isUsableInventoryFull
-            : canAfford;
+            : isPurge
+              ? canAfford && canAffordBloodPurge && canPurgeDeck
+              : canAfford && canAffordBloodPurge;
 
           return (
             <RogueButton
               key={item.id}
-              disabled={isSold || purgeSoldOut || !canBuyItem}
+              disabled={isSold || !canBuyItem}
               type="text"
               onClick={() => handleBuy(item)}
               className={cn(
                 "!flex !h-auto !w-44 !flex-col !items-center !justify-start !gap-2 !whitespace-normal !rounded-lg !border-2 !p-4 transition",
                 isSold
                   ? "border-gray-700 bg-gray-900/30 opacity-40"
-                  : purgeSoldOut
-                    ? "border-gray-700 bg-gray-900/30 opacity-40"
-                    : canBuyItem
-                      ? "cursor-pointer hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/10"
-                      : "cursor-not-allowed opacity-60",
+                  : canBuyItem
+                    ? "cursor-pointer hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/10"
+                    : "cursor-not-allowed opacity-60",
                 item.type === "card" &&
                   item.cardDef &&
                   (typeColors[item.cardDef.type] ??
@@ -259,7 +259,9 @@ export function ShopView({
                 item.type === "relic" && "border-amber-500 bg-amber-950/50",
                 item.type === "heal" && "border-green-500 bg-green-950/50",
                 isMaxHp && "border-red-500 bg-red-950/50",
-                isPurge && "border-rose-600 bg-rose-950/50",
+                item.type === "purge" && "border-rose-600 bg-rose-950/50",
+                item.type === "blood_purge" &&
+                  "border-fuchsia-600 bg-fuchsia-950/50",
                 isUsableItem && "border-orange-500 bg-orange-950/50",
                 isAlly && "border-teal-500 bg-teal-950/50"
               )}
@@ -275,9 +277,11 @@ export function ShopView({
                         ? "M"
                         : item.type === "purge"
                           ? "P"
-                          : item.type === "ally"
-                            ? "⚔"
-                            : "U"}
+                          : item.type === "blood_purge"
+                            ? "B"
+                            : item.type === "ally"
+                              ? "⚔"
+                              : "U"}
               </span>
 
               <span
@@ -308,12 +312,14 @@ export function ShopView({
                         ? t("shop.itemName.maxHp")
                         : item.type === "purge"
                           ? t("shop.itemName.purge")
-                          : item.type === "ally"
-                            ? (item.allyName ?? t("shop.itemName.ally"))
-                            : localizeUsableItemName(
-                                item.usableItemDef?.id,
-                                item.usableItemDef?.name
-                              )}
+                          : item.type === "blood_purge"
+                            ? t("shop.itemName.bloodPurge")
+                            : item.type === "ally"
+                              ? (item.allyName ?? t("shop.itemName.ally"))
+                              : localizeUsableItemName(
+                                  item.usableItemDef?.id,
+                                  item.usableItemDef?.name
+                                )}
               </span>
 
               <span className="break-words text-center text-xs text-gray-400">
@@ -334,12 +340,16 @@ export function ShopView({
                           })
                         : item.type === "purge"
                           ? t("shop.itemDescription.purge")
-                          : item.type === "ally"
-                            ? (item.allyDescription ?? "")
-                            : localizeUsableItemDescription(
-                                item.usableItemDef?.id,
-                                item.usableItemDef?.description
-                              )}
+                          : item.type === "blood_purge"
+                            ? t("shop.itemDescription.bloodPurge", {
+                                amount: item.hpCost ?? 0,
+                              })
+                            : item.type === "ally"
+                              ? (item.allyDescription ?? "")
+                              : localizeUsableItemDescription(
+                                  item.usableItemDef?.id,
+                                  item.usableItemDef?.description
+                                )}
               </span>
 
               {item.type === "card" && item.cardDef && (
@@ -375,20 +385,18 @@ export function ShopView({
               >
                 {isSold
                   ? t("shop.sold")
-                  : purgeSoldOut
-                    ? t("shop.soldOut")
-                    : isUsableItem && isUsableInventoryFull
-                      ? t("shop.inventoryFull")
+                  : isUsableItem && isUsableInventoryFull
+                    ? t("shop.inventoryFull")
+                    : item.type === "blood_purge"
+                      ? t("shop.priceHp", { price: item.hpCost ?? 0 })
                       : t("shop.priceGold", { price: item.price })}
               </span>
-              {isPurge && (
+              {item.type === "blood_purge" && !canAffordBloodPurge && (
                 <RogueTag
                   bordered={false}
-                  className="text-[10px] text-rose-300/80"
+                  className="text-[10px] text-fuchsia-300/80"
                 >
-                  {t("shop.purgesLeft", {
-                    count: Math.max(0, purgeUsesPerVisit - purgeUses),
-                  })}
+                  {t("shop.requiresMoreHp")}
                 </RogueTag>
               )}
             </RogueButton>

@@ -140,3 +140,12 @@ export const BiomeResource = z.enum([
   "MASQUES",
 ]);
 export type BiomeResource = z.infer<typeof BiomeResource>;
+
+export const CardArchetypeTag = z.enum([
+  "BLEED",
+  "BLOCK",
+  "EXHAUST",
+  "HEAL",
+  "INK",
+]);
+export type CardArchetypeTag = z.infer<typeof CardArchetypeTag>;

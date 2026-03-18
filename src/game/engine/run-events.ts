@@ -1,5 +1,5 @@
 import type { RunState } from "../schemas/run-state";
-import type { BiomeType } from "../schemas/enums";
+import type { BiomeType, CardArchetypeTag } from "../schemas/enums";
 import { GAME_CONSTANTS } from "../constants";
 import { relicDefinitions } from "../data/relics";
 import { createRNG, type RNG } from "./rng";
@@ -29,6 +29,7 @@ export interface EventChoice {
   description: string;
   outcomeText?: string;
   requiresPurge?: boolean;
+  rewardArchetypeTag?: CardArchetypeTag;
   apply: (state: RunState) => RunState;
 }
 
@@ -121,7 +122,100 @@ export function createGuaranteedRelicEvent(): GameEvent {
   };
 }
 
+function createArchetypeChoice(
+  label: string,
+  description: string,
+  outcomeText: string,
+  rewardArchetypeTag: CardArchetypeTag
+): EventChoice {
+  return {
+    label,
+    description,
+    outcomeText,
+    rewardArchetypeTag,
+    apply: (state) => ({ ...state, currentRoom: state.currentRoom + 1 }),
+  };
+}
+
 const EVENTS: GameEvent[] = [
+  {
+    id: "scriptorium_catalog",
+    title: "events.scriptorium_catalog.title",
+    flavorText: "events.scriptorium_catalog.flavorText",
+    description: "events.scriptorium_catalog.description",
+    choices: [
+      createArchetypeChoice(
+        "events.scriptorium_catalog.choices.0.label",
+        "events.scriptorium_catalog.choices.0.description",
+        "events.scriptorium_catalog.choices.0.outcomeText",
+        "BLOCK"
+      ),
+      createArchetypeChoice(
+        "events.scriptorium_catalog.choices.1.label",
+        "events.scriptorium_catalog.choices.1.description",
+        "events.scriptorium_catalog.choices.1.outcomeText",
+        "HEAL"
+      ),
+      createArchetypeChoice(
+        "events.scriptorium_catalog.choices.2.label",
+        "events.scriptorium_catalog.choices.2.description",
+        "events.scriptorium_catalog.choices.2.outcomeText",
+        "INK"
+      ),
+    ],
+  },
+  {
+    id: "scarlet_index",
+    title: "events.scarlet_index.title",
+    flavorText: "events.scarlet_index.flavorText",
+    description: "events.scarlet_index.description",
+    choices: [
+      createArchetypeChoice(
+        "events.scarlet_index.choices.0.label",
+        "events.scarlet_index.choices.0.description",
+        "events.scarlet_index.choices.0.outcomeText",
+        "BLEED"
+      ),
+      createArchetypeChoice(
+        "events.scarlet_index.choices.1.label",
+        "events.scarlet_index.choices.1.description",
+        "events.scarlet_index.choices.1.outcomeText",
+        "EXHAUST"
+      ),
+      createArchetypeChoice(
+        "events.scarlet_index.choices.2.label",
+        "events.scarlet_index.choices.2.description",
+        "events.scarlet_index.choices.2.outcomeText",
+        "INK"
+      ),
+    ],
+  },
+  {
+    id: "war_ledger",
+    title: "events.war_ledger.title",
+    flavorText: "events.war_ledger.flavorText",
+    description: "events.war_ledger.description",
+    choices: [
+      createArchetypeChoice(
+        "events.war_ledger.choices.0.label",
+        "events.war_ledger.choices.0.description",
+        "events.war_ledger.choices.0.outcomeText",
+        "BLOCK"
+      ),
+      createArchetypeChoice(
+        "events.war_ledger.choices.1.label",
+        "events.war_ledger.choices.1.description",
+        "events.war_ledger.choices.1.outcomeText",
+        "BLEED"
+      ),
+      createArchetypeChoice(
+        "events.war_ledger.choices.2.label",
+        "events.war_ledger.choices.2.description",
+        "events.war_ledger.choices.2.outcomeText",
+        "EXHAUST"
+      ),
+    ],
+  },
   // ── Neutral events ──────────────────────────────────────────────────────
   {
     id: "mysterious_tome",

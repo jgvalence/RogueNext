@@ -15,7 +15,6 @@ import { createRNG } from "@/game/engine/rng";
 import { playSound } from "@/lib/sound";
 import { enemyDefinitions } from "@/game/data/enemies";
 import { relicDefinitions } from "@/game/data/relics";
-import { GAME_CONSTANTS } from "@/game/constants";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { RunState } from "@/game/schemas/run-state";
 import {
@@ -88,7 +87,7 @@ export function useCombatOutcome({
       );
       setNewBestiaryEntries(discoveredNow);
 
-      const isBoss = state.currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
+      const isBoss = state.currentRoom === state.map.length - 1;
 
       const roomChoices = state.map[state.currentRoom];
       const selectedRoom =
@@ -136,7 +135,10 @@ export function useCombatOutcome({
         [...projectedUnlockedRelicIds],
         runConditionRewardMultiplier,
         isInfiniteMode,
-        state.characterId ?? "scribe"
+        state.characterId ?? "scribe",
+        state.deck,
+        combat.player.currentHp,
+        combat.player.maxHp
       );
       setRewards(combatRewards);
       setIsBossRewards(isBoss);

@@ -6,9 +6,11 @@ import type { EnemyDefinition, AllyDefinition } from "@/game/schemas/entities";
 import { useTranslation } from "react-i18next";
 import { RogueButton } from "@/components/ui/rogue";
 import {
+  buildEnemyStatusMarkers,
   buildPlayerStatusMarkers,
   formatAllyIntent,
   renderBuffTooltipDetails,
+  renderEnemyStatusMarkerDetails,
   renderEnemyIntentEffects,
   renderStatusMarkerDetailsForPlayer,
   resolveEnemyIntentTargetLabel,
@@ -99,6 +101,7 @@ export function CombatMobileInfoPanel({
               enemy,
               { playerHand: combat.hand }
             );
+            const enemyStatusMarkers = buildEnemyStatusMarkers(enemy);
             const hpRatio =
               enemy.maxHp > 0 ? Math.max(0, enemy.currentHp) / enemy.maxHp : 0;
             const canTargetNow =
@@ -195,13 +198,13 @@ export function CombatMobileInfoPanel({
                     )}
                   </div>
 
-                  {enemy.buffs.length > 0 && (
+                  {enemyStatusMarkers.length > 0 && (
                     <div>
                       <p className="mb-1.5 text-[9px] font-bold uppercase tracking-[0.18em] text-slate-500">
                         Effets actifs
                       </p>
                       <div className="rounded-2xl border border-slate-800/60 bg-slate-900/40 px-4 py-3">
-                        {renderBuffTooltipDetails(enemy.buffs)}
+                        {renderEnemyStatusMarkerDetails(enemyStatusMarkers)}
                       </div>
                     </div>
                   )}

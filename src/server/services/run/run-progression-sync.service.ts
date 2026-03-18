@@ -260,15 +260,15 @@ export async function syncRunEndProgression(
 
   const progression = await prisma.userProgression.findUnique({
     where: { userId: input.userId },
-    select: { resources: true, unlockedStoryIds: true },
+    select: { resources: true, unlockedStoryIds: true, winsByDifficulty: true },
   });
+  const currentWinsByDifficulty =
+    (progression?.winsByDifficulty as Record<string, number>) ?? {};
   const currentResourcesBase =
     (progression?.resources as Record<string, number>) ?? {};
-  const characterId = (runState.characterId as string | undefined) ?? "scribe";
   const difficultyLevel = runState.selectedDifficultyLevel ?? 0;
   const earnedResourceMultiplier = getEarnedResourceMultiplierForRun(
-    currentResourcesBase,
-    characterId,
+    currentWinsByDifficulty,
     difficultyLevel,
     input.status
   );

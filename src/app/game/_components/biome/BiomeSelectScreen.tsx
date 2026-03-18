@@ -3,6 +3,7 @@
 import { RogueButton, RogueTag } from "@/components/ui/rogue";
 import type { BiomeType } from "@/game/schemas/enums";
 import { BIOME_METADATA } from "@/game/data/biomes";
+import { GAME_CONSTANTS } from "@/game/constants";
 import { useTranslation } from "react-i18next";
 
 interface BiomeSelectScreenProps {
@@ -83,7 +84,10 @@ export function BiomeSelectScreen({
       </div>
 
       <p className="text-xs text-gray-600">
-        {t("biomeSelect.floorProgress", { floor: currentFloor + 1, total: 3 })}
+        {t("biomeSelect.floorProgress", {
+          floor: currentFloor + 1,
+          total: GAME_CONSTANTS.MAX_FLOORS,
+        })}
       </p>
     </div>
   );

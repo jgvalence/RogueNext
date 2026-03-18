@@ -4,6 +4,7 @@ import { buildEnemyDefsMap } from "@/game/data";
 import type { CombatState, TurnDisruption } from "@/game/schemas/combat-state";
 import type { EnemyState, PlayerState } from "@/game/schemas/entities";
 import {
+  buildEnemyStatusMarkers,
   buildMobileEnemyIntentChips,
   buildPlayerStatusMarkers,
   computeEnemyEffectDamagePreview,
@@ -283,6 +284,72 @@ describe("enemy intent previews", () => {
 
     expect(chips.some((chip) => chip.startsWith("P2 "))).toBe(true);
     expect(chips.some((chip) => chip.includes("Binding Curse"))).toBe(true);
+  });
+
+  it("shows chapter guardian bindings and their progress as enemy status markers", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("chapter_guardian", 0, {
+      mechanicFlags: {
+        chapter_guardian_binding_martial_active: 1,
+        chapter_guardian_binding_script_active: 1,
+        chapter_guardian_binding_ink_active: 1,
+        chapter_guardian_turn_attacks: 2,
+        chapter_guardian_turn_block_gained: 7,
+        chapter_guardian_turn_ink_spent: 1,
+      },
+    });
+
+    const markers = buildEnemyStatusMarkers(enemy);
+
+    expect(markers.map((marker) => marker.compactLabel)).toEqual(
+      expect.arrayContaining(["ATK 2/3", "BLK 7/12", "INK 1/3"])
+    );
+    expect(
+      markers.find((marker) => marker.detailLabel === "Martial Binding")
+        ?.detailText
+    ).toContain("capped at 8 damage");
+    expect(
+      markers.find((marker) => marker.detailLabel === "Ink Binding")?.detailText
+    ).toContain("Haunting Regret");
+  });
+
+  it("updates chapter guardian status markers for open chapter and phase 2", async () => {
+    await i18n.changeLanguage("en");
+
+    const openEnemy = buildEnemyState("chapter_guardian", 0, {
+      mechanicFlags: {
+        chapter_guardian_open_chapter: 1,
+        chapter_guardian_binding_martial_active: 0,
+        chapter_guardian_binding_script_active: 0,
+        chapter_guardian_binding_ink_active: 0,
+      },
+    });
+    const phaseTwoEnemy = buildEnemyState("chapter_guardian", 0, {
+      mechanicFlags: {
+        chapter_guardian_phase2: 1,
+        chapter_guardian_binding_martial_active: 1,
+        chapter_guardian_binding_script_active: 1,
+        chapter_guardian_binding_ink_active: 1,
+      },
+    });
+
+    const openMarkers = buildEnemyStatusMarkers(openEnemy);
+    const phaseTwoMarkers = buildEnemyStatusMarkers(phaseTwoEnemy);
+
+    expect(openMarkers.map((marker) => marker.compactLabel)).toContain("OPEN");
+    expect(
+      phaseTwoMarkers.find((marker) => marker.detailLabel === "Martial Binding")
+        ?.detailText
+    ).toContain("capped at 6 damage");
+    expect(
+      phaseTwoMarkers.find((marker) => marker.detailLabel === "Script Binding")
+        ?.detailText
+    ).toContain("boss +8 block");
+    expect(
+      phaseTwoMarkers.find((marker) => marker.detailLabel === "Ink Binding")
+        ?.detailText
+    ).toContain("Binding Curse");
   });
 
   it("shows archivist cost redactions in intent chips when the black inkwell lives", async () => {

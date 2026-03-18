@@ -23,6 +23,7 @@ import {
   type EnemyIntentDamageBonus,
   type EnemyIntentExtraEffect,
 } from "@/game/engine/enemy-intent-preview";
+import { getChapterGuardianUiState } from "@/game/engine/chapter-guardian";
 import { getCardDefinitionById } from "@/game/data";
 import { localizeCardName } from "@/lib/i18n/card-text";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
@@ -205,6 +206,92 @@ function buildBuffStatusMarkers(buffs: BuffInstance[]): StatusMarker[] {
   );
 }
 
+function buildChapterGuardianStatusMarkers(
+  enemy: CombatState["enemies"][number]
+): StatusMarker[] {
+  const guardianState = getChapterGuardianUiState(enemy);
+  if (!guardianState) return [];
+
+  const t = i18n.t.bind(i18n);
+  const markers: StatusMarker[] = [];
+
+  if (guardianState.open) {
+    markers.push({
+      key: "chapter-guardian-open",
+      colorClass: "bg-emerald-950/85 text-emerald-100",
+      compactLabel: "OPEN",
+      symbolLabel: "OP",
+      detailLabel: t("enemyCard.chapterGuardian.openLabel"),
+      detailText: t("enemyCard.chapterGuardian.openDetail", {
+        multiplier: guardianState.openChapterDamageMultiplier,
+      }),
+    });
+  }
+
+  if (guardianState.rebindPending) {
+    markers.push({
+      key: "chapter-guardian-rebind",
+      colorClass: "bg-amber-950/85 text-amber-100",
+      compactLabel: "REBIND",
+      symbolLabel: "RB",
+      detailLabel: t("enemyCard.chapterGuardian.rebindLabel"),
+      detailText: t("enemyCard.chapterGuardian.rebindDetail"),
+    });
+  }
+
+  if (guardianState.martialActive) {
+    markers.push({
+      key: "chapter-guardian-martial",
+      colorClass: "bg-rose-950/85 text-rose-100",
+      compactLabel: `ATK ${guardianState.martialProgress}/${guardianState.martialThreshold}`,
+      symbolLabel: `A${guardianState.martialProgress}/${guardianState.martialThreshold}`,
+      detailLabel: t("enemyCard.chapterGuardian.martialLabel"),
+      detailText: t("enemyCard.chapterGuardian.martialDetail", {
+        progress: guardianState.martialProgress,
+        threshold: guardianState.martialThreshold,
+        cap: guardianState.damageCap ?? 0,
+      }),
+    });
+  }
+
+  if (guardianState.scriptActive) {
+    markers.push({
+      key: "chapter-guardian-script",
+      colorClass: "bg-blue-950/85 text-blue-100",
+      compactLabel: `BLK ${guardianState.scriptProgress}/${guardianState.scriptThreshold}`,
+      symbolLabel: `B${guardianState.scriptProgress}/${guardianState.scriptThreshold}`,
+      detailLabel: t("enemyCard.chapterGuardian.scriptLabel"),
+      detailText: t("enemyCard.chapterGuardian.scriptDetail", {
+        progress: guardianState.scriptProgress,
+        threshold: guardianState.scriptThreshold,
+        punish: guardianState.scriptPunishBlock,
+      }),
+    });
+  }
+
+  if (guardianState.inkActive) {
+    const punishCardDefinition = getCardDefinitionById(
+      guardianState.inkPunishCardId
+    );
+    markers.push({
+      key: "chapter-guardian-ink",
+      colorClass: "bg-cyan-950/85 text-cyan-100",
+      compactLabel: `INK ${guardianState.inkProgress}/${guardianState.inkThreshold}`,
+      symbolLabel: `I${guardianState.inkProgress}/${guardianState.inkThreshold}`,
+      detailLabel: t("enemyCard.chapterGuardian.inkLabel"),
+      detailText: t("enemyCard.chapterGuardian.inkDetail", {
+        progress: guardianState.inkProgress,
+        threshold: guardianState.inkThreshold,
+        card: punishCardDefinition
+          ? localizeCardName(punishCardDefinition, t as never)
+          : guardianState.inkPunishCardId,
+      }),
+    });
+  }
+
+  return markers;
+}
+
 function buildPlayerDisruptionMarkers(
   disruption:
     | CombatState["playerDisruption"]
@@ -308,6 +395,27 @@ function getBuffSymbol(buffType: string): string {
 
 export function renderBuffTooltipDetails(buffs: BuffInstance[]): ReactNode {
   return renderStatusMarkerDetails(buildBuffStatusMarkers(buffs));
+}
+
+export function buildEnemyStatusMarkers(
+  enemy: CombatState["enemies"][number]
+): StatusMarker[] {
+  return [
+    ...buildChapterGuardianStatusMarkers(enemy),
+    ...buildBuffStatusMarkers(enemy.buffs),
+  ];
+}
+
+export function renderCompactEnemyStatusMarkers(
+  markers: StatusMarker[]
+): ReactNode {
+  return renderCompactStatusMarkers(markers);
+}
+
+export function renderEnemyStatusMarkerDetails(
+  markers: StatusMarker[]
+): ReactNode {
+  return renderStatusMarkerDetails(markers);
 }
 
 export function buildPlayerMarkerBuffs(player: PlayerState): BuffInstance[] {

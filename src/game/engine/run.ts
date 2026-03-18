@@ -186,7 +186,8 @@ export function createNewRun(
   initialEnemyKillCounts: Record<string, number> = {},
   availableCharacters: string[] = ["scribe"],
   difficultyMaxByCharacter: Record<string, number> = {},
-  firstRunScript: FirstRunScriptState | null = null
+  firstRunScript: FirstRunScriptState | null = null,
+  winsByDifficultySnapshot: Record<string, number> = {}
 ): RunState {
   const runCharacterId = inferRunCharacterId(starterCards);
   // Build starter deck instances
@@ -276,6 +277,7 @@ export function createNewRun(
     pendingCharacterChoices:
       availableCharacters.length > 1 ? availableCharacters : null,
     difficultyMaxByCharacter,
+    winsByDifficultySnapshot,
     pendingBiomeChoices: startingBiomeChoices,
     pendingDifficultyLevels: unlockedDifficultyLevels,
     selectedDifficultyLevel: null,
@@ -303,10 +305,1127 @@ export function createNewRun(
   };
 }
 
+type TemplateSpecialType = NonNullable<RoomNode["specialType"]>;
+type MainRouteTag = "SAFE" | "BALANCED" | "GREEDY";
+type RouteTag = MainRouteTag | "WILD";
+type TemplateNode = {
+  key: string;
+  lane: number;
+  type: RoomNode["type"];
+  nextKeys: string[];
+  isElite?: boolean;
+  isBoss?: boolean;
+  specialType?: TemplateSpecialType;
+  routeTag?: RouteTag;
+};
+type FloorMapTemplate = TemplateNode[][];
+
+const MAIN_ROUTE_TAGS: readonly MainRouteTag[] = ["SAFE", "BALANCED", "GREEDY"];
+const ROUTE_LANE_SETS: readonly [number, number, number][] = [
+  [0, 1, 2],
+  [0, 1, 3],
+  [0, 1, 4],
+  [0, 2, 3],
+  [0, 2, 4],
+  [0, 3, 4],
+  [1, 2, 3],
+  [1, 2, 4],
+  [1, 3, 4],
+  [2, 3, 4],
+] as const;
+
+function getLaneSetMovement(
+  previous: readonly number[],
+  next: readonly number[]
+): number {
+  return previous.reduce(
+    (sum, lane, index) => sum + Math.abs(lane - next[index]!),
+    0
+  );
+}
+
+function pickRandomLaneSet(
+  previous: readonly number[] | null,
+  repeatedMiddleLaneCount: number,
+  depth: number,
+  rng: RNG
+): [number, number, number] {
+  const candidates = ROUTE_LANE_SETS.filter(
+    (candidate) =>
+      previous === null || getLaneSetMovement(previous, candidate) <= 5
+  );
+
+  return weightedPick(
+    candidates,
+    (candidate) => {
+      const spread = candidate[2] - candidate[0];
+      if (previous === null) {
+        let weight = spread >= 3 ? 1.25 : 0.9;
+        if (candidate[1] !== 2) weight *= 1.08;
+        return weight;
+      }
+
+      const movement = getLaneSetMovement(previous, candidate);
+      let weight = 1;
+      if (movement === 0) weight *= 0.04;
+      else if (movement <= 2) weight *= 1.05;
+      else if (movement <= 4) weight *= 1.25;
+      else weight *= 0.72;
+
+      if (candidate[1] === previous[1]) {
+        weight *= repeatedMiddleLaneCount >= 1 ? 0.18 : 0.65;
+      }
+      if (candidate[0] === previous[0] && candidate[2] === previous[2]) {
+        weight *= 0.6;
+      }
+      if (depth <= 4) {
+        weight *= spread >= 3 ? 1.18 : 0.85;
+      }
+      if (depth >= 10) {
+        weight *= candidate.some((lane) => lane === 2) ? 1.14 : 0.82;
+      }
+      if (!candidate.includes(2) && previous.includes(2)) {
+        weight *= 1.1;
+      }
+      return weight;
+    },
+    rng
+  );
+}
+
+function pickExtraDepths(rng: RNG): Set<number> {
+  const candidateDepths = rng.shuffle([2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  const targetCount = 4 + (rng.next() < 0.45 ? 1 : 0);
+  const picked: number[] = [];
+
+  for (const depth of candidateDepths) {
+    if (picked.every((existingDepth) => Math.abs(existingDepth - depth) >= 2)) {
+      picked.push(depth);
+      if (picked.length >= targetCount) break;
+    }
+  }
+
+  return new Set(picked);
+}
+
+function appendUniqueNextKey(node: TemplateNode, nextKey: string): void {
+  if (!node.nextKeys.includes(nextKey)) {
+    node.nextKeys.push(nextKey);
+  }
+}
+
+/** Two directed edges (sA→tA) and (sB→tB) visually cross if their lane orderings are inverted. */
+function edgesWouldCross(
+  sA: TemplateNode,
+  tA: TemplateNode,
+  edges: ReadonlyArray<readonly [TemplateNode, TemplateNode]>
+): boolean {
+  for (const [sB, tB] of edges) {
+    const sSign = Math.sign(sA.lane - sB.lane);
+    const tSign = Math.sign(tA.lane - tB.lane);
+    if (sSign !== 0 && tSign !== 0 && sSign !== tSign) return true;
+  }
+  return false;
+}
+
+function appendIfNoCross(
+  source: TemplateNode,
+  target: TemplateNode,
+  depthEdges: Array<readonly [TemplateNode, TemplateNode]>
+): void {
+  if (edgesWouldCross(source, target, depthEdges)) return;
+  appendUniqueNextKey(source, target.key);
+  depthEdges.push([source, target] as const);
+}
+
+function pickClosestTemplateNodes(
+  nodes: TemplateNode[],
+  lane: number,
+  limit: number
+): TemplateNode[] {
+  return [...nodes]
+    .sort((left, right) => {
+      const laneDelta =
+        Math.abs(left.lane - lane) - Math.abs(right.lane - lane);
+      if (laneDelta !== 0) return laneDelta;
+      return left.lane - right.lane;
+    })
+    .slice(0, limit);
+}
+
+function pickGeneratedNode(
+  template: FloorMapTemplate,
+  depths: readonly number[],
+  routeTags: readonly RouteTag[],
+  rng: RNG
+): TemplateNode | null {
+  const candidates = depths.flatMap((depth) =>
+    (template[depth] ?? []).filter(
+      (node) =>
+        routeTags.includes(node.routeTag ?? "WILD") &&
+        node.key !== "start" &&
+        node.key !== "preboss" &&
+        !node.isBoss &&
+        node.type === "COMBAT" &&
+        !node.isElite
+    )
+  );
+
+  if (candidates.length === 0) return null;
+
+  return weightedPick(
+    candidates,
+    (node) => {
+      let weight = 1;
+      if (node.routeTag === "WILD") weight *= 1.15;
+      if (node.lane === 2) weight *= 0.9;
+      return weight;
+    },
+    rng
+  );
+}
+
+function assignPlanSpecial(
+  node: TemplateNode | null,
+  specialType: TemplateSpecialType
+): void {
+  if (!node) return;
+  node.type = "SPECIAL";
+  node.specialType = specialType;
+  node.isElite = false;
+}
+
+function assignPlanMerchant(node: TemplateNode | null): void {
+  if (!node) return;
+  node.type = "MERCHANT";
+  node.specialType = undefined;
+  node.isElite = false;
+}
+
+function assignPlanElite(node: TemplateNode | null): void {
+  if (!node) return;
+  node.type = "COMBAT";
+  node.specialType = undefined;
+  node.isElite = true;
+}
+
+function connectGraphTemplate(template: FloorMapTemplate, rng: RNG): void {
+  const startNode = template[0]?.[0];
+  if (startNode) {
+    startNode.nextKeys = (template[1] ?? []).map((node) => node.key);
+  }
+
+  for (let depth = 1; depth < GAME_CONSTANTS.BOSS_ROOM_INDEX - 1; depth += 1) {
+    const currentNodes = template[depth] ?? [];
+    const nextNodes = template[depth + 1] ?? [];
+    const nextByKey = new Map(nextNodes.map((n) => [n.key, n]));
+
+    // Track all edges added at this depth to enforce planarity.
+    const depthEdges: Array<readonly [TemplateNode, TemplateNode]> = [];
+
+    const currentByRoute = new Map<RouteTag, TemplateNode>(
+      currentNodes
+        .filter((node): node is TemplateNode & { routeTag: RouteTag } =>
+          Boolean(node.routeTag)
+        )
+        .map((node) => [node.routeTag, node] as const)
+    );
+    const nextByRoute = new Map<RouteTag, TemplateNode>(
+      nextNodes
+        .filter((node): node is TemplateNode & { routeTag: RouteTag } =>
+          Boolean(node.routeTag)
+        )
+        .map((node) => [node.routeTag, node] as const)
+    );
+
+    // Main same-route connections are added unconditionally (backbone connectivity),
+    // but are tracked so subsequent edges can avoid crossing them.
+    for (const routeTag of MAIN_ROUTE_TAGS) {
+      const source = currentByRoute.get(routeTag);
+      const target = nextByRoute.get(routeTag);
+      if (source && target) {
+        appendUniqueNextKey(source, target.key);
+        depthEdges.push([source, target] as const);
+      }
+    }
+
+    // Seed depthEdges with any other connections that already exist on currentNodes
+    // (e.g. from previous iterations assigning nextKeys early).
+    for (const node of currentNodes) {
+      for (const key of node.nextKeys) {
+        const target = nextByKey.get(key);
+        if (
+          target &&
+          !depthEdges.some(([s, t]) => s === node && t === target)
+        ) {
+          depthEdges.push([node, target] as const);
+        }
+      }
+    }
+
+    for (const nextWildNode of nextNodes.filter(
+      (node) => node.routeTag === "WILD"
+    )) {
+      const sources = pickClosestTemplateNodes(
+        currentNodes,
+        nextWildNode.lane,
+        2
+      );
+      if (sources[0]) {
+        appendIfNoCross(sources[0], nextWildNode, depthEdges);
+      }
+      if (
+        sources[1] &&
+        Math.abs(sources[1].lane - nextWildNode.lane) <= 1 &&
+        rng.next() < 0.4
+      ) {
+        appendIfNoCross(sources[1], nextWildNode, depthEdges);
+      }
+    }
+
+    for (const currentWildNode of currentNodes.filter(
+      (node) => node.routeTag === "WILD"
+    )) {
+      const targets = pickClosestTemplateNodes(
+        nextNodes,
+        currentWildNode.lane,
+        2
+      );
+      if (targets[0]) {
+        appendIfNoCross(currentWildNode, targets[0], depthEdges);
+      }
+      if (
+        targets[1] &&
+        Math.abs(targets[1].lane - currentWildNode.lane) <= 1 &&
+        rng.next() < 0.32
+      ) {
+        appendIfNoCross(currentWildNode, targets[1], depthEdges);
+      }
+    }
+
+    const crossoverPairs: Array<[MainRouteTag, MainRouteTag]> = [];
+    if (rng.next() < 0.42) {
+      crossoverPairs.push(
+        rng.next() < 0.5 ? ["SAFE", "BALANCED"] : ["BALANCED", "SAFE"]
+      );
+    }
+    if (rng.next() < 0.42) {
+      crossoverPairs.push(
+        rng.next() < 0.5 ? ["BALANCED", "GREEDY"] : ["GREEDY", "BALANCED"]
+      );
+    }
+    if (depth >= 4 && depth <= 10 && rng.next() < 0.1) {
+      crossoverPairs.push(
+        rng.next() < 0.5 ? ["SAFE", "GREEDY"] : ["GREEDY", "SAFE"]
+      );
+    }
+
+    for (const [fromRoute, toRoute] of crossoverPairs) {
+      const source = currentByRoute.get(fromRoute);
+      const target = nextByRoute.get(toRoute);
+      if (
+        source &&
+        target &&
+        source.nextKeys.length < 2 &&
+        Math.abs(source.lane - target.lane) <= 2
+      ) {
+        appendIfNoCross(source, target, depthEdges);
+      }
+    }
+
+    for (const node of currentNodes) {
+      if (node.nextKeys.length > 0 || nextNodes.length === 0) continue;
+
+      const fallbackTargets = pickClosestTemplateNodes(
+        nextNodes,
+        node.lane,
+        nextNodes.length
+      );
+
+      for (const target of fallbackTargets) {
+        appendIfNoCross(node, target, depthEdges);
+        if (node.nextKeys.length > 0) break;
+      }
+
+      if (node.nextKeys.length === 0) {
+        const nearestTarget = fallbackTargets[0];
+        if (nearestTarget) {
+          appendUniqueNextKey(node, nearestTarget.key);
+          depthEdges.push([node, nearestTarget] as const);
+        }
+      }
+    }
+  }
+
+  for (const node of template[GAME_CONSTANTS.BOSS_ROOM_INDEX - 2] ?? []) {
+    appendUniqueNextKey(node, "preboss");
+  }
+}
+
+function assignGraphRoomTypes(template: FloorMapTemplate, rng: RNG): void {
+  for (const depthNodes of template) {
+    for (const node of depthNodes) {
+      if (node.key === "start" || node.key === "preboss" || node.isBoss)
+        continue;
+      node.type = "COMBAT";
+      node.specialType = undefined;
+      node.isElite = false;
+    }
+  }
+
+  assignPlanSpecial(pickGeneratedNode(template, [1, 2], ["SAFE"], rng), "HEAL");
+  assignPlanSpecial(
+    pickGeneratedNode(template, [4, 5], ["SAFE"], rng),
+    rng.next() < 0.5 ? "UPGRADE" : "EVENT"
+  );
+  assignPlanSpecial(
+    pickGeneratedNode(template, [6, 7], ["SAFE"], rng),
+    rng.next() < 0.5 ? "HEAL" : "UPGRADE"
+  );
+  assignPlanMerchant(pickGeneratedNode(template, [8], ["SAFE"], rng));
+  assignPlanSpecial(
+    pickGeneratedNode(template, [12, 13], ["SAFE"], rng),
+    "EVENT"
+  );
+
+  assignPlanSpecial(
+    pickGeneratedNode(template, [2, 3], ["BALANCED"], rng),
+    "EVENT"
+  );
+  assignPlanSpecial(
+    pickGeneratedNode(template, [4, 5], ["BALANCED"], rng),
+    "UPGRADE"
+  );
+  assignPlanElite(pickGeneratedNode(template, [6, 7], ["BALANCED"], rng));
+  assignPlanMerchant(pickGeneratedNode(template, [8], ["BALANCED"], rng));
+  assignPlanSpecial(
+    pickGeneratedNode(template, [9, 10], ["BALANCED"], rng),
+    rng.next() < 0.5 ? "EVENT" : "HEAL"
+  );
+  assignPlanSpecial(
+    pickGeneratedNode(template, [12, 13], ["BALANCED"], rng),
+    rng.next() < 0.55 ? "UPGRADE" : "HEAL"
+  );
+
+  assignPlanSpecial(
+    pickGeneratedNode(template, [1, 2], ["GREEDY"], rng),
+    rng.next() < 0.5 ? "EVENT" : "HEAL"
+  );
+  assignPlanElite(pickGeneratedNode(template, [2, 3], ["GREEDY"], rng));
+  assignPlanSpecial(
+    pickGeneratedNode(template, [4, 5], ["GREEDY"], rng),
+    "EVENT"
+  );
+  assignPlanSpecial(
+    pickGeneratedNode(template, [6, 7], ["GREEDY"], rng),
+    "UPGRADE"
+  );
+  assignPlanMerchant(pickGeneratedNode(template, [8], ["GREEDY"], rng));
+  assignPlanElite(pickGeneratedNode(template, [9, 10], ["GREEDY"], rng));
+  assignPlanSpecial(
+    pickGeneratedNode(template, [12, 13], ["GREEDY"], rng),
+    "EVENT"
+  );
+
+  assignPlanSpecial(
+    pickGeneratedNode(template, [3, 4, 5], ["WILD"], rng),
+    "EVENT"
+  );
+  assignPlanMerchant(pickGeneratedNode(template, [8], ["WILD"], rng));
+  assignPlanSpecial(
+    pickGeneratedNode(template, [10, 11], ["WILD"], rng),
+    rng.next() < 0.5 ? "HEAL" : "UPGRADE"
+  );
+}
+
+function buildGraphTemplate(rng: RNG): FloorMapTemplate {
+  const template: FloorMapTemplate = [
+    [{ key: "start", lane: 2, type: "COMBAT", nextKeys: [] }],
+  ];
+  const extraDepths = pickExtraDepths(rng);
+  let previousLaneSet: readonly number[] | null = null;
+  let repeatedMiddleLaneCount = 0;
+
+  for (let depth = 1; depth < GAME_CONSTANTS.BOSS_ROOM_INDEX - 1; depth += 1) {
+    const laneSet = pickRandomLaneSet(
+      previousLaneSet,
+      repeatedMiddleLaneCount,
+      depth,
+      rng
+    );
+    repeatedMiddleLaneCount =
+      previousLaneSet && laneSet[1] === previousLaneSet[1]
+        ? repeatedMiddleLaneCount + 1
+        : 0;
+    previousLaneSet = laneSet;
+
+    const depthNodes: TemplateNode[] = laneSet.map((lane, index) => ({
+      key: `d${depth}-${MAIN_ROUTE_TAGS[index]!.toLowerCase()}`,
+      lane,
+      type: "COMBAT",
+      nextKeys: [],
+      routeTag: MAIN_ROUTE_TAGS[index]!,
+    }));
+
+    if (extraDepths.has(depth)) {
+      const unusedLanes = Array.from(
+        { length: GAME_CONSTANTS.MAP_LANES },
+        (_, lane) => lane
+      ).filter((lane) => !laneSet.includes(lane));
+      if (unusedLanes.length > 0) {
+        const extraLane = weightedPick(
+          unusedLanes,
+          (lane) => {
+            const nearestMainLaneDelta = Math.min(
+              ...laneSet.map((mainLane) => Math.abs(mainLane - lane))
+            );
+            let weight = nearestMainLaneDelta <= 1 ? 1.25 : 1;
+            if (lane === 2) weight *= 0.82;
+            return weight;
+          },
+          rng
+        );
+        depthNodes.push({
+          key: `d${depth}-wild`,
+          lane: extraLane,
+          type: "COMBAT",
+          nextKeys: [],
+          routeTag: "WILD",
+        });
+      }
+    }
+
+    template[depth] = depthNodes.sort((left, right) => left.lane - right.lane);
+  }
+
+  template[GAME_CONSTANTS.BOSS_ROOM_INDEX - 1] = [
+    {
+      key: "preboss",
+      lane: 2,
+      type: "PRE_BOSS",
+      nextKeys: ["boss"],
+    },
+  ];
+  template[GAME_CONSTANTS.BOSS_ROOM_INDEX] = [
+    {
+      key: "boss",
+      lane: 2,
+      type: "COMBAT",
+      isBoss: true,
+      nextKeys: [],
+    },
+  ];
+
+  connectGraphTemplate(template, rng);
+  assignGraphRoomTypes(template, rng);
+  return template;
+}
+
+const LINEAR_TEMPLATE: FloorMapTemplate = [
+  [
+    {
+      key: "start",
+      lane: 2,
+      type: "COMBAT",
+      nextKeys: ["l1"],
+    },
+  ],
+  [
+    {
+      key: "l1",
+      lane: 2,
+      type: "SPECIAL",
+      specialType: "EVENT",
+      nextKeys: ["l2"],
+    },
+  ],
+  [{ key: "l2", lane: 2, type: "COMBAT", nextKeys: ["l3"] }],
+  [{ key: "l3", lane: 2, type: "MERCHANT", nextKeys: ["l4"] }],
+  [
+    {
+      key: "l4",
+      lane: 2,
+      type: "COMBAT",
+      isElite: true,
+      nextKeys: ["l5"],
+    },
+  ],
+  [
+    {
+      key: "l5",
+      lane: 2,
+      type: "SPECIAL",
+      specialType: "HEAL",
+      nextKeys: ["l6"],
+    },
+  ],
+  [{ key: "l6", lane: 2, type: "COMBAT", nextKeys: ["l7"] }],
+  [
+    {
+      key: "l7",
+      lane: 2,
+      type: "SPECIAL",
+      specialType: "UPGRADE",
+      nextKeys: ["l8"],
+    },
+  ],
+  [{ key: "l8", lane: 2, type: "COMBAT", nextKeys: ["l9"] }],
+  [{ key: "l9", lane: 2, type: "MERCHANT", nextKeys: ["l10"] }],
+  [
+    {
+      key: "l10",
+      lane: 2,
+      type: "COMBAT",
+      isElite: true,
+      nextKeys: ["l11"],
+    },
+  ],
+  [
+    {
+      key: "l11",
+      lane: 2,
+      type: "SPECIAL",
+      specialType: "EVENT",
+      nextKeys: ["l12"],
+    },
+  ],
+  [{ key: "l12", lane: 2, type: "COMBAT", nextKeys: ["l13"] }],
+  [
+    {
+      key: "l13",
+      lane: 2,
+      type: "SPECIAL",
+      specialType: "HEAL",
+      nextKeys: ["preboss"],
+    },
+  ],
+  [
+    {
+      key: "preboss",
+      lane: 2,
+      type: "PRE_BOSS",
+      nextKeys: ["boss"],
+    },
+  ],
+  [
+    {
+      key: "boss",
+      lane: 2,
+      type: "COMBAT",
+      isBoss: true,
+      nextKeys: [],
+    },
+  ],
+];
+
+function cloneTemplate(template: FloorMapTemplate): FloorMapTemplate {
+  return template.map((depth) => depth.map((node) => ({ ...node })));
+}
+
+function varyTemplateSpecialRooms(
+  template: FloorMapTemplate,
+  rng: RNG
+): FloorMapTemplate {
+  return template.map((depth) =>
+    depth.map((node) => {
+      if (node.type !== "SPECIAL") return { ...node };
+      if (node.specialType === "HEAL" && rng.next() < 0.25) {
+        return { ...node, specialType: "UPGRADE" };
+      }
+      if (node.specialType === "UPGRADE" && rng.next() < 0.25) {
+        return { ...node, specialType: "HEAL" };
+      }
+      return { ...node };
+    })
+  );
+}
+
+function pickTemplate(
+  mapRules: ReturnType<typeof getRunConditionMapRules>,
+  rng: RNG
+): FloorMapTemplate {
+  if (mapRules.forceSingleChoice || mapRules.bossOnlyCombats) {
+    return varyTemplateSpecialRooms(cloneTemplate(LINEAR_TEMPLATE), rng);
+  }
+
+  return buildGraphTemplate(rng);
+}
+
+function applyTemplateMapRules(
+  template: FloorMapTemplate,
+  mapRules: ReturnType<typeof getRunConditionMapRules>,
+  rng: RNG
+): FloorMapTemplate {
+  const result = cloneTemplate(template);
+
+  if (mapRules.noMerchants) {
+    for (const depth of result) {
+      for (const node of depth) {
+        if (node.type === "MERCHANT") {
+          node.type = "SPECIAL";
+          node.specialType = depth[0]?.key === node.key ? "UPGRADE" : "EVENT";
+        }
+      }
+    }
+  }
+
+  if (mapRules.extraSpecialRoom) {
+    const candidates = result
+      .flat()
+      .filter(
+        (node) =>
+          node.type === "COMBAT" &&
+          !node.isElite &&
+          !node.isBoss &&
+          node.key !== "start" &&
+          node.key !== "boss"
+      );
+    if (candidates.length > 0) {
+      const picked = rng.pick(candidates);
+      picked.type = "SPECIAL";
+      picked.specialType = "EVENT";
+    }
+  }
+
+  return result;
+}
+
+export function getBossRoomIndexForMap(map: RoomNode[][]): number {
+  return Math.max(0, map.length - 1);
+}
+
+export function getPreBossRoomIndexForMap(map: RoomNode[][]): number {
+  return Math.max(0, getBossRoomIndexForMap(map) - 1);
+}
+
+function getRoomNodeStableId(node: RoomNode, choiceIndex: number): string {
+  return node.nodeId ?? `${node.index}-${choiceIndex}`;
+}
+
+export function getReachableRoomChoiceIndexes(
+  map: RoomNode[][],
+  currentRoom: number
+): number[] {
+  const currentSlot = map[currentRoom] ?? [];
+  if (currentSlot.length === 0) return [];
+  if (currentRoom <= 0) return currentSlot.map((_, index) => index);
+
+  const previousSlot = map[currentRoom - 1] ?? [];
+  const previousSelectedNode = previousSlot.find((node) => node.completed);
+  if (
+    !previousSelectedNode ||
+    (previousSelectedNode.nextNodeIds?.length ?? 0) === 0
+  ) {
+    return currentSlot.map((_, index) => index);
+  }
+
+  const reachableNodeIds = new Set(previousSelectedNode.nextNodeIds ?? []);
+  return currentSlot
+    .map((node, index) =>
+      reachableNodeIds.has(getRoomNodeStableId(node, index)) ? index : -1
+    )
+    .filter((index) => index >= 0);
+}
+
+export function isRoomChoiceReachable(
+  map: RoomNode[][],
+  currentRoom: number,
+  choiceIndex: number
+): boolean {
+  return getReachableRoomChoiceIndexes(map, currentRoom).includes(choiceIndex);
+}
+
+function buildRoomNode(
+  index: number,
+  lane: number,
+  nodeId: string,
+  type: RoomNode["type"],
+  isElite = false,
+  enemyIds?: string[],
+  specialType?: RoomNode["specialType"],
+  nextNodeIds: string[] = []
+): RoomNode {
+  return {
+    index,
+    nodeId,
+    lane,
+    nextNodeIds,
+    type,
+    specialType,
+    enemyIds,
+    isElite,
+    completed: false,
+  };
+}
+
+function pickPreBossEnemyId(
+  floor: number,
+  biome: BiomeType,
+  rng: RNG,
+  bossOnlyCombats: boolean
+): string {
+  const pool = bossOnlyCombats
+    ? enemyDefinitions.filter((enemy) => enemy.isBoss && enemy.biome === biome)
+    : enemyDefinitions.filter(
+        (enemy) =>
+          enemy.isElite &&
+          !enemy.isScriptedOnly &&
+          (enemy.biome === biome || enemy.biome === "LIBRARY")
+      );
+  if (pool.length === 0) {
+    return bossOnlyCombats ? "chapter_guardian" : "ink_slime";
+  }
+  return weightedPick(
+    pool,
+    (enemy) => getEnemySelectionWeight(enemy, floor, biome),
+    rng
+  ).id;
+}
+
+function pickEliteEnemyId(
+  floor: number,
+  biome: BiomeType,
+  rng: RNG
+): string | null {
+  const pool = enemyDefinitions.filter(
+    (enemy) =>
+      enemy.isElite &&
+      !enemy.isScriptedOnly &&
+      (enemy.biome === biome || enemy.biome === "LIBRARY")
+  );
+  if (pool.length === 0) return null;
+  return weightedPick(
+    pool,
+    (enemy) => getEnemySelectionWeight(enemy, floor, biome),
+    rng
+  ).id;
+}
+
+function buildFloorMapCandidate(
+  floor: number,
+  rng: RNG,
+  biome: BiomeType,
+  mapRules: ReturnType<typeof getRunConditionMapRules>,
+  difficultyLevel: number,
+  isInfiniteMode: boolean
+): RoomNode[][] {
+  const template = applyTemplateMapRules(
+    pickTemplate(mapRules, rng),
+    mapRules,
+    rng
+  );
+
+  return template.map((depthNodes, depthIndex) =>
+    depthNodes.map((node) => {
+      if (node.type === "MERCHANT" || node.type === "SPECIAL") {
+        return buildRoomNode(
+          depthIndex,
+          node.lane,
+          node.key,
+          node.type,
+          false,
+          undefined,
+          node.specialType,
+          node.nextKeys
+        );
+      }
+
+      if (node.type === "PRE_BOSS") {
+        return buildRoomNode(
+          depthIndex,
+          node.lane,
+          node.key,
+          "PRE_BOSS",
+          true,
+          [
+            pickPreBossEnemyId(
+              floor,
+              biome,
+              rng,
+              mapRules.bossOnlyCombats ?? false
+            ),
+          ],
+          undefined,
+          node.nextKeys
+        );
+      }
+
+      if (mapRules.bossOnlyCombats) {
+        return buildRoomNode(
+          depthIndex,
+          node.lane,
+          node.key,
+          "COMBAT",
+          false,
+          generateRoomEnemies(
+            floor,
+            depthIndex,
+            Boolean(node.isBoss),
+            biome,
+            rng,
+            difficultyLevel,
+            1,
+            false,
+            true,
+            isInfiniteMode
+          ).enemyIds,
+          undefined,
+          node.nextKeys
+        );
+      }
+
+      if (node.isBoss || depthIndex === GAME_CONSTANTS.BOSS_ROOM_INDEX) {
+        return buildRoomNode(
+          depthIndex,
+          node.lane,
+          node.key,
+          "COMBAT",
+          false,
+          generateRoomEnemies(
+            floor,
+            depthIndex,
+            true,
+            biome,
+            rng,
+            difficultyLevel,
+            1,
+            false,
+            false,
+            isInfiniteMode
+          ).enemyIds,
+          undefined,
+          node.nextKeys
+        );
+      }
+
+      if (node.isElite) {
+        const eliteEnemyId = pickEliteEnemyId(floor, biome, rng);
+        return buildRoomNode(
+          depthIndex,
+          node.lane,
+          node.key,
+          "COMBAT",
+          Boolean(eliteEnemyId),
+          eliteEnemyId ? [eliteEnemyId] : ["ink_slime"],
+          undefined,
+          node.nextKeys
+        );
+      }
+
+      return buildRoomNode(
+        depthIndex,
+        node.lane,
+        node.key,
+        "COMBAT",
+        false,
+        generateRoomEnemies(
+          floor,
+          depthIndex,
+          false,
+          biome,
+          rng,
+          difficultyLevel,
+          1,
+          false,
+          false,
+          isInfiniteMode
+        ).enemyIds,
+        undefined,
+        node.nextKeys
+      );
+    })
+  );
+}
+
+function enumerateFloorMapPaths(map: RoomNode[][]): RoomNode[][] {
+  if (map.length === 0 || map[0]?.length === 0) return [];
+
+  const nodesById = new Map(
+    map.flatMap((depth) =>
+      depth.map(
+        (node, choiceIndex) =>
+          [getRoomNodeStableId(node, choiceIndex), node] as const
+      )
+    )
+  );
+  const startNode = map[0]?.[0];
+  if (!startNode) return [];
+
+  const results: RoomNode[][] = [];
+  const visit = (node: RoomNode, path: RoomNode[]) => {
+    const nextPath = [...path, node];
+    if (node.index >= map.length - 1 || (node.nextNodeIds?.length ?? 0) === 0) {
+      results.push(nextPath);
+      return;
+    }
+
+    for (const nextNodeId of node.nextNodeIds ?? []) {
+      const nextNode = nodesById.get(nextNodeId);
+      if (nextNode) {
+        visit(nextNode, nextPath);
+      }
+    }
+  };
+
+  visit(startNode, []);
+  return results;
+}
+
+function getPathSupportTag(node: RoomNode): string | null {
+  if (node.type === "MERCHANT") return "MERCHANT";
+  if (node.type === "SPECIAL") return node.specialType ?? "SPECIAL";
+  return null;
+}
+
+function summarizePathIdentity(path: RoomNode[]): string {
+  const supportTags = path
+    .map((node) => getPathSupportTag(node))
+    .filter((tag): tag is string => tag !== null);
+  const firstSupport = supportTags[0] ?? "NONE";
+  const lastSupport = supportTags[supportTags.length - 1] ?? "NONE";
+  const eliteCount = path.filter(
+    (node) => node.type === "COMBAT" && node.isElite
+  ).length;
+  const merchantCount = path.filter((node) => node.type === "MERCHANT").length;
+  const eventCount = path.filter(
+    (node) => node.type === "SPECIAL" && node.specialType === "EVENT"
+  ).length;
+  const healCount = path.filter(
+    (node) => node.type === "SPECIAL" && node.specialType === "HEAL"
+  ).length;
+  const upgradeCount = path.filter(
+    (node) => node.type === "SPECIAL" && node.specialType === "UPGRADE"
+  ).length;
+
+  return [
+    `elite:${eliteCount}`,
+    `merchant:${merchantCount}`,
+    `event:${eventCount}`,
+    `heal:${healCount}`,
+    `upgrade:${upgradeCount}`,
+    `first:${firstSupport}`,
+    `last:${lastSupport}`,
+  ].join("|");
+}
+
+function isValidFloorMapCandidate(map: RoomNode[][]): boolean {
+  const bossRoomIndex = getBossRoomIndexForMap(map);
+  const preBossRoomIndex = getPreBossRoomIndexForMap(map);
+  const paths = enumerateFloorMapPaths(map);
+  if (paths.length === 0) return false;
+
+  let safePathExists = false;
+  let balancedPathExists = false;
+  let greedyPathExists = false;
+  const pathIdentities = new Set<string>();
+
+  for (const path of paths) {
+    if (path.length !== map.length) return false;
+
+    const beforePreBoss = path.filter((node) => node.index < preBossRoomIndex);
+    const earlyCorrectionCount = beforePreBoss.filter(
+      (node) =>
+        node.index >= 1 &&
+        node.index <= 5 &&
+        (node.type === "MERCHANT" || node.type === "SPECIAL")
+    ).length;
+    if (earlyCorrectionCount === 0) return false;
+
+    const midCorrectionCount = beforePreBoss.filter(
+      (node) =>
+        node.index >= 6 &&
+        node.index <= 10 &&
+        (node.type === "MERCHANT" || node.type === "SPECIAL")
+    ).length;
+    if (midCorrectionCount === 0) return false;
+
+    const lateCorrectionCount = beforePreBoss.filter(
+      (node) =>
+        node.index >= 11 &&
+        node.index <= 13 &&
+        (node.type === "MERCHANT" || node.type === "SPECIAL")
+    ).length;
+    if (lateCorrectionCount === 0) return false;
+
+    const combatCount = beforePreBoss.filter(
+      (node) => node.type === "COMBAT"
+    ).length;
+    if (combatCount < 6) return false;
+
+    const supportNodes = beforePreBoss.filter(
+      (node) => node.type === "MERCHANT" || node.type === "SPECIAL"
+    );
+    const supportKinds = new Set(
+      supportNodes
+        .map((node) => getPathSupportTag(node))
+        .filter((tag): tag is string => tag !== null)
+    );
+
+    const eventLikeCount = beforePreBoss.filter(
+      (node) =>
+        node.type === "MERCHANT" ||
+        (node.type === "SPECIAL" && node.specialType === "EVENT")
+    ).length;
+
+    const recoveryOrUpgradeCount = beforePreBoss.filter(
+      (node) =>
+        node.type === "SPECIAL" &&
+        (node.specialType === "HEAL" || node.specialType === "UPGRADE")
+    ).length;
+
+    let combatStreak = 0;
+    for (const node of beforePreBoss) {
+      if (node.type === "COMBAT") {
+        combatStreak += 1;
+        if (combatStreak > 4) return false;
+      } else {
+        combatStreak = 0;
+      }
+    }
+
+    const eliteCount = beforePreBoss.filter(
+      (node) => node.type === "COMBAT" && node.isElite
+    ).length;
+    if (eliteCount > 2) return false;
+    const merchantCount = beforePreBoss.filter(
+      (node) => node.type === "MERCHANT"
+    ).length;
+    const merchantIndexes = beforePreBoss
+      .filter((node) => node.type === "MERCHANT")
+      .map((node) => node.index);
+    if (merchantCount < 1) return false;
+    if (merchantCount > 2) return false;
+    if ((merchantIndexes[0] ?? Number.POSITIVE_INFINITY) > 8) return false;
+    for (let index = 1; index < merchantIndexes.length; index += 1) {
+      if (merchantIndexes[index]! - merchantIndexes[index - 1]! <= 1) {
+        return false;
+      }
+    }
+    safePathExists ||=
+      eliteCount === 0 && recoveryOrUpgradeCount >= 2 && eventLikeCount >= 1;
+    balancedPathExists ||=
+      eliteCount === 1 && supportKinds.size >= 3 && merchantCount >= 1;
+    greedyPathExists ||= eliteCount >= 2 && eventLikeCount >= 1;
+
+    pathIdentities.add(summarizePathIdentity(beforePreBoss));
+  }
+
+  const preBossNodes = map[preBossRoomIndex] ?? [];
+  const bossNodes = map[bossRoomIndex] ?? [];
+  return (
+    preBossNodes.length === 1 &&
+    bossNodes.length === 1 &&
+    safePathExists &&
+    balancedPathExists &&
+    pathIdentities.size >= 3 &&
+    greedyPathExists
+  );
+}
+
 /**
- * Generate a floor map: array of room slots, each with 1-3 room choices.
- * Room 0 = always COMBAT, Room 9 = always COMBAT (boss).
- * Rooms 1-8: exactly 1 MERCHANT + 1-2 SPECIAL + rest COMBAT, shuffled.
+ * Generate a floor map as a connected graph inspired by Slay the Spire.
+ * The outer array remains indexed by depth so the rest of the run flow can
+ * continue using currentRoom as a depth cursor.
  */
 export function generateFloorMap(
   floor: number,
@@ -317,175 +1436,29 @@ export function generateFloorMap(
 ): RoomNode[][] {
   const mapRules = getRunConditionMapRules(selectedRunConditionId);
   const isInfiniteMode = isInfiniteRunConditionId(selectedRunConditionId);
-  // Build the sequence for rooms 1-7 (7 middle rooms): 1 shop, 1-2 events, rest combat
-  // Room 8 is always PRE_BOSS; Room 9 is always BOSS
-  const minSpecial = mapRules.extraSpecialRoom ? 2 : 1;
-  const maxSpecial = mapRules.extraSpecialRoom ? 3 : 2;
-  const numSpecial = rng.nextInt(minSpecial, maxSpecial);
-  const middleTypes: Array<"COMBAT" | "MERCHANT" | "SPECIAL"> = [
-    ...(mapRules.noMerchants ? [] : (["MERCHANT"] as const)),
-    ...Array<"SPECIAL">(numSpecial).fill("SPECIAL"),
-    ...Array<"COMBAT">(7 - (mapRules.noMerchants ? 0 : 1) - numSpecial).fill(
-      "COMBAT"
-    ),
-  ];
-  const shuffledMiddle = buildBalancedMiddleRooms(middleTypes, rng);
-  if (floor === 1 && shuffledMiddle[1] !== "SPECIAL") {
-    const specialIndex = shuffledMiddle.findIndex((type) => type === "SPECIAL");
-    if (specialIndex >= 0) {
-      [shuffledMiddle[1], shuffledMiddle[specialIndex]] = [
-        shuffledMiddle[specialIndex]!,
-        shuffledMiddle[1]!,
-      ];
-    }
-  }
 
-  const PRE_BOSS_ROOM_INDEX = GAME_CONSTANTS.BOSS_ROOM_INDEX - 1; // 8
-  const maxRandomEliteRoomsForFloor =
-    floor === 1 ? 1 : Number.POSITIVE_INFINITY;
-  let randomEliteRoomsGenerated = 0;
-
-  const map: RoomNode[][] = [];
-
-  for (let i = 0; i < GAME_CONSTANTS.ROOMS_PER_FLOOR; i++) {
-    const isBossRoom = i === GAME_CONSTANTS.BOSS_ROOM_INDEX;
-    const isFirstRoom = i === 0;
-    const isPreBossRoom = i === PRE_BOSS_ROOM_INDEX;
-
-    // PRE_BOSS room: always a single node with 1 elite enemy for the "fight for relic" option
-    if (isPreBossRoom) {
-      const preBossDefs = mapRules.bossOnlyCombats
-        ? enemyDefinitions.filter((e) => e.isBoss && e.biome === biome)
-        : enemyDefinitions.filter(
-            (e) => e.isElite && (e.biome === biome || e.biome === "LIBRARY")
-          );
-      const preBossEnemyId =
-        preBossDefs.length > 0
-          ? weightedPick(
-              preBossDefs,
-              (e) => getEnemySelectionWeight(e, floor, biome),
-              rng
-            ).id
-          : "ink_slime";
-      map.push([
-        {
-          index: i,
-          type: "PRE_BOSS",
-          enemyIds: [preBossEnemyId],
-          isElite: true,
-          completed: false,
-        },
-      ]);
-      continue;
-    }
-
-    const requestedChoices =
-      mapRules.forceSingleChoice ||
-      mapRules.bossOnlyCombats ||
-      isBossRoom ||
-      isFirstRoom
-        ? 1
-        : rng.nextInt(1, GAME_CONSTANTS.ROOM_CHOICES);
-
-    const baseType: "COMBAT" | "MERCHANT" | "SPECIAL" =
-      isBossRoom || isFirstRoom ? "COMBAT" : shuffledMiddle[i - 1]!;
-
-    const maxEnemyCount = getMaxEnemyCountForRoom(
+  for (let attempt = 0; attempt < 128; attempt += 1) {
+    const candidate = buildFloorMapCandidate(
       floor,
+      rng,
       biome,
-      difficultyLevel
+      mapRules,
+      difficultyLevel,
+      isInfiniteMode
     );
-    const numChoices =
-      baseType === "COMBAT"
-        ? Math.min(requestedChoices, Math.max(1, maxEnemyCount))
-        : requestedChoices;
-
-    const choices: RoomNode[] = [];
-    for (let j = 0; j < numChoices; j++) {
-      // First choice uses the assigned type; extra choices are always COMBAT
-      const type = j === 0 ? baseType : ("COMBAT" as const);
-
-      const enemyResult =
-        type === "COMBAT"
-          ? generateRoomEnemies(
-              floor,
-              i,
-              isBossRoom,
-              biome,
-              rng,
-              difficultyLevel,
-              numChoices > 1 ? j + 1 : 1,
-              randomEliteRoomsGenerated < maxRandomEliteRoomsForFloor,
-              mapRules.bossOnlyCombats ?? false,
-              isInfiniteMode
-            )
-          : undefined;
-
-      if (enemyResult?.isElite) {
-        randomEliteRoomsGenerated += 1;
-      }
-
-      choices.push({
-        index: i,
-        type,
-        enemyIds: enemyResult?.enemyIds,
-        isElite: enemyResult?.isElite ?? false,
-        completed: false,
-      });
+    if (isValidFloorMapCandidate(candidate)) {
+      return candidate;
     }
-
-    map.push(choices);
   }
 
-  return map;
-}
-
-function buildBalancedMiddleRooms(
-  middleTypes: Array<"COMBAT" | "MERCHANT" | "SPECIAL">,
-  rng: RNG
-): Array<"COMBAT" | "MERCHANT" | "SPECIAL"> {
-  // Avoid long early-combat streaks:
-  // at least one non-combat in the first 5 slots, and at most one non-combat in last 2.
-  const isAcceptable = (rooms: Array<"COMBAT" | "MERCHANT" | "SPECIAL">) => {
-    const firstFiveHaveNonCombat = rooms
-      .slice(0, 5)
-      .some((t) => t !== "COMBAT");
-    const tailNonCombatCount = rooms
-      .slice(5)
-      .filter((t) => t !== "COMBAT").length;
-    return firstFiveHaveNonCombat && tailNonCombatCount <= 1;
-  };
-
-  for (let attempt = 0; attempt < 8; attempt++) {
-    const shuffled = rng.shuffle(middleTypes);
-    if (isAcceptable(shuffled)) return shuffled;
-  }
-
-  // Fallback: keep randomness but force a single early non-combat if needed.
-  const fallback = rng.shuffle(middleTypes);
-  const firstFiveHaveNonCombat = fallback
-    .slice(0, 5)
-    .some((t) => t !== "COMBAT");
-  if (firstFiveHaveNonCombat) return fallback;
-
-  const lateNonCombatIndex = fallback.findIndex(
-    (t, idx) => idx >= 5 && t !== "COMBAT"
+  return buildFloorMapCandidate(
+    floor,
+    rng,
+    biome,
+    mapRules,
+    difficultyLevel,
+    isInfiniteMode
   );
-  if (lateNonCombatIndex === -1) return fallback;
-
-  const earlyCombatSlots = fallback
-    .map((t, idx) => ({ t, idx }))
-    .filter((x) => x.idx < 5 && x.t === "COMBAT")
-    .map((x) => x.idx);
-  if (earlyCombatSlots.length === 0) return fallback;
-
-  const swapWith = rng.pick(earlyCombatSlots);
-  const result = [...fallback];
-  [result[swapWith], result[lateNonCombatIndex]] = [
-    result[lateNonCombatIndex]!,
-    result[swapWith]!,
-  ];
-  return result;
 }
 
 /**
@@ -658,6 +1631,9 @@ export function selectRoom(runState: RunState, choiceIndex: number): RunState {
 
   const choice = currentRoomChoices[choiceIndex];
   if (!choice) return runState;
+  if (!isRoomChoiceReachable(runState.map, runState.currentRoom, choiceIndex)) {
+    return runState;
+  }
 
   // Mark as completed
   const newMap = runState.map.map((slot, i) =>
@@ -941,7 +1917,8 @@ export function completeCombat(
   relicIds?: string[],
   usableItemDropDefinitionId?: string | null
 ): RunState {
-  const isBossRoom = runState.currentRoom === GAME_CONSTANTS.BOSS_ROOM_INDEX;
+  const isBossRoom =
+    runState.currentRoom === getBossRoomIndexForMap(runState.map);
   const isInfiniteMode = isInfiniteRunConditionId(
     runState.selectedRunConditionId
   );

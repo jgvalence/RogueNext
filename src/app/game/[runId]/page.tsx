@@ -19,6 +19,7 @@ import { useCombatDebugInfo } from "../_hooks/use-combat-debug-info";
 import { useRewardPhaseHandlers } from "../_hooks/use-reward-phase-handlers";
 import { useRunRoomActions } from "../_hooks/use-run-room-actions";
 import { useRunPhaseViewHandlers } from "../_hooks/use-run-phase-view-handlers";
+import { useStableSpecialRoomType } from "../_hooks/use-stable-special-room-type";
 import { GameLayout } from "../_components/shared/GameLayout";
 import { CardPickerModal } from "../_components/shared/CardPickerModal";
 import { CombatView } from "../_components/combat/CombatView";
@@ -219,6 +220,9 @@ function GameContent({
 
   // Determine current room info
   const currentRoomChoices = state.map[state.currentRoom];
+  const selectedCurrentRoom =
+    currentRoomChoices?.find((room) => room.completed) ?? null;
+  const stableSpecialRoomType = useStableSpecialRoomType(phase, state);
 
   const { handleSelectRoom, handleContinueSetup, handlePickBiome, handleHeal } =
     useRunRoomActions({
@@ -284,6 +288,7 @@ function GameContent({
     handleMerchantLeave,
     handleSpecialUpgrade,
     handleSpecialEventChoice,
+    handleSpecialEventCardReward,
     handleSpecialEventContinue,
     handleSpecialEventPurge,
     handleSpecialSkip,
@@ -301,12 +306,16 @@ function GameContent({
     cancelEnemyTurnFlow,
   });
 
-  const { earnedResourcesSummary, newlyUnlockedCards, newlyUnlockedRelics } =
-    useRunOutcomeSummary({
-      state,
-      isInfiniteMode,
-      cardDefs,
-    });
+  const {
+    earnedResourcesSummary,
+    earnedResourceMultiplier,
+    newlyUnlockedCards,
+    newlyUnlockedRelics,
+  } = useRunOutcomeSummary({
+    state,
+    isInfiniteMode,
+    cardDefs,
+  });
   const { debugEnemySelection, debugDrawInfo } = useCombatDebugInfo({
     isDevBuild,
     isAdmin,
@@ -481,6 +490,7 @@ function GameContent({
           <ShopView
             floor={state.floor}
             gold={state.gold}
+            playerCurrentHp={state.playerCurrentHp}
             relicIds={state.relicIds}
             unlockedCardIds={state.unlockedCardIds}
             unlockedRelicIds={state.unlockedRelicIds ?? []}
@@ -517,12 +527,16 @@ function GameContent({
             rng={rng}
             difficultyLevel={state.selectedDifficultyLevel ?? 0}
             forceEventWithRelic={forceEventWithRelicStable}
+            forcedRoomType={
+              stableSpecialRoomType ?? selectedCurrentRoom?.specialType
+            }
             runState={state}
             onHeal={handleHeal}
             onUpgrade={handleSpecialUpgrade}
+            onPurgeCard={handleSpecialEventPurge}
             onEventChoice={handleSpecialEventChoice}
+            onPickCardReward={handleSpecialEventCardReward}
             onEventContinue={handleSpecialEventContinue}
-            onEventPurge={handleSpecialEventPurge}
             onSkip={handleSpecialSkip}
           />
         )}
@@ -552,10 +566,13 @@ function GameContent({
             status="VICTORY"
             floor={state.floor}
             currentRoom={state.currentRoom}
+            totalRooms={state.map.length}
             gold={state.gold}
             deckSize={state.deck.length}
             relicCount={state.relicIds.length}
+            difficultyLevel={state.selectedDifficultyLevel}
             earnedResourcesSummary={earnedResourcesSummary}
+            earnedResourceMultiplier={earnedResourceMultiplier}
             newlyUnlockedCards={newlyUnlockedCards}
             newlyUnlockedRelics={newlyUnlockedRelics}
             onBackToLibrary={() => handleEndRun("VICTORY")}
@@ -567,10 +584,13 @@ function GameContent({
             status="DEFEAT"
             floor={state.floor}
             currentRoom={state.currentRoom}
+            totalRooms={state.map.length}
             gold={state.gold}
             deckSize={state.deck.length}
             relicCount={state.relicIds.length}
+            difficultyLevel={state.selectedDifficultyLevel}
             earnedResourcesSummary={earnedResourcesSummary}
+            earnedResourceMultiplier={earnedResourceMultiplier}
             newlyUnlockedCards={newlyUnlockedCards}
             newlyUnlockedRelics={newlyUnlockedRelics}
             onBackToLibrary={() => handleEndRun("DEFEAT")}
@@ -582,10 +602,13 @@ function GameContent({
             status="ABANDONED"
             floor={state.floor}
             currentRoom={state.currentRoom}
+            totalRooms={state.map.length}
             gold={state.gold}
             deckSize={state.deck.length}
             relicCount={state.relicIds.length}
+            difficultyLevel={state.selectedDifficultyLevel}
             earnedResourcesSummary={earnedResourcesSummary}
+            earnedResourceMultiplier={earnedResourceMultiplier}
             newlyUnlockedCards={newlyUnlockedCards}
             newlyUnlockedRelics={newlyUnlockedRelics}
             onBackToLibrary={() => handleEndRun("ABANDONED", "/library")}

@@ -10,6 +10,7 @@ import type { RunState } from "@/game/schemas/run-state";
 import type { BiomeType } from "@/game/schemas/enums";
 import { VANILLA_RUN_CONDITION_ID } from "@/game/engine/run-conditions";
 import { getFirstRunForcedMapChoiceIndex } from "@/game/engine/first-run-script";
+import { isRoomChoiceReachable } from "@/game/engine/run";
 import type { GameAction } from "../_providers/game-reducer";
 import { isRunStartState, type GamePhase } from "../_services/run-phase";
 import type { RunSetupDraft } from "../_components/run-setup/RunSetupScreen";
@@ -46,6 +47,15 @@ export function useRunRoomActions({
 
       const room = currentRoomChoices?.[choiceIndex];
       if (!room) return;
+      if (
+        !isRoomChoiceReachable(
+          stateRef.current.map,
+          stateRef.current.currentRoom,
+          choiceIndex
+        )
+      ) {
+        return;
+      }
 
       dispatch({ type: "SELECT_ROOM", payload: { choiceIndex } });
 

@@ -44,6 +44,7 @@ function makeRunState(overrides: Partial<RunState> = {}): RunState {
     currentBiome: "LIBRARY",
     pendingBiomeChoices: null,
     difficultyMaxByCharacter: {},
+    winsByDifficultySnapshot: {},
     firstRunScript: {
       enabled: true,
       step: "MAP_INTRO",
@@ -95,6 +96,7 @@ describe("first run script helpers", () => {
       "MERCHANT",
       "COMBAT",
     ]);
+    expect(scriptedMap[1]?.[0]?.specialType).toBe("EVENT");
     expect(scriptedMap[1]?.[2]?.isElite).toBe(true);
     expect(scriptedMap[1]?.[2]?.enemyIds).toEqual(["tome_colossus"]);
   });

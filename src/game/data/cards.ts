@@ -266,6 +266,7 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     targeting: "SELF",
     rarity: "COMMON",
     description: "Gain 8 block.",
+    archetypeTags: ["BLOCK"],
     effects: [{ type: "BLOCK", value: 8 }],
     inkedVariant: {
       description: "Gain 14 block.",
@@ -315,6 +316,7 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     targeting: "SELF",
     rarity: "UNCOMMON",
     description: "Heal 6 HP.",
+    archetypeTags: ["HEAL"],
     effects: [{ type: "HEAL", value: 6 }],
     inkedVariant: {
       description: "Heal 12 HP.",
@@ -498,6 +500,7 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     targeting: "SINGLE_ENEMY",
     rarity: "RARE",
     description: "Deal 10 damage. Deal 4 damage per Bleed on target. Exhaust.",
+    archetypeTags: ["BLEED", "EXHAUST"],
     effects: [
       { type: "DAMAGE", value: 10 },
       { type: "DAMAGE_PER_DEBUFF", value: 4, buff: "BLEED" },
@@ -690,6 +693,7 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     targeting: "SELF",
     rarity: "UNCOMMON",
     description: "Gain 2 Ink. Upgrade 1 random card in hand. Draw 1 card.",
+    archetypeTags: ["INK"],
     effects: [
       { type: "GAIN_INK", value: 2 },
       { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },

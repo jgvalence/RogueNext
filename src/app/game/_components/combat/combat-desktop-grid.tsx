@@ -8,11 +8,14 @@ import { Tooltip } from "../shared/Tooltip";
 import { HpBar } from "../shared/HpBar";
 import { ArmorBadge, IncomingDamageBadge } from "./combat-badges";
 import {
+  buildEnemyStatusMarkers,
   buildMobileEnemyIntentChips,
   buildPlayerStatusMarkers,
   formatAllyIntent,
   renderBuffTooltipDetails,
+  renderCompactEnemyStatusMarkers,
   renderCompactBuffs,
+  renderEnemyStatusMarkerDetails,
   renderEnemyIntentEffects,
   renderCompactStatusMarkersForPlayer,
   renderStatusMarkerDetailsForPlayer,
@@ -321,6 +324,7 @@ export function CombatDesktopGrid({
         const isActing = actingEnemyId === enemy.instanceId;
         const enemyArtSrc = getEnemyImageSrc(enemy.definitionId);
         const enemyArtFailed = enemyArtFailures.has(enemy.definitionId);
+        const enemyStatusMarkers = buildEnemyStatusMarkers(enemy);
         const intentChips = buildMobileEnemyIntentChips(
           combat,
           enemy,
@@ -374,12 +378,12 @@ export function CombatDesktopGrid({
                     {hideIntent ? t("enemyCard.intentHidden") : "-"}
                   </p>
                 )}
-                {enemy.buffs.length > 0 && (
+                {enemyStatusMarkers.length > 0 && (
                   <div className="space-y-1">
                     <p className="font-semibold text-slate-100">
                       {t("combat.activeEffects")}
                     </p>
-                    {renderBuffTooltipDetails(enemy.buffs)}
+                    {renderEnemyStatusMarkerDetails(enemyStatusMarkers)}
                   </div>
                 )}
               </div>
@@ -406,7 +410,7 @@ export function CombatDesktopGrid({
               )}
             >
               <div className="absolute -top-2 left-2 flex max-w-[90%] items-center gap-1 overflow-hidden">
-                {renderCompactBuffs(enemy.buffs)}
+                {renderCompactEnemyStatusMarkers(enemyStatusMarkers)}
               </div>
               <div className="mb-1 flex h-14 items-center justify-center overflow-hidden rounded-lg border border-rose-900/60 bg-slate-900 sm:h-16 lg:h-28">
                 {!enemyArtFailed ? (

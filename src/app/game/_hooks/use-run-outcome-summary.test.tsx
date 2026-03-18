@@ -54,4 +54,27 @@ describe("useRunOutcomeSummary", () => {
 
     expect(result.current.newlyUnlockedRelics).toEqual([]);
   });
+
+  it("applies repeated-difficulty reward reduction to the displayed summary", () => {
+    const state = makeTestRunState({
+      status: "VICTORY",
+      selectedDifficultyLevel: 2,
+      winsByDifficultySnapshot: { "2": 1 },
+      earnedResources: {
+        PAGES: 6,
+        RUNES: 1,
+      },
+    });
+
+    const { result } = renderHook(() =>
+      useRunOutcomeSummary({
+        state,
+        isInfiniteMode: false,
+        cardDefs: buildCardDefsMap(),
+      })
+    );
+
+    expect(result.current.earnedResourceMultiplier).toBe(0.2);
+    expect(result.current.earnedResourcesSummary).toEqual([["PAGES", 1]]);
+  });
 });

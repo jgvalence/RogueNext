@@ -13,6 +13,7 @@ import {
   getPostFloorFiveEscalation,
   getRelicUnlockDetails,
   hasClearedDifficultyBefore,
+  hasClearedDifficultyGloballyBefore,
   isRelicUnlocked,
   readCharacterWinsByDifficultyFromResources,
   recordCharacterDifficultyVictory,
@@ -47,9 +48,14 @@ describe("Run difficulty progression", () => {
     expect(shouldHideEnemyIntent(3, 3, { isElite: true })).toBe(true);
     expect(shouldHideEnemyIntent(3, 2, { isBoss: true })).toBe(false);
     expect(
-      shouldHideEnemyIntent(0, 1, { isElite: true }, {
-        playerHand: [{ definitionId: "shrouded_omen" }],
-      })
+      shouldHideEnemyIntent(
+        0,
+        1,
+        { isElite: true },
+        {
+          playerHand: [{ definitionId: "shrouded_omen" }],
+        }
+      )
     ).toBe(true);
     expect(getEnemyStartingBlock(3, 2, { isBoss: true })).toBe(12);
     expect(getEnemyStartingBlock(4, 2, { isElite: true })).toBe(10);
@@ -63,13 +69,16 @@ describe("Run difficulty progression", () => {
     resources = recordCharacterDifficultyVictory(resources, "scribe", 0);
 
     expect(hasClearedDifficultyBefore(resources, "scribe", 0)).toBe(true);
+    expect(hasClearedDifficultyGloballyBefore({ "0": 1 }, 0)).toBe(true);
+    expect(hasClearedDifficultyGloballyBefore({ "0": 1 }, 1)).toBe(false);
     expect(hasClearedDifficultyBefore(resources, "scribe", 1)).toBe(false);
-    expect(
-      getEarnedResourceMultiplierForRun(resources, "scribe", 0, "VICTORY")
-    ).toBe(0.875);
-    expect(
-      getEarnedResourceMultiplierForRun({}, "scribe", 0, "VICTORY")
-    ).toBe(1.25);
+    expect(getEarnedResourceMultiplierForRun({ "0": 1 }, 0, "VICTORY")).toBe(
+      0.2
+    );
+    expect(getEarnedResourceMultiplierForRun({}, 0, "VICTORY")).toBe(1.25);
+    expect(getEarnedResourceMultiplierForRun({ "0": 1 }, 0, "DEFEAT")).toBe(
+      0.2
+    );
   });
 
   it("hardens high-end difficulties 4 and 5", () => {

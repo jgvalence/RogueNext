@@ -42,8 +42,10 @@ import {
 } from "../engine/run";
 import { generateCombatRewards, addCardToRunDeck } from "../engine/rewards";
 import {
+  buyShopItem,
   generateShopInventory,
   generateStartMerchantOffers,
+  getShopRerollPrice,
 } from "../engine/merchant";
 import {
   getCardOfferWeight,
@@ -71,6 +73,7 @@ import type { CombatState } from "../schemas/combat-state";
 import type { CardDefinition } from "../schemas/cards";
 import type { Effect } from "../schemas/effects";
 import { DEFAULT_META_BONUSES } from "../schemas/meta";
+import type { RoomNode } from "../schemas/run-state";
 import { GAME_CONSTANTS } from "../constants";
 import {
   buildAllyDefsMap,
@@ -153,6 +156,46 @@ function makeMinimalCombat(overrides?: Partial<CombatState>): CombatState {
     },
     ...overrides,
   };
+}
+
+function enumerateMapPaths(map: RoomNode[][]): RoomNode[][] {
+  if (map.length === 0 || map[0]?.length === 0) return [];
+
+  const nodeById = new Map(
+    map.flatMap((depth) =>
+      depth.map(
+        (node, nodeChoiceIndex) =>
+          [node.nodeId ?? `${node.index}-${nodeChoiceIndex}`, node] as const
+      )
+    )
+  );
+  const startNode = map[0]?.[0];
+  if (!startNode) return [];
+
+  const results: RoomNode[][] = [];
+  const visit = (node: RoomNode, path: RoomNode[]) => {
+    const nextPath = [...path, node];
+    if ((node.nextNodeIds?.length ?? 0) === 0) {
+      results.push(nextPath);
+      return;
+    }
+
+    for (const nextNodeId of node.nextNodeIds ?? []) {
+      const nextNode = nodeById.get(nextNodeId);
+      if (nextNode) {
+        visit(nextNode, nextPath);
+      }
+    }
+  };
+
+  visit(startNode, []);
+  return results;
+}
+
+function getPathSupportKind(node: RoomNode): string | null {
+  if (node.type === "MERCHANT") return "MERCHANT";
+  if (node.type === "SPECIAL") return node.specialType ?? "SPECIAL";
+  return null;
 }
 
 function makeDeterministicRng(seed: string) {
@@ -3973,7 +4016,7 @@ describe("Run management", () => {
     expect(run.runStartedAtMs).toBeGreaterThan(0);
     expect(run.playerCurrentHp).toBe(60);
     expect(run.deck).toHaveLength(starterCards.length);
-    expect(run.map).toHaveLength(10);
+    expect(run.map).toHaveLength(GAME_CONSTANTS.ROOMS_PER_FLOOR);
   });
 
   it("createNewRun can expose opening biome choices", () => {
@@ -4028,18 +4071,19 @@ describe("Run management", () => {
     expect(result.pendingBiomeChoices).toBeNull();
   });
 
-  it("generateFloorMap creates 10 room slots", () => {
+  it("generateFloorMap creates a 16-depth connected floor graph", () => {
     const rng = createRNG("map-gen");
     const map = generateFloorMap(1, rng, "LIBRARY");
-    expect(map).toHaveLength(10);
+    expect(map).toHaveLength(GAME_CONSTANTS.ROOMS_PER_FLOOR);
 
-    // First room has exactly 1 choice (always COMBAT)
     expect(map[0]).toHaveLength(1);
     expect(map[0]?.[0]?.type).toBe("COMBAT");
+    expect((map[0]?.[0]?.nextNodeIds?.length ?? 0) > 0).toBe(true);
 
-    // Boss room has exactly 1 choice (COMBAT)
-    expect(map[9]).toHaveLength(1);
-    expect(map[9]?.[0]?.type).toBe("COMBAT");
+    expect(map[GAME_CONSTANTS.BOSS_ROOM_INDEX - 1]).toHaveLength(1);
+    expect(map[GAME_CONSTANTS.BOSS_ROOM_INDEX - 1]?.[0]?.type).toBe("PRE_BOSS");
+    expect(map[GAME_CONSTANTS.BOSS_ROOM_INDEX]).toHaveLength(1);
+    expect(map[GAME_CONSTANTS.BOSS_ROOM_INDEX]?.[0]?.type).toBe("COMBAT");
   });
 
   it("generateFloorMap with boss_rush uses bosses in non-boss combat rooms", () => {
@@ -4056,7 +4100,7 @@ describe("Run management", () => {
     expect(enemy?.isBoss).toBe(true);
   });
 
-  it("generateFloorMap distributes non-combat rooms before late-floor slots", () => {
+  it("generateFloorMap keeps early correction rooms and 1-2 merchants per path", () => {
     const seeds = [
       "map-balance-1",
       "map-balance-2",
@@ -4070,23 +4114,111 @@ describe("Run management", () => {
 
     for (const seed of seeds) {
       const map = generateFloorMap(1, createRNG(seed), "LIBRARY");
-      const middleBaseTypes = map
-        .slice(1, 8)
-        .map((slot) => slot?.[0]?.type ?? "COMBAT");
+      const earlyNodes = map.slice(1, 7).flat();
+      const allNodes = map.flat();
+      const pathMerchantCounts = enumerateMapPaths(map).map(
+        (path) => path.filter((room) => room.type === "MERCHANT").length
+      );
+      const optionalEliteCount = allNodes.filter(
+        (room) => room.type === "COMBAT" && room.isElite
+      ).length;
 
-      const firstFiveHaveNonCombat = middleBaseTypes
-        .slice(0, 5)
-        .some((t) => t === "MERCHANT" || t === "SPECIAL");
-      const tailNonCombatCount = middleBaseTypes
-        .slice(5)
-        .filter((t) => t === "MERCHANT" || t === "SPECIAL").length;
-
-      expect(firstFiveHaveNonCombat).toBe(true);
-      expect(tailNonCombatCount).toBeLessThanOrEqual(1);
+      expect(
+        earlyNodes.some(
+          (room) => room.type === "MERCHANT" || room.type === "SPECIAL"
+        )
+      ).toBe(true);
+      expect(
+        pathMerchantCounts.every((count) => count >= 1 && count <= 2)
+      ).toBe(true);
+      expect(optionalEliteCount).toBeGreaterThanOrEqual(2);
+      expect(
+        allNodes.filter((room) => (room.nextNodeIds?.length ?? 0) >= 2).length
+      ).toBeGreaterThanOrEqual(8);
+      expect(
+        allNodes.filter((room) => room.type === "SPECIAL" && room.specialType)
+          .length
+      ).toBeGreaterThanOrEqual(4);
     }
   });
 
-  it("generateFloorMap forces room 3 to SPECIAL on floor 1", () => {
+  it("generateFloorMap creates distinct safe, balanced, and greedy routes", () => {
+    const seeds = [
+      "map-routes-1",
+      "map-routes-2",
+      "map-routes-3",
+      "map-routes-4",
+      "map-routes-5",
+      "map-routes-6",
+    ];
+
+    for (const seed of seeds) {
+      const map = generateFloorMap(1, createRNG(seed), "LIBRARY");
+      const preBossIndex = GAME_CONSTANTS.BOSS_ROOM_INDEX - 1;
+      const paths = enumerateMapPaths(map).map((path) =>
+        path.filter((node) => node.index < preBossIndex)
+      );
+
+      const eliteCounts = paths.map(
+        (path) =>
+          path.filter((node) => node.type === "COMBAT" && node.isElite).length
+      );
+      const supportKindCounts = paths.map(
+        (path) =>
+          new Set(
+            path
+              .map((node) => getPathSupportKind(node))
+              .filter((kind): kind is string => kind !== null)
+          ).size
+      );
+      const eventLikeCounts = paths.map(
+        (path) =>
+          path.filter(
+            (node) =>
+              node.type === "MERCHANT" ||
+              (node.type === "SPECIAL" && node.specialType === "EVENT")
+          ).length
+      );
+
+      expect(eliteCounts.some((count) => count === 0)).toBe(true);
+      expect(eliteCounts.some((count) => count === 1)).toBe(true);
+      expect(eliteCounts.some((count) => count >= 2)).toBe(true);
+      expect(supportKindCounts.some((count) => count >= 3)).toBe(true);
+      expect(eventLikeCounts.some((count) => count >= 2)).toBe(true);
+    }
+  });
+
+  it("generateFloorMap varies lane signatures across seeds and breaks the fixed center spine", () => {
+    const seeds = [
+      "map-layout-1",
+      "map-layout-2",
+      "map-layout-3",
+      "map-layout-4",
+      "map-layout-5",
+      "map-layout-6",
+    ];
+
+    const maps = seeds.map((seed) =>
+      generateFloorMap(1, createRNG(seed), "LIBRARY")
+    );
+    const laneSignatures = maps.map((map) =>
+      map
+        .slice(1, GAME_CONSTANTS.BOSS_ROOM_INDEX - 1)
+        .map((depth) => depth.map((room) => room.lane).join(""))
+        .join("|")
+    );
+
+    expect(new Set(laneSignatures).size).toBeGreaterThanOrEqual(4);
+    expect(
+      maps.some((map) =>
+        map
+          .slice(1, GAME_CONSTANTS.BOSS_ROOM_INDEX - 1)
+          .some((depth) => depth.every((room) => room.lane !== 2))
+      )
+    ).toBe(true);
+  });
+
+  it("generateFloorMap guarantees an early correction node on floor 1", () => {
     const seeds = [
       "room3-special-1",
       "room3-special-2",
@@ -4095,11 +4227,16 @@ describe("Run management", () => {
     ];
     for (const seed of seeds) {
       const map = generateFloorMap(1, createRNG(seed), "LIBRARY");
-      expect(map[2]?.[0]?.type).toBe("SPECIAL");
+      expect(
+        map
+          .slice(1, 4)
+          .flat()
+          .some((room) => room.type === "MERCHANT" || room.type === "SPECIAL")
+      ).toBe(true);
     }
   });
 
-  it("generateFloorMap avoids multi-choice pure combat slots when packs are capped to 1 enemy", () => {
+  it("generateFloorMap connects every node to the next depth", () => {
     const seeds = [
       "russian-pack-cap-1",
       "russian-pack-cap-2",
@@ -4111,11 +4248,21 @@ describe("Run management", () => {
 
     for (const seed of seeds) {
       const map = generateFloorMap(1, createRNG(seed), "RUSSIAN");
-      for (let roomIndex = 1; roomIndex < 8; roomIndex++) {
-        const slot = map[roomIndex] ?? [];
-        const baseType = slot[0]?.type;
-        if (baseType === "COMBAT") {
-          expect(slot).toHaveLength(1);
+      for (let depthIndex = 0; depthIndex < map.length - 1; depthIndex += 1) {
+        const depth = map[depthIndex] ?? [];
+        const nextDepthIds = new Set(
+          (map[depthIndex + 1] ?? []).map(
+            (room, choiceIndex) => room.nodeId ?? `${room.index}-${choiceIndex}`
+          )
+        );
+
+        for (const room of depth) {
+          expect((room.nextNodeIds?.length ?? 0) > 0).toBe(true);
+          expect(
+            (room.nextNodeIds ?? []).every((nextNodeId) =>
+              nextDepthIds.has(nextNodeId)
+            )
+          ).toBe(true);
         }
       }
     }
@@ -4860,7 +5007,7 @@ describe("Run management", () => {
     expect(result.currentRoom).toBe(0);
     expect(result.currentBiome).toBe("VIKING");
     expect(result.pendingBiomeChoices).toBeNull();
-    expect(result.map).toHaveLength(10);
+    expect(result.map).toHaveLength(GAME_CONSTANTS.ROOMS_PER_FLOOR);
   });
 
   it("guaranteed relic event grants a relic and advances room", () => {
@@ -5359,7 +5506,7 @@ describe("Rewards", () => {
     expect(rewards.cardChoices.every((c) => !c.isStarterCard)).toBe(true);
   });
 
-  it("normal rewards keep one current-biome card and fill the rest from other unlocked biomes", () => {
+  it("normal rewards keep at least two current-biome cards when possible", () => {
     const rewardPool = [...cardDefs.values()].filter(
       (card) =>
         !card.isStarterCard &&
@@ -5394,14 +5541,11 @@ describe("Rewards", () => {
 
     expect(rewards.cardChoices).toHaveLength(3);
     expect(
-      rewards.cardChoices.filter((card) => card.biome === "VIKING")
-    ).toHaveLength(1);
-    expect(
-      rewards.cardChoices.filter((card) => card.biome !== "VIKING")
-    ).toHaveLength(2);
+      rewards.cardChoices.filter((card) => card.biome === "VIKING").length
+    ).toBeGreaterThanOrEqual(2);
   });
 
-  it("extra reward card choices still preserve the biome anchor", () => {
+  it("extra reward card choices still preserve the stronger biome bias", () => {
     const rewardPool = [...cardDefs.values()].filter(
       (card) =>
         !card.isStarterCard &&
@@ -5436,11 +5580,8 @@ describe("Rewards", () => {
 
     expect(rewards.cardChoices).toHaveLength(6);
     expect(
-      rewards.cardChoices.filter((card) => card.biome === "VIKING")
-    ).toHaveLength(1);
-    expect(
-      rewards.cardChoices.filter((card) => card.biome !== "VIKING").length
-    ).toBeGreaterThanOrEqual(5);
+      rewards.cardChoices.filter((card) => card.biome === "VIKING").length
+    ).toBeGreaterThanOrEqual(2);
   });
 
   it("african_griot_archive adds an extra elite card reward choice", () => {
@@ -5659,6 +5800,118 @@ describe("Rewards", () => {
 // ============================
 
 describe("Merchant", () => {
+  it("generateShopInventory offers one gold purge and one blood purge by default", () => {
+    const inventory = generateShopInventory(
+      1,
+      [...cardDefs.values()],
+      [],
+      makeDeterministicRng("merchant-purge-layout"),
+      undefined,
+      0,
+      0,
+      0,
+      [],
+      GAME_CONSTANTS.MAX_USABLE_ITEMS,
+      undefined,
+      [],
+      0,
+      "scribe"
+    );
+
+    const purgeTypes = inventory
+      .filter((item) => item.type === "purge" || item.type === "blood_purge")
+      .map((item) => item.type);
+    expect(purgeTypes).toEqual(["purge", "blood_purge"]);
+  });
+
+  it("generateShopInventory keeps floor-1 prices affordable across cards and core services", () => {
+    const commonCard = [...cardDefs.values()].find(
+      (card) =>
+        card.rarity === "COMMON" &&
+        !card.isStarterCard &&
+        card.isCollectible !== false
+    );
+    const uncommonCard = [...cardDefs.values()].find(
+      (card) =>
+        card.rarity === "UNCOMMON" &&
+        !card.isStarterCard &&
+        card.isCollectible !== false
+    );
+    const rareCard = [...cardDefs.values()].find(
+      (card) =>
+        card.rarity === "RARE" &&
+        !card.isStarterCard &&
+        card.isCollectible !== false
+    );
+    const uncommonRelic = relicDefinitions.find(
+      (relic) => relic.rarity === "UNCOMMON"
+    );
+
+    expect(commonCard).toBeDefined();
+    expect(uncommonCard).toBeDefined();
+    expect(rareCard).toBeDefined();
+    expect(uncommonRelic).toBeDefined();
+    if (!commonCard || !uncommonCard || !rareCard || !uncommonRelic) return;
+
+    const inventory = generateShopInventory(
+      1,
+      [commonCard, uncommonCard, rareCard],
+      [],
+      makeDeterministicRng("merchant-floor-1-prices"),
+      [commonCard.id, uncommonCard.id, rareCard.id],
+      0,
+      0,
+      0,
+      [],
+      GAME_CONSTANTS.MAX_USABLE_ITEMS,
+      [uncommonRelic.id],
+      [],
+      0
+    );
+
+    const cardPrices = Object.fromEntries(
+      inventory
+        .filter((item) => item.type === "card" && item.cardDef)
+        .map((item) => [item.cardDef!.rarity, item.price] as const)
+    );
+    const relicOffer = inventory.find((item) => item.type === "relic");
+    const healOffer = inventory.find((item) => item.type === "heal");
+    const maxHpOffer = inventory.find((item) => item.type === "max_hp");
+    const purgeOffer = inventory.find((item) => item.type === "purge");
+    const usableItemOffer = inventory.find(
+      (item) => item.type === "usable_item"
+    );
+
+    expect(getShopRerollPrice(1, 0)).toBe(26);
+    expect(cardPrices.COMMON).toBe(51);
+    expect(cardPrices.UNCOMMON).toBe(74);
+    expect(cardPrices.RARE).toBe(108);
+    expect(relicOffer?.price).toBe(126);
+    expect(healOffer?.price).toBe(45);
+    expect(maxHpOffer?.price).toBe(101);
+    expect(purgeOffer?.price).toBe(90);
+    expect(usableItemOffer?.price).toBe(59);
+  });
+
+  it("buyShopItem blood purge pays HP instead of gold", () => {
+    const run = createNewRun(
+      "run-blood-purge",
+      "run-blood-purge",
+      getStarterCardsForCharacter("scribe"),
+      createRNG("run-blood-purge")
+    );
+    const updated = buyShopItem(run, {
+      id: "purge-blood-1",
+      type: "blood_purge",
+      price: 0,
+      hpCost: 8,
+    });
+
+    expect(updated).not.toBeNull();
+    expect(updated?.gold).toBe(run.gold);
+    expect(updated?.playerCurrentHp).toBe(run.playerCurrentHp - 8);
+  });
+
   it("getCardOfferWeight only boosts tuned signatures in their intended offer sources", () => {
     const boostedRare = cardDefs.get("book_of_the_dead");
     const controlRare = cardDefs.get("embalmed_tome");

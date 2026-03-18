@@ -565,6 +565,9 @@ export const fr = {
       COMBAT_ELITE: "Épreuve d'Élite",
       MERCHANT: "Scriptorium",
       SPECIAL: "Chronique",
+      SPECIAL_EVENT: "Evenement",
+      SPECIAL_HEAL: "Halte de repos",
+      SPECIAL_UPGRADE: "Forge des marges",
       PRE_BOSS: "Antichambre",
     },
     bossRoom: "Antre du Boss",
@@ -1330,6 +1333,10 @@ export const fr = {
     unlockCount_one: "{{count}} debloquage",
     unlockCount_other: "{{count}} debloquages",
     resourcesGained: "Ressources gagnees pendant ce run",
+    resourceModifierBonus:
+      "C'etait votre premiere victoire sur la difficulte {{level}}. Les ressources sont creditees a {{percent}}%.",
+    resourceModifierReduced:
+      "La difficulte {{level}} a deja ete validee. Seuls {{percent}}% des ressources sont credites sur les runs repetes.",
     cardsUnlocked: "Cartes debloquees pendant ce run",
     relicsUnlocked: "Reliques debloquees pendant ce run",
     newBestiaryEntryTitle: "Nouvelle entree du Bestiaire",
@@ -1648,6 +1655,22 @@ export const fr = {
     conditionalBonusPerCurse: "+{{perCurse}}/maled. (actuel +{{total}})",
     phase2Badge: "P2",
     phase2Summon: "Phase 2 (<50% PV) : invoque {{label}}",
+    chapterGuardian: {
+      martialLabel: "Lien martial",
+      martialDetail:
+        "Brise: joue {{threshold}} attaques ce tour ({{progress}}/{{threshold}}). Tes coups sont limites a {{cap}} degats tant qu'il tient.",
+      scriptLabel: "Lien du script",
+      scriptDetail:
+        "Punition: ton premier gain d'armure chaque tour donne +{{punish}} BLK au boss. Brise: gagne {{threshold}} armure ce tour ({{progress}}/{{threshold}}).",
+      inkLabel: "Lien d'encre",
+      inkDetail:
+        "Punition: ta premiere depense d'encre chaque tour ajoute {{card}}. Brise: depense {{threshold}} encre ce tour ({{progress}}/{{threshold}}).",
+      openLabel: "Chapitre ouvert",
+      openDetail:
+        "Tous les liens sont brises. Le Gardien subit x{{multiplier}} degats jusqu'a la fin de ton tour.",
+      rebindLabel: "Reliure imminente",
+      rebindDetail: "Sa prochaine action restaure tous les liens.",
+    },
   },
   playerStats: {
     block: "Armure",
@@ -1694,6 +1717,9 @@ export const fr = {
       "Entre deux rangees de grimoires, une vasque de pierre affleure le sol. L'eau qui s'en ecoule porte l'odeur de l'encre et du vieux parchemin. On dit que les mots des livres detruits s'y sont dissous — et qu'en boire, c'est laisser quelque chose d'ecrit vous recoudre de l'interieur.",
     currentHp: "Actuel : {{current}}/{{max}}",
     healAction: "Soigner",
+    healChoiceHint:
+      "Choisissez entre recoudre vos blessures ou alleger votre deck.",
+    healPurgeAction: "Purifier une carte",
     upgradeTitle: "Enclume enchantee",
     upgradeHint: "Survole une carte pour voir l'amelioration",
     upgradeAction: "Ameliorer",
@@ -1705,6 +1731,9 @@ export const fr = {
       "Cette carte sera definitivement supprimee de votre deck.",
     eventContinue: "Continuer",
     eventPurgeAction: "Choisir une carte a retirer",
+    eventRewardPickerTitle: "Choisissez 1 carte",
+    eventRewardPickerSubtitle:
+      "Le scriptorium vous propose des cartes alignees avec l'archetype choisi.",
   },
   startMerchant: {
     kicker: "Pre-run",
@@ -1744,18 +1773,22 @@ export const fr = {
       heal: "Soin",
       maxHp: "PV max",
       purge: "Purge",
+      bloodPurge: "Purge de sang",
       ally: "Allié",
     },
     itemDescription: {
       heal: "Restaure {{amount}} PV",
       maxHp: "+{{amount}} PV max",
       purge: "Retire 1 carte de votre deck definitivement.",
+      bloodPurge: "Retire 1 carte de votre deck en sacrifiant {{amount}} PV.",
     },
     energyCost: "{{cost}} energie",
     sold: "VENDU",
     soldOut: "RUPTURE",
     inventoryFull: "Inventaire plein",
     priceGold: "{{price}} or",
+    priceHp: "{{price}} PV",
+    requiresMoreHp: "Pas assez de PV pour ce sacrifice",
     purgesLeft: "Purges restantes : {{count}}",
     reroll: "Relancer la boutique ({{price}} or)",
     autoRestock:
@@ -1929,6 +1962,87 @@ export const fr = {
     },
   },
   events: {
+    scriptorium_catalog: {
+      title: "Le Catalogue du Scriptorium",
+      flavorText:
+        "Un pupitre rotatif presente trois index relies par des fils d'encre. Chacun ouvre un rayon different du Scriptorium, comme si les cartes y attendaient deja votre decision.",
+      description:
+        "Choisissez une discipline. Le Scriptorium vous proposera ensuite trois cartes coherentes avec cet axe.",
+      choices: [
+        {
+          label: "Ouvrir les traites defensifs",
+          description: "Recevez 3 cartes orientees Block.",
+          outcomeText:
+            "Les rayons coulissent avec un bruit de chaines bien huilees. Des pages de garde, des sceaux et des bastions de papier se presentent a vous.",
+        },
+        {
+          label: "Consulter les manuscrits de restauration",
+          description: "Recevez 3 cartes orientees Heal.",
+          outcomeText:
+            "Une odeur de baume, d'herbes seches et d'encre claire remonte des etageres. Les ouvrages qui guerissent ont ete sortis pour vous.",
+        },
+        {
+          label: "Suivre les marges d'encre vive",
+          description: "Recevez 3 cartes orientees Ink.",
+          outcomeText:
+            "Les filaments noirs se mettent a briller. Les pages choisies pulsent deja d'une energie liquide, pretes a nourrir votre encre.",
+        },
+      ],
+    },
+    scarlet_index: {
+      title: "L'Index Ecarlate",
+      flavorText:
+        "Une table de consultation est couverte de fiches rouges. Certaines sont tachees de sang, d'autres noircies jusqu'au bord. Toutes semblent pointer vers des manieres plus brutales de raconter une histoire.",
+      description:
+        "Choisissez une ligne de lecture agressive. L'index ecarlate vous ouvrira ensuite trois cartes adaptees.",
+      choices: [
+        {
+          label: "Suivre les annotations sanglantes",
+          description: "Recevez 3 cartes orientees Bleed.",
+          outcomeText:
+            "Les fiches se superposent en une piste nette. La douleur devient une methode, et l'index vous remet des pages qui savent la prolonger.",
+        },
+        {
+          label: "Explorer les pages consumees",
+          description: "Recevez 3 cartes orientees Exhaust.",
+          outcomeText:
+            "Les coins brules s'effritent sous vos doigts. Ce qui disparait vite laisse parfois la trace la plus utile, et le Scriptorium semble d'accord.",
+        },
+        {
+          label: "Chercher les reserves d'encre ferreuse",
+          description: "Recevez 3 cartes orientees Ink.",
+          outcomeText:
+            "L'encre y est plus lourde, presque metallique. Les cartes extraites de ce rayon promettent une puissance breve, mais dense.",
+        },
+      ],
+    },
+    war_ledger: {
+      title: "Le Registre de Guerre",
+      flavorText:
+        "Sous une cloche de verre repose un registre massif, rempli de campagnes annotees, de retraits ordonnes et de blessures converties en doctrine. En l'ouvrant, vous sentez trois strategies possibles tirer sur la reliure.",
+      description:
+        "Choisissez un plan de bataille. Le registre vous proposera ensuite trois cartes dans cette direction.",
+      choices: [
+        {
+          label: "Etudier les lignes de boucliers",
+          description: "Recevez 3 cartes orientees Block.",
+          outcomeText:
+            "Le registre s'ouvre sur des formations patientes et denses. Les cartes qui emergent parlent de tenue, de garde et de murs qui refusent de ceder.",
+        },
+        {
+          label: "Relire les campagnes d'attrition",
+          description: "Recevez 3 cartes orientees Bleed.",
+          outcomeText:
+            "Des cartes de blessures lentes, de pressions repetees et de coupures methodiques glissent hors des pages. Rien ici n'est rapide; tout y est fatal.",
+        },
+        {
+          label: "Examiner les doctrines de sacrifice",
+          description: "Recevez 3 cartes orientees Exhaust.",
+          outcomeText:
+            "Certaines manoeuvres ne servent qu'une fois. Le registre les classe pourtant parmi les plus importantes, et vous en confie trois exemples.",
+        },
+      ],
+    },
     mysterious_tome: {
       title: "Le Tome Scelle",
       flavorText:

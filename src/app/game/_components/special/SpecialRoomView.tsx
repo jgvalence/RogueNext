@@ -4,7 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Cinzel } from "next/font/google";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { CardInstance } from "@/game/schemas/cards";
-import type { RNG } from "@/game/engine/rng";
+import { createRNG, type RNG } from "@/game/engine/rng";
 import type { RunState } from "@/game/schemas/run-state";
 import {
   createGuaranteedRelicEvent,
@@ -13,6 +13,7 @@ import {
   pickGuaranteedEventRelicId,
   type GameEvent,
 } from "@/game/engine/run";
+import { buildArchetypeEventCardChoices } from "@/game/engine/archetype-offers";
 import { relicDefinitions } from "@/game/data/relics";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { cn } from "@/lib/utils/cn";
@@ -44,11 +45,13 @@ interface SpecialRoomViewProps {
   rng: RNG;
   difficultyLevel: number;
   forceEventWithRelic?: boolean;
+  forcedRoomType?: "HEAL" | "UPGRADE" | "EVENT";
   runState?: RunState;
   onHeal: () => void;
   onUpgrade: (cardInstanceId: string) => void;
+  onPurgeCard: (cardInstanceId: string) => void;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
-  onEventPurge: (cardInstanceId: string) => void;
+  onPickCardReward: (definitionId: string) => void;
   onEventContinue: () => void;
   onSkip: () => void;
 }
@@ -62,18 +65,21 @@ export function SpecialRoomView({
   rng,
   difficultyLevel,
   forceEventWithRelic = false,
+  forcedRoomType,
   runState,
   onHeal,
   onUpgrade,
+  onPurgeCard,
   onEventChoice,
-  onEventPurge,
+  onPickCardReward,
   onEventContinue,
   onSkip,
 }: SpecialRoomViewProps) {
   const roomType = useMemo(() => {
     if (forceEventWithRelic) return "EVENT" as const;
+    if (forcedRoomType) return forcedRoomType;
     return pickSpecialRoomTypeWithDifficulty(rng, difficultyLevel);
-  }, [forceEventWithRelic, rng, difficultyLevel]);
+  }, [difficultyLevel, forceEventWithRelic, forcedRoomType, rng]);
   const forcedEvent = useMemo(
     () => (forceEventWithRelic ? createGuaranteedRelicEvent() : null),
     [forceEventWithRelic]
@@ -85,7 +91,10 @@ export function SpecialRoomView({
         <HealRoom
           playerCurrentHp={playerCurrentHp}
           playerMaxHp={playerMaxHp}
+          deck={deck}
+          cardDefs={cardDefs}
           onHeal={onHeal}
+          onPurgeCard={onPurgeCard}
         />
       );
     case "UPGRADE":
@@ -110,7 +119,8 @@ export function SpecialRoomView({
           deck={deck}
           cardDefs={cardDefs}
           onEventChoice={onEventChoice}
-          onEventPurge={onEventPurge}
+          onPickCardReward={onPickCardReward}
+          onPurgeCard={onPurgeCard}
           onEventContinue={onEventContinue}
         />
       );
@@ -173,15 +183,23 @@ function RoomTitle({
 function HealRoom({
   playerCurrentHp,
   playerMaxHp,
+  deck,
+  cardDefs,
   onHeal,
+  onPurgeCard,
 }: {
   playerCurrentHp: number;
   playerMaxHp: number;
+  deck: CardInstance[];
+  cardDefs: Map<string, CardDefinition>;
   onHeal: () => void;
+  onPurgeCard: (cardInstanceId: string) => void;
 }) {
   const { t } = useTranslation();
   const healAmount = Math.floor(playerMaxHp * GAME_CONSTANTS.HEAL_ROOM_PERCENT);
   const newHp = Math.min(playerMaxHp, playerCurrentHp + healAmount);
+  const [showPurgePicker, setShowPurgePicker] = useState(false);
+  const canPurge = deck.length > 1;
 
   return (
     <div className="flex flex-col items-center gap-5 px-4 py-10">
@@ -195,6 +213,9 @@ function HealRoom({
       <p className="max-w-md text-center text-sm italic leading-relaxed text-amber-200/60">
         {t("special.healDesc")}
       </p>
+      <p className="max-w-md text-center text-xs leading-relaxed text-amber-100/45">
+        {t("special.healChoiceHint")}
+      </p>
 
       {/* HP preview */}
       <div className="flex items-center gap-3 rounded border border-amber-500/20 bg-amber-950/20 px-6 py-3 text-sm">
@@ -204,21 +225,54 @@ function HealRoom({
         <span className="text-amber-100/30">/ {playerMaxHp}</span>
       </div>
 
-      <RogueButton
-        onClick={onHeal}
-        type="text"
-        className={cn(
-          cinzel.className,
-          "!group !mt-2 !flex !h-auto !items-center !gap-3 !py-[0.42rem] !uppercase",
-          "!text-[1.1rem] !font-semibold !tracking-[0.16em] !text-amber-100",
-          "!outline-none !transition-all !duration-150"
-        )}
-      >
-        <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
-        {t("special.healAction")}
-      </RogueButton>
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-4">
+        <RogueButton
+          onClick={onHeal}
+          type="text"
+          className={cn(
+            cinzel.className,
+            "!group !flex !h-auto !items-center !gap-3 !py-[0.42rem] !uppercase",
+            "!text-[1.1rem] !font-semibold !tracking-[0.16em] !text-amber-100",
+            "!outline-none !transition-all !duration-150"
+          )}
+        >
+          <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
+          {t("special.healAction")}
+        </RogueButton>
+
+        <RogueButton
+          onClick={() => setShowPurgePicker(true)}
+          disabled={!canPurge}
+          type="text"
+          className={cn(
+            cinzel.className,
+            "!group !flex !h-auto !items-center !gap-3 !py-[0.42rem] !uppercase",
+            "!text-[1.05rem] !font-semibold !tracking-[0.16em] !outline-none !transition-all !duration-150",
+            canPurge
+              ? "!text-rose-200"
+              : "!cursor-not-allowed !text-rose-100/25"
+          )}
+        >
+          <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-rose-400 to-rose-300/0 opacity-90" />
+          {t("special.healPurgeAction")}
+        </RogueButton>
+      </div>
 
       <Divider dim />
+
+      {showPurgePicker && (
+        <CardPickerModal
+          title={t("special.purgePickerTitle")}
+          subtitle={t("special.purgePickerSubtitle")}
+          cards={deck}
+          cardDefs={cardDefs}
+          onPick={(cardInstanceId) => {
+            setShowPurgePicker(false);
+            onPurgeCard(cardInstanceId);
+          }}
+          onCancel={() => setShowPurgePicker(false)}
+        />
+      )}
     </div>
   );
 }
@@ -380,7 +434,8 @@ function EventRoom({
   deck,
   cardDefs,
   onEventChoice,
-  onEventPurge,
+  onPickCardReward,
+  onPurgeCard,
   onEventContinue,
 }: {
   rng: RNG;
@@ -393,7 +448,8 @@ function EventRoom({
   deck: CardInstance[];
   cardDefs: Map<string, CardDefinition>;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
-  onEventPurge: (cardInstanceId: string) => void;
+  onPickCardReward: (definitionId: string) => void;
+  onPurgeCard: (cardInstanceId: string) => void;
   onEventContinue: () => void;
 }) {
   const { t } = useTranslation();
@@ -413,8 +469,41 @@ function EventRoom({
 
   const [chosenIndex, setChosenIndex] = useState<number | null>(null);
   const [showPurgePicker, setShowPurgePicker] = useState(false);
+  const [pendingArchetypeChoiceIndex, setPendingArchetypeChoiceIndex] =
+    useState<number | null>(null);
+
+  const archetypeRewardChoicesByIndex = useMemo(() => {
+    const choices = new Map<number, CardDefinition[]>();
+    if (!runState) return choices;
+
+    const allCards = [...cardDefs.values()];
+    event.choices.forEach((choice, choiceIndex) => {
+      if (!choice.rewardArchetypeTag) return;
+      const choiceRng = createRNG(
+        `${runState.seed}-event-archetype-${event.id}-${choiceIndex}-${runState.floor}-${runState.currentRoom}`
+      );
+      choices.set(
+        choiceIndex,
+        buildArchetypeEventCardChoices(
+          allCards,
+          runState,
+          choice.rewardArchetypeTag,
+          choiceRng
+        )
+      );
+    });
+
+    return choices;
+  }, [cardDefs, event, runState]);
 
   const handleChoice = (choiceIndex: number) => {
+    const choice = event.choices[choiceIndex];
+    const archetypeChoices = archetypeRewardChoicesByIndex.get(choiceIndex);
+    if (choice?.rewardArchetypeTag && (archetypeChoices?.length ?? 0) > 0) {
+      setPendingArchetypeChoiceIndex(choiceIndex);
+      return;
+    }
+
     onEventChoice(event, choiceIndex);
     setChosenIndex(choiceIndex);
   };
@@ -427,6 +516,18 @@ function EventRoom({
       onEventContinue();
     }
   };
+
+  const pendingArchetypeRewardCards =
+    pendingArchetypeChoiceIndex !== null
+      ? (archetypeRewardChoicesByIndex.get(pendingArchetypeChoiceIndex) ?? [])
+      : [];
+  const displayedChoices = event.choices.map((choice, index) => ({
+    choice,
+    index,
+    isUnavailable:
+      Boolean(choice.rewardArchetypeTag) &&
+      (archetypeRewardChoicesByIndex.get(index)?.length ?? 0) === 0,
+  }));
 
   // ── Phase OUTCOME ─────────────────────────────────────────────────────────
   if (chosenIndex !== null) {
@@ -472,7 +573,7 @@ function EventRoom({
             cardDefs={cardDefs}
             onPick={(cardInstanceId) => {
               setShowPurgePicker(false);
-              onEventPurge(cardInstanceId);
+              onPurgeCard(cardInstanceId);
             }}
           />
         )}
@@ -555,16 +656,19 @@ function EventRoom({
 
       {/* Choices */}
       <div className="flex w-full max-w-md flex-col gap-3">
-        {event.choices.map((choice, i) => (
+        {displayedChoices.map(({ choice, index, isUnavailable }) => (
           <RogueButton
-            key={i}
-            onClick={() => handleChoice(i)}
+            key={index}
+            disabled={isUnavailable}
+            onClick={() => handleChoice(index)}
             type="text"
             className={cn(
               "!group !flex !h-auto !flex-col !items-start !gap-1.5 !rounded !border !border-amber-500/15",
               "!bg-amber-950/10 !px-6 !py-3 !text-left",
               "!transition-all !duration-150",
-              "hover:!border-amber-500/35 hover:!bg-amber-950/30"
+              isUnavailable
+                ? "!cursor-not-allowed !opacity-45"
+                : "hover:!border-amber-500/35 hover:!bg-amber-950/30"
             )}
           >
             <div className="flex items-center gap-3">
@@ -587,6 +691,26 @@ function EventRoom({
       </div>
 
       <Divider dim />
+
+      {pendingArchetypeChoiceIndex !== null && (
+        <CardPickerModal
+          title={t("special.eventRewardPickerTitle")}
+          subtitle={t("special.eventRewardPickerSubtitle")}
+          cards={pendingArchetypeRewardCards.map((card) => ({
+            instanceId: card.id,
+            definitionId: card.id,
+            upgraded: false,
+          }))}
+          cardDefs={cardDefs}
+          onPick={(definitionId) => {
+            onPickCardReward(definitionId);
+            onEventChoice(event, pendingArchetypeChoiceIndex);
+            setChosenIndex(pendingArchetypeChoiceIndex);
+            setPendingArchetypeChoiceIndex(null);
+          }}
+          onCancel={() => setPendingArchetypeChoiceIndex(null)}
+        />
+      )}
     </div>
   );
 }

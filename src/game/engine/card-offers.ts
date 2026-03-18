@@ -1,12 +1,16 @@
 import type { CardDefinition } from "../schemas/cards";
-import type { BiomeType } from "../schemas/enums";
+import type { BiomeType, CardArchetypeTag } from "../schemas/enums";
 import { getLootRarityWeight } from "./loot";
 import type { RNG } from "./rng";
+import { getCardArchetypeTags } from "./card-archetypes";
 
-export type CardOfferSource =
-  | "NORMAL_REWARD"
-  | "ELITE_REWARD"
-  | "MERCHANT";
+export type CardOfferSource = "NORMAL_REWARD" | "ELITE_REWARD" | "MERCHANT";
+
+export interface CardOfferContext {
+  archetypeCounts?: Partial<Record<CardArchetypeTag, number>>;
+  playerCurrentHp?: number;
+  playerMaxHp?: number;
+}
 
 const NORMAL_REWARD_SIGNATURE_WEIGHT: Partial<Record<string, number>> = {
   written_prophecy: 1.5,
@@ -26,29 +30,60 @@ const MERCHANT_SIGNATURE_WEIGHT: Partial<Record<string, number>> = {
 function getCardOfferMultiplier(
   card: CardDefinition,
   source: CardOfferSource,
-  currentBiome?: BiomeType
+  currentBiome?: BiomeType,
+  context?: CardOfferContext
 ): number {
+  let multiplier = 1;
+
   if (source === "NORMAL_REWARD") {
-    if (!currentBiome || card.biome !== currentBiome) return 1;
-    return NORMAL_REWARD_SIGNATURE_WEIGHT[card.id] ?? 1;
+    if (currentBiome && card.biome === currentBiome) {
+      multiplier *= NORMAL_REWARD_SIGNATURE_WEIGHT[card.id] ?? 1;
+    }
   }
 
   if (source === "MERCHANT") {
-    return MERCHANT_SIGNATURE_WEIGHT[card.id] ?? 1;
+    multiplier *= MERCHANT_SIGNATURE_WEIGHT[card.id] ?? 1;
   }
 
-  return 1;
+  if (source !== "MERCHANT" && context) {
+    const tags = getCardArchetypeTags(card);
+    const strongestArchetypeCount = tags.reduce(
+      (best, tag) => Math.max(best, context.archetypeCounts?.[tag] ?? 0),
+      0
+    );
+
+    if (strongestArchetypeCount >= 2) {
+      multiplier *= 1 + Math.min(0.45, strongestArchetypeCount * 0.08);
+    }
+
+    if (
+      context.playerCurrentHp != null &&
+      context.playerMaxHp != null &&
+      context.playerMaxHp > 0
+    ) {
+      const currentHp = Math.max(0, Math.floor(context.playerCurrentHp));
+      const maxHp = Math.max(1, Math.floor(context.playerMaxHp));
+      if (currentHp / maxHp <= 0.45 && tags.includes("HEAL")) {
+        multiplier *= 1.75;
+      }
+    }
+  }
+
+  return multiplier;
 }
 
 export function getCardOfferWeight(
   card: CardDefinition,
   lootLuck: number,
   source: CardOfferSource,
-  currentBiome?: BiomeType
+  currentBiome?: BiomeType,
+  context?: CardOfferContext
 ): number {
   const baseWeight = getLootRarityWeight(card.rarity, lootLuck);
   if (baseWeight <= 0) return 0;
-  return baseWeight * getCardOfferMultiplier(card, source, currentBiome);
+  return (
+    baseWeight * getCardOfferMultiplier(card, source, currentBiome, context)
+  );
 }
 
 function weightedPickByOfferWeight(
@@ -56,10 +91,14 @@ function weightedPickByOfferWeight(
   lootLuck: number,
   source: CardOfferSource,
   rng: RNG,
-  currentBiome?: BiomeType
+  currentBiome?: BiomeType,
+  context?: CardOfferContext
 ): CardDefinition {
   const weights = cards.map((card) =>
-    Math.max(0, getCardOfferWeight(card, lootLuck, source, currentBiome))
+    Math.max(
+      0,
+      getCardOfferWeight(card, lootLuck, source, currentBiome, context)
+    )
   );
   const total = weights.reduce((sum, weight) => sum + weight, 0);
   if (total <= 0) return rng.pick(cards);
@@ -79,12 +118,14 @@ export function weightedSampleCardsForOffers(
   rng: RNG,
   lootLuck: number,
   source: CardOfferSource,
-  currentBiome?: BiomeType
+  currentBiome?: BiomeType,
+  context?: CardOfferContext
 ): CardDefinition[] {
   if (count <= 0 || cards.length === 0) return [];
 
   const pool = [...cards].filter(
-    (card) => getCardOfferWeight(card, lootLuck, source, currentBiome) > 0
+    (card) =>
+      getCardOfferWeight(card, lootLuck, source, currentBiome, context) > 0
   );
   if (pool.length === 0) return [];
 
@@ -95,7 +136,8 @@ export function weightedSampleCardsForOffers(
       lootLuck,
       source,
       rng,
-      currentBiome
+      currentBiome,
+      context
     );
     picks.push(picked);
     const index = pool.indexOf(picked);
