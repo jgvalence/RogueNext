@@ -309,7 +309,7 @@ export const fr = {
       },
       tempered_flesh: {
         name: "Chair temperee",
-        description: "Commence avec +12 PV max, mais -15 or.",
+        description: "Commence avec +10 PV max.",
       },
       open_grimoire: {
         name: "Grimoire ouvert",
@@ -386,7 +386,7 @@ export const fr = {
       ink_lender: {
         name: "Pret d'encre",
         description:
-          "Commence chaque combat avec +2 encre et +1 encre par carte jouee, mais -20 or.",
+          "Commence chaque combat avec +2 encre et +1 encre par carte jouee, mais perdez 8 PV max.",
       },
       prepared_wards: {
         name: "Gardes pretes",
@@ -422,7 +422,8 @@ export const fr = {
       },
       inkwell_bargain: {
         name: "Marche de l'encrier",
-        description: "Commence avec la relique Reservoir d'encre, mais -25 or.",
+        description:
+          "Commence avec la relique Reservoir d'encre, mais perdez 10 PV max.",
       },
       forged_lexicon: {
         name: "Lexique forge",
@@ -432,7 +433,7 @@ export const fr = {
       isolated_trials: {
         name: "Epreuves isolees",
         description:
-          "Un seul chemin a chaque salle, mais ajoute 2 cartes aleatoires.",
+          "Un seul chemin a chaque salle, retire 1 carte de depart aleatoire et ameliore 1 carte aleatoire.",
       },
       grim_shortcuts: {
         name: "Raccourcis funestes",

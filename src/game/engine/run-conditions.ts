@@ -99,9 +99,9 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
   },
   {
     id: "tempered_flesh",
-    category: "BOON_WITH_DRAWBACK",
+    category: "LIGHT_BOON",
     unlock: {},
-    effects: { maxHpDelta: 12, startingGoldDelta: -15 },
+    effects: { maxHpDelta: 10 },
   },
   {
     id: "open_grimoire",
@@ -235,7 +235,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     category: "BOON_WITH_DRAWBACK",
     unlock: { totalRuns: 1 },
     effects: {
-      startingGoldDelta: -20,
+      maxHpDelta: -8,
       addMetaBonuses: {
         startingInk: 2,
         inkPerCardChance: 100,
@@ -313,7 +313,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     unlock: { totalRuns: 4, wonRuns: 1 },
     effects: {
       addRelicIds: ["inkwell_reservoir"],
-      startingGoldDelta: -25,
+      maxHpDelta: -10,
     },
   },
   {
@@ -331,7 +331,8 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     unlock: { totalRuns: 5, wonRuns: 2 },
     effects: {
       mapRules: { forceSingleChoice: true },
-      addRandomCardsCount: 2,
+      removeRandomStarterCardsCount: 1,
+      upgradeRandomDeckCardsCount: 1,
     },
   },
   {

@@ -4494,6 +4494,94 @@ describe("Run management", () => {
     }
   });
 
+  it("generateFloorMap keeps generated combats inside the selected biome", () => {
+    const seeds = [
+      "biome-only-1",
+      "biome-only-2",
+      "biome-only-3",
+      "biome-only-4",
+    ];
+
+    for (const seed of seeds) {
+      const map = generateFloorMap(2, createRNG(seed), "GREEK", undefined, 4);
+      const combatRooms = map
+        .flat()
+        .filter((room) => (room.enemyIds?.length ?? 0) > 0);
+
+      for (const room of combatRooms) {
+        for (const enemyId of room.enemyIds ?? []) {
+          expect(enemyDefs.get(enemyId)?.biome).toBe("GREEK");
+        }
+      }
+    }
+  });
+
+  it("generateFloorMap ramps normal encounter danger with room depth and difficulty", () => {
+    const openingDangerScores: number[] = [];
+    const lateDangerScores: number[] = [];
+    const lateEncounterSizes: number[] = [];
+    const encounterDanger = (enemyIds: string[]) =>
+      enemyIds.reduce(
+        (sum, enemyId) => sum + (enemyDefs.get(enemyId)?.tier ?? 1),
+        0
+      );
+
+    for (let i = 0; i < 12; i += 1) {
+      const openingMap = generateFloorMap(
+        1,
+        createRNG(`danger-opening-${i}`),
+        "GREEK",
+        undefined,
+        1
+      );
+      const openingEncounter = openingMap[0]?.[0]?.enemyIds ?? [];
+      openingDangerScores.push(encounterDanger(openingEncounter));
+      expect(openingEncounter).toHaveLength(1);
+      expect(encounterDanger(openingEncounter)).toBe(1);
+
+      const lateMap = generateFloorMap(
+        3,
+        createRNG(`danger-late-${i}`),
+        "GREEK",
+        undefined,
+        5
+      );
+      const lateNormalCombats = lateMap
+        .flat()
+        .filter(
+          (room) =>
+            room.type === "COMBAT" &&
+            !room.isElite &&
+            room.index >= 9 &&
+            room.index < GAME_CONSTANTS.BOSS_ROOM_INDEX
+        );
+
+      expect(lateNormalCombats.length).toBeGreaterThan(0);
+
+      const strongestLateCombat = lateNormalCombats.reduce((bestRoom, room) =>
+        encounterDanger(room.enemyIds ?? []) > encounterDanger(bestRoom.enemyIds ?? [])
+          ? room
+          : bestRoom
+      );
+      const strongestLateDanger = encounterDanger(
+        strongestLateCombat.enemyIds ?? []
+      );
+      lateDangerScores.push(strongestLateDanger);
+      lateEncounterSizes.push(strongestLateCombat.enemyIds?.length ?? 0);
+    }
+
+    const averageOpeningDanger =
+      openingDangerScores.reduce((sum, score) => sum + score, 0) /
+      openingDangerScores.length;
+    const averageLateDanger =
+      lateDangerScores.reduce((sum, score) => sum + score, 0) /
+      lateDangerScores.length;
+
+    expect(averageLateDanger).toBeGreaterThan(averageOpeningDanger + 4);
+    expect(Math.max(...lateDangerScores)).toBeGreaterThanOrEqual(8);
+    expect(Math.max(...lateEncounterSizes)).toBeGreaterThanOrEqual(4);
+  });
+
   it("selectRoom marks room as completed", () => {
     const rng = createRNG("select-room");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
@@ -4742,6 +4830,8 @@ describe("Run management", () => {
     expect(applied.metaBonuses?.startingInk).toBe(2);
     expect(applied.metaBonuses?.inkPerCardChance).toBe(100);
     expect(applied.metaBonuses?.inkPerCardValue).toBe(0);
+    expect(applied.playerMaxHp).toBe(run.playerMaxHp - 8);
+    expect(applied.playerCurrentHp).toBe(run.playerCurrentHp - 8);
 
     const combat = initCombat(
       applied,
@@ -4768,6 +4858,36 @@ describe("Run management", () => {
     );
 
     expect(result.player.inkCurrent).toBe(3);
+  });
+
+  it("applyRunConditionToRun isolated_trials keeps the linear map but sharpens the starting deck", () => {
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-isolated-trials",
+      "run-isolated-trials",
+      starterCards,
+      createRNG("run-isolated-trials")
+    );
+    const applied = applyRunConditionToRun(
+      {
+        ...run,
+        selectedDifficultyLevel: 0,
+        pendingRunConditionChoices: [
+          "isolated_trials",
+          "vanilla_run",
+          "quiet_pockets",
+        ],
+      },
+      "isolated_trials",
+      createRNG("run-isolated-trials-apply"),
+      [...cardDefs.values()]
+    );
+
+    expect(applied.deck).toHaveLength(run.deck.length - 1);
+    expect(applied.deck.filter((card) => card.upgraded)).toHaveLength(1);
+    expect(applied.map.slice(1, 8).every((depth) => depth.length === 1)).toBe(
+      true
+    );
   });
 
   it("createNewRun filters starting rare card to the inferred run character", () => {

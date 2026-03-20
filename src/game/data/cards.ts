@@ -394,7 +394,13 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     rarity: "RARE",
     description: "Gain 2 Strength.",
     effects: [{ type: "GAIN_STRENGTH", value: 2 }],
-    inkedVariant: null,
+    inkedVariant: {
+      description: "Gain 3 Strength.",
+      effects: [{ type: "GAIN_STRENGTH", value: 3 }],
+      inkMarkCost: 2,
+      upgradedDescription: "Gain 3 Strength.",
+      upgradedEffects: [{ type: "GAIN_STRENGTH", value: 3 }],
+    },
     upgrade: {
       energyCost: 1,
       description: "Gain 2 Strength.",
@@ -541,7 +547,21 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     effects: [
       { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
     ],
-    inkedVariant: null,
+    inkedVariant: {
+      description: "Apply 3 Vulnerable to ALL enemies. Draw 1 card.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+      inkMarkCost: 2,
+      upgradedDescription:
+        "Apply 3 Vulnerable and 1 Weak to ALL enemies. Draw 1 card.",
+      upgradedEffects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
     upgrade: {
       description: "Apply 3 Vulnerable and 1 Weak to ALL enemies.",
       effects: [
@@ -1050,7 +1070,13 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     rarity: "RARE",
     description: "Gain 3 Focus.",
     effects: [{ type: "GAIN_FOCUS", value: 3 }],
-    inkedVariant: null,
+    inkedVariant: {
+      description: "Gain 4 Focus.",
+      effects: [{ type: "GAIN_FOCUS", value: 4 }],
+      inkMarkCost: 3,
+      upgradedDescription: "Gain 4 Focus.",
+      upgradedEffects: [{ type: "GAIN_FOCUS", value: 4 }],
+    },
     upgrade: {
       energyCost: 1,
       description: "Gain 3 Focus.",
@@ -1816,7 +1842,19 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "GAIN_STRENGTH", value: 1 },
       { type: "GAIN_FOCUS", value: 1 },
     ],
-    inkedVariant: null,
+    inkedVariant: {
+      description: "Gain 2 Strength and 1 Focus.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "GAIN_FOCUS", value: 1 },
+      ],
+      inkMarkCost: 3,
+      upgradedDescription: "Gain 3 Strength and 2 Focus.",
+      upgradedEffects: [
+        { type: "GAIN_STRENGTH", value: 3 },
+        { type: "GAIN_FOCUS", value: 2 },
+      ],
+    },
     upgrade: {
       description: "Gain 2 Strength and 2 Focus.",
       effects: [
@@ -2183,7 +2221,22 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "DRAW_CARDS", value: 1 },
       { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
     ],
-    inkedVariant: null,
+    inkedVariant: {
+      description: "Gain 8 block. Draw 2 cards. Upgrade 1 random card in hand.",
+      effects: [
+        { type: "BLOCK", value: 8 },
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+      ],
+      inkMarkCost: 2,
+      upgradedDescription:
+        "Gain 11 block. Draw 2 cards. Upgrade 1 random card in hand.",
+      upgradedEffects: [
+        { type: "BLOCK", value: 11 },
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+      ],
+    },
     upgrade: {
       description: "Gain 9 block. Draw 1 card. Upgrade 1 random card in hand.",
       effects: [
@@ -2401,7 +2454,21 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "GAIN_STRENGTH", value: 1 },
       { type: "APPLY_DEBUFF", value: 2, buff: "BLEED", duration: 4 },
     ],
-    inkedVariant: null,
+    inkedVariant: {
+      description: "Draw 1 card. Gain 2 Strength. Apply 3 Bleed.",
+      effects: [
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
+      ],
+      inkMarkCost: 2,
+      upgradedDescription: "Draw 1 card. Gain 2 Strength. Apply 4 Bleed.",
+      upgradedEffects: [
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
+      ],
+    },
     upgrade: {
       description: "Draw 1 card. Gain 1 Strength. Apply 3 Bleed.",
       effects: [
@@ -2779,7 +2846,19 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "BLOCK", value: 6 },
       { type: "GAIN_STRENGTH", value: 2 },
     ],
-    inkedVariant: null,
+    inkedVariant: {
+      description: "Gain 8 block. Gain 3 Strength.",
+      effects: [
+        { type: "BLOCK", value: 8 },
+        { type: "GAIN_STRENGTH", value: 3 },
+      ],
+      inkMarkCost: 2,
+      upgradedDescription: "Gain 10 block. Gain 3 Strength.",
+      upgradedEffects: [
+        { type: "BLOCK", value: 10 },
+        { type: "GAIN_STRENGTH", value: 3 },
+      ],
+    },
     upgrade: {
       description: "Gain 8 block. Gain 2 Strength.",
       effects: [
@@ -3628,7 +3707,23 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
       { type: "DRAW_CARDS", value: 1 },
     ],
-    inkedVariant: null,
+    inkedVariant: {
+      description:
+        "Apply 3 Vulnerable to target. Apply 3 Weak to target. Draw 1 card.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "VULNERABLE", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+      inkMarkCost: 2,
+      upgradedDescription:
+        "Apply 4 Vulnerable to target. Apply 3 Weak to target. Draw 1 card.",
+      upgradedEffects: [
+        { type: "APPLY_DEBUFF", value: 4, buff: "VULNERABLE", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
     upgrade: {
       description:
         "Apply 3 Vulnerable to target. Apply 2 Weak to target. Draw 1 card.",
@@ -5197,7 +5292,21 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "HEAL", value: 4 },
       { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
     ],
-    inkedVariant: null,
+    inkedVariant: {
+      description: "Draw 3 cards. Heal 5. Upgrade 1 random card in hand.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "HEAL", value: 5 },
+        { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+      ],
+      inkMarkCost: 2,
+      upgradedDescription: "Draw 3 cards. Heal 6. Upgrade 1 random card in hand.",
+      upgradedEffects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "HEAL", value: 6 },
+        { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+      ],
+    },
     upgrade: {
       description: "Draw 3 cards. Heal 4. Upgrade 1 random card in hand.",
       effects: [
@@ -6078,7 +6187,20 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
       { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
     ],
-    inkedVariant: null,
+    inkedVariant: {
+      description: "Apply 3 Weak to ALL enemies. Apply 3 Poison to ALL enemies.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+      ],
+      inkMarkCost: 2,
+      upgradedDescription:
+        "Apply 3 Weak to ALL enemies. Apply 4 Poison to ALL enemies.",
+      upgradedEffects: [
+        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+      ],
+    },
     upgrade: {
       description:
         "Apply 2 Weak to ALL enemies. Apply 3 Poison to ALL enemies.",

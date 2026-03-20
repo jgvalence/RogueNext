@@ -131,34 +131,145 @@ function isThematicEnemy(enemy: EnemyDef): boolean {
   );
 }
 
-function getMaxEnemyCountForRoom(
+function getEnemyDangerCost(enemy: EnemyDef): number {
+  return Math.max(1, Math.min(3, enemy.tier));
+}
+
+function getEncounterProgressBand(room: number): number {
+  const lastRegularCombatDepth = GAME_CONSTANTS.BOSS_ROOM_INDEX - 2;
+  const clampedRoom = Math.max(0, Math.min(room, lastRegularCombatDepth));
+  return Math.min(4, Math.floor(clampedRoom / 3));
+}
+
+function getEncounterDifficultyBudgetBonus(difficultyLevel: number): number {
+  const clampedDifficulty = Math.min(5, Math.max(0, Math.floor(difficultyLevel)));
+  return ([0, 0, 1, 1, 2, 3] as const)[clampedDifficulty] ?? 0;
+}
+
+function getEncounterDangerBudget(
   floor: number,
-  biome: BiomeType,
-  difficultyLevel: number
+  room: number,
+  difficultyLevel: number,
+  isInfiniteMode: boolean
 ): number {
-  const difficultyModifiers = getDifficultyModifiers(difficultyLevel);
-  const biomeCountBonusByBiome: Record<BiomeType, number> = {
-    LIBRARY: 0,
-    VIKING: 0,
-    GREEK: 0,
-    EGYPTIAN: 0,
-    LOVECRAFTIAN: -1,
-    AZTEC: 0,
-    CELTIC: -1,
-    RUSSIAN: -1,
-    AFRICAN: 1,
-  };
+  const floorBudget = Math.max(0, floor - 1);
+  const roomBudget = getEncounterProgressBand(room);
+  const difficultyBudget = getEncounterDifficultyBudgetBonus(difficultyLevel);
+  const infiniteBudget = isInfiniteMode
+    ? Math.max(0, Math.floor(Math.max(0, floor - 1) / 3))
+    : 0;
 
   return Math.min(
-    GAME_CONSTANTS.MAX_ENEMIES,
-    Math.max(
-      1,
-      2 +
-        Math.floor(floor / 2) +
-        (biomeCountBonusByBiome[biome] ?? 0) +
-        difficultyModifiers.enemyPackSizeBonus
-    )
+    12,
+    Math.max(1, 1 + floorBudget + roomBudget + difficultyBudget + infiniteBudget)
   );
+}
+
+function getEncounterTargetEnemyCost(
+  remainingBudget: number,
+  selectedEnemyCount: number
+): number {
+  const remainingSlots = Math.max(
+    1,
+    GAME_CONSTANTS.MAX_ENEMIES - selectedEnemyCount
+  );
+  const desiredRemainingEnemies = Math.max(
+    1,
+    Math.min(remainingSlots, Math.ceil(remainingBudget / 2))
+  );
+  return Math.max(
+    1,
+    Math.min(3, Math.round(remainingBudget / desiredRemainingEnemies))
+  );
+}
+
+function getEncounterCompositionWeight(
+  enemy: EnemyDef,
+  selectedEnemies: EnemyDef[],
+  remainingBudget: number,
+  floor: number,
+  biome: BiomeType
+): number {
+  const targetCost = getEncounterTargetEnemyCost(
+    remainingBudget,
+    selectedEnemies.length
+  );
+  const cost = getEnemyDangerCost(enemy);
+  const fitWeight =
+    cost === targetCost ? 1.8 : Math.abs(cost - targetCost) === 1 ? 1.2 : 0.75;
+  const roleDiversityWeight = selectedEnemies.some(
+    (selectedEnemy) => selectedEnemy.role === enemy.role
+  )
+    ? 0.92
+    : 1.08;
+  const disruptionStackWeight =
+    hasDisruptionAbility(enemy) &&
+    selectedEnemies.some((selectedEnemy) => hasDisruptionAbility(selectedEnemy))
+      ? 0.85
+      : 1;
+  const anchorWeight =
+    selectedEnemies.length === 0 && enemy.role === "SUPPORT" ? 0.9 : 1;
+
+  return (
+    getEnemySelectionWeight(enemy, floor, biome) *
+    fitWeight *
+    roleDiversityWeight *
+    disruptionStackWeight *
+    anchorWeight
+  );
+}
+
+function filterEncounterCandidates(
+  pool: EnemyDef[],
+  selectedEnemies: EnemyDef[],
+  remainingBudget: number,
+  room: number
+): EnemyDef[] {
+  const affordableCandidates = pool.filter(
+    (enemy) => getEnemyDangerCost(enemy) <= remainingBudget
+  );
+  const cheapestCost = Math.min(...pool.map(getEnemyDangerCost));
+  let candidates =
+    affordableCandidates.length > 0
+      ? affordableCandidates
+      : pool.filter((enemy) => getEnemyDangerCost(enemy) === cheapestCost);
+
+  const earlyRoom = getEncounterProgressBand(room) === 0;
+  const selectedIds = new Set(selectedEnemies.map((enemy) => enemy.id));
+
+  if (
+    earlyRoom &&
+    selectedEnemies.some((enemy) => getEnemyDangerCost(enemy) >= 3)
+  ) {
+    const saferCandidates = candidates.filter(
+      (enemy) => getEnemyDangerCost(enemy) < 3
+    );
+    if (saferCandidates.length > 0) {
+      candidates = saferCandidates;
+    }
+  }
+
+  if (
+    earlyRoom &&
+    selectedEnemies.some((enemy) => hasDisruptionAbility(enemy))
+  ) {
+    const lessDisruptiveCandidates = candidates.filter(
+      (enemy) => !hasDisruptionAbility(enemy)
+    );
+    if (lessDisruptiveCandidates.length > 0) {
+      candidates = lessDisruptiveCandidates;
+    }
+  }
+
+  const nonDuplicateHighThreats = candidates.filter(
+    (enemy) =>
+      !(selectedIds.has(enemy.id) && getEnemyDangerCost(enemy) >= 2)
+  );
+  if (nonDuplicateHighThreats.length > 0) {
+    candidates = nonDuplicateHighThreats;
+  }
+
+  return candidates;
 }
 
 /**
@@ -1065,13 +1176,10 @@ function pickPreBossEnemyId(
   const pool = bossOnlyCombats
     ? enemyDefinitions.filter((enemy) => enemy.isBoss && enemy.biome === biome)
     : enemyDefinitions.filter(
-        (enemy) =>
-          enemy.isElite &&
-          !enemy.isScriptedOnly &&
-          (enemy.biome === biome || enemy.biome === "LIBRARY")
+        (enemy) => enemy.isElite && !enemy.isScriptedOnly && enemy.biome === biome
       );
   if (pool.length === 0) {
-    return bossOnlyCombats ? "chapter_guardian" : "ink_slime";
+    return bossOnlyCombats ? "chapter_guardian" : "ink_archon";
   }
   return weightedPick(
     pool,
@@ -1086,10 +1194,7 @@ function pickEliteEnemyId(
   rng: RNG
 ): string | null {
   const pool = enemyDefinitions.filter(
-    (enemy) =>
-      enemy.isElite &&
-      !enemy.isScriptedOnly &&
-      (enemy.biome === biome || enemy.biome === "LIBRARY")
+    (enemy) => enemy.isElite && !enemy.isScriptedOnly && enemy.biome === biome
   );
   if (pool.length === 0) return null;
   return weightedPick(
@@ -1460,9 +1565,8 @@ export function generateFloorMap(
 }
 
 /**
- * Generate enemy IDs for a combat room, filtered by biome.
- * Library enemies appear in all biomes (they're universal).
- * Biome-specific enemies only appear in their biome.
+ * Generate enemy IDs for a combat room using biome-specific pools and
+ * a room danger budget that scales with progression and difficulty.
  */
 function generateRoomEnemies(
   floor: number,
@@ -1479,7 +1583,7 @@ function generateRoomEnemies(
   const difficultyModifiers = getDifficultyModifiers(difficultyLevel);
   const postFloorEscalation = getPostFloorFiveEscalation(floor, isInfiniteMode);
   const canAppear = (e: (typeof enemyDefinitions)[0]) =>
-    !e.isScriptedOnly && (e.biome === biome || e.biome === "LIBRARY");
+    !e.isScriptedOnly && e.biome === biome;
 
   if (isBoss || bossOnlyCombats) {
     const bossPool = enemyDefinitions
@@ -1527,97 +1631,112 @@ function generateRoomEnemies(
     return { enemyIds: ["ink_slime"], isElite: false };
   }
 
-  const maxEnemyCount = getMaxEnemyCountForRoom(floor, biome, difficultyLevel);
-  const clampedMinEnemyCount = Math.max(
-    1,
-    Math.min(minEnemyCount, maxEnemyCount)
+  const clampedMinEnemyCount = Math.max(1, minEnemyCount);
+  const dangerBudget = getEncounterDangerBudget(
+    floor,
+    room,
+    difficultyLevel,
+    isInfiniteMode
   );
-  const count = rng.nextInt(clampedMinEnemyCount, maxEnemyCount);
-  const enemies: string[] = [];
-  const assaultPool = normalPool.filter(
-    (e) => e.role === "ASSAULT" || e.role === "HYBRID"
-  );
-  const supportPool = normalPool.filter(
-    (e) => e.role === "SUPPORT" || e.role === "CONTROL" || e.role === "TANK"
-  );
-  const disruptionPool = normalPool.filter(hasDisruptionAbility);
+  const cheapestEnemyCost = Math.min(...normalPool.map(getEnemyDangerCost));
+  const selectedEnemies: EnemyDef[] = [];
+  let remainingBudget = dangerBudget;
 
-  for (let i = 0; i < count; i++) {
-    const preferDisruptionLead =
-      i === 0 && biome === "AFRICAN" && disruptionPool.length > 0;
-    const preferSupportSlot =
-      count > 1 && i > 0 && (biome === "AFRICAN" || biome === "LIBRARY");
-    const sourcePool = preferDisruptionLead
-      ? disruptionPool
-      : preferSupportSlot && supportPool.length > 0
-        ? supportPool
-        : assaultPool.length > 0
-          ? assaultPool
-          : normalPool;
-    const picked = weightedPick(
-      sourcePool,
-      (e) => getEnemySelectionWeight(e, floor, biome),
+  while (
+    selectedEnemies.length < GAME_CONSTANTS.MAX_ENEMIES &&
+    remainingBudget > 0
+  ) {
+    const candidatePool = filterEncounterCandidates(
+      normalPool,
+      selectedEnemies,
+      remainingBudget,
+      room
+    );
+    if (candidatePool.length === 0) {
+      break;
+    }
+
+    const pickedEnemy = weightedPick(
+      candidatePool,
+      (enemy) =>
+        getEncounterCompositionWeight(
+          enemy,
+          selectedEnemies,
+          remainingBudget,
+          floor,
+          biome
+        ),
       rng
     );
-    enemies.push(picked.id);
-  }
+    selectedEnemies.push(pickedEnemy);
+    remainingBudget -= getEnemyDangerCost(pickedEnemy);
 
-  const selectedDefs = enemies
-    .map((enemyId) => normalPool.find((enemy) => enemy.id === enemyId))
-    .filter((enemy): enemy is EnemyDef => !!enemy);
-
-  // Keep the encounter identity anchored in the chosen biome.
-  if (
-    biome !== "LIBRARY" &&
-    !selectedDefs.some((enemy) => enemy.biome === biome)
-  ) {
-    const biomePool = normalPool.filter((enemy) => enemy.biome === biome);
-    if (biomePool.length > 0) {
-      enemies[0] = weightedPick(
-        biomePool,
-        (enemy) => getEnemySelectionWeight(enemy, floor, biome),
-        rng
-      ).id;
+    if (
+      selectedEnemies.length >= clampedMinEnemyCount &&
+      remainingBudget < cheapestEnemyCost
+    ) {
+      break;
     }
   }
 
+  while (selectedEnemies.length < clampedMinEnemyCount) {
+    selectedEnemies.push(
+      weightedPick(
+        normalPool.filter((enemy) => getEnemyDangerCost(enemy) === cheapestEnemyCost),
+        (enemy) => getEnemySelectionWeight(enemy, floor, biome),
+        rng
+      )
+    );
+  }
+
   // Ensure multi-enemy fights are not pure assault mirrors.
-  if (count > 1) {
-    const refreshedDefs = enemies
-      .map((enemyId) => normalPool.find((enemy) => enemy.id === enemyId))
-      .filter((enemy): enemy is EnemyDef => !!enemy);
-    const hasThematicUnit = refreshedDefs.some(isThematicEnemy);
+  if (selectedEnemies.length > 1) {
+    const hasThematicUnit = selectedEnemies.some(isThematicEnemy);
     if (!hasThematicUnit) {
-      const biomeThematicPool = normalPool.filter(
-        (enemy) => enemy.biome === biome && isThematicEnemy(enemy)
+      const replaceIndex = selectedEnemies.length - 1;
+      const replacedEnemy = selectedEnemies[replaceIndex];
+      const thematicPool = normalPool.filter(
+        (enemy) =>
+          isThematicEnemy(enemy) &&
+          getEnemyDangerCost(enemy) <= getEnemyDangerCost(replacedEnemy!)
       );
-      const fallbackThematicPool = normalPool.filter(isThematicEnemy);
-      const thematicPool =
-        biomeThematicPool.length > 0 ? biomeThematicPool : fallbackThematicPool;
       if (thematicPool.length > 0) {
-        enemies[count - 1] = weightedPick(
+        selectedEnemies[replaceIndex] = weightedPick(
           thematicPool,
           (enemy) => getEnemySelectionWeight(enemy, floor, biome),
           rng
-        ).id;
+        );
       }
     }
   }
 
   // In larger packs, avoid full clone squads when alternatives exist.
-  if (count >= 3 && new Set(enemies).size === 1 && normalPool.length > 1) {
-    const cloneId = enemies[0]!;
-    const alternatives = normalPool.filter((enemy) => enemy.id !== cloneId);
+  if (
+    selectedEnemies.length >= 3 &&
+    new Set(selectedEnemies.map((enemy) => enemy.id)).size === 1 &&
+    normalPool.length > 1
+  ) {
+    const replaceIndex = selectedEnemies.length - 1;
+    const replacedEnemy = selectedEnemies[replaceIndex];
+    const cloneId = selectedEnemies[0]!.id;
+    const alternatives = normalPool.filter(
+      (enemy) =>
+        enemy.id !== cloneId &&
+        getEnemyDangerCost(enemy) <= getEnemyDangerCost(replacedEnemy!)
+    );
     if (alternatives.length > 0) {
-      enemies[count - 1] = weightedPick(
+      selectedEnemies[replaceIndex] = weightedPick(
         alternatives,
         (enemy) => getEnemySelectionWeight(enemy, floor, biome),
         rng
-      ).id;
+      );
     }
   }
 
-  return { enemyIds: enemies, isElite: false };
+  return {
+    enemyIds: selectedEnemies.map((enemy) => enemy.id),
+    isElite: false,
+  };
 }
 
 /**

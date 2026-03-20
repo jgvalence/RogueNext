@@ -99,4 +99,14 @@ describe("Run conditions", () => {
     expect(isInfiniteRunConditionId("infinite_mode")).toBe(true);
     expect(isInfiniteRunConditionId("vanilla_run")).toBe(false);
   });
+
+  it("avoids dead negative starting-gold drawbacks in starting options", () => {
+    const conditionsWithNegativeGoldDelta = runConditionDefinitions
+      .filter(
+        (condition) => (condition.effects.startingGoldDelta ?? 0) < 0
+      )
+      .map((condition) => condition.id);
+
+    expect(conditionsWithNegativeGoldDelta).toEqual([]);
+  });
 });

@@ -306,7 +306,7 @@ export const en = {
       },
       tempered_flesh: {
         name: "Tempered Flesh",
-        description: "Start with +12 max HP, but -15 gold.",
+        description: "Start with +10 max HP.",
       },
       open_grimoire: {
         name: "Open Grimoire",
@@ -380,7 +380,7 @@ export const en = {
       ink_lender: {
         name: "Ink Loan",
         description:
-          "Start each combat with +2 ink and +1 ink per card played, but -20 gold.",
+          "Start each combat with +2 ink and +1 ink per card played, but lose 8 max HP.",
       },
       prepared_wards: {
         name: "Prepared Wards",
@@ -416,7 +416,7 @@ export const en = {
       },
       inkwell_bargain: {
         name: "Inkwell Bargain",
-        description: "Start with the Inkwell Reservoir relic, but -25 gold.",
+        description: "Start with the Inkwell Reservoir relic, but lose 10 max HP.",
       },
       forged_lexicon: {
         name: "Forged Lexicon",
@@ -426,7 +426,7 @@ export const en = {
       isolated_trials: {
         name: "Isolated Trials",
         description:
-          "Only one path at each room, but add 2 random collectible cards.",
+          "Only one path at each room, remove 1 random starter card, and upgrade 1 random card.",
       },
       grim_shortcuts: {
         name: "Grim Shortcuts",

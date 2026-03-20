@@ -61,7 +61,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "LIBRARY",
   },
   {
@@ -124,7 +124,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "LIBRARY",
   },
   {
@@ -338,7 +338,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "VIKING",
   },
   {
@@ -368,7 +368,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "VIKING",
   },
   {
@@ -401,7 +401,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "VIKING",
   },
 
@@ -468,7 +468,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "VIKING",
   },
 
@@ -644,7 +644,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "GREEK",
   },
   {
@@ -680,7 +680,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "GREEK",
   },
 
@@ -712,7 +712,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "GREEK",
   },
   {
@@ -742,7 +742,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "GREEK",
   },
 
@@ -865,7 +865,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "EGYPTIAN",
   },
   {
@@ -915,7 +915,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "EGYPTIAN",
   },
   {
@@ -976,7 +976,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "EGYPTIAN",
   },
   {
@@ -1006,7 +1006,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "EGYPTIAN",
   },
   {
@@ -1130,7 +1130,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "LOVECRAFTIAN",
   },
   {
@@ -1148,7 +1148,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "LOVECRAFTIAN",
   },
   {
@@ -1169,7 +1169,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "LOVECRAFTIAN",
   },
   {
@@ -1219,7 +1219,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "LOVECRAFTIAN",
   },
   {
@@ -1359,7 +1359,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "AZTEC",
   },
   {
@@ -1381,7 +1381,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "AZTEC",
   },
   {
@@ -1406,7 +1406,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "AZTEC",
   },
   {
@@ -1436,7 +1436,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "AZTEC",
   },
   {
@@ -1562,7 +1562,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "CELTIC",
   },
   {
@@ -1601,7 +1601,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "CELTIC",
   },
   {
@@ -1662,7 +1662,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "CELTIC",
   },
   {
@@ -1772,7 +1772,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "RUSSIAN",
   },
   {
@@ -1797,7 +1797,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "RUSSIAN",
   },
   {
@@ -1822,7 +1822,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "RUSSIAN",
   },
   {
@@ -1997,7 +1997,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "AFRICAN",
   },
   {
@@ -2019,7 +2019,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 3,
     biome: "AFRICAN",
   },
   {
@@ -2044,7 +2044,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "AFRICAN",
   },
   {
@@ -2072,7 +2072,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
     ],
     isBoss: false,
     isElite: false,
-    tier: 1,
+    tier: 2,
     biome: "AFRICAN",
   },
   {
