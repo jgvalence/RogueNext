@@ -7,24 +7,24 @@ import type { RunState } from "@/game/schemas/run-state";
 
 interface UseCombatDebugInfoParams {
   isDevBuild: boolean;
-  isAdmin: boolean;
   state: RunState;
   enemyDefs: Map<string, EnemyDefinition>;
 }
 
 export function useCombatDebugInfo({
   isDevBuild,
-  isAdmin,
   state,
   enemyDefs,
 }: UseCombatDebugInfoParams) {
   const debugEnemySelection = useMemo(() => {
-    if (!isDevBuild || !isAdmin || !state.combat) return null;
+    if (!isDevBuild || !state.combat) return null;
 
     const roomChoices = state.map[state.currentRoom];
     const selectedRoom =
       roomChoices?.find((room) => room.completed) ?? roomChoices?.[0];
-    const plannedEnemyIds = selectedRoom?.enemyIds ?? [];
+    const plannedEnemyIds = state.combat.encounterContext?.bossDefinitionId
+      ? [state.combat.encounterContext.bossDefinitionId]
+      : (selectedRoom?.enemyIds ?? []);
     const activeEnemies = state.combat.enemies.map((enemy) => {
       const def = enemyDefs.get(enemy.definitionId);
       const hasDisruption =
@@ -60,13 +60,12 @@ export function useCombatDebugInfo({
     return {
       floor: state.floor,
       room: state.currentRoom,
-      biome: state.currentBiome,
+      biome: state.combat.encounterContext?.biome ?? state.currentBiome,
       plannedEnemyIds,
       activeEnemies,
       hasThematicUnit,
     };
   }, [
-    isAdmin,
     isDevBuild,
     enemyDefs,
     state.combat,
@@ -77,7 +76,7 @@ export function useCombatDebugInfo({
   ]);
 
   const debugDrawInfo = useMemo(() => {
-    if (!isDevBuild || !isAdmin || !state.combat) return null;
+    if (!isDevBuild || !state.combat) return null;
     return {
       drawCount: state.combat.player.drawCount,
       handSize: state.combat.hand.length,
@@ -85,7 +84,7 @@ export function useCombatDebugInfo({
       pendingOverflow: state.combat.pendingHandOverflowExhaust ?? 0,
       history: [...(state.combat.drawDebugHistory ?? [])].slice(-12).reverse(),
     };
-  }, [isAdmin, isDevBuild, state.combat]);
+  }, [isDevBuild, state.combat]);
 
   return {
     debugEnemySelection,

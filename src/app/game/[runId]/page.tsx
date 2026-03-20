@@ -23,6 +23,7 @@ import { useStableSpecialRoomType } from "../_hooks/use-stable-special-room-type
 import { GameLayout } from "../_components/shared/GameLayout";
 import { CardPickerModal } from "../_components/shared/CardPickerModal";
 import { CombatView } from "../_components/combat/CombatView";
+import { BossRoomSelector } from "../_components/map/BossRoomSelector";
 import { FloorMap } from "../_components/map/FloorMap";
 import { RewardScreen } from "../_components/rewards/RewardScreen";
 import { ShopView } from "../_components/merchant/ShopView";
@@ -41,19 +42,28 @@ import {
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { getCharacterById } from "@/game/data/characters";
+import { RogueButton } from "@/components/ui/rogue";
 import { cn } from "@/lib/utils/cn";
 import { endRunAction } from "@/server/actions/run";
 import type { CombatRewards } from "@/game/engine/rewards";
+import {
+  ATLAS_OF_REALMS_RELIC_ID,
+  HUNTERS_SIGNET_RELIC_ID,
+  HUNTERS_SIGNET_USED_FLAG,
+  hasRunRelicFlag,
+} from "@/game/engine/relics";
 import { isInfiniteRunConditionId } from "@/game/engine/run-conditions";
 import type { CardDefinition } from "@/game/schemas/cards";
 import { startMusic, stopMusic } from "@/lib/music";
 import { getUsableItemDefinitionsMap } from "@/game/engine/items";
+import { getBossRoomIndexForMap } from "@/game/engine/run";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
 import {
   getFirstRunForcedMapChoiceIndex,
   isFirstRunScriptedEliteRoom,
   shouldShowFirstRunMapTutorial,
 } from "@/game/engine/first-run-script";
+import type { BiomeType } from "@/game/schemas/enums";
 
 export default function RunPage() {
   const { t } = useTranslation();
@@ -108,7 +118,6 @@ export default function RunPage() {
         cardDefs={cardDefsMap}
         enemyDefs={enemyDefs}
         allyDefs={allyDefs}
-        isAdmin={runData.userRole === "ADMIN"}
         isFirstRun={runData.isFirstRun ?? false}
       />
     </GameProvider>
@@ -119,13 +128,11 @@ function GameContent({
   cardDefs,
   enemyDefs,
   allyDefs,
-  isAdmin,
   isFirstRun,
 }: {
   cardDefs: Map<string, CardDefinition>;
   enemyDefs: Map<string, EnemyDefinition>;
   allyDefs: Map<string, AllyDefinition>;
-  isAdmin: boolean;
   isFirstRun: boolean;
 }) {
   const { t } = useTranslation();
@@ -150,6 +157,12 @@ function GameContent({
     useState(false);
   const [firstRewardTutorialDismissed, setFirstRewardTutorialDismissed] =
     useState(false);
+  const [bossEncounterOverride, setBossEncounterOverride] = useState<{
+    biome: BiomeType;
+    bossId: string;
+  } | null>(null);
+  const [isBossRelicSelectorArmed, setIsBossRelicSelectorArmed] =
+    useState(false);
   const [newBestiaryEntries, setNewBestiaryEntries] = useState<string[]>([]);
   const runEndedRef = useRef(false);
   // Always-current ref to avoid stale closures in callbacks
@@ -165,6 +178,7 @@ function GameContent({
   } = useCombatTurnFlow({ dispatch, stateRef });
   const isInfiniteMode = isInfiniteRunConditionId(state.selectedRunConditionId);
   const isDevBuild = process.env.NODE_ENV !== "production";
+  const isDevToolsEnabled = isDevBuild;
   const usableItemDefs = useMemo(() => getUsableItemDefinitionsMap(), []);
   const showGuidedFirstRunMapTutorial = shouldShowFirstRunMapTutorial(state);
   const forcedFirstRunMapChoiceIndex = getFirstRunForcedMapChoiceIndex(state);
@@ -222,19 +236,178 @@ function GameContent({
   const currentRoomChoices = state.map[state.currentRoom];
   const selectedCurrentRoom =
     currentRoomChoices?.find((room) => room.completed) ?? null;
+  const bossRoomIndex = getBossRoomIndexForMap(state.map);
+  const plannedBossId = currentRoomChoices?.[0]?.enemyIds?.[0];
+  const plannedBossDefinition = plannedBossId
+    ? enemyDefs.get(plannedBossId)
+    : undefined;
+  const bossDefinitionsByBiome = useMemo(() => {
+    const grouped = new Map<BiomeType, EnemyDefinition[]>();
+    const biomeOrder: BiomeType[] = [
+      "LIBRARY",
+      "VIKING",
+      "GREEK",
+      "EGYPTIAN",
+      "LOVECRAFTIAN",
+      "AZTEC",
+      "CELTIC",
+      "RUSSIAN",
+      "AFRICAN",
+    ];
+
+    for (const biome of biomeOrder) {
+      grouped.set(biome, []);
+    }
+
+    for (const enemy of enemyDefs.values()) {
+      if (!enemy.isBoss || enemy.isScriptedOnly) continue;
+      grouped.set(enemy.biome, [...(grouped.get(enemy.biome) ?? []), enemy]);
+    }
+
+    for (const [biome, bosses] of grouped.entries()) {
+      grouped.set(
+        biome,
+        [...bosses].sort((left, right) => left.name.localeCompare(right.name))
+      );
+    }
+
+    return grouped;
+  }, [enemyDefs]);
+  const hasAtlasOfRealms = state.relicIds.includes(ATLAS_OF_REALMS_RELIC_ID);
+  const hasExpandedBiomeSelection = hasAtlasOfRealms || isDevToolsEnabled;
+  const canUseHuntersSignet =
+    state.relicIds.includes(HUNTERS_SIGNET_RELIC_ID) &&
+    !hasRunRelicFlag(state, HUNTERS_SIGNET_USED_FLAG);
+  const showBossRoomMap =
+    phase === "MAP" && state.currentRoom === bossRoomIndex;
+  const activeBossRoomSelectorMode: "DEV" | "RELIC" | null =
+    showBossRoomMap && isDevToolsEnabled
+      ? "DEV"
+      : showBossRoomMap && canUseHuntersSignet && isBossRelicSelectorArmed
+        ? "RELIC"
+        : null;
+  const showBossRelicSelectorTrigger =
+    showBossRoomMap &&
+    !isDevToolsEnabled &&
+    canUseHuntersSignet &&
+    !isBossRelicSelectorArmed;
+  const bossSelectorChoicesByBiome = useMemo(() => {
+    if (activeBossRoomSelectorMode === "DEV") return bossDefinitionsByBiome;
+
+    const currentBiomeBosses =
+      bossDefinitionsByBiome.get(state.currentBiome) ?? [];
+    return new Map<BiomeType, EnemyDefinition[]>([
+      [state.currentBiome, currentBiomeBosses],
+    ]);
+  }, [activeBossRoomSelectorMode, bossDefinitionsByBiome, state.currentBiome]);
   const stableSpecialRoomType = useStableSpecialRoomType(phase, state);
 
-  const { handleSelectRoom, handleContinueSetup, handlePickBiome, handleHeal } =
-    useRunRoomActions({
-      state,
-      stateRef,
-      currentRoomChoices,
-      dispatch,
-      setPhase,
-      setForceEventWithRelicStable,
-      canOfferFreeUpgradeAtStart,
-      hasOpeningBiomeChoice,
+  useEffect(() => {
+    if (showBossRoomMap) return;
+    setIsBossRelicSelectorArmed(false);
+  }, [showBossRoomMap]);
+
+  useEffect(() => {
+    if (!activeBossRoomSelectorMode) return;
+
+    setBossEncounterOverride((current) => {
+      const preferredBiome =
+        activeBossRoomSelectorMode === "RELIC"
+          ? state.currentBiome
+          : (current?.biome ?? state.currentBiome);
+      const normalizedBiome =
+        (bossSelectorChoicesByBiome.get(preferredBiome)?.length ?? 0) > 0
+          ? preferredBiome
+          : state.currentBiome;
+      const bossOptions = bossSelectorChoicesByBiome.get(normalizedBiome) ?? [];
+      const normalizedBossId =
+        bossOptions.find((boss) => boss.id === current?.bossId)?.id ??
+        bossOptions.find((boss) => boss.id === plannedBossId)?.id ??
+        bossOptions[0]?.id;
+
+      if (!normalizedBossId) return current;
+      if (
+        current?.biome === normalizedBiome &&
+        current?.bossId === normalizedBossId
+      ) {
+        return current;
+      }
+
+      return {
+        biome: normalizedBiome,
+        bossId: normalizedBossId,
+      };
     });
+  }, [
+    activeBossRoomSelectorMode,
+    bossSelectorChoicesByBiome,
+    plannedBossId,
+    state.currentBiome,
+  ]);
+
+  const handleBossBiomeChange = useCallback(
+    (biome: BiomeType) => {
+      const bossOptions = bossSelectorChoicesByBiome.get(biome) ?? [];
+      if (bossOptions.length === 0) return;
+
+      setBossEncounterOverride((current) => ({
+        biome,
+        bossId:
+          bossOptions.find((boss) => boss.id === current?.bossId)?.id ??
+          bossOptions[0]!.id,
+      }));
+    },
+    [bossSelectorChoicesByBiome]
+  );
+
+  const handleBossChange = useCallback(
+    (bossId: string) => {
+      setBossEncounterOverride((current) => {
+        if (current) return { ...current, bossId };
+        return {
+          biome: state.currentBiome,
+          bossId,
+        };
+      });
+    },
+    [state.currentBiome]
+  );
+
+  const handleArmBossRelicSelector = useCallback(() => {
+    setIsBossRelicSelectorArmed(true);
+  }, []);
+
+  const handleCancelBossRelicSelector = useCallback(() => {
+    setIsBossRelicSelectorArmed(false);
+    setBossEncounterOverride(null);
+  }, []);
+
+  const {
+    handleSelectRoom,
+    handleContinueSetup,
+    handlePickBiome,
+    handleHeal,
+    handleDevSkipToBossRoom,
+  } = useRunRoomActions({
+    state,
+    stateRef,
+    currentRoomChoices,
+    dispatch,
+    setPhase,
+    setForceEventWithRelicStable,
+    canOfferFreeUpgradeAtStart,
+    hasOpeningBiomeChoice,
+    bossEncounterOverride:
+      activeBossRoomSelectorMode && bossEncounterOverride
+        ? {
+            ...bossEncounterOverride,
+            consumeRunFlag:
+              activeBossRoomSelectorMode === "RELIC"
+                ? HUNTERS_SIGNET_USED_FLAG
+                : undefined,
+          }
+        : null,
+  });
 
   useCombatOutcome({
     state,
@@ -317,8 +490,7 @@ function GameContent({
     cardDefs,
   });
   const { debugEnemySelection, debugDrawInfo } = useCombatDebugInfo({
-    isDevBuild,
-    isAdmin,
+    isDevBuild: isDevToolsEnabled,
     state,
     enemyDefs,
   });
@@ -349,16 +521,84 @@ function GameContent({
         )}
 
         {phase === "MAP" && (
-          <FloorMap
-            map={state.map}
-            currentRoom={state.currentRoom}
-            floor={state.floor}
-            currentBiome={state.currentBiome}
-            enemyDefs={enemyDefs}
-            showFirstMapTutorial={showGuidedFirstRunMapTutorial}
-            forcedChoiceIndex={forcedFirstRunMapChoiceIndex}
-            onSelectRoom={handleSelectRoom}
-          />
+          <>
+            {isDevToolsEnabled && state.currentRoom < bossRoomIndex && (
+              <div className="mx-auto mb-4 flex w-full max-w-5xl items-center justify-between gap-3 rounded-xl border border-sky-500/20 bg-slate-950/85 px-4 py-3">
+                <div className="min-w-0">
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-sky-300/70">
+                    {t("map.devShortcut.kicker")}
+                  </p>
+                  <p className="text-sm text-slate-100">
+                    {t("map.devShortcut.subtitle")}
+                  </p>
+                </div>
+
+                <RogueButton
+                  onClick={handleDevSkipToBossRoom}
+                  className="!shrink-0"
+                >
+                  {t("map.devShortcut.action")}
+                </RogueButton>
+              </div>
+            )}
+
+            {showBossRelicSelectorTrigger && (
+              <div className="mx-auto mb-4 flex w-full max-w-5xl items-center justify-between gap-3 rounded-xl border border-amber-500/20 bg-stone-950/85 px-4 py-3">
+                <div className="min-w-0">
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-amber-400/65">
+                    {t("map.relicBossSelector.readyKicker")}
+                  </p>
+                  <p className="text-sm text-amber-50">
+                    {t("map.relicBossSelector.readySubtitle")}
+                  </p>
+                </div>
+
+                <RogueButton
+                  onClick={handleArmBossRelicSelector}
+                  className="!shrink-0"
+                >
+                  {t("map.relicBossSelector.useAction")}
+                </RogueButton>
+              </div>
+            )}
+
+            {activeBossRoomSelectorMode && bossEncounterOverride && (
+              <BossRoomSelector
+                mode={activeBossRoomSelectorMode}
+                currentBiome={state.currentBiome}
+                selectedBiome={bossEncounterOverride.biome}
+                selectedBossId={bossEncounterOverride.bossId}
+                plannedBoss={plannedBossDefinition}
+                bossesByBiome={bossSelectorChoicesByBiome}
+                allowBiomeChange={activeBossRoomSelectorMode === "DEV"}
+                onBiomeChange={handleBossBiomeChange}
+                onBossChange={handleBossChange}
+              />
+            )}
+
+            {activeBossRoomSelectorMode === "RELIC" && (
+              <div className="mx-auto mb-4 flex w-full max-w-5xl justify-end">
+                <RogueButton
+                  onClick={handleCancelBossRelicSelector}
+                  type="text"
+                  className="!px-4"
+                >
+                  {t("map.relicBossSelector.cancelAction")}
+                </RogueButton>
+              </div>
+            )}
+
+            <FloorMap
+              map={state.map}
+              currentRoom={state.currentRoom}
+              floor={state.floor}
+              currentBiome={state.currentBiome}
+              enemyDefs={enemyDefs}
+              showFirstMapTutorial={showGuidedFirstRunMapTutorial}
+              forcedChoiceIndex={forcedFirstRunMapChoiceIndex}
+              onSelectRoom={handleSelectRoom}
+            />
+          </>
         )}
 
         {phase === "RUN_SETUP" && (
@@ -439,7 +679,7 @@ function GameContent({
               return char.powers.filter((_, i) => slots.includes(i + 1));
             })()}
             onCheatKillEnemy={
-              isDevBuild && isAdmin
+              isDevToolsEnabled
                 ? (enemyInstanceId) =>
                     dispatch({
                       type: "CHEAT_KILL_ENEMY",
@@ -452,7 +692,7 @@ function GameContent({
             isDiscarding={isDiscarding}
             isResolvingEndTurn={isResolvingEndTurn}
             attackBonus={state.metaBonuses?.attackBonus ?? 0}
-            biome={state.currentBiome}
+            biome={state.combat.encounterContext?.biome ?? state.currentBiome}
             shouldAutoLoseFirstRunElite={isFirstRunScriptedEliteRoom(state)}
             debugEnemySelection={debugEnemySelection ?? undefined}
             debugDrawInfo={debugDrawInfo ?? undefined}
@@ -555,7 +795,11 @@ function GameContent({
 
         {phase === "BIOME_SELECT" && state.pendingBiomeChoices && (
           <BiomeSelectScreen
-            choices={state.pendingBiomeChoices}
+            choices={
+              hasExpandedBiomeSelection
+                ? [...GAME_CONSTANTS.ALL_BIOMES]
+                : state.pendingBiomeChoices
+            }
             currentFloor={state.floor}
             onChoose={handlePickBiome}
           />

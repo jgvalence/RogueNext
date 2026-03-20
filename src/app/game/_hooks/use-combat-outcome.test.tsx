@@ -187,6 +187,85 @@ describe("useCombatOutcome", () => {
     expect(endRunActionMock).not.toHaveBeenCalled();
   });
 
+  it("uses the overridden biome and boss id when generating boss rewards", async () => {
+    const baseState = makeTestRunState();
+    const bossRoomIndex = baseState.map.length - 1;
+    const state = {
+      ...baseState,
+      currentRoom: bossRoomIndex,
+      currentBiome: "LIBRARY" as const,
+      map: baseState.map.map((rooms, index) =>
+        index === bossRoomIndex
+          ? [
+              {
+                index: bossRoomIndex,
+                type: "COMBAT" as const,
+                enemyIds: ["chapter_guardian"],
+                isElite: false,
+                completed: true,
+              },
+            ]
+          : rooms
+      ),
+      combat: makeTestCombat({
+        phase: "COMBAT_WON",
+        encounterContext: {
+          biome: "VIKING",
+          bossDefinitionId: "fenrir",
+        },
+        enemies: [
+          {
+            instanceId: "fenrir-1",
+            definitionId: "fenrir",
+            name: "Fenrir",
+            currentHp: 0,
+            maxHp: 150,
+            block: 0,
+            speed: 8,
+            buffs: [],
+            intentIndex: 0,
+            isBoss: true,
+          },
+        ],
+      }),
+    };
+    const params = makeParams({ state });
+
+    renderHook(() => useCombatOutcome(params));
+
+    await waitFor(() => {
+      expect(generateCombatRewardsMock).toHaveBeenCalledTimes(1);
+    });
+
+    expect(generateCombatRewardsMock).toHaveBeenCalledWith(
+      expect.any(Number),
+      expect.any(Number),
+      true,
+      false,
+      1,
+      expect.any(Array),
+      expect.anything(),
+      "VIKING",
+      expect.any(Array),
+      expect.anything(),
+      expect.any(Array),
+      expect.any(Number),
+      expect.any(Number),
+      "fenrir",
+      expect.any(Number),
+      expect.any(Number),
+      expect.any(Number),
+      expect.any(Array),
+      expect.any(Number),
+      expect.any(Boolean),
+      expect.any(String),
+      expect.any(Array),
+      expect.any(Number),
+      expect.any(Number)
+    );
+    expect(params.setIsBossRewards).toHaveBeenCalledWith(true);
+  });
+
   it("ends a normal defeat only once even if dependencies rerender", async () => {
     const state = {
       ...makeTestRunState(),

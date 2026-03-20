@@ -27,6 +27,8 @@ interface GameCardProps {
   isSelected?: boolean;
   isPendingInked?: boolean;
   isFrozen?: boolean;
+  isPetrified?: boolean;
+  isWebbed?: boolean;
   upgraded?: boolean;
   costModifier?: number;
   attackBonus?: number;
@@ -144,6 +146,33 @@ const rarityStyles: Record<
   },
 };
 
+const raritySymbols: Record<Rarity, string> = {
+  STARTER: "○",
+  COMMON: "•",
+  UNCOMMON: "◆",
+  RARE: "✦",
+};
+
+const biomeSymbols: Record<BiomeType, string> = {
+  LIBRARY: "✒",
+  VIKING: "⚒",
+  GREEK: "Ω",
+  EGYPTIAN: "☥",
+  LOVECRAFTIAN: "✶",
+  AZTEC: "☀",
+  CELTIC: "✣",
+  RUSSIAN: "❄",
+  AFRICAN: "✺",
+};
+
+const neutralOriginBadge =
+  "border-slate-300/25 bg-slate-200/10 text-slate-50/90";
+
+const characterOriginBadgeStyles: Record<string, string> = {
+  scribe: "border-amber-300/30 bg-amber-300/12 text-amber-50",
+  bibliothecaire: "border-sky-300/30 bg-sky-300/12 text-sky-50",
+};
+
 const biomeStyles: Record<
   BiomeType,
   { badge: string; edge: string; aura: string }
@@ -259,6 +288,20 @@ const redactionBadgeStyles: Record<CardRedactionType, string> = {
   TEXT: "border-slate-200/30 bg-slate-200/10 text-slate-100",
 };
 
+function getCardOriginSymbol(characterId?: string): string {
+  if (!characterId) return "N";
+
+  if (characterId === "scribe") return "S";
+  if (characterId === "bibliothecaire") return "B";
+
+  return characterId.slice(0, 1).toUpperCase();
+}
+
+function getCardOriginBadgeStyle(characterId?: string): string {
+  if (!characterId) return neutralOriginBadge;
+  return characterOriginBadgeStyles[characterId] ?? neutralOriginBadge;
+}
+
 export function GameCard({
   definition,
   redactionTypes = [],
@@ -267,6 +310,8 @@ export function GameCard({
   isSelected = false,
   isPendingInked = false,
   isFrozen = false,
+  isPetrified = false,
+  isWebbed = false,
   upgraded = false,
   costModifier = 0,
   attackBonus = 0,
@@ -316,8 +361,27 @@ export function GameCard({
   const localizedRarity = t(`gameCard.rarity.${displayDefinition.rarity}`, {
     defaultValue: displayDefinition.rarity,
   });
+  const raritySymbol = raritySymbols[displayDefinition.rarity];
   const localizedBiome = t(`biome.${displayDefinition.biome}`, {
     defaultValue: displayDefinition.biome,
+  });
+  const biomeSymbol = biomeSymbols[displayDefinition.biome];
+  const localizedCharacterName = displayDefinition.characterId
+    ? t(`characters.${displayDefinition.characterId}.name`, {
+        defaultValue: displayDefinition.characterId,
+      })
+    : null;
+  const originSymbol = getCardOriginSymbol(displayDefinition.characterId);
+  const originLabel =
+    localizedCharacterName ??
+    t("gameCard.labels.neutral", {
+      defaultValue: "Neutral",
+    });
+  const originBadgeStyle = getCardOriginBadgeStyle(
+    displayDefinition.characterId
+  );
+  const noInkLabel = t("gameCard.labels.noInk", {
+    defaultValue: "No Ink",
   });
   const isCondensed = detailMode === "condensed";
   const isScrollablePreview = size !== "sm" && !isCondensed;
@@ -393,6 +457,10 @@ export function GameCard({
           : "cursor-not-allowed opacity-55 saturate-[0.78]",
         isFrozen &&
           "shadow-[0_0_22px_rgba(34,211,238,0.2)] ring-2 ring-cyan-400/85",
+        isWebbed &&
+          "shadow-[0_0_22px_rgba(251,191,36,0.16)] ring-2 ring-amber-200/70",
+        isPetrified &&
+          "shadow-[0_0_22px_rgba(214,211,209,0.18)] ring-2 ring-stone-300/80",
         isSelected &&
           "z-30 -translate-y-2 ring-2 ring-offset-2 ring-offset-slate-950 lg:-translate-y-3",
         isSelected &&
@@ -500,6 +568,30 @@ export function GameCard({
                 Frozen
               </span>
             )}
+            {isPetrified && (
+              <span
+                className={cn(
+                  "rounded-full border border-stone-300/35 bg-stone-200/10 px-1.5 py-0.5 font-black uppercase tracking-[0.16em] text-stone-100",
+                  sizeStyle.badge
+                )}
+              >
+                {t("gameCard.labels.petrified", {
+                  defaultValue: "Petrified",
+                })}
+              </span>
+            )}
+            {isWebbed && (
+              <span
+                className={cn(
+                  "rounded-full border border-amber-200/35 bg-amber-200/10 px-1.5 py-0.5 font-black uppercase tracking-[0.16em] text-amber-100",
+                  sizeStyle.badge
+                )}
+              >
+                {t("gameCard.labels.webbed", {
+                  defaultValue: "Webbed",
+                })}
+              </span>
+            )}
             {sortedRedactionTypes.map((redactionType) => (
               <span
                 key={redactionType}
@@ -514,6 +606,49 @@ export function GameCard({
                 })}
               </span>
             ))}
+            {!showArtworkMeta && (
+              <>
+                <Tooltip content={localizedRarity}>
+                  <span
+                    role="img"
+                    aria-label={localizedRarity}
+                    className={cn(
+                      "inline-flex min-w-[1.6em] items-center justify-center rounded-full border px-1.5 py-0.5 font-black",
+                      sizeStyle.badge,
+                      rarityStyle.badge
+                    )}
+                  >
+                    {raritySymbol}
+                  </span>
+                </Tooltip>
+                <Tooltip content={originLabel}>
+                  <span
+                    role="img"
+                    aria-label={originLabel}
+                    className={cn(
+                      "inline-flex min-w-[1.6em] items-center justify-center rounded-full border px-1.5 py-0.5 font-black",
+                      sizeStyle.badge,
+                      originBadgeStyle
+                    )}
+                  >
+                    {originSymbol}
+                  </span>
+                </Tooltip>
+                <Tooltip content={localizedBiome}>
+                  <span
+                    role="img"
+                    aria-label={localizedBiome}
+                    className={cn(
+                      "inline-flex min-w-[1.6em] items-center justify-center rounded-full border px-1.5 py-0.5 font-black",
+                      sizeStyle.badge,
+                      biomeStyle.badge
+                    )}
+                  >
+                    {biomeSymbol}
+                  </span>
+                </Tooltip>
+              </>
+            )}
           </div>
         </div>
 
@@ -579,8 +714,10 @@ export function GameCard({
                       "mt-1 uppercase tracking-[0.24em] text-white/25",
                       sizeStyle.footer
                     )}
+                    role="img"
+                    aria-label={localizedBiome}
                   >
-                    {localizedBiome}
+                    {biomeSymbol}
                   </span>
                 </div>
               )}
@@ -595,24 +732,47 @@ export function GameCard({
               />
               {showArtworkMeta && (
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-1 border-t border-white/10 bg-slate-950/60 px-2 py-1 backdrop-blur-sm">
-                  <span
-                    className={cn(
-                      "truncate rounded-full border px-1.5 py-0.5 font-semibold uppercase tracking-[0.16em]",
-                      sizeStyle.badge,
-                      rarityStyle.badge
-                    )}
-                  >
-                    {localizedRarity}
-                  </span>
-                  <span
-                    className={cn(
-                      "truncate rounded-full border px-1.5 py-0.5 font-semibold uppercase tracking-[0.16em]",
-                      sizeStyle.badge,
-                      biomeStyle.badge
-                    )}
-                  >
-                    {localizedBiome}
-                  </span>
+                  <div className="flex min-w-0 items-center gap-1">
+                    <Tooltip content={localizedRarity}>
+                      <span
+                        role="img"
+                        aria-label={localizedRarity}
+                        className={cn(
+                          "inline-flex min-w-[1.6em] items-center justify-center rounded-full border px-1.5 py-0.5 font-black",
+                          sizeStyle.badge,
+                          rarityStyle.badge
+                        )}
+                      >
+                        {raritySymbol}
+                      </span>
+                    </Tooltip>
+                    <Tooltip content={originLabel}>
+                      <span
+                        role="img"
+                        aria-label={originLabel}
+                        className={cn(
+                          "inline-flex min-w-[1.6em] items-center justify-center rounded-full border px-1.5 py-0.5 font-black",
+                          sizeStyle.badge,
+                          originBadgeStyle
+                        )}
+                      >
+                        {originSymbol}
+                      </span>
+                    </Tooltip>
+                  </div>
+                  <Tooltip content={localizedBiome}>
+                    <span
+                      role="img"
+                      aria-label={localizedBiome}
+                      className={cn(
+                        "inline-flex min-w-[1.6em] items-center justify-center rounded-full border px-1.5 py-0.5 font-black",
+                        sizeStyle.badge,
+                        biomeStyle.badge
+                      )}
+                    >
+                      {biomeSymbol}
+                    </span>
+                  </Tooltip>
                 </div>
               )}
             </div>
@@ -768,13 +928,21 @@ export function GameCard({
                   )}
                 >
                   <span className="uppercase tracking-[0.18em] text-slate-400/80">
-                    {upgraded
-                      ? t("gameCard.labels.upgraded")
-                      : t("gameCard.labels.normal")}
+                    {noInkLabel}
                   </span>
-                  <span className="truncate uppercase tracking-[0.16em] text-slate-500/90">
-                    {localizedBiome}
-                  </span>
+                  <Tooltip content={localizedBiome}>
+                    <span
+                      role="img"
+                      aria-label={localizedBiome}
+                      className={cn(
+                        "inline-flex min-w-[1.6em] items-center justify-center rounded-full border px-1.5 py-0.5 font-black",
+                        sizeStyle.footer,
+                        biomeStyle.badge
+                      )}
+                    >
+                      {biomeSymbol}
+                    </span>
+                  </Tooltip>
                 </div>
               )}
             </div>

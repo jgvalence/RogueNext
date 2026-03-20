@@ -25,6 +25,40 @@ import {
   registerChapterGuardianBlockGain,
 } from "./chapter-guardian";
 import { enemyDebuffsBypassBlock, getBossDebuffBonus } from "./difficulty";
+import { registerBabaYagaBlockGain } from "./baba-yaga";
+import { registerFenrirHuntHit } from "./fenrir";
+import { registerHydraDamage, synchronizeHydraCombatState } from "./hydra";
+import { synchronizeMedusaCombatState } from "./medusa";
+import { synchronizeKoscheiCombatState } from "./koschei";
+import { synchronizeAnansiCombatState } from "./anansi-weaver";
+import {
+  modifyCernunnosIncomingDamage,
+  registerCernunnosDamage,
+  synchronizeCernunnosCombatState,
+} from "./cernunnos-shade";
+import { synchronizeDagdaCombatState } from "./dagda-shadow";
+import { synchronizeNyarlathotepCombatState } from "./nyarlathotep";
+import { applyRelicsOnInkSpent } from "./relics";
+import {
+  registerOsirisBlockGain,
+  registerOsirisDamageDealt,
+  synchronizeOsirisCombatState,
+} from "./osiris-judgment";
+import {
+  modifyQuetzalcoatlIncomingDamage,
+  registerQuetzalcoatlDamage,
+  synchronizeQuetzalcoatlCombatState,
+} from "./quetzalcoatl";
+import {
+  registerRaSolarBarrierBreak,
+  synchronizeRaCombatState,
+} from "./ra-avatar";
+import {
+  registerSoundiataInterruptDamage,
+  synchronizeSoundiataCombatState,
+} from "./soundiata-spirit";
+import { synchronizeShubCombatState } from "./shub-spawn";
+import { synchronizeTezcatlipocaCombatState } from "./tezcatlipoca";
 import { nanoid } from "nanoid";
 import type { RNG } from "./rng";
 
@@ -132,6 +166,76 @@ function updateEnemy(
   };
 }
 
+function getFenrirHuntSource(
+  source: EffectSource
+): "player" | "ally" | "other" {
+  if (source === "player") return "player";
+  if (source.type === "ally") return "ally";
+  return "other";
+}
+
+function synchronizeBossStates(state: CombatState): CombatState {
+  return synchronizeKoscheiCombatState(
+    synchronizeHydraCombatState(
+      synchronizeMedusaCombatState(
+        synchronizeQuetzalcoatlCombatState(
+          synchronizeTezcatlipocaCombatState(
+            synchronizeOsirisCombatState(
+              synchronizeShubCombatState(
+                synchronizeNyarlathotepCombatState(
+                  synchronizeSoundiataCombatState(
+                    synchronizeAnansiCombatState(
+                      synchronizeCernunnosCombatState(
+                        synchronizeDagdaCombatState(
+                          synchronizeRaCombatState(state)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
+function getAppliedEnemyDamage(
+  previousEnemy: Pick<EnemyState, "currentHp" | "block">,
+  nextEnemy: Pick<EnemyState, "currentHp" | "block">
+): number {
+  return (
+    Math.max(0, previousEnemy.currentHp - nextEnemy.currentHp) +
+    Math.max(0, previousEnemy.block - nextEnemy.block)
+  );
+}
+
+function registerFriendlyEnemyDamage(
+  state: CombatState,
+  previousEnemy: EnemyState,
+  nextEnemy: Pick<EnemyState, "currentHp" | "block">,
+  source: EffectSource
+): CombatState {
+  let current = registerRaSolarBarrierBreak(
+    state,
+    previousEnemy.instanceId,
+    source,
+    previousEnemy.block,
+    nextEnemy.block
+  );
+  const appliedDamage = getAppliedEnemyDamage(previousEnemy, nextEnemy);
+  if (appliedDamage <= 0) return current;
+  current = registerSoundiataInterruptDamage(
+    current,
+    previousEnemy.instanceId,
+    appliedDamage,
+    source
+  );
+  return registerOsirisDamageDealt(current, appliedDamage, source);
+}
+
 function updateAlly(
   state: CombatState,
   instanceId: string,
@@ -177,7 +281,7 @@ function applyNeutralDamageToAllEnemies(
       block: result.block,
     }));
   }
-  return current;
+  return synchronizeBossStates(current);
 }
 
 function advancePlayerPoisonBurst(
@@ -382,12 +486,35 @@ function applyDamageToTarget(
         ),
         source === "player" ? "player" : "other"
       );
-      const result = applyDamage(enemy, finalDmg);
+      const quetzalModifiedDamage = modifyQuetzalcoatlIncomingDamage(
+        s,
+        enemy.instanceId,
+        source,
+        finalDmg
+      );
+      const modifiedDamage = modifyCernunnosIncomingDamage(
+        s,
+        enemy.instanceId,
+        source,
+        quetzalModifiedDamage
+      );
+      const result = applyDamage(enemy, modifiedDamage);
       s = updateEnemy(s, enemy.instanceId, (e) => ({
         ...e,
         currentHp: result.currentHp,
         block: result.block,
       }));
+      s = registerFriendlyEnemyDamage(s, enemy, result, source);
+      if (modifiedDamage > 0) {
+        s = registerHydraDamage(s, enemy.instanceId, source);
+        s = registerQuetzalcoatlDamage(s, enemy.instanceId, source);
+        s = registerCernunnosDamage(s, enemy.instanceId, source);
+        s = registerFenrirHuntHit(
+          s,
+          enemy.instanceId,
+          getFenrirHuntSource(source)
+        );
+      }
     }
     return s;
   }
@@ -411,12 +538,40 @@ function applyDamageToTarget(
       ),
       source === "player" ? "player" : "other"
     );
-    const result = applyDamage(enemy, finalDmg);
-    return updateEnemy(state, target.instanceId, (e) => ({
+    const quetzalModifiedDamage = modifyQuetzalcoatlIncomingDamage(
+      state,
+      target.instanceId,
+      source,
+      finalDmg
+    );
+    const modifiedDamage = modifyCernunnosIncomingDamage(
+      state,
+      target.instanceId,
+      source,
+      quetzalModifiedDamage
+    );
+    const result = applyDamage(enemy, modifiedDamage);
+    let nextState = updateEnemy(state, target.instanceId, (e) => ({
       ...e,
       currentHp: result.currentHp,
       block: result.block,
     }));
+    nextState = registerFriendlyEnemyDamage(nextState, enemy, result, source);
+    if (modifiedDamage > 0) {
+      nextState = registerHydraDamage(nextState, target.instanceId, source);
+      nextState = registerQuetzalcoatlDamage(
+        nextState,
+        target.instanceId,
+        source
+      );
+      nextState = registerCernunnosDamage(nextState, target.instanceId, source);
+      nextState = registerFenrirHuntHit(
+        nextState,
+        target.instanceId,
+        getFenrirHuntSource(source)
+      );
+    }
+    return nextState;
   }
 
   if (target === "all_allies") {
@@ -642,12 +797,35 @@ function applyDirectDamageToTarget(
         ),
         source === "player" ? "player" : "other"
       );
-      const result = applyDirectDamage(enemy, finalDmg);
+      const quetzalModifiedDamage = modifyQuetzalcoatlIncomingDamage(
+        s,
+        enemy.instanceId,
+        source,
+        finalDmg
+      );
+      const modifiedDamage = modifyCernunnosIncomingDamage(
+        s,
+        enemy.instanceId,
+        source,
+        quetzalModifiedDamage
+      );
+      const result = applyDirectDamage(enemy, modifiedDamage);
       s = updateEnemy(s, enemy.instanceId, (e) => ({
         ...e,
         currentHp: result.currentHp,
         block: result.block,
       }));
+      s = registerFriendlyEnemyDamage(s, enemy, result, source);
+      if (modifiedDamage > 0) {
+        s = registerHydraDamage(s, enemy.instanceId, source);
+        s = registerQuetzalcoatlDamage(s, enemy.instanceId, source);
+        s = registerCernunnosDamage(s, enemy.instanceId, source);
+        s = registerFenrirHuntHit(
+          s,
+          enemy.instanceId,
+          getFenrirHuntSource(source)
+        );
+      }
     }
     return s;
   }
@@ -671,12 +849,40 @@ function applyDirectDamageToTarget(
       ),
       source === "player" ? "player" : "other"
     );
-    const result = applyDirectDamage(enemy, finalDmg);
-    return updateEnemy(state, target.instanceId, (e) => ({
+    const quetzalModifiedDamage = modifyQuetzalcoatlIncomingDamage(
+      state,
+      target.instanceId,
+      source,
+      finalDmg
+    );
+    const modifiedDamage = modifyCernunnosIncomingDamage(
+      state,
+      target.instanceId,
+      source,
+      quetzalModifiedDamage
+    );
+    const result = applyDirectDamage(enemy, modifiedDamage);
+    let nextState = updateEnemy(state, target.instanceId, (e) => ({
       ...e,
       currentHp: result.currentHp,
       block: result.block,
     }));
+    nextState = registerFriendlyEnemyDamage(nextState, enemy, result, source);
+    if (modifiedDamage > 0) {
+      nextState = registerHydraDamage(nextState, target.instanceId, source);
+      nextState = registerQuetzalcoatlDamage(
+        nextState,
+        target.instanceId,
+        source
+      );
+      nextState = registerCernunnosDamage(nextState, target.instanceId, source);
+      nextState = registerFenrirHuntHit(
+        nextState,
+        target.instanceId,
+        getFenrirHuntSource(source)
+      );
+    }
+    return nextState;
   }
 
   if (target === "all_allies") {
@@ -807,7 +1013,13 @@ function applyBlockToTarget(
         0,
         nextState.player.block - state.player.block
       );
-      return registerChapterGuardianBlockGain(nextState, gainedBlock);
+      return registerOsirisBlockGain(
+        registerBabaYagaBlockGain(
+          registerChapterGuardianBlockGain(nextState, gainedBlock),
+          gainedBlock
+        ),
+        gainedBlock
+      );
     }
     return nextState;
   }
@@ -821,28 +1033,38 @@ function applyBlockToTarget(
 
   if (target === "all_allies") {
     let s = state;
+    let gainedBlockTotal = 0;
     for (const ally of state.allies) {
       if (ally.currentHp <= 0) continue;
       if (getBuffStacks(ally.buffs, "STONEBOUND") > 0) continue;
+      const nextBlock = applyBlock(ally.block, amount, 0);
+      gainedBlockTotal += Math.max(0, nextBlock - ally.block);
       s = updateAlly(s, ally.instanceId, (a) => ({
         ...a,
-        block: applyBlock(a.block, amount, 0),
+        block: nextBlock,
       }));
     }
-    return s;
+    return source === "player"
+      ? registerOsirisBlockGain(s, gainedBlockTotal)
+      : s;
   }
 
   if (typeof target === "object" && target.type === "ally") {
     const ally = state.allies.find(
       (entry) => entry.instanceId === target.instanceId
     );
+    if (!ally) return state;
     if (getBuffStacks(ally?.buffs ?? [], "STONEBOUND") > 0) {
       return state;
     }
-    return updateAlly(state, target.instanceId, (a) => ({
+    const nextBlock = applyBlock(ally.block, amount, 0);
+    const nextState = updateAlly(state, target.instanceId, (a) => ({
       ...a,
-      block: applyBlock(a.block, amount, 0),
+      block: nextBlock,
     }));
+    return source === "player"
+      ? registerOsirisBlockGain(nextState, Math.max(0, nextBlock - ally.block))
+      : nextState;
   }
 
   return state;
@@ -1063,10 +1285,13 @@ function applyDamagePerCurrentInkToTarget(
     );
   }
 
-  return updatePlayer(nextState, (player) => ({
-    ...player,
-    inkCurrent: 0,
-  }));
+  return applyRelicsOnInkSpent(
+    updatePlayer(nextState, (player) => ({
+      ...player,
+      inkCurrent: 0,
+    })),
+    currentInk
+  );
 }
 
 function applyDamagePerClogInDiscardToTarget(
@@ -1132,10 +1357,13 @@ function applyBlockPerCurrentInkToTarget(
     );
   }
 
-  return updatePlayer(nextState, (player) => ({
-    ...player,
-    inkCurrent: 0,
-  }));
+  return applyRelicsOnInkSpent(
+    updatePlayer(nextState, (player) => ({
+      ...player,
+      inkCurrent: 0,
+    })),
+    currentInk
+  );
 }
 
 function applyBlockPerExhaustedCardToTarget(
@@ -1326,7 +1554,7 @@ function moveRandomNonClogDiscardToHand(
     remaining--;
   }
 
-  return current;
+  return synchronizeBossStates(current);
 }
 
 function freezeCardsInHand(state: CombatState, count: number): CombatState {
@@ -1748,10 +1976,21 @@ export function resolveEffect(
       };
 
     case "DRAIN_INK":
-      return updatePlayer(state, (p) => ({
-        ...p,
-        inkCurrent: Math.max(0, p.inkCurrent - effect.value),
-      }));
+      return ctx.source === "player"
+        ? applyRelicsOnInkSpent(
+            updatePlayer(state, (p) => ({
+              ...p,
+              inkCurrent: Math.max(0, p.inkCurrent - effect.value),
+            })),
+            Math.min(
+              Math.max(0, state.player.inkCurrent),
+              Math.max(0, effect.value)
+            )
+          )
+        : updatePlayer(state, (p) => ({
+            ...p,
+            inkCurrent: Math.max(0, p.inkCurrent - effect.value),
+          }));
 
     case "EXHAUST":
       // Handled at card-play level, not here
@@ -2046,5 +2285,5 @@ export function resolveEffects(
       current = resolveEffect(current, effect, ctx, rng);
     }
   }
-  return current;
+  return synchronizeBossStates(current);
 }

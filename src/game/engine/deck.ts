@@ -8,6 +8,8 @@ import {
   isCurseCardDefinitionId,
   shouldExhaustAtEndOfTurn,
 } from "./status-cards";
+import { isCardWebbed } from "./anansi-weaver";
+import { registerNyarlathotepDrawAction } from "./nyarlathotep";
 
 export type DrawSource = "PLAYER" | "ENEMY" | "SYSTEM";
 const MAX_DRAW_DEBUG_EVENTS = 20;
@@ -187,6 +189,9 @@ export function drawCards(
         ) {
           pendingOverflow++;
         }
+        if (isCardWebbed(current, card.instanceId)) {
+          frozen.add(card.instanceId);
+        }
         if (freezeRemaining > 0) {
           frozen.add(card.instanceId);
           freezeRemaining--;
@@ -275,7 +280,7 @@ export function drawCards(
     }
   }
 
-  return next;
+  return registerNyarlathotepDrawAction(next, source, reason, movedToHand);
 }
 
 export function discardHand(state: CombatState): CombatState {

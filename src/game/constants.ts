@@ -9,6 +9,17 @@ export const GAME_CONSTANTS = {
   MAX_ENEMIES: 4,
   MAX_HAND_SIZE: 13,
   MAX_FLOORS: 3,
+  ALL_BIOMES: [
+    "LIBRARY",
+    "VIKING",
+    "GREEK",
+    "EGYPTIAN",
+    "LOVECRAFTIAN",
+    "AZTEC",
+    "CELTIC",
+    "RUSSIAN",
+    "AFRICAN",
+  ] as BiomeType[],
   AVAILABLE_BIOMES: [
     "VIKING",
     "GREEK",

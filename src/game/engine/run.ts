@@ -91,10 +91,7 @@ function inferRunCharacterId(starterCards: CardDefinition[]): string {
   return characterIds.length === 1 ? characterIds[0]! : "scribe";
 }
 
-const RANDOM_BIOME_CHOICE_POOL = [
-  "LIBRARY",
-  ...GAME_CONSTANTS.AVAILABLE_BIOMES,
-] as BiomeType[];
+const RANDOM_BIOME_CHOICE_POOL = [...GAME_CONSTANTS.ALL_BIOMES] as BiomeType[];
 
 export function drawRandomBiomeChoices(rng: RNG): [BiomeType, BiomeType] {
   const shuffled = rng.shuffle(RANDOM_BIOME_CHOICE_POOL);
@@ -265,6 +262,7 @@ export function createNewRun(
     allyIds: [],
     allyCurrentHps: {},
     relicIds: [],
+    relicRunFlags: {},
     usableItems: [],
     usableItemCapacity: GAME_CONSTANTS.MAX_USABLE_ITEMS,
     freeUpgradeUsed: false,
@@ -1919,6 +1917,8 @@ export function completeCombat(
 ): RunState {
   const isBossRoom =
     runState.currentRoom === getBossRoomIndexForMap(runState.map);
+  const encounterBiome =
+    combatResult.encounterContext?.biome ?? runState.currentBiome;
   const isInfiniteMode = isInfiniteRunConditionId(
     runState.selectedRunConditionId
   );
@@ -2038,14 +2038,14 @@ export function completeCombat(
   if (selectedRoom?.isElite) {
     unlockProgress = onEliteKilled(
       unlockProgress,
-      runState.currentBiome,
+      encounterBiome,
       runState.characterId
     );
   }
   if (isBossRoom) {
     unlockProgress = onBossKilled(
       unlockProgress,
-      runState.currentBiome,
+      encounterBiome,
       runState.characterId
     );
   }

@@ -5,7 +5,7 @@ import {
   EnemyStateSchema,
   AllyStateSchema,
 } from "./entities";
-import { InkPowerType } from "./enums";
+import { BiomeType, InkPowerType } from "./enums";
 
 export const CombatPhase = z.enum([
   "PLAYER_TURN",
@@ -52,6 +52,14 @@ export const CardRedactionSchema = z.object({
 });
 export type CardRedaction = z.infer<typeof CardRedactionSchema>;
 
+export const CombatEncounterContextSchema = z.object({
+  biome: BiomeType.optional(),
+  bossDefinitionId: z.string().optional(),
+});
+export type CombatEncounterContext = z.infer<
+  typeof CombatEncounterContextSchema
+>;
+
 export const CombatStateSchema = z.object({
   floor: z.number().int().default(1),
   difficultyLevel: z.number().int().min(0).optional(),
@@ -68,10 +76,16 @@ export const CombatStateSchema = z.object({
   pendingHandOverflowExhaust: z.number().int().min(0).default(0),
   drawDebugHistory: z.array(DrawDebugEventSchema).default([]),
   inkPowerUsedThisTurn: z.boolean().default(false),
+  usedInkPowersThisTurn: z.array(InkPowerType).optional(),
   firstHitReductionUsed: z.boolean().default(false),
   playerDisruption: TurnDisruptionSchema.default({}),
   nextPlayerDisruption: TurnDisruptionSchema.default({}),
   cardRedactions: z.array(CardRedactionSchema).optional(),
+  petrifiedCardCostBonuses: z
+    .record(z.string(), z.number().int().min(0))
+    .optional(),
+  webbedCardIds: z.array(z.string()).optional(),
+  encounterContext: CombatEncounterContextSchema.optional(),
   relicFlags: z.record(z.string(), z.boolean()).optional(),
   relicCounters: z.record(z.string(), z.number()).optional(),
   relicModifiers: z

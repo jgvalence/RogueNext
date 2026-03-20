@@ -131,6 +131,13 @@ export const relicDefinitions: RelicDefinitionData[] = [
     rarity: "UNCOMMON",
   },
   {
+    id: "hunters_signet",
+    name: "Hunter's Signet",
+    description:
+      "Once per run, at a boss room, you may choose which boss of the current biome you face.",
+    rarity: "UNCOMMON",
+  },
+  {
     id: "ink_stamp",
     name: "Ink Stamp",
     description: "Start each combat with 3 ink.",
@@ -194,7 +201,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "tendril_star_knot",
     name: "NAud Stellaire Tentaculaire",
-    description: "Gain 1 Ink at the start of each turn. Add 1 Dazed to your discard pile.",
+    description:
+      "Gain 1 Ink at the start of each turn. Add 1 Dazed to your discard pile.",
     rarity: "UNCOMMON",
   },
   {
@@ -331,6 +339,19 @@ export const relicDefinitions: RelicDefinitionData[] = [
     rarity: "RARE",
   },
   {
+    id: "menders_inkwell",
+    name: "Mender's Inkwell",
+    description: "Whenever you spend Ink, heal that much HP.",
+    rarity: "RARE",
+  },
+  {
+    id: "echoing_inkstone",
+    name: "Echoing Inkstone",
+    description:
+      "Inked cards, cards with Ink cost, and current-ink payoffs have their effects doubled.",
+    rarity: "RARE",
+  },
+  {
     id: "mummy_linen_knot",
     name: "NAud de Lin de Momie",
     description: "Elites start combat with 25% less HP.",
@@ -371,6 +392,12 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "spawn_void_ichor",
     name: "Ichor de Rejeton du Vide",
     description: "The first time a card Exhausts each turn, gain 1 Ink.",
+    rarity: "RARE",
+  },
+  {
+    id: "atlas_of_realms",
+    name: "Atlas of Realms",
+    description: "When choosing the next biome, choose from all 8 realms.",
     rarity: "RARE",
   },
   {

@@ -29,6 +29,72 @@ import {
   initializeArchivistCombat,
   synchronizeArchivistCombatState,
 } from "./archivist";
+import { initializeFenrirCombat, resetFenrirHuntForPlayerTurn } from "./fenrir";
+import { initializeHelQueenCombat } from "./hel-queen";
+import { initializeBabaYagaCombat, resetBabaYagaTurnState } from "./baba-yaga";
+import {
+  finalizeHydraPlayerTurn,
+  initializeHydraCombat,
+  resetHydraTurnState,
+  synchronizeHydraCombatState,
+} from "./hydra";
+import {
+  initializeDagdaCombat,
+  synchronizeDagdaCombatState,
+} from "./dagda-shadow";
+import {
+  initializeKoscheiCombat,
+  synchronizeKoscheiCombatState,
+} from "./koschei";
+import {
+  initializeMedusaCombat,
+  startMedusaPlayerTurn,
+  synchronizeMedusaCombatState,
+} from "./medusa";
+import {
+  finalizeRaPlayerTurn,
+  initializeRaCombat,
+  synchronizeRaCombatState,
+} from "./ra-avatar";
+import {
+  initializeNyarlathotepCombat,
+  startNyarlathotepPlayerTurn,
+  synchronizeNyarlathotepCombatState,
+} from "./nyarlathotep";
+import {
+  initializeShubSpawnCombat,
+  synchronizeShubCombatState,
+} from "./shub-spawn";
+import {
+  initializeSoundiataCombat,
+  startSoundiataPlayerTurn,
+  synchronizeSoundiataCombatState,
+} from "./soundiata-spirit";
+import {
+  finalizeQuetzalcoatlPlayerTurn,
+  initializeQuetzalcoatlCombat,
+  startQuetzalcoatlPlayerTurn,
+  synchronizeQuetzalcoatlCombatState,
+} from "./quetzalcoatl";
+import {
+  initializeCernunnosCombat,
+  synchronizeCernunnosCombatState,
+} from "./cernunnos-shade";
+import {
+  initializeAnansiCombat,
+  startAnansiPlayerTurn,
+  synchronizeAnansiCombatState,
+} from "./anansi-weaver";
+import {
+  initializeOsirisCombat,
+  resetOsirisTurnState,
+  synchronizeOsirisCombatState,
+} from "./osiris-judgment";
+import {
+  initializeTezcatlipocaCombat,
+  startTezcatlipocaPlayerTurn,
+  synchronizeTezcatlipocaCombatState,
+} from "./tezcatlipoca";
 import { matchesCardCharacter } from "./card-filters";
 import {
   buildConditionCombatStartCards,
@@ -259,6 +325,7 @@ export function initCombat(
     pendingHandOverflowExhaust: 0,
     drawDebugHistory: [],
     inkPowerUsedThisTurn: false,
+    usedInkPowersThisTurn: [],
     firstHitReductionUsed: false,
     playerDisruption: { ...EMPTY_DISRUPTION },
     nextPlayerDisruption: { ...EMPTY_DISRUPTION },
@@ -276,9 +343,37 @@ export function initCombat(
 
   // Apply meta-progression bonuses if any
   const combatWithChapterGuardian = initializeChapterGuardianCombat(combat);
+  const combatWithFenrir = initializeFenrirCombat(combatWithChapterGuardian);
+  const combatWithHelQueen = initializeHelQueenCombat(combatWithFenrir);
+  const combatWithBabaYaga = initializeBabaYagaCombat(combatWithHelQueen);
+  const combatWithTezcatlipoca =
+    initializeTezcatlipocaCombat(combatWithBabaYaga);
+  const combatWithQuetzalcoatl = initializeQuetzalcoatlCombat(
+    combatWithTezcatlipoca
+  );
+  const combatWithMedusa = initializeMedusaCombat(combatWithQuetzalcoatl, rng);
+  const combatWithHydra = initializeHydraCombat(combatWithMedusa);
+  const combatWithKoschei = initializeKoscheiCombat(combatWithHydra);
+  const combatWithRa = initializeRaCombat(combatWithKoschei);
+  const combatWithOsiris = initializeOsirisCombat(combatWithRa);
+  const combatWithNyarlathotep = initializeNyarlathotepCombat(
+    combatWithOsiris,
+    rng
+  );
+  const combatWithShub = initializeShubSpawnCombat(
+    combatWithNyarlathotep,
+    enemyDefs
+  );
+  const combatWithDagda = initializeDagdaCombat(combatWithShub, enemyDefs);
+  const combatWithCernunnos = initializeCernunnosCombat(combatWithDagda);
+  const combatWithSoundiata = initializeSoundiataCombat(
+    combatWithCernunnos,
+    enemyDefs
+  );
+  const combatWithAnansi = initializeAnansiCombat(combatWithSoundiata, rng);
   const combatWithMeta = bonuses
-    ? applyMetaBonusesToCombat(combatWithChapterGuardian, bonuses)
-    : combatWithChapterGuardian;
+    ? applyMetaBonusesToCombat(combatWithAnansi, bonuses)
+    : combatWithAnansi;
   const startCombatCards = buildConditionCombatStartCards(
     runState.selectedRunConditionId,
     cardDefs
@@ -322,6 +417,7 @@ export function startPlayerTurn(
     phase: "PLAYER_TURN",
     turnNumber: state.turnNumber + 1,
     inkPowerUsedThisTurn: false,
+    usedInkPowersThisTurn: [],
     playerDisruption: mergeDisruptions(
       state.playerDisruption ?? { ...EMPTY_DISRUPTION },
       state.nextPlayerDisruption ?? { ...EMPTY_DISRUPTION }
@@ -337,7 +433,17 @@ export function startPlayerTurn(
   };
 
   current = resetChapterGuardianTurnState(current);
+  current = resetFenrirHuntForPlayerTurn(current);
+  current = resetHydraTurnState(current);
+  current = resetBabaYagaTurnState(current);
   current = applyRelicsOnTurnStart(current, relicIds, rng);
+  current = resetOsirisTurnState(current);
+  current = startNyarlathotepPlayerTurn(current, rng);
+  current = startSoundiataPlayerTurn(current);
+  current = startTezcatlipocaPlayerTurn(current);
+  current = startQuetzalcoatlPlayerTurn(current);
+  current = startMedusaPlayerTurn(current, rng);
+  current = startAnansiPlayerTurn(current, rng);
   current = drawCards(
     current,
     Math.max(
@@ -348,7 +454,31 @@ export function startPlayerTurn(
     "SYSTEM",
     "TURN_START_BASE_DRAW"
   );
-  return current;
+  return synchronizeKoscheiCombatState(
+    synchronizeHydraCombatState(
+      synchronizeMedusaCombatState(
+        synchronizeQuetzalcoatlCombatState(
+          synchronizeTezcatlipocaCombatState(
+            synchronizeOsirisCombatState(
+              synchronizeShubCombatState(
+                synchronizeNyarlathotepCombatState(
+                  synchronizeSoundiataCombatState(
+                    synchronizeAnansiCombatState(
+                      synchronizeCernunnosCombatState(
+                        synchronizeDagdaCombatState(
+                          synchronizeRaCombatState(current)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
 }
 
 /**
@@ -361,11 +491,38 @@ export function endPlayerTurn(
   const afterRelics = applyRelicsOnTurnEnd(state, relicIds);
   const afterGuardian = finalizeChapterGuardianPlayerTurn(afterRelics);
   const afterDiscard = discardHand(afterGuardian);
-  return {
-    ...afterDiscard,
-    phase: "ALLIES_ENEMIES_TURN",
-    playerDisruption: { ...EMPTY_DISRUPTION },
-  };
+  const afterHydra = finalizeHydraPlayerTurn(afterDiscard);
+  const afterQuetzalcoatl = finalizeQuetzalcoatlPlayerTurn(afterHydra);
+  const afterRa = finalizeRaPlayerTurn(afterQuetzalcoatl);
+  return synchronizeKoscheiCombatState(
+    synchronizeHydraCombatState(
+      synchronizeMedusaCombatState(
+        synchronizeQuetzalcoatlCombatState(
+          synchronizeTezcatlipocaCombatState(
+            synchronizeOsirisCombatState(
+              synchronizeShubCombatState(
+                synchronizeNyarlathotepCombatState(
+                  synchronizeSoundiataCombatState(
+                    synchronizeAnansiCombatState(
+                      synchronizeCernunnosCombatState(
+                        synchronizeDagdaCombatState(
+                          synchronizeRaCombatState({
+                            ...afterRa,
+                            phase: "ALLIES_ENEMIES_TURN",
+                            playerDisruption: { ...EMPTY_DISRUPTION },
+                          })
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
 }
 
 /**
@@ -392,28 +549,54 @@ export function executeAlliesEnemiesTurn(
  * Check win/loss conditions and update phase accordingly.
  */
 export function checkCombatEnd(state: CombatState): CombatState {
-  if (state.player.currentHp <= 0) {
-    if (state.relicFlags?.deathless_locket_available) {
+  const current = synchronizeKoscheiCombatState(
+    synchronizeHydraCombatState(
+      synchronizeMedusaCombatState(
+        synchronizeQuetzalcoatlCombatState(
+          synchronizeTezcatlipocaCombatState(
+            synchronizeOsirisCombatState(
+              synchronizeShubCombatState(
+                synchronizeNyarlathotepCombatState(
+                  synchronizeSoundiataCombatState(
+                    synchronizeAnansiCombatState(
+                      synchronizeCernunnosCombatState(
+                        synchronizeDagdaCombatState(
+                          synchronizeRaCombatState(state)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+
+  if (current.player.currentHp <= 0) {
+    if (current.relicFlags?.deathless_locket_available) {
       return {
-        ...state,
+        ...current,
         player: {
-          ...state.player,
-          currentHp: Math.max(1, Math.floor(state.player.maxHp * 0.3)),
-          block: state.player.block + 20,
+          ...current.player,
+          currentHp: Math.max(1, Math.floor(current.player.maxHp * 0.3)),
+          block: current.player.block + 20,
         },
         relicFlags: {
-          ...(state.relicFlags ?? {}),
+          ...(current.relicFlags ?? {}),
           deathless_locket_available: false,
         },
       };
     }
-    return { ...state, phase: "COMBAT_LOST" };
+    return { ...current, phase: "COMBAT_LOST" };
   }
 
-  const allEnemiesDead = state.enemies.every((e) => e.currentHp <= 0);
+  const allEnemiesDead = current.enemies.every((e) => e.currentHp <= 0);
   if (allEnemiesDead) {
-    return { ...state, phase: "COMBAT_WON" };
+    return { ...current, phase: "COMBAT_WON" };
   }
 
-  return state;
+  return current;
 }

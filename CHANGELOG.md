@@ -1,6 +1,25 @@
 # Changelog
 
-## 1.1.1 - 2026-03-14
+## 0.2.0 - 2026-03-20
+
+### Bosses uniques et combats
+
+- Ajout de boss uniques pour tous les biomes, avec un pool total de 18 boss et de nouvelles mecaniques dediees par combat.
+- Refonte du moteur de boss avec modules `enemy-bosses/` et `boss-mechanics/`, nouveaux scripts moteur, previews et textes localises associes.
+- La carte et le flux de run permettent maintenant de choisir plus explicitement le boss cible avant le combat final, y compris dans les outils de debug et de reliques.
+
+### Interface et ergonomie
+
+- La map recentre automatiquement la profondeur courante pour rendre la navigation plus lisible pendant une run.
+- L'interface de combat a ete retouchee sur les cartes, la main, les intents et plusieurs ecrans de salle pour mieux accompagner les nouveaux combats de boss.
+- Ajout d'un avertissement visuel de devtools et ajustements sur plusieurs helpers d'etat de combat et de salle.
+
+### Tests et documentation
+
+- Couverture de tests etendue avec une suite dediee pour chaque biome de boss, plus des ajouts sur la map, la boutique, les rewards et les hooks de run.
+- Nouvelle documentation de design sur la cible des boss uniques et leur contre-jeu.
+
+## 0.1.1 - 2026-03-14
 
 ### Correctifs combat
 
@@ -17,7 +36,7 @@
 - Le leaderboard retire les colonnes `Runs` et `Winrate` pour se concentrer sur les victoires, la meilleure difficulte, l'infini et les meilleurs temps par difficulte.
 - Le tri du classement a ete aligne sur ces criteres visibles.
 
-## 1.1.0 - 2026-03-13
+## 0.1.0 - 2026-03-13
 
 ### Ajouts et ameliorations
 

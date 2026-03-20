@@ -16,15 +16,80 @@ import {
   registerChapterGuardianAttackCardPlayed,
   registerChapterGuardianInkSpent,
 } from "./chapter-guardian";
+import {
+  registerBabaYagaAttackCardPlayed,
+  registerBabaYagaInkSpent,
+} from "./baba-yaga";
+import {
+  isCardWebbed,
+  registerAnansiCardPlayed,
+  releaseWebbedCard,
+  synchronizeAnansiCombatState,
+} from "./anansi-weaver";
+import { synchronizeCernunnosCombatState } from "./cernunnos-shade";
+import { synchronizeDagdaCombatState } from "./dagda-shadow";
+import {
+  registerNyarlathotepCardPlayed,
+  synchronizeNyarlathotepCombatState,
+} from "./nyarlathotep";
+import {
+  getCardPetrifiedCostBonus,
+  registerMedusaCardPlayed,
+  releasePetrifiedCard,
+  synchronizeMedusaCombatState,
+} from "./medusa";
+import { synchronizeHydraCombatState } from "./hydra";
+import { synchronizeKoscheiCombatState } from "./koschei";
+import { synchronizeOsirisCombatState } from "./osiris-judgment";
+import { synchronizeQuetzalcoatlCombatState } from "./quetzalcoatl";
+import { synchronizeRaCombatState } from "./ra-avatar";
+import { amplifyEffectsForInkRelic, applyRelicsOnInkSpent } from "./relics";
+import { synchronizeShubCombatState } from "./shub-spawn";
+import { synchronizeSoundiataCombatState } from "./soundiata-spirit";
+import {
+  registerTezcatlipocaCardPlayed,
+  synchronizeTezcatlipocaCombatState,
+} from "./tezcatlipoca";
+
+function synchronizeBossStates(state: CombatState): CombatState {
+  return synchronizeKoscheiCombatState(
+    synchronizeHydraCombatState(
+      synchronizeMedusaCombatState(
+        synchronizeQuetzalcoatlCombatState(
+          synchronizeTezcatlipocaCombatState(
+            synchronizeOsirisCombatState(
+              synchronizeShubCombatState(
+                synchronizeNyarlathotepCombatState(
+                  synchronizeSoundiataCombatState(
+                    synchronizeAnansiCombatState(
+                      synchronizeCernunnosCombatState(
+                        synchronizeDagdaCombatState(
+                          synchronizeRaCombatState(state)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+}
 
 function getEffectiveCardEnergyCost(
+  state: CombatState,
   definition: CardDefinition,
+  instanceId: string,
   upgraded: boolean
 ): number {
+  const petrifiedCostBonus = getCardPetrifiedCostBonus(state, instanceId);
   if (upgraded && definition.upgrade?.energyCost !== undefined) {
-    return definition.upgrade.energyCost;
+    return definition.upgrade.energyCost + petrifiedCostBonus;
   }
-  return definition.energyCost;
+  return definition.energyCost + petrifiedCostBonus;
 }
 
 export function canPlayCard(
@@ -51,7 +116,7 @@ export function canPlayCard(
     return false;
 
   const effectiveEnergyCost =
-    getEffectiveCardEnergyCost(def, effectiveUpgraded) +
+    getEffectiveCardEnergyCost(state, def, instanceId, effectiveUpgraded) +
     (state.playerDisruption?.extraCardCost ?? 0) +
     getArchivistCardCostModifier(state, instanceId);
   if (state.player.energyCurrent < effectiveEnergyCost) return false;
@@ -133,7 +198,9 @@ export function playCard(
 
   // Apply upgrade: use card-specific upgrade if defined, else generic boost
   let energyCost = getEffectiveCardEnergyCost(
+    state,
     effectiveDefinition,
+    instanceId,
     effectiveUpgraded
   );
   if (effectiveUpgraded) {
@@ -160,6 +227,10 @@ export function playCard(
     );
   }
 
+  effects = amplifyEffectsForInkRelic(state, effects, {
+    amplifyAll: inkCost > 0,
+  });
+
   energyCost += state.playerDisruption?.extraCardCost ?? 0;
   energyCost += getArchivistCardCostModifier(state, instanceId);
   if (state.playerDisruption?.frozenHandCardIds?.includes(instanceId))
@@ -181,9 +252,12 @@ export function playCard(
 
   if (def.type === "ATTACK") {
     current = registerChapterGuardianAttackCardPlayed(current);
+    current = registerBabaYagaAttackCardPlayed(current);
   }
   if (inkCost > 0) {
+    current = applyRelicsOnInkSpent(current, inkCost);
     current = registerChapterGuardianInkSpent(current, inkCost);
+    current = registerBabaYagaInkSpent(current, inkCost);
   }
 
   // Resolve effects
@@ -201,6 +275,29 @@ export function playCard(
     rng
   );
   current = synchronizeArchivistCombatState(current);
+  const wasPetrified = getCardPetrifiedCostBonus(current, instanceId) > 0;
+  const wasWebbed = isCardWebbed(current, instanceId);
+  const medusaCardResult = registerMedusaCardPlayed(current, cardInst, def);
+  current = medusaCardResult.state;
+  current = registerNyarlathotepCardPlayed(
+    current,
+    effectiveDefinition,
+    inkCost
+  );
+  current = registerTezcatlipocaCardPlayed(
+    current,
+    effectiveDefinition,
+    effects,
+    energyCost,
+    inkCost
+  );
+  const anansiCardResult = registerAnansiCardPlayed(
+    current,
+    cardInst,
+    effectiveDefinition,
+    inkCost
+  );
+  current = anansiCardResult.state;
 
   // Chance-based extra ink on card play.
   if (
@@ -238,10 +335,22 @@ export function playCard(
       Math.max(0, metaBonuses?.exhaustKeepChance ?? 0)
     );
     const keepCard = keepChance > 0 && rng.next() * 100 < keepChance;
+    if (wasPetrified && !medusaCardResult.newlyPetrified) {
+      current = releasePetrifiedCard(current, instanceId);
+    }
+    if (wasWebbed && !anansiCardResult.newlyWebbed) {
+      current = releaseWebbedCard(current, instanceId);
+    }
     current = keepCard
       ? moveCardToDiscard(current, instanceId)
       : moveCardToExhaust(current, instanceId);
   } else {
+    if (wasPetrified && !medusaCardResult.newlyPetrified) {
+      current = releasePetrifiedCard(current, instanceId);
+    }
+    if (wasWebbed && !anansiCardResult.newlyWebbed) {
+      current = releaseWebbedCard(current, instanceId);
+    }
     current = moveCardToDiscard(current, instanceId);
   }
 
@@ -258,5 +367,5 @@ export function playCard(
     },
   };
 
-  return current;
+  return synchronizeBossStates(current);
 }

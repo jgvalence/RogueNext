@@ -6,6 +6,7 @@ import { QueryProvider } from "@/lib/query/provider";
 import { Toaster } from "sonner";
 import { env } from "@/lib/env";
 import { AntdProvider } from "@/components/providers/AntdProvider";
+import { DevtoolsConsoleWarning } from "@/components/shared/DevtoolsConsoleWarning";
 import { I18nProvider } from "@/components/providers/I18nProvider";
 import { GlobalLanguageDock } from "@/components/shared/GlobalLanguageDock";
 import { RouteMusicGuard } from "@/components/shared/RouteMusicGuard";
@@ -60,6 +61,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <I18nProvider>
           <AntdProvider>
+            <DevtoolsConsoleWarning />
             <RouteMusicGuard />
             <GlobalLanguageDock />
             <QueryProvider>

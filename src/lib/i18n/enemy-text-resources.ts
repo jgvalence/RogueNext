@@ -81,6 +81,7 @@ const FR_ENEMY_NAMES: Record<string, string> = {
   morrigan_chosen: "Elu de Morrigan",
   wild_hunt_hound: "Limier de la Chasse sauvage",
   dagda_shadow: "Ombre de Dagda",
+  dagda_cauldron: "Chaudron de Dagda",
   cernunnos_shade: "Ombre de Cernunnos",
   winter_wolf: "Loup d'hiver",
   czar_guard: "Garde du tsar",

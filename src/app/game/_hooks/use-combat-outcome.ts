@@ -94,8 +94,13 @@ export function useCombatOutcome({
         roomChoices?.find((room) => room.completed) ?? roomChoices?.[0];
       const enemyCount = selectedRoom?.enemyIds?.length ?? 1;
       const isElite = selectedRoom?.isElite ?? false;
+      const encounterBiome =
+        combat.encounterContext?.biome ?? state.currentBiome;
 
-      const defeatedBossId = isBoss ? selectedRoom?.enemyIds?.[0] : undefined;
+      const defeatedBossId = isBoss
+        ? (combat.encounterContext?.bossDefinitionId ??
+          selectedRoom?.enemyIds?.[0])
+        : undefined;
       const projectedEnemyKillCounts = { ...(state.enemyKillCounts ?? {}) };
       for (const enemy of combat.enemies) {
         if (!TRACKED_ENEMY_DEFINITION_IDS.has(enemy.definitionId)) continue;
@@ -122,7 +127,7 @@ export function useCombatOutcome({
         enemyCount,
         [...cardDefs.values()],
         combatRng,
-        state.currentBiome,
+        encounterBiome,
         state.relicIds,
         state.unlockedCardIds,
         state.allyIds,

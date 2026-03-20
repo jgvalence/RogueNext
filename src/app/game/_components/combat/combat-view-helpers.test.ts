@@ -195,14 +195,33 @@ describe("enemy intent previews", () => {
     expect(summary.remaining).toBe(1);
   });
 
-  it("includes hidden flat bonus damage in boss damage previews", async () => {
+  it("shows tezcatlipoca mirror markers and mirror echo chips", async () => {
     await i18n.changeLanguage("en");
 
-    const enemy = buildEnemyState("tezcatlipoca_echo", 0);
+    const enemy = buildEnemyState("tezcatlipoca_echo", 0, {
+      mechanicFlags: {
+        tezcatlipoca_echo_phase2: 1,
+        tezcatlipoca_echo_slot_1_family: 3,
+        tezcatlipoca_echo_slot_1_value: 9,
+        tezcatlipoca_echo_slot_2_family: 1,
+        tezcatlipoca_echo_slot_2_value: 6,
+      },
+    });
     const ability = enemyDefs.get("tezcatlipoca_echo")?.abilities[0];
     const combat = buildCombatState(enemy);
 
     expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
     expect(
       computeEnemyEffectDamagePreview(
         combat,
@@ -211,7 +230,93 @@ describe("enemy intent previews", () => {
         ability!.effects[0]!,
         ability
       )
-    ).toBe(27);
+    ).toBe(19);
+    expect(markers.map((marker) => marker.compactLabel)).toContain(
+      "MIRROR INK 9"
+    );
+    expect(markers.map((marker) => marker.compactLabel)).toContain(
+      "MIRROR ATK 6"
+    );
+    expect(chips.some((chip) => chip.includes("mirror damage"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Ink Burn"))).toBe(true);
+  });
+
+  it("shows dagda brew markers and cauldron resolve chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("dagda_shadow", 0, {
+      mechanicFlags: {
+        dagda_shadow_brew_type: 0,
+        dagda_shadow_brew_progress: 1,
+        dagda_shadow_cauldron_present: 1,
+      },
+    });
+    const cauldron = buildEnemyState("dagda_cauldron", 0, {
+      instanceId: "dagda-cauldron-1",
+      mechanicFlags: {
+        dagda_cauldron_brew_type: 0,
+        dagda_cauldron_brew_progress: 1,
+      },
+    });
+    const ability = enemyDefs.get("dagda_shadow")?.abilities[0];
+    const combat = buildCombatState(enemy, {
+      enemies: [enemy, cauldron],
+    });
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability!,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain(
+      "BREW FEAST 1/2"
+    );
+    expect(chips.some((chip) => chip.includes("heal 14"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Strength +2"))).toBe(true);
+  });
+
+  it("shows cernunnos crown markers and antler-scaled wrath chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("cernunnos_shade", 4, {
+      mechanicFlags: {
+        cernunnos_shade_antler_layers: 2,
+      },
+    });
+    const ability = enemyDefs.get("cernunnos_shade")?.abilities[4];
+    const combat = buildCombatState(enemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability!,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(
+      computeEnemyEffectDamagePreview(
+        combat,
+        enemy,
+        "player",
+        ability!.effects[0]!,
+        ability
+      )
+    ).toBe(29);
+    expect(markers.map((marker) => marker.compactLabel)).toContain("CROWN 2/3");
+    expect(chips.some((chip) => chip.includes("+4/antler"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("now +8"))).toBe(true);
   });
 
   it("shows named hidden status injections in boss intent chips", async () => {
@@ -284,6 +389,564 @@ describe("enemy intent previews", () => {
 
     expect(chips.some((chip) => chip.startsWith("P2 "))).toBe(true);
     expect(chips.some((chip) => chip.includes("Binding Curse"))).toBe(true);
+  });
+
+  it("shows fenrir hunt markers and hunt-based intent chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("fenrir", 1, {
+      mechanicFlags: {
+        fenrir_hunt_remaining: 2,
+      },
+    });
+    const ability = enemyDefs.get("fenrir")?.abilities[1];
+    const combat = buildCombatState(enemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain("HUNT 2/3");
+    expect(
+      markers.find((marker) => marker.detailLabel === "The Hunt")?.detailText
+    ).toContain("+4 damage");
+    expect(chips.some((chip) => chip.includes("+2/hunt"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("now +4"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Summon Draugr"))).toBe(true);
+  });
+
+  it("shows hel queen death stance markers and cash-out intent chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("hel_queen", 3, {
+      mechanicFlags: {
+        hel_queen_phase2: 1,
+        hel_queen_stance: 1,
+        hel_queen_turns_until_swap: 1,
+      },
+    });
+    const deadDraugr = buildEnemyState("draugr", 0, {
+      instanceId: "draugr-dead",
+      currentHp: 0,
+    });
+    const ability = enemyDefs.get("hel_queen")?.abilities[3];
+    const combat = buildCombatState(enemy, {
+      player: {
+        ...basePlayer(),
+        buffs: [{ type: "BLEED", stacks: 3, duration: 4 }],
+      },
+      enemies: [enemy, deadDraugr],
+    });
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain("DEATH 1");
+    expect(
+      markers.find((marker) => marker.detailLabel === "DEATH")?.detailText
+    ).toContain("applies 1 Weak");
+    expect(chips.some((chip) => chip.includes("Cash out Bleed x3"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Restores Draugr"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Weak"))).toBe(true);
+    expect(
+      chips.some((chip) => chip.includes("P2 Switches stance every turn"))
+    ).toBe(false);
+  });
+
+  it("shows baba yaga face markers and face-specific punish chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("baba_yaga_hut", 1, {
+      mechanicFlags: {
+        baba_yaga_hut_face: 2,
+        baba_yaga_hut_turns_until_rotate: 1,
+        baba_yaga_hut_turn_ink_spent: 1,
+      },
+    });
+    const ability = enemyDefs.get("baba_yaga_hut")?.abilities[1];
+    const combat = buildCombatState(enemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain(
+      "HEARTH 1/2"
+    );
+    expect(
+      markers.find((marker) => marker.detailLabel === "HEARTH")?.detailText
+    ).toContain("Turns to TEETH in 1 turn");
+    expect(chips.some((chip) => chip.includes("Smudged Lens"))).toBe(true);
+    expect(chips.some((chip) => chip.toLowerCase().includes("freeze 1"))).toBe(
+      true
+    );
+  });
+
+  it("shows medusa gaze markers and phase 2 pattern chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const phaseTwoEnemy = buildEnemyState("medusa", 0, {
+      mechanicFlags: {
+        medusa_phase2: 1,
+        medusa_gaze_initialized: 1,
+        medusa_gaze_slot_1_pattern: 1,
+        medusa_gaze_slot_2_pattern: 0,
+        medusa_gaze_slot_1_progress: 1,
+        medusa_gaze_slot_2_progress: 0,
+      },
+    });
+    const ability = enemyDefs.get("medusa")?.abilities[0];
+    const previewEnemy = buildEnemyState("medusa", 0, {
+      currentHp: 70,
+      mechanicFlags: {
+        medusa_gaze_initialized: 1,
+        medusa_gaze_slot_1_pattern: 1,
+        medusa_gaze_slot_1_progress: 1,
+      },
+    });
+    const previewCombat = buildCombatState(previewEnemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(phaseTwoEnemy);
+    const chips = buildMobileEnemyIntentChips(
+      previewCombat,
+      previewEnemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain(
+      "GAZE SKL > ATK 1/2"
+    );
+    expect(markers.map((marker) => marker.compactLabel)).toContain(
+      "GAZE ATK > ATK 0/2"
+    );
+    expect(
+      chips.some((chip) => chip.includes("reveals a second forbidden pattern"))
+    ).toBe(true);
+  });
+
+  it("shows ra sun markers and Solar Barrier eclipse chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("ra_avatar", 2, {
+      block: 18,
+      mechanicFlags: {
+        ra_avatar_sun_charge: 2,
+      },
+    });
+    const ability = enemyDefs.get("ra_avatar")?.abilities[2];
+    const combat = buildCombatState(enemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      { type: "enemy", instanceId: enemy.instanceId },
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain("SUN 2/3");
+    expect(markers.map((marker) => marker.compactLabel)).toContain("ECLIPSE");
+    expect(
+      chips.some((chip) => chip.includes("End turn with ink: +1 SUN"))
+    ).toBe(true);
+    expect(chips.some((chip) => chip.includes("Break Solar Barrier"))).toBe(
+      true
+    );
+  });
+
+  it("shows ra judgment-ready damage bonus and drain chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("ra_avatar", 3, {
+      mechanicFlags: {
+        ra_avatar_sun_charge: 3,
+      },
+    });
+    const ability = enemyDefs.get("ra_avatar")?.abilities[3];
+    const combat = buildCombatState(enemy, {
+      player: {
+        ...basePlayer(),
+        inkCurrent: 5,
+      },
+    });
+
+    expect(ability).toBeDefined();
+
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(
+      computeEnemyEffectDamagePreview(
+        combat,
+        enemy,
+        "player",
+        ability!.effects[0]!,
+        ability
+      )
+    ).toBe(32);
+    expect(chips.some((chip) => chip.includes("+10 bonus"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Drain all ink"))).toBe(true);
+  });
+
+  it("shows osiris scales markers and attack-verdict intent chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("osiris_judgment", 0, {
+      mechanicFlags: {
+        osiris_judgment_turn_damage: 10,
+        osiris_judgment_turn_block: 1,
+      },
+    });
+    const ability = enemyDefs.get("osiris_judgment")?.abilities[0];
+    const combat = buildCombatState(enemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain("MAAT 10/1");
+    expect(markers.map((marker) => marker.compactLabel)).toContain(
+      "VERDICT ATK"
+    );
+    expect(chips.some((chip) => chip.includes("+8 bonus"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Weak"))).toBe(true);
+  });
+
+  it("shows osiris phase-two threshold preview chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("osiris_judgment", 0, {
+      currentHp: 80,
+    });
+    const ability = enemyDefs.get("osiris_judgment")?.abilities[0];
+    const combat = buildCombatState(enemy);
+
+    expect(ability).toBeDefined();
+
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(chips.some((chip) => chip.startsWith("P2 "))).toBe(true);
+    expect(chips.some((chip) => chip.includes("threshold falls to 5"))).toBe(
+      true
+    );
+  });
+
+  it("shows soundiata verse markers and verse-resolution chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("soundiata_spirit", 0, {
+      mechanicFlags: {
+        soundiata_spirit_phase2: 1,
+        soundiata_spirit_slot_1_chapter: 0,
+        soundiata_spirit_slot_1_progress: 1,
+        soundiata_spirit_slot_2_chapter: 2,
+        soundiata_spirit_slot_2_progress: 0,
+        soundiata_spirit_slot_1_interrupt_progress: 6,
+        soundiata_spirit_slot_2_interrupt_progress: 0,
+      },
+    });
+    const ability = enemyDefs.get("soundiata_spirit")?.abilities[0];
+    const combat = buildCombatState(enemy, {
+      enemies: [enemy, buildEnemyState("mask_hunter")],
+    });
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain("RALLY 1/2");
+    expect(markers.map((marker) => marker.compactLabel)).toContain("WAR 0/2");
+    expect(chips.some((chip) => chip.includes("Allies +2 Strength"))).toBe(
+      true
+    );
+  });
+
+  it("shows nyarlathotep prophecy markers and prophecy chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("nyarlathotep_shard", 0, {
+      mechanicFlags: {
+        nyarlathotep_shard_phase2: 1,
+        nyarlathotep_shard_slot_1_omen: 0,
+        nyarlathotep_shard_slot_1_consumed: 0,
+        nyarlathotep_shard_slot_2_omen: 3,
+        nyarlathotep_shard_slot_2_consumed: 1,
+      },
+    });
+    const ability = enemyDefs.get("nyarlathotep_shard")?.abilities[0];
+    const combat = buildCombatState(enemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain("OMEN DRW");
+    expect(markers.map((marker) => marker.compactLabel)).toContain(
+      "OMEN SKL X"
+    );
+    expect(chips.some((chip) => chip.includes("Prophecy DRAW"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Haunting Regret"))).toBe(true);
+  });
+
+  it("shows shub brood markers, nest timers, and brood intent chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("shub_spawn", 2, {
+      mechanicFlags: {
+        shub_spawn_phase2: 1,
+        shub_spawn_nest_count: 1,
+        shub_spawn_next_hatch: 1,
+      },
+    });
+    const nest = buildEnemyState("shub_brood_nest", 0, {
+      mechanicFlags: {
+        shub_brood_nest_timer: 1,
+      },
+    });
+    const ability = enemyDefs
+      .get("shub_spawn")
+      ?.abilities.find((entry) => entry.name === "Spawn Eruption");
+    const combat = buildCombatState(enemy, {
+      enemies: [enemy, nest],
+    });
+
+    expect(ability).toBeDefined();
+
+    const bossMarkers = buildEnemyStatusMarkers(enemy);
+    const nestMarkers = buildEnemyStatusMarkers(nest);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(bossMarkers.map((marker) => marker.compactLabel)).toContain(
+      "BROOD 1/2"
+    );
+    expect(nestMarkers.map((marker) => marker.compactLabel)).toContain(
+      "HATCH 1/2"
+    );
+    expect(chips.some((chip) => chip.includes("Brood Nest"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Shoggoth Spawn"))).toBe(true);
+  });
+
+  it("shows anansi loom markers and web-on-complete chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("anansi_weaver", 0, {
+      mechanicFlags: {
+        anansi_weaver_phase2: 1,
+        anansi_weaver_pattern: 3,
+        anansi_weaver_progress: 1,
+        anansi_weaver_stalled: 0,
+        anansi_weaver_webbed_count: 1,
+      },
+    });
+    const ability = enemyDefs.get("anansi_weaver")?.abilities[0];
+    const combat = buildCombatState(enemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain(
+      "LOOM ATK + SKL + INK 1/3"
+    );
+    expect(markers.map((marker) => marker.compactLabel)).toContain("WEB 1");
+    expect(chips.some((chip) => chip.includes("web last card"))).toBe(true);
+    expect(chips.some((chip) => chip.includes("Binding Curse"))).toBe(true);
+  });
+
+  it("shows hydra head state markers and regrow preview chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("hydra_aspect", 0, {
+      mechanicFlags: {
+        hydra_heads_left: 1,
+        hydra_heads_right: 0,
+        hydra_heads_center: 3,
+      },
+    });
+    const rightHead = buildEnemyState("hydra_head_right");
+    const ability = enemyDefs.get("hydra_aspect")?.abilities[0];
+    const combat = buildCombatState(enemy, {
+      enemies: [enemy, rightHead],
+    });
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain("HEAD 1/2");
+    expect(markers.map((marker) => marker.compactLabel)).toContain("REGROW 1");
+    expect(chips.some((chip) => chip.includes("Hydra Head"))).toBe(true);
+  });
+
+  it("shows quetzalcoatl stance markers and phase 2 skyfall chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const phaseTwoEnemy = buildEnemyState("quetzalcoatl_wrath", 0, {
+      mechanicFlags: {
+        quetzalcoatl_wrath_phase2: 1,
+        quetzalcoatl_wrath_stance: 0,
+        quetzalcoatl_wrath_hit_count: 1,
+      },
+    });
+    const ability = enemyDefs.get("quetzalcoatl_wrath")?.abilities[0];
+    const previewEnemy = buildEnemyState("quetzalcoatl_wrath", 0, {
+      currentHp: 70,
+      mechanicFlags: {
+        quetzalcoatl_wrath_stance: 0,
+        quetzalcoatl_wrath_hit_count: 1,
+      },
+    });
+    const previewCombat = buildCombatState(previewEnemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(phaseTwoEnemy);
+    const chips = buildMobileEnemyIntentChips(
+      previewCombat,
+      previewEnemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain("AIR");
+    expect(markers.map((marker) => marker.compactLabel)).toContain("DOWN 1/2");
+    expect(
+      chips.some((chip) => chip.includes("knockdown threshold falls to 2"))
+    ).toBe(true);
+    expect(chips.some((chip) => chip.includes("adds 2 Bleed"))).toBe(true);
+  });
+
+  it("shows koschei immortality markers and reseal intent chips", async () => {
+    await i18n.changeLanguage("en");
+
+    const enemy = buildEnemyState("koschei_deathless", 2, {
+      mechanicFlags: {
+        koschei_deathless_phase2: 1,
+        koschei_deathless_stage: 1,
+        koschei_deathless_reseal_pending: 1,
+        koschei_deathless_reseal_used: 1,
+      },
+    });
+    const ability = enemyDefs.get("koschei_deathless")?.abilities[2];
+    const combat = buildCombatState(enemy);
+
+    expect(ability).toBeDefined();
+
+    const markers = buildEnemyStatusMarkers(enemy);
+    const chips = buildMobileEnemyIntentChips(
+      combat,
+      enemy,
+      "player",
+      ability,
+      false,
+      i18n.t.bind(i18n)
+    );
+
+    expect(markers.map((marker) => marker.compactLabel)).toContain("IMM EGG");
+    expect(
+      markers.find((marker) => marker.detailLabel === "Hidden Death")
+        ?.detailText
+    ).toContain("resealing");
+    expect(chips.some((chip) => chip.includes("Restores Black Egg"))).toBe(
+      true
+    );
+    expect(chips.some((chip) => chip.includes("heal 12"))).toBe(true);
   });
 
   it("shows chapter guardian bindings and their progress as enemy status markers", async () => {

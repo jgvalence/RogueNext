@@ -28,7 +28,8 @@ export function buildArchetypeEventCardChoices(
   >,
   archetypeTag: CardArchetypeTag,
   rng: RNG,
-  count = 3
+  count = 3,
+  minimumChoices = 1
 ): CardDefinition[] {
   const unlockedCardIds = new Set(runState.unlockedCardIds ?? []);
   const cardDefs = new Map(allCards.map((card) => [card.id, card]));
@@ -47,7 +48,7 @@ export function buildArchetypeEventCardChoices(
       getCardArchetypeTags(card).includes(archetypeTag)
   );
 
-  if (eligible.length === 0) return [];
+  if (eligible.length < minimumChoices) return [];
 
   const lootLuck = getTotalLootLuck(
     runState.relicIds,

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { createGameReducer } from "./game-reducer";
-import { createNewRun } from "@/game/engine/run";
+import {
+  createNewRun,
+  getBossRoomIndexForMap,
+  getReachableRoomChoiceIndexes,
+} from "@/game/engine/run";
 import type { CardDefinition } from "@/game/schemas/cards";
 import { DEFAULT_META_BONUSES } from "@/game/schemas/meta";
 import { createRNG } from "@/game/engine/rng";
@@ -124,5 +128,35 @@ describe("gameReducer", () => {
       next.cardUnlockProgress.byCharacter?.bibliothecaire?.enteredBiomes.LIBRARY
     ).toBe(1);
     expect(next.cardUnlockProgress.enteredBiomes.LIBRARY).toBe(1);
+  });
+
+  it("dev skip to boss room moves the cursor and keeps the boss node reachable", () => {
+    const allCards = buildCardDefsMap();
+    const scribeStarterCards = getStarterCards(allCards, "scribe");
+    const reducer = createGameReducer({
+      cardDefs: allCards,
+      enemyDefs: buildEnemyDefsMap(),
+      allyDefs: buildAllyDefsMap(),
+      rng: makeDeterministicRng("dev-skip-to-boss-room"),
+    });
+
+    const state = createNewRun(
+      "run-dev-skip",
+      "run-dev-skip",
+      scribeStarterCards,
+      createRNG("run-dev-skip-base")
+    );
+    const bossRoomIndex = getBossRoomIndexForMap(state.map);
+
+    expect(state.currentRoom).toBeLessThan(bossRoomIndex);
+
+    const next = reducer(state, {
+      type: "DEV_SKIP_TO_BOSS_ROOM",
+    });
+
+    expect(next.currentRoom).toBe(bossRoomIndex);
+    expect(getReachableRoomChoiceIndexes(next.map, next.currentRoom)).toContain(
+      0
+    );
   });
 });

@@ -86,6 +86,28 @@ describe("Card archetypes", () => {
     ).toBe(true);
   });
 
+  it("can require a minimum number of archetype event choices", () => {
+    const choices = buildArchetypeEventCardChoices(
+      allCards,
+      {
+        deck: [],
+        relicIds: [],
+        metaBonuses: undefined,
+        unlockedCardIds: ["healing_script", "temple_archive"],
+        currentBiome: "LIBRARY",
+        characterId: "bibliothecaire",
+        playerCurrentHp: 60,
+        playerMaxHp: 60,
+      },
+      "HEAL",
+      createRNG("archetype-event-heal-minimum"),
+      3,
+      3
+    );
+
+    expect(choices).toEqual([]);
+  });
+
   it("boosts healing cards in rewards when HP is low", () => {
     const healingScript = cardDefs.get("healing_script");
     const inkSurge = cardDefs.get("ink_surge");

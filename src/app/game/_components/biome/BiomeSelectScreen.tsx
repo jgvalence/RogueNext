@@ -7,7 +7,7 @@ import { GAME_CONSTANTS } from "@/game/constants";
 import { useTranslation } from "react-i18next";
 
 interface BiomeSelectScreenProps {
-  choices: [BiomeType, BiomeType];
+  choices: BiomeType[];
   currentFloor: number;
   onChoose: (biome: BiomeType) => void;
 }
@@ -33,7 +33,10 @@ export function BiomeSelectScreen({
         </p>
       </div>
 
-      <div className="flex w-full max-w-5xl flex-col gap-4 sm:flex-row sm:justify-center">
+      <div
+        data-testid="biome-select-grid"
+        className="grid w-full max-w-6xl grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
+      >
         {choices.map((biome) => {
           const meta = BIOME_METADATA[biome];
           const baseKey = `biomeSelect.biomes.${biome}`;
@@ -42,7 +45,7 @@ export function BiomeSelectScreen({
               key={biome}
               onClick={() => onChoose(biome)}
               type="text"
-              className="!flex !h-auto !w-full !min-w-0 !flex-1 !flex-col !items-start !gap-3 !whitespace-normal !rounded-xl !border !border-amber-800/40 !bg-gray-900/80 !p-6 !text-left transition-all duration-200 hover:!border-amber-500/70 hover:!bg-gray-800/80 hover:!shadow-lg hover:!shadow-amber-900/20 active:!scale-[0.98]"
+              className="!flex !h-full !min-h-[18rem] !w-full !min-w-0 !flex-col !items-start !justify-start !gap-3 !whitespace-normal !rounded-xl !border !border-amber-800/40 !bg-gray-900/80 !p-6 !text-left transition-all duration-200 hover:!border-amber-500/70 hover:!bg-gray-800/80 hover:!shadow-lg hover:!shadow-amber-900/20 active:!scale-[0.98]"
             >
               <span className="text-5xl">{meta.icon}</span>
 

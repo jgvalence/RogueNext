@@ -488,7 +488,9 @@ function EventRoom({
           allCards,
           runState,
           choice.rewardArchetypeTag,
-          choiceRng
+          choiceRng,
+          3,
+          choice.minimumRewardChoices ?? 1
         )
       );
     });

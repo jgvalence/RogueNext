@@ -89,6 +89,7 @@ export const starterCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: true,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "parchemin_de_soin",
@@ -120,6 +121,7 @@ export const starterCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: true,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
   {
     id: "annotation",
@@ -147,6 +149,7 @@ export const starterCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: true,
     biome: "LIBRARY",
+    characterId: "scribe",
   },
 
   // ─── Cartes uniques de la Bibliothécaire ──────────────────────────────────
@@ -175,6 +178,7 @@ export const starterCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: true,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "chuchotement",
@@ -200,6 +204,7 @@ export const starterCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: true,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
   {
     id: "marque_page",
@@ -224,6 +229,7 @@ export const starterCardDefinitions: CardDefinition[] = [
     },
     isStarterCard: true,
     biome: "LIBRARY",
+    characterId: "bibliothecaire",
   },
 ];
 

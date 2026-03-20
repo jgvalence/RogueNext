@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import type { RoomNode } from "@/game/schemas/run-state";
 import type { BiomeType } from "@/game/schemas/enums";
@@ -480,6 +481,7 @@ export function FloorMap({
   onDismissFirstMapTutorial,
 }: FloorMapProps) {
   const { t } = useTranslation();
+  const currentDepthAnchorRef = useRef<HTMLDivElement | null>(null);
   const totalRooms = Math.max(1, map.length);
   const bossRoomIndex = getBossRoomIndexForMap(map);
   const currentReachableIndexes = getReachableRoomChoiceIndexes(
@@ -520,6 +522,27 @@ export function FloorMap({
     NODE_SIZE;
   const mapHeight =
     MAP_PADDING_Y * 2 + Math.max(0, totalRooms - 1) * DEPTH_HEIGHT + NODE_SIZE;
+  const currentDepthRooms = positionedRooms.filter(
+    (room) =>
+      room.depthIndex === currentRoom &&
+      (currentReachableIndexSet.size === 0 ||
+        currentReachableIndexSet.has(room.choiceIndex))
+  );
+  const currentDepthAnchor =
+    currentDepthRooms.length > 0
+      ? {
+          x:
+            currentDepthRooms.reduce(
+              (sum, room) => sum + room.x + NODE_SIZE / 2,
+              0
+            ) / currentDepthRooms.length,
+          y:
+            currentDepthRooms.reduce(
+              (sum, room) => sum + room.y + NODE_SIZE / 2,
+              0
+            ) / currentDepthRooms.length,
+        }
+      : null;
 
   const currentChoices = currentSlot
     .map((room, choiceIndex) => ({ room, choiceIndex }))
@@ -587,6 +610,14 @@ export function FloorMap({
       isBossRoom: true,
     },
   ].filter((entry): entry is LegendEntry => entry !== null);
+
+  useEffect(() => {
+    currentDepthAnchorRef.current?.scrollIntoView({
+      block: "center",
+      inline: "center",
+      behavior: "auto",
+    });
+  }, [currentRoom, currentDepthAnchor?.x, currentDepthAnchor?.y]);
 
   return (
     <div className="flex min-h-[80vh] flex-col items-center gap-8 px-4 py-10 sm:px-6">
@@ -747,6 +778,18 @@ export function FloorMap({
             className="relative"
             style={{ width: `${mapWidth}px`, height: `${mapHeight}px` }}
           >
+            {currentDepthAnchor ? (
+              <div
+                ref={currentDepthAnchorRef}
+                data-map-current-anchor="true"
+                aria-hidden="true"
+                className="pointer-events-none absolute h-px w-px"
+                style={{
+                  left: `${currentDepthAnchor.x}px`,
+                  top: `${currentDepthAnchor.y}px`,
+                }}
+              />
+            ) : null}
             {positionedRooms.map((positioned) => {
               const { room, choiceIndex, depthIndex, nodeId, x, y } =
                 positioned;

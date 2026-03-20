@@ -1,10 +1,121 @@
 import type { CombatState } from "../schemas/combat-state";
 import type { RunState } from "../schemas/run-state";
+import type { Effect } from "../schemas/effects";
 import { nanoid } from "nanoid";
 import { applyDamage } from "./damage";
 import { drawCards } from "./deck";
 import type { RNG } from "./rng";
 import { pickRandomStatusCardDefinitionId } from "./status-cards";
+
+export const ATLAS_OF_REALMS_RELIC_ID = "atlas_of_realms";
+export const HUNTERS_SIGNET_RELIC_ID = "hunters_signet";
+export const HUNTERS_SIGNET_USED_FLAG = "hunters_signet_used";
+const MENDERS_INKWELL_FLAG = "menders_inkwell_owned";
+const ECHOING_INKSTONE_FLAG = "echoing_inkstone_owned";
+const INK_RELIC_MULTIPLIER = 2;
+
+const FULL_INK_AMPLIFY_EFFECT_TYPES = new Set<Effect["type"]>([
+  "DAMAGE",
+  "DAMAGE_PER_TARGET_BLOCK",
+  "DAMAGE_EQUAL_BLOCK",
+  "BLOCK",
+  "HEAL",
+  "DRAW_CARDS",
+  "DOUBLE_POISON",
+  "DAMAGE_PER_DEBUFF",
+  "DAMAGE_IF_TARGET_HAS_DEBUFF",
+  "DAMAGE_PER_THIS_CARD_PLAYED",
+  "DAMAGE_PER_CURRENT_INK",
+  "DAMAGE_PER_CLOG_IN_DISCARD",
+  "DAMAGE_PER_EXHAUSTED_CARD",
+  "DAMAGE_PER_DRAWN_THIS_TURN",
+  "BLOCK_PER_CURRENT_INK",
+  "GAIN_ENERGY",
+  "GAIN_INK",
+  "APPLY_BUFF",
+  "APPLY_DEBUFF",
+  "BLOCK_PER_DEBUFF",
+  "BLOCK_PER_EXHAUSTED_CARD",
+  "APPLY_BUFF_PER_DEBUFF",
+  "APPLY_BUFF_PER_EXHAUSTED_CARD",
+  "GAIN_STRENGTH",
+  "GAIN_FOCUS",
+  "DAMAGE_BONUS_IF_UPGRADED_IN_HAND",
+]);
+
+const PARTIAL_INK_AMPLIFY_EFFECT_TYPES = new Set<Effect["type"]>([
+  "DAMAGE_PER_CURRENT_INK",
+  "BLOCK_PER_CURRENT_INK",
+]);
+
+function scaleInkRelicValue(value: number): number {
+  if (value === 0) return 0;
+  return value > 0
+    ? Math.ceil(value * INK_RELIC_MULTIPLIER)
+    : Math.floor(value * INK_RELIC_MULTIPLIER);
+}
+
+export function applyRelicsOnInkSpent(
+  state: CombatState,
+  amount: number
+): CombatState {
+  const inkSpent = Math.max(0, Math.floor(amount));
+  if (inkSpent <= 0 || !state.relicFlags?.[MENDERS_INKWELL_FLAG]) {
+    return state;
+  }
+
+  return {
+    ...state,
+    player: {
+      ...state.player,
+      currentHp: Math.min(
+        state.player.maxHp,
+        state.player.currentHp + inkSpent
+      ),
+    },
+  };
+}
+
+export function amplifyEffectsForInkRelic(
+  state: Pick<CombatState, "relicFlags"> | null | undefined,
+  effects: readonly Effect[],
+  options?: { amplifyAll?: boolean }
+): Effect[] {
+  if (!state?.relicFlags?.[ECHOING_INKSTONE_FLAG]) {
+    return [...effects];
+  }
+
+  const supportedTypes = options?.amplifyAll
+    ? FULL_INK_AMPLIFY_EFFECT_TYPES
+    : PARTIAL_INK_AMPLIFY_EFFECT_TYPES;
+
+  return effects.map((effect) =>
+    supportedTypes.has(effect.type)
+      ? { ...effect, value: scaleInkRelicValue(effect.value) }
+      : effect
+  );
+}
+
+export function hasRunRelicFlag(
+  runState: Pick<RunState, "relicRunFlags">,
+  flag: string
+): boolean {
+  return runState.relicRunFlags?.[flag] === true;
+}
+
+export function setRunRelicFlag(
+  runState: RunState,
+  flag: string,
+  value = true
+): RunState {
+  return {
+    ...runState,
+    relicRunFlags: {
+      ...(runState.relicRunFlags ?? {}),
+      [flag]: value,
+    },
+  };
+}
 
 export function addRelicToRunState(
   runState: RunState,
@@ -201,10 +312,7 @@ export function applyRelicsOnCombatStart(
           player: {
             ...current.player,
             block: current.player.block + 4,
-            buffs: [
-              ...current.player.buffs,
-              { type: "THORNS", stacks: 1 },
-            ],
+            buffs: [...current.player.buffs, { type: "THORNS", stacks: 1 }],
           },
         };
         break;
@@ -222,6 +330,14 @@ export function applyRelicsOnCombatStart(
             ),
           },
         };
+        break;
+
+      case "menders_inkwell":
+        current = setFlag(current, MENDERS_INKWELL_FLAG, true);
+        break;
+
+      case "echoing_inkstone":
+        current = setFlag(current, ECHOING_INKSTONE_FLAG, true);
         break;
 
       case "battle_lexicon":
@@ -1617,7 +1733,10 @@ export function applyRelicsOnCardPlayed(
       ...current,
       player: {
         ...current.player,
-        inkCurrent: Math.min(current.player.inkMax, current.player.inkCurrent + 1),
+        inkCurrent: Math.min(
+          current.player.inkMax,
+          current.player.inkCurrent + 1
+        ),
       },
     };
   }

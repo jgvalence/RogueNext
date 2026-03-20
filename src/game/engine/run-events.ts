@@ -30,6 +30,7 @@ export interface EventChoice {
   outcomeText?: string;
   requiresPurge?: boolean;
   rewardArchetypeTag?: CardArchetypeTag;
+  minimumRewardChoices?: number;
   apply: (state: RunState) => RunState;
 }
 
@@ -126,13 +127,15 @@ function createArchetypeChoice(
   label: string,
   description: string,
   outcomeText: string,
-  rewardArchetypeTag: CardArchetypeTag
+  rewardArchetypeTag: CardArchetypeTag,
+  minimumRewardChoices = 1
 ): EventChoice {
   return {
     label,
     description,
     outcomeText,
     rewardArchetypeTag,
+    minimumRewardChoices,
     apply: (state) => ({ ...state, currentRoom: state.currentRoom + 1 }),
   };
 }
@@ -154,7 +157,8 @@ const EVENTS: GameEvent[] = [
         "events.scriptorium_catalog.choices.1.label",
         "events.scriptorium_catalog.choices.1.description",
         "events.scriptorium_catalog.choices.1.outcomeText",
-        "HEAL"
+        "HEAL",
+        3
       ),
       createArchetypeChoice(
         "events.scriptorium_catalog.choices.2.label",

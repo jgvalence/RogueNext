@@ -10,7 +10,71 @@ import {
 import { applyDamage } from "./damage";
 import { getBuffStacks } from "./buffs";
 import { applyBuff } from "./buffs";
+import { registerBabaYagaInkSpent } from "./baba-yaga";
+import { registerHydraDamage, synchronizeHydraCombatState } from "./hydra";
+import { synchronizeKoscheiCombatState } from "./koschei";
+import { synchronizeMedusaCombatState } from "./medusa";
+import { synchronizeAnansiCombatState } from "./anansi-weaver";
+import {
+  modifyCernunnosIncomingDamage,
+  registerCernunnosDamage,
+  synchronizeCernunnosCombatState,
+} from "./cernunnos-shade";
+import { synchronizeDagdaCombatState } from "./dagda-shadow";
+import {
+  registerNyarlathotepInkSpent,
+  synchronizeNyarlathotepCombatState,
+} from "./nyarlathotep";
+import {
+  registerOsirisBlockGain,
+  registerOsirisDamageDealt,
+  synchronizeOsirisCombatState,
+} from "./osiris-judgment";
+import {
+  modifyQuetzalcoatlIncomingDamage,
+  registerQuetzalcoatlDamage,
+  synchronizeQuetzalcoatlCombatState,
+} from "./quetzalcoatl";
+import {
+  registerRaSolarBarrierBreak,
+  synchronizeRaCombatState,
+} from "./ra-avatar";
+import { applyRelicsOnInkSpent } from "./relics";
+import {
+  registerSoundiataInterruptDamage,
+  synchronizeSoundiataCombatState,
+} from "./soundiata-spirit";
+import { synchronizeShubCombatState } from "./shub-spawn";
+import { synchronizeTezcatlipocaCombatState } from "./tezcatlipoca";
 import type { RNG } from "./rng";
+
+function synchronizeBossStates(state: CombatState): CombatState {
+  return synchronizeKoscheiCombatState(
+    synchronizeHydraCombatState(
+      synchronizeMedusaCombatState(
+        synchronizeQuetzalcoatlCombatState(
+          synchronizeTezcatlipocaCombatState(
+            synchronizeOsirisCombatState(
+              synchronizeShubCombatState(
+                synchronizeNyarlathotepCombatState(
+                  synchronizeSoundiataCombatState(
+                    synchronizeAnansiCombatState(
+                      synchronizeCernunnosCombatState(
+                        synchronizeDagdaCombatState(
+                          synchronizeRaCombatState(state)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  );
+}
 
 export function gainInk(state: CombatState, amount: number): CombatState {
   return {
@@ -47,7 +111,9 @@ export function canUseInkPower(
   const disabled = state.playerDisruption?.disabledInkPowers ?? [];
   if (disabled.includes("ALL") || disabled.includes(power)) return false;
 
-  if (state.inkPowerUsedThisTurn) return false;
+  const usedInkPowersThisTurn = state.usedInkPowersThisTurn;
+  if (usedInkPowersThisTurn?.includes(power)) return false;
+  if (!usedInkPowersThisTurn && state.inkPowerUsedThisTurn) return false;
 
   const cost = GAME_CONSTANTS.INK_POWER_COSTS[power];
   if (state.player.inkCurrent < cost) return false;
@@ -116,7 +182,22 @@ export function applyInkPower(
   const afterSpend = spendInk(state, cost);
   if (!afterSpend) return state;
 
-  const marked: CombatState = { ...afterSpend, inkPowerUsedThisTurn: true };
+  const marked: CombatState = {
+    ...afterSpend,
+    inkPowerUsedThisTurn: true,
+    usedInkPowersThisTurn: Array.from(
+      new Set([...(afterSpend.usedInkPowersThisTurn ?? []), power])
+    ),
+  };
+  let markedWithRussianState = applyRelicsOnInkSpent(marked, cost);
+  markedWithRussianState = registerBabaYagaInkSpent(
+    markedWithRussianState,
+    cost
+  );
+  markedWithRussianState = registerNyarlathotepInkSpent(
+    markedWithRussianState,
+    cost
+  );
 
   switch (power) {
     case "CALLIGRAPHIE": {
@@ -126,74 +207,140 @@ export function applyInkPower(
       );
       if (upgradable.length === 0) return state;
       const target = rng.pick(upgradable);
-      return {
-        ...marked,
-        hand: marked.hand.map((c) =>
+      return synchronizeBossStates({
+        ...markedWithRussianState,
+        hand: markedWithRussianState.hand.map((c) =>
           c.instanceId === target.instanceId ? { ...c, upgraded: true } : c
         ),
-      };
+      });
     }
 
     case "ENCRE_NOIRE": {
       // Dégâts = inkCurrent (avant dépense) × MULTIPLIER à tous les ennemis
       const rawInk = state.player.inkCurrent;
       const dmg = rawInk * GAME_CONSTANTS.ENCRE_NOIRE_DAMAGE_MULTIPLIER;
-      const updatedEnemies = marked.enemies.map((e) => {
+      let current = { ...markedWithRussianState };
+      const updatedEnemies = markedWithRussianState.enemies.map((e) => {
         if (e.currentHp <= 0) return e;
-        const result = applyDamage(e, dmg);
+        const quetzalModifiedDamage = modifyQuetzalcoatlIncomingDamage(
+          current,
+          e.instanceId,
+          "player",
+          dmg
+        );
+        const modifiedDamage = modifyCernunnosIncomingDamage(
+          current,
+          e.instanceId,
+          "player",
+          quetzalModifiedDamage
+        );
+        const result = applyDamage(e, modifiedDamage);
         return { ...e, currentHp: result.currentHp, block: result.block };
       });
-      return { ...marked, enemies: updatedEnemies };
+      current = {
+        ...current,
+        enemies: updatedEnemies,
+      };
+      for (const enemy of updatedEnemies) {
+        const previousEnemy = markedWithRussianState.enemies.find(
+          (entry) => entry.instanceId === enemy.instanceId
+        );
+        if (!previousEnemy) continue;
+        const actualDamage =
+          Math.max(0, previousEnemy.currentHp - enemy.currentHp) +
+          Math.max(0, previousEnemy.block - enemy.block);
+        current = registerRaSolarBarrierBreak(
+          current,
+          enemy.instanceId,
+          "player",
+          previousEnemy.block,
+          enemy.block
+        );
+        if (actualDamage <= 0) continue;
+        current = registerSoundiataInterruptDamage(
+          current,
+          enemy.instanceId,
+          actualDamage,
+          "player"
+        );
+        current = registerOsirisDamageDealt(current, actualDamage, "player");
+        current = registerHydraDamage(current, enemy.instanceId, "player");
+        current = registerQuetzalcoatlDamage(
+          current,
+          enemy.instanceId,
+          "player"
+        );
+        current = registerCernunnosDamage(current, enemy.instanceId, "player");
+      }
+      return synchronizeBossStates(current);
     }
 
     case "SEAL": {
-      return {
-        ...marked,
-        player: {
-          ...marked.player,
-          block: marked.player.block + GAME_CONSTANTS.SEAL_BLOCK_AMOUNT,
-        },
-      };
+      return synchronizeBossStates(
+        registerOsirisBlockGain(
+          {
+            ...markedWithRussianState,
+            player: {
+              ...markedWithRussianState.player,
+              block:
+                markedWithRussianState.player.block +
+                GAME_CONSTANTS.SEAL_BLOCK_AMOUNT,
+            },
+          },
+          GAME_CONSTANTS.SEAL_BLOCK_AMOUNT
+        )
+      );
     }
 
     case "VISION": {
-      return drawCards(
-        marked,
-        GAME_CONSTANTS.VISION_DRAW,
-        rng,
-        "PLAYER",
-        "INK_POWER:VISION"
+      return synchronizeBossStates(
+        drawCards(
+          markedWithRussianState,
+          GAME_CONSTANTS.VISION_DRAW,
+          rng,
+          "PLAYER",
+          "INK_POWER:VISION"
+        )
       );
     }
 
     case "INDEX": {
       if (!targetInstanceId) return state;
-      return moveFromDiscardToHand(marked, targetInstanceId);
+      return synchronizeBossStates(
+        moveFromDiscardToHand(markedWithRussianState, targetInstanceId)
+      );
     }
 
     case "SILENCE": {
       // Étourdis l'ennemi ciblé : il passe son prochain tour
       if (!targetInstanceId) return state;
-      const updatedEnemies = marked.enemies.map((e) => {
+      const updatedEnemies = markedWithRussianState.enemies.map((e) => {
         if (e.instanceId !== targetInstanceId || e.currentHp <= 0) return e;
         return { ...e, buffs: applyBuff(e.buffs, "STUN", 1, 1) };
       });
-      return { ...marked, enemies: updatedEnemies };
+      return synchronizeBossStates({
+        ...markedWithRussianState,
+        enemies: updatedEnemies,
+      });
     }
 
     // Legacy
     case "REWRITE": {
       if (!targetInstanceId) return state;
-      return moveFromDiscardToHand(marked, targetInstanceId);
+      return synchronizeBossStates(
+        moveFromDiscardToHand(markedWithRussianState, targetInstanceId)
+      );
     }
 
     case "LOST_CHAPTER": {
-      return drawCards(
-        marked,
-        GAME_CONSTANTS.LOST_CHAPTER_DRAW,
-        rng,
-        "PLAYER",
-        "INK_POWER:LOST_CHAPTER"
+      return synchronizeBossStates(
+        drawCards(
+          markedWithRussianState,
+          GAME_CONSTANTS.LOST_CHAPTER_DRAW,
+          rng,
+          "PLAYER",
+          "INK_POWER:LOST_CHAPTER"
+        )
       );
     }
   }

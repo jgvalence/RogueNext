@@ -542,6 +542,32 @@ export const en = {
     choosePath: "Choose Your Path",
     roomOf: "Room {{current}} of {{total}}",
     bossSuffix: "BOSS",
+    devBossSelector: {
+      kicker: "DEV Boss Room",
+      subtitle:
+        "Override the next boss encounter by choosing a biome and one of its bosses.",
+      biomeLabel: "Biome",
+      bossLabel: "Boss",
+      plannedBoss: "Planned room boss: {{boss}} from {{biome}}",
+    },
+    devShortcut: {
+      kicker: "DEV Shortcut",
+      subtitle: "Skip the route and jump straight to this floor's boss room.",
+      action: "Go To Boss Room",
+    },
+    relicBossSelector: {
+      kicker: "Relic Boss Choice",
+      subtitle:
+        "Spend your relic charge to choose which boss of this biome you face.",
+      biomeLabel: "Biome",
+      bossLabel: "Boss",
+      plannedBoss: "Planned room boss: {{boss}} from {{biome}}",
+      readyKicker: "Relic Ready",
+      readySubtitle:
+        "Hunter's Signet is unused. You can spend it here to choose the biome boss.",
+      useAction: "Use Hunter's Signet",
+      cancelAction: "Keep It For Later",
+    },
     elite: "Elite",
     enemyCount_one: "{{count}} enemy",
     enemyCount_other: "{{count}} enemies",
@@ -1032,6 +1058,15 @@ export const en = {
       name: "Mender's Charm",
       description: "Increase post-combat healing percentage by 50%.",
     },
+    menders_inkwell: {
+      name: "Mender's Inkwell",
+      description: "Whenever you spend Ink, heal that much HP.",
+    },
+    echoing_inkstone: {
+      name: "Echoing Inkstone",
+      description:
+        "Inked cards, cards with Ink cost, and current-ink payoffs have their effects doubled.",
+    },
     gilded_ledger: {
       name: "Gilded Ledger",
       description: "Increase gold gained from combat rewards by 50%.",
@@ -1092,10 +1127,14 @@ export const en = {
     },
     labels: {
       normal: "Normal",
+      noInk: "No Ink",
       inked: "Inked",
       ink: "Ink",
       current: "Current",
       upgraded: "Upgraded",
+      petrified: "Petrified",
+      webbed: "Webbed",
+      neutral: "Neutral",
       redaction: {
         COST: "Cost +1",
         TEXT: "Text Redacted",
@@ -1645,6 +1684,7 @@ export const en = {
     selfDamage: "Lose {{value}} HP",
     alliesGainBlock: "Allies +{{value}} BLK",
     alliesGainBuff: "Allies +{{value}} {{buff}}",
+    alliesGainThorns: "Allies +{{value}} Thorns",
     redactCardCost: "Redacts {{value}} card: +1 cost",
     redactCardText: "Redacts {{value}} card: upgrade/inked disabled",
     redactCardFlexible: "Redacts {{value}} card: cost or text",
@@ -1654,8 +1694,218 @@ export const en = {
     conditionalBonusVsDebuffed: "+{{bonus}} if player is debuffed",
     conditionalBonusVsLowInk: "+{{bonus}} if <= {{threshold}} ink",
     conditionalBonusPerCurse: "+{{perCurse}}/curse (now +{{total}})",
+    conditionalBonusPerHunt:
+      "+{{perPip}}/hunt ({{remaining}} left, now +{{total}})",
+    conditionalBonusPerBleed: "+{{perBleed}}/bleed (now +{{total}})",
+    conditionalBonusPerAntler: "+{{perAntler}}/antler (now +{{total}})",
+    cashOutPlayerBleed: "Cash out Bleed x{{bleed}} ({{damage}} DMG)",
     phase2Badge: "P2",
     phase2Summon: "Phase 2 (<50% HP): summons {{label}}",
+    phase2FenrirHunt: "HUNT rises to {{value}}",
+    phase2HelRotate: "Switches stance every turn",
+    phase2MedusaDoubleGaze: "Phase 2: reveals a second forbidden pattern",
+    phase2TezcatlipocaDoubleEcho: "Phase 2: stores two mirror echoes",
+    phase2RaChargeRate: "Phase 2: gains {{value}} SUN whenever you keep ink",
+    phase2OsirisThreshold:
+      "Phase 2: the Maat threshold falls to {{value}} and verdicts grow harsher",
+    phase2SoundiataDoubleVerse:
+      "Phase 2: a second verse overlaps the first one",
+    phase2NyarlathotepDoubleProphecy:
+      "Phase 2: two taboo prophecies are active at once",
+    phase2ShubDoubleBrood:
+      "Phase 2: Spawn Eruption can maintain two brood nests",
+    phase2DagdaFastBrew: "Phase 2: the cauldron starts precharged at 1/2",
+    phase2CernunnosFastRegrow:
+      "Phase 2: antlers regrow by {{value}} after each action",
+    phase2AnansiThreeStepPattern:
+      "Phase 2: the Loom patterns expand to 3 steps",
+    phase2AnansiDoubleOutcome:
+      "Phase 2: completed weaves also inject Binding Curse",
+    phase2QuetzalcoatlFastKnockdown:
+      "Phase 2: knockdown threshold falls to {{value}} hit(s)",
+    phase2QuetzalcoatlBleedOnMiss:
+      "Phase 2: missing the knockdown adds {{value}} Bleed",
+    tezcatlipoca: {
+      mirrorLabel: "Obsidian Mirror",
+      attackDetail: "Next action echoes {{value}} mirror damage.",
+      blockDetail: "Next action echoes {{value}} mirror block.",
+      inkDetail: "Next action adds {{value}} Ink Burn to your draw pile.",
+      hexDetail: "Next action makes cards cost +{{value}} next turn.",
+      intentAttackEcho: "Echo: +{{value}} mirror damage",
+      intentBlockEcho: "Echo: +{{value}} mirror block",
+      intentInkEcho: "Echo: draw +{{value}} Ink Burn",
+      intentHexEcho: "Echo: cards +{{value}} cost next turn",
+    },
+    ra: {
+      sunLabel: "Solar Cycle",
+      sunDetail:
+        "{{charge}}/{{max}} SUN charged. Ending your turn with unspent ink adds {{value}} SUN.",
+      sunReadyDetail:
+        "Solar Judgment is ready. Divine Scorch drains all ink and gains +{{bonus}} damage.",
+      eclipseLabel: "Eclipse Window",
+      eclipseDetail: "Breaking Solar Barrier removes 1 SUN before Ra acts.",
+      chargeIntent: "End turn with ink: +{{value}} SUN",
+      eclipseIntent: "Break Solar Barrier: -1 SUN",
+    },
+    osiris: {
+      scalesLabel: "Scales of Maat",
+      balancedDetail:
+        "{{damage}} damage vs {{block}} block this turn. Stay within {{threshold}} to avoid a verdict.",
+      attackVerdictLabel: "Attack Verdict",
+      attackVerdictShort: "+{{bonus}} damage and {{weak}} Weak",
+      attackVerdictDetail:
+        "{{damage}} damage vs {{block}} block. Next action gains +{{bonus}} damage and applies {{weak}} Weak.",
+      blockVerdictLabel: "Defense Verdict",
+      blockVerdictShort: "+{{bonus}} Block and {{vulnerable}} Vulnerable",
+      blockVerdictDetail:
+        "{{damage}} damage vs {{block}} block. Next action gains +{{bonus}} Block and applies {{vulnerable}} Vulnerable.",
+    },
+    nyarlathotep: {
+      prophecyLabel: "Black Prophecy",
+      spentLabel: "Prophecy Spent",
+      spentDetail:
+        "{{omen}} has already been triggered this turn. {{card}} is already on the way.",
+      drawDetail:
+        "First player-effect draw this turn adds {{card}} to your draw pile.",
+      inkDetail: "First ink spend this turn adds {{card}} to your draw pile.",
+      attackDetail:
+        "First ATTACK card this turn adds {{card}} to your draw pile.",
+      skillDetail:
+        "First SKILL card this turn adds {{card}} to your draw pile.",
+      phaseTwoDetail: "This second prophecy only appears in phase 2.",
+      intentDraw: "Prophecy DRAW: add {{card}}",
+      intentInk: "Prophecy INK: add {{card}}",
+      intentAttack: "Prophecy ATTACK: add {{card}}",
+      intentSkill: "Prophecy SKILL: add {{card}}",
+    },
+    shub: {
+      broodLabel: "Brood Cycle",
+      broodDetail:
+        "{{count}} nest(s) are active out of {{max}}. Next hatch in {{timer}} Shub action(s). Eldritch Veil consumes one for +{{heal}} HP and {{poison}} Poison.",
+      broodEmptyDetail:
+        "No nest is active. Spawn Eruption can fill up to {{max}} nest(s). Eldritch Veil consumes one for +{{heal}} HP and {{poison}} Poison.",
+      nestLabel: "Brood Nest",
+      nestDetail:
+        "If this survives {{timer}} more Shub action(s), it hatches into a Shoggoth Spawn.",
+    },
+    dagda: {
+      brewLabel: "The Cauldron",
+      feastDetail:
+        "FEAST is at {{progress}}/{{length}}. If it resolves, Dagda heals {{heal}} and gains +{{strength}} Strength. Break the cauldron before it finishes.",
+      famineDetail:
+        "FAMINE is at {{progress}}/{{length}}. If it resolves, it adds {{cards}} and applies {{weak}} Weak for {{duration}} turn(s). Break the cauldron before it finishes.",
+      cauldronDownLabel: "Cauldron Broken",
+      cauldronDownDetail:
+        "Dagda has no cauldron in play. Cauldron Steam can restore it.",
+      cauldronLabel: "Dagda's Cauldron",
+      cauldronDetail:
+        "{{brew}} is brewing ({{progress}}/{{length}}). Destroy the cauldron before it resolves.",
+    },
+    cernunnos: {
+      crownLabel: "Antler Crown",
+      crownDetail:
+        "{{layers}}/{{max}} antler layer(s) remain. Hits are capped at {{cap}} while the crown holds. Ancient Wrath gains +{{wrath}} damage right now.",
+      exposedLabel: "EXPOSED",
+      exposedDetail:
+        "The crown is broken. Cernunnos takes +{{bonus}}% damage until his next action, then regrows {{regrow}} layer(s).",
+    },
+    soundiata: {
+      verseLabel: "Epic Verse",
+      rallyDetail:
+        "RALLY is at {{progress}}/{{length}}. If it resolves, all enemies gain +{{value}} Strength. Break it with {{interrupt}}/{{threshold}} damage to Soundiata or Mask Hunter this turn.",
+      shieldDetail:
+        "SHIELD is at {{progress}}/{{length}}. If it resolves, all enemies gain +{{value}} Block. Break it with {{interrupt}}/{{threshold}} damage to Soundiata or Mask Hunter this turn.",
+      warDetail:
+        "WAR is at {{progress}}/{{length}}. If it resolves, all enemies gain +{{value}} Thorns. Break it with {{interrupt}}/{{threshold}} damage to Soundiata or Mask Hunter this turn.",
+      phaseTwoDetail: "This overlapping verse only appears in phase 2.",
+    },
+    anansi: {
+      loomLabel: "The Loom",
+      loomDetail:
+        "Combination {{pattern}} is live ({{progress}}/{{length}}). Order does not matter. An inked card counts as its native type plus INK. Completing it webs the last card played and adds Shrouded Omen.",
+      loomPhaseTwoDetail:
+        "Combination {{pattern}} is live ({{progress}}/{{length}}). Order does not matter. An inked card counts as its native type plus INK. Completing it webs the last card played and adds Shrouded Omen plus Binding Curse.",
+      stalledLabel: "Loom Stalled",
+      stalledDetail:
+        "You broke the pattern this turn. If the pattern required Ink, Anansi still adds a Shrouded Omen. The Loom will not catch another card until next turn.",
+      webbedLabel: "Caught Card",
+      webbedDetail:
+        "{{count}} card(s) are caught in the Loom. When drawn again, they enter your hand Frozen until played.",
+      intentPattern:
+        "Loom {{pattern}} ({{progress}}/{{length}}, any order): on complete, web last card + Shrouded Omen",
+      intentPatternPhaseTwo:
+        "Loom {{pattern}} ({{progress}}/{{length}}, any order): on complete, web last card + Omen + Binding Curse",
+    },
+    quetzalcoatl: {
+      airborneLabel: "AIRBORNE",
+      airborneDetail:
+        "Friendly hits are capped at {{cap}} damage while Quetzalcoatl is in the air.",
+      groundedLabel: "GROUNDED",
+      groundedDetail:
+        "Quetzalcoatl is knocked down, takes +{{bonus}}% damage, and prepares Solar Dive.",
+      counterLabel: "Knockdown",
+      counterDetail:
+        "{{hits}}/{{threshold}} hits landed this turn. Reach the threshold to force a knockdown.",
+      counterPhaseTwoDetail:
+        "{{hits}}/{{threshold}} hits landed this turn. In phase 2, missing the knockdown adds {{bleed}} Bleed.",
+    },
+    fenrir: {
+      huntLabel: "The Hunt",
+      huntDetail:
+        "{{remaining}}/{{max}} hunt remains. Fenrir gains +{{bonus}} damage this turn.",
+      huntBrokenDetail: "The hunt is broken. Fenrir gets no bonus damage.",
+      phaseTwoHowlDetail:
+        "If the hunt survives, Pack Howl summons a Draugr or adds Bleed.",
+    },
+    helQueen: {
+      lifeLabel: "LIFE",
+      deathLabel: "DEATH",
+      lifeDetail:
+        "Applies {{bleed}} Bleed after each action. Switches to {{next}} in {{turns}} turn(s).",
+      deathDetail:
+        "Cashes out Bleed and may restore a Draugr. Switches to {{next}} in {{turns}} turn(s).",
+      deathPhaseTwoDetail:
+        "Cashes out Bleed, may restore a Draugr, and applies {{weak}} Weak. Switches to {{next}} in {{turns}} turn(s).",
+    },
+    medusa: {
+      gazeLabel: "Forbidden Gaze",
+      gazeDetail:
+        "Do not complete {{pattern}} this turn ({{progress}}/{{length}}). If you do, the last card becomes Petrified and costs +{{petrify}}.",
+    },
+    hydra: {
+      headsLabel: "Hydra Heads",
+      headsDetail:
+        "{{alive}}/{{total}} heads remain. Kill a head and hit the body in the same turn to cauterize it.",
+      regrowLabel: "Regrowth",
+      regrowDetail:
+        "{{count}} head(s) will regrow when the enemy turn begins unless the body is hit this turn.",
+      cauterizedLabel: "Cauterized",
+      cauterizedDetail: "{{count}} head(s) are cauterized and will not regrow.",
+    },
+    babaYaga: {
+      teethLabel: "TEETH",
+      bonesLabel: "BONES",
+      hearthLabel: "HEARTH",
+      curseLabel: "CURSE",
+      teethDetail:
+        "Offer {{threshold}} attacks this turn ({{progress}}/{{threshold}}) or the hut gains Strength. Turns to {{next}} in {{turns}} turn(s).",
+      bonesDetail:
+        "Offer {{threshold}} block this turn ({{progress}}/{{threshold}}) or the hut gains Block. Turns to {{next}} in {{turns}} turn(s).",
+      hearthDetail:
+        "Offer {{threshold}} spent ink this turn ({{progress}}/{{threshold}}) or the hut freezes your hand. Turns to {{next}} in {{turns}} turn(s).",
+      curseDetail:
+        "Offer 1 attack, 6 block, and 1 spent ink this turn (ATK {{attacks}}, BLK {{block}}, INK {{ink}}) or the hut freezes 2 cards and raises costs next turn. Turns to {{next}} in {{turns}} turn(s).",
+    },
+    koschei: {
+      immortalLabel: "Hidden Death",
+      hiddenDeathLabel: "The hidden death",
+      stageDetail: "Koschei cannot die while {{vessel}} remains hidden.",
+      stagePhaseTwoDetail:
+        "Koschei cannot die while {{vessel}} remains hidden. In phase 2, the next broken vessel is resealed once.",
+      resealDetail: "Koschei is resealing {{vessel}} on his next action.",
+      mortalLabel: "MORTAL",
+      mortalDetail: "The needle is broken. Koschei can be finished.",
+    },
     chapterGuardian: {
       martialLabel: "Martial Binding",
       martialDetail:

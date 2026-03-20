@@ -22,11 +22,25 @@ import {
   finalizeEnemyRound,
 } from "@/game/engine/enemies";
 import { applyInkPower } from "@/game/engine/ink";
+import { synchronizeHydraCombatState } from "@/game/engine/hydra";
+import { synchronizeKoscheiCombatState } from "@/game/engine/koschei";
+import { synchronizeMedusaCombatState } from "@/game/engine/medusa";
+import { synchronizeAnansiCombatState } from "@/game/engine/anansi-weaver";
+import { synchronizeCernunnosCombatState } from "@/game/engine/cernunnos-shade";
+import { synchronizeDagdaCombatState } from "@/game/engine/dagda-shadow";
+import { synchronizeNyarlathotepCombatState } from "@/game/engine/nyarlathotep";
+import { synchronizeOsirisCombatState } from "@/game/engine/osiris-judgment";
+import { synchronizeQuetzalcoatlCombatState } from "@/game/engine/quetzalcoatl";
+import { synchronizeRaCombatState } from "@/game/engine/ra-avatar";
+import { synchronizeShubCombatState } from "@/game/engine/shub-spawn";
+import { synchronizeSoundiataCombatState } from "@/game/engine/soundiata-spirit";
+import { synchronizeTezcatlipocaCombatState } from "@/game/engine/tezcatlipoca";
 import {
   addRelicToRunState,
   applyRelicsOnCombatStart,
   applyRelicsOnCardPlayed,
   getRelicExhaustKeepChance,
+  setRunRelicFlag,
 } from "@/game/engine/relics";
 import { drawCards, exhaustCardFromHandForOverflow } from "@/game/engine/deck";
 import {
@@ -45,6 +59,7 @@ import {
   removeCardFromRunDeck,
   applyEventChoice,
   type GameEvent,
+  getBossRoomIndexForMap,
 } from "@/game/engine/run";
 import { addCardToRunDeck } from "@/game/engine/rewards";
 import {
@@ -70,7 +85,11 @@ export type GameAction =
   | { type: "LOAD_RUN"; payload: RunState }
   | {
       type: "START_COMBAT";
-      payload: { enemyIds: string[] };
+      payload: {
+        enemyIds: string[];
+        encounterBiomeOverride?: BiomeType;
+        encounterBossIdOverride?: string;
+      };
     }
   | {
       type: "PLAY_CARD";
@@ -126,10 +145,12 @@ export type GameAction =
   | { type: "REROLL_SHOP" }
   | { type: "BUY_START_MERCHANT_OFFER"; payload: { offer: StartMerchantOffer } }
   | { type: "COMPLETE_START_MERCHANT" }
+  | { type: "DEV_SKIP_TO_BOSS_ROOM" }
   | { type: "CHEAT_KILL_ENEMY"; payload: { enemyInstanceId: string } }
   | { type: "UPGRADE_CARD"; payload: { cardInstanceId: string } }
   | { type: "APPLY_FREE_UPGRADE"; payload: { cardInstanceId: string } }
   | { type: "MARK_FREE_UPGRADE_USED" }
+  | { type: "SET_RELIC_RUN_FLAG"; payload: { flag: string; value?: boolean } }
   | { type: "REMOVE_CARD_FROM_DECK"; payload: { cardInstanceId: string } }
   | { type: "APPLY_EVENT"; payload: { event: GameEvent; choiceIndex: number } }
   | { type: "CHOOSE_BIOME"; payload: { biome: BiomeType } }
@@ -143,6 +164,33 @@ interface ReducerDeps {
 }
 
 export function createGameReducer(deps: ReducerDeps) {
+  const synchronizeBossStates = (combat: NonNullable<RunState["combat"]>) =>
+    synchronizeKoscheiCombatState(
+      synchronizeHydraCombatState(
+        synchronizeMedusaCombatState(
+          synchronizeQuetzalcoatlCombatState(
+            synchronizeTezcatlipocaCombatState(
+              synchronizeOsirisCombatState(
+                synchronizeShubCombatState(
+                  synchronizeNyarlathotepCombatState(
+                    synchronizeSoundiataCombatState(
+                      synchronizeAnansiCombatState(
+                        synchronizeCernunnosCombatState(
+                          synchronizeDagdaCombatState(
+                            synchronizeRaCombatState(combat)
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    );
+
   const applySurvivalOnceIfNeeded = (state: RunState, rng: RNG): RunState => {
     if (!state.combat || state.combat.phase !== "COMBAT_LOST") return state;
     if (!state.metaBonuses?.survivalOnce || state.survivalOnceUsed)
@@ -182,6 +230,7 @@ export function createGameReducer(deps: ReducerDeps) {
           rng
         );
         combat = applyRelicsOnCombatStart(combat, state.relicIds, rng);
+        combat = synchronizeBossStates(combat);
 
         // initCombat already drew the initial hand before relics are applied.
         // If relics increased drawCount (e.g. Bookmark), top up opening hand.
@@ -202,6 +251,19 @@ export function createGameReducer(deps: ReducerDeps) {
           state.currentRoom === 0
         ) {
           combat = applyFirstRunOpeningCombatAdvantage(combat);
+        }
+
+        if (
+          action.payload.encounterBiomeOverride ||
+          action.payload.encounterBossIdOverride
+        ) {
+          combat = {
+            ...combat,
+            encounterContext: {
+              biome: action.payload.encounterBiomeOverride,
+              bossDefinitionId: action.payload.encounterBossIdOverride,
+            },
+          };
         }
 
         return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
@@ -241,6 +303,7 @@ export function createGameReducer(deps: ReducerDeps) {
             }
           );
         }
+        combat = synchronizeBossStates(combat);
         combat = checkCombatEnd(combat);
         return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
@@ -569,6 +632,46 @@ export function createGameReducer(deps: ReducerDeps) {
       case "COMPLETE_START_MERCHANT":
         return completeStartMerchant(state);
 
+      case "DEV_SKIP_TO_BOSS_ROOM": {
+        if (process.env.NODE_ENV === "production") return state;
+
+        const bossRoomIndex = getBossRoomIndexForMap(state.map);
+        if (state.currentRoom >= bossRoomIndex) return state;
+
+        const preBossIndex = Math.max(0, bossRoomIndex - 1);
+        const bossSlot = state.map[bossRoomIndex] ?? [];
+        const preBossSlot = state.map[preBossIndex] ?? [];
+        const targetBossNode = bossSlot[0];
+        const targetBossNodeId = targetBossNode
+          ? (targetBossNode.nodeId ?? `${targetBossNode.index}-0`)
+          : null;
+        const matchedPreBossChoiceIndex = preBossSlot.findIndex(
+          (node, choiceIndex) => {
+            if (!targetBossNodeId) return choiceIndex === 0;
+            const nextNodeIds = node.nextNodeIds ?? [];
+            return nextNodeIds.length === 0
+              ? choiceIndex === 0
+              : nextNodeIds.includes(targetBossNodeId);
+          }
+        );
+        const preBossChoiceIndex =
+          matchedPreBossChoiceIndex >= 0 ? matchedPreBossChoiceIndex : 0;
+
+        return {
+          ...state,
+          currentRoom: bossRoomIndex,
+          merchantRerollCount: 0,
+          map: state.map.map((slot, slotIndex) =>
+            slotIndex === preBossIndex
+              ? slot.map((node, choiceIndex) => ({
+                  ...node,
+                  completed: choiceIndex === preBossChoiceIndex,
+                }))
+              : slot
+          ),
+        };
+      }
+
       case "CHEAT_KILL_ENEMY": {
         if (process.env.NODE_ENV === "production") return state;
         if (!state.combat) return state;
@@ -599,6 +702,13 @@ export function createGameReducer(deps: ReducerDeps) {
 
       case "MARK_FREE_UPGRADE_USED":
         return { ...state, freeUpgradeUsed: true };
+
+      case "SET_RELIC_RUN_FLAG":
+        return setRunRelicFlag(
+          state,
+          action.payload.flag,
+          action.payload.value ?? true
+        );
 
       case "REMOVE_CARD_FROM_DECK":
         return removeCardFromRunDeck(state, action.payload.cardInstanceId);

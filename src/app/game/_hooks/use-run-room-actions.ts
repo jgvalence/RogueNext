@@ -10,7 +10,10 @@ import type { RunState } from "@/game/schemas/run-state";
 import type { BiomeType } from "@/game/schemas/enums";
 import { VANILLA_RUN_CONDITION_ID } from "@/game/engine/run-conditions";
 import { getFirstRunForcedMapChoiceIndex } from "@/game/engine/first-run-script";
-import { isRoomChoiceReachable } from "@/game/engine/run";
+import {
+  getBossRoomIndexForMap,
+  isRoomChoiceReachable,
+} from "@/game/engine/run";
 import type { GameAction } from "../_providers/game-reducer";
 import { isRunStartState, type GamePhase } from "../_services/run-phase";
 import type { RunSetupDraft } from "../_components/run-setup/RunSetupScreen";
@@ -24,6 +27,11 @@ interface UseRunRoomActionsParams {
   setForceEventWithRelicStable: Dispatch<SetStateAction<boolean>>;
   canOfferFreeUpgradeAtStart: boolean;
   hasOpeningBiomeChoice: boolean;
+  bossEncounterOverride?: {
+    biome: BiomeType;
+    bossId: string;
+    consumeRunFlag?: string;
+  } | null;
 }
 
 export function useRunRoomActions({
@@ -35,6 +43,7 @@ export function useRunRoomActions({
   setForceEventWithRelicStable,
   canOfferFreeUpgradeAtStart,
   hasOpeningBiomeChoice,
+  bossEncounterOverride = null,
 }: UseRunRoomActionsParams) {
   const handleSelectRoom = useCallback(
     (choiceIndex: number) => {
@@ -60,9 +69,33 @@ export function useRunRoomActions({
       dispatch({ type: "SELECT_ROOM", payload: { choiceIndex } });
 
       if (room.type === "COMBAT" && room.enemyIds) {
+        const isBossRoom =
+          stateRef.current.currentRoom ===
+          getBossRoomIndexForMap(stateRef.current.map);
+        const plannedBossId = room.enemyIds[0];
+        const hasBossEncounterOverride =
+          isBossRoom && bossEncounterOverride !== null;
+        const shouldOverrideBossEncounter =
+          hasBossEncounterOverride &&
+          (bossEncounterOverride.biome !== stateRef.current.currentBiome ||
+            bossEncounterOverride.bossId !== plannedBossId);
+
+        if (hasBossEncounterOverride && bossEncounterOverride.consumeRunFlag) {
+          dispatch({
+            type: "SET_RELIC_RUN_FLAG",
+            payload: { flag: bossEncounterOverride.consumeRunFlag },
+          });
+        }
+
         dispatch({
           type: "START_COMBAT",
-          payload: { enemyIds: room.enemyIds },
+          payload: shouldOverrideBossEncounter
+            ? {
+                enemyIds: [bossEncounterOverride.bossId],
+                encounterBiomeOverride: bossEncounterOverride.biome,
+                encounterBossIdOverride: bossEncounterOverride.bossId,
+              }
+            : { enemyIds: room.enemyIds },
         });
         setPhase("COMBAT");
       } else if (room.type === "MERCHANT") {
@@ -78,6 +111,7 @@ export function useRunRoomActions({
     },
     [
       currentRoomChoices,
+      bossEncounterOverride,
       dispatch,
       setForceEventWithRelicStable,
       setPhase,
@@ -170,10 +204,15 @@ export function useRunRoomActions({
     setPhase("MAP");
   }, [dispatch, setPhase]);
 
+  const handleDevSkipToBossRoom = useCallback(() => {
+    dispatch({ type: "DEV_SKIP_TO_BOSS_ROOM" });
+  }, [dispatch]);
+
   return {
     handleSelectRoom,
     handleContinueSetup,
     handlePickBiome,
     handleHeal,
+    handleDevSkipToBossRoom,
   };
 }

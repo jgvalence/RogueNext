@@ -551,6 +551,32 @@ export const fr = {
     choosePath: "Choisis ton chemin",
     roomOf: "Salle {{current}} sur {{total}}",
     bossSuffix: "BOSS",
+    devBossSelector: {
+      kicker: "DEV Salle Boss",
+      subtitle:
+        "Remplace le prochain combat de boss en choisissant un biome et l'un de ses boss.",
+      biomeLabel: "Biome",
+      bossLabel: "Boss",
+      plannedBoss: "Boss prevu dans la salle : {{boss}} du biome {{biome}}",
+    },
+    devShortcut: {
+      kicker: "Raccourci DEV",
+      subtitle: "Ignore le routing et saute directement a la salle du boss.",
+      action: "Aller au boss",
+    },
+    relicBossSelector: {
+      kicker: "Choix de Boss",
+      subtitle:
+        "Depense la charge de la relique pour choisir quel boss de ce biome tu affrontes.",
+      biomeLabel: "Biome",
+      bossLabel: "Boss",
+      plannedBoss: "Boss prevu dans la salle : {{boss}} du biome {{biome}}",
+      readyKicker: "Relique prete",
+      readySubtitle:
+        "Le Sceau du Chasseur n'a pas encore ete utilise. Tu peux le depenser ici pour choisir le boss du biome.",
+      useAction: "Utiliser le Sceau du Chasseur",
+      cancelAction: "Le garder pour plus tard",
+    },
     elite: "Elite",
     enemyCount_one: "{{count}} ennemi",
     enemyCount_other: "{{count}} ennemis",
@@ -894,6 +920,16 @@ export const fr = {
       description:
         "Augmente de 50% le pourcentage de soin applique apres chaque combat.",
     },
+    menders_inkwell: {
+      name: "Encrier du guerisseur",
+      description:
+        "Chaque fois que vous depensez de l'encre, soignez-vous d'autant de PV.",
+    },
+    echoing_inkstone: {
+      name: "Pierre d'encre resonante",
+      description:
+        "Les cartes encrees, les cartes avec un cout en encre et les payoffs bases sur l'encre actuelle voient leurs effets doubles.",
+    },
     gilded_ledger: {
       name: "Ledger dore",
       description: "Augmente de 50% l'or gagne via les recompenses de combat.",
@@ -1071,10 +1107,14 @@ export const fr = {
     },
     labels: {
       normal: "Normal",
+      noInk: "Sans encre",
       inked: "Encre",
       ink: "Encre",
       current: "Actuelle",
       upgraded: "Amelioree",
+      petrified: "Petrifiee",
+      webbed: "Capturee",
+      neutral: "Neutre",
       redaction: {
         COST: "Cout +1",
         TEXT: "Texte censure",
@@ -1642,6 +1682,7 @@ export const fr = {
     selfDamage: "Perd {{value}} PV",
     alliesGainBlock: "Allies +{{value}} BLK",
     alliesGainBuff: "Allies +{{value}} {{buff}}",
+    alliesGainThorns: "Allies +{{value}} Epines",
     redactCardCost: "Redige {{value}} carte : +1 cout",
     redactCardText: "Redige {{value}} carte : upgrade/encre coupes",
     redactCardFlexible: "Redige {{value}} carte : cout ou texte",
@@ -1653,8 +1694,223 @@ export const fr = {
     conditionalBonusVsDebuffed: "+{{bonus}} si le joueur est affaibli",
     conditionalBonusVsLowInk: "+{{bonus}} si <= {{threshold}} encre",
     conditionalBonusPerCurse: "+{{perCurse}}/maled. (actuel +{{total}})",
+    conditionalBonusPerHunt:
+      "+{{perPip}}/chasse (reste {{remaining}}, actuel +{{total}})",
+    conditionalBonusPerBleed: "+{{perBleed}}/saign. (actuel +{{total}})",
+    conditionalBonusPerAntler: "+{{perAntler}}/andouiller (actuel +{{total}})",
+    cashOutPlayerBleed: "Convertit Saignement x{{bleed}} ({{damage}} DMG)",
     phase2Badge: "P2",
     phase2Summon: "Phase 2 (<50% PV) : invoque {{label}}",
+    phase2FenrirHunt: "HUNT passe a {{value}}",
+    phase2HelRotate: "Change de stance a chaque tour",
+    phase2MedusaDoubleGaze: "Phase 2 : revele un deuxieme pattern interdit",
+    phase2TezcatlipocaDoubleEcho: "Phase 2 : stocke deux echos du miroir",
+    phase2RaChargeRate:
+      "Phase 2 : gagne {{value}} SUN chaque fois que tu gardes de l'encre",
+    phase2OsirisThreshold:
+      "Phase 2 : le seuil de Maat tombe a {{value}} et les verdicts deviennent plus severes",
+    phase2SoundiataDoubleVerse:
+      "Phase 2 : un deuxieme vers se superpose au premier",
+    phase2NyarlathotepDoubleProphecy:
+      "Phase 2 : deux propheties taboues sont actives en meme temps",
+    phase2ShubDoubleBrood:
+      "Phase 2 : Spawn Eruption peut entretenir deux nids a la fois",
+    phase2DagdaFastBrew: "Phase 2 : le chaudron commence precharge a 1/2",
+    phase2CernunnosFastRegrow:
+      "Phase 2 : les andouillers repoussent de {{value}} apres chaque action",
+    phase2AnansiThreeStepPattern:
+      "Phase 2 : les patterns du metier passent a 3 etapes",
+    phase2AnansiDoubleOutcome:
+      "Phase 2 : une toile complete ajoute aussi Binding Curse",
+    phase2QuetzalcoatlFastKnockdown:
+      "Phase 2 : la chute demande seulement {{value}} hit(s)",
+    phase2QuetzalcoatlBleedOnMiss:
+      "Phase 2 : rater la chute ajoute {{value}} Saignement",
+    tezcatlipoca: {
+      mirrorLabel: "Miroir d'obsidienne",
+      attackDetail: "Sa prochaine action renverra {{value}} degats du miroir.",
+      blockDetail: "Sa prochaine action renverra {{value}} blocage du miroir.",
+      inkDetail: "Sa prochaine action ajoute {{value}} Ink Burn a ta pioche.",
+      hexDetail:
+        "Sa prochaine action augmente les cartes de +{{value}} cout au prochain tour.",
+      intentAttackEcho: "Echo : +{{value}} degats miroir",
+      intentBlockEcho: "Echo : +{{value}} blocage miroir",
+      intentInkEcho: "Echo : pioche +{{value}} Ink Burn",
+      intentHexEcho: "Echo : cartes +{{value}} cout au prochain tour",
+    },
+    ra: {
+      sunLabel: "Cycle solaire",
+      sunDetail:
+        "{{charge}}/{{max}} SUN charges. Finir ton tour avec de l'encre non depensee ajoute {{value}} SUN.",
+      sunReadyDetail:
+        "Solar Judgment est pret. Divine Scorch vide toute l'encre et gagne +{{bonus}} degats.",
+      eclipseLabel: "Fenetre d'eclipse",
+      eclipseDetail: "Briser Solar Barrier retire 1 SUN avant l'action de Ra.",
+      chargeIntent: "Fin de tour avec encre : +{{value}} SUN",
+      eclipseIntent: "Brise Solar Barrier : -1 SUN",
+    },
+    osiris: {
+      scalesLabel: "Balances de Maat",
+      balancedDetail:
+        "{{damage}} degats contre {{block}} armure ce tour. Reste sous {{threshold}} d'ecart pour eviter un verdict.",
+      attackVerdictLabel: "Verdict d'attaque",
+      attackVerdictShort: "+{{bonus}} degats et {{weak}} Faible",
+      attackVerdictDetail:
+        "{{damage}} degats contre {{block}} armure. Sa prochaine action gagne +{{bonus}} degats et applique {{weak}} Faible.",
+      blockVerdictLabel: "Verdict de defense",
+      blockVerdictShort: "+{{bonus}} armure et {{vulnerable}} Vulnerable",
+      blockVerdictDetail:
+        "{{damage}} degats contre {{block}} armure. Sa prochaine action gagne +{{bonus}} armure et applique {{vulnerable}} Vulnerable.",
+    },
+    nyarlathotep: {
+      prophecyLabel: "Prophetie noire",
+      spentLabel: "Prophetie consommee",
+      spentDetail:
+        "{{omen}} s'est deja declenchee ce tour. {{card}} est deja en route.",
+      drawDetail:
+        "La premiere pioche provoquee par le joueur ce tour ajoute {{card}} a ta pioche.",
+      inkDetail:
+        "La premiere depense d'encre ce tour ajoute {{card}} a ta pioche.",
+      attackDetail:
+        "La premiere carte ATTACK ce tour ajoute {{card}} a ta pioche.",
+      skillDetail:
+        "La premiere carte SKILL ce tour ajoute {{card}} a ta pioche.",
+      phaseTwoDetail: "Cette deuxieme prophetie n'apparait qu'en phase 2.",
+      intentDraw: "Prophetie DRAW : ajoute {{card}}",
+      intentInk: "Prophetie INK : ajoute {{card}}",
+      intentAttack: "Prophetie ATTACK : ajoute {{card}}",
+      intentSkill: "Prophetie SKILL : ajoute {{card}}",
+    },
+    shub: {
+      broodLabel: "Cycle du couvain",
+      broodDetail:
+        "{{count}} nid(s) sont actifs sur {{max}}. Prochaine eclosion dans {{timer}} action(s) de Shub. Eldritch Veil en consomme un pour +{{heal}} PV et {{poison}} Poison.",
+      broodEmptyDetail:
+        "Aucun nid actif. Spawn Eruption peut remplir jusqu'a {{max}} nid(s). Eldritch Veil en consomme un pour +{{heal}} PV et {{poison}} Poison.",
+      nestLabel: "Nid du couvain",
+      nestDetail:
+        "S'il survit encore {{timer}} action(s) de Shub, ce nid eclot en Shoggoth Spawn.",
+    },
+    dagda: {
+      brewLabel: "Le chaudron",
+      feastDetail:
+        "FEAST est a {{progress}}/{{length}}. S'il se termine, Dagda se soigne de {{heal}} et gagne +{{strength}} Force. Brise le chaudron avant la resolution.",
+      famineDetail:
+        "FAMINE est a {{progress}}/{{length}}. S'il se termine, il ajoute {{cards}} et applique {{weak}} Faible pendant {{duration}} tour(s). Brise le chaudron avant la resolution.",
+      cauldronDownLabel: "Chaudron brise",
+      cauldronDownDetail:
+        "Dagda n'a plus de chaudron en jeu. Cauldron Steam peut le restaurer.",
+      cauldronLabel: "Chaudron de Dagda",
+      cauldronDetail:
+        "{{brew}} mijote ({{progress}}/{{length}}). Detruis le chaudron avant la resolution.",
+    },
+    cernunnos: {
+      crownLabel: "Couronne d'andouillers",
+      crownDetail:
+        "{{layers}}/{{max}} couche(s) restent. Les hits sont limites a {{cap}} tant que la couronne tient. Ancient Wrath gagne actuellement +{{wrath}} degats.",
+      exposedLabel: "EXPOSE",
+      exposedDetail:
+        "La couronne est brisee. Cernunnos subit +{{bonus}}% degats jusqu'a sa prochaine action, puis regagne {{regrow}} couche(s).",
+    },
+    soundiata: {
+      verseLabel: "Vers epique",
+      rallyDetail:
+        "RALLY est a {{progress}}/{{length}}. S'il se termine, tous les ennemis gagnent +{{value}} Force. Brise-le avec {{interrupt}}/{{threshold}} degats sur Soundiata ou Mask Hunter ce tour.",
+      shieldDetail:
+        "SHIELD est a {{progress}}/{{length}}. S'il se termine, tous les ennemis gagnent +{{value}} armure. Brise-le avec {{interrupt}}/{{threshold}} degats sur Soundiata ou Mask Hunter ce tour.",
+      warDetail:
+        "WAR est a {{progress}}/{{length}}. S'il se termine, tous les ennemis gagnent +{{value}} Epines. Brise-le avec {{interrupt}}/{{threshold}} degats sur Soundiata ou Mask Hunter ce tour.",
+      phaseTwoDetail: "Ce vers superpose n'apparait qu'en phase 2.",
+    },
+    anansi: {
+      loomLabel: "Le Metier",
+      loomDetail:
+        "La combinaison {{pattern}} est active ({{progress}}/{{length}}). L'ordre n'a pas d'importance. Une carte jouee avec de l'encre compte comme son type natif plus INK. La completer capture la derniere carte jouee et ajoute Shrouded Omen.",
+      loomPhaseTwoDetail:
+        "La combinaison {{pattern}} est active ({{progress}}/{{length}}). L'ordre n'a pas d'importance. Une carte jouee avec de l'encre compte comme son type natif plus INK. La completer capture la derniere carte jouee et ajoute Shrouded Omen plus Binding Curse.",
+      stalledLabel: "Metier cale",
+      stalledDetail:
+        "Tu as casse la combinaison ce tour. Si le motif demandait de l'encre, Anansi ajoute quand meme un Shrouded Omen. Le metier n'attrapera plus de carte avant le prochain tour.",
+      webbedLabel: "Carte capturee",
+      webbedDetail:
+        "{{count}} carte(s) sont prises dans la toile. A la prochaine pioche, elles entrent en main gelees jusqu'a etre rejouees.",
+      intentPattern:
+        "Metier {{pattern}} ({{progress}}/{{length}}, ordre libre) : a la completion, capture la derniere carte + Shrouded Omen",
+      intentPatternPhaseTwo:
+        "Metier {{pattern}} ({{progress}}/{{length}}, ordre libre) : a la completion, capture la derniere carte + Omen + Binding Curse",
+    },
+    quetzalcoatl: {
+      airborneLabel: "EN VOL",
+      airborneDetail:
+        "Les hits allies sont limites a {{cap}} degats tant que Quetzalcoatl est en l'air.",
+      groundedLabel: "AU SOL",
+      groundedDetail:
+        "Quetzalcoatl est projete au sol, subit +{{bonus}}% degats, et prepare Solar Dive.",
+      counterLabel: "Chute",
+      counterDetail:
+        "{{hits}}/{{threshold}} hits ont touche ce tour. Atteins le seuil pour le faire tomber.",
+      counterPhaseTwoDetail:
+        "{{hits}}/{{threshold}} hits ont touche ce tour. En phase 2, rater la chute ajoute {{bleed}} Saignement.",
+    },
+    fenrir: {
+      huntLabel: "La chasse",
+      huntDetail:
+        "{{remaining}}/{{max}} marqueurs restants. Fenrir gagne +{{bonus}} degats ce tour.",
+      huntBrokenDetail: "La chasse est brisee. Fenrir ne gagne plus de bonus.",
+      phaseTwoHowlDetail:
+        "Si la chasse tient, Pack Howl invoque un Draugr ou ajoute Saignement.",
+    },
+    helQueen: {
+      lifeLabel: "VIE",
+      deathLabel: "MORT",
+      lifeDetail:
+        "Applique {{bleed}} Saignement apres chaque action. Passe en {{next}} dans {{turns}} tour(s).",
+      deathDetail:
+        "Convertit le Saignement et peut retablir un Draugr. Passe en {{next}} dans {{turns}} tour(s).",
+      deathPhaseTwoDetail:
+        "Convertit le Saignement, peut retablir un Draugr et applique {{weak}} Faible. Passe en {{next}} dans {{turns}} tour(s).",
+    },
+    medusa: {
+      gazeLabel: "Regard interdit",
+      gazeDetail:
+        "Ne complete pas {{pattern}} ce tour ({{progress}}/{{length}}). Sinon, la derniere carte devient Petrifiee et coute +{{petrify}}.",
+    },
+    hydra: {
+      headsLabel: "Tetes d'Hydre",
+      headsDetail:
+        "{{alive}}/{{total}} tetes restent actives. Tue une tete puis touche le corps dans le meme tour pour la cauteriser.",
+      regrowLabel: "Repousse",
+      regrowDetail:
+        "{{count}} tete(s) repousseront au debut du tour ennemi si le corps n'est pas touche ce tour.",
+      cauterizedLabel: "Cauterisee",
+      cauterizedDetail:
+        "{{count}} tete(s) sont cauterisees et ne repousseront plus.",
+    },
+    babaYaga: {
+      teethLabel: "CROC",
+      bonesLabel: "OS",
+      hearthLabel: "FOYER",
+      curseLabel: "MALEDICTION",
+      teethDetail:
+        "Offre {{threshold}} attaques ce tour ({{progress}}/{{threshold}}) ou la cabane gagne de la Force. Se tourne vers {{next}} dans {{turns}} tour(s).",
+      bonesDetail:
+        "Offre {{threshold}} armure ce tour ({{progress}}/{{threshold}}) ou la cabane gagne du blocage. Se tourne vers {{next}} dans {{turns}} tour(s).",
+      hearthDetail:
+        "Offre {{threshold}} encre depensee ce tour ({{progress}}/{{threshold}}) ou la cabane gele ta main. Se tourne vers {{next}} dans {{turns}} tour(s).",
+      curseDetail:
+        "Offre 1 attaque, 6 armure et 1 encre depensee ce tour (ATQ {{attacks}}, BLK {{block}}, INK {{ink}}) ou la cabane gele 2 cartes et augmente les couts au prochain tour. Se tourne vers {{next}} dans {{turns}} tour(s).",
+    },
+    koschei: {
+      immortalLabel: "Mort cachee",
+      hiddenDeathLabel: "La mort cachee",
+      stageDetail:
+        "Kostchei ne peut pas mourir tant que {{vessel}} reste cache.",
+      stagePhaseTwoDetail:
+        "Kostchei ne peut pas mourir tant que {{vessel}} reste cache. En phase 2, le prochain receptacle brise est rescelle une fois.",
+      resealDetail: "Kostchei rescelle {{vessel}} lors de sa prochaine action.",
+      mortalLabel: "MORTEL",
+      mortalDetail: "L'aiguille est brisee. Kostchei peut enfin etre acheve.",
+    },
     chapterGuardian: {
       martialLabel: "Lien martial",
       martialDetail:

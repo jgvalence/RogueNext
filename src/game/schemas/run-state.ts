@@ -73,6 +73,7 @@ export const RunStateSchema = z.object({
   // Absent entry = new ally, starts at full HP
   allyCurrentHps: z.record(z.string(), z.number().int()).default({}),
   relicIds: z.array(z.string()).default([]),
+  relicRunFlags: z.record(z.string(), z.boolean()).default({}),
   usableItems: z.array(UsableItemInstanceSchema).default([]),
   usableItemCapacity: z.number().int().min(0).default(3),
   freeUpgradeUsed: z.boolean().default(false),
@@ -150,6 +151,10 @@ export const RunStateSchema = z.object({
     })
     .optional(),
 });
-export type RunState = Omit<z.infer<typeof RunStateSchema>, "map"> & {
+export type RunState = Omit<
+  z.infer<typeof RunStateSchema>,
+  "map" | "relicRunFlags"
+> & {
   map: RoomNode[][];
+  relicRunFlags?: Record<string, boolean>;
 };

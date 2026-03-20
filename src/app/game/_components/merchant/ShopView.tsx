@@ -64,6 +64,21 @@ const rarityColors: Record<string, string> = {
   RARE: "text-yellow-400",
 };
 
+function isPurgeItem(item: ShopItem): boolean {
+  return item.type === "purge" || item.type === "blood_purge";
+}
+
+function getPersistentSoldIds(
+  inventory: ShopItem[],
+  soldIds: Set<string>
+): Set<string> {
+  return new Set(
+    inventory
+      .filter((item) => isPurgeItem(item) && soldIds.has(item.id))
+      .map((item) => item.id)
+  );
+}
+
 export function ShopView({
   floor,
   gold,
@@ -141,7 +156,7 @@ export function ShopView({
   const canReroll = gold >= rerollPrice;
 
   const handleBuy = (item: ShopItem) => {
-    const isPurge = item.type === "purge" || item.type === "blood_purge";
+    const isPurge = isPurgeItem(item);
     if (isPurge && deck.length <= 1) return;
     if (gold < item.price || soldIds.has(item.id)) return;
     onBuy(item);
@@ -150,25 +165,24 @@ export function ShopView({
       setPendingPurgeItemId(item.id);
     } else {
       if (autoRestockChargesLeft > 0) {
-        setInventory(
-          generateShopInventory(
-            floor,
-            [...cardDefs.values()],
-            relicIds,
-            rng,
-            unlockedCardIds,
-            unlockedDifficultyLevelSnapshot,
-            selectedDifficultyLevel,
-            relicDiscount,
-            usableItems,
-            usableItemCapacity,
-            unlockedRelicIds,
-            allyIds,
-            allySlots,
-            characterId
-          )
+        const nextInventory = generateShopInventory(
+          floor,
+          [...cardDefs.values()],
+          relicIds,
+          rng,
+          unlockedCardIds,
+          unlockedDifficultyLevelSnapshot,
+          selectedDifficultyLevel,
+          relicDiscount,
+          usableItems,
+          usableItemCapacity,
+          unlockedRelicIds,
+          allyIds,
+          allySlots,
+          characterId
         );
-        setSoldIds(new Set());
+        setInventory(nextInventory);
+        setSoldIds((prev) => getPersistentSoldIds(inventory, prev));
         setAutoRestockChargesLeft((prev) => Math.max(0, prev - 1));
       } else {
         setSoldIds((prev) => new Set(prev).add(item.id));
@@ -187,25 +201,24 @@ export function ShopView({
   const handleReroll = () => {
     if (!canReroll) return;
     onReroll();
-    setInventory(
-      generateShopInventory(
-        floor,
-        [...cardDefs.values()],
-        relicIds,
-        rng,
-        unlockedCardIds,
-        unlockedDifficultyLevelSnapshot,
-        selectedDifficultyLevel,
-        relicDiscount,
-        usableItems,
-        usableItemCapacity,
-        unlockedRelicIds,
-        allyIds,
-        allySlots,
-        characterId
-      )
+    const nextInventory = generateShopInventory(
+      floor,
+      [...cardDefs.values()],
+      relicIds,
+      rng,
+      unlockedCardIds,
+      unlockedDifficultyLevelSnapshot,
+      selectedDifficultyLevel,
+      relicDiscount,
+      usableItems,
+      usableItemCapacity,
+      unlockedRelicIds,
+      allyIds,
+      allySlots,
+      characterId
     );
-    setSoldIds(new Set());
+    setInventory(nextInventory);
+    setSoldIds((prev) => getPersistentSoldIds(inventory, prev));
   };
 
   return (

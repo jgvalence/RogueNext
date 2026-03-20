@@ -695,8 +695,6 @@ function getSummonLabelFromBossAbility(
       return "Ink Slime";
     case "fenrir:Pack Howl":
       return "Draugr";
-    case "nyarlathotep_shard:Void Mantle":
-      return "Cultist Scribe";
     default:
       return null;
   }
@@ -727,10 +725,10 @@ function BossPhaseHint({
 
 function getPhaseTwoSummonLabel(definitionId: string): string | null {
   switch (definitionId) {
-    case "fenrir":
-      return "Draugr";
     case "nyarlathotep_shard":
       return "Void Tendril";
+    case "shub_spawn":
+      return "Brood Nest";
     case "baba_yaga_hut":
       return "Frost Witch";
     case "soundiata_spirit":

@@ -10,6 +10,8 @@ import {
   getArchivistEffectiveCardDefinition,
   getArchivistEffectiveUpgradeState,
 } from "@/game/engine/archivist";
+import { isCardWebbed } from "@/game/engine/anansi-weaver";
+import { getCardPetrifiedCostBonus } from "@/game/engine/medusa";
 import { GameCard } from "./GameCard";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
@@ -86,6 +88,8 @@ interface MobileHandCardProps {
   isSelected: boolean;
   isPendingInked: boolean;
   isFrozen: boolean;
+  isPetrified: boolean;
+  isWebbed: boolean;
   canPlay: boolean;
   canPlayInked: boolean;
   onOpenPreview: () => void;
@@ -126,6 +130,8 @@ function MobileHandCard({
   isSelected,
   isPendingInked,
   isFrozen,
+  isPetrified,
+  isWebbed,
   canPlay,
   canPlayInked,
   onOpenPreview,
@@ -228,7 +234,11 @@ function MobileHandCard({
             : "ring-2 ring-amber-200/90 ring-offset-2 ring-offset-slate-950"),
         upgraded &&
           "shadow-[0_0_18px_rgba(251,191,36,0.24)] before:absolute before:inset-x-0 before:top-0 before:h-[3px] before:bg-gradient-to-r before:from-amber-400 before:via-yellow-200 before:to-amber-400",
-        isFrozen && "ring-2 ring-cyan-300/85"
+        isFrozen && "ring-2 ring-cyan-300/85",
+        isWebbed &&
+          "shadow-[0_0_18px_rgba(251,191,36,0.16)] ring-2 ring-amber-200/70",
+        isPetrified &&
+          "shadow-[0_0_18px_rgba(214,211,209,0.2)] ring-2 ring-stone-300/80"
       )}
     >
       <div
@@ -269,10 +279,24 @@ function MobileHandCard({
               Frozen
             </span>
           )}
+          {isWebbed && (
+            <span className="mt-1.5 inline-flex rounded-full border border-amber-200/35 bg-amber-200/10 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.14em] text-amber-100">
+              {t("gameCard.labels.webbed", {
+                defaultValue: "Webbed",
+              })}
+            </span>
+          )}
+          {!isFrozen && isPetrified && (
+            <span className="mt-1.5 inline-flex rounded-full border border-stone-300/35 bg-stone-200/10 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.14em] text-stone-100">
+              Petrified
+            </span>
+          )}
           {!isFrozen && upgraded && (
             <div className="mt-1.5 h-1.5 w-9 rounded-full bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.26)]" />
           )}
-          {!isFrozen && !upgraded && <div className="mt-1.5 h-1.5" />}
+          {!isFrozen && !isWebbed && !isPetrified && !upgraded && (
+            <div className="mt-1.5 h-1.5" />
+          )}
         </div>
 
         {hasInkedVariant ? (
@@ -455,11 +479,22 @@ export function HandArea({
               }
               costModifier={
                 globalCostModifier +
-                (mobilePreviewDisplay?.archivistCostModifier ?? 0)
+                (mobilePreviewDisplay?.archivistCostModifier ?? 0) +
+                getCardPetrifiedCostBonus(
+                  combatState,
+                  mobilePreviewCard.instanceId
+                )
               }
               attackBonus={attackBonus}
               canPlay
               canPlayInked={mobilePreviewCanInked}
+              isPetrified={
+                getCardPetrifiedCostBonus(
+                  combatState,
+                  mobilePreviewCard.instanceId
+                ) > 0
+              }
+              isWebbed={isCardWebbed(combatState, mobilePreviewCard.instanceId)}
               isSelected={selectedCardId === mobilePreviewCard.instanceId}
               isPendingInked={
                 selectedCardId === mobilePreviewCard.instanceId && pendingInked
@@ -513,6 +548,11 @@ export function HandArea({
                 combatState.playerDisruption?.frozenHandCardIds ?? []
               ).includes(card.instanceId);
               const isSelected = selectedCardId === card.instanceId;
+              const petrifiedCostBonus = getCardPetrifiedCostBonus(
+                combatState,
+                card.instanceId
+              );
+              const isWebbed = isCardWebbed(combatState, card.instanceId);
               const fanOffset = index - (hand.length - 1) / 2;
               const fanRotateDeg = fanOffset * mobileFanRotationDeg;
               const fanLiftPx = Math.max(0, 3.5 - Math.abs(fanOffset) * 0.9);
@@ -532,11 +572,15 @@ export function HandArea({
                     definition={display.definition}
                     upgraded={display.upgraded}
                     costModifier={
-                      globalCostModifier + display.archivistCostModifier
+                      globalCostModifier +
+                      display.archivistCostModifier +
+                      petrifiedCostBonus
                     }
                     isSelected={isSelected}
                     isPendingInked={isSelected && pendingInked}
                     isFrozen={isFrozen}
+                    isPetrified={petrifiedCostBonus > 0}
+                    isWebbed={isWebbed}
                     canPlay={displayedCanPlay}
                     canPlayInked={displayedCanPlayInked}
                     onOpenPreview={() => {
@@ -587,6 +631,11 @@ export function HandArea({
           const isFrozen = (
             combatState.playerDisruption?.frozenHandCardIds ?? []
           ).includes(card.instanceId);
+          const petrifiedCostBonus = getCardPetrifiedCostBonus(
+            combatState,
+            card.instanceId
+          );
+          const isWebbed = isCardWebbed(combatState, card.instanceId);
 
           const isPlaying = playingCardId === card.instanceId;
           const isSelected = selectedCardId === card.instanceId;
@@ -648,7 +697,9 @@ export function HandArea({
                 instanceId={card.instanceId}
                 definition={display.definition}
                 costModifier={
-                  globalCostModifier + display.archivistCostModifier
+                  globalCostModifier +
+                  display.archivistCostModifier +
+                  petrifiedCostBonus
                 }
                 attackBonus={attackBonus}
                 canPlay={displayedCanPlay}
@@ -656,6 +707,8 @@ export function HandArea({
                 isSelected={isSelected}
                 isPendingInked={isSelected && pendingInked}
                 isFrozen={isFrozen}
+                isPetrified={petrifiedCostBonus > 0}
+                isWebbed={isWebbed}
                 upgraded={display.upgraded}
                 detailMode={isHovered || isSelected ? "full" : "condensed"}
                 className={

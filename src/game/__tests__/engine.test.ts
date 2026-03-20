@@ -57,6 +57,12 @@ import {
 } from "../engine/relics";
 import { resolveEffects, type EffectContext } from "../engine/effects";
 import { executeOneEnemyTurn } from "../engine/enemies";
+import { getCernunnosUiState } from "../engine/cernunnos-shade";
+import { getDagdaUiState } from "../engine/dagda-shadow";
+import { getFenrirUiState } from "../engine/fenrir";
+import { getMedusaUiState } from "../engine/medusa";
+import { getOsirisUiState } from "../engine/osiris-judgment";
+import { getRaUiState } from "../engine/ra-avatar";
 import {
   computeUnlockedCardIds,
   getCardUnlockDetails,
@@ -919,6 +925,79 @@ describe("Card playing", () => {
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(2);
     expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(2);
     expect(result.exhaustPile[0]?.definitionId).toBe("book_of_the_dead");
+  });
+
+  it("menders_inkwell heals for ink spent on card costs", () => {
+    const rng = createRNG("menders-inkwell-book");
+    const base = makeMinimalCombat();
+    const started = applyRelicsOnCombatStart(
+      makeMinimalCombat({
+        player: {
+          ...base.player,
+          currentHp: 30,
+          inkCurrent: 3,
+          inkPerCardChance: 0,
+        },
+        hand: [
+          {
+            instanceId: "c1",
+            definitionId: "book_of_the_dead",
+            upgraded: false,
+          },
+        ],
+        drawPile: [
+          { instanceId: "d1", definitionId: "strike", upgraded: false },
+        ],
+      }),
+      ["menders_inkwell"]
+    );
+
+    const result = playCard(started, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(32);
+    expect(result.player.inkCurrent).toBe(1);
+  });
+
+  it("echoing_inkstone boosts cards that pay ink costs", () => {
+    const rng = createRNG("echoing-inkstone-book");
+    const base = makeMinimalCombat();
+    const started = applyRelicsOnCombatStart(
+      makeMinimalCombat({
+        player: {
+          ...base.player,
+          inkCurrent: 3,
+          inkPerCardChance: 0,
+        },
+        hand: [
+          {
+            instanceId: "c1",
+            definitionId: "book_of_the_dead",
+            upgraded: false,
+          },
+        ],
+        drawPile: [
+          { instanceId: "d1", definitionId: "strike", upgraded: false },
+          { instanceId: "d2", definitionId: "defend", upgraded: false },
+        ],
+        enemies: [
+          { ...base.enemies[0]! },
+          {
+            ...base.enemies[0]!,
+            instanceId: "e2",
+            currentHp: 18,
+            maxHp: 18,
+          },
+        ],
+      }),
+      ["echoing_inkstone"]
+    );
+
+    const result = playCard(started, "c1", null, false, cardDefs, rng);
+
+    expect(result.player.strength).toBe(4);
+    expect(result.hand).toHaveLength(2);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(4);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(4);
   });
 
   it("playCard inked trickster_snare applies Vulnerable and Poison to all surviving enemies", () => {
@@ -2075,6 +2154,70 @@ describe("Card playing", () => {
     ).toBe(true);
   });
 
+  it("menders_inkwell heals for current-ink cash-outs", () => {
+    const rng = createRNG("menders-inkwell-pythian");
+    const base = makeMinimalCombat();
+    const started = applyRelicsOnCombatStart(
+      makeMinimalCombat({
+        player: {
+          ...base.player,
+          currentHp: 30,
+          inkPerCardChance: 0,
+          inkCurrent: 4,
+        },
+        hand: [
+          { instanceId: "c1", definitionId: "pythian_codex", upgraded: false },
+        ],
+        enemies: [
+          {
+            ...base.enemies[0]!,
+            instanceId: "e1",
+            currentHp: 40,
+            maxHp: 40,
+          },
+        ],
+      }),
+      ["menders_inkwell"]
+    );
+
+    const result = playCard(started, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.player.currentHp).toBe(34);
+    expect(result.player.inkCurrent).toBe(0);
+  });
+
+  it("echoing_inkstone boosts current-ink payoffs", () => {
+    const rng = createRNG("echoing-inkstone-pythian");
+    const base = makeMinimalCombat();
+    const started = applyRelicsOnCombatStart(
+      makeMinimalCombat({
+        player: {
+          ...base.player,
+          inkPerCardChance: 0,
+          inkCurrent: 4,
+        },
+        hand: [
+          { instanceId: "c1", definitionId: "pythian_codex", upgraded: false },
+          { instanceId: "c2", definitionId: "strike", upgraded: false },
+        ],
+        enemies: [
+          {
+            ...base.enemies[0]!,
+            instanceId: "e1",
+            currentHp: 40,
+            maxHp: 40,
+          },
+        ],
+      }),
+      ["echoing_inkstone"]
+    );
+
+    const result = playCard(started, "c1", "e1", false, cardDefs, rng);
+
+    expect(result.enemies[0]?.currentHp).toBe(8);
+    expect(result.player.inkCurrent).toBe(0);
+  });
+
   it("saga_archive turns draw and energy burst into strength tempo", () => {
     const rng = createRNG("saga-archive");
     const state = makeMinimalCombat({
@@ -3079,6 +3222,7 @@ describe("Ink system", () => {
       ...afterSkip,
       phase: "PLAYER_TURN" as const,
       inkPowerUsedThisTurn: false,
+      usedInkPowersThisTurn: [],
       player: { ...afterSkip.player, inkCurrent: 7 },
     };
     expect(canUseInkPower(lockedTurn, "SILENCE")).toBe(false);
@@ -3103,6 +3247,7 @@ describe("Ink system", () => {
       ...afterRecovery,
       phase: "PLAYER_TURN" as const,
       inkPowerUsedThisTurn: false,
+      usedInkPowersThisTurn: [],
       player: { ...afterRecovery.player, inkCurrent: 7 },
     };
     expect(canUseInkPower(recoveredTurn, "SILENCE")).toBe(true);
@@ -3130,6 +3275,45 @@ describe("Ink system", () => {
     expect(result.discardPile).toHaveLength(0);
     expect(result.hand).toHaveLength(1);
     expect(result.player.inkCurrent).toBe(2); // 5 - 3
+  });
+
+  it("allows using different ink powers in the same turn, but not the same power twice", () => {
+    const rng = createRNG("multi-ink-power-turn");
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 5 },
+      drawPile: [{ instanceId: "d1", definitionId: "strike", upgraded: false }],
+    });
+
+    const afterSeal = applyInkPower(state, "SEAL", null, cardDefs, rng);
+
+    expect(afterSeal.player.block).toBe(8);
+    expect(afterSeal.usedInkPowersThisTurn).toEqual(["SEAL"]);
+    expect(canUseInkPower(afterSeal, "SEAL")).toBe(false);
+    expect(canUseInkPower(afterSeal, "VISION")).toBe(true);
+
+    const afterVision = applyInkPower(
+      afterSeal,
+      "VISION",
+      null,
+      cardDefs,
+      createRNG("multi-ink-power-turn-vision")
+    );
+
+    expect(afterVision.player.inkCurrent).toBe(1);
+    expect(afterVision.hand).toHaveLength(1);
+    expect(afterVision.usedInkPowersThisTurn).toEqual(["SEAL", "VISION"]);
+    expect(canUseInkPower(afterVision, "VISION")).toBe(false);
+  });
+
+  it("keeps legacy global lock behavior when the per-power tracking list is absent", () => {
+    const legacyLockedState = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 7 },
+      inkPowerUsedThisTurn: true,
+      usedInkPowersThisTurn: undefined,
+    });
+
+    expect(canUseInkPower(legacyLockedState, "SEAL")).toBe(false);
+    expect(canUseInkPower(legacyLockedState, "VISION")).toBe(false);
   });
 });
 
@@ -3876,22 +4060,20 @@ describe("Combat flow", () => {
       },
       {
         id: "fenrir",
-        check: (r) =>
-          expect(r.enemies.some((e) => e.definitionId === "draugr")).toBe(true),
+        check: (r) => expect(getFenrirUiState(r.enemies[0])?.huntMax).toBe(4),
       },
       {
         id: "medusa",
         check: (r) =>
-          expect(r.discardPile.some((c) => c.definitionId === "dazed")).toBe(
-            true
-          ),
+          expect(getMedusaUiState(r.enemies[0])?.patterns).toHaveLength(2),
       },
       {
         id: "ra_avatar",
-        check: (r) =>
-          expect(r.player.buffs.some((b) => b.type === "VULNERABLE")).toBe(
-            true
-          ),
+        check: (r) => expect(getRaUiState(r.enemies[0])?.chargePerTurn).toBe(2),
+      },
+      {
+        id: "osiris_judgment",
+        check: (r) => expect(getOsirisUiState(r.enemies[0])?.threshold).toBe(5),
       },
       {
         id: "nyarlathotep_shard",
@@ -3905,18 +4087,18 @@ describe("Combat flow", () => {
           ).toBe(true),
       },
       {
-        id: "tezcatlipoca_echo",
-        check: (r) =>
-          expect(r.drawPile.some((c) => c.definitionId === "ink_burn")).toBe(
-            true
-          ),
-      },
-      {
         id: "dagda_shadow",
         check: (r) =>
-          expect(
-            r.discardPile.some((c) => c.definitionId === "hexed_parchment")
-          ).toBe(true),
+          expect(getDagdaUiState(r.enemies[0])?.phaseTwo).toBe(true),
+      },
+      {
+        id: "cernunnos_shade",
+        check: (r) => {
+          expect(r.enemies.some((e) => e.definitionId === "amber_hound")).toBe(
+            true
+          );
+          expect(getCernunnosUiState(r.enemies[0])?.regrowPerTurn).toBe(2);
+        },
       },
       {
         id: "baba_yaga_hut",
@@ -4924,6 +5106,53 @@ describe("Run management", () => {
     expect(choices[0]).not.toBe(choices[1]);
     expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(choices[0]);
     expect(GAME_CONSTANTS.AVAILABLE_BIOMES).toContain(choices[1]);
+  });
+
+  it("completeCombat credits boss progression to the overridden encounter biome", () => {
+    const rng = createRNG("boss-override-progression");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = createNewRun(
+      "run-override-boss",
+      "boss-override-progression",
+      starterCards,
+      rng
+    );
+    const combat = makeMinimalCombat({
+      encounterContext: {
+        biome: "VIKING",
+        bossDefinitionId: "fenrir",
+      },
+      enemies: [
+        {
+          instanceId: "fenrir-1",
+          definitionId: "fenrir",
+          name: "Fenrir",
+          isBoss: true,
+          currentHp: 0,
+          maxHp: 140,
+          block: 0,
+          speed: 8,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+
+    const result = completeCombat(
+      {
+        ...run,
+        currentBiome: "LIBRARY",
+        currentRoom: GAME_CONSTANTS.BOSS_ROOM_INDEX,
+      },
+      combat,
+      0,
+      createRNG("boss-override-progression-next"),
+      { RUNES: 2 },
+      [...cardDefs.values()]
+    );
+
+    expect(result.cardUnlockProgress.bossKillsByBiome.VIKING).toBe(1);
+    expect(result.cardUnlockProgress.bossKillsByBiome.LIBRARY ?? 0).toBe(0);
   });
 
   it("completeCombat in infinite mode does not end at floor 5 boss", () => {
