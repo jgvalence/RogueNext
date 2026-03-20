@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { RogueButton, RogueEmpty, RogueModal } from "@/components/ui/rogue";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
 import { GameCard } from "../combat/GameCard";
+import { Tooltip } from "./Tooltip";
 import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
@@ -81,7 +82,7 @@ export function CardPickerModal({
               {cards.map((card) => {
                 const def = cardDefs.get(card.definitionId);
                 if (!def) return null;
-                return (
+                const cardButton = (
                   <RogueButton
                     key={card.instanceId}
                     type="text"
@@ -99,6 +100,31 @@ export function CardPickerModal({
                       size="sm"
                     />
                   </RogueButton>
+                );
+
+                if (showUpgradePreview) {
+                  return cardButton;
+                }
+
+                return (
+                  <Tooltip
+                    key={card.instanceId}
+                    content={
+                      <GameCard
+                        definition={def}
+                        instanceId={card.instanceId}
+                        upgraded={card.upgraded}
+                        canPlay={false}
+                        className="!cursor-default !opacity-100 !saturate-100"
+                        size="md"
+                      />
+                    }
+                    contentClassName="!max-w-none !border-0 !bg-transparent !p-0 !shadow-none"
+                    showArrow={false}
+                    className="justify-self-center"
+                  >
+                    {cardButton}
+                  </Tooltip>
                 );
               })}
             </div>

@@ -15,9 +15,17 @@ interface TooltipProps {
   content: ReactNode;
   children: ReactNode;
   className?: string;
+  contentClassName?: string;
+  showArrow?: boolean;
 }
 
-export function Tooltip({ content, children, className }: TooltipProps) {
+export function Tooltip({
+  content,
+  children,
+  className,
+  contentClassName,
+  showArrow = true,
+}: TooltipProps) {
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [placement, setPlacement] = useState<"top" | "bottom">("top");
   const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
@@ -87,19 +95,22 @@ export function Tooltip({ content, children, className }: TooltipProps) {
             ref={tooltipRef}
             className={cn(
               "pointer-events-none fixed z-[9999] w-max max-w-[220px] -translate-x-1/2 rounded-lg border border-gray-600 bg-gray-950 px-3 py-2 text-xs leading-snug text-gray-200 shadow-xl",
-              placement === "top" ? "-translate-y-full" : "translate-y-0"
+              placement === "top" ? "-translate-y-full" : "translate-y-0",
+              contentClassName
             )}
             style={{ left: pos.x, top: pos.y }}
           >
             {content}
-            <div
-              className={cn(
-                "absolute left-1/2 -translate-x-1/2 border-4 border-transparent",
-                placement === "top"
-                  ? "top-full border-t-gray-600"
-                  : "bottom-full border-b-gray-600"
-              )}
-            />
+            {showArrow ? (
+              <div
+                className={cn(
+                  "absolute left-1/2 -translate-x-1/2 border-4 border-transparent",
+                  placement === "top"
+                    ? "top-full border-t-gray-600"
+                    : "bottom-full border-b-gray-600"
+                )}
+              />
+            ) : null}
           </div>,
           document.body
         )}
