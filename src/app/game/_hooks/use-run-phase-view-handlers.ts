@@ -131,6 +131,17 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
     setPhase("MAP");
   }, [setPhase]);
 
+  const handleSpecialHealRoomBloodPurge = useCallback(
+    (cardInstanceId: string) => {
+      dispatch({
+        type: "APPLY_HEAL_ROOM_BLOOD_PURGE",
+        payload: { cardInstanceId },
+      });
+      setPhase("MAP");
+    },
+    [dispatch, setPhase]
+  );
+
   const handleSpecialEventPurge = useCallback(
     (cardInstanceId: string) => {
       dispatch({
@@ -182,6 +193,7 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
     handleSpecialEventChoice,
     handleSpecialEventCardReward,
     handleSpecialEventContinue,
+    handleSpecialHealRoomBloodPurge,
     handleSpecialEventPurge,
     handleSpecialSkip,
     handlePreBossHeal,

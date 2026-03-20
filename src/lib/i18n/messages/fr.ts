@@ -180,7 +180,8 @@ export const fr = {
       unlockPowerSlot: "Debloque le pouvoir de rang {{slot}}",
       healAfterCombat: "Recupere {{value}}% des PV max apres combat",
       healAfterCombatFlat: "Recupere {{value}} PV apres combat",
-      exhaustKeepChance: "{{value}}% de chance de ne pas epuiser une carte",
+      exhaustKeepChance:
+        "{{value}}% de chance de ne pas epuiser une carte avec Exhaust (hors pouvoirs)",
       survivalOnce: "Survit a 1 PV une fois par run",
       freeUpgradePerRun: "Ameliore une carte gratuitement a chaque run",
       startingRareCard: "Commence chaque run avec une carte rare aleatoire",
@@ -1974,7 +1975,7 @@ export const fr = {
     currentHp: "Actuel : {{current}}/{{max}}",
     healAction: "Soigner",
     healChoiceHint:
-      "Choisissez entre recoudre vos blessures ou alleger votre deck.",
+      "Choisissez entre vous soigner gratuitement ou purifier une carte contre un lourd sacrifice de PV.",
     healPurgeAction: "Purifier une carte",
     upgradeTitle: "Enclume enchantee",
     upgradeHint: "Survole une carte pour voir l'amelioration",

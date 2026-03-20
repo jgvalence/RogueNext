@@ -343,7 +343,7 @@ export const histoireDefinitions: Histoire[] = [
     prerequis: [],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 30 },
     description:
-      "Un fragment du livre maudit. Les cartes avec Exhaust ont 30% de chance de ne pas être exhaustées.",
+      "Un fragment du livre maudit. Les cartes non-Power avec Exhaust ont 30% de chance de ne pas etre exhaustees.",
     visuel: "grimoire",
   },
   {
@@ -392,7 +392,7 @@ export const histoireDefinitions: Histoire[] = [
     prerequis: ["cultes_innommables", "mondes_sans_nom"],
     bonus: { type: "EXHAUST_KEEP_CHANCE", value: 20 },
     description:
-      "Le signe mystique qui permet de manipuler les lois du cosmos. +20% de chance supplémentaire de ne pas exhaust une carte.",
+      "Le signe mystique qui permet de manipuler les lois du cosmos. +20% de chance supplementaire de ne pas exhaust une carte non-Power.",
     visuel: "tablette",
   },
 

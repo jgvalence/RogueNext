@@ -323,17 +323,20 @@ export function playCard(
   }
 
   // Move card to appropriate pile
+  const exhaustsAsPower = effectiveDefinition.type === "POWER";
+  const exhaustsFromEffect = effects.some((e) => e.type === "EXHAUST");
+  const exhaustsFromStatusCurseRule =
+    Boolean(state.relicFlags?.statusCursePlayExhaust) &&
+    (effectiveDefinition.type === "STATUS" ||
+      effectiveDefinition.type === "CURSE");
   const shouldExhaust =
-    effectiveDefinition.type === "POWER" ||
-    effects.some((e) => e.type === "EXHAUST") ||
-    (Boolean(state.relicFlags?.statusCursePlayExhaust) &&
-      (effectiveDefinition.type === "STATUS" ||
-        effectiveDefinition.type === "CURSE"));
+    exhaustsAsPower || exhaustsFromEffect || exhaustsFromStatusCurseRule;
   if (shouldExhaust) {
-    const keepChance = Math.min(
-      100,
-      Math.max(0, metaBonuses?.exhaustKeepChance ?? 0)
-    );
+    // Meta exhaust retention applies only to explicit Exhaust cards, not POWERS.
+    const keepChance =
+      !exhaustsAsPower && exhaustsFromEffect
+        ? Math.min(100, Math.max(0, metaBonuses?.exhaustKeepChance ?? 0))
+        : 0;
     const keepCard = keepChance > 0 && rng.next() * 100 < keepChance;
     if (wasPetrified && !medusaCardResult.newlyPetrified) {
       current = releasePetrifiedCard(current, instanceId);

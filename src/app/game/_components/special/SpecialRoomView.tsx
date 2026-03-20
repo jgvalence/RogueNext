@@ -8,9 +8,11 @@ import { createRNG, type RNG } from "@/game/engine/rng";
 import type { RunState } from "@/game/schemas/run-state";
 import {
   createGuaranteedRelicEvent,
+  getHealRoomBloodPurgeHpCost,
   pickSpecialRoomTypeWithDifficulty,
   pickEvent,
   pickGuaranteedEventRelicId,
+  isEventChoiceAvailable,
   type GameEvent,
 } from "@/game/engine/run";
 import { buildArchetypeEventCardChoices } from "@/game/engine/archetype-offers";
@@ -49,6 +51,7 @@ interface SpecialRoomViewProps {
   runState?: RunState;
   onHeal: () => void;
   onUpgrade: (cardInstanceId: string) => void;
+  onHealRoomBloodPurge: (cardInstanceId: string) => void;
   onPurgeCard: (cardInstanceId: string) => void;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
   onPickCardReward: (definitionId: string) => void;
@@ -69,6 +72,7 @@ export function SpecialRoomView({
   runState,
   onHeal,
   onUpgrade,
+  onHealRoomBloodPurge,
   onPurgeCard,
   onEventChoice,
   onPickCardReward,
@@ -94,7 +98,7 @@ export function SpecialRoomView({
           deck={deck}
           cardDefs={cardDefs}
           onHeal={onHeal}
-          onPurgeCard={onPurgeCard}
+          onBloodPurge={onHealRoomBloodPurge}
         />
       );
     case "UPGRADE":
@@ -186,20 +190,23 @@ function HealRoom({
   deck,
   cardDefs,
   onHeal,
-  onPurgeCard,
+  onBloodPurge,
 }: {
   playerCurrentHp: number;
   playerMaxHp: number;
   deck: CardInstance[];
   cardDefs: Map<string, CardDefinition>;
   onHeal: () => void;
-  onPurgeCard: (cardInstanceId: string) => void;
+  onBloodPurge: (cardInstanceId: string) => void;
 }) {
   const { t } = useTranslation();
   const healAmount = Math.floor(playerMaxHp * GAME_CONSTANTS.HEAL_ROOM_PERCENT);
   const newHp = Math.min(playerMaxHp, playerCurrentHp + healAmount);
-  const [showPurgePicker, setShowPurgePicker] = useState(false);
-  const canPurge = deck.length > 1;
+  const bloodPurgeHpCost = getHealRoomBloodPurgeHpCost({ playerMaxHp });
+  const hpAfterBloodPurge = playerCurrentHp - bloodPurgeHpCost;
+  const [showBloodPurgePicker, setShowBloodPurgePicker] = useState(false);
+  const hasPurgeableCard = deck.length > 1;
+  const canBloodPurge = hasPurgeableCard && playerCurrentHp > bloodPurgeHpCost;
 
   return (
     <div className="flex flex-col items-center gap-5 px-4 py-10">
@@ -225,6 +232,23 @@ function HealRoom({
         <span className="text-amber-100/30">/ {playerMaxHp}</span>
       </div>
 
+      <div className="flex items-center gap-3 rounded border border-rose-500/20 bg-rose-950/20 px-6 py-3 text-sm">
+        <span className="text-rose-100/55">{playerCurrentHp}</span>
+        <span className="text-rose-400/40">→</span>
+        <span
+          className={cn(
+            "font-semibold",
+            canBloodPurge ? "text-rose-300" : "text-rose-200/35"
+          )}
+        >
+          {canBloodPurge ? hpAfterBloodPurge : "X"}
+        </span>
+        <span className="text-rose-100/30">/ {playerMaxHp}</span>
+        <span className="text-rose-200/55">
+          {t("shop.priceHp", { price: bloodPurgeHpCost })}
+        </span>
+      </div>
+
       <div className="mt-2 flex flex-wrap items-center justify-center gap-4">
         <RogueButton
           onClick={onHeal}
@@ -241,36 +265,41 @@ function HealRoom({
         </RogueButton>
 
         <RogueButton
-          onClick={() => setShowPurgePicker(true)}
-          disabled={!canPurge}
+          onClick={() => setShowBloodPurgePicker(true)}
+          disabled={!canBloodPurge}
           type="text"
           className={cn(
             cinzel.className,
             "!group !flex !h-auto !items-center !gap-3 !py-[0.42rem] !uppercase",
             "!text-[1.05rem] !font-semibold !tracking-[0.16em] !outline-none !transition-all !duration-150",
-            canPurge
+            canBloodPurge
               ? "!text-rose-200"
               : "!cursor-not-allowed !text-rose-100/25"
           )}
         >
           <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-rose-400 to-rose-300/0 opacity-90" />
-          {t("special.healPurgeAction")}
+          {t("shop.itemName.bloodPurge")}
         </RogueButton>
       </div>
 
-      <Divider dim />
+      {hasPurgeableCard && !canBloodPurge && (
+        <p className="text-xs text-rose-300/75">{t("shop.requiresMoreHp")}</p>
+      )}
 
-      {showPurgePicker && (
+      <Divider dim />
+      {showBloodPurgePicker && (
         <CardPickerModal
           title={t("special.purgePickerTitle")}
-          subtitle={t("special.purgePickerSubtitle")}
+          subtitle={t("shop.itemDescription.bloodPurge", {
+            amount: bloodPurgeHpCost,
+          })}
           cards={deck}
           cardDefs={cardDefs}
           onPick={(cardInstanceId) => {
-            setShowPurgePicker(false);
-            onPurgeCard(cardInstanceId);
+            setShowBloodPurgePicker(false);
+            onBloodPurge(cardInstanceId);
           }}
-          onCancel={() => setShowPurgePicker(false)}
+          onCancel={() => setShowBloodPurgePicker(false)}
         />
       )}
     </div>
@@ -339,7 +368,7 @@ function UpgradeRoom({
               onMouseLeave={handleCardMouseLeave}
               type="text"
               className={cn(
-                "!relative !flex !h-auto !w-32 !min-w-0 !flex-col !items-center !gap-1 !whitespace-normal !rounded !border-2 !p-3 !text-center !transition-all !duration-150",
+                "!relative !flex !h-auto !w-32 !min-w-0 !cursor-pointer !flex-col !items-center !gap-1 !whitespace-normal !rounded !border-2 !p-3 !text-center !transition-all !duration-150",
                 isSelected
                   ? "!border-amber-400/60 !bg-amber-950/50 !ring-1 !ring-amber-400/30"
                   : "!border-amber-500/15 !bg-amber-950/10 hover:!border-amber-500/30 hover:!bg-amber-950/30"
@@ -501,6 +530,15 @@ function EventRoom({
   const handleChoice = (choiceIndex: number) => {
     const choice = event.choices[choiceIndex];
     const archetypeChoices = archetypeRewardChoicesByIndex.get(choiceIndex);
+    const isMissingArchetypeReward =
+      Boolean(choice?.rewardArchetypeTag) &&
+      (archetypeChoices?.length ?? 0) === 0;
+    if (!choice || isMissingArchetypeReward) {
+      return;
+    }
+    if (!runState || !isEventChoiceAvailable(runState, choice)) {
+      return;
+    }
     if (choice?.rewardArchetypeTag && (archetypeChoices?.length ?? 0) > 0) {
       setPendingArchetypeChoiceIndex(choiceIndex);
       return;
@@ -527,8 +565,10 @@ function EventRoom({
     choice,
     index,
     isUnavailable:
-      Boolean(choice.rewardArchetypeTag) &&
-      (archetypeRewardChoicesByIndex.get(index)?.length ?? 0) === 0,
+      !runState ||
+      !isEventChoiceAvailable(runState, choice) ||
+      (Boolean(choice.rewardArchetypeTag) &&
+        (archetypeRewardChoicesByIndex.get(index)?.length ?? 0) === 0),
   }));
 
   // ── Phase OUTCOME ─────────────────────────────────────────────────────────

@@ -235,7 +235,7 @@ function UpgradeSubView({
               onMouseLeave={handleMouseLeave}
               type="text"
               className={cn(
-                "!relative !flex !h-auto !w-32 !min-w-0 !flex-col !items-center !gap-1 !whitespace-normal !rounded !border-2 !p-3 !text-center !transition-all !duration-150",
+                "!relative !flex !h-auto !w-32 !min-w-0 !cursor-pointer !flex-col !items-center !gap-1 !whitespace-normal !rounded !border-2 !p-3 !text-center !transition-all !duration-150",
                 isSelected
                   ? "!border-amber-400/60 !bg-amber-950/50 !ring-1 !ring-amber-400/30"
                   : "!border-amber-500/15 !bg-amber-950/10 hover:!border-amber-500/30 hover:!bg-amber-950/30"

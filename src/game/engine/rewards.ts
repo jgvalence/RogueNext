@@ -116,6 +116,7 @@ function drawBiomeFocusedCardChoices(
   if (count <= 0 || cards.length === 0) return [];
 
   const sameBiomePool = cards.filter((card) => card.biome === biome);
+  const offBiomePool = cards.filter((card) => card.biome !== biome);
   const picks: CardDefinition[] = [];
   const pickedIds = new Set<string>();
 
@@ -137,7 +138,11 @@ function drawBiomeFocusedCardChoices(
     }
   };
 
-  addPicks(sameBiomePool, Math.min(2, count));
+  addPicks(sameBiomePool, Math.min(1, count));
+  addPicks(
+    offBiomePool.filter((card) => !pickedIds.has(card.id)),
+    count - picks.length
+  );
   addPicks(
     cards.filter((card) => !pickedIds.has(card.id)),
     count - picks.length

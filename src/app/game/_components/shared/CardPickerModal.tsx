@@ -85,7 +85,7 @@ export function CardPickerModal({
                   <RogueButton
                     key={card.instanceId}
                     type="text"
-                    className="!flex !h-auto !w-auto !justify-center !rounded-lg !p-0 !ring-2 !ring-transparent transition hover:!ring-rose-500 focus:!ring-rose-400"
+                    className="!flex !h-auto !w-auto !cursor-pointer !justify-center !rounded-lg !p-0 !ring-2 !ring-transparent transition hover:!ring-rose-500 focus:!ring-rose-400"
                     onClick={() => onPick(card.instanceId)}
                     onMouseEnter={(e) => handleCardMouseEnter(e, def)}
                     onMouseLeave={handleCardMouseLeave}
@@ -95,6 +95,7 @@ export function CardPickerModal({
                       instanceId={card.instanceId}
                       upgraded={card.upgraded}
                       canPlay={false}
+                      className="!cursor-pointer !opacity-100 !saturate-100"
                       size="sm"
                     />
                   </RogueButton>

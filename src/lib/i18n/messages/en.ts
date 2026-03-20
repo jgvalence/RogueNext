@@ -178,7 +178,8 @@ export const en = {
       unlockPowerSlot: "Unlock power slot {{slot}}",
       healAfterCombat: "Recover {{value}}% max HP after combat",
       healAfterCombatFlat: "Recover {{value}} HP after combat",
-      exhaustKeepChance: "{{value}}% chance to not exhaust a card",
+      exhaustKeepChance:
+        "{{value}}% chance for a non-Power Exhaust card to be kept",
       survivalOnce: "Survive at 1 HP once per run",
       freeUpgradePerRun: "Upgrade one card for free each run",
       startingRareCard: "Start each run with a random rare card",
@@ -1968,7 +1969,7 @@ export const en = {
     currentHp: "Current: {{current}}/{{max}}",
     healAction: "Heal",
     healChoiceHint:
-      "Choose between restoring your health or trimming your deck.",
+      "Choose between healing for free or purging a card through a costly blood sacrifice.",
     healPurgeAction: "Purge a card",
     upgradeTitle: "Enchanted Anvil",
     upgradeHint: "Hover a card to preview the upgrade",

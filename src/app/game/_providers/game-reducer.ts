@@ -54,6 +54,7 @@ import {
   completeCombat,
   advanceFloor,
   applyHealRoom,
+  applyHealRoomBloodPurge,
   upgradeCardInDeck,
   applyFreeUpgradeInDeck,
   removeCardFromRunDeck,
@@ -140,6 +141,10 @@ export type GameAction =
   | { type: "PICK_ALLY_REWARD"; payload: { allyId: string } }
   | { type: "GAIN_MAX_HP"; payload: { amount: number } }
   | { type: "APPLY_HEAL_ROOM" }
+  | {
+      type: "APPLY_HEAL_ROOM_BLOOD_PURGE";
+      payload: { cardInstanceId: string };
+    }
   | { type: "ADVANCE_ROOM" }
   | { type: "BUY_SHOP_ITEM"; payload: { item: ShopItem } }
   | { type: "REROLL_SHOP" }
@@ -712,6 +717,9 @@ export function createGameReducer(deps: ReducerDeps) {
 
       case "REMOVE_CARD_FROM_DECK":
         return removeCardFromRunDeck(state, action.payload.cardInstanceId);
+
+      case "APPLY_HEAL_ROOM_BLOOD_PURGE":
+        return applyHealRoomBloodPurge(state, action.payload.cardInstanceId);
 
       case "APPLY_EVENT":
         return applyEventChoice(

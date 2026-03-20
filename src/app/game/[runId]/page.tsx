@@ -463,6 +463,7 @@ function GameContent({
     handleSpecialEventChoice,
     handleSpecialEventCardReward,
     handleSpecialEventContinue,
+    handleSpecialHealRoomBloodPurge,
     handleSpecialEventPurge,
     handleSpecialSkip,
     handlePreBossHeal,
@@ -773,6 +774,7 @@ function GameContent({
             runState={state}
             onHeal={handleHeal}
             onUpgrade={handleSpecialUpgrade}
+            onHealRoomBloodPurge={handleSpecialHealRoomBloodPurge}
             onPurgeCard={handleSpecialEventPurge}
             onEventChoice={handleSpecialEventChoice}
             onPickCardReward={handleSpecialEventCardReward}

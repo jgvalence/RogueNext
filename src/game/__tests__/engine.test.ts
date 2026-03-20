@@ -32,10 +32,12 @@ import {
 import {
   applyDifficultyToRun,
   applyRunConditionToRun,
+  applyHealRoomBloodPurge,
   createGuaranteedRelicEvent,
   createNewRun,
   drawRandomBiomeChoices,
   generateFloorMap,
+  getHealRoomBloodPurgeHpCost,
   selectRoom,
   completeCombat,
   advanceFloor,
@@ -1054,6 +1056,48 @@ describe("Card playing", () => {
     expect(result.exhaustPile).toHaveLength(1);
     expect(result.exhaustPile[0]?.definitionId).toBe("rage_of_ages");
     expect(result.player.strength).toBe(2);
+  });
+
+  it("exhaustKeepChance does not keep POWER cards out of exhaust", () => {
+    const rng = createRNG("power-exhaust-keep-test");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "starborn_omen", upgraded: false }],
+    });
+
+    const result = playCard(
+      state,
+      "c1",
+      null,
+      false,
+      cardDefs,
+      rng,
+      { exhaustKeepChance: 100 }
+    );
+
+    expect(result.discardPile).toHaveLength(0);
+    expect(result.exhaustPile).toHaveLength(1);
+    expect(result.exhaustPile[0]?.definitionId).toBe("starborn_omen");
+  });
+
+  it("exhaustKeepChance can keep non-POWER Exhaust cards in discard", () => {
+    const rng = createRNG("non-power-exhaust-keep-test");
+    const state = makeMinimalCombat({
+      hand: [{ instanceId: "c1", definitionId: "eldritch_pact", upgraded: false }],
+    });
+
+    const result = playCard(
+      state,
+      "c1",
+      null,
+      false,
+      cardDefs,
+      rng,
+      { exhaustKeepChance: 100 }
+    );
+
+    expect(result.exhaustPile).toHaveLength(0);
+    expect(result.discardPile).toHaveLength(1);
+    expect(result.discardPile[0]?.definitionId).toBe("eldritch_pact");
   });
 
   it("bastion_crash deals damage equal to current block", () => {
@@ -5735,7 +5779,7 @@ describe("Rewards", () => {
     expect(rewards.cardChoices.every((c) => !c.isStarterCard)).toBe(true);
   });
 
-  it("normal rewards keep at least two current-biome cards when possible", () => {
+  it("normal rewards keep only one guaranteed current-biome card when off-biome options exist", () => {
     const rewardPool = [...cardDefs.values()].filter(
       (card) =>
         !card.isStarterCard &&
@@ -5771,10 +5815,10 @@ describe("Rewards", () => {
     expect(rewards.cardChoices).toHaveLength(3);
     expect(
       rewards.cardChoices.filter((card) => card.biome === "VIKING").length
-    ).toBeGreaterThanOrEqual(2);
+    ).toBe(1);
   });
 
-  it("extra reward card choices still preserve the stronger biome bias", () => {
+  it("extra reward card choices still keep current-biome picks capped when off-biome options exist", () => {
     const rewardPool = [...cardDefs.values()].filter(
       (card) =>
         !card.isStarterCard &&
@@ -5810,7 +5854,7 @@ describe("Rewards", () => {
     expect(rewards.cardChoices).toHaveLength(6);
     expect(
       rewards.cardChoices.filter((card) => card.biome === "VIKING").length
-    ).toBeGreaterThanOrEqual(2);
+    ).toBe(1);
   });
 
   it("african_griot_archive adds an extra elite card reward choice", () => {
@@ -6028,6 +6072,62 @@ describe("Rewards", () => {
 // Merchant Tests
 // ============================
 
+describe("Heal Room", () => {
+  it("blood purge removes a card, costs 30% max HP, and advances the room", () => {
+    const run = createNewRun(
+      "run-heal-room-blood-purge",
+      "run-heal-room-blood-purge",
+      getStarterCardsForCharacter("scribe"),
+      createRNG("run-heal-room-blood-purge")
+    );
+    const cardToPurge = run.deck[0];
+    expect(cardToPurge).toBeDefined();
+    if (!cardToPurge) return;
+
+    const bloodPurgeHpCost = getHealRoomBloodPurgeHpCost(run);
+    const currentRoom = 4;
+    const result = applyHealRoomBloodPurge(
+      {
+        ...run,
+        currentRoom,
+      },
+      cardToPurge.instanceId
+    );
+
+    expect(result.deck).toHaveLength(run.deck.length - 1);
+    expect(
+      result.deck.some((card) => card.instanceId === cardToPurge.instanceId)
+    ).toBe(false);
+    expect(result.playerCurrentHp).toBe(run.playerCurrentHp - bloodPurgeHpCost);
+    expect(result.currentRoom).toBe(currentRoom + 1);
+  });
+
+  it("blood purge stays non-lethal when the sacrifice would drop the player to 0", () => {
+    const run = createNewRun(
+      "run-heal-room-blood-purge-nonlethal",
+      "run-heal-room-blood-purge-nonlethal",
+      getStarterCardsForCharacter("scribe"),
+      createRNG("run-heal-room-blood-purge-nonlethal")
+    );
+    const bloodPurgeHpCost = getHealRoomBloodPurgeHpCost(run);
+
+    const result = applyHealRoomBloodPurge(
+      {
+        ...run,
+        playerCurrentHp: bloodPurgeHpCost,
+        currentRoom: 7,
+      },
+      run.deck[0]!.instanceId
+    );
+
+    expect(result).toEqual({
+      ...run,
+      playerCurrentHp: bloodPurgeHpCost,
+      currentRoom: 7,
+    });
+  });
+});
+
 describe("Merchant", () => {
   it("generateShopInventory offers one gold purge and one blood purge by default", () => {
     const inventory = generateShopInventory(
@@ -6051,6 +6151,34 @@ describe("Merchant", () => {
       .filter((item) => item.type === "purge" || item.type === "blood_purge")
       .map((item) => item.type);
     expect(purgeTypes).toEqual(["purge", "blood_purge"]);
+  });
+
+  it("generateShopInventory makes blood purge a steep HP sacrifice", () => {
+    const inventory = generateShopInventory(
+      2,
+      [...cardDefs.values()],
+      [],
+      makeDeterministicRng("merchant-blood-purge-cost"),
+      undefined,
+      0,
+      0,
+      0,
+      [],
+      GAME_CONSTANTS.MAX_USABLE_ITEMS,
+      undefined,
+      [],
+      0,
+      "scribe"
+    );
+
+    const bloodPurgeOffer = inventory.find(
+      (item) => item.type === "blood_purge"
+    );
+
+    expect(bloodPurgeOffer).toMatchObject({
+      type: "blood_purge",
+      hpCost: 18,
+    });
   });
 
   it("generateShopInventory keeps floor-1 prices affordable across cards and core services", () => {
@@ -6166,6 +6294,25 @@ describe("Merchant", () => {
       getCardOfferWeight(controlRare, 0, "NORMAL_REWARD", "EGYPTIAN")
     ).toBe(baseRareWeight);
     expect(getCardOfferWeight(controlRare, 0, "MERCHANT")).toBe(baseRareWeight);
+  });
+
+  it("getCardOfferWeight gives only a modest boost to supported archetypes", () => {
+    const blockCard = cardDefs.get("defend");
+    expect(blockCard).toBeDefined();
+    if (!blockCard) return;
+
+    const baseWeight = getLootRarityWeight(blockCard.rarity, 0);
+
+    expect(
+      getCardOfferWeight(blockCard, 0, "NORMAL_REWARD", undefined, {
+        archetypeCounts: { BLOCK: 2 },
+      })
+    ).toBeCloseTo(baseWeight * 1.1);
+    expect(
+      getCardOfferWeight(blockCard, 0, "NORMAL_REWARD", undefined, {
+        archetypeCounts: { BLOCK: 8 },
+      })
+    ).toBeCloseTo(baseWeight * 1.25);
   });
 
   it("weighted normal rewards can bias toward a tuned home-biome signature", () => {

@@ -2208,6 +2208,34 @@ export function applyHealRoom(runState: RunState): RunState {
   };
 }
 
+const HEAL_ROOM_BLOOD_PURGE_HP_SHARE = 0.3;
+
+export function getHealRoomBloodPurgeHpCost(
+  runState: Pick<RunState, "playerMaxHp">
+): number {
+  return Math.max(
+    1,
+    Math.floor(runState.playerMaxHp * HEAL_ROOM_BLOOD_PURGE_HP_SHARE)
+  );
+}
+
+export function applyHealRoomBloodPurge(
+  runState: RunState,
+  cardInstanceId: string
+): RunState {
+  const hpCost = getHealRoomBloodPurgeHpCost(runState);
+  if (runState.playerCurrentHp <= hpCost) return runState;
+
+  const nextState = removeCardFromRunDeck(runState, cardInstanceId);
+  if (nextState.deck.length === runState.deck.length) return runState;
+
+  return {
+    ...nextState,
+    playerCurrentHp: runState.playerCurrentHp - hpCost,
+    currentRoom: runState.currentRoom + 1,
+  };
+}
+
 // ============================
 // Special Room Subtypes
 // ============================
@@ -2306,4 +2334,5 @@ export {
   createGuaranteedRelicEvent,
   pickEvent,
   applyEventChoice,
+  isEventChoiceAvailable,
 } from "./run-events";

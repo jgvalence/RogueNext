@@ -53,7 +53,7 @@ function getCardOfferMultiplier(
     );
 
     if (strongestArchetypeCount >= 2) {
-      multiplier *= 1 + Math.min(0.45, strongestArchetypeCount * 0.08);
+      multiplier *= 1 + Math.min(0.25, strongestArchetypeCount * 0.05);
     }
 
     if (

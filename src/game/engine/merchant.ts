@@ -212,7 +212,7 @@ export interface ShopItem {
 }
 
 function getBloodPurgeHpCost(floor: number): number {
-  return Math.min(16, 6 + Math.max(1, floor) * 2);
+  return Math.min(30, 10 + Math.max(1, floor) * 4);
 }
 
 export type StartMerchantOfferType =

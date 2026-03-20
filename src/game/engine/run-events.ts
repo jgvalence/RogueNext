@@ -29,9 +29,19 @@ export interface EventChoice {
   description: string;
   outcomeText?: string;
   requiresPurge?: boolean;
+  goldCost?: number;
   rewardArchetypeTag?: CardArchetypeTag;
   minimumRewardChoices?: number;
+  canApply?: (state: RunState) => boolean;
   apply: (state: RunState) => RunState;
+}
+
+export function isEventChoiceAvailable(
+  state: RunState,
+  choice: EventChoice
+): boolean {
+  if ((choice.goldCost ?? 0) > state.gold) return false;
+  return choice.canApply ? choice.canApply(state) : true;
 }
 
 const RISKY_EVENT_IDS = new Set([
@@ -288,16 +298,14 @@ const EVENTS: GameEvent[] = [
         label: "events.wandering_scribe.choices.0.label",
         description: "events.wandering_scribe.choices.0.description",
         outcomeText: "events.wandering_scribe.choices.0.outcomeText",
-        apply: (s) =>
-          s.gold >= 30
-            ? {
-                ...s,
-                gold: s.gold - 30,
-                playerMaxHp: s.playerMaxHp + 20,
-                playerCurrentHp: s.playerCurrentHp + 20,
-                currentRoom: s.currentRoom + 1,
-              }
-            : { ...s, currentRoom: s.currentRoom + 1 },
+        goldCost: 30,
+        apply: (s) => ({
+          ...s,
+          gold: s.gold - 30,
+          playerMaxHp: s.playerMaxHp + 20,
+          playerCurrentHp: s.playerCurrentHp + 20,
+          currentRoom: s.currentRoom + 1,
+        }),
       },
       {
         label: "events.wandering_scribe.choices.1.label",
@@ -675,21 +683,14 @@ const EVENTS: GameEvent[] = [
         label: "events.oracle_of_delphi.choices.1.label",
         description: "events.oracle_of_delphi.choices.1.description",
         outcomeText: "events.oracle_of_delphi.choices.1.outcomeText",
-        apply: (s) =>
-          s.gold >= 30
-            ? {
-                ...s,
-                gold: s.gold - 30,
-                playerMaxHp: s.playerMaxHp + 45,
-                playerCurrentHp: s.playerCurrentHp + 45,
-                currentRoom: s.currentRoom + 1,
-              }
-            : {
-                ...s,
-                playerMaxHp: s.playerMaxHp + 30,
-                playerCurrentHp: s.playerCurrentHp + 30,
-                currentRoom: s.currentRoom + 1,
-              },
+        goldCost: 30,
+        apply: (s) => ({
+          ...s,
+          gold: s.gold - 30,
+          playerMaxHp: s.playerMaxHp + 45,
+          playerCurrentHp: s.playerCurrentHp + 45,
+          currentRoom: s.currentRoom + 1,
+        }),
       },
     ],
   },
@@ -831,16 +832,14 @@ const EVENTS: GameEvent[] = [
         label: "events.huginn_bargain.choices.1.label",
         description: "events.huginn_bargain.choices.1.description",
         outcomeText: "events.huginn_bargain.choices.1.outcomeText",
-        apply: (s) =>
-          s.gold >= 30
-            ? {
-                ...s,
-                gold: s.gold - 30,
-                playerMaxHp: s.playerMaxHp + 30,
-                playerCurrentHp: s.playerCurrentHp + 30,
-                currentRoom: s.currentRoom + 1,
-              }
-            : { ...s, currentRoom: s.currentRoom + 1 },
+        goldCost: 30,
+        apply: (s) => ({
+          ...s,
+          gold: s.gold - 30,
+          playerMaxHp: s.playerMaxHp + 30,
+          playerCurrentHp: s.playerCurrentHp + 30,
+          currentRoom: s.currentRoom + 1,
+        }),
       },
       {
         label: "events.huginn_bargain.choices.2.label",
@@ -1192,16 +1191,14 @@ const EVENTS: GameEvent[] = [
         label: "events.obsidian_altar.choices.1.label",
         description: "events.obsidian_altar.choices.1.description",
         outcomeText: "events.obsidian_altar.choices.1.outcomeText",
-        apply: (s) =>
-          s.gold >= 30
-            ? {
-                ...s,
-                gold: s.gold - 30,
-                playerMaxHp: s.playerMaxHp + 25,
-                playerCurrentHp: s.playerCurrentHp + 25,
-                currentRoom: s.currentRoom + 1,
-              }
-            : { ...s, currentRoom: s.currentRoom + 1 },
+        goldCost: 30,
+        apply: (s) => ({
+          ...s,
+          gold: s.gold - 30,
+          playerMaxHp: s.playerMaxHp + 25,
+          playerCurrentHp: s.playerCurrentHp + 25,
+          currentRoom: s.currentRoom + 1,
+        }),
       },
       {
         label: "events.obsidian_altar.choices.2.label",
@@ -1276,21 +1273,14 @@ const EVENTS: GameEvent[] = [
         label: "events.druid_memory.choices.1.label",
         description: "events.druid_memory.choices.1.description",
         outcomeText: "events.druid_memory.choices.1.outcomeText",
-        apply: (s) =>
-          s.gold >= 20
-            ? {
-                ...s,
-                gold: s.gold - 20,
-                playerMaxHp: s.playerMaxHp + 40,
-                playerCurrentHp: s.playerCurrentHp + 40,
-                currentRoom: s.currentRoom + 1,
-              }
-            : {
-                ...s,
-                playerMaxHp: s.playerMaxHp + 25,
-                playerCurrentHp: s.playerCurrentHp + 25,
-                currentRoom: s.currentRoom + 1,
-              },
+        goldCost: 20,
+        apply: (s) => ({
+          ...s,
+          gold: s.gold - 20,
+          playerMaxHp: s.playerMaxHp + 40,
+          playerCurrentHp: s.playerCurrentHp + 40,
+          currentRoom: s.currentRoom + 1,
+        }),
       },
       {
         label: "events.druid_memory.choices.2.label",
@@ -1322,16 +1312,14 @@ const EVENTS: GameEvent[] = [
         label: "events.lady_of_the_lake.choices.1.label",
         description: "events.lady_of_the_lake.choices.1.description",
         outcomeText: "events.lady_of_the_lake.choices.1.outcomeText",
-        apply: (s) =>
-          s.gold >= 30
-            ? {
-                ...s,
-                gold: s.gold - 30,
-                playerMaxHp: s.playerMaxHp + 25,
-                playerCurrentHp: s.playerCurrentHp + 25,
-                currentRoom: s.currentRoom + 1,
-              }
-            : { ...s, currentRoom: s.currentRoom + 1 },
+        goldCost: 30,
+        apply: (s) => ({
+          ...s,
+          gold: s.gold - 30,
+          playerMaxHp: s.playerMaxHp + 25,
+          playerCurrentHp: s.playerCurrentHp + 25,
+          currentRoom: s.currentRoom + 1,
+        }),
       },
       {
         label: "events.lady_of_the_lake.choices.2.label",
@@ -1480,16 +1468,14 @@ const EVENTS: GameEvent[] = [
         label: "events.nyame_trial.choices.1.label",
         description: "events.nyame_trial.choices.1.description",
         outcomeText: "events.nyame_trial.choices.1.outcomeText",
-        apply: (s) =>
-          s.gold >= 40
-            ? {
-                ...s,
-                gold: s.gold - 40,
-                playerMaxHp: s.playerMaxHp + 30,
-                playerCurrentHp: s.playerCurrentHp + 30,
-                currentRoom: s.currentRoom + 1,
-              }
-            : { ...s, currentRoom: s.currentRoom + 1 },
+        goldCost: 40,
+        apply: (s) => ({
+          ...s,
+          gold: s.gold - 40,
+          playerMaxHp: s.playerMaxHp + 30,
+          playerCurrentHp: s.playerCurrentHp + 30,
+          currentRoom: s.currentRoom + 1,
+        }),
       },
       {
         label: "events.nyame_trial.choices.2.label",
@@ -1924,6 +1910,7 @@ export function applyEventChoice(
 ): RunState {
   const choice = event.choices[choiceIndex];
   if (!choice) return runState;
+  if (!isEventChoiceAvailable(runState, choice)) return runState;
   const newState = choice.apply(runState);
 
   // Mark once-per-run events as seen
