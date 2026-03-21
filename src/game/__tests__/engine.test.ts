@@ -5370,12 +5370,12 @@ describe("Run management", () => {
     expect(result.cardUnlockProgress.bossKillsByBiome.LIBRARY ?? 0).toBe(0);
   });
 
-  it("completeCombat in infinite mode does not end at floor 5 boss", () => {
-    const rng = createRNG("boss-floor-5-infinite");
+  it("completeCombat in infinite mode does not end at the normal final boss", () => {
+    const rng = createRNG("boss-floor-cap-infinite");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
     const run = createNewRun(
       "run-1",
-      "boss-floor-5-infinite",
+      "boss-floor-cap-infinite",
       starterCards,
       rng
     );
@@ -5384,13 +5384,13 @@ describe("Run management", () => {
     const result = completeCombat(
       {
         ...run,
-        floor: 5,
+        floor: GAME_CONSTANTS.MAX_FLOORS,
         currentRoom: GAME_CONSTANTS.BOSS_ROOM_INDEX,
         selectedRunConditionId: "infinite_mode",
       },
       combat,
       0,
-      createRNG("boss-floor-5-infinite-next")
+      createRNG("boss-floor-cap-infinite-next")
     );
 
     expect(result.status).toBe("IN_PROGRESS");
@@ -7020,6 +7020,27 @@ describe("Relics", () => {
     const state = makeMinimalCombat();
     const result = applyRelicsOnCombatStart(state, ["briar_codex"]);
     expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+  });
+
+  it("russian_koschei_needle applies vulnerable from the penultimate floor onward", () => {
+    const activationFloor = Math.max(1, GAME_CONSTANTS.MAX_FLOORS - 1);
+    const beforeActivation = Math.max(1, activationFloor - 1);
+
+    const beforeResult = applyRelicsOnCombatStart(
+      makeMinimalCombat({ floor: beforeActivation }),
+      ["russian_koschei_needle"]
+    );
+    const activeResult = applyRelicsOnCombatStart(
+      makeMinimalCombat({ floor: activationFloor }),
+      ["russian_koschei_needle"]
+    );
+
+    expect(getBuffStacks(beforeResult.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(
+      0
+    );
+    expect(getBuffStacks(activeResult.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(
+      1
+    );
   });
 
   it("plague_carillon deals 1 damage to all enemies on card played", () => {

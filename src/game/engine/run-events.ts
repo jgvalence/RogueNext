@@ -24,6 +24,8 @@ export interface GameEvent {
   condition?: (state: RunState) => boolean;
 }
 
+const LATE_RUN_SCRIBE_FLOOR = Math.max(3, GAME_CONSTANTS.MAX_FLOORS - 1);
+
 export interface EventChoice {
   label: string;
   description: string;
@@ -1767,7 +1769,7 @@ const EVENTS: GameEvent[] = [
     once: true,
     condition: (s) =>
       s.seenEventIds.includes("scribe_7_the_other") &&
-      s.floor >= 4 &&
+      s.floor >= LATE_RUN_SCRIBE_FLOOR &&
       (s.selectedDifficultyLevel ?? 0) >= 3,
     choices: [
       {
@@ -1806,7 +1808,7 @@ const EVENTS: GameEvent[] = [
     once: true,
     condition: (s) =>
       s.seenEventIds.includes("scribe_8_the_truth") &&
-      s.floor >= 4 &&
+      s.floor >= LATE_RUN_SCRIBE_FLOOR &&
       (s.selectedDifficultyLevel ?? 0) >= 4,
     choices: [
       {
@@ -1845,7 +1847,7 @@ const EVENTS: GameEvent[] = [
     once: true,
     condition: (s) =>
       s.seenEventIds.includes("scribe_9_the_choice") &&
-      s.floor >= GAME_CONSTANTS.MAX_FLOORS - 1 &&
+      s.floor >= LATE_RUN_SCRIBE_FLOOR &&
       (s.selectedDifficultyLevel ?? 0) >= 5,
     choices: [
       {

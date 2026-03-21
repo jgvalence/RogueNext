@@ -17,7 +17,7 @@
 
 ### Progression run
 
-- [x] 5 etages (`MAX_FLOORS = 5`)
+- [x] 3 etages (`MAX_FLOORS = 3`)
 - [x] Difficulte croissante par etage
 - [x] HP ennemis scales par floor
 - [x] Chance elite augmente par floor
@@ -102,7 +102,7 @@
 - [ ] Passer d'un calibrage "fonctionnel" a un calibrage fin biome par biome (HP, degats, frequences)
 - [x] Ajuster la cadence des unlocks cartes / reliques / conditions de run (pass progression 2026-03-15)
 - [ ] Verifier en playtest la nouvelle cadence d'unlocks (early runs, builds signatures, starts speciaux)
-- [ ] Verifier la courbe difficulte floors 4-5 en conditions reelles
+- [ ] Verifier la courbe difficulte floors 2-3 en conditions reelles
 - [x] Reequilibrer l'economie d'action de la meta (`EXTRA_DRAW`, `EXTRA_ENERGY_MAX`, `EXTRA_HAND_AT_START`)
 - [x] Reduire les redondances de l'arbre meta (`STARTING_BLOCK`, `EXTRA_CARD_REWARD_CHOICES`, `EXHAUST_KEEP_CHANCE`)
 - [ ] Verifier en playtest la nouvelle repartition des `ALLY_SLOTS` entre arbres (cap cible `3`)
@@ -150,9 +150,9 @@
     - `scribe_5_the_name` — ANY, fl.3+, diff>=1, req. #4 (il cherche son nom)
     - `scribe_6_the_warning` — ANY, fl.3+, diff>=2, req. #5 (l'avertissement)
     - `scribe_7_the_other` — ANY, fl.3+, diff>=2, req. #6 (il parle de lui sans le savoir)
-    - `scribe_8_the_truth` — ANY, fl.4+, diff>=3, req. #7 (l'Archiviste d'avant)
-    - `scribe_9_the_choice` — ANY, fl.4+, diff>=4, req. #8 (ce que tu ferais)
-    - `scribe_10_the_reveal` — ANY, fl.4+, diff>=5, req. #9 (il est le Censeur)
+    - `scribe_8_the_truth` — ANY, avant-dernier etage+, diff>=3, req. #7 (l'Archiviste d'avant)
+    - `scribe_9_the_choice` — ANY, avant-dernier etage+, diff>=4, req. #8 (ce que tu ferais)
+    - `scribe_10_the_reveal` — ANY, avant-dernier etage+, diff>=5, req. #9 (il est le Censeur)
   - [x] Persistance metaprogression dans `UserProgression.resources` (via `endRunAction`) :
     - 10 cles `__SCRIBE_1_ATT` … `__SCRIBE_10_ATT` — reponse individuelle par rencontre
     - Encodage : 0/absent = pas vue, 1 = hostile, 2 = neutre, 3 = compassion

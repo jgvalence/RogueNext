@@ -987,7 +987,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "russian_koschei_needle",
     name: "Aiguille de Koschei",
-    description: "Etages 4+: debut de combat, ennemis sous 1 VULNERABLE.",
+    description:
+      "A partir de l'avant-dernier etage: debut de combat, ennemis sous 1 VULNERABLE.",
     rarity: "UNCOMMON",
   },
   {

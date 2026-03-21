@@ -1,4 +1,5 @@
 import type { CardDefinition, CardInstance } from "../schemas/cards";
+import { GAME_CONSTANTS } from "../constants";
 import { relicDefinitions, type RelicDefinitionData } from "../data/relics";
 import { RELIC_UNLOCK_REQUIREMENTS_FROM_DOC } from "../data/relic-unlocks";
 import { characterDefinitions } from "../data/characters";
@@ -321,7 +322,7 @@ export function updateBestInfiniteFloor(
   };
 }
 
-export function getPostFloorFiveEscalation(
+export function getPostFloorCapEscalation(
   floor: number,
   enabled: boolean
 ): {
@@ -330,7 +331,7 @@ export function getPostFloorFiveEscalation(
   eliteChanceBonus: number;
 } {
   const safeFloor = Math.max(1, Math.floor(floor));
-  const escalationStartFloor = 5;
+  const escalationStartFloor = GAME_CONSTANTS.MAX_FLOORS;
   if (!enabled || safeFloor <= escalationStartFloor) {
     return {
       enemyHpMultiplier: 1,
@@ -341,8 +342,8 @@ export function getPostFloorFiveEscalation(
 
   const extraFloors = safeFloor - escalationStartFloor;
   return {
-    // Infinite mode is meant to spike hard immediately after floor 5.
-    // Floor 6 should feel dramatically harder, then keep ramping quickly.
+    // Infinite mode is meant to spike hard immediately after the normal floor cap.
+    // The next floor should feel dramatically harder, then keep ramping quickly.
     enemyHpMultiplier: Math.pow(1.85, extraFloors),
     enemyDamageMultiplier: Math.pow(1.6, extraFloors),
     eliteChanceBonus: Math.min(0.6, extraFloors * 0.18),

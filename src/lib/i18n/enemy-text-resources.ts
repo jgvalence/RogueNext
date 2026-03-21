@@ -38,9 +38,12 @@ const FR_ENEMY_NAMES: Record<string, string> = {
   lamia: "Lamia",
   bronze_automaton: "Automate de bronze",
   minotaur: "Minotaure",
-  lernaean_broodling: "Couvain de Lerne",
+  lernaean_broodling: "Rejeton de Lerne",
   medusa: "Meduse",
   hydra_aspect: "Aspect de l'Hydre",
+  hydra_head_left: "Tete gauche de l'Hydre",
+  hydra_head_right: "Tete droite de l'Hydre",
+  hydra_head_center: "Tete centrale de l'Hydre",
   scarab_swarm: "Essaim de scarabees",
   sand_guardian: "Gardien des sables",
   tomb_priest: "Pretre du tombeau",
@@ -103,6 +106,12 @@ const FR_ENEMY_NAMES: Record<string, string> = {
   oya_harbinger: "Messager d'Oya",
   soundiata_spirit: "Esprit de Soundiata",
   anansi_weaver: "Anansi le Tisseur",
+  archivist_black_inkwell: "Encrier noir",
+  archivist_pale_inkwell: "Encrier pale",
+  shub_brood_nest: "Nid du couvain",
+  koschei_bone_chest: "Coffre d'os",
+  koschei_black_egg: "Oeuf noir",
+  koschei_hidden_needle: "Aiguille cachee",
 };
 
 const FR_BIOME_CONTEXT: Record<BiomeType, string> = {

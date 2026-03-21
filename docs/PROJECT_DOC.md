@@ -10,9 +10,9 @@ Mécanique signature : **Jauge d’Encre** + cartes **Marquées à l’encre** (
 
 ## 1) Structure d’un run
 
-- Un run est composé de `N_FLOORS` étages (**implémenté : 5**).
-- Chaque étage comporte `ROOMS_PER_FLOOR = 10` salles.
-- La salle 10 est toujours un **Boss**.
+- Un run est composé de `N_FLOORS` étages (**implémenté : 3**).
+- Chaque étage comporte `ROOMS_PER_FLOOR = 16` salles.
+- La salle 16 est toujours un **Boss**.
 - Après avoir terminé une salle, le joueur choisit la prochaine salle parmi `1..3` options (sauf transitions spéciales).
 - Types de salles :
   - Combat
@@ -240,7 +240,7 @@ Le combat continue tant que :
 
 > Le MVP initial est dépassé. Voici l’état réel du jeu.
 
-- **5 étages** de 10 salles chacun
+- **3 étages** de 16 salles chacun
 - **73 cartes** : 4 starters + 21 commons + 27 uncommons + 21 rares
 - **57 ennemis** répartis sur 9 biomes (normaux + élites + boss)
 - **3 alliés** (Scribe Apprentice, Ward Knight, Ink Familiar)
@@ -265,7 +265,7 @@ Le combat continue tant que :
 ## 11) Glossaire
 
 - `Run` : tentative complète jusqu’à mort/victoire
-- `Floor` : étage (lot de 10 salles + boss)
+- `Floor` : étage (lot de 15 salles + boss)
 - `Room` : salle (combat, shop, event)
 - `Ink` : ressource spéciale
 - `Inked` : version améliorée d’une carte via encre

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { GAME_CONSTANTS } from "../constants";
 import {
   computeEnemyKillUnlockedRelicIds,
   eliteCanDropRelic,
@@ -10,7 +11,7 @@ import {
   getDifficultyModifiers,
   getEarnedResourceMultiplierForRun,
   getEnemyStartingBlock,
-  getPostFloorFiveEscalation,
+  getPostFloorCapEscalation,
   getRelicUnlockDetails,
   hasClearedDifficultyBefore,
   hasClearedDifficultyGloballyBefore,
@@ -365,34 +366,40 @@ describe("Run difficulty progression", () => {
     expect(getBestInfiniteFloor(noDowngrade)).toBe(9);
   });
 
-  it("adds a steep post-floor-5 escalation only when enabled", () => {
-    expect(getPostFloorFiveEscalation(5, false)).toEqual({
+  it("adds a steep post-floor-cap escalation only when enabled", () => {
+    const floorCap = GAME_CONSTANTS.MAX_FLOORS;
+
+    expect(getPostFloorCapEscalation(floorCap, false)).toEqual({
       enemyHpMultiplier: 1,
       enemyDamageMultiplier: 1,
       eliteChanceBonus: 0,
     });
-    expect(getPostFloorFiveEscalation(5, true)).toEqual({
+    expect(getPostFloorCapEscalation(floorCap, true)).toEqual({
       enemyHpMultiplier: 1,
       enemyDamageMultiplier: 1,
       eliteChanceBonus: 0,
     });
 
-    const floor6 = getPostFloorFiveEscalation(6, true);
-    const floor7 = getPostFloorFiveEscalation(7, true);
+    const nextFloor = getPostFloorCapEscalation(floorCap + 1, true);
+    const laterFloor = getPostFloorCapEscalation(floorCap + 2, true);
 
-    // Immediate spike right after floor 5.
-    expect(floor6.enemyHpMultiplier).toBeGreaterThan(1.8);
-    expect(floor6.enemyDamageMultiplier).toBeGreaterThan(1.55);
-    expect(floor6.eliteChanceBonus).toBeGreaterThan(0.17);
+    // Immediate spike right after the normal floor cap.
+    expect(nextFloor.enemyHpMultiplier).toBeGreaterThan(1.8);
+    expect(nextFloor.enemyDamageMultiplier).toBeGreaterThan(1.55);
+    expect(nextFloor.eliteChanceBonus).toBeGreaterThan(0.17);
 
     // Then scaling keeps ramping aggressively each floor.
-    expect(floor7.enemyHpMultiplier).toBeGreaterThan(3.4);
-    expect(floor7.enemyDamageMultiplier).toBeGreaterThan(2.5);
-    expect(floor7.enemyHpMultiplier).toBeGreaterThan(floor6.enemyHpMultiplier);
-    expect(floor7.enemyDamageMultiplier).toBeGreaterThan(
-      floor6.enemyDamageMultiplier
+    expect(laterFloor.enemyHpMultiplier).toBeGreaterThan(3.4);
+    expect(laterFloor.enemyDamageMultiplier).toBeGreaterThan(2.5);
+    expect(laterFloor.enemyHpMultiplier).toBeGreaterThan(
+      nextFloor.enemyHpMultiplier
     );
-    expect(floor7.eliteChanceBonus).toBeGreaterThan(floor6.eliteChanceBonus);
+    expect(laterFloor.enemyDamageMultiplier).toBeGreaterThan(
+      nextFloor.enemyDamageMultiplier
+    );
+    expect(laterFloor.eliteChanceBonus).toBeGreaterThan(
+      nextFloor.eliteChanceBonus
+    );
   });
 
   it("does not gate cards/relics by difficulty anymore", () => {

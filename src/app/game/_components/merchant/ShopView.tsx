@@ -18,6 +18,8 @@ import {
   localizeCardType,
 } from "@/lib/i18n/card-text";
 import {
+  localizeAllyAbilityName,
+  localizeAllyName,
   localizeRelicDescription,
   localizeRelicName,
   localizeUsableItemDescription,
@@ -243,6 +245,18 @@ export function ShopView({
           const allyDef = isAlly
             ? (allyDefinitions.find((a) => a.id === item.allyId) ?? null)
             : null;
+          const localizedAllyName =
+            isAlly && allyDef
+              ? localizeAllyName(allyDef.id, item.allyName ?? allyDef.name)
+              : isAlly
+                ? localizeAllyName(item.allyId, item.allyName)
+                : null;
+          const localizedAllySummary =
+            isAlly && allyDef
+              ? `${allyDef.maxHp} ${t("combat.hp")} - ${allyDef.speed} ${t(
+                  "combat.spd"
+                )}`
+              : (item.allyDescription ?? "");
           const isUsableInventoryFull =
             usableItems.length >= usableItemCapacity;
           const canPurgeDeck = deck.length > 1;
@@ -328,7 +342,7 @@ export function ShopView({
                           : item.type === "blood_purge"
                             ? t("shop.itemName.bloodPurge")
                             : item.type === "ally"
-                              ? (item.allyName ?? t("shop.itemName.ally"))
+                              ? (localizedAllyName ?? t("shop.itemName.ally"))
                               : localizeUsableItemName(
                                   item.usableItemDef?.id,
                                   item.usableItemDef?.name
@@ -358,7 +372,7 @@ export function ShopView({
                                 amount: item.hpCost ?? 0,
                               })
                             : item.type === "ally"
-                              ? (item.allyDescription ?? "")
+                              ? localizedAllySummary
                               : localizeUsableItemDescription(
                                   item.usableItemDef?.id,
                                   item.usableItemDef?.description
@@ -383,7 +397,7 @@ export function ShopView({
                       className="rounded border border-teal-800/70 bg-teal-900/30 px-1.5 py-1"
                     >
                       <div className="truncate text-[10px] font-semibold text-teal-100">
-                        {ability.name}
+                        {localizeAllyAbilityName(allyDef.id, ability.name)}
                       </div>
                     </div>
                   ))}

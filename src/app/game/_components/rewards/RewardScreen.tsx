@@ -10,6 +10,8 @@ import type { AllyDefinition } from "@/game/schemas/entities";
 import type { Effect } from "@/game/schemas/effects";
 import { RogueButton, RogueTag } from "@/components/ui/rogue";
 import {
+  localizeAllyAbilityName,
+  localizeAllyName,
   localizeRelicDescription,
   localizeRelicName,
 } from "@/lib/i18n/entity-text";
@@ -248,6 +250,7 @@ function AllyCard({
   onPick: (allyId: string) => void;
 }) {
   const { t } = useTranslation();
+  const localizedAllyName = localizeAllyName(ally.id, ally.name);
 
   return (
     <RogueButton
@@ -259,10 +262,10 @@ function AllyCard({
         {t("reward.ally")}
       </span>
       <span className="block w-full whitespace-normal break-words text-sm font-bold leading-tight text-white [overflow-wrap:anywhere]">
-        {ally.name}
+        {localizedAllyName}
       </span>
       <span className="text-xs text-cyan-200">
-        {ally.maxHp} HP - {ally.speed} SPD
+        {ally.maxHp} {t("combat.hp")} - {ally.speed} {t("combat.spd")}
       </span>
       <div className="mt-1 w-full space-y-1 text-left">
         {ally.abilities.map((ability, i) => (
@@ -271,7 +274,7 @@ function AllyCard({
             className="rounded border border-cyan-800/70 bg-cyan-900/40 px-2 py-1"
           >
             <div className="whitespace-normal break-words text-[11px] font-semibold leading-tight text-cyan-100 [overflow-wrap:anywhere]">
-              {ability.name}
+              {localizeAllyAbilityName(ally.id, ability.name)}
             </div>
             <div className="whitespace-normal break-words text-[10px] leading-relaxed text-cyan-300 [overflow-wrap:anywhere]">
               {formatTarget(ability.target, t)} -{" "}

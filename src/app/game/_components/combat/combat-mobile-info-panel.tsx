@@ -18,7 +18,11 @@ import {
 import type { MobileInfoPanelState } from "./combat-view-types";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
-import { localizeEnemyAbilityName } from "@/lib/i18n/entity-text";
+import {
+  localizeAllyAbilityName,
+  localizeAllyName,
+  localizeEnemyAbilityName,
+} from "@/lib/i18n/entity-text";
 
 interface CombatMobileInfoPanelProps {
   mobileInfoPanel: MobileInfoPanelState;
@@ -358,6 +362,13 @@ export function CombatMobileInfoPanel({
             const ally = mobileInfoAlly;
             const def = allyDefs.get(ally.definitionId);
             const intent = def?.abilities[ally.intentIndex];
+            const localizedAllyName = localizeAllyName(
+              ally.definitionId,
+              ally.name
+            );
+            const localizedAllyIntentName = intent
+              ? localizeAllyAbilityName(ally.definitionId, intent.name)
+              : null;
             const hpRatio =
               ally.maxHp > 0 ? Math.max(0, ally.currentHp) / ally.maxHp : 0;
             const canTargetAlly =
@@ -372,10 +383,10 @@ export function CombatMobileInfoPanel({
                   <div className="relative flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-cyan-400/70">
-                        Allie
+                        {t("combat.ally")}
                       </p>
                       <h2 className="mt-0.5 truncate text-2xl font-black text-white">
-                        {ally.name}
+                        {localizedAllyName}
                       </h2>
                       <div className="mt-3">
                         <div className="mb-1 flex justify-between text-xs">
@@ -420,7 +431,7 @@ export function CombatMobileInfoPanel({
                       </p>
                       <div className="rounded-2xl border border-cyan-800/50 bg-cyan-950/30 px-4 py-3">
                         <p className="text-sm font-bold text-cyan-200">
-                          {intent.name}
+                          {localizedAllyIntentName}
                           <span className="ml-2 text-xs font-normal text-slate-300">
                             {formatAllyIntent(intent, t)}
                           </span>

@@ -34,7 +34,7 @@ import {
 import {
   computeEnemyKillUnlockedRelicIds,
   getDifficultyModifiers,
-  getPostFloorFiveEscalation,
+  getPostFloorCapEscalation,
 } from "./difficulty";
 import { createUsableItemInstance } from "./items";
 import {
@@ -1600,7 +1600,7 @@ function generateRoomEnemies(
   isInfiniteMode = false
 ): { enemyIds: string[]; isElite: boolean } {
   const difficultyModifiers = getDifficultyModifiers(difficultyLevel);
-  const postFloorEscalation = getPostFloorFiveEscalation(floor, isInfiniteMode);
+  const postFloorEscalation = getPostFloorCapEscalation(floor, isInfiniteMode);
   const canAppear = (e: (typeof enemyDefinitions)[0]) =>
     !e.isScriptedOnly && e.biome === biome;
 

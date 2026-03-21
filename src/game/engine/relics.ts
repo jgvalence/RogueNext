@@ -1,6 +1,7 @@
 import type { CombatState } from "../schemas/combat-state";
 import type { RunState } from "../schemas/run-state";
 import type { Effect } from "../schemas/effects";
+import { GAME_CONSTANTS } from "../constants";
 import { nanoid } from "nanoid";
 import { applyDamage } from "./damage";
 import { drawCards } from "./deck";
@@ -1075,7 +1076,7 @@ export function applyRelicsOnCombatStart(
         current = setFlag(current, "rusalka_teardrop_active", true);
         break;
       case "russian_koschei_needle":
-        if (current.floor >= 4) {
+        if (current.floor >= Math.max(1, GAME_CONSTANTS.MAX_FLOORS - 1)) {
           current = {
             ...current,
             enemies: current.enemies.map((enemy) =>

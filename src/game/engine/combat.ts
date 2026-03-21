@@ -16,7 +16,7 @@ import { applyRelicsOnTurnStart, applyRelicsOnTurnEnd } from "./relics";
 import {
   getDifficultyModifiers,
   getEnemyStartingBlock,
-  getPostFloorFiveEscalation,
+  getPostFloorCapEscalation,
 } from "./difficulty";
 import {
   finalizeChapterGuardianPlayerTurn,
@@ -194,7 +194,7 @@ export function initCombat(
   const bonuses = metaBonuses ?? runState.metaBonuses;
   const difficultyLevel = runState.selectedDifficultyLevel ?? 0;
   const difficultyMods = getDifficultyModifiers(difficultyLevel);
-  const postFloorEscalation = getPostFloorFiveEscalation(
+  const postFloorEscalation = getPostFloorCapEscalation(
     runState.floor,
     isInfiniteRunConditionId(runState.selectedRunConditionId)
   );

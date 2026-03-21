@@ -20,11 +20,11 @@ export const fr = {
     loginHint: "Connectez-vous pour sauvegarder votre progression",
     signedInHint: "Le grimoire est ouvert. Lancez une nouvelle expedition.",
     ritualKicker: "Table de navigation",
-    ritualTitle: "Plan de run",
+    ritualTitle: "Plan d'expedition",
     ritualSubtitle:
-      "Tracez votre route, optimisez votre deck, puis terrassez le boss.",
+      "Tracez votre route, optimisez votre deck, puis terrassez le boss final.",
     pathLabel: "Sequence de progression",
-    modeLabel: "Doctrine",
+    modeLabel: "Mode",
     modeValue: "Roguelike tactique",
     pathSteps: ["Combat", "Elite", "Marchand", "Boss"],
     quickFacts: {
@@ -47,7 +47,7 @@ export const fr = {
       "Compare la progression infinie ou les meilleurs temps de victoire par difficulte.",
     backHome: "Accueil",
     loadError: "Impossible de charger le classement: {{message}}",
-    empty: "Aucune statistique de run disponible pour le moment.",
+    empty: "Aucune statistique d'expedition disponible pour le moment.",
     playerFallback: "Archiviste {{id}}",
     you: "Vous",
     noTime: "-",
@@ -56,7 +56,7 @@ export const fr = {
       kicker: "Tri du classement",
       limit: "Top {{count}} joueurs affiches.",
       sortLabel: "Trier par",
-      difficultyLabel: "Difficulte du temps",
+      difficultyLabel: "Difficulte",
       allDifficulties: "Toutes les difficultes",
       summaryProgression:
         "Classement progression: etage infini, puis victoires, difficulte max et temps.",
@@ -73,11 +73,11 @@ export const fr = {
       rank: "Rang",
       player: "Joueur",
       wins: "Victoires",
-      runs: "Runs",
-      winRate: "Winrate",
+      runs: "Expeditions",
+      winRate: "Taux de victoire",
       bestInfiniteFloor: "Etage infini max",
       bestDifficulty: "Difficulte max",
-      bestTime: "Temps par diff",
+      bestTime: "Temps par difficulte",
       bestTimeVictory: "Temps victoire",
       bestTimeDifficulty: "Temps victoire D{{difficulty}}",
     },
@@ -122,8 +122,8 @@ export const fr = {
     collectedStories: "{{unlocked}}/{{total}} histoires collectees",
     collection: "Collection",
     bestiary: "Bestiaire",
-    startRun: "Commencer un run",
-    tier: "Tier",
+    startRun: "Commencer une expedition",
+    tier: "Palier",
     permanentBonus: "Bonus permanent",
     cost: "Cout",
     availableAmount: "disponibles",
@@ -138,9 +138,9 @@ export const fr = {
     collectionLoadErrorTitle: "Impossible de charger la collection",
     firstVisitTutorial: {
       kicker: "Tutoriel bibliotheque",
-      title: "Ici, tu transformes tes runs en progression permanente",
+      title: "Ici, tu transformes tes expeditions en progression permanente",
       description:
-        "La Bibliotheque sert de meta-progression. Les ressources gagnees en run sont depensees ici pour debloquer des histoires qui renforcent tous tes prochains runs.",
+        "La Bibliotheque est le lieu de ta progression permanente. Les ressources gagnees pendant tes expeditions sont depensees ici pour debloquer des histoires qui renforceront les suivantes.",
       resourcesTitle: "Ressources",
       resourcesDescription:
         "Chaque biome donne sa propre ressource apres les combats. Le bandeau en haut montre ton stock actuel pour savoir quelles histoires tu peux acheter.",
@@ -153,7 +153,7 @@ export const fr = {
     guidedStoryTutorial: {
       kicker: "Premier achat",
       description:
-        "Tu as recupere juste assez de Pages pour debloquer l'Encyclopedie du Savoir. Cette histoire te donnera +1 pioche sur tous tes prochains runs.",
+        "Tu as recupere juste assez de Pages pour debloquer l'Encyclopedie du Savoir. Cette histoire te donnera +1 pioche sur toutes tes prochaines expeditions.",
     },
     bonus: {
       extraDraw: "+{{value}} pioche par tour",
@@ -161,7 +161,7 @@ export const fr = {
       extraInkMax: "+{{value}} encre max",
       inkPerCardChance:
         "+{{value}}% de chance de gagner de l'encre en jouant une carte",
-      inkPerCardValue: "+{{value}} encre quand le proc se declenche",
+      inkPerCardValue: "+{{value}} encre quand l'effet se declenche",
       startingInk: "Commence le combat avec +{{value}} encre",
       startingBlock: "+{{value}} armure au debut du combat",
       startingStrength: "+{{value}} force au debut du combat",
@@ -172,7 +172,7 @@ export const fr = {
       extraHandAtStart: "+{{value}} cartes en main de depart",
       attackBonus: "+{{value}} degats des cartes Attaque",
       allySlots: "+{{value}} emplacement(s) allie",
-      startingGold: "+{{value}} or de depart a chaque run",
+      startingGold: "+{{value}} or de depart a chaque expedition",
       extraCardRewardChoices: "+{{value}} choix de carte en recompense",
       relicDiscount: "{{value}}% de reduction sur les reliques",
       lootLuck: "+{{value}} qualite du butin",
@@ -181,10 +181,12 @@ export const fr = {
       healAfterCombat: "Recupere {{value}}% des PV max apres combat",
       healAfterCombatFlat: "Recupere {{value}} PV apres combat",
       exhaustKeepChance:
-        "{{value}}% de chance de ne pas epuiser une carte avec Exhaust (hors pouvoirs)",
-      survivalOnce: "Survit a 1 PV une fois par run",
-      freeUpgradePerRun: "Ameliore une carte gratuitement a chaque run",
-      startingRareCard: "Commence chaque run avec une carte rare aleatoire",
+        "{{value}}% de chance qu'une carte avec Epuisement ne soit pas epuisee (hors pouvoirs)",
+      survivalOnce: "Survit a 1 PV une fois par expedition",
+      freeUpgradePerRun:
+        "Ameliore une carte gratuitement a chaque expedition",
+      startingRareCard:
+        "Commence chaque expedition avec une carte rare aleatoire",
     },
   },
   gameHub: {
@@ -201,7 +203,7 @@ export const fr = {
     relicSummary:
       "{{unlocked}} debloquees - {{locked}} bloquees - {{total}} reliques",
     backToLibrary: "Retour bibliotheque",
-    startRun: "Commencer un run",
+    startRun: "Commencer une expedition",
     tabs: {
       runOptions: "Options de depart",
       cards: "Cartes",
@@ -214,7 +216,7 @@ export const fr = {
     power: "Pouvoir",
     allOwnerships: "Toutes les origines",
     neutralOnly: "Neutres",
-    characterTypedOnly: "Typees personnage",
+    characterTypedOnly: "Liees a un personnage",
     allRarities: "Toutes les raretes",
     bossRelicRarity: "Relique de boss",
     allStates: "Tous les etats",
@@ -226,37 +228,37 @@ export const fr = {
     noRelicsForFilters: "Aucune relique pour ces filtres.",
     energy: "energie",
     neutralBadge: "Neutre",
-    characterTypedBadge: "Typee {{character}}",
-    relicSourceBoss: "Source: boss {{boss}}",
-    relicSourceGeneral: "Source: generale",
+    characterTypedBadge: "Liee a {{character}}",
+    relicSourceBoss: "Source : boss {{boss}}",
+    relicSourceGeneral: "Source : generale",
     whyLocked: "Pourquoi cette carte est bloquee",
     whyRelicLocked: "Pourquoi cette relique est bloquee",
     missingCondition: "Condition manquante",
     progress: "Progression",
     alwaysUnlocked: "Toujours debloquee",
-    relicUnlockBestGold: "Atteindre {{gold}} or sur un meme run",
+    relicUnlockBestGold: "Atteindre {{gold}} or sur une meme expedition",
     relicUnlockDifficultyWins:
-      "Gagner {{wins}} run(s) en difficulte {{difficulty}}",
+      "Gagner {{wins}} expedition(s) en difficulte {{difficulty}}",
     relicUnlockCharacterDifficultyWins:
-      "Gagner {{wins}} run(s) en difficulte {{difficulty}} avec {{character}}",
+      "Gagner {{wins}} expedition(s) en difficulte {{difficulty}} avec {{character}}",
     runConditions: {
       title: "Options de depart",
       summary:
-        "{{unlocked}}/{{total}} debloquees - Runs: {{runs}} - Victoires: {{wins}}",
+        "{{unlocked}}/{{total}} debloquees - Expeditions : {{runs}} - Victoires : {{wins}}",
       unlockCondition: "Condition de debloquage",
-      unlockRuns: "Terminer au moins {{runs}} run(s)",
-      unlockWins: "Gagner au moins {{wins}} run(s)",
+      unlockRuns: "Terminer au moins {{runs}} expedition(s)",
+      unlockWins: "Gagner au moins {{wins}} expedition(s)",
       unlockEnemyKills: "Vaincre {{enemy}} {{kills}} fois",
       unlockLootedCard: "Obtenir {{card}} au moins une fois",
       unlockRunsAndWins:
-        "Terminer au moins {{runs}} run(s) et gagner {{wins}} run(s)",
+        "Terminer au moins {{runs}} expedition(s) et gagner {{wins}} expedition(s)",
     },
   },
   bestiary: {
     title: "Bestiaire des royaumes",
     discoveredCount: "{{discovered}}/{{total}} entrees decouvertes",
     backToLibrary: "Retour bibliotheque",
-    startRun: "Commencer un run",
+    startRun: "Commencer une expedition",
     allBiomes: "Tous les biomes",
     allTypes: "Tous les types",
     noEntries: "Aucune entree pour ce filtre.",
@@ -275,20 +277,20 @@ export const fr = {
     hp: "PV",
     speed: "Vitesse",
     kills: "Victoires",
-    loreTier: "Lore {{current}}/{{total}}",
-    nextLoreAt: "prochaine entree a {{count}}",
+    loreTier: "Notice {{current}}/{{total}}",
+    nextLoreAt: "prochaine notice a {{count}}",
   },
   runCondition: {
     select: {
-      kicker: "Nouveau run",
+      kicker: "Nouvelle expedition",
       title: "Choisis une option de depart",
       subtitle: "Choisis 1 option parmi 3.",
       pickAction: "Choisir cette option",
     },
     bossStart: {
       name: "Benediction de {{boss}}",
-      description: "Commence le run avec : {{bonus}}.",
-      bonusFallback: "Bonus de depart de boss",
+      description: "Commence l'expedition avec : {{bonus}}.",
+      bonusFallback: "Bonus de depart du boss",
     },
     category: {
       LIGHT_BOON: "Petit avantage",
@@ -300,11 +302,11 @@ export const fr = {
     },
     definitions: {
       vanilla_run: {
-        name: "Sans changement",
-        description: "Run classique, sans regle speciale.",
+        name: "Sans modificateur",
+        description: "Expedition classique, sans regle speciale.",
       },
       quiet_pockets: {
-        name: "Poches tranquilles",
+        name: "Poches bien remplies",
         description: "Commence avec +20 or.",
       },
       tempered_flesh: {
@@ -313,14 +315,14 @@ export const fr = {
       },
       open_grimoire: {
         name: "Grimoire ouvert",
-        description: "Ajoute Fortify au deck de depart.",
+        description: "Ajoute Sceau d'Archive au deck de depart.",
       },
       recursive_scratch_opening: {
         name: "Griffure recursive",
-        description: "Commence chaque combat avec Recursive Scratch en main.",
+        description: "Commence chaque combat avec Griffure recursive en main.",
       },
       inked_beginning: {
-        name: "Debut encre",
+        name: "Encre initiale",
         description: "Commence chaque combat avec +2 encre.",
       },
       battle_manual: {
@@ -340,7 +342,7 @@ export const fr = {
       fractured_archive: {
         name: "Archive fracturee",
         description:
-          "Ameliore 3 cartes aleatoires, mais ajoute 2 Regret hantant au deck.",
+          "Ameliore 3 cartes aleatoires, mais ajoute 2 cartes Regret hantant a votre deck.",
       },
       severed_index: {
         name: "Index tronque",
@@ -350,12 +352,12 @@ export const fr = {
       merciless_routes: {
         name: "Routes impitoyables",
         description:
-          "Pas de marchands et un seul chemin, mais recompenses de combat x2.",
+          "Pas de marchands et un seul chemin, mais les recompenses de combat sont doublees.",
       },
       forbidden_contract: {
         name: "Contrat interdit",
         description:
-          "Ajoute Mythic Blow et Haunting Regret, mais perdez 6 PV max.",
+          "Ajoute Chapitre legendaire et 1 carte Regret hantant, mais perdez 6 PV max.",
       },
       single_path: {
         name: "Chemin unique",
@@ -363,7 +365,7 @@ export const fr = {
       },
       eventful_routes: {
         name: "Routes agitees",
-        description: "Pas de marchands, plus de salles speciales.",
+        description: "Pas de marchands, davantage de salles speciales.",
       },
       battle_rite: {
         name: "Rite de guerre",
@@ -374,14 +376,14 @@ export const fr = {
         description: "Le deck de depart est remplace par 10 cartes aleatoires.",
       },
       boss_rush: {
-        name: "Marche des boss",
+        name: "Ruee vers les boss",
         description:
-          "Tous les combats deviennent des combats de boss. Recompenses de combat x2.",
+          "Tous les combats deviennent des combats de boss. Les recompenses de combat sont doublees.",
       },
       veterans_oath: {
-        name: "Praticiens de Snokin",
+        name: "Voeu de Snokin",
         description:
-          "Vous recupererez 100% de vos PV apres chaque combat, mais perdez 50 PV max.",
+          "Recuperez tous vos PV apres chaque combat, mais perdez 50 PV max.",
       },
       ink_lender: {
         name: "Pret d'encre",
@@ -389,8 +391,8 @@ export const fr = {
           "Commence chaque combat avec +2 encre et +1 encre par carte jouee, mais perdez 8 PV max.",
       },
       prepared_wards: {
-        name: "Gardes pretes",
-        description: "Commence avec la relique Ruban garde.",
+        name: "Protections preparees",
+        description: "Commence avec la relique Ruban de garde.",
       },
       archivist_cache: {
         name: "Reserve d'archiviste",
@@ -398,7 +400,7 @@ export const fr = {
           "Ajoute 2 cartes aleatoires communes ou peu communes au deck de depart.",
       },
       rare_tithe: {
-        name: "Dime rare",
+        name: "Offrande rare",
         description: "Ajoute 1 carte rare aleatoire, mais perdez 14 PV max.",
       },
       surgical_cut: {
@@ -413,22 +415,23 @@ export const fr = {
       },
       cursed_compendium: {
         name: "Compendium maudit",
-        description: "Ajoute 2 cartes aleatoires, mais aussi 2 Regret hantant.",
+        description:
+          "Ajoute 2 cartes aleatoires, mais aussi 2 cartes Regret hantant a votre deck.",
       },
       crystal_loan: {
         name: "Pret de cristal",
         description:
-          "Commence avec la relique Cristal d'energie, ameliore 1 carte aleatoire, mais ajoute 1 Regret hantant.",
+          "Commence avec la relique Cristal d'energie, ameliore 1 carte aleatoire, mais ajoute 1 carte Regret hantant a votre deck.",
       },
       inkwell_bargain: {
         name: "Marche de l'encrier",
         description:
-          "Commence avec la relique Reservoir d'encre, mais perdez 10 PV max.",
+          "Commence avec la relique Reservoir d'encrier, mais perdez 10 PV max.",
       },
       forged_lexicon: {
         name: "Lexique forge",
         description:
-          "Commence avec la relique Lexique de bataille, mais ajoute 1 Regret hantant.",
+          "Commence avec la relique Lexique de bataille, mais ajoute 1 carte Regret hantant a votre deck.",
       },
       isolated_trials: {
         name: "Epreuves isolees",
@@ -438,63 +441,64 @@ export const fr = {
       grim_shortcuts: {
         name: "Raccourcis funestes",
         description:
-          "Un seul chemin avec plus de salles speciales, +10 or, mais ajoute 1 Regret hantant.",
+          "Un seul chemin, davantage de salles speciales, +10 or, mais ajoute 1 carte Regret hantant a votre deck.",
       },
       fateful_manuscript: {
         name: "Manuscrit fatal",
         description:
-          "Commence avec +1 energie max et +1 pioche par tour, mais ajoute 2 Regret hantant et perdez 12 PV max.",
+          "Commence avec +1 energie max et +1 pioche par tour, mais ajoute 2 cartes Regret hantant et perdez 12 PV max.",
       },
       infinite_mode: {
         name: "Mode infini",
         description:
-          "Pas de limite d'etages. Aucune ressource de biome en fin de run. La difficulte explose apres l'etage 5.",
+          "Pas de limite d'etages. Aucune ressource de biome en fin d'expedition. La difficulte explose apres l'etage 3.",
       },
     },
   },
   runSetup: {
-    kicker: "Preparation du run",
+    kicker: "Preparation de l'expedition",
     title: "Configure ton expedition",
     subtitle:
-      "Choisis la difficulte, le type de run, puis prepare tes options de depart avant d'entrer dans la premiere salle.",
+      "Choisis la difficulte, le type d'expedition, puis prepare tes options de depart avant d'entrer dans la premiere salle.",
     firstRunTutorial: {
-      kicker: "Premier run",
+      kicker: "Premiere expedition",
       title: "Mini tutoriel",
       subtitle:
-        "Cette partie sert a prendre en main les bases. Pour ce premier run, la difficulte 0 est la seule disponible.",
+        "Cette partie sert a prendre en main les bases. Pour cette premiere expedition, la difficulte 0 est la seule disponible.",
       steps: {
         chooseDifficulty:
-          "Choisis le niveau 0. C'est la seule difficulte disponible pour ce premier run.",
-        pickMode: "Selectionne Normal pour un run classique en 5 etages.",
+          "Choisis le niveau 0. C'est la seule difficulte disponible pour cette premiere expedition.",
+        pickMode:
+          "Selectionne Normal pour une expedition classique en 3 etages.",
         planRoute:
           "Sur la carte, vise des combats pour renforcer ton deck, et passe au marchand si tu as assez d'or.",
         combatFlow:
           "En combat: joue tes cartes, garde un oeil sur l'energie/encre, puis termine ton tour.",
         endOfRun:
-          "En fin de run, recupere tes recompenses et retourne a la Bibliotheque pour investir tes ressources.",
+          "En fin d'expedition, recupere tes recompenses et retourne a la Bibliotheque pour investir tes ressources.",
       },
     },
     sections: {
       character: "Personnage",
       difficulty: "Difficulte",
-      runType: "Type de run",
-      runCondition: "Option de run",
-      preGameOptions: "Options pre-game",
+      runType: "Type d'expedition",
+      runCondition: "Option de depart",
+      preGameOptions: "Options d'avant-partie",
     },
     selected: "Selectionne",
     modeType: "Mode",
     modeHint:
-      "Choisis d'abord entre Normal et Infini, puis configure tes options pre-game.",
+      "Choisis d'abord entre Normal et Infini, puis configure tes options d'avant-partie.",
     modeLockedHint:
-      "Le type de run est verrouille apres selection d'une option de run.",
+      "Le type d'expedition est verrouille apres la selection d'une option de depart.",
     modeNormal: "Normal",
     modeNormalDescription:
-      "Run classique en 5 etages, avec progression standard et ressources de fin de run.",
+      "Expedition classique en 3 etages, avec progression standard et ressources de fin d'expedition.",
     modeInfinite: "Infini",
     modeInfiniteDescription:
-      "Pas de limite d'etages. Pense pour grimper au leaderboard. Aucune ressource de biome n'est accordee.",
-    continue: "Lancer le run",
-    readyHint: "Preparation complete. Tu peux lancer le run.",
+      "Pas de limite d'etages. Concu pour grimper dans le classement. Aucune ressource de biome n'est accordee.",
+    continue: "Lancer l'expedition",
+    readyHint: "Preparation complete. Tu peux lancer l'expedition.",
     missingHint: "Choisis une difficulte et un mode de jeu pour continuer.",
   },
   runDifficulty: {
@@ -870,15 +874,16 @@ export const fr = {
     },
     bookmark: {
       name: "Marque-page",
-      description: "Pioche 1 carte supplementaire par tour",
+      description: "Piochez 1 carte supplementaire par tour.",
     },
     ink_stamp: {
       name: "Tampon d'encre",
-      description: "Commence le combat avec 3 encre",
+      description: "Commencez chaque combat avec 3 encre.",
     },
     iron_binding: {
       name: "Reliure de fer",
-      description: "+1 encre gagnee quand l'effet encre-sur-carte se declenche",
+      description:
+        "+1 encre a chaque declenchement d'un effet d'encre par carte.",
     },
     blighted_compass: {
       name: "Boussole fletrie",
@@ -887,54 +892,55 @@ export const fr = {
     cursed_diacrit: {
       name: "Diacritique maudit",
       description:
-        "+1 energie par tour, mais gagne une malediction a chaque combat.",
+        "+1 energie par tour, mais ajoute 1 malediction a chaque combat.",
     },
     runic_bulwark: {
       name: "Rempart runique",
-      description: "Conserve 50% de votre armure restante a chaque tour.",
+      description:
+        "Conservez 50 % de votre armure restante d'un tour a l'autre.",
     },
     eternal_hourglass: {
       name: "Sablier eternel",
-      description: "L'energie non depensee est conservee entre les tours.",
+      description: "Conservez votre energie non depensee entre les tours.",
     },
     briar_codex: {
       name: "Codex d'epines",
-      description: "Commence chaque combat avec 2 Epines.",
+      description: "Commencez chaque combat avec 2 Epines.",
     },
     warded_ribbon: {
       name: "Ruban de garde",
-      description: "Commence chaque combat avec 4 armure et 1 epine.",
+      description: "Commencez chaque combat avec 4 armure et 1 Epine.",
     },
     inkwell_reservoir: {
       name: "Reservoir d'encrier",
-      description: "+1 encre max et commence chaque combat avec 1 encre.",
+      description: "+1 encre max. Commencez chaque combat avec 1 encre.",
     },
     battle_lexicon: {
       name: "Lexique de bataille",
-      description: "Commence chaque combat avec +1 Force.",
+      description: "Commencez chaque combat avec +1 Force.",
     },
     vital_flask: {
       name: "Flasque vitale",
-      description: "Recupere +5 PV apres chaque combat.",
+      description: "Recuperez 5 PV apres chaque combat.",
     },
     menders_charm: {
       name: "Charme du guerisseur",
       description:
-        "Augmente de 50% le pourcentage de soin applique apres chaque combat.",
+        "Augmente de 50 % les soins recuperes apres chaque combat.",
     },
     menders_inkwell: {
       name: "Encrier du guerisseur",
       description:
-        "Chaque fois que vous depensez de l'encre, soignez-vous d'autant de PV.",
+        "Chaque fois que vous depensez de l'encre, recuperez autant de PV.",
     },
     echoing_inkstone: {
       name: "Pierre d'encre resonante",
       description:
-        "Les cartes encrees, les cartes avec un cout en encre et les payoffs bases sur l'encre actuelle voient leurs effets doubles.",
+        "Double les effets des cartes encrees, des cartes a cout d'encre et des effets bases sur votre encre actuelle.",
     },
     gilded_ledger: {
-      name: "Ledger dore",
-      description: "Augmente de 50% l'or gagne via les recompenses de combat.",
+      name: "Registre dore",
+      description: "Augmente de 50 % l'or gagne en recompense de combat.",
     },
     plague_carillon: {
       name: "Carillon pestilentiel",
@@ -942,26 +948,27 @@ export const fr = {
     },
     phoenix_ash: {
       name: "Cendre de phenix",
-      description: "Recupere 2 PV au debut de chaque tour.",
+      description: "Recuperez 2 PV au debut de chaque tour.",
     },
     ink_spindle: {
       name: "Fuseau d'encre",
       description:
-        "A la fin du tour, gagne 1 concentration si votre main est vide.",
+        "A la fin de votre tour, gagnez 1 Concentration si votre main est vide.",
     },
     omens_compass: {
       name: "Boussole des presages",
       description:
-        "Les recompenses de boss ont plus de chances d'inclure une option de relique de boss supplementaire.",
+        "Les recompenses de boss ont plus de chances de proposer une relique de boss supplementaire.",
     },
     lucky_charm: {
       name: "Porte-bonheur",
-      description: "Ameliore la chance de butin pour de meilleures raretes.",
+      description:
+        "Ameliore la qualite du butin et augmente les chances d'obtenir de meilleures raretes.",
     },
     haggler_satchel: {
       name: "Besace du negociant",
       description:
-        "Le premier achat dans chaque boutique rafraichit tout le stock.",
+        "Le premier achat chez chaque marchand reapprovisionne tout le stock.",
     },
     surgeons_quill: {
       name: "Plume du chirurgien",
@@ -971,116 +978,119 @@ export const fr = {
     blood_grimoire: {
       name: "Grimoire de sang",
       description:
-        "Gagne 1 PV max par ennemi normal tue, 2 par elite, 5 par boss.",
+        "Gagnez 1 PV max par ennemi normal vaincu, 2 par elite et 5 par boss.",
     },
     guardians_seal: {
       name: "Sceau du gardien",
-      description: "+2 encre max. Commence chaque combat avec 2 encre.",
+      description: "+2 encre max. Commencez chaque combat avec 2 encre.",
     },
     archivists_lens: {
       name: "Lentille de l'archiviste",
-      description: "+2 encre max. Commence chaque combat avec 2 concentration.",
+      description:
+        "+2 encre max. Commencez chaque combat avec 2 Concentration.",
     },
     wolf_fang: {
       name: "Croc de loup",
-      description: "Commence chaque combat avec 2 force.",
+      description: "Commencez chaque combat avec 2 Force.",
     },
     hels_crown: {
       name: "Couronne de Hel",
-      description: "Commence chaque combat avec 2 force et 4 epines.",
+      description: "Commencez chaque combat avec 2 Force et 4 Epines.",
     },
     stone_pendant: {
       name: "Pendentif de pierre",
-      description: "Commence chaque combat avec 1 force et 1 concentration.",
+      description:
+        "Commencez chaque combat avec 1 Force et 1 Concentration.",
     },
     hydra_scale: {
       name: "Ecaille d'hydre",
-      description: "Commence chaque combat avec 1 force et 5 epines.",
+      description: "Commencez chaque combat avec 1 Force et 5 Epines.",
     },
     solar_disc: {
       name: "Disque solaire",
-      description: "+1 energie max. Commence chaque combat avec 2 encre.",
+      description: "+1 energie max. Commencez chaque combat avec 2 encre.",
     },
     eye_of_maat: {
       name: "Oeil de Maat",
       description:
-        "+1 energie max. Commence chaque combat avec 1 concentration.",
+        "+1 energie max. Commencez chaque combat avec 1 Concentration.",
     },
     void_shard: {
       name: "Eclat du vide",
-      description: "Commence chaque combat avec 2 concentration.",
+      description: "Commencez chaque combat avec 2 Concentration.",
     },
     shub_idol: {
       name: "Idole de Shub",
-      description: "Commence chaque combat avec 2 force et 3 encre.",
+      description: "Commencez chaque combat avec 2 Force et 3 encre.",
     },
     obsidian_mirror: {
       name: "Miroir d'obsidienne",
-      description: "Commence chaque combat avec 3 force.",
+      description: "Commencez chaque combat avec 3 Force.",
     },
     quetzal_feather: {
       name: "Plume de quetzal",
       description:
-        "Commence chaque combat avec 1 force, 1 concentration et 1 energie.",
+        "Commencez chaque combat avec 1 Force, 1 Concentration et 1 energie.",
     },
     dagdas_club: {
       name: "Gourdin de Dagda",
-      description: "Commence chaque combat avec 6 epines.",
+      description: "Commencez chaque combat avec 6 Epines.",
     },
     cernunnos_horn: {
       name: "Corne de Cernunnos",
-      description: "Commence chaque combat avec 6 epines et +1 pioche.",
+      description: "Commencez chaque combat avec 6 Epines et +1 pioche.",
     },
     yaga_skull: {
       name: "Crane de Yaga",
-      description: "Commence chaque combat avec +1 pioche et 3 epines.",
+      description: "Commencez chaque combat avec +1 pioche et 3 Epines.",
     },
     deathless_bone: {
       name: "Os de l'immortel",
-      description: "+1 energie max. Commence chaque combat avec 10 armure.",
+      description: "+1 energie max. Commencez chaque combat avec 10 armure.",
     },
     griot_drum: {
       name: "Tambour du griot",
-      description: "Commence chaque combat avec 6 armure et 1 force.",
+      description: "Commencez chaque combat avec 6 armure et 1 Force.",
     },
     weavers_thread: {
       name: "Fil du tisseur",
-      description: "Commence chaque combat avec +1 pioche et 2 concentration.",
+      description:
+        "Commencez chaque combat avec +1 pioche et 2 Concentration.",
     },
     thorn_mantle: {
       name: "Manteau d'epines",
-      description: "Gagne 1 epine au debut de chaque tour.",
+      description: "Gagnez 1 Epine au debut de chaque tour.",
     },
     spectral_inkwell: {
       name: "Encrier spectral",
-      description: "Gagne 1 encre au debut de chaque tour.",
+      description: "Gagnez 1 encre au debut de chaque tour.",
     },
     fading_grimoire: {
-      name: "Grimoire fanant",
-      description: "Gagne 1 force au debut de chaque tour.",
+      name: "Grimoire fane",
+      description: "Gagnez 1 Force au debut de chaque tour.",
     },
     iron_codex: {
       name: "Codex de fer",
       description:
-        "A la fin de votre tour, gagne 1 armure par carte encore en main.",
+        "A la fin de votre tour, gagnez 1 armure par carte encore en main.",
     },
     resonant_quill: {
       name: "Plume resonante",
       description:
-        "A la fin de votre tour, gagne 1 encre par carte non jouee (max 3).",
+        "A la fin de votre tour, gagnez 1 encre par carte non jouee (max. 3).",
     },
     ember_seal: {
       name: "Sceau de braise",
       description:
-        "A la fin de votre tour, gagne 3 armure par energie non depensee.",
+        "A la fin de votre tour, gagnez 3 armure par energie non depensee.",
     },
     scholars_stone: {
       name: "Pierre de l'erudit",
-      description: "Chaque carte Attaque jouee donne 1 encre.",
+      description: "Chaque carte Attaque jouee vous donne 1 encre.",
     },
     reactive_binding: {
       name: "Reliure reactive",
-      description: "Chaque carte Competence jouee donne 1 armure.",
+      description: "Chaque carte Competence jouee vous donne 1 armure.",
     },
   },
   usableItems: {
@@ -1356,7 +1366,7 @@ export const fr = {
   },
   run: {
     loading: "Chargement de la partie...",
-    notFound: "Run introuvable",
+    notFound: "Expedition introuvable",
     freeUpgradeTitle: "Amelioration gratuite (Manuel de revision)",
     freeUpgradeSubtitle:
       "Choisis une carte non amelioree. Survole pour voir l'amelioration.",
@@ -1365,7 +1375,7 @@ export const fr = {
       "Vous avez conquis les {{floor}} etages de la Bibliotheque Interdite !",
     defeatTitle: "Defaite",
     defeatSubtitle: "Votre histoire s'arrete ici...",
-    abandonedTitle: "Run abandonnee",
+    abandonedTitle: "Expedition abandonnee",
     abandonedSubtitle: "Vous avez quitte cette aventure.",
     goldEarned: "Or gagne : {{gold}}",
     goldSimple: "Or : {{gold}}",
@@ -1374,13 +1384,13 @@ export const fr = {
     reachedRoom: "Atteint : Salle {{room}}/{{total}}",
     unlockCount_one: "{{count}} debloquage",
     unlockCount_other: "{{count}} debloquages",
-    resourcesGained: "Ressources gagnees pendant ce run",
+    resourcesGained: "Ressources gagnees pendant cette expedition",
     resourceModifierBonus:
       "C'etait votre premiere victoire sur la difficulte {{level}}. Les ressources sont creditees a {{percent}}%.",
     resourceModifierReduced:
-      "La difficulte {{level}} a deja ete validee. Seuls {{percent}}% des ressources sont credites sur les runs repetes.",
-    cardsUnlocked: "Cartes debloquees pendant ce run",
-    relicsUnlocked: "Reliques debloquees pendant ce run",
+      "La difficulte {{level}} a deja ete validee. Seuls {{percent}}% des ressources sont credites sur les expeditions repetees.",
+    cardsUnlocked: "Cartes debloquees pendant cette expedition",
+    relicsUnlocked: "Reliques debloquees pendant cette expedition",
     newBestiaryEntryTitle: "Nouvelle entree du Bestiaire",
     newBestiaryEntrySingle: "{{name}} ajoute au Bestiaire",
     newBestiaryEntryMultiple:
@@ -1406,8 +1416,8 @@ export const fr = {
     menu: "Menu",
     mute: "Couper le son",
     unmute: "Remettre le son",
-    abandonConfirm: "Terminer ce run maintenant ?",
-    abandonRun: "Terminer le run",
+    abandonConfirm: "Terminer cette expedition maintenant ?",
+    abandonRun: "Terminer l'expedition",
     yourRelics: "Vos reliques",
     noRelicsYet: "Aucune relique pour le moment.",
   },
@@ -1665,8 +1675,8 @@ export const fr = {
     boss: "Boss",
     elite: "Elite",
     acting: "Agit",
-    blk: "BLK",
-    dmg: "DMG",
+    blk: "ARM",
+    dmg: "DEG",
     calculated: "Calcule : {{from}} -> {{to}} ({{modifiers}})",
     incoming: "Degats entrants",
     intentHidden: "Intention cachee",
@@ -1682,7 +1692,7 @@ export const fr = {
     addCardToDiscardNamed: "Defausse +{{value}} {{card}}",
     drainAllInk: "Vide toute l'encre",
     selfDamage: "Perd {{value}} PV",
-    alliesGainBlock: "Allies +{{value}} BLK",
+    alliesGainBlock: "Allies +{{value}} armure",
     alliesGainBuff: "Allies +{{value}} {{buff}}",
     alliesGainThorns: "Allies +{{value}} Epines",
     redactCardCost: "Redige {{value}} carte : +1 cout",
@@ -1700,7 +1710,7 @@ export const fr = {
       "+{{perPip}}/chasse (reste {{remaining}}, actuel +{{total}})",
     conditionalBonusPerBleed: "+{{perBleed}}/saign. (actuel +{{total}})",
     conditionalBonusPerAntler: "+{{perAntler}}/andouiller (actuel +{{total}})",
-    cashOutPlayerBleed: "Convertit Saignement x{{bleed}} ({{damage}} DMG)",
+    cashOutPlayerBleed: "Convertit Saignement x{{bleed}} ({{damage}} DEG)",
     phase2Badge: "P2",
     phase2Summon: "Phase 2 (<50% PV) : invoque {{label}}",
     phase2FenrirHunt: "HUNT passe a {{value}}",
@@ -1716,28 +1726,29 @@ export const fr = {
     phase2NyarlathotepDoubleProphecy:
       "Phase 2 : deux propheties taboues sont actives en meme temps",
     phase2ShubDoubleBrood:
-      "Phase 2 : Spawn Eruption peut entretenir deux nids a la fois",
+      "Phase 2 : l'eclosion peut entretenir deux nids a la fois",
     phase2DagdaFastBrew: "Phase 2 : le chaudron commence precharge a 1/2",
     phase2CernunnosFastRegrow:
       "Phase 2 : les andouillers repoussent de {{value}} apres chaque action",
     phase2AnansiThreeStepPattern:
-      "Phase 2 : les patterns du metier passent a 3 etapes",
+      "Phase 2 : les motifs du metier passent a 3 etapes",
     phase2AnansiDoubleOutcome:
-      "Phase 2 : une toile complete ajoute aussi Binding Curse",
+      "Phase 2 : une toile complete ajoute aussi Malediction de lien",
     phase2QuetzalcoatlFastKnockdown:
-      "Phase 2 : la chute demande seulement {{value}} hit(s)",
+      "Phase 2 : la chute demande seulement {{value}} coup(s)",
     phase2QuetzalcoatlBleedOnMiss:
       "Phase 2 : rater la chute ajoute {{value}} Saignement",
     tezcatlipoca: {
       mirrorLabel: "Miroir d'obsidienne",
       attackDetail: "Sa prochaine action renverra {{value}} degats du miroir.",
       blockDetail: "Sa prochaine action renverra {{value}} blocage du miroir.",
-      inkDetail: "Sa prochaine action ajoute {{value}} Ink Burn a ta pioche.",
+      inkDetail:
+        "Sa prochaine action ajoute {{value}} Brulure d'encre a ta pioche.",
       hexDetail:
         "Sa prochaine action augmente les cartes de +{{value}} cout au prochain tour.",
       intentAttackEcho: "Echo : +{{value}} degats miroir",
       intentBlockEcho: "Echo : +{{value}} blocage miroir",
-      intentInkEcho: "Echo : pioche +{{value}} Ink Burn",
+      intentInkEcho: "Echo : pioche +{{value}} Brulure d'encre",
       intentHexEcho: "Echo : cartes +{{value}} cout au prochain tour",
     },
     ra: {
@@ -1745,11 +1756,11 @@ export const fr = {
       sunDetail:
         "{{charge}}/{{max}} SUN charges. Finir ton tour avec de l'encre non depensee ajoute {{value}} SUN.",
       sunReadyDetail:
-        "Solar Judgment est pret. Divine Scorch vide toute l'encre et gagne +{{bonus}} degats.",
+        "Le jugement solaire est pret. Sa prochaine action vide toute l'encre et gagne +{{bonus}} degats.",
       eclipseLabel: "Fenetre d'eclipse",
-      eclipseDetail: "Briser Solar Barrier retire 1 SUN avant l'action de Ra.",
+      eclipseDetail: "Briser la barriere solaire retire 1 SUN avant l'action de Ra.",
       chargeIntent: "Fin de tour avec encre : +{{value}} SUN",
-      eclipseIntent: "Brise Solar Barrier : -1 SUN",
+      eclipseIntent: "Brise la barriere solaire : -1 SUN",
     },
     osiris: {
       scalesLabel: "Balances de Maat",
@@ -1774,21 +1785,21 @@ export const fr = {
       inkDetail:
         "La premiere depense d'encre ce tour ajoute {{card}} a ta pioche.",
       attackDetail:
-        "La premiere carte ATTACK ce tour ajoute {{card}} a ta pioche.",
+        "La premiere carte Attaque ce tour ajoute {{card}} a ta pioche.",
       skillDetail:
-        "La premiere carte SKILL ce tour ajoute {{card}} a ta pioche.",
+        "La premiere carte Competence ce tour ajoute {{card}} a ta pioche.",
       phaseTwoDetail: "Cette deuxieme prophetie n'apparait qu'en phase 2.",
-      intentDraw: "Prophetie DRAW : ajoute {{card}}",
-      intentInk: "Prophetie INK : ajoute {{card}}",
-      intentAttack: "Prophetie ATTACK : ajoute {{card}}",
-      intentSkill: "Prophetie SKILL : ajoute {{card}}",
+      intentDraw: "Prophetie Pioche : ajoute {{card}}",
+      intentInk: "Prophetie Encre : ajoute {{card}}",
+      intentAttack: "Prophetie Attaque : ajoute {{card}}",
+      intentSkill: "Prophetie Competence : ajoute {{card}}",
     },
     shub: {
       broodLabel: "Cycle du couvain",
       broodDetail:
-        "{{count}} nid(s) sont actifs sur {{max}}. Prochaine eclosion dans {{timer}} action(s) de Shub. Eldritch Veil en consomme un pour +{{heal}} PV et {{poison}} Poison.",
+        "{{count}} nid(s) sont actifs sur {{max}}. Prochaine eclosion dans {{timer}} action(s) de Shub. Son voile consume un nid pour +{{heal}} PV et {{poison}} Poison.",
       broodEmptyDetail:
-        "Aucun nid actif. Spawn Eruption peut remplir jusqu'a {{max}} nid(s). Eldritch Veil en consomme un pour +{{heal}} PV et {{poison}} Poison.",
+        "Aucun nid actif. Une eruption peut remplir jusqu'a {{max}} nid(s). Son voile en consume un pour +{{heal}} PV et {{poison}} Poison.",
       nestLabel: "Nid du couvain",
       nestDetail:
         "S'il survit encore {{timer}} action(s) de Shub, ce nid eclot en Shoggoth Spawn.",
@@ -1810,7 +1821,7 @@ export const fr = {
       crownLabel: "Couronne d'andouillers",
       crownDetail:
         "{{layers}}/{{max}} couche(s) restent. Les hits sont limites a {{cap}} tant que la couronne tient. Ancient Wrath gagne actuellement +{{wrath}} degats.",
-      exposedLabel: "EXPOSE",
+      exposedLabel: "A DECOUVERT",
       exposedDetail:
         "La couronne est brisee. Cernunnos subit +{{bonus}}% degats jusqu'a sa prochaine action, puis regagne {{regrow}} couche(s).",
     },
@@ -1827,19 +1838,19 @@ export const fr = {
     anansi: {
       loomLabel: "Le Metier",
       loomDetail:
-        "La combinaison {{pattern}} est active ({{progress}}/{{length}}). L'ordre n'a pas d'importance. Une carte jouee avec de l'encre compte comme son type natif plus INK. La completer capture la derniere carte jouee et ajoute Shrouded Omen.",
+        "La combinaison {{pattern}} est active ({{progress}}/{{length}}). L'ordre n'a pas d'importance. Une carte jouee avec de l'encre compte comme son type natif plus Encre. La completer capture la derniere carte jouee et ajoute Presage voile.",
       loomPhaseTwoDetail:
-        "La combinaison {{pattern}} est active ({{progress}}/{{length}}). L'ordre n'a pas d'importance. Une carte jouee avec de l'encre compte comme son type natif plus INK. La completer capture la derniere carte jouee et ajoute Shrouded Omen plus Binding Curse.",
+        "La combinaison {{pattern}} est active ({{progress}}/{{length}}). L'ordre n'a pas d'importance. Une carte jouee avec de l'encre compte comme son type natif plus Encre. La completer capture la derniere carte jouee et ajoute Presage voile plus Malediction de lien.",
       stalledLabel: "Metier cale",
       stalledDetail:
-        "Tu as casse la combinaison ce tour. Si le motif demandait de l'encre, Anansi ajoute quand meme un Shrouded Omen. Le metier n'attrapera plus de carte avant le prochain tour.",
+        "Tu as casse la combinaison ce tour. Si le motif demandait de l'encre, Anansi ajoute quand meme un Presage voile. Le metier n'attrapera plus de carte avant le prochain tour.",
       webbedLabel: "Carte capturee",
       webbedDetail:
         "{{count}} carte(s) sont prises dans la toile. A la prochaine pioche, elles entrent en main gelees jusqu'a etre rejouees.",
       intentPattern:
-        "Metier {{pattern}} ({{progress}}/{{length}}, ordre libre) : a la completion, capture la derniere carte + Shrouded Omen",
+        "Metier {{pattern}} ({{progress}}/{{length}}, ordre libre) : a la completion, capture la derniere carte + Presage voile",
       intentPatternPhaseTwo:
-        "Metier {{pattern}} ({{progress}}/{{length}}, ordre libre) : a la completion, capture la derniere carte + Omen + Binding Curse",
+        "Metier {{pattern}} ({{progress}}/{{length}}, ordre libre) : a la completion, capture la derniere carte + Presage voile + Malediction de lien",
     },
     quetzalcoatl: {
       airborneLabel: "EN VOL",
@@ -1847,12 +1858,12 @@ export const fr = {
         "Les hits allies sont limites a {{cap}} degats tant que Quetzalcoatl est en l'air.",
       groundedLabel: "AU SOL",
       groundedDetail:
-        "Quetzalcoatl est projete au sol, subit +{{bonus}}% degats, et prepare Solar Dive.",
+        "Quetzalcoatl est projete au sol, subit +{{bonus}}% degats, et prepare une plongee solaire.",
       counterLabel: "Chute",
       counterDetail:
-        "{{hits}}/{{threshold}} hits ont touche ce tour. Atteins le seuil pour le faire tomber.",
+        "{{hits}}/{{threshold}} coup(s) ont touche ce tour. Atteins le seuil pour le faire tomber.",
       counterPhaseTwoDetail:
-        "{{hits}}/{{threshold}} hits ont touche ce tour. En phase 2, rater la chute ajoute {{bleed}} Saignement.",
+        "{{hits}}/{{threshold}} coup(s) ont touche ce tour. En phase 2, rater la chute ajoute {{bleed}} Saignement.",
     },
     fenrir: {
       huntLabel: "La chasse",
@@ -1860,7 +1871,7 @@ export const fr = {
         "{{remaining}}/{{max}} marqueurs restants. Fenrir gagne +{{bonus}} degats ce tour.",
       huntBrokenDetail: "La chasse est brisee. Fenrir ne gagne plus de bonus.",
       phaseTwoHowlDetail:
-        "Si la chasse tient, Pack Howl invoque un Draugr ou ajoute Saignement.",
+        "Si la chasse tient, le hurlement de la meute invoque un Draugr ou ajoute Saignement.",
     },
     helQueen: {
       lifeLabel: "VIE",
@@ -1900,7 +1911,7 @@ export const fr = {
       hearthDetail:
         "Offre {{threshold}} encre depensee ce tour ({{progress}}/{{threshold}}) ou la cabane gele ta main. Se tourne vers {{next}} dans {{turns}} tour(s).",
       curseDetail:
-        "Offre 1 attaque, 6 armure et 1 encre depensee ce tour (ATQ {{attacks}}, BLK {{block}}, INK {{ink}}) ou la cabane gele 2 cartes et augmente les couts au prochain tour. Se tourne vers {{next}} dans {{turns}} tour(s).",
+        "Offre 1 attaque, 6 armure et 1 encre depensee ce tour (ATQ {{attacks}}, ARM {{block}}, ENC {{ink}}) ou la cabane gele 2 cartes et augmente les couts au prochain tour. Se tourne vers {{next}} dans {{turns}} tour(s).",
     },
     koschei: {
       immortalLabel: "Mort cachee",
@@ -1919,7 +1930,7 @@ export const fr = {
         "Brise: joue {{threshold}} attaques ce tour ({{progress}}/{{threshold}}). Tes coups sont limites a {{cap}} degats tant qu'il tient.",
       scriptLabel: "Lien du script",
       scriptDetail:
-        "Punition: ton premier gain d'armure chaque tour donne +{{punish}} BLK au boss. Brise: gagne {{threshold}} armure ce tour ({{progress}}/{{threshold}}).",
+        "Punition: ton premier gain d'armure chaque tour donne +{{punish}} armure au boss. Brise: gagne {{threshold}} armure ce tour ({{progress}}/{{threshold}}).",
       inkLabel: "Lien d'encre",
       inkDetail:
         "Punition: ta premiere depense d'encre chaque tour ajoute {{card}}. Brise: depense {{threshold}} encre ce tour ({{progress}}/{{threshold}}).",
@@ -1982,7 +1993,7 @@ export const fr = {
     upgradeHint: "Survole une carte pour voir l'amelioration",
     upgradeAction: "Ameliorer",
     eventLabel: "Evenement",
-    relicLabel: "Relique revilee",
+    relicLabel: "Relique revelee",
     eventStats: "PV : {{current}}/{{max}} - Or : {{gold}}",
     purgePickerTitle: "Choisissez une carte a retirer",
     purgePickerSubtitle:
@@ -1994,18 +2005,19 @@ export const fr = {
       "Le scriptorium vous propose des cartes alignees avec l'archetype choisi.",
   },
   startMerchant: {
-    kicker: "Pre-run",
+    kicker: "Avant-partie",
     title: "Marchand des origines",
-    subtitle: "Echange tes ressources de bibliotheque contre des bonus de run.",
+    subtitle:
+      "Echange tes ressources de la Bibliotheque contre des bonus pour l'expedition.",
     noResources: "Aucune ressource disponible",
     cost: "Cout",
     bought: "Achete",
     trade: "Echanger",
     insufficient: "Ressources insuffisantes",
     bonusGoldName: "Bourse d'eclaireur",
-    bonusGoldDescription: "+{{amount}} or pour ce run",
+    bonusGoldDescription: "+{{amount}} or pour cette expedition",
     bonusMaxHpName: "Benediction de cuir",
-    bonusMaxHpDescription: "+{{amount}} PV max pour ce run",
+    bonusMaxHpDescription: "+{{amount}} PV max pour cette expedition",
     continue: "Continuer l'aventure",
     offerType: {
       CARD: "Carte",
@@ -2020,9 +2032,9 @@ export const fr = {
   // Alias de compatibilite pour une ancienne faute de frappe de cle i18n.
   startMarchant: {
     bonusGoldName: "Bourse d'eclaireur",
-    bonusGoldDescription: "+{{amount}} or pour ce run",
+    bonusGoldDescription: "+{{amount}} or pour cette expedition",
     bonusMaxHpName: "Benediction de cuir",
-    bonusMaxHpDescription: "+{{amount}} PV max pour ce run",
+    bonusMaxHpDescription: "+{{amount}} PV max pour cette expedition",
   },
   shop: {
     title: "Marchand",
@@ -2066,14 +2078,14 @@ export const fr = {
       overview: {
         title: "Apercu",
         emoji: "📚",
-        text: "Panlibrarium est un roguelike deck-builder: vous progressez salle apres salle, vous renforcez votre deck, puis vous affrontez un boss de biome. Chaque decision compte: cartes choisies, reliques, gestion de vos ressources et ordre des combats. Le but est de survivre aux 5 etages et vaincre les boss.",
+        text: "Panlibrarium est un roguelike deck-builder: vous progressez salle apres salle, vous renforcez votre deck, puis vous affrontez un boss de biome. Chaque decision compte: cartes choisies, reliques, gestion de vos ressources et ordre des combats. Le but est de survivre aux 3 etages et vaincre les boss.",
       },
       runStructure: {
         title: "Structure d'une partie",
         emoji: "🧭",
         bullets: [
-          "Une run se compose de 5 etages.",
-          "Chaque etage contient 10 salles, avec progression de gauche a droite.",
+          "Une expedition se compose de 3 etages.",
+          "Chaque etage contient 16 salles, avec progression de gauche a droite.",
           "La difficulte monte progressivement jusqu'au combat de boss.",
           "Apres un boss, vous passez au biome suivant avec de nouveaux ennemis et themes.",
         ],
@@ -2166,9 +2178,9 @@ export const fr = {
             reward: "-",
           },
           {
-            room: "Pre-boss",
+            room: "Antichambre",
             content: "Combat elite",
-            reward: "Acces boss",
+            reward: "Acces au boss",
           },
           {
             room: "Boss",
@@ -2229,19 +2241,19 @@ export const fr = {
       choices: [
         {
           label: "Ouvrir les traites defensifs",
-          description: "Recevez 3 cartes orientees Block.",
+          description: "Recevez 3 cartes axees defense.",
           outcomeText:
             "Les rayons coulissent avec un bruit de chaines bien huilees. Des pages de garde, des sceaux et des bastions de papier se presentent a vous.",
         },
         {
           label: "Consulter les manuscrits de restauration",
-          description: "Recevez 3 cartes orientees Heal.",
+          description: "Recevez 3 cartes axees soin.",
           outcomeText:
             "Une odeur de baume, d'herbes seches et d'encre claire remonte des etageres. Les ouvrages qui guerissent ont ete sortis pour vous.",
         },
         {
           label: "Suivre les marges d'encre vive",
-          description: "Recevez 3 cartes orientees Ink.",
+          description: "Recevez 3 cartes axees encre.",
           outcomeText:
             "Les filaments noirs se mettent a briller. Les pages choisies pulsent deja d'une energie liquide, pretes a nourrir votre encre.",
         },
@@ -2256,19 +2268,19 @@ export const fr = {
       choices: [
         {
           label: "Suivre les annotations sanglantes",
-          description: "Recevez 3 cartes orientees Bleed.",
+          description: "Recevez 3 cartes axees saignement.",
           outcomeText:
             "Les fiches se superposent en une piste nette. La douleur devient une methode, et l'index vous remet des pages qui savent la prolonger.",
         },
         {
           label: "Explorer les pages consumees",
-          description: "Recevez 3 cartes orientees Exhaust.",
+          description: "Recevez 3 cartes axees epuisement.",
           outcomeText:
             "Les coins brules s'effritent sous vos doigts. Ce qui disparait vite laisse parfois la trace la plus utile, et le Scriptorium semble d'accord.",
         },
         {
           label: "Chercher les reserves d'encre ferreuse",
-          description: "Recevez 3 cartes orientees Ink.",
+          description: "Recevez 3 cartes axees encre.",
           outcomeText:
             "L'encre y est plus lourde, presque metallique. Les cartes extraites de ce rayon promettent une puissance breve, mais dense.",
         },
@@ -2283,19 +2295,19 @@ export const fr = {
       choices: [
         {
           label: "Etudier les lignes de boucliers",
-          description: "Recevez 3 cartes orientees Block.",
+          description: "Recevez 3 cartes axees defense.",
           outcomeText:
             "Le registre s'ouvre sur des formations patientes et denses. Les cartes qui emergent parlent de tenue, de garde et de murs qui refusent de ceder.",
         },
         {
           label: "Relire les campagnes d'attrition",
-          description: "Recevez 3 cartes orientees Bleed.",
+          description: "Recevez 3 cartes axees saignement.",
           outcomeText:
             "Des cartes de blessures lentes, de pressions repetees et de coupures methodiques glissent hors des pages. Rien ici n'est rapide; tout y est fatal.",
         },
         {
           label: "Examiner les doctrines de sacrifice",
-          description: "Recevez 3 cartes orientees Exhaust.",
+          description: "Recevez 3 cartes axees epuisement.",
           outcomeText:
             "Certaines manoeuvres ne servent qu'une fois. Le registre les classe pourtant parmi les plus importantes, et vous en confie trois exemples.",
         },
@@ -2311,7 +2323,7 @@ export const fr = {
           label: "Decacheter le tome",
           description: "Perdez 10 PV, gagnez 50 or.",
           outcomeText:
-            "Vos doigts saignent sur les pages. Le tome boit, satisfait. Vingt pieces tombent d'entre les feuilles — le prix d'un autre lecteur, autrefois.",
+            "Vos doigts saignent sur les pages. Le tome boit, satisfait. Une pluie de pieces d'or glisse d'entre les feuilles, prix laisse par un autre lecteur, autrefois.",
         },
         {
           label: "Refermer la vitrine",
@@ -2334,7 +2346,7 @@ export const fr = {
             "L'encre est froide, etrangement douce. Elle rouvre vos blessures d'un cote et les referme de l'autre. Des mots anciens brillent un instant dans vos veines.",
         },
         {
-          label: "Puiser dans votre bourse",
+          label: "Remplir vos poches",
           description: "Gagnez 75 or.",
           outcomeText:
             "L'encre solidifie au contact de l'air en pieces d'or parfaitement rondes. Un marche equitable pour la Bibliotheque — elle reprend toujours ce qu'elle donne.",
@@ -2344,7 +2356,7 @@ export const fr = {
     wandering_scribe: {
       title: "Le Scribe Errant",
       flavorText:
-        "Un vieillard voute erre entre les rayons, sa plume grattant le vide. Il ne semble pas vous voir — jusqu'a ce qu'il se retourne brusquement : « Je peux te reecrire. Pour un prix. »",
+        "Un vieillard voute erre entre les rayons, sa plume grattant le vide. Il ne semble pas vous voir jusqu'au moment ou il se retourne brusquement. « Je peux te reecrire, dit-il. Contre paiement. »",
       description: "Ses services ont un cout. Ses soins, aussi.",
       choices: [
         {
@@ -2391,7 +2403,7 @@ export const fr = {
     whispering_idol: {
       title: "L'Idole Chuchotante",
       flavorText:
-        "L'idole est a peine plus grande que votre main, taillee dans un marbre couleur de cendre. Quand elle parle, toute la salle s'arrete de respirer. « Tu veux de l'or, dit-elle. Tout le monde veut de l'or. Mais moi, je veux quelque chose de toi. »",
+        "L'idole est a peine plus grande que votre main, taillee dans un marbre couleur de cendre. Quand elle parle, toute la salle retient son souffle. « Tu veux de l'or, dit-elle. Tout le monde en veut. Mais moi, je veux quelque chose de toi. »",
       description: "Un pacte de richesse maudite vous est propose.",
       choices: [
         {
@@ -2402,7 +2414,8 @@ export const fr = {
         },
         {
           label: "Forcer le destin",
-          description: "Gagnez 140 or. Ajoutez 2 Regrets Hantes a votre deck.",
+          description:
+            "Gagnez 140 or. Ajoutez 2 cartes Regret hantant a votre deck.",
           outcomeText:
             "L'idole rit — ou du moins, quelque chose qui y ressemble. Elle vous donne plus que demande. Elle prend aussi plus que prevu.",
         },
@@ -2417,7 +2430,7 @@ export const fr = {
     ruthless_scrivener: {
       title: "Le Copiste Implacable",
       flavorText:
-        "Assis a son pupitre, il revise un manuscrit avec une precision chirurgicale, bifant des passages entiers sans hesiter. En vous voyant entrer, il leve des yeux pales comme du papier : « Votre deck est trop verbeux. Je peux le corriger. »",
+        "Assis a son pupitre, il revise un manuscrit avec une precision chirurgicale, biffant des passages entiers sans hesiter. En vous voyant entrer, il leve des yeux pales comme du papier. « Votre deck est trop verbeux. Je peux le corriger. »",
       description:
         "La purge coute du sang. Mais un deck allege vaut parfois le prix.",
       choices: [
@@ -2460,15 +2473,15 @@ export const fr = {
     wandering_knight: {
       title: "Chevalier des Mots",
       flavorText:
-        "Il se tient debout dans la penombre, son armure couverte de runes gravees a la main. Sa bibliotheque a brule — ou pire, a ete censuree. Il cherche un nouveau serment a preter, une cause qui merite d'etre defendue.",
+        "Il se tient debout dans la penombre, son armure couverte de runes gravees a la main. Sa bibliotheque a brule, ou pire, a ete censuree. Il cherche un nouveau serment a preter, une cause qui merite d'etre defendue.",
       description:
-        "Sa ward-magie peut vous proteger. Son serment vous lierait l'un a l'autre.",
+        "Sa magie de protection peut vous proteger. Son serment vous lierait l'un a l'autre.",
       choices: [
         {
           label: "Accepter son serment",
           description: "Le Chevalier des Mots rejoint votre groupe.",
           outcomeText:
-            "Il pose un genou a terre, sa main sur l'un de vos grimoires comme serment. Quelque chose de chaud traverse vos veines — sa loyaute, imprimee dans l'encre de son armure.",
+            "Il pose un genou a terre, sa main sur l'un de vos grimoires comme serment. Quelque chose de chaud traverse vos veines, sa loyaute imprimee dans l'encre de son armure.",
         },
         {
           label: "Decliner",
@@ -2502,9 +2515,9 @@ export const fr = {
     mirror_of_bronze: {
       title: "Le Miroir de Bronze",
       flavorText:
-        "Le miroir de bronze poli trône entre deux colonnes de marbre. Il ne reflete pas votre visage — mais celui de quelqu'un que vous auriez pu etre. La silhouette sourit. Elle tend la main depuis l'autre cote du metal froid.",
+        "Le miroir de bronze poli trone entre deux colonnes de marbre. Il ne reflete pas votre visage, mais celui de quelqu'un que vous auriez pu etre. La silhouette sourit et tend la main depuis l'autre cote du metal froid.",
       description:
-        "Que repondez-vous a ce qui vous regarde depuis l'autre cote ?",
+        "Que faites-vous face a ce reflet venu de l'autre cote ?",
       choices: [
         {
           label: "Tendre la main en retour",
@@ -2514,7 +2527,8 @@ export const fr = {
         },
         {
           label: "Briser le miroir",
-          description: "Gagnez 90 or. Ajoutez Regret Hante a votre deck.",
+          description:
+            "Gagnez 90 or. Ajoutez 1 carte Regret hantant a votre deck.",
           outcomeText:
             "Le bronze vole en eclats. Les morceaux saignent quelques instants avant de se solidifier en pieces d'or. La silhouette disparait avec un rire qui ressemble etrangement a de la reconnaissance. Les regrets restent.",
         },
@@ -2529,7 +2543,7 @@ export const fr = {
     turning_house: {
       title: "La Maison qui Tourne",
       flavorText:
-        "La salle pivote lentement sur elle-meme — les etageres changent de place quand vous ne les regardez pas. Dans le fauteuil au centre, une vieille femme tricote avec des aiguilles en os. Elle ne leve pas les yeux. « Assieds-toi, dit-elle. Les maisons qui tournent n'attendent pas. »",
+        "La salle pivote lentement sur elle-meme, et les etageres changent de place quand vous ne les regardez pas. Dans le fauteuil au centre, une vieille femme tricote avec des aiguilles en os. Elle ne leve pas les yeux. « Assieds-toi, dit-elle. Les maisons qui tournent n'attendent pas. »",
       description: "Que demandez-vous a la gardienne de cette maison ?",
       choices: [
         {
@@ -2568,7 +2582,7 @@ export const fr = {
           label: "Reciter une strophe",
           description: "Gagnez 50 or.",
           outcomeText:
-            "Les flammes bleues vacillent. Elles reconnaissent les mots — ou les aiment. De l'or tombe de l'air comme une recompense pour un poeme recite dans la langue correcte au bon moment.",
+            "Les flammes bleues vacillent. Elles reconnaissent les mots, ou peut-etre les aiment-elles. De l'or tombe de l'air comme recompense pour un poeme recite dans la bonne langue, au bon moment.",
         },
         {
           label: "Repartir sans un mot",
@@ -2657,13 +2671,13 @@ export const fr = {
           label: "Prendre un peu de fil",
           description: "Gagnez 20 PV max.",
           outcomeText:
-            "Le fil vous guide le long d'un chemin que vous n'auriez pas trouve seul. Il vous mene a une chambre pleine de lumiere, puis disparait. Vous avez trouve ce qu'il fallait trouver.",
+            "Le fil vous guide le long d'un chemin que vous n'auriez pas trouve seul. Il vous mene jusqu'a une salle baignee de lumiere, puis disparait. Vous avez trouve ce qu'il fallait trouver.",
         },
         {
           label: "Derouler la bobine entiere",
           description: "Gagnez 40 PV max. Perdez 15 PV.",
           outcomeText:
-            "Le fil se tend — trop. Il vous traverse, reecrit quelques chapitres, en arrache d'autres. Ce que vous gagnez en endurance, vous le payez en chair. Le labyrinthe prend toujours son peage.",
+            "Le fil se tend, trop. Il vous traverse, reecrit quelques chapitres, en arrache d'autres. Ce que vous gagnez en endurance, vous le payez en chair. Le labyrinthe prend toujours son peage.",
         },
         {
           label: "Laisser le fil",
@@ -2804,7 +2818,8 @@ export const fr = {
         },
         {
           label: "Fuir le jugement",
-          description: "Ajoutez 2 Regrets Hantes a votre deck.",
+          description:
+            "Ajoutez 2 cartes Regret hantant a votre deck.",
           outcomeText:
             "Vous courez. Derriere vous, Anubis note votre nom avec soin. Les dieux des morts n'oublient jamais les noms. Les Regrets vous rattrapent avant que vous ayez atteint la porte.",
         },
@@ -2813,7 +2828,7 @@ export const fr = {
     thoth_archives: {
       title: "Les Archives de Thoth",
       flavorText:
-        "Thoth, le scribe des dieux, est assis a un pupitre monumental, son bec d'ibis effleurant un rouleau qui se deroule a l'infini. Il leve une main sans lever les yeux. « Je suis occupe a tout noter. Mais tu peux regarder. Ou meme prendre. A ton risque. »",
+        "Thoth, le scribe des dieux, est assis a un pupitre monumental, son bec d'ibis effleurant un rouleau qui se deroule a l'infini. Il leve une main sans lever les yeux. « Je suis occupe a tout noter. Mais tu peux regarder. Ou meme prendre. A tes risques. »",
       description:
         "Les archives de Thoth contiennent tout — y compris des choses que vous n'etiez pas cense voir.",
       choices: [
@@ -2825,7 +2840,8 @@ export const fr = {
         },
         {
           label: "Voler le rouleau principal",
-          description: "Gagnez 60 or. Ajoutez 1 Regret Hante.",
+          description:
+            "Gagnez 60 or. Ajoutez 1 carte Regret hantant a votre deck.",
           outcomeText:
             "Vos doigts se referment sur le rouleau. Thoth ecrit quelque chose dans son grand livre sans lever les yeux. Il note toujours tout. Le rouleau se transforme en or dans vos mains, mais quelque chose de sa nature reste en vous sous forme de regret.",
         },
@@ -2868,15 +2884,16 @@ export const fr = {
     forbidden_lexicon: {
       title: "Le Lexique Interdit",
       flavorText:
-        "Le Bibliothecaire n'a pas de visage — ou plutot, il en a trop, qui se succedent trop vite pour etre comptes. Il tient un lexique dont les mots changent quand vous le regardez. « Ce que tu peux lire dans ce livre ne peut pas etre vu deux fois, dit-il. Choisis ta dose. »",
+        "Le Bibliothecaire n'a pas de visage, ou plutot il en a trop, qui se succedent trop vite pour etre comptes. Il tient un lexique dont les mots changent quand vous le regardez. « Ce que tu peux lire dans ce livre ne peut pas etre vu deux fois, dit-il. Choisis ce que tu peux supporter. »",
       description:
         "Le Bibliothecaire propose une connaissance qui ne peut etre vue qu'une fois. Le prix se paye en clarte mentale.",
       choices: [
         {
           label: "Lire le passage interdit",
-          description: "Gagnez 50 or. Ajoutez 1 Regret Hante.",
+          description:
+            "Gagnez 50 or. Ajoutez 1 carte Regret hantant a votre deck.",
           outcomeText:
-            "Les mots entrent par les yeux et sortent autrement. Ce que vous comprenez n'a pas de traduction. Ce que vous retenez, c'est de l'or. Ce que vous perdez se nomme lui-meme « regret » faute d'un meilleur terme.",
+            "Les mots entrent par les yeux et ressortent autrement. Ce que vous comprenez n'a pas de traduction. Ce que vous retenez, c'est de l'or. Ce que vous perdez se nomme lui-meme « regret », faute d'un meilleur terme.",
         },
         {
           label: "Lire avec les paupieres mi-closes",
@@ -3222,7 +3239,7 @@ export const fr = {
     scribe_3_familiar_face: {
       title: "Le Visage Connu",
       flavorText:
-        "Il vous arrete dans un couloir — cette fois, c'est lui qui a l'initiative. « Je te connais, dit-il. Pas de ce run. De l'autre. Ou peut-etre... du prochain. »",
+        "Il vous arrete dans un couloir, et cette fois c'est lui qui prend l'initiative. « Je te connais, dit-il. Pas de cette expedition. De l'autre. Ou peut-etre... de la prochaine. »",
       description:
         "Il parle de vous comme d'un personnage recurrent. Il n'a pas tort.",
       choices: [

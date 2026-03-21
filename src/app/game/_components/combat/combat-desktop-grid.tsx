@@ -25,7 +25,11 @@ import {
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
 import { getEnemyImageSrc, PLAYER_AVATAR } from "@/lib/assets";
-import { localizeEnemyAbilityName } from "@/lib/i18n/entity-text";
+import {
+  localizeAllyAbilityName,
+  localizeAllyName,
+  localizeEnemyAbilityName,
+} from "@/lib/i18n/entity-text";
 
 interface CombatDesktopGridProps {
   combat: CombatState;
@@ -118,6 +122,10 @@ export function CombatDesktopGrid({
 
         const def = allyDefs.get(ally.definitionId);
         const intent = def?.abilities[ally.intentIndex];
+        const localizedAllyName = localizeAllyName(ally.definitionId, ally.name);
+        const localizedAllyIntentName = intent
+          ? localizeAllyAbilityName(ally.definitionId, intent.name)
+          : null;
         const canTarget =
           (selectingAllyTarget || selfCanRetargetToAlly) &&
           ally.currentHp > 0 &&
@@ -129,7 +137,9 @@ export function CombatDesktopGrid({
             key={ally.instanceId}
             content={
               <div className="space-y-1.5">
-                <p className="font-semibold text-cyan-200">{ally.name}</p>
+                <p className="font-semibold text-cyan-200">
+                  {localizedAllyName}
+                </p>
                 <p>
                   {t("combat.hp")} {Math.max(0, ally.currentHp)}/{ally.maxHp}
                 </p>
@@ -141,7 +151,7 @@ export function CombatDesktopGrid({
                 </p>
                 {intent ? (
                   <p className="text-cyan-100">
-                    {intent.name}: {formatAllyIntent(intent, t)}
+                    {localizedAllyIntentName}: {formatAllyIntent(intent, t)}
                   </p>
                 ) : (
                   <p className="text-slate-300">{t("combat.noAbility")}</p>
@@ -194,7 +204,7 @@ export function CombatDesktopGrid({
                 *
               </div>
               <p className="truncate text-[11px] font-bold text-cyan-100 lg:text-xs">
-                {ally.name}
+                {localizedAllyName}
               </p>
               <HpBar
                 current={Math.max(0, ally.currentHp)}

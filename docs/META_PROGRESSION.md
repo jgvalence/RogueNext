@@ -89,7 +89,7 @@ Fichier: `src/game/engine/run-conditions.ts`
 
 ## Floors et difficulte en combat
 
-- 5 floors (`MAX_FLOORS = 5`)
+- 3 floors (`MAX_FLOORS = 3`)
 - Difficulte croissante par floor:
   - HP ennemis scale avec le floor
   - chance elite augmente avec le floor

@@ -49,7 +49,7 @@ import { getSoundiataUiState } from "@/game/engine/soundiata-spirit";
 import { getTezcatlipocaUiState } from "@/game/engine/tezcatlipoca";
 import { getCardDefinitionById } from "@/game/data";
 import { localizeCardName } from "@/lib/i18n/card-text";
-import { localizeEnemyName } from "@/lib/i18n/entity-text";
+import { localizeAllyName, localizeEnemyName } from "@/lib/i18n/entity-text";
 import { i18n } from "@/lib/i18n";
 
 export interface StatusMarker {
@@ -2476,10 +2476,10 @@ export function resolveEnemyIntentTargetLabel(
   if (target === "all_enemies") return t("combat.allEnemies");
   if (target === "all_allies") return t("combat.allAllies");
   if (target.type === "ally") {
-    return (
-      combat.allies.find((a) => a.instanceId === target.instanceId)?.name ??
-      t("combat.ally")
-    );
+    const ally = combat.allies.find((a) => a.instanceId === target.instanceId);
+    return ally
+      ? localizeAllyName(ally.definitionId, ally.name)
+      : t("combat.ally");
   }
   if (target.type === "enemy") {
     const enemy = combat.enemies.find(

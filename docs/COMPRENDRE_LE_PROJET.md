@@ -905,9 +905,9 @@ rng.pick(array); // choisit un élément aléatoirement
 // src/game/constants.ts
 GAME_CONSTANTS = {
   // Structure du donjon
-  ROOMS_PER_FLOOR: 10, // 9 salles + 1 boss (index 9)
-  BOSS_ROOM_INDEX: 9,
-  MAX_FLOORS: 5,
+  ROOMS_PER_FLOOR: 16, // 15 salles + 1 boss (index 15)
+  BOSS_ROOM_INDEX: 15,
+  MAX_FLOORS: 3,
   AVAILABLE_BIOMES: [
     "VIKING",
     "GREEK",

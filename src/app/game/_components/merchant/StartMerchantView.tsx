@@ -12,6 +12,7 @@ import {
   localizeCardName,
 } from "@/lib/i18n/card-text";
 import {
+  localizeAllyName,
   localizeRelicDescription,
   localizeRelicName,
   localizeUsableItemDescription,
@@ -99,7 +100,7 @@ export function StartMerchantView({
       case "USABLE_ITEM":
         return localizeUsableItemName(offer.usableItemId, offer.name);
       case "ALLY":
-        return offer.name;
+        return localizeAllyName(offer.allyId, offer.name);
       case "BONUS_GOLD":
         return t("startMerchant.bonusGoldName");
       case "BONUS_MAX_HP":
@@ -122,8 +123,14 @@ export function StartMerchantView({
           offer.usableItemId,
           offer.description
         );
-      case "ALLY":
-        return offer.description;
+      case "ALLY": {
+        const ally = offer.allyId ? allyDefs.get(offer.allyId) : undefined;
+        return ally
+          ? `${ally.maxHp} ${t("combat.hp")} - ${ally.speed} ${t(
+              "combat.spd"
+            )}`
+          : offer.description;
+      }
       case "BONUS_GOLD":
         return t("startMerchant.bonusGoldDescription", {
           amount: offer.goldAmount ?? 0,

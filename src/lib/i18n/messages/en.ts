@@ -18,12 +18,12 @@ export const en = {
     signin: "Sign in",
     loginHint: "Sign in to save your progression",
     signedInHint: "Your grimoire is open. Begin your next expedition.",
-    ritualKicker: "Navigation Board",
-    ritualTitle: "Run Plan",
+    ritualKicker: "Route Planner",
+    ritualTitle: "Expedition Plan",
     ritualSubtitle:
       "Trace your path, refine your deck, then crush the final boss.",
     pathLabel: "Progression sequence",
-    modeLabel: "Doctrine",
+    modeLabel: "Mode",
     modeValue: "Tactical roguelike",
     pathSteps: ["Combat", "Elite", "Merchant", "Boss"],
     quickFacts: {
@@ -40,13 +40,13 @@ export const en = {
     ],
   },
   leaderboard: {
-    kicker: "Global Ranking",
-    title: "Archivists Hall",
+    kicker: "Global Leaderboard",
+    title: "Hall of Archivists",
     subtitle:
       "Compare infinite progression or best victory times by difficulty.",
     backHome: "Home",
     loadError: "Unable to load leaderboard: {{message}}",
-    empty: "No run statistics available yet.",
+    empty: "No expedition stats available yet.",
     playerFallback: "Archivist {{id}}",
     you: "You",
     noTime: "-",
@@ -55,7 +55,7 @@ export const en = {
       kicker: "Leaderboard Sorting",
       limit: "Showing top {{count}} players.",
       sortLabel: "Sort by",
-      difficultyLabel: "Time difficulty",
+      difficultyLabel: "Difficulty",
       allDifficulties: "All difficulties",
       summaryProgression:
         "Progression ranking: infinite floor first, then wins, highest difficulty, and time.",
@@ -72,11 +72,11 @@ export const en = {
       rank: "Rank",
       player: "Player",
       wins: "Wins",
-      runs: "Runs",
+      runs: "Expeditions",
       winRate: "Win Rate",
       bestInfiniteFloor: "Best Infinite Floor",
       bestDifficulty: "Highest Difficulty",
-      bestTime: "Times by Diff",
+      bestTime: "Times by Difficulty",
       bestTimeVictory: "Victory Time",
       bestTimeDifficulty: "Victory Time D{{difficulty}}",
     },
@@ -121,7 +121,7 @@ export const en = {
     collectedStories: "{{unlocked}}/{{total}} stories collected",
     collection: "Collection",
     bestiary: "Bestiary",
-    startRun: "Start Run",
+    startRun: "Start Expedition",
     tier: "Tier",
     permanentBonus: "Permanent bonus",
     cost: "Cost",
@@ -137,9 +137,9 @@ export const en = {
     collectionLoadErrorTitle: "Failed to load the collection",
     firstVisitTutorial: {
       kicker: "Library tutorial",
-      title: "This is where runs become permanent progression",
+      title: "This is where expeditions become permanent progression",
       description:
-        "The Library is your meta-progression hub. Resources earned during runs are spent here to unlock stories that strengthen every future run.",
+        "The Library is your long-term progression hub. Resources earned during expeditions are spent here to unlock stories that strengthen every future expedition.",
       resourcesTitle: "Resources",
       resourcesDescription:
         "Each biome grants its own resource after combat. The bar at the top shows your current stock so you can see which stories you can afford.",
@@ -152,7 +152,7 @@ export const en = {
     guidedStoryTutorial: {
       kicker: "First purchase",
       description:
-        "You recovered exactly enough Pages to unlock the Encyclopedia of Knowledge. This story grants +1 draw on all your future runs.",
+        "You recovered exactly enough Pages to unlock the Encyclopedia of Knowledge. This story grants +1 draw on all your future expeditions.",
     },
     bonus: {
       extraDraw: "+{{value}} draw each turn",
@@ -170,7 +170,7 @@ export const en = {
       extraHandAtStart: "+{{value}} cards in opening hand",
       attackBonus: "+{{value}} attack card damage",
       allySlots: "+{{value}} ally slot(s)",
-      startingGold: "+{{value}} starting gold each run",
+      startingGold: "+{{value}} starting gold each expedition",
       extraCardRewardChoices: "+{{value}} card reward choices",
       relicDiscount: "{{value}}% relic discount",
       lootLuck: "+{{value}} loot quality",
@@ -180,9 +180,9 @@ export const en = {
       healAfterCombatFlat: "Recover {{value}} HP after combat",
       exhaustKeepChance:
         "{{value}}% chance for a non-Power Exhaust card to be kept",
-      survivalOnce: "Survive at 1 HP once per run",
-      freeUpgradePerRun: "Upgrade one card for free each run",
-      startingRareCard: "Start each run with a random rare card",
+      survivalOnce: "Survive at 1 HP once per expedition",
+      freeUpgradePerRun: "Upgrade one card for free each expedition",
+      startingRareCard: "Start each expedition with a random rare card",
     },
   },
   gameHub: {
@@ -198,7 +198,7 @@ export const en = {
     relicSummary:
       "{{unlocked}} unlocked - {{locked}} locked - {{total}} relics",
     backToLibrary: "Back to Library",
-    startRun: "Start Run",
+    startRun: "Start Expedition",
     tabs: {
       runOptions: "Starting options",
       cards: "Cards",
@@ -211,7 +211,7 @@ export const en = {
     power: "Power",
     allOwnerships: "All origins",
     neutralOnly: "Neutral",
-    characterTypedOnly: "Character-typed",
+    characterTypedOnly: "Character-specific",
     allRarities: "All rarities",
     bossRelicRarity: "Boss relic",
     allStates: "All states",
@@ -223,7 +223,7 @@ export const en = {
     noRelicsForFilters: "No relics match these filters.",
     energy: "energy",
     neutralBadge: "Neutral",
-    characterTypedBadge: "Typed {{character}}",
+    characterTypedBadge: "Linked to {{character}}",
     relicSourceBoss: "Source: boss {{boss}}",
     relicSourceGeneral: "Source: general",
     whyLocked: "Why this card is locked",
@@ -231,29 +231,29 @@ export const en = {
     missingCondition: "Missing condition",
     progress: "Progress",
     alwaysUnlocked: "Always unlocked",
-    relicUnlockBestGold: "Reach {{gold}} gold in a single run",
+    relicUnlockBestGold: "Reach {{gold}} gold in a single expedition",
     relicUnlockDifficultyWins:
-      "Win {{wins}} run(s) on difficulty {{difficulty}}",
+      "Win {{wins}} expedition(s) on difficulty {{difficulty}}",
     relicUnlockCharacterDifficultyWins:
-      "Win {{wins}} run(s) on difficulty {{difficulty}} with {{character}}",
+      "Win {{wins}} expedition(s) on difficulty {{difficulty}} with {{character}}",
     runConditions: {
       title: "Starting options",
       summary:
-        "{{unlocked}}/{{total}} unlocked - Runs: {{runs}} - Wins: {{wins}}",
+        "{{unlocked}}/{{total}} unlocked - Expeditions: {{runs}} - Wins: {{wins}}",
       unlockCondition: "Unlock condition",
-      unlockRuns: "Complete at least {{runs}} run(s)",
-      unlockWins: "Win at least {{wins}} run(s)",
+      unlockRuns: "Complete at least {{runs}} expedition(s)",
+      unlockWins: "Win at least {{wins}} expedition(s)",
       unlockEnemyKills: "Defeat {{enemy}} {{kills}} time(s)",
       unlockLootedCard: "Obtain {{card}} at least once",
       unlockRunsAndWins:
-        "Complete at least {{runs}} run(s) and win {{wins}} run(s)",
+        "Complete at least {{runs}} expedition(s) and win {{wins}} expedition(s)",
     },
   },
   bestiary: {
     title: "Realm Bestiary",
     discoveredCount: "{{discovered}}/{{total}} entries discovered",
     backToLibrary: "Back to Library",
-    startRun: "Start Run",
+    startRun: "Start Expedition",
     allBiomes: "All biomes",
     allTypes: "All types",
     noEntries: "No entries match this filter.",
@@ -277,15 +277,15 @@ export const en = {
   },
   runCondition: {
     select: {
-      kicker: "New run",
+      kicker: "New Expedition",
       title: "Choose a starting option",
       subtitle: "Pick 1 option among 3.",
       pickAction: "Choose this option",
     },
     bossStart: {
       name: "{{boss}} Blessing",
-      description: "Start the run with: {{bonus}}.",
-      bonusFallback: "Boss start bonus",
+      description: "Start the expedition with: {{bonus}}.",
+      bonusFallback: "Boss opening bonus",
     },
     category: {
       LIGHT_BOON: "Light boon",
@@ -297,11 +297,11 @@ export const en = {
     },
     definitions: {
       vanilla_run: {
-        name: "No Change",
-        description: "Classic run with no special rule.",
+        name: "No Modifier",
+        description: "Standard expedition with no special rule.",
       },
       quiet_pockets: {
-        name: "Quiet Pockets",
+        name: "Deep Pockets",
         description: "Start with +20 gold.",
       },
       tempered_flesh: {
@@ -310,7 +310,7 @@ export const en = {
       },
       open_grimoire: {
         name: "Open Grimoire",
-        description: "Add Fortify to your starting deck.",
+        description: "Add Archive Seal to your starting deck.",
       },
       recursive_scratch_opening: {
         name: "Recursive Scratch",
@@ -336,7 +336,7 @@ export const en = {
       fractured_archive: {
         name: "Fractured Archive",
         description:
-          "Upgrade 3 random cards, but add 2 Haunting Regret to your deck.",
+          "Upgrade 3 random cards, but add 2 Haunting Regret cards to your deck.",
       },
       severed_index: {
         name: "Severed Index",
@@ -346,11 +346,12 @@ export const en = {
       merciless_routes: {
         name: "Merciless Routes",
         description:
-          "No merchants and only one path, but combat rewards are doubled.",
+          "No merchants and only one route, but combat rewards are doubled.",
       },
       forbidden_contract: {
         name: "Forbidden Contract",
-        description: "Add Mythic Blow and Haunting Regret, but lose 6 max HP.",
+        description:
+          "Add Legendary Chapter and 1 Haunting Regret to your deck, but lose 6 max HP.",
       },
       single_path: {
         name: "Single Path",
@@ -358,7 +359,7 @@ export const en = {
       },
       eventful_routes: {
         name: "Eventful Routes",
-        description: "No merchants, more special rooms.",
+        description: "No merchants, but more special rooms.",
       },
       battle_rite: {
         name: "Battle Rite",
@@ -374,13 +375,13 @@ export const en = {
           "All combats become boss fights. Combat rewards are doubled.",
       },
       veterans_oath: {
-        name: "Snokin Practitioners",
+        name: "Snokin's Vow",
         description: "Recover 100% HP after each combat, but lose 50 max HP.",
       },
       ink_lender: {
         name: "Ink Loan",
         description:
-          "Start each combat with +2 ink and +1 ink per card played, but lose 8 max HP.",
+          "Start each combat with +2 Ink and gain +1 Ink per card played, but lose 8 max HP.",
       },
       prepared_wards: {
         name: "Prepared Wards",
@@ -407,12 +408,13 @@ export const en = {
       },
       cursed_compendium: {
         name: "Cursed Compendium",
-        description: "Add 2 random cards, but also add 2 Haunting Regret.",
+        description:
+          "Add 2 random cards, but also add 2 Haunting Regret cards to your deck.",
       },
       crystal_loan: {
         name: "Crystal Loan",
         description:
-          "Start with the Energy Crystal relic, upgrade 1 random card, but add 1 Haunting Regret.",
+          "Start with the Energy Crystal relic, upgrade 1 random card, but add 1 Haunting Regret to your deck.",
       },
       inkwell_bargain: {
         name: "Inkwell Bargain",
@@ -421,7 +423,7 @@ export const en = {
       forged_lexicon: {
         name: "Forged Lexicon",
         description:
-          "Start with the Battle Lexicon relic, but add 1 Haunting Regret.",
+          "Start with the Battle Lexicon relic, but add 1 Haunting Regret to your deck.",
       },
       isolated_trials: {
         name: "Isolated Trials",
@@ -431,17 +433,17 @@ export const en = {
       grim_shortcuts: {
         name: "Grim Shortcuts",
         description:
-          "Single-path routes with extra special rooms, +10 gold, but add 1 Haunting Regret.",
+          "Single-path routes with more special rooms, +10 gold, but add 1 Haunting Regret to your deck.",
       },
       fateful_manuscript: {
         name: "Fateful Manuscript",
         description:
-          "Start with +1 max energy and +1 draw each turn, but add 2 Haunting Regret and lose 12 max HP.",
+          "Start with +1 max Energy and +1 draw each turn, but add 2 Haunting Regret cards and lose 12 max HP.",
       },
       infinite_mode: {
         name: "Infinite Mode",
         description:
-          "No floor cap. No biome resources are granted at the end of the run. Difficulty spikes hard after floor 5.",
+          "No floor cap. No biome resources are granted at the end of the expedition. Difficulty spikes hard after floor 3.",
       },
     },
   },
@@ -449,43 +451,43 @@ export const en = {
     kicker: "Run Preparation",
     title: "Configure Your Expedition",
     subtitle:
-      "Choose your difficulty, pick your run type, and prepare your opening loadout before entering the first room.",
+      "Choose your difficulty, pick an expedition type, and prepare your starting options before entering the first room.",
     firstRunTutorial: {
-      kicker: "First run",
+      kicker: "First Expedition",
       title: "Quick tutorial",
       subtitle:
-        "This first run is meant to teach the core loop. Difficulty 0 is the only available chapter for now.",
+        "This first expedition teaches the core loop. Difficulty 0 is the only available chapter for now.",
       steps: {
         chooseDifficulty:
-          "Choose level 0. It is the only difficulty available for this first run.",
-        pickMode: "Pick Normal for a classic 5-floor run.",
+          "Choose level 0. It is the only difficulty available for this first expedition.",
+        pickMode: "Pick Normal for a standard 3-floor expedition.",
         planRoute:
           "On the map, prioritize fights to grow your deck, then visit merchants when you can afford upgrades.",
         combatFlow:
           "In combat: play cards, watch energy/ink, then end your turn.",
         endOfRun:
-          "At the end of the run, claim rewards and return to the Library to invest your resources.",
+          "At the end of the expedition, claim your rewards and return to the Library to invest your resources.",
       },
     },
     sections: {
       character: "Character",
       difficulty: "Difficulty",
-      runType: "Run Type",
-      runCondition: "Run Option",
-      preGameOptions: "Pre-Game Options",
+      runType: "Expedition Type",
+      runCondition: "Starting Option",
+      preGameOptions: "Pre-Expedition Options",
     },
     selected: "Selected",
     modeType: "Mode",
-    modeHint: "Choose Normal or Infinite before selecting pre-game options.",
-    modeLockedHint: "Run type is locked after selecting a run option.",
+    modeHint: "Choose Normal or Infinite before selecting pre-expedition options.",
+    modeLockedHint: "Expedition type is locked after selecting a starting option.",
     modeNormal: "Normal",
     modeNormalDescription:
-      "Classic 5-floor run with regular progression and end-of-run resources.",
+      "Standard 3-floor expedition with regular progression and end-of-expedition rewards.",
     modeInfinite: "Infinite",
     modeInfiniteDescription:
-      "No floor cap. Built for leaderboard climbing. No biome resources are awarded.",
-    continue: "Start Run",
-    readyHint: "Setup complete. You can start the run.",
+      "No floor cap. Designed for leaderboard climbs. No biome resources are awarded.",
+    continue: "Start Expedition",
+    readyHint: "Setup complete. You can start the expedition.",
     missingHint: "Pick a difficulty and a game mode to continue.",
   },
   runDifficulty: {
@@ -1008,24 +1010,30 @@ export const en = {
     cosmic_spider: { name: "Anansi Codex" },
   },
   relics: {
-    ancient_quill: { name: "Ancient Quill", description: "+2 max ink" },
+    ancient_quill: { name: "Ancient Quill", description: "+2 max Ink." },
     energy_crystal: {
       name: "Energy Crystal",
       description: "+1 energy per turn",
     },
-    bookmark: { name: "Bookmark", description: "Draw 1 extra card per turn" },
-    ink_stamp: { name: "Ink Stamp", description: "Start combat with 3 ink" },
+    bookmark: {
+      name: "Bookmark",
+      description: "Draw 1 extra card each turn.",
+    },
+    ink_stamp: {
+      name: "Ink Stamp",
+      description: "Start each combat with 3 Ink.",
+    },
     iron_binding: {
       name: "Iron Binding",
-      description: "+1 ink gained when ink-per-card triggers",
+      description: "Gain 1 extra Ink whenever an ink-per-card effect triggers.",
     },
     blighted_compass: {
       name: "Blighted Compass",
       description: "+1 draw per turn, but start combat with Weak.",
     },
     cursed_diacrit: {
-      name: "Cursed Diacrit",
-      description: "+1 energy per turn, but gain a curse each combat.",
+      name: "Cursed Diacritic",
+      description: "+1 energy per turn, but add a Curse each combat.",
     },
     runic_bulwark: {
       name: "Runic Bulwark",
@@ -1033,7 +1041,7 @@ export const en = {
     },
     eternal_hourglass: {
       name: "Eternal Hourglass",
-      description: "Unspent energy is conserved between turns.",
+      description: "Carry unspent energy over between turns.",
     },
     briar_codex: {
       name: "Briar Codex",
@@ -1045,7 +1053,7 @@ export const en = {
     },
     inkwell_reservoir: {
       name: "Inkwell Reservoir",
-      description: "+1 max ink and start each combat with 1 ink.",
+      description: "+1 max Ink. Start each combat with 1 Ink.",
     },
     battle_lexicon: {
       name: "Battle Lexicon",
@@ -1053,20 +1061,20 @@ export const en = {
     },
     vital_flask: {
       name: "Vital Flask",
-      description: "Recover +5 HP after each combat.",
+      description: "Recover 5 HP after each combat.",
     },
     menders_charm: {
       name: "Mender's Charm",
-      description: "Increase post-combat healing percentage by 50%.",
+      description: "Increase post-combat healing by 50%.",
     },
     menders_inkwell: {
       name: "Mender's Inkwell",
-      description: "Whenever you spend Ink, heal that much HP.",
+      description: "Whenever you spend Ink, recover that much HP.",
     },
     echoing_inkstone: {
       name: "Echoing Inkstone",
       description:
-        "Inked cards, cards with Ink cost, and current-ink payoffs have their effects doubled.",
+        "Double the effects of inked cards, cards with Ink costs, and effects that scale with current Ink.",
     },
     gilded_ledger: {
       name: "Gilded Ledger",
@@ -1082,24 +1090,25 @@ export const en = {
     },
     ink_spindle: {
       name: "Ink Spindle",
-      description: "At end of turn, gain 1 Focus if your hand is empty.",
+      description: "At the end of your turn, gain 1 Focus if your hand is empty.",
     },
     omens_compass: {
       name: "Omen's Compass",
       description:
-        "Boss rewards are more likely to include an additional Boss relic option.",
+        "Boss rewards are more likely to offer an extra Boss relic option.",
     },
     lucky_charm: {
       name: "Lucky Charm",
-      description: "Increases loot luck for better rarity rolls.",
+      description:
+        "Improve loot luck, increasing the odds of higher-rarity rewards.",
     },
     haggler_satchel: {
       name: "Haggler's Satchel",
-      description: "First purchase in each shop refreshes the full stock.",
+      description: "The first purchase in each shop refreshes the full stock.",
     },
     surgeons_quill: {
       name: "Surgeon's Quill",
-      description: "You can Purge up to 3 times per merchant visit.",
+      description: "You can Purge up to 3 times at each merchant visit.",
     },
   },
   usableItems: {
@@ -1385,13 +1394,13 @@ export const en = {
     reachedRoom: "Reached: Room {{room}}/{{total}}",
     unlockCount_one: "{{count}} unlock",
     unlockCount_other: "{{count}} unlocks",
-    resourcesGained: "Resources gained this run",
+    resourcesGained: "Resources gained during this expedition",
     resourceModifierBonus:
       "This was your first clear of difficulty {{level}}. Resources are credited at {{percent}}%.",
     resourceModifierReduced:
-      "Difficulty {{level}} was already cleared. Only {{percent}}% of resources are credited on repeat runs.",
-    cardsUnlocked: "Cards unlocked this run",
-    relicsUnlocked: "Relics unlocked this run",
+      "Difficulty {{level}} was already cleared. Only {{percent}}% of resources are credited on repeat expeditions.",
+    cardsUnlocked: "Cards unlocked during this expedition",
+    relicsUnlocked: "Relics unlocked during this expedition",
     newBestiaryEntryTitle: "New Bestiary entry",
     newBestiaryEntrySingle: "{{name}} added to the Bestiary",
     newBestiaryEntryMultiple: "{{count}} new entries added to the Bestiary",
@@ -1416,8 +1425,8 @@ export const en = {
     menu: "Menu",
     mute: "Mute",
     unmute: "Unmute",
-    abandonConfirm: "End this run now?",
-    abandonRun: "End run",
+    abandonConfirm: "End this expedition now?",
+    abandonRun: "End expedition",
     yourRelics: "Your relics",
     noRelicsYet: "No relics yet.",
   },
@@ -1683,7 +1692,7 @@ export const en = {
     addCardToDiscardNamed: "Discard +{{value}} {{card}}",
     drainAllInk: "Drain all ink",
     selfDamage: "Lose {{value}} HP",
-    alliesGainBlock: "Allies +{{value}} BLK",
+    alliesGainBlock: "Allies +{{value}} Block",
     alliesGainBuff: "Allies +{{value}} {{buff}}",
     alliesGainThorns: "Allies +{{value}} Thorns",
     redactCardCost: "Redacts {{value}} card: +1 cost",
@@ -1987,18 +1996,18 @@ export const en = {
       "The scriptorium offers cards aligned with your chosen archetype.",
   },
   startMerchant: {
-    kicker: "Pre-run",
+    kicker: "Pre-Expedition",
     title: "Origin Merchant",
-    subtitle: "Trade library resources for run bonuses.",
+    subtitle: "Trade Library resources for expedition bonuses.",
     noResources: "No available resources",
     cost: "Cost",
     bought: "Bought",
     trade: "Trade",
     insufficient: "Insufficient resources",
     bonusGoldName: "Scout's Purse",
-    bonusGoldDescription: "+{{amount}} gold for this run",
+    bonusGoldDescription: "+{{amount}} gold for this expedition",
     bonusMaxHpName: "Leather Blessing",
-    bonusMaxHpDescription: "+{{amount}} max HP for this run",
+    bonusMaxHpDescription: "+{{amount}} max HP for this expedition",
     continue: "Continue adventure",
     offerType: {
       CARD: "Card",
@@ -2013,9 +2022,9 @@ export const en = {
   // Backward-compatible alias for legacy typo used in some UI paths.
   startMarchant: {
     bonusGoldName: "Scout's Purse",
-    bonusGoldDescription: "+{{amount}} gold for this run",
+    bonusGoldDescription: "+{{amount}} gold for this expedition",
     bonusMaxHpName: "Leather Blessing",
-    bonusMaxHpDescription: "+{{amount}} max HP for this run",
+    bonusMaxHpDescription: "+{{amount}} max HP for this expedition",
   },
   shop: {
     title: "Merchant",
@@ -2058,14 +2067,14 @@ export const en = {
       overview: {
         title: "Overview",
         emoji: "📚",
-        text: "Panlibrarium is a roguelike deck-builder: you progress room by room, strengthen your deck, then face a biome boss. Every decision matters: chosen cards, relics, resource management, and combat order. Your goal is to survive all 5 floors and defeat the bosses.",
+        text: "Panlibrarium is a roguelike deck-builder: you progress room by room, strengthen your deck, then face a biome boss. Every decision matters: chosen cards, relics, resource management, and combat order. Your goal is to survive all 3 floors and defeat the bosses.",
       },
       runStructure: {
         title: "Run structure",
         emoji: "🧭",
         bullets: [
-          "A run is made of 5 floors.",
-          "Each floor has 10 rooms, progressing from left to right.",
+          "An expedition spans 3 floors.",
+          "Each floor has 16 rooms, progressing from left to right.",
           "Difficulty ramps up progressively until the boss fight.",
           "After a boss, you move to the next biome with new enemies and themes.",
         ],
@@ -2303,7 +2312,7 @@ export const en = {
           label: "Unseal the tome",
           description: "Lose 10 HP, gain 50 gold.",
           outcomeText:
-            "Your fingers bleed on the pages. The tome drinks, satisfied. Twenty coins fall from between the leaves — the price of another reader, long ago.",
+            "Your fingers bleed on the pages. The tome drinks, satisfied. A spill of gold coins slips from between the leaves, payment left by another reader long ago.",
         },
         {
           label: "Close the display case",
@@ -2336,7 +2345,7 @@ export const en = {
     wandering_scribe: {
       title: "The Wandering Scribe",
       flavorText:
-        "A hunched old man wanders the stacks, his quill scratching the air. He does not seem to see you — until he turns abruptly: 'I can rewrite you. For a price.'",
+        "A hunched old man wanders the stacks, his quill scratching the air. He does not seem to see you until he turns abruptly and says, 'I can rewrite you, for a price.'",
       description: "His services have a cost. His care, too.",
       choices: [
         {
@@ -2452,7 +2461,7 @@ export const en = {
       flavorText:
         "He stands in the shadows, his armor covered in hand-carved runes. His library burned — or worse, was censored. He seeks a new oath to swear, a cause worth defending.",
       description:
-        "His ward-magic can protect you. His oath would bind you to each other.",
+        "His ward magic can protect you. His oath would bind you to each other.",
       choices: [
         {
           label: "Accept his oath",
@@ -2492,9 +2501,9 @@ export const en = {
     mirror_of_bronze: {
       title: "The Mirror of Bronze",
       flavorText:
-        "The polished bronze mirror stands between two marble columns. It does not reflect your face — but that of someone you could have been. The silhouette smiles. It reaches out from the other side of the cold metal.",
+        "The polished bronze mirror stands between two marble columns. It does not reflect your face, but that of someone you could have been. The silhouette smiles and reaches out from the other side of the cold metal.",
       description:
-        "What do you answer to what watches you from the other side?",
+        "How do you answer the thing watching you from the other side?",
       choices: [
         {
           label: "Reach back",
@@ -2558,7 +2567,7 @@ export const en = {
           label: "Recite a verse",
           description: "Gain 50 gold.",
           outcomeText:
-            "The blue flames flicker. They recognize the words — or love them. Gold falls from the air like a reward for a poem recited in the right language at the right moment.",
+            "The blue flames flicker. They recognize the words, or perhaps they love them. Gold falls from the air like a reward for a poem recited in the right language at the right moment.",
         },
         {
           label: "Leave without a word",
@@ -2572,7 +2581,7 @@ export const en = {
       title: "The Blank Page",
       flavorText:
         "In the middle of an empty corridor, a blank page is pinned at eye level. Not a word. Not an illustration. Yet you have the feeling it has been waiting for you since the beginning of your journey — perhaps before.",
-      description: "The page is blank. What do you do with this void?",
+      description: "The page is blank. What do you make of that emptiness?",
       choices: [
         {
           label: "Write your strength",
@@ -2632,7 +2641,7 @@ export const en = {
           label: "Offer tribute (30 gold)",
           description: "Lose 30 gold, gain 45 max HP.",
           outcomeText:
-            "She accepts the offering without looking at it. In exchange, she places a cold finger on your sternum — and an extra life inscribes itself into you, like a revision in the margins of an already finished manuscript.",
+            "She accepts the offering without looking at it. In exchange, she places a cold finger on your sternum, and an extra reserve of life etches itself into you like a revision in the margin of a finished manuscript.",
         },
       ],
     },
@@ -2647,7 +2656,7 @@ export const en = {
           label: "Take a little thread",
           description: "Gain 20 max HP.",
           outcomeText:
-            "The thread guides you along a path you would not have found alone. It leads you to a room full of light, then vanishes. You found what needed finding.",
+            "The thread guides you along a path you would not have found alone. It leads you to a chamber flooded with light, then vanishes. You found what needed finding.",
         },
         {
           label: "Unroll the entire spool",
@@ -2802,7 +2811,7 @@ export const en = {
     thoth_archives: {
       title: "Thoth's Archives",
       flavorText:
-        "Thoth, scribe of the gods, sits at a monumental desk, his ibis beak hovering over a scroll that unrolls infinitely. He raises one hand without looking up. 'I am busy recording everything. But you may look. Or even take. At your own risk.'",
+        "Thoth, scribe of the gods, sits at a monumental desk, his ibis beak hovering over a scroll that unrolls without end. He raises one hand without looking up. 'I am busy recording everything. But you may look. Or even take. At your own risk.'",
       description:
         "Thoth's archives contain everything — including things you were not meant to see.",
       choices: [
@@ -2857,9 +2866,9 @@ export const en = {
     forbidden_lexicon: {
       title: "The Forbidden Lexicon",
       flavorText:
-        "The Librarian has no face — or rather, it has too many, succeeding one another too fast to count. It holds a lexicon whose words change as you watch. 'What you can read in this book cannot be seen twice,' it says. 'Choose your dosage.'",
+        "The Librarian has no face, or rather too many to count, each replacing the last too quickly to follow. It holds a lexicon whose words change as you watch. 'What you can read in this book cannot be seen twice,' it says. 'Choose how much you can bear.'",
       description:
-        "The Librarian offers knowledge that can only be seen once. The price is paid in mental clarity.",
+        "The Librarian offers knowledge that can only be seen once. The price is part of your mental clarity.",
       choices: [
         {
           label: "Read the forbidden passage",
@@ -3209,7 +3218,7 @@ export const en = {
     scribe_3_familiar_face: {
       title: "The Known Face",
       flavorText:
-        "He stops you in a corridor — this time, he takes the initiative. 'I know you,' he says. 'Not from this run. From the other one. Or perhaps... the next.'",
+        "He stops you in a corridor, and this time he takes the initiative. 'I know you,' he says. 'Not from this expedition. From the other one. Or perhaps... the next.'",
       description:
         "He speaks of you as a recurring character. He is not wrong.",
       choices: [

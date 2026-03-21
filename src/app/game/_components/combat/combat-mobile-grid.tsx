@@ -19,6 +19,7 @@ import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
 import { getEnemyImageSrc, PLAYER_AVATAR } from "@/lib/assets";
 import { HpBar } from "../shared/HpBar";
+import { localizeAllyName } from "@/lib/i18n/entity-text";
 
 interface CombatMobileGridProps {
   combat: CombatState;
@@ -261,6 +262,10 @@ export function CombatMobileGrid({
                   const ally = entry.ally;
                   const def = allyDefs.get(ally.definitionId);
                   const intent = def?.abilities[ally.intentIndex];
+                  const localizedAllyName = localizeAllyName(
+                    ally.definitionId,
+                    ally.name
+                  );
                   const canTarget =
                     (selectingAllyTarget || selfCanRetargetToAlly) &&
                     ally.currentHp > 0 &&
@@ -300,7 +305,7 @@ export function CombatMobileGrid({
                               {t("combat.ally", { defaultValue: "Allie" })}
                             </p>
                             <p className="truncate text-[13px] font-black text-cyan-50">
-                              {ally.name}
+                              {localizedAllyName}
                             </p>
                           </div>
                           <MobileValuePill
@@ -328,7 +333,7 @@ export function CombatMobileGrid({
                             )}
                           >
                             <div className="flex h-full w-full items-center justify-center text-lg font-black uppercase tracking-[0.18em] text-cyan-50/90">
-                              {getMonogram(ally.name, "AL")}
+                              {getMonogram(localizedAllyName, "AL")}
                             </div>
                           </div>
 
