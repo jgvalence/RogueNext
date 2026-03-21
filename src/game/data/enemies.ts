@@ -219,7 +219,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         target: "PLAYER",
         effects: [
           { type: "DAMAGE", value: 2 },
-          { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
+          { type: "DAMAGE_PER_TARGET_BLOCK", value: 3 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
         conditionalWeights: [
@@ -1021,7 +1021,7 @@ const baseEnemyDefinitions: RawEnemyDefinition[] = [
         weight: 1,
         effects: [
           { type: "DAMAGE", value: 2 },
-          { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
+          { type: "DAMAGE_PER_TARGET_BLOCK", value: 3 },
           { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
         ],
         conditionalWeights: [

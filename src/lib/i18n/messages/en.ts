@@ -418,7 +418,8 @@ export const en = {
       },
       inkwell_bargain: {
         name: "Inkwell Bargain",
-        description: "Start with the Inkwell Reservoir relic, but lose 10 max HP.",
+        description:
+          "Start with the Inkwell Reservoir relic, but lose 10 max HP.",
       },
       forged_lexicon: {
         name: "Forged Lexicon",
@@ -478,8 +479,10 @@ export const en = {
     },
     selected: "Selected",
     modeType: "Mode",
-    modeHint: "Choose Normal or Infinite before selecting pre-expedition options.",
-    modeLockedHint: "Expedition type is locked after selecting a starting option.",
+    modeHint:
+      "Choose Normal or Infinite before selecting pre-expedition options.",
+    modeLockedHint:
+      "Expedition type is locked after selecting a starting option.",
     modeNormal: "Normal",
     modeNormalDescription:
       "Standard 3-floor expedition with regular progression and end-of-expedition rewards.",
@@ -1090,7 +1093,8 @@ export const en = {
     },
     ink_spindle: {
       name: "Ink Spindle",
-      description: "At the end of your turn, gain 1 Focus if your hand is empty.",
+      description:
+        "At the end of your turn, gain 1 Focus if your hand is empty.",
     },
     omens_compass: {
       name: "Omen's Compass",
@@ -1109,6 +1113,10 @@ export const en = {
     surgeons_quill: {
       name: "Surgeon's Quill",
       description: "You can Purge up to 3 times at each merchant visit.",
+    },
+    wyrm_venom_signet: {
+      name: "Wyrm Venom Signet",
+      description: "Apply 1 Weak to all enemies at combat start.",
     },
   },
   usableItems: {
@@ -1677,6 +1685,9 @@ export const en = {
     acting: "Acting",
     blk: "BLK",
     dmg: "DMG",
+    damagePerTargetBlockShort: "+1 DMG / {{value}} BLK",
+    damagePerTargetBlockTooltip:
+      "This attack gains 1 damage for every {{value}} Block on its target. The more Block the target has, the more damage it takes.",
     calculated: "Calculated: {{from}} -> {{to}} ({{modifiers}})",
     incoming: "Incoming",
     intentHidden: "Intent Hidden",

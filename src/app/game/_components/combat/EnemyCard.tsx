@@ -378,12 +378,18 @@ function formatIntentEffects(
 
       case "DAMAGE_PER_TARGET_BLOCK":
         parts.push(
-          <span
+          <Tooltip
             key={`d-block-${parts.length}`}
-            className="inline-flex items-center gap-0.5 rounded bg-red-950/70 px-1.5 py-0.5 text-sm font-black text-red-200 lg:text-base"
+            content={t("enemyCard.damagePerTargetBlockTooltip", {
+              value: effect.value,
+            })}
           >
-            {t("enemyCard.dmg")} ARM/{effect.value}
-          </span>
+            <span className="inline-flex items-center gap-0.5 rounded bg-red-950/70 px-1.5 py-0.5 text-sm font-black text-red-200 lg:text-base">
+              {t("enemyCard.damagePerTargetBlockShort", {
+                value: effect.value,
+              })}
+            </span>
+          </Tooltip>
         );
         break;
 

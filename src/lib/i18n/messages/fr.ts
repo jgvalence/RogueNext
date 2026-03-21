@@ -183,8 +183,7 @@ export const fr = {
       exhaustKeepChance:
         "{{value}}% de chance qu'une carte avec Epuisement ne soit pas epuisee (hors pouvoirs)",
       survivalOnce: "Survit a 1 PV une fois par expedition",
-      freeUpgradePerRun:
-        "Ameliore une carte gratuitement a chaque expedition",
+      freeUpgradePerRun: "Ameliore une carte gratuitement a chaque expedition",
       startingRareCard:
         "Commence chaque expedition avec une carte rare aleatoire",
     },
@@ -925,8 +924,7 @@ export const fr = {
     },
     menders_charm: {
       name: "Charme du guerisseur",
-      description:
-        "Augmente de 50 % les soins recuperes apres chaque combat.",
+      description: "Augmente de 50 % les soins recuperes apres chaque combat.",
     },
     menders_inkwell: {
       name: "Encrier du guerisseur",
@@ -989,6 +987,11 @@ export const fr = {
       description:
         "+2 encre max. Commencez chaque combat avec 2 Concentration.",
     },
+    wyrm_venom_signet: {
+      name: "Sceau du ver venimeux",
+      description:
+        "Applique 1 Faiblesse a tous les ennemis au debut du combat.",
+    },
     wolf_fang: {
       name: "Croc de loup",
       description: "Commencez chaque combat avec 2 Force.",
@@ -999,8 +1002,7 @@ export const fr = {
     },
     stone_pendant: {
       name: "Pendentif de pierre",
-      description:
-        "Commencez chaque combat avec 1 Force et 1 Concentration.",
+      description: "Commencez chaque combat avec 1 Force et 1 Concentration.",
     },
     hydra_scale: {
       name: "Ecaille d'hydre",
@@ -1054,8 +1056,7 @@ export const fr = {
     },
     weavers_thread: {
       name: "Fil du tisseur",
-      description:
-        "Commencez chaque combat avec +1 pioche et 2 Concentration.",
+      description: "Commencez chaque combat avec +1 pioche et 2 Concentration.",
     },
     thorn_mantle: {
       name: "Manteau d'epines",
@@ -1677,6 +1678,9 @@ export const fr = {
     acting: "Agit",
     blk: "ARM",
     dmg: "DEG",
+    damagePerTargetBlockShort: "+1 DEG / {{value}} ARM",
+    damagePerTargetBlockTooltip:
+      "Cette attaque gagne 1 degat tous les {{value}} points d'Armure de la cible. Plus la cible a d'Armure, plus elle subit de degats.",
     calculated: "Calcule : {{from}} -> {{to}} ({{modifiers}})",
     incoming: "Degats entrants",
     intentHidden: "Intention cachee",
@@ -1758,7 +1762,8 @@ export const fr = {
       sunReadyDetail:
         "Le jugement solaire est pret. Sa prochaine action vide toute l'encre et gagne +{{bonus}} degats.",
       eclipseLabel: "Fenetre d'eclipse",
-      eclipseDetail: "Briser la barriere solaire retire 1 SUN avant l'action de Ra.",
+      eclipseDetail:
+        "Briser la barriere solaire retire 1 SUN avant l'action de Ra.",
       chargeIntent: "Fin de tour avec encre : +{{value}} SUN",
       eclipseIntent: "Brise la barriere solaire : -1 SUN",
     },
@@ -2516,8 +2521,7 @@ export const fr = {
       title: "Le Miroir de Bronze",
       flavorText:
         "Le miroir de bronze poli trone entre deux colonnes de marbre. Il ne reflete pas votre visage, mais celui de quelqu'un que vous auriez pu etre. La silhouette sourit et tend la main depuis l'autre cote du metal froid.",
-      description:
-        "Que faites-vous face a ce reflet venu de l'autre cote ?",
+      description: "Que faites-vous face a ce reflet venu de l'autre cote ?",
       choices: [
         {
           label: "Tendre la main en retour",
@@ -2818,8 +2822,7 @@ export const fr = {
         },
         {
           label: "Fuir le jugement",
-          description:
-            "Ajoutez 2 cartes Regret hantant a votre deck.",
+          description: "Ajoutez 2 cartes Regret hantant a votre deck.",
           outcomeText:
             "Vous courez. Derriere vous, Anubis note votre nom avec soin. Les dieux des morts n'oublient jamais les noms. Les Regrets vous rattrapent avant que vous ayez atteint la porte.",
         },

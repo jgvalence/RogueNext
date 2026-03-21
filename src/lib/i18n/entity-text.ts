@@ -9,6 +9,7 @@ import {
   normalizeEntityFallbackText,
   normalizeRelicFallbackName,
 } from "@/lib/i18n/fallback-text";
+import { getRelicTextEntry } from "@/lib/i18n/relic-text-resources";
 
 function getLocaleString(key: string): string | null {
   const locale = getCurrentLocale();
@@ -37,8 +38,10 @@ export function localizeRelicName(
       ? normalizeRelicFallbackName(undefined, fallback, locale)
       : "";
   }
+  const localizedEntry = getRelicTextEntry(locale, relicId);
   return (
     getLocaleString(`relics.${relicId}.name`) ??
+    localizedEntry?.name ??
     (fallback ? normalizeRelicFallbackName(relicId, fallback, locale) : relicId)
   );
 }
@@ -51,8 +54,10 @@ export function localizeRelicDescription(
   if (!relicId) {
     return fallback ? normalizeEntityFallbackText(fallback, locale) : "";
   }
+  const localizedEntry = getRelicTextEntry(locale, relicId);
   return (
     getLocaleString(`relics.${relicId}.description`) ??
+    localizedEntry?.description ??
     (fallback ? normalizeEntityFallbackText(fallback, locale) : relicId)
   );
 }
