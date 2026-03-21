@@ -231,7 +231,27 @@ export function generateCombatRewards(
     (isElite && hasGriotArchive ? 1 : 0);
   let cardChoices: CardDefinition[];
   if (isBoss) {
-    cardChoices = []; // Boss: no card choice
+    // Boss: 2 rare card choices
+    cardChoices =
+      rareRewardCards.length > 0
+        ? drawMixedCardChoices(
+            rareRewardCards,
+            biome,
+            2,
+            rng,
+            lootLuck,
+            "NORMAL_REWARD",
+            offerContext
+          )
+        : drawMixedCardChoices(
+            rewardEligibleCards,
+            biome,
+            2,
+            rng,
+            lootLuck,
+            "NORMAL_REWARD",
+            offerContext
+          );
   } else if (isElite) {
     cardChoices = drawMixedCardChoices(
       rewardEligibleCards,

@@ -1278,6 +1278,8 @@ export const fr = {
   reward: {
     victory: "Victoire!",
     gold: "Or",
+    chooseRareCard: "Choisissez une carte rare:",
+    cardPicked: "Carte ajoutee au deck.",
     chooseReward: "Choisissez une recompense:",
     chooseRewardCardOrRelic: "Choisissez votre recompense: carte ou relique",
     chooseRewardCard: "Choisissez votre recompense: carte",

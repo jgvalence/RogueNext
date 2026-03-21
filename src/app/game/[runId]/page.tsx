@@ -443,6 +443,7 @@ function GameContent({
     handlePickRelic,
     handlePickAlly,
     handlePickMaxHp,
+    bossCardPicked,
   } = useRewardPhaseHandlers({
     dispatch,
     isBossRewards,
@@ -709,6 +710,7 @@ function GameContent({
             allyChoices={rewards.allyChoices}
             bossMaxHpBonus={rewards.bossMaxHpBonus}
             isBoss={isBossRewards}
+            bossCardPicked={bossCardPicked}
             isElite={isEliteRewards}
             showFirstRewardTutorial={
               isFirstRun &&

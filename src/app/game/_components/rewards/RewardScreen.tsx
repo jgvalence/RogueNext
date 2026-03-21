@@ -29,6 +29,7 @@ interface RewardScreenProps {
   allyChoices: AllyDefinition[];
   bossMaxHpBonus?: number | null;
   isBoss?: boolean;
+  bossCardPicked?: boolean;
   isElite?: boolean;
   onPickCard: (definitionId: string) => void;
   onPickRelic: (relicId: string) => void;
@@ -47,6 +48,7 @@ export function RewardScreen({
   allyChoices,
   bossMaxHpBonus,
   isBoss,
+  bossCardPicked,
   isElite,
   onPickCard,
   onPickRelic,
@@ -129,36 +131,70 @@ export function RewardScreen({
         </div>
       )}
 
-      {isBoss && (relicChoices.length > 0 || bossMaxHpBonus) && (
+      {isBoss && (
         <>
-          <p className="text-sm font-medium text-purple-400">
-            {t("reward.chooseReward")}
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            {relicChoices.map((relic) => (
-              <RelicCard key={relic.id} relic={relic} onPick={onPickRelic} />
-            ))}
-            {allyChoices.map((ally) => (
-              <AllyCard key={ally.id} ally={ally} onPick={onPickAlly} />
-            ))}
-            {bossMaxHpBonus && onPickMaxHp && (
-              <RogueButton
-                onClick={() => onPickMaxHp(bossMaxHpBonus)}
-                type="text"
-                className="!flex !h-auto !w-40 !min-w-0 !flex-col !items-center !gap-2 !whitespace-normal !rounded-xl !border-2 !border-red-700 !bg-red-950/40 !p-4 !text-center !transition hover:!border-red-500 hover:!bg-red-950/60"
-              >
-                <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
-                  {t("reward.vitality")}
-                </span>
-                <span className="block w-full whitespace-normal break-words text-sm font-bold leading-tight text-white [overflow-wrap:anywhere]">
-                  +{bossMaxHpBonus} {t("reward.maxHp")}
-                </span>
-                <span className="block w-full whitespace-normal break-words text-xs leading-relaxed text-red-200 [overflow-wrap:anywhere]">
-                  {t("reward.maxHpDescription")}
-                </span>
-              </RogueButton>
-            )}
-          </div>
+          {hasCardChoices && !bossCardPicked && (
+            <>
+              <p className="text-sm font-medium text-yellow-400">
+                {t("reward.chooseRareCard")}
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                {cardChoices.map((card) => (
+                  <div
+                    key={card.id}
+                    onMouseEnter={(e) => handleCardMouseEnter(e, card)}
+                    onMouseLeave={handleCardMouseLeave}
+                  >
+                    <GameCard
+                      definition={card}
+                      canPlay={true}
+                      onClick={() => onPickCard(card.id)}
+                      size="md"
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+          {bossCardPicked && (
+            <p className="text-sm text-green-500">{t("reward.cardPicked")}</p>
+          )}
+          {(relicChoices.length > 0 || bossMaxHpBonus) && (
+            <>
+              <p className="text-sm font-medium text-purple-400">
+                {t("reward.chooseReward")}
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                {relicChoices.map((relic) => (
+                  <RelicCard
+                    key={relic.id}
+                    relic={relic}
+                    onPick={onPickRelic}
+                  />
+                ))}
+                {allyChoices.map((ally) => (
+                  <AllyCard key={ally.id} ally={ally} onPick={onPickAlly} />
+                ))}
+                {bossMaxHpBonus && onPickMaxHp && (
+                  <RogueButton
+                    onClick={() => onPickMaxHp(bossMaxHpBonus)}
+                    type="text"
+                    className="!flex !h-auto !w-40 !min-w-0 !flex-col !items-center !gap-2 !whitespace-normal !rounded-xl !border-2 !border-red-700 !bg-red-950/40 !p-4 !text-center !transition hover:!border-red-500 hover:!bg-red-950/60"
+                  >
+                    <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
+                      {t("reward.vitality")}
+                    </span>
+                    <span className="block w-full whitespace-normal break-words text-sm font-bold leading-tight text-white [overflow-wrap:anywhere]">
+                      +{bossMaxHpBonus} {t("reward.maxHp")}
+                    </span>
+                    <span className="block w-full whitespace-normal break-words text-xs leading-relaxed text-red-200 [overflow-wrap:anywhere]">
+                      {t("reward.maxHpDescription")}
+                    </span>
+                  </RogueButton>
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
 

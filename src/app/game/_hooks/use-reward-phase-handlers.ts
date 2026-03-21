@@ -1,6 +1,11 @@
 "use client";
 
-import { useCallback, type Dispatch, type SetStateAction } from "react";
+import {
+  useCallback,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import type { CombatRewards } from "@/game/engine/rewards";
 import type { GameAction } from "../_providers/game-reducer";
 import type { GamePhase } from "../_services/run-phase";
@@ -22,6 +27,8 @@ export function useRewardPhaseHandlers({
   setPhase,
   setRewards,
 }: UseRewardPhaseHandlersParams) {
+  const [bossCardPicked, setBossCardPicked] = useState(false);
+
   const transitionAfterBossReward = useCallback(() => {
     if (hasPendingBiomeChoices) {
       setPhase("BIOME_SELECT");
@@ -43,9 +50,14 @@ export function useRewardPhaseHandlers({
   const handlePickCard = useCallback(
     (definitionId: string) => {
       dispatch({ type: "PICK_CARD_REWARD", payload: { definitionId } });
+      if (isBossRewards) {
+        setRewards((prev) => (prev ? { ...prev, cardChoices: [] } : null));
+        setBossCardPicked(true);
+        return;
+      }
       transitionAfterReward();
     },
-    [dispatch, transitionAfterReward]
+    [dispatch, isBossRewards, setRewards, transitionAfterReward]
   );
 
   const handleSkipReward = useCallback(() => {
@@ -84,5 +96,6 @@ export function useRewardPhaseHandlers({
     handlePickRelic,
     handlePickAlly,
     handlePickMaxHp,
+    bossCardPicked,
   };
 }
