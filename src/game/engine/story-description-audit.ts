@@ -131,6 +131,10 @@ const DESCRIPTION_RULES: Record<MetaBonus["type"], DescriptionRule> = {
     fr: [/qualite de butin/],
     en: [/loot quality/],
   },
+  STARTING_UNCOMMON_CARD_CHOICE: {
+    fr: [/choix parmi 3 cartes .*communes|choix parmi 3 cartes inhabituelles/],
+    en: [/choice of 3 uncommon cards|choose from 3 uncommon cards/],
+  },
   STARTING_RARE_CARD: {
     fr: [/carte rare aleatoire/],
     en: [/random rare card/],
@@ -144,11 +148,11 @@ function normalizeAuditText(text: string): string {
     .toLowerCase();
 }
 
-function getEnglishStoryDescription(
-  storyId: string,
-  fallback: string
-): string {
-  const stories = (en.stories ?? {}) as Record<string, { description?: string }>;
+function getEnglishStoryDescription(storyId: string, fallback: string): string {
+  const stories = (en.stories ?? {}) as Record<
+    string,
+    { description?: string }
+  >;
   return stories[storyId]?.description ?? fallback;
 }
 

@@ -44,6 +44,7 @@ export const MetaBonusSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("ALLY_SLOTS"), value: z.number().int() }),
   z.object({ type: z.literal("RELIC_DISCOUNT"), value: z.number() }),
   z.object({ type: z.literal("LOOT_LUCK"), value: z.number().int() }),
+  z.object({ type: z.literal("STARTING_UNCOMMON_CARD_CHOICE") }),
   z.object({ type: z.literal("STARTING_RARE_CARD") }),
 ]);
 export type MetaBonus = z.infer<typeof MetaBonusSchema>;
@@ -115,6 +116,7 @@ export const ComputedMetaBonusesSchema = z.object({
   exhaustKeepChance: z.number().default(0), // % chance to not exhaust
   survivalOnce: z.boolean().default(false),
   freeUpgradePerRun: z.boolean().default(false),
+  startingUncommonCardChoice: z.boolean().default(false),
   startingRareCard: z.boolean().default(false),
 });
 export type ComputedMetaBonuses = z.infer<typeof ComputedMetaBonusesSchema>;

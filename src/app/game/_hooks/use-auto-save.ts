@@ -6,6 +6,10 @@ import { saveRunStateAction } from "@/server/actions/run";
 
 const DEBOUNCE_MS = 2000;
 
+function isTerminalRunStatus(status: RunState["status"]): boolean {
+  return status === "VICTORY" || status === "DEFEAT" || status === "ABANDONED";
+}
+
 function buildMapCompletionSignature(state: RunState): string {
   return state.map
     .map((slot) => slot.map((room) => (room.completed ? "1" : "0")).join(""))
@@ -58,6 +62,15 @@ export function useAutoSave(
   latestStateKeyRef.current = buildAutoSaveStateKey(state);
 
   useEffect(() => {
+    if (isTerminalRunStatus(state.status)) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      previousStateRef.current = state;
+      return;
+    }
+
     const previousState = previousStateRef.current;
     const stateKey = latestStateKeyRef.current;
     const previousMapCompletion = buildMapCompletionSignature(previousState);
@@ -128,6 +141,9 @@ export function useAutoSave(
   useEffect(() => {
     const flushLatestState = () => {
       const latestState = latestStateRef.current;
+      if (isTerminalRunStatus(latestState.status)) {
+        return;
+      }
       const latestStateKey = latestStateKeyRef.current;
       const snapshotState = buildStateSnapshot
         ? buildStateSnapshot(latestState)

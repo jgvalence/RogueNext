@@ -170,6 +170,9 @@ function applyBonusToComputed(
     case "FREE_UPGRADE_PER_RUN":
       result.freeUpgradePerRun = true;
       break;
+    case "STARTING_UNCOMMON_CARD_CHOICE":
+      result.startingUncommonCardChoice = true;
+      break;
     case "STARTING_RARE_CARD":
       result.startingRareCard = true;
       break;

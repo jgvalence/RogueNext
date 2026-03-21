@@ -184,6 +184,8 @@ export const fr = {
         "{{value}}% de chance qu'une carte avec Epuisement ne soit pas epuisee (hors pouvoirs)",
       survivalOnce: "Survit a 1 PV une fois par expedition",
       freeUpgradePerRun: "Ameliore une carte gratuitement a chaque expedition",
+      startingUncommonCardChoice:
+        "Commence chaque expedition avec un choix parmi 3 cartes inhabituelles",
       startingRareCard:
         "Commence chaque expedition avec une carte rare aleatoire",
     },
@@ -479,11 +481,14 @@ export const fr = {
     },
     sections: {
       character: "Personnage",
+      startingStoryCard: "Carte de chronique",
       difficulty: "Difficulte",
       runType: "Type d'expedition",
       runCondition: "Option de depart",
       preGameOptions: "Options d'avant-partie",
     },
+    startingStoryCardHint:
+      "Ce bonus de chronique te laisse choisir 1 carte inhabituelle avant le depart.",
     selected: "Selectionne",
     modeType: "Mode",
     modeHint:
@@ -498,7 +503,7 @@ export const fr = {
       "Pas de limite d'etages. Concu pour grimper dans le classement. Aucune ressource de biome n'est accordee.",
     continue: "Lancer l'expedition",
     readyHint: "Preparation complete. Tu peux lancer l'expedition.",
-    missingHint: "Choisis une difficulte et un mode de jeu pour continuer.",
+    missingHint: "Finalise les choix obligatoires pour continuer.",
   },
   runDifficulty: {
     select: {
@@ -895,8 +900,7 @@ export const fr = {
     },
     runic_bulwark: {
       name: "Rempart runique",
-      description:
-        "Conservez 50 % de votre armure restante d'un tour a l'autre.",
+      description: "Commencez chaque combat avec 1 Concentration et 2 Epines.",
     },
     eternal_hourglass: {
       name: "Sablier eternel",

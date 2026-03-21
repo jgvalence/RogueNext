@@ -77,6 +77,7 @@ export const RunStateSchema = z.object({
   usableItems: z.array(UsableItemInstanceSchema).default([]),
   usableItemCapacity: z.number().int().min(0).default(3),
   freeUpgradeUsed: z.boolean().default(false),
+  startingBonusCardApplied: z.boolean().default(false),
   survivalOnceUsed: z.boolean().optional(),
   map: z.array(z.array(RoomNodeSchema)),
   combat: CombatStateSchema.nullable().default(null),

@@ -38,6 +38,7 @@ function makeRunState(overrides: Partial<RunState> = {}): RunState {
     usableItems: [],
     usableItemCapacity: 3,
     freeUpgradeUsed: false,
+    startingBonusCardApplied: false,
     survivalOnceUsed: false,
     map: Array.from({ length: 10 }, (_, index) => [makeRoom(index, "COMBAT")]),
     combat: null,

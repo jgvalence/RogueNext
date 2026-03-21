@@ -35,6 +35,65 @@ function getStarterCards(
 }
 
 describe("gameReducer", () => {
+  it("adds the selected starting uncommon card only when it matches the current character choice", () => {
+    const allCards = buildCardDefsMap();
+    const bibliStarterCards = getStarterCards(allCards, "bibliothecaire");
+    const scribeUncommon = allCards.get("starborn_omen");
+    const bibliUncommon = allCards.get("sphinx_riddle");
+    expect(scribeUncommon).toBeDefined();
+    expect(bibliUncommon).toBeDefined();
+    if (!scribeUncommon || !bibliUncommon) return;
+
+    const reducerCardDefs = new Map<string, CardDefinition>([
+      [scribeUncommon.id, scribeUncommon],
+      [bibliUncommon.id, bibliUncommon],
+      ...bibliStarterCards.map((card) => [card.id, card] as const),
+    ]);
+
+    const reducer = createGameReducer({
+      cardDefs: reducerCardDefs,
+      enemyDefs: buildEnemyDefsMap(),
+      allyDefs: buildAllyDefsMap(),
+      rng: makeDeterministicRng("starting-uncommon-choice"),
+    });
+
+    const state = {
+      ...createNewRun(
+        "run-starting-uncommon",
+        "run-starting-uncommon",
+        bibliStarterCards,
+        createRNG("run-starting-uncommon-base")
+      ),
+      metaBonuses: {
+        ...DEFAULT_META_BONUSES,
+        startingUncommonCardChoice: true,
+      },
+      unlockedCardIds: [scribeUncommon.id, bibliUncommon.id],
+    };
+
+    const invalid = reducer(state, {
+      type: "ADD_STARTING_BONUS_CARD",
+      payload: { definitionId: scribeUncommon.id },
+    });
+    expect(invalid.deck).toHaveLength(state.deck.length);
+    expect(invalid.startingBonusCardApplied).toBe(false);
+
+    const valid = reducer(state, {
+      type: "ADD_STARTING_BONUS_CARD",
+      payload: { definitionId: bibliUncommon.id },
+    });
+    expect(
+      valid.deck.some((card) => card.definitionId === bibliUncommon.id)
+    ).toBe(true);
+    expect(valid.startingBonusCardApplied).toBe(true);
+
+    const duplicate = reducer(valid, {
+      type: "ADD_STARTING_BONUS_CARD",
+      payload: { definitionId: bibliUncommon.id },
+    });
+    expect(duplicate.deck).toHaveLength(valid.deck.length);
+  });
+
   it("filters starting rare card to the chosen character", () => {
     const allCards = buildCardDefsMap();
     const scribeStarterCards = getStarterCards(allCards, "scribe");

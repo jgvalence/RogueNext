@@ -147,6 +147,13 @@ export function useRunRoomActions({
         });
       }
 
+      if (draft.selectedStartingBonusCardId) {
+        dispatch({
+          type: "ADD_STARTING_BONUS_CARD",
+          payload: { definitionId: draft.selectedStartingBonusCardId },
+        });
+      }
+
       dispatch({ type: "APPLY_DIFFICULTY", payload: { difficultyLevel } });
       dispatch({
         type: "APPLY_RUN_CONDITION",

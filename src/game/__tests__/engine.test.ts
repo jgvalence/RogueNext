@@ -35,6 +35,7 @@ import {
   applyHealRoomBloodPurge,
   createGuaranteedRelicEvent,
   createNewRun,
+  drawStartingUncommonCardChoices,
   drawRandomBiomeChoices,
   generateFloorMap,
   getHealRoomBloodPurgeHpCost,
@@ -1061,18 +1062,14 @@ describe("Card playing", () => {
   it("exhaustKeepChance does not keep POWER cards out of exhaust", () => {
     const rng = createRNG("power-exhaust-keep-test");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "starborn_omen", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "starborn_omen", upgraded: false },
+      ],
     });
 
-    const result = playCard(
-      state,
-      "c1",
-      null,
-      false,
-      cardDefs,
-      rng,
-      { exhaustKeepChance: 100 }
-    );
+    const result = playCard(state, "c1", null, false, cardDefs, rng, {
+      exhaustKeepChance: 100,
+    });
 
     expect(result.discardPile).toHaveLength(0);
     expect(result.exhaustPile).toHaveLength(1);
@@ -1082,18 +1079,14 @@ describe("Card playing", () => {
   it("exhaustKeepChance can keep non-POWER Exhaust cards in discard", () => {
     const rng = createRNG("non-power-exhaust-keep-test");
     const state = makeMinimalCombat({
-      hand: [{ instanceId: "c1", definitionId: "eldritch_pact", upgraded: false }],
+      hand: [
+        { instanceId: "c1", definitionId: "eldritch_pact", upgraded: false },
+      ],
     });
 
-    const result = playCard(
-      state,
-      "c1",
-      null,
-      false,
-      cardDefs,
-      rng,
-      { exhaustKeepChance: 100 }
-    );
+    const result = playCard(state, "c1", null, false, cardDefs, rng, {
+      exhaustKeepChance: 100,
+    });
 
     expect(result.exhaustPile).toHaveLength(0);
     expect(result.discardPile).toHaveLength(1);
@@ -2373,9 +2366,9 @@ describe("Card playing", () => {
 
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
-    expect(result.player.currentHp).toBe(73);
+    expect(result.player.currentHp).toBe(72);
     expect(result.player.block).toBe(7);
-    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(1);
   });
 
   it("leshy_ward cashes in weak stacks into scaling defense", () => {
@@ -2972,8 +2965,8 @@ describe("Card playing", () => {
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
     expect(result.player.block).toBe(8);
-    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
-    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "POISON")).toBe(2);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(1);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "POISON")).toBe(1);
   });
 
   it("xipe_shield marks the next draw to go to discard", () => {
@@ -4559,7 +4552,8 @@ describe("Run management", () => {
       expect(lateNormalCombats.length).toBeGreaterThan(0);
 
       const strongestLateCombat = lateNormalCombats.reduce((bestRoom, room) =>
-        encounterDanger(room.enemyIds ?? []) > encounterDanger(bestRoom.enemyIds ?? [])
+        encounterDanger(room.enemyIds ?? []) >
+        encounterDanger(bestRoom.enemyIds ?? [])
           ? room
           : bestRoom
       );
@@ -4612,7 +4606,8 @@ describe("Run management", () => {
       expect(lateNormalCombats.length).toBeGreaterThan(0);
 
       const strongestLateCombat = lateNormalCombats.reduce((bestRoom, room) =>
-        encounterDanger(room.enemyIds ?? []) > encounterDanger(bestRoom.enemyIds ?? [])
+        encounterDanger(room.enemyIds ?? []) >
+        encounterDanger(bestRoom.enemyIds ?? [])
           ? room
           : bestRoom
       );
@@ -4973,6 +4968,24 @@ describe("Run management", () => {
     expect(run.deck.some((card) => card.definitionId === scribeRare.id)).toBe(
       false
     );
+  });
+
+  it("drawStartingUncommonCardChoices filters to the chosen character and unlocked cards", () => {
+    const rng = makeDeterministicRng("starting-uncommon-choice");
+    const scribeUncommon = cardDefs.get("starborn_omen");
+    const bibliUncommon = cardDefs.get("sphinx_riddle");
+    expect(scribeUncommon).toBeDefined();
+    expect(bibliUncommon).toBeDefined();
+    if (!scribeUncommon || !bibliUncommon) return;
+
+    const choices = drawStartingUncommonCardChoices(
+      [scribeUncommon, bibliUncommon],
+      rng,
+      "bibliothecaire",
+      [scribeUncommon.id, bibliUncommon.id]
+    );
+
+    expect(choices.map((card) => card.id)).toEqual([bibliUncommon.id]);
   });
 
   it("applyRunConditionToRun filters explicit bonus cards to the current character", () => {
@@ -6784,8 +6797,15 @@ describe("Relics", () => {
     expect(statusCardDefinitionIds).toContain(injectedStatus);
   });
 
-  it("runic_bulwark retains half of remaining block on next turn", () => {
-    const rng = createRNG("runic-bulwark");
+  it("runic_bulwark starts combat with 1 focus and 2 thorns", () => {
+    const state = makeMinimalCombat();
+    const result = applyRelicsOnCombatStart(state, ["runic_bulwark"]);
+    expect(result.player.focus).toBe(1);
+    expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+  });
+
+  it("runic_bulwark no longer retains block between turns", () => {
+    const rng = createRNG("surgeon-mi-go-tools");
     const state = makeMinimalCombat({
       phase: "ALLIES_ENEMIES_TURN",
       player: {
@@ -6794,30 +6814,7 @@ describe("Relics", () => {
       },
     });
     const result = startPlayerTurn(state, rng, ["runic_bulwark"]);
-    expect(result.player.block).toBe(4);
-  });
-
-  it("surgeon_mi_go_tools retains 50% block and reduces draw by 1", () => {
-    const rng = createRNG("surgeon-mi-go-tools");
-    const state = makeMinimalCombat({
-      phase: "ALLIES_ENEMIES_TURN",
-      player: {
-        ...makeMinimalCombat().player,
-        block: 9,
-      },
-      drawPile: [
-        { instanceId: "c1", definitionId: "strike", upgraded: false },
-        { instanceId: "c2", definitionId: "strike", upgraded: false },
-        { instanceId: "c3", definitionId: "defend", upgraded: false },
-        { instanceId: "c4", definitionId: "defend", upgraded: false },
-        { instanceId: "c5", definitionId: "ink_surge", upgraded: false },
-      ],
-    });
-
-    const result = startPlayerTurn(state, rng, ["surgeon_mi_go_tools"]);
-
-    expect(result.player.block).toBe(4);
-    expect(result.hand).toHaveLength(4);
+    expect(result.player.block).toBe(0);
   });
 
   it("recursive_scratch upgraded draws a card and copies itself into the draw pile", () => {
@@ -7002,6 +6999,79 @@ describe("Relics", () => {
     expect(state.player.inkCurrent).toBe(1);
   });
 
+  it("surgeon_mi_go_tools heals 1 only on the first exhaust each turn", () => {
+    const rng = createRNG("surgeon-mi-go-tools");
+    const cardDefs = buildCardDefsMap();
+    let state = makeMinimalCombat({
+      hand: [
+        {
+          instanceId: "recursive-1",
+          definitionId: "recursive_scratch",
+          upgraded: false,
+        },
+        {
+          instanceId: "recursive-2",
+          definitionId: "recursive_scratch",
+          upgraded: false,
+        },
+      ],
+      drawPile: [],
+      discardPile: [],
+      exhaustPile: [],
+      player: {
+        ...makeMinimalCombat().player,
+        currentHp: 28,
+        maxHp: 30,
+      },
+    });
+
+    const beforeFirst = state;
+    state = playCard(state, "recursive-1", "e1", false, cardDefs, rng);
+    state = applyRelicsOnCardPlayed(state, ["surgeon_mi_go_tools"], "ATTACK", {
+      beforeState: beforeFirst,
+      targetId: "e1",
+      rng,
+    });
+    expect(state.player.currentHp).toBe(29);
+
+    const beforeSecond = state;
+    state = playCard(state, "recursive-2", "e1", false, cardDefs, rng);
+    state = applyRelicsOnCardPlayed(state, ["surgeon_mi_go_tools"], "ATTACK", {
+      beforeState: beforeSecond,
+      targetId: "e1",
+      rng,
+    });
+    expect(state.player.currentHp).toBe(29);
+  });
+
+  it("library_colossus_plate retains 30% of remaining block on next turn", () => {
+    const rng = createRNG("library-colossus-plate");
+    const state = makeMinimalCombat({
+      phase: "ALLIES_ENEMIES_TURN",
+      player: {
+        ...makeMinimalCombat().player,
+        block: 9,
+      },
+    });
+    const result = startPlayerTurn(state, rng, ["library_colossus_plate"]);
+    expect(result.player.block).toBe(2);
+  });
+
+  it("russian_domovoi_hearth grants 1 ink at the start of each turn and no longer retains block", () => {
+    const rng = createRNG("russian-domovoi-hearth");
+    const state = makeMinimalCombat({
+      phase: "ALLIES_ENEMIES_TURN",
+      player: {
+        ...makeMinimalCombat().player,
+        block: 9,
+        inkCurrent: 0,
+      },
+    });
+    const result = startPlayerTurn(state, rng, ["russian_domovoi_hearth"]);
+    expect(result.player.block).toBe(0);
+    expect(result.player.inkCurrent).toBe(1);
+  });
+
   it("eternal_hourglass conserves unspent energy between turns", () => {
     const rng = createRNG("eternal-hourglass");
     const state = makeMinimalCombat({
@@ -7035,12 +7105,12 @@ describe("Relics", () => {
       ["russian_koschei_needle"]
     );
 
-    expect(getBuffStacks(beforeResult.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(
-      0
-    );
-    expect(getBuffStacks(activeResult.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(
-      1
-    );
+    expect(
+      getBuffStacks(beforeResult.enemies[0]?.buffs ?? [], "VULNERABLE")
+    ).toBe(0);
+    expect(
+      getBuffStacks(activeResult.enemies[0]?.buffs ?? [], "VULNERABLE")
+    ).toBe(1);
   });
 
   it("plague_carillon deals 1 damage to all enemies on card played", () => {

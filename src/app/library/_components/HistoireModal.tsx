@@ -83,6 +83,8 @@ function formatBonus(
       return t("library.bonus.survivalOnce");
     case "FREE_UPGRADE_PER_RUN":
       return t("library.bonus.freeUpgradePerRun");
+    case "STARTING_UNCOMMON_CARD_CHOICE":
+      return t("library.bonus.startingUncommonCardChoice");
     case "STARTING_RARE_CARD":
       return t("library.bonus.startingRareCard");
     default:

@@ -559,6 +559,20 @@ export function applyRelicsOnCombatStart(
         };
         break;
 
+      case "runic_bulwark":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            focus: current.player.focus + 1,
+            buffs: [
+              ...current.player.buffs,
+              { type: "THORNS" as const, stacks: 2 },
+            ],
+          },
+        };
+        break;
+
       case "kikimora_night_lantern":
         current = {
           ...current,
@@ -1132,12 +1146,7 @@ export function applyRelicsOnTurnStart(
   relicIds: string[],
   rng?: RNG
 ): CombatState {
-  const retainRatios = [
-    relicIds.includes("runic_bulwark") ? 0.5 : 0,
-    relicIds.includes("surgeon_mi_go_tools") ? 0.5 : 0,
-    relicIds.includes("library_colossus_plate") ? 0.4 : 0,
-    relicIds.includes("russian_domovoi_hearth") ? 0.3 : 0,
-  ];
+  const retainRatios = [relicIds.includes("library_colossus_plate") ? 0.3 : 0];
   const retainedRatio = Math.max(...retainRatios);
   const keepEnergy = relicIds.includes("eternal_hourglass");
   const retainedBlock =
@@ -1154,16 +1163,6 @@ export function applyRelicsOnTurnStart(
       energyCurrent,
     },
   };
-
-  if (retainedBlock > 0 && relicIds.includes("surgeon_mi_go_tools")) {
-    current = {
-      ...current,
-      playerDisruption: {
-        ...(current.playerDisruption ?? {}),
-        drawPenalty: (current.playerDisruption?.drawPenalty ?? 0) + 1,
-      },
-    };
-  }
 
   // Reset common per-turn counters used by several relic triggers.
   current = {
@@ -1204,19 +1203,6 @@ export function applyRelicsOnTurnStart(
     current = setCounter(current, "next_turn_energy_bonus", 0);
   }
 
-  if (retainedBlock > 0 && relicIds.includes("russian_domovoi_hearth")) {
-    current = {
-      ...current,
-      player: {
-        ...current.player,
-        inkCurrent: Math.min(
-          current.player.inkMax,
-          current.player.inkCurrent + 1
-        ),
-      },
-    };
-  }
-
   for (const relicId of relicIds) {
     switch (relicId) {
       case "thorn_mantle": {
@@ -1249,6 +1235,19 @@ export function applyRelicsOnTurnStart(
       }
 
       case "spectral_inkwell":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + 1
+            ),
+          },
+        };
+        break;
+
+      case "russian_domovoi_hearth":
         current = {
           ...current,
           player: {
@@ -1726,20 +1725,35 @@ export function applyRelicsOnCardPlayed(
 
   if (
     exhaustedThisPlay > 0 &&
-    relicIds.includes("spawn_void_ichor") &&
-    getCounter(current, "turn_exhaust_triggers") === 0
+    getCounter(current, "turn_exhaust_triggers") === 0 &&
+    (relicIds.includes("spawn_void_ichor") ||
+      relicIds.includes("surgeon_mi_go_tools"))
   ) {
     current = incrementCounter(current, "turn_exhaust_triggers", 1);
-    current = {
-      ...current,
-      player: {
-        ...current.player,
-        inkCurrent: Math.min(
-          current.player.inkMax,
-          current.player.inkCurrent + 1
-        ),
-      },
-    };
+    if (relicIds.includes("spawn_void_ichor")) {
+      current = {
+        ...current,
+        player: {
+          ...current.player,
+          inkCurrent: Math.min(
+            current.player.inkMax,
+            current.player.inkCurrent + 1
+          ),
+        },
+      };
+    }
+    if (relicIds.includes("surgeon_mi_go_tools")) {
+      current = {
+        ...current,
+        player: {
+          ...current.player,
+          currentHp: Math.min(
+            current.player.maxHp,
+            current.player.currentHp + 1
+          ),
+        },
+      };
+    }
   }
 
   const exhaustEnergyStacks = getBuffStacks(

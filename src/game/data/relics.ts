@@ -385,7 +385,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "runic_bulwark",
     name: "Runic Bulwark",
-    description: "Retain 50% of your remaining Block each turn.",
+    description: "Start each combat with 1 Focus and 2 Thorns.",
     rarity: "RARE",
   },
   {
@@ -409,8 +409,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "surgeon_mi_go_tools",
     name: "Instruments du Chirurgien Mi-Go",
-    description:
-      "Retain 50% of your remaining Block each turn. Draw 1 fewer card on turns where Block is retained.",
+    description: "The first time a card Exhausts each turn, recover 1 HP.",
     rarity: "RARE",
   },
   {
@@ -587,7 +586,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "library_colossus_plate",
     name: "Plaque du Colosse",
     description:
-      "Fin de tour: conserve 40% du Block restant (arrondi inferieur).",
+      "Fin de tour: conserve 30% du Block restant (arrondi inferieur).",
     rarity: "RARE",
   },
   {
@@ -994,7 +993,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "russian_domovoi_hearth",
     name: "Foyer Domovoi",
-    description: "Conservez 30% Block. Si Block conserve > 0: +1 Ink.",
+    description: "Debut de tour: gagnez 1 Ink.",
     rarity: "RARE",
   },
   {

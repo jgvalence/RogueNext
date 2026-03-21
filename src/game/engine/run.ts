@@ -91,6 +91,26 @@ function inferRunCharacterId(starterCards: CardDefinition[]): string {
   return characterIds.length === 1 ? characterIds[0]! : "scribe";
 }
 
+export function drawStartingUncommonCardChoices(
+  allCards: CardDefinition[],
+  rng: RNG,
+  characterId: string,
+  unlockedCardIds: string[] = []
+): CardDefinition[] {
+  const unlockedCardIdSet =
+    unlockedCardIds.length > 0 ? new Set(unlockedCardIds) : null;
+  const pool = allCards.filter(
+    (card) =>
+      card.rarity === "UNCOMMON" &&
+      !card.isStarterCard &&
+      card.isCollectible !== false &&
+      matchesCardCharacter(card, characterId) &&
+      (unlockedCardIdSet === null || unlockedCardIdSet.has(card.id))
+  );
+  if (pool.length <= 3) return rng.shuffle(pool);
+  return rng.shuffle(pool).slice(0, 3);
+}
+
 const RANDOM_BIOME_CHOICE_POOL = [...GAME_CONSTANTS.ALL_BIOMES] as BiomeType[];
 
 export function drawRandomBiomeChoices(rng: RNG): [BiomeType, BiomeType] {
@@ -142,7 +162,10 @@ function getEncounterProgressBand(room: number): number {
 }
 
 function getEncounterDifficultyBudgetBonus(difficultyLevel: number): number {
-  const clampedDifficulty = Math.min(5, Math.max(0, Math.floor(difficultyLevel)));
+  const clampedDifficulty = Math.min(
+    5,
+    Math.max(0, Math.floor(difficultyLevel))
+  );
   return ([0, 0, 1, 2, 3, 4] as const)[clampedDifficulty] ?? 0;
 }
 
@@ -157,7 +180,10 @@ function getEncounterDangerBudgetCap(
     ? Math.max(0, Math.floor(Math.max(0, floor - 1) / 3))
     : 0;
 
-  return Math.min(12, Math.max(2, 2 + floorBudget + difficultyBudget + infiniteBudget));
+  return Math.min(
+    12,
+    Math.max(2, 2 + floorBudget + difficultyBudget + infiniteBudget)
+  );
 }
 
 function getEncounterDangerBudget(
@@ -180,7 +206,10 @@ function getEncounterDangerBudget(
 
   return Math.min(
     maxBudget,
-    Math.max(1, 1 + floorBudget + roomBudget + difficultyBudget + infiniteBudget)
+    Math.max(
+      1,
+      1 + floorBudget + roomBudget + difficultyBudget + infiniteBudget
+    )
   );
 }
 
@@ -281,8 +310,7 @@ function filterEncounterCandidates(
   }
 
   const nonDuplicateHighThreats = candidates.filter(
-    (enemy) =>
-      !(selectedIds.has(enemy.id) && getEnemyDangerCost(enemy) >= 2)
+    (enemy) => !(selectedIds.has(enemy.id) && getEnemyDangerCost(enemy) >= 2)
   );
   if (nonDuplicateHighThreats.length > 0) {
     candidates = nonDuplicateHighThreats;
@@ -396,6 +424,7 @@ export function createNewRun(
     usableItems: [],
     usableItemCapacity: GAME_CONSTANTS.MAX_USABLE_ITEMS,
     freeUpgradeUsed: false,
+    startingBonusCardApplied: false,
     survivalOnceUsed: false,
     firstRunScript,
     map,
@@ -1195,7 +1224,8 @@ function pickPreBossEnemyId(
   const pool = bossOnlyCombats
     ? enemyDefinitions.filter((enemy) => enemy.isBoss && enemy.biome === biome)
     : enemyDefinitions.filter(
-        (enemy) => enemy.isElite && !enemy.isScriptedOnly && enemy.biome === biome
+        (enemy) =>
+          enemy.isElite && !enemy.isScriptedOnly && enemy.biome === biome
       );
   if (pool.length === 0) {
     return bossOnlyCombats ? "chapter_guardian" : "ink_archon";
@@ -1701,7 +1731,9 @@ function generateRoomEnemies(
   while (selectedEnemies.length < clampedMinEnemyCount) {
     selectedEnemies.push(
       weightedPick(
-        normalPool.filter((enemy) => getEnemyDangerCost(enemy) === cheapestEnemyCost),
+        normalPool.filter(
+          (enemy) => getEnemyDangerCost(enemy) === cheapestEnemyCost
+        ),
         (enemy) => getEnemySelectionWeight(enemy, floor, biome),
         rng
       )

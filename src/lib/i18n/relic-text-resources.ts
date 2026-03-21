@@ -154,8 +154,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     surgeon_mi_go_tools: {
       name: "Instruments du chirurgien Mi-Go",
-      description:
-        "Conservez 50 % de votre Armure restante chaque tour. Piochez 1 carte de moins lors d'un tour ou de l'Armure est conservee.",
+      description: "La premiere carte Epuisee de chaque tour vous rend 1 PV.",
     },
     sprite_quill_charm: {
       name: "Talisman de plume folle",
@@ -305,8 +304,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
         "Quand vous piochez au moins 3 cartes dans un tour, gagnez 1 Concentration.",
     },
     russian_domovoi_hearth: {
-      description:
-        "Conservez 30 % de votre Armure. Si de l'Armure est conservee, gagnez 1 Encre.",
+      description: "Au debut de chaque tour, gagnez 1 Encre.",
     },
     russian_midwinter_star: {
       description: "Tous les 3 tours, gagnez 1 Energie et piochez 1 carte.",

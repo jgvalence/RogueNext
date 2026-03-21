@@ -182,6 +182,8 @@ export const en = {
         "{{value}}% chance for a non-Power Exhaust card to be kept",
       survivalOnce: "Survive at 1 HP once per expedition",
       freeUpgradePerRun: "Upgrade one card for free each expedition",
+      startingUncommonCardChoice:
+        "Start each expedition with a choice of 3 uncommon cards",
       startingRareCard: "Start each expedition with a random rare card",
     },
   },
@@ -472,11 +474,14 @@ export const en = {
     },
     sections: {
       character: "Character",
+      startingStoryCard: "Story Card",
       difficulty: "Difficulty",
       runType: "Expedition Type",
       runCondition: "Starting Option",
       preGameOptions: "Pre-Expedition Options",
     },
+    startingStoryCardHint:
+      "This story bonus lets you pick 1 uncommon card before the expedition starts.",
     selected: "Selected",
     modeType: "Mode",
     modeHint:
@@ -491,7 +496,7 @@ export const en = {
       "No floor cap. Designed for leaderboard climbs. No biome resources are awarded.",
     continue: "Start Expedition",
     readyHint: "Setup complete. You can start the expedition.",
-    missingHint: "Pick a difficulty and a game mode to continue.",
+    missingHint: "Finish the required choices to continue.",
   },
   runDifficulty: {
     select: {
@@ -681,7 +686,7 @@ export const en = {
       title: "Homeric Hymns",
       author: "Homer",
       description:
-        "Hymns to the gods of Olympus that attract divine favor. Start each run with a random rare card in your deck.",
+        "Hymns to the gods of Olympus that attract divine favor. Start each run with a choice of 3 uncommon cards.",
     },
     le_banquet: {
       title: "The Symposium",
@@ -747,7 +752,7 @@ export const en = {
     journal_de_miskatonic: {
       title: "Miskatonic Journal",
       description:
-        "Notes from a scholar at Miskatonic University. Start each run with a random rare card.",
+        "Notes from a scholar at Miskatonic University. Start each run with a choice of 3 uncommon cards.",
     },
     cultes_innommables: {
       title: "Nameless Cults",
@@ -1040,7 +1045,7 @@ export const en = {
     },
     runic_bulwark: {
       name: "Runic Bulwark",
-      description: "Retain 50% of your remaining Block each turn.",
+      description: "Start each combat with 1 Focus and 2 Thorns.",
     },
     eternal_hourglass: {
       name: "Eternal Hourglass",

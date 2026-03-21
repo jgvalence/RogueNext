@@ -7,7 +7,7 @@ import type {
   BiomeResource,
 } from "@/game/schemas/enums";
 import { GAME_CONSTANTS } from "@/game/constants";
-import { type RNG } from "@/game/engine/rng";
+import { createRNG, type RNG } from "@/game/engine/rng";
 import { playCard } from "@/game/engine/cards";
 import {
   initCombat,
@@ -59,6 +59,7 @@ import {
   applyFreeUpgradeInDeck,
   removeCardFromRunDeck,
   applyEventChoice,
+  drawStartingUncommonCardChoices,
   type GameEvent,
   getBossRoomIndexForMap,
 } from "@/game/engine/run";
@@ -127,6 +128,7 @@ export type GameAction =
   | { type: "SELECT_ROOM"; payload: { choiceIndex: number } }
   | { type: "APPLY_DIFFICULTY"; payload: { difficultyLevel: number } }
   | { type: "APPLY_RUN_CONDITION"; payload: { conditionId: string } }
+  | { type: "ADD_STARTING_BONUS_CARD"; payload: { definitionId: string } }
   | { type: "PICK_CARD_REWARD"; payload: { definitionId: string } }
   | { type: "SKIP_CARD_REWARD" }
   | {
@@ -604,6 +606,48 @@ export function createGameReducer(deps: ReducerDeps) {
         return advanceFloor(state, action.payload.biome, rng, [
           ...cardDefs.values(),
         ]);
+
+      case "ADD_STARTING_BONUS_CARD": {
+        if (
+          state.startingBonusCardApplied ||
+          !state.metaBonuses?.startingUncommonCardChoice
+        ) {
+          return state;
+        }
+        const definition = cardDefs.get(action.payload.definitionId);
+        if (
+          !definition ||
+          definition.rarity !== "UNCOMMON" ||
+          definition.isStarterCard ||
+          definition.isCollectible === false ||
+          !matchesCardCharacter(definition, state.characterId)
+        ) {
+          return state;
+        }
+        const availableChoices = drawStartingUncommonCardChoices(
+          [...cardDefs.values()],
+          createRNG(
+            `${state.seed}-starting-uncommon-choice-${state.characterId}`
+          ),
+          state.characterId,
+          state.unlockedCardIds
+        );
+        if (!availableChoices.some((card) => card.id === definition.id)) {
+          return state;
+        }
+        return {
+          ...state,
+          startingBonusCardApplied: true,
+          deck: [
+            ...state.deck,
+            {
+              instanceId: nanoid(),
+              definitionId: definition.id,
+              upgraded: false,
+            },
+          ],
+        };
+      }
 
       case "PICK_CARD_REWARD":
         return addCardToRunDeck(state, action.payload.definitionId);

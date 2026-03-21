@@ -129,8 +129,7 @@ export const histoireDefinitions: Histoire[] = [
     cout: { RUNES: 78, PAGES: 12 },
     prerequis: ["chant_de_skald", "runes_du_valhalla"],
     bonus: { type: "STARTING_STRENGTH", value: 2 },
-    description:
-      "L'épopée du grand héros germanique. +2 Force de départ.",
+    description: "L'épopée du grand héros germanique. +2 Force de départ.",
     visuel: "livre",
   },
 
@@ -183,9 +182,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 2,
     cout: { LAURIERS: 28 },
     prerequis: ["la_republique"],
-    bonus: { type: "STARTING_RARE_CARD" },
+    bonus: { type: "STARTING_UNCOMMON_CARD_CHOICE" },
     description:
-      "Des hymnes aux dieux de l'Olympe qui attirent les faveurs divines. Commence chaque run avec une carte rare aléatoire dans le deck.",
+      "Des hymnes aux dieux de l'Olympe qui attirent les faveurs divines. Commence chaque run avec un choix parmi 3 cartes inhabituelles.",
     visuel: "parchemin",
   },
   {
@@ -353,9 +352,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { FRAGMENTS: 14 },
     prerequis: [],
-    bonus: { type: "STARTING_RARE_CARD" },
+    bonus: { type: "STARTING_UNCOMMON_CARD_CHOICE" },
     description:
-      "Les notes d'un chercheur de l'université de Miskatonic. Commence chaque run avec une carte rare aléatoire.",
+      "Les notes d'un chercheur de l'université de Miskatonic. Commence chaque run avec un choix parmi 3 cartes inhabituelles.",
     visuel: "livre",
   },
   {

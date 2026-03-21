@@ -1970,17 +1970,17 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "COMMON",
-    description: "Gain 8 block. Apply 2 Poison to ALL enemies.",
+    description: "Gain 8 block. Apply 1 Poison to ALL enemies.",
     effects: [
       { type: "BLOCK", value: 8 },
-      { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+      { type: "APPLY_DEBUFF", value: 1, buff: "POISON" },
     ],
     inkedVariant: null,
     upgrade: {
-      description: "Gain 12 block. Apply 3 Poison to ALL enemies.",
+      description: "Gain 12 block. Apply 2 Poison to ALL enemies.",
       effects: [
         { type: "BLOCK", value: 12 },
-        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+        { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
       ],
     },
     isStarterCard: false,
@@ -4446,27 +4446,27 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "COMMON",
-    description: "Gain 7 block. Heal 3. Gain 2 Thorns.",
+    description: "Gain 7 block. Heal 2. Gain 1 Thorns.",
     effects: [
       { type: "BLOCK", value: 7 },
-      { type: "HEAL", value: 3 },
-      { type: "APPLY_BUFF", value: 2, buff: "THORNS" },
+      { type: "HEAL", value: 2 },
+      { type: "APPLY_BUFF", value: 1, buff: "THORNS" },
     ],
     inkedVariant: {
-      description: "Gain 10 block. Heal 5. Gain 3 Thorns.",
-      effects: [
-        { type: "BLOCK", value: 10 },
-        { type: "HEAL", value: 5 },
-        { type: "APPLY_BUFF", value: 3, buff: "THORNS" },
-      ],
-      inkMarkCost: 2,
-    },
-    upgrade: {
       description: "Gain 10 block. Heal 4. Gain 2 Thorns.",
       effects: [
         { type: "BLOCK", value: 10 },
         { type: "HEAL", value: 4 },
         { type: "APPLY_BUFF", value: 2, buff: "THORNS" },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Gain 10 block. Heal 3. Gain 1 Thorns.",
+      effects: [
+        { type: "BLOCK", value: 10 },
+        { type: "HEAL", value: 3 },
+        { type: "APPLY_BUFF", value: 1, buff: "THORNS" },
       ],
     },
     isStarterCard: false,
@@ -5300,7 +5300,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
         { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
       ],
       inkMarkCost: 2,
-      upgradedDescription: "Draw 3 cards. Heal 6. Upgrade 1 random card in hand.",
+      upgradedDescription:
+        "Draw 3 cards. Heal 6. Upgrade 1 random card in hand.",
       upgradedEffects: [
         { type: "DRAW_CARDS", value: 3 },
         { type: "HEAL", value: 6 },
@@ -6188,7 +6189,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
     ],
     inkedVariant: {
-      description: "Apply 3 Weak to ALL enemies. Apply 3 Poison to ALL enemies.",
+      description:
+        "Apply 3 Weak to ALL enemies. Apply 3 Poison to ALL enemies.",
       effects: [
         { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
         { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },

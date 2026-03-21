@@ -98,4 +98,32 @@ describe("useAutoSave", () => {
     expect(body.runId).toBe(state.runId);
     expect(body.state.runId).toBe(state.runId);
   });
+
+  it("does not autosave or flush when the run is already terminal", () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const terminalState = makeTestRunState({
+      status: "VICTORY",
+    });
+
+    const { rerender } = renderHook(({ state }) => useAutoSave(state), {
+      initialProps: { state: terminalState },
+    });
+
+    rerender({
+      state: {
+        ...terminalState,
+        gold: terminalState.gold + 5,
+      },
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(2500);
+      window.dispatchEvent(new Event("pagehide"));
+    });
+
+    expect(saveRunStateActionMock).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 });

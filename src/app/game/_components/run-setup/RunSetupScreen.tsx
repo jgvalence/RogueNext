@@ -11,6 +11,7 @@ import {
   computeUnlockedCardIds,
   onEnterBiome,
 } from "@/game/engine/card-unlocks";
+import { drawStartingUncommonCardChoices } from "@/game/engine/run";
 import {
   generateStartMerchantOffers,
   getRemainingStartMerchantResources,
@@ -52,6 +53,7 @@ export interface RunSetupDraft {
   difficultyLevel: number | null;
   modeConditionId: string | null;
   normalConditionId: string | null;
+  selectedStartingBonusCardId: string | null;
   selectedStartOffers: StartMerchantOffer[];
 }
 
@@ -135,6 +137,10 @@ export function RunSetupScreen({
   const [draftNormalConditionId, setDraftNormalConditionId] = useState<
     string | null
   >(null);
+  const [
+    draftSelectedStartingBonusCardId,
+    setDraftSelectedStartingBonusCardId,
+  ] = useState<string | null>(null);
   const [draftSelectedOfferIds, setDraftSelectedOfferIds] = useState<string[]>(
     initialSelectedOfferIds
   );
@@ -217,6 +223,7 @@ export function RunSetupScreen({
     setDraftDifficulty(initialDifficulty);
     setDraftModeConditionId(selectedModeConditionId);
     setDraftNormalConditionId(selectedNormalConditionId);
+    setDraftSelectedStartingBonusCardId(null);
     setDraftSelectedOfferIds([...initialSelectedOfferIds]);
   }, [
     initialCharacterId,
@@ -225,6 +232,38 @@ export function RunSetupScreen({
     selectedNormalConditionId,
     initialSelectedOfferIds,
   ]);
+
+  const startingStoryCardChoices = useMemo(() => {
+    if (
+      !runState.metaBonuses?.startingUncommonCardChoice ||
+      runState.startingBonusCardApplied
+    ) {
+      return [];
+    }
+    return drawStartingUncommonCardChoices(
+      [...cardDefs.values()],
+      createRNG(
+        `${runState.seed}-starting-uncommon-choice-${draftCharacterId}`
+      ),
+      draftCharacterId,
+      draftUnlockedCardIds
+    );
+  }, [
+    cardDefs,
+    draftCharacterId,
+    draftUnlockedCardIds,
+    runState.metaBonuses?.startingUncommonCardChoice,
+    runState.seed,
+    runState.startingBonusCardApplied,
+  ]);
+
+  useEffect(() => {
+    setDraftSelectedStartingBonusCardId((current) =>
+      current && startingStoryCardChoices.some((card) => card.id === current)
+        ? current
+        : null
+    );
+  }, [startingStoryCardChoices]);
 
   const fallbackCharacterChoices = useMemo(() => {
     const knownChoices = Object.keys(runState.difficultyMaxByCharacter ?? {});
@@ -311,11 +350,14 @@ export function RunSetupScreen({
 
   const isDifficultyValid =
     draftDifficulty !== null && difficultyChoices.includes(draftDifficulty);
+  const requiresStartingStoryCardChoice = startingStoryCardChoices.length > 0;
   const canContinue =
     isDifficultyValid &&
     draftModeConditionId !== null &&
     (draftModeConditionId === INFINITE_RUN_CONDITION_ID ||
-      draftNormalConditionId !== null);
+      draftNormalConditionId !== null) &&
+    (!requiresStartingStoryCardChoice ||
+      draftSelectedStartingBonusCardId !== null);
 
   const visibleResources = Object.entries(remainingResources).filter(
     ([, amount]) => amount > 0
@@ -343,6 +385,7 @@ export function RunSetupScreen({
         draftModeConditionId === VANILLA_RUN_CONDITION_ID
           ? draftNormalConditionId
           : null,
+      selectedStartingBonusCardId: draftSelectedStartingBonusCardId,
       selectedStartOffers: draftSelectedOffers,
     });
   };
@@ -653,6 +696,62 @@ export function RunSetupScreen({
                   );
                 }
               )}
+            </div>
+          </section>
+        )}
+
+        {startingStoryCardChoices.length > 0 && (
+          <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100/80">
+                {t("runSetup.sections.startingStoryCard")}
+              </h3>
+              {draftSelectedStartingBonusCardId && (
+                <RogueTag
+                  bordered
+                  className="!m-0 rounded border-sky-300/35 bg-sky-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-sky-100"
+                >
+                  {t("runSetup.selected")}
+                </RogueTag>
+              )}
+            </div>
+            <p className="mb-3 text-xs text-amber-100/65">
+              {t("runSetup.startingStoryCardHint")}
+            </p>
+            <div className="grid gap-3 md:grid-cols-3">
+              {startingStoryCardChoices.map((card) => {
+                const isSelected = draftSelectedStartingBonusCardId === card.id;
+                return (
+                  <RogueButton
+                    key={card.id}
+                    type="text"
+                    onClick={() => setDraftSelectedStartingBonusCardId(card.id)}
+                    className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition ${
+                      isSelected
+                        ? "!border-sky-300/60 !bg-sky-300/10"
+                        : "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
+                    }`}
+                  >
+                    <RogueTag
+                      bordered
+                      className="!m-0 rounded border-sky-300/35 bg-sky-300/15 px-2 py-0.5 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-sky-100"
+                    >
+                      {t("gameCard.rarity.UNCOMMON")}
+                    </RogueTag>
+                    <p className="mt-2 text-sm font-bold text-amber-50">
+                      {localizeCardName(card, t)}
+                    </p>
+                    <p className="mt-1 text-xs text-amber-100/70">
+                      {localizeCardDescription(card, t)}
+                    </p>
+                    <p className="mt-2 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-amber-200/75">
+                      {isSelected
+                        ? t("runSetup.selected")
+                        : t("runDifficulty.select.pickAction")}
+                    </p>
+                  </RogueButton>
+                );
+              })}
             </div>
           </section>
         )}
