@@ -138,12 +138,26 @@ function getEnemyDangerCost(enemy: EnemyDef): number {
 function getEncounterProgressBand(room: number): number {
   const lastRegularCombatDepth = GAME_CONSTANTS.BOSS_ROOM_INDEX - 2;
   const clampedRoom = Math.max(0, Math.min(room, lastRegularCombatDepth));
-  return Math.min(4, Math.floor(clampedRoom / 3));
+  return Math.min(2, Math.floor(clampedRoom / 5));
 }
 
 function getEncounterDifficultyBudgetBonus(difficultyLevel: number): number {
   const clampedDifficulty = Math.min(5, Math.max(0, Math.floor(difficultyLevel)));
-  return ([0, 0, 1, 1, 2, 3] as const)[clampedDifficulty] ?? 0;
+  return ([0, 0, 1, 2, 3, 4] as const)[clampedDifficulty] ?? 0;
+}
+
+function getEncounterDangerBudgetCap(
+  floor: number,
+  difficultyLevel: number,
+  isInfiniteMode: boolean
+): number {
+  const floorBudget = Math.max(0, floor - 1) * 2;
+  const difficultyBudget = getEncounterDifficultyBudgetBonus(difficultyLevel);
+  const infiniteBudget = isInfiniteMode
+    ? Math.max(0, Math.floor(Math.max(0, floor - 1) / 3))
+    : 0;
+
+  return Math.min(12, Math.max(2, 2 + floorBudget + difficultyBudget + infiniteBudget));
 }
 
 function getEncounterDangerBudget(
@@ -152,15 +166,20 @@ function getEncounterDangerBudget(
   difficultyLevel: number,
   isInfiniteMode: boolean
 ): number {
-  const floorBudget = Math.max(0, floor - 1);
+  const floorBudget = Math.max(0, floor - 1) * 2;
   const roomBudget = getEncounterProgressBand(room);
   const difficultyBudget = getEncounterDifficultyBudgetBonus(difficultyLevel);
   const infiniteBudget = isInfiniteMode
     ? Math.max(0, Math.floor(Math.max(0, floor - 1) / 3))
     : 0;
+  const maxBudget = getEncounterDangerBudgetCap(
+    floor,
+    difficultyLevel,
+    isInfiniteMode
+  );
 
   return Math.min(
-    12,
+    maxBudget,
     Math.max(1, 1 + floorBudget + roomBudget + difficultyBudget + infiniteBudget)
   );
 }

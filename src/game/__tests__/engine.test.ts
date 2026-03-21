@@ -4582,6 +4582,57 @@ describe("Run management", () => {
     expect(Math.max(...lateEncounterSizes)).toBeGreaterThanOrEqual(4);
   });
 
+  it("generateFloorMap keeps floor one danger controlled on difficulty 1", () => {
+    const lateFloorOneDangerScores: number[] = [];
+    const lateFloorOneEncounterSizes: number[] = [];
+    const encounterDanger = (enemyIds: string[]) =>
+      enemyIds.reduce(
+        (sum, enemyId) => sum + (enemyDefs.get(enemyId)?.tier ?? 1),
+        0
+      );
+
+    for (let i = 0; i < 16; i += 1) {
+      const map = generateFloorMap(
+        1,
+        createRNG(`danger-floor-one-${i}`),
+        "GREEK",
+        undefined,
+        1
+      );
+      const lateNormalCombats = map
+        .flat()
+        .filter(
+          (room) =>
+            room.type === "COMBAT" &&
+            !room.isElite &&
+            room.index >= 6 &&
+            room.index < GAME_CONSTANTS.BOSS_ROOM_INDEX
+        );
+
+      expect(lateNormalCombats.length).toBeGreaterThan(0);
+
+      const strongestLateCombat = lateNormalCombats.reduce((bestRoom, room) =>
+        encounterDanger(room.enemyIds ?? []) > encounterDanger(bestRoom.enemyIds ?? [])
+          ? room
+          : bestRoom
+      );
+      lateFloorOneDangerScores.push(
+        encounterDanger(strongestLateCombat.enemyIds ?? [])
+      );
+      lateFloorOneEncounterSizes.push(
+        strongestLateCombat.enemyIds?.length ?? 0
+      );
+    }
+
+    const averageLateFloorOneDanger =
+      lateFloorOneDangerScores.reduce((sum, score) => sum + score, 0) /
+      lateFloorOneDangerScores.length;
+
+    expect(averageLateFloorOneDanger).toBeLessThanOrEqual(2.5);
+    expect(Math.max(...lateFloorOneDangerScores)).toBeLessThanOrEqual(3);
+    expect(Math.max(...lateFloorOneEncounterSizes)).toBeLessThanOrEqual(2);
+  });
+
   it("selectRoom marks room as completed", () => {
     const rng = createRNG("select-room");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
