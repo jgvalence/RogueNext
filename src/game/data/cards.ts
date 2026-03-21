@@ -4445,7 +4445,7 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     energyCost: 1,
     inkCost: 0,
     targeting: "SELF",
-    rarity: "COMMON",
+    rarity: "UNCOMMON",
     description: "Gain 7 block. Heal 2. Gain 1 Thorns.",
     effects: [
       { type: "BLOCK", value: 7 },

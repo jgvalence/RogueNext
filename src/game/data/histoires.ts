@@ -517,9 +517,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 3,
     cout: { SCEAUX: 74, AMBRE: 10 },
     prerequis: ["l_oiseau_de_feu", "domovoi"],
-    bonus: { type: "LOOT_LUCK", value: 2 },
+    bonus: { type: "LOOT_LUCK", value: 1 },
     description:
-      "Le grimoire interdit de la tradition russe. Ses marges cachent des chemins vers les récompenses les plus rares. +2 qualité de butin.",
+      "Le grimoire interdit de la tradition russe. Ses marges cachent des chemins vers les récompenses les plus rares. +1 qualité de butin.",
     visuel: "grimoire",
   },
 

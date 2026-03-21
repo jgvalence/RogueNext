@@ -5,8 +5,8 @@ type LootRarity = "COMMON" | "UNCOMMON" | "RARE" | "BOSS" | "STARTER";
 const BASE_RARITY_WEIGHT: Record<LootRarity, number> = {
   STARTER: 0,
   COMMON: 60,
-  UNCOMMON: 30,
-  RARE: 10,
+  UNCOMMON: 37,
+  RARE: 3,
   BOSS: 0,
 };
 

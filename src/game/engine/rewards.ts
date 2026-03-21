@@ -233,27 +233,15 @@ export function generateCombatRewards(
   if (isBoss) {
     cardChoices = []; // Boss: no card choice
   } else if (isElite) {
-    // Elite: 1 rare card option
-    cardChoices =
-      rareRewardCards.length > 0
-        ? drawMixedCardChoices(
-            rareRewardCards,
-            biome,
-            Math.max(1, 1 + extraChoices),
-            rng,
-            lootLuck,
-            "ELITE_REWARD",
-            offerContext
-          )
-        : drawMixedCardChoices(
-            rewardEligibleCards,
-            biome,
-            Math.max(1, 1 + extraChoices),
-            rng,
-            lootLuck,
-            "ELITE_REWARD",
-            offerContext
-          );
+    cardChoices = drawMixedCardChoices(
+      rewardEligibleCards,
+      biome,
+      Math.max(1, 1 + extraChoices),
+      rng,
+      lootLuck,
+      "ELITE_REWARD",
+      offerContext
+    );
   } else {
     cardChoices = drawBiomeFocusedCardChoices(
       rewardEligibleCards,
