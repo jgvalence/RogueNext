@@ -11,7 +11,7 @@ export const dagdaShadowBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "dagda_shadow",
     name: "Dagda's Shadow",
-    maxHp: 166,
+    maxHp: 132,
     speed: 3,
     abilities: [
       {
@@ -39,13 +39,13 @@ export const dagdaShadowBossEnemyDefinitions: RawEnemyDefinition[] = [
         weight: 1,
         target: "SELF",
         effects: [
-          { type: "BLOCK", value: 20 },
-          { type: "HEAL", value: 12 },
+          { type: "BLOCK", value: 14 },
+          { type: "HEAL", value: 6 },
         ],
         conditionalWeights: [
           {
             condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
-            weightMultiplier: 3,
+            weightMultiplier: 2,
           },
           { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
         ],

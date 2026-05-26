@@ -12,7 +12,7 @@ export const cernunnosShadeBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "cernunnos_shade",
     name: "Cernunnos's Shade",
-    maxHp: 168,
+    maxHp: 135,
     speed: 4,
     abilities: [
       {
@@ -32,7 +32,7 @@ export const cernunnosShadeBossEnemyDefinitions: RawEnemyDefinition[] = [
         weight: 1,
         target: "SELF",
         effects: [
-          { type: "APPLY_BUFF", value: 5, buff: "THORNS" },
+          { type: "APPLY_BUFF", value: 3, buff: "THORNS" },
           { type: "BLOCK", value: 10 },
         ],
         conditionalWeights: [

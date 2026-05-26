@@ -12,7 +12,7 @@ export const shubSpawnBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "shub_spawn",
     name: "Shub-Niggurath's Spawn",
-    maxHp: 175,
+    maxHp: 198,
     speed: 4,
     abilities: [
       {

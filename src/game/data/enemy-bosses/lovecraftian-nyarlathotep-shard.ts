@@ -11,7 +11,7 @@ export const nyarlathotepShardBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "nyarlathotep_shard",
     name: "Nyarlathotep Shard",
-    maxHp: 168,
+    maxHp: 188,
     speed: 5,
     abilities: [
       {

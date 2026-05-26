@@ -12,7 +12,7 @@ export const medusaBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "medusa",
     name: "Medusa",
-    maxHp: 155,
+    maxHp: 122,
     speed: 2,
     abilities: [
       {
@@ -50,15 +50,15 @@ export const medusaBossEnemyDefinitions: RawEnemyDefinition[] = [
       {
         name: "Stone Crush",
         weight: 1,
-        effects: [{ type: "DAMAGE", value: 22 }],
+        effects: [{ type: "DAMAGE", value: 18 }],
         conditionalWeights: [
           {
             condition: { type: "PLAYER_HAS_DEBUFF", buff: "VULNERABLE" },
-            weightMultiplier: 4,
+            weightMultiplier: 3,
           },
           {
             condition: { type: "PLAYER_HAS_DEBUFF", buff: "WEAK" },
-            weightMultiplier: 3,
+            weightMultiplier: 2,
           },
         ],
       },

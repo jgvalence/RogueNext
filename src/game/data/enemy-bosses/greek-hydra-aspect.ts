@@ -12,7 +12,7 @@ export const hydraAspectBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "hydra_aspect",
     name: "Aspect of the Hydra",
-    maxHp: 155,
+    maxHp: 118,
     speed: 4,
     abilities: [
       {
@@ -20,9 +20,9 @@ export const hydraAspectBossEnemyDefinitions: RawEnemyDefinition[] = [
         weight: 1,
         target: "PLAYER",
         effects: [
-          { type: "DAMAGE", value: 7 },
-          { type: "DAMAGE", value: 7 },
-          { type: "DAMAGE", value: 7 },
+          { type: "DAMAGE", value: 6 },
+          { type: "DAMAGE", value: 6 },
+          { type: "DAMAGE", value: 6 },
         ],
         conditionalWeights: [
           {
@@ -62,11 +62,11 @@ export const hydraAspectBossEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Regeneration",
         weight: 1,
         target: "SELF",
-        effects: [{ type: "BLOCK", value: 15 }],
+        effects: [{ type: "BLOCK", value: 10 }],
         conditionalWeights: [
           {
             condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 40 },
-            weightMultiplier: 3,
+            weightMultiplier: 2,
           },
           { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
         ],
@@ -92,22 +92,22 @@ export const hydraAspectBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "hydra_head_left",
     name: "Hydra Head",
-    maxHp: 20,
+    maxHp: 12,
     speed: 5,
     abilities: [
       {
         name: "Fang Jab",
         weight: 1,
         target: "PLAYER",
-        effects: [{ type: "DAMAGE", value: 6 }],
+        effects: [{ type: "DAMAGE", value: 4 }],
       },
       {
         name: "Venom Spit",
         weight: 1,
         target: "PLAYER",
         effects: [
-          { type: "DAMAGE", value: 4 },
-          { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+          { type: "DAMAGE", value: 3 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
         ],
       },
     ],
@@ -120,22 +120,22 @@ export const hydraAspectBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "hydra_head_right",
     name: "Hydra Head",
-    maxHp: 20,
+    maxHp: 12,
     speed: 5,
     abilities: [
       {
         name: "Fang Jab",
         weight: 1,
         target: "PLAYER",
-        effects: [{ type: "DAMAGE", value: 6 }],
+        effects: [{ type: "DAMAGE", value: 4 }],
       },
       {
         name: "Venom Spit",
         weight: 1,
         target: "PLAYER",
         effects: [
-          { type: "DAMAGE", value: 4 },
-          { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+          { type: "DAMAGE", value: 3 },
+          { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
         ],
       },
     ],
@@ -148,7 +148,7 @@ export const hydraAspectBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "hydra_head_center",
     name: "Hydra Head",
-    maxHp: 24,
+    maxHp: 16,
     speed: 6,
     abilities: [
       {
@@ -156,7 +156,7 @@ export const hydraAspectBossEnemyDefinitions: RawEnemyDefinition[] = [
         weight: 1,
         target: "PLAYER",
         effects: [
-          { type: "DAMAGE", value: 7 },
+          { type: "DAMAGE", value: 5 },
           { type: "APPLY_DEBUFF", value: 2, buff: "VULNERABLE", duration: 2 },
         ],
       },
@@ -165,8 +165,8 @@ export const hydraAspectBossEnemyDefinitions: RawEnemyDefinition[] = [
         weight: 1,
         target: "PLAYER",
         effects: [
-          { type: "DAMAGE", value: 5 },
-          { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+          { type: "DAMAGE", value: 4 },
+          { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
         ],
       },
     ],

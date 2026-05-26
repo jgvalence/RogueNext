@@ -16,7 +16,7 @@ export const chapterGuardianLibraryBossEnemyDefinitions: RawEnemyDefinition[] =
     {
       id: "chapter_guardian",
       name: "Chapter Guardian",
-      maxHp: 145,
+      maxHp: 150,
       speed: 5,
       abilities: [
         {

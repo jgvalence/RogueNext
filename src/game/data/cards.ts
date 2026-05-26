@@ -936,16 +936,23 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "RARE",
-    description: "Draw 3 cards. Gain 1 energy.",
+    description: "Draw 2 cards. Gain 1 energy.",
     effects: [
-      { type: "DRAW_CARDS", value: 3 },
+      { type: "DRAW_CARDS", value: 2 },
       { type: "GAIN_ENERGY", value: 1 },
     ],
-    inkedVariant: null,
-    upgrade: {
-      description: "Draw 3 cards. Gain 2 energy.",
+    inkedVariant: {
+      description: "Draw 3 cards. Gain 1 energy.",
       effects: [
         { type: "DRAW_CARDS", value: 3 },
+        { type: "GAIN_ENERGY", value: 1 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Draw 2 cards. Gain 2 energy.",
+      effects: [
+        { type: "DRAW_CARDS", value: 2 },
         { type: "GAIN_ENERGY", value: 2 },
       ],
     },

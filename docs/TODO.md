@@ -111,6 +111,23 @@
 - [ ] Verifier en playtest le nouveau cluster meta `LIBRARY` (`draw`, `energy`, `opening hand`) apres les nerfs
 - [ ] Verifier si `RUSSIAN` tier 2 reste trop fade apres le pass couts/identite
 
+#### Problemes identifies par le simulateur (scripts/simulate.ts)
+
+> Baseline conservatrice (events skippés, navigation non-stratégique) — les vraies valeurs sont ~5-10pp plus hautes.
+> Limites simulateur : GREEK et RUSSIAN sous-evalues de ~10-15pp (mecanique multi-cibles + boss phases).
+> Cibles visées : diff 0 = ~80% (max), ~35-40% (average) ; diff 2 = ~25-30% (max) toutes builds.
+
+- [x] **Meta none/minimal = 0% victoire** — starter deck buffé (Strike 6→8, Defend 5→6) + presets minimal renforcés
+- [x] **Average ≈ Strong** — strong différencié (str 4→5, block 7→9, atkBonus 2→3, regen 1→2)
+- [x] **Falaises difficulté** — `disruptionWeightBonus` lissé [0,0.2,0.4,0.9,2.0,3.5], seuils bypass/block décalés +1 palier
+- [x] **Ecart boss par biome** — GREEK +17pp avg (48→67% max), CELTIC +11pp max (65→76%), RUSSIAN +11pp avg. Voir `project_simulator.md` pour valeurs finales.
+- [ ] **Build armor dominant** — 85.5% (max diff 0) vs 82.5% ink (révisés) ; l'ecart croît avec la difficulte ; à surveiller
+- [ ] **Build ink structurellement faible** — 82.5% diff 0 max (amélioré) mais diff 2 : 37.5% vs armor 49% ; nerfler ou buffler cartes POWER
+- [ ] **Spread builds trop large** — diff 1 : draw 82.5% vs ink 58.5% (24pp) ; cible : tous les builds dans un couloir de ±10pp
+- [ ] **Falaise difficulte 1 → 2** — winrate mixed : 76% → 46% (÷1.65) ; acceptable mais à surveiller
+- [ ] **Diff 3 prestige** — mixed 19.5%, armor 17% ; acceptable comme mode prestige difficile
+- [ ] **LIBRARY max trivial** (99%) — structurel : boss sans mécanique complexe, max meta DPS écraserait même 200 HP ; accepter ou ajouter une mécanique défensive
+
 ### Contenu cartes/enemies
 
 - [x] Enrichir le pool de cartes STATUS/CURSE (types implementes, pool elargi avec effets de draw/tempo/hand disruption)
@@ -203,11 +220,31 @@
   - Supprimer progressivement les fallbacks auto-generes au profit de textes auteurises
   - Prioriser au minimum les ennemis les plus vus du biome `LIBRARY`
 
+### Dynamisme visuel
+
+- [ ] Transitions entre écrans — aucune transition animée entre les vues (marchand, carte, événement) : tout apparaît instantanément
+- [x] Animation de mort des ennemis — flash lumineux → désaturation → fondu vers l'état grisé (0.5s) dans `EnemyCard.tsx`
+- [x] Application buff/debuff — overlay vert (buff) ou rouge (debuff) lors de l'application sur l'ennemi (`EnemyCard.tsx`)
+- [x] Idle animations ennemis — l'image de l'ennemi respire doucement (scale 1→1.06, 3.6s, stoppée pendant acting/attacking)
+- [x] Écran récompenses sans fanfare — `animate-screen-enter` + cascade par item (55ms entre chaque carte/relique)
+- [ ] Cartes en main — pas de hover 3D, pas de flottement léger au repos (le fan mobile existe déjà)
+- [x] VFX cartes Power/Encre — glow violet pulsant permanent (`animate-power-pulse`) sur les cartes POWER jouables
+- [x] Signal de transition de phase boss — overlay doré + texte "Phase 2" sur 1.1s au déclenchement (`EnemyCard.tsx`)
+- [x] Minimap statique — `animate-ping` teal sur les nœuds de la salle courante disponibles (`FloorMap.tsx`)
+- [ ] Feedback résolution d'effet AoE — les cartes ciblant `ALL_ENEMIES` ne montrent pas d'enchaînement visuel sur chaque ennemi
+
+### Contenu manquant
+
+- [ ] Objets utilisables — seulement 2 potions (dégâts + bouclier) alors que le système supporte bien plus ; élargir le pool
+- [ ] Previews biomes — 6 biomes sur 9 affichent "Coming soon..." dans `biomes.ts` (champ `enemyPreview`) ; rédiger les descriptions
+- [ ] Contenu alliés — 3 alliés seulement (Scribe Apprentice, Ward Knight, Ink Familiar) ; le système supporte davantage
+
 ### UX / technique
 
 - [ ] Historique de runs (query key existe, page manquante)
 - [ ] Tutoriel/onboarding
 - [ ] Option vitesse/skip animations
+- [ ] Auth DB adapter désactivé (`src/lib/auth/config.ts:39`) — réactiver une fois le conflit `@auth/core` résolu
 - [x] FloorMap — deduplication des salles combat en apercu
   - Si plusieurs salles combat ont le meme nombre d'ennemis, n'en afficher qu'une seule
   - Conserver toutes les salles si les nombres d'ennemis sont differents (ex: 1 ennemi vs 2 ennemis = afficher les deux)

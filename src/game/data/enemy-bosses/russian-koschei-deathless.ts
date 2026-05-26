@@ -12,7 +12,7 @@ export const koscheiDeathlessBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "koschei_deathless",
     name: "Koschei the Deathless",
-    maxHp: 180,
+    maxHp: 148,
     speed: 2,
     abilities: [
       {
@@ -49,11 +49,11 @@ export const koscheiDeathlessBossEnemyDefinitions: RawEnemyDefinition[] = [
         name: "Immortal Ward",
         weight: 1,
         target: "SELF",
-        effects: [{ type: "BLOCK", value: 22 }],
+        effects: [{ type: "BLOCK", value: 16 }],
         conditionalWeights: [
           {
             condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },
-            weightMultiplier: 4,
+            weightMultiplier: 3,
           },
           { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
         ],
@@ -83,7 +83,7 @@ export const koscheiDeathlessBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "koschei_bone_chest",
     name: "Bone Chest",
-    maxHp: 24,
+    maxHp: 14,
     speed: 1,
     abilities: [
       {
@@ -114,7 +114,7 @@ export const koscheiDeathlessBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "koschei_black_egg",
     name: "Black Egg",
-    maxHp: 18,
+    maxHp: 10,
     speed: 3,
     abilities: [
       {
@@ -145,7 +145,7 @@ export const koscheiDeathlessBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "koschei_hidden_needle",
     name: "Hidden Needle",
-    maxHp: 12,
+    maxHp: 7,
     speed: 7,
     abilities: [
       {

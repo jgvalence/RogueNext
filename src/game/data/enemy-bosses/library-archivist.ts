@@ -18,7 +18,7 @@ export const archivistLibraryBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "the_archivist",
     name: "The Corrupted Archivist",
-    maxHp: 140,
+    maxHp: 144,
     speed: 7,
     abilities: [
       {

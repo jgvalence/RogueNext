@@ -42,23 +42,23 @@ const VESSEL_CONFIG_BY_STAGE: Record<
   CHEST: {
     definitionId: "koschei_bone_chest",
     name: "Bone Chest",
-    maxHp: 24,
+    maxHp: 14,
     speed: 1,
-    resealHp: 16,
+    resealHp: 8,
   },
   EGG: {
     definitionId: "koschei_black_egg",
     name: "Black Egg",
-    maxHp: 18,
+    maxHp: 10,
     speed: 3,
-    resealHp: 12,
+    resealHp: 6,
   },
   NEEDLE: {
     definitionId: "koschei_hidden_needle",
     name: "Hidden Needle",
-    maxHp: 12,
+    maxHp: 7,
     speed: 7,
-    resealHp: 12,
+    resealHp: 6,
   },
 };
 
@@ -424,7 +424,7 @@ export function applyKoscheiAbilityMechanics(
     );
   }
   if (abilityName === "Immortal Ward") {
-    current = healEnemy(current, enemyInstanceId, 12);
+    current = healEnemy(current, enemyInstanceId, 6);
   }
 
   return synchronizeKoscheiCombatState(current);

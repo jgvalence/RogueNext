@@ -350,7 +350,7 @@ function applyBabaYagaFacePunishment(
     case "TEETH":
       return grantEnemyStrength(state, enemy.instanceId, phaseTwo ? 2 : 1);
     case "BONES":
-      return grantEnemyBlock(state, enemy.instanceId, phaseTwo ? 12 : 8);
+      return grantEnemyBlock(state, enemy.instanceId, phaseTwo ? 6 : 4);
     case "HEARTH":
       return freezePlayerHandCards(state, phaseTwo ? 2 : 1);
     case "CURSE": {

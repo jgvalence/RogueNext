@@ -11,7 +11,7 @@ export const tezcatlipocaEchoBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "tezcatlipoca_echo",
     name: "Tezcatlipoca Echo",
-    maxHp: 172,
+    maxHp: 152,
     speed: 4,
     abilities: [
       {
@@ -55,7 +55,7 @@ export const tezcatlipocaEchoBossEnemyDefinitions: RawEnemyDefinition[] = [
       {
         name: "Night Mantle",
         weight: 1,
-        effects: [{ type: "BLOCK", value: 20 }],
+        effects: [{ type: "BLOCK", value: 14 }],
         conditionalWeights: [
           {
             condition: { type: "ENEMY_HP_BELOW_PCT", threshold: 50 },

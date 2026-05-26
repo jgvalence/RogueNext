@@ -11,7 +11,7 @@ export const babaYagaHutBossEnemyDefinitions: RawEnemyDefinition[] = [
   {
     id: "baba_yaga_hut",
     name: "Baba Yaga's Hut",
-    maxHp: 170,
+    maxHp: 122,
     speed: 3,
     abilities: [
       {
@@ -42,7 +42,7 @@ export const babaYagaHutBossEnemyDefinitions: RawEnemyDefinition[] = [
       {
         name: "Bone Fence",
         weight: 1,
-        effects: [{ type: "BLOCK", value: 19 }],
+        effects: [{ type: "BLOCK", value: 14 }],
         conditionalWeights: [
           { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 3 },
         ],
