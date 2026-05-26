@@ -122,7 +122,10 @@ export function CombatDesktopGrid({
 
         const def = allyDefs.get(ally.definitionId);
         const intent = def?.abilities[ally.intentIndex];
-        const localizedAllyName = localizeAllyName(ally.definitionId, ally.name);
+        const localizedAllyName = localizeAllyName(
+          ally.definitionId,
+          ally.name
+        );
         const localizedAllyIntentName = intent
           ? localizeAllyAbilityName(ally.definitionId, intent.name)
           : null;
@@ -413,6 +416,11 @@ export function CombatDesktopGrid({
                 (isTargetable || isCheatSelectable) &&
                   "border-red-400 shadow-[0_0_20px_rgba(248,113,113,0.45)]",
                 !isDead && !isActing && "cursor-pointer hover:-translate-y-1",
+                !isDead &&
+                  !isActing &&
+                  attackingEnemyId !== enemy.instanceId &&
+                  !newlySummonedIds.has(enemy.instanceId) &&
+                  "animate-enemy-idle",
                 isActing && "animate-enemy-acting",
                 attackingEnemyId === enemy.instanceId && "animate-enemy-attack",
                 newlySummonedIds.has(enemy.instanceId) &&

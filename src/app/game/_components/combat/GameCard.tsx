@@ -38,6 +38,7 @@ interface GameCardProps {
   onInkedDoubleClick?: () => void;
   size?: "sm" | "md" | "lg";
   detailMode?: "full" | "condensed";
+  scrollable?: boolean;
   className?: string;
 }
 
@@ -321,6 +322,7 @@ export function GameCard({
   onInkedDoubleClick,
   size = "md",
   detailMode = "full",
+  scrollable = false,
   className,
 }: GameCardProps) {
   const { t } = useTranslation();
@@ -384,7 +386,7 @@ export function GameCard({
     defaultValue: "No Ink",
   });
   const isCondensed = detailMode === "condensed";
-  const isScrollablePreview = size !== "sm" && !isCondensed;
+  const isScrollablePreview = (size !== "sm" || scrollable) && !isCondensed;
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const [showScrollTopFade, setShowScrollTopFade] = useState(false);
   const [showScrollBottomFade, setShowScrollBottomFade] = useState(false);
@@ -452,6 +454,9 @@ export function GameCard({
         typeStyle.border,
         sizeStyle.cardW,
         sizeStyle.cardH,
+        displayDefinition.type === "POWER" &&
+          hasInteractiveAction &&
+          "animate-power-pulse",
         hasInteractiveAction
           ? "cursor-pointer hover:-translate-y-1.5 hover:shadow-[0_18px_34px_rgba(2,6,23,0.62)] lg:hover:-translate-y-2"
           : "cursor-not-allowed opacity-55 saturate-[0.78]",

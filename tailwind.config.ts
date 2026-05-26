@@ -124,6 +124,73 @@ const config: Config = {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(100vh)" },
         },
+        // Enemy death: flash bright then dissolve
+        "enemy-death": {
+          "0%": {
+            opacity: "1",
+            transform: "scale(1)",
+            filter: "grayscale(0) brightness(1)",
+          },
+          "22%": {
+            opacity: "1",
+            transform: "scale(1.07)",
+            filter: "grayscale(0.2) brightness(2.2)",
+          },
+          "60%": {
+            opacity: "0.55",
+            transform: "scale(0.94)",
+            filter: "grayscale(0.8) brightness(0.6)",
+          },
+          "100%": {
+            opacity: "0.3",
+            transform: "scale(1)",
+            filter: "grayscale(1) brightness(1)",
+          },
+        },
+        // Screen mount: fade + slide up
+        "screen-enter": {
+          "0%": { opacity: "0", transform: "translateY(12px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        // Buff gained (positive): green inset flash
+        "buff-gain-flash": {
+          "0%": { backgroundColor: "rgba(34,197,94,0)" },
+          "35%": { backgroundColor: "rgba(34,197,94,0.38)" },
+          "100%": { backgroundColor: "rgba(34,197,94,0)" },
+        },
+        // Debuff gained (negative): red inset flash
+        "debuff-gain-flash": {
+          "0%": { backgroundColor: "rgba(239,68,68,0)" },
+          "35%": { backgroundColor: "rgba(239,68,68,0.38)" },
+          "100%": { backgroundColor: "rgba(239,68,68,0)" },
+        },
+        // Boss phase 2 trigger: dramatic gold-to-red flash
+        "boss-phase-flash": {
+          "0%": { opacity: "0" },
+          "12%": { opacity: "0.85" },
+          "45%": { opacity: "0.6" },
+          "100%": { opacity: "0" },
+        },
+        "enemy-idle": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-5px)" },
+        },
+        // Reward item staggered entry
+        "reward-enter": {
+          "0%": { opacity: "0", transform: "translateY(10px) scale(0.97)" },
+          "100%": { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        // POWER card outer glow pulse
+        "power-pulse": {
+          "0%, 100%": {
+            boxShadow:
+              "0 0 8px 2px rgba(167,139,250,0.32), 0 0 0 0 rgba(167,139,250,0)",
+          },
+          "50%": {
+            boxShadow:
+              "0 0 24px 7px rgba(167,139,250,0.62), 0 0 40px 10px rgba(167,139,250,0.18)",
+          },
+        },
       },
       animation: {
         "float-up": "float-up 0.8s ease-out forwards",
@@ -136,6 +203,14 @@ const config: Config = {
         "enemy-summon-enter": "enemy-summon-enter 0.55s ease-out forwards",
         "title-glow": "title-glow 4s ease-in-out infinite",
         "ambient-float": "ambient-float 7s ease-in-out infinite",
+        "enemy-death": "enemy-death 0.5s ease-out forwards",
+        "screen-enter": "screen-enter 0.32s ease-out both",
+        "buff-gain-flash": "buff-gain-flash 0.55s ease-out both",
+        "debuff-gain-flash": "debuff-gain-flash 0.55s ease-out both",
+        "boss-phase-flash": "boss-phase-flash 1.0s ease-out forwards",
+        "enemy-idle": "enemy-idle 3.6s ease-in-out infinite",
+        "reward-enter": "reward-enter 0.36s ease-out both",
+        "power-pulse": "power-pulse 2.4s ease-in-out infinite",
       },
     },
   },

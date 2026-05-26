@@ -796,6 +796,8 @@ export function FloorMap({
               const isBossRoom = depthIndex === bossRoomIndex;
               const isCurrentDepth = depthIndex === currentRoom;
               const isReachable = currentReachableIndexSet.has(choiceIndex);
+              const isPingTarget =
+                isCurrentDepth && isReachable && !room.completed;
               const isForcedChoice =
                 forcedChoiceIndex !== null &&
                 depthIndex === currentRoom &&
@@ -817,6 +819,12 @@ export function FloorMap({
                   className="absolute"
                   style={{ left: `${x}px`, top: `${y}px` }}
                 >
+                  {isPingTarget && (
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 animate-ping rounded-full bg-teal-400/40"
+                    />
+                  )}
                   <button
                     type="button"
                     disabled={!isClickable}

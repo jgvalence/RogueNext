@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Cinzel } from "next/font/google";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { CardInstance } from "@/game/schemas/cards";
@@ -26,15 +26,11 @@ import {
 import { CardPickerModal } from "../shared/CardPickerModal";
 import { useTranslation } from "react-i18next";
 import {
-  localizeCardDescription,
-  localizeCardName,
-  localizeCardType,
-} from "@/lib/i18n/card-text";
-import {
   localizeRelicDescription,
   localizeRelicName,
 } from "@/lib/i18n/entity-text";
 import { RogueButton } from "@/components/ui/rogue";
+import { GameCard } from "../combat/GameCard";
 
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -324,6 +320,11 @@ function UpgradeRoom({
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
   );
+  const [pinnedInfo, setPinnedInfo] = useState<UpgradePreviewHoverInfo | null>(
+    null
+  );
+  const cardElsRef = useRef<Map<string, HTMLElement>>(new Map());
+
   const handleCardMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLElement>, def: CardDefinition) => {
       setHoverInfo({ definition: def, anchorEl: e.currentTarget });
@@ -333,6 +334,15 @@ function UpgradeRoom({
   const handleCardMouseLeave = useCallback(() => {
     setHoverInfo(null);
   }, []);
+
+  const handleCardClick = useCallback(
+    (instanceId: string, def: CardDefinition) => {
+      setSelected(instanceId);
+      const el = cardElsRef.current.get(instanceId);
+      if (el) setPinnedInfo({ definition: def, anchorEl: el });
+    },
+    []
+  );
 
   const upgradable = deck.filter((c) => {
     if (c.upgraded) return false;
@@ -353,40 +363,31 @@ function UpgradeRoom({
         {t("special.upgradeHint")}
       </p>
 
-      <div className="flex max-w-2xl flex-wrap justify-center gap-3">
+      <div className="flex max-w-4xl flex-wrap justify-center gap-3">
         {upgradable.map((card) => {
           const def = cardDefs.get(card.definitionId);
           if (!def) return null;
-
           const isSelected = selected === card.instanceId;
-
           return (
-            <RogueButton
+            <div
               key={card.instanceId}
-              onClick={() => setSelected(card.instanceId)}
+              ref={(el) => {
+                if (el) cardElsRef.current.set(card.instanceId, el);
+                else cardElsRef.current.delete(card.instanceId);
+              }}
               onMouseEnter={(e) => handleCardMouseEnter(e, def)}
               onMouseLeave={handleCardMouseLeave}
-              type="text"
-              className={cn(
-                "!relative !flex !h-auto !w-32 !min-w-0 !cursor-pointer !flex-col !items-center !gap-1 !whitespace-normal !rounded !border-2 !p-3 !text-center !transition-all !duration-150",
-                isSelected
-                  ? "!border-amber-400/60 !bg-amber-950/50 !ring-1 !ring-amber-400/30"
-                  : "!border-amber-500/15 !bg-amber-950/10 hover:!border-amber-500/30 hover:!bg-amber-950/30"
-              )}
             >
-              <span className="block w-full whitespace-normal break-words text-xs font-bold leading-tight text-amber-100 [overflow-wrap:anywhere]">
-                {localizeCardName(def, t)}
-              </span>
-              <span className="block w-full whitespace-normal break-words text-[10px] leading-tight text-amber-200/40 [overflow-wrap:anywhere]">
-                {localizeCardType(def.type, t)} —{" "}
-                {t(`gameCard.rarity.${def.rarity}`, {
-                  defaultValue: def.rarity,
-                })}
-              </span>
-              <span className="line-clamp-2 block w-full whitespace-normal break-words text-[10px] leading-tight text-amber-100/30 [overflow-wrap:anywhere]">
-                {localizeCardDescription(def, t)}
-              </span>
-            </RogueButton>
+              <GameCard
+                definition={def}
+                upgraded={card.upgraded}
+                canPlay={true}
+                isSelected={isSelected}
+                size="sm"
+                scrollable={true}
+                onClick={() => handleCardClick(card.instanceId, def)}
+              />
+            </div>
           );
         })}
       </div>
@@ -424,7 +425,7 @@ function UpgradeRoom({
       </div>
 
       <Divider dim />
-      <UpgradePreviewPortal info={hoverInfo} />
+      <UpgradePreviewPortal info={hoverInfo ?? pinnedInfo} />
     </div>
   );
 }

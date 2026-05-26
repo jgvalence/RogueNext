@@ -7,6 +7,15 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+
+const DEBUFF_TYPES = new Set([
+  "POISON",
+  "BLEED",
+  "VULNERABLE",
+  "WEAK",
+  "STUN",
+  "STONEBOUND",
+]);
 import { cn } from "@/lib/utils/cn";
 import type {
   EnemyState,
@@ -76,8 +85,21 @@ export function EnemyCard({
     []
   );
   const popupId = useRef(0);
-  // Track whether the enemy art image loaded successfully
   const [artFailed, setArtFailed] = useState(false);
+
+  // Death animation
+  const wasDead = useRef(enemy.currentHp <= 0);
+  const [isDying, setIsDying] = useState(false);
+
+  // Buff/debuff flash
+  const prevBuffCountRef = useRef(enemy.buffs.length);
+  const [buffFlash, setBuffFlash] = useState<"buff" | "debuff" | null>(null);
+
+  // Boss phase 2 flash
+  const phase2Key = definition.isBoss ? `${definition.id}_phase2` : "";
+  const phase2Flag = enemy.mechanicFlags?.[phase2Key] ?? 0;
+  const prevPhase2Ref = useRef(phase2Flag > 0);
+  const [bossPhaseFlash, setBossPhaseFlash] = useState(false);
 
   useEffect(() => {
     const diff = prevHp.current - enemy.currentHp;
@@ -85,7 +107,6 @@ export function EnemyCard({
     if (diff > 0) {
       const id = popupId.current++;
       setDmgPopups((prev) => [...prev, { id, value: diff }]);
-      // TEMPORARY: play hit/death sound (files in /public/sounds/combat/)
       if (enemy.currentHp <= 0) {
         playSound("ENEMY_DEATH", 0.8);
       } else {
@@ -93,6 +114,48 @@ export function EnemyCard({
       }
     }
   }, [enemy.currentHp]);
+
+  // Trigger death dissolve animation on HP reaching 0
+  useEffect(() => {
+    const nowDead = enemy.currentHp <= 0;
+    if (!wasDead.current && nowDead) {
+      setIsDying(true);
+      wasDead.current = true;
+      const timer = setTimeout(() => setIsDying(false), 500);
+      return () => clearTimeout(timer);
+    }
+    wasDead.current = nowDead;
+    return undefined;
+  }, [enemy.currentHp]);
+
+  // Flash on buff/debuff applied
+  useEffect(() => {
+    if (enemy.currentHp <= 0) return;
+    const curr = enemy.buffs.length;
+    const prev = prevBuffCountRef.current;
+    prevBuffCountRef.current = curr;
+    if (curr <= prev) return;
+    const lastBuff = enemy.buffs[enemy.buffs.length - 1];
+    if (!lastBuff) return;
+    const flashType = DEBUFF_TYPES.has(lastBuff.type) ? "debuff" : "buff";
+    setBuffFlash(flashType);
+    const timer = setTimeout(() => setBuffFlash(null), 600);
+    return () => clearTimeout(timer);
+  }, [enemy.buffs.length, enemy.currentHp]);
+
+  // Flash on boss phase 2 trigger
+  useEffect(() => {
+    if (!phase2Key) return undefined;
+    const isPhase2 = phase2Flag > 0;
+    if (!prevPhase2Ref.current && isPhase2) {
+      setBossPhaseFlash(true);
+      prevPhase2Ref.current = true;
+      const timer = setTimeout(() => setBossPhaseFlash(false), 1100);
+      return () => clearTimeout(timer);
+    }
+    prevPhase2Ref.current = isPhase2;
+    return undefined;
+  }, [phase2Flag, phase2Key]);
 
   const removePopup = useCallback((id: number) => {
     setDmgPopups((prev) => prev.filter((p) => p.id !== id));
@@ -133,7 +196,13 @@ export function EnemyCard({
         "relative flex flex-col overflow-hidden rounded-xl border-2 bg-gray-900/95 shadow-md transition-all duration-150",
         isAttacking && "animate-enemy-attack",
         isNewlySummoned && "animate-enemy-summon-enter",
-        isDead && "opacity-30 grayscale",
+        isDying && "animate-enemy-death",
+        !isDead &&
+          !isActing &&
+          !isAttacking &&
+          !isNewlySummoned &&
+          "animate-enemy-idle",
+        isDead && !isDying && "opacity-30 grayscale",
         cardW,
         borderClass,
         interactClass
@@ -149,6 +218,31 @@ export function EnemyCard({
           onDone={() => removePopup(p.id)}
         />
       ))}
+
+      {/* Buff / debuff flash overlay */}
+      {buffFlash && (
+        <div
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute inset-0 z-10 rounded-xl",
+            buffFlash === "debuff"
+              ? "animate-debuff-gain-flash"
+              : "animate-buff-gain-flash"
+          )}
+        />
+      )}
+
+      {/* Boss phase 2 flash overlay */}
+      {bossPhaseFlash && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-20 flex animate-boss-phase-flash items-center justify-center rounded-xl bg-amber-500/55"
+        >
+          <span className="text-[10px] font-black uppercase tracking-widest text-white drop-shadow-lg lg:text-xs">
+            Phase 2
+          </span>
+        </div>
+      )}
 
       {/* Art area - TEMPORARY: shows image if present, emoji placeholder otherwise */}
       <div

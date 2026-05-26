@@ -566,6 +566,11 @@ export function CombatMobileGrid({
                         : "border-rose-500/45 bg-[linear-gradient(180deg,rgba(159,18,57,0.22),rgba(15,23,42,0.92))]",
                       (isTargetable || isCheatSelectable) &&
                         "border-red-300 shadow-[0_0_24px_rgba(248,113,113,0.36)] ring-2 ring-red-300/70",
+                      !isDead &&
+                        !isActing &&
+                        attackingEnemyId !== enemy.instanceId &&
+                        !newlySummonedIds.has(enemy.instanceId) &&
+                        "animate-enemy-idle",
                       isActing && "animate-enemy-acting",
                       attackingEnemyId === enemy.instanceId &&
                         "animate-enemy-attack",

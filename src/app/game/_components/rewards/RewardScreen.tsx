@@ -8,6 +8,7 @@ import type { BiomeResource } from "@/game/schemas/enums";
 import type { RelicDefinitionData } from "@/game/data/relics";
 import type { AllyDefinition } from "@/game/schemas/entities";
 import type { Effect } from "@/game/schemas/effects";
+import { cn } from "@/lib/utils/cn";
 import { RogueButton, RogueTag } from "@/components/ui/rogue";
 import {
   localizeAllyAbilityName,
@@ -82,17 +83,30 @@ export function RewardScreen({
   const hasAnyEliteChoice = hasCardChoices || hasRelicChoices || hasAllyChoices;
 
   return (
-    <div className="flex flex-col items-center gap-6 py-4 sm:py-8">
-      <h2 className="text-2xl font-bold text-green-400">
+    <div className="relative flex animate-screen-enter flex-col items-center gap-6 py-4 sm:py-8">
+      {/* Atmospheric background glow */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_0%,rgba(34,197,94,0.08),transparent)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_30%_at_50%_15%,rgba(250,204,21,0.05),transparent)]" />
+
+      <h2
+        className="animate-reward-enter text-2xl font-bold text-green-400"
+        style={{ animationDelay: "0ms" }}
+      >
         {t("reward.victory")}
       </h2>
 
-      <div className="text-lg text-yellow-400">
+      <div
+        className="animate-reward-enter text-lg text-yellow-400"
+        style={{ animationDelay: "60ms" }}
+      >
         +{gold} {t("reward.gold")}
       </div>
 
       {resourceEntries.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-2">
+        <div
+          className="flex animate-reward-enter flex-wrap justify-center gap-2"
+          style={{ animationDelay: "110ms" }}
+        >
           {resourceEntries.map(([key, val]) => (
             <RogueTag
               key={key}
@@ -135,13 +149,18 @@ export function RewardScreen({
         <>
           {hasCardChoices && !bossCardPicked && (
             <>
-              <p className="text-sm font-medium text-yellow-400">
+              <p
+                className="animate-reward-enter text-sm font-medium text-yellow-400"
+                style={{ animationDelay: "160ms" }}
+              >
                 {t("reward.chooseRareCard")}
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                {cardChoices.map((card) => (
+                {cardChoices.map((card, i) => (
                   <div
                     key={card.id}
+                    className="animate-reward-enter"
+                    style={{ animationDelay: `${200 + i * 55}ms` }}
                     onMouseEnter={(e) => handleCardMouseEnter(e, card)}
                     onMouseLeave={handleCardMouseLeave}
                   >
@@ -161,36 +180,56 @@ export function RewardScreen({
           )}
           {(relicChoices.length > 0 || bossMaxHpBonus) && (
             <>
-              <p className="text-sm font-medium text-purple-400">
+              <p
+                className="animate-reward-enter text-sm font-medium text-purple-400"
+                style={{ animationDelay: "280ms" }}
+              >
                 {t("reward.chooseReward")}
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                {relicChoices.map((relic) => (
-                  <RelicCard
+                {relicChoices.map((relic, i) => (
+                  <div
                     key={relic.id}
-                    relic={relic}
-                    onPick={onPickRelic}
-                  />
+                    className="animate-reward-enter"
+                    style={{ animationDelay: `${320 + i * 55}ms` }}
+                  >
+                    <RelicCard relic={relic} onPick={onPickRelic} />
+                  </div>
                 ))}
-                {allyChoices.map((ally) => (
-                  <AllyCard key={ally.id} ally={ally} onPick={onPickAlly} />
+                {allyChoices.map((ally, i) => (
+                  <div
+                    key={ally.id}
+                    className="animate-reward-enter"
+                    style={{
+                      animationDelay: `${320 + (relicChoices.length + i) * 55}ms`,
+                    }}
+                  >
+                    <AllyCard ally={ally} onPick={onPickAlly} />
+                  </div>
                 ))}
                 {bossMaxHpBonus && onPickMaxHp && (
-                  <RogueButton
-                    onClick={() => onPickMaxHp(bossMaxHpBonus)}
-                    type="text"
-                    className="!flex !h-auto !w-40 !min-w-0 !flex-col !items-center !gap-2 !whitespace-normal !rounded-xl !border-2 !border-red-700 !bg-red-950/40 !p-4 !text-center !transition hover:!border-red-500 hover:!bg-red-950/60"
+                  <div
+                    className="animate-reward-enter"
+                    style={{
+                      animationDelay: `${320 + (relicChoices.length + allyChoices.length) * 55}ms`,
+                    }}
                   >
-                    <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
-                      {t("reward.vitality")}
-                    </span>
-                    <span className="block w-full whitespace-normal break-words text-sm font-bold leading-tight text-white [overflow-wrap:anywhere]">
-                      +{bossMaxHpBonus} {t("reward.maxHp")}
-                    </span>
-                    <span className="block w-full whitespace-normal break-words text-xs leading-relaxed text-red-200 [overflow-wrap:anywhere]">
-                      {t("reward.maxHpDescription")}
-                    </span>
-                  </RogueButton>
+                    <RogueButton
+                      onClick={() => onPickMaxHp(bossMaxHpBonus)}
+                      type="text"
+                      className="!flex !h-auto !w-40 !min-w-0 !flex-col !items-center !gap-2 !whitespace-normal !rounded-xl !border-2 !border-red-700 !bg-red-950/40 !p-4 !text-center !transition hover:!border-red-500 hover:!bg-red-950/60"
+                    >
+                      <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
+                        {t("reward.vitality")}
+                      </span>
+                      <span className="block w-full whitespace-normal break-words text-sm font-bold leading-tight text-white [overflow-wrap:anywhere]">
+                        +{bossMaxHpBonus} {t("reward.maxHp")}
+                      </span>
+                      <span className="block w-full whitespace-normal break-words text-xs leading-relaxed text-red-200 [overflow-wrap:anywhere]">
+                        {t("reward.maxHpDescription")}
+                      </span>
+                    </RogueButton>
+                  </div>
                 )}
               </div>
             </>
@@ -200,7 +239,10 @@ export function RewardScreen({
 
       {isElite && !isBoss && (
         <>
-          <p className="text-sm text-gray-400">
+          <p
+            className="animate-reward-enter text-sm text-gray-400"
+            style={{ animationDelay: "160ms" }}
+          >
             {hasCardChoices && hasRelicChoices
               ? t("reward.chooseRewardCardOrRelic")
               : hasCardChoices
@@ -212,9 +254,11 @@ export function RewardScreen({
                     : t("reward.noRewardChoices")}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            {cardChoices.map((card) => (
+            {cardChoices.map((card, i) => (
               <div
                 key={card.id}
+                className="animate-reward-enter"
+                style={{ animationDelay: `${200 + i * 55}ms` }}
                 onMouseEnter={(e) => handleCardMouseEnter(e, card)}
                 onMouseLeave={handleCardMouseLeave}
               >
@@ -226,11 +270,27 @@ export function RewardScreen({
                 />
               </div>
             ))}
-            {relicChoices.map((relic) => (
-              <RelicCard key={relic.id} relic={relic} onPick={onPickRelic} />
+            {relicChoices.map((relic, i) => (
+              <div
+                key={relic.id}
+                className="animate-reward-enter"
+                style={{
+                  animationDelay: `${200 + (cardChoices.length + i) * 55}ms`,
+                }}
+              >
+                <RelicCard relic={relic} onPick={onPickRelic} />
+              </div>
             ))}
-            {allyChoices.map((ally) => (
-              <AllyCard key={ally.id} ally={ally} onPick={onPickAlly} />
+            {allyChoices.map((ally, i) => (
+              <div
+                key={ally.id}
+                className="animate-reward-enter"
+                style={{
+                  animationDelay: `${200 + (cardChoices.length + relicChoices.length + i) * 55}ms`,
+                }}
+              >
+                <AllyCard ally={ally} onPick={onPickAlly} />
+              </div>
             ))}
           </div>
           {!hasAnyEliteChoice && (
@@ -247,11 +307,18 @@ export function RewardScreen({
 
       {!isBoss && !isElite && (
         <>
-          <p className="text-sm text-gray-400">{t("reward.chooseCardToAdd")}</p>
+          <p
+            className="animate-reward-enter text-sm text-gray-400"
+            style={{ animationDelay: "160ms" }}
+          >
+            {t("reward.chooseCardToAdd")}
+          </p>
           <div className="flex gap-4">
-            {cardChoices.map((card) => (
+            {cardChoices.map((card, i) => (
               <div
                 key={card.id}
+                className="animate-reward-enter"
+                style={{ animationDelay: `${200 + i * 55}ms` }}
                 onMouseEnter={(e) => handleCardMouseEnter(e, card)}
                 onMouseLeave={handleCardMouseLeave}
               >
@@ -264,13 +331,18 @@ export function RewardScreen({
               </div>
             ))}
           </div>
-          <RogueButton
-            type="text"
-            className="!h-auto !rounded-lg !border !border-gray-600 !px-6 !py-2 !text-sm !text-gray-400 !transition hover:!bg-gray-800"
-            onClick={onSkip}
+          <div
+            className="animate-reward-enter"
+            style={{ animationDelay: `${200 + cardChoices.length * 55}ms` }}
           >
-            {t("reward.skip")}
-          </RogueButton>
+            <RogueButton
+              type="text"
+              className="!h-auto !rounded-lg !border !border-gray-600 !px-6 !py-2 !text-sm !text-gray-400 !transition hover:!bg-gray-800"
+              onClick={onSkip}
+            >
+              {t("reward.skip")}
+            </RogueButton>
+          </div>
         </>
       )}
       <UpgradePreviewPortal info={hoverInfo} />
@@ -469,6 +541,40 @@ function formatEffect(effect: Effect, t: TFunction): string {
   }
 }
 
+const RELIC_RARITY_STYLES: Record<
+  string,
+  { border: string; bg: string; glow: string; label: string; icon: string }
+> = {
+  COMMON: {
+    border: "!border-slate-500/60",
+    bg: "!bg-slate-900/80",
+    glow: "shadow-none",
+    label: "text-slate-400",
+    icon: "•",
+  },
+  UNCOMMON: {
+    border: "!border-emerald-500/60",
+    bg: "!bg-[radial-gradient(ellipse_at_top,rgba(6,78,59,0.55),rgba(2,6,23,0.95))]",
+    glow: "hover:!shadow-[0_0_28px_rgba(52,211,153,0.18)]",
+    label: "text-emerald-400",
+    icon: "◆",
+  },
+  RARE: {
+    border: "!border-amber-400/65",
+    bg: "!bg-[radial-gradient(ellipse_at_top,rgba(120,53,15,0.55),rgba(2,6,23,0.95))]",
+    glow: "hover:!shadow-[0_0_28px_rgba(251,191,36,0.22)]",
+    label: "text-amber-300",
+    icon: "✦",
+  },
+  BOSS: {
+    border: "!border-orange-400/65",
+    bg: "!bg-[radial-gradient(ellipse_at_top,rgba(124,45,18,0.55),rgba(2,6,23,0.95))]",
+    glow: "hover:!shadow-[0_0_28px_rgba(251,146,60,0.22)]",
+    label: "text-orange-300",
+    icon: "★",
+  },
+};
+
 function RelicCard({
   relic,
   onPick,
@@ -477,20 +583,35 @@ function RelicCard({
   onPick: (relicId: string) => void;
 }) {
   const { t } = useTranslation();
+  const rs = RELIC_RARITY_STYLES[relic.rarity] ?? RELIC_RARITY_STYLES.COMMON!;
 
   return (
     <RogueButton
       onClick={() => onPick(relic.id)}
       type="text"
-      className="!flex !h-auto !w-36 !min-w-0 !flex-col !items-center !gap-2 !whitespace-normal !rounded-xl !border-2 !border-purple-700 !bg-purple-950/40 !p-4 !text-center !transition hover:!border-purple-500 hover:!bg-purple-950/60"
+      className={cn(
+        "!flex !h-auto !w-44 !min-w-0 !flex-col !items-center !gap-2.5 !whitespace-normal !rounded-xl !border-2 !p-4 !text-center !transition-all !duration-150",
+        rs.border,
+        rs.bg,
+        rs.glow,
+        "hover:!scale-[1.04] hover:!brightness-110"
+      )}
     >
-      <span className="text-xs font-semibold uppercase tracking-widest text-purple-400">
-        {t(`gameCard.rarity.${relic.rarity}`, relic.rarity)}
-      </span>
-      <span className="block w-full whitespace-normal break-words text-sm font-bold leading-tight text-white [overflow-wrap:anywhere]">
+      <div className="flex items-center gap-1.5">
+        <span className={cn("text-base font-black", rs.label)}>{rs.icon}</span>
+        <span
+          className={cn(
+            "text-[10px] font-bold uppercase tracking-widest",
+            rs.label
+          )}
+        >
+          {t(`gameCard.rarity.${relic.rarity}`, { defaultValue: relic.rarity })}
+        </span>
+      </div>
+      <span className="block w-full whitespace-normal text-sm font-bold leading-snug text-white [overflow-wrap:anywhere]">
         {localizeRelicName(relic.id, relic.name)}
       </span>
-      <span className="block w-full whitespace-normal break-words text-xs leading-relaxed text-purple-200 [overflow-wrap:anywhere]">
+      <span className="block w-full whitespace-normal text-xs leading-relaxed text-gray-300/80 [overflow-wrap:anywhere]">
         {localizeRelicDescription(relic.id, relic.description)}
       </span>
     </RogueButton>

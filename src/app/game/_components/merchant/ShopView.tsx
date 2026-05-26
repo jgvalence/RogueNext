@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useState, useMemo } from "react";
-import { RogueButton, RogueTag } from "@/components/ui/rogue";
+import { RogueButton } from "@/components/ui/rogue";
 import type { ShopItem } from "@/game/engine/merchant";
 import {
   generateShopInventory,
@@ -13,11 +13,6 @@ import type { UsableItemInstance } from "@/game/schemas/items";
 import type { RNG } from "@/game/engine/rng";
 import { cn } from "@/lib/utils/cn";
 import {
-  localizeCardDescription,
-  localizeCardName,
-  localizeCardType,
-} from "@/lib/i18n/card-text";
-import {
   localizeAllyAbilityName,
   localizeAllyName,
   localizeRelicDescription,
@@ -26,6 +21,7 @@ import {
   localizeUsableItemName,
 } from "@/lib/i18n/entity-text";
 import { CardPickerModal } from "../shared/CardPickerModal";
+import { GameCard } from "../combat/GameCard";
 import { useTranslation } from "react-i18next";
 import { allyDefinitions } from "@/game/data/allies";
 
@@ -53,18 +49,6 @@ interface ShopViewProps {
   onRemoveCard: (cardInstanceId: string) => void;
   onLeave: () => void;
 }
-
-const typeColors: Record<string, string> = {
-  ATTACK: "border-red-500 bg-red-950/50",
-  SKILL: "border-blue-500 bg-blue-950/50",
-  POWER: "border-purple-500 bg-purple-950/50",
-};
-
-const rarityColors: Record<string, string> = {
-  COMMON: "text-white",
-  UNCOMMON: "text-blue-400",
-  RARE: "text-yellow-400",
-};
 
 function isPurgeItem(item: ShopItem): boolean {
   return item.type === "purge" || item.type === "blood_purge";
@@ -266,167 +250,247 @@ export function ShopView({
               ? canAfford && canAffordBloodPurge && canPurgeDeck
               : canAfford && canAffordBloodPurge;
 
+          // ── Card items: use GameCard with price badge ─────────────────────
+          if (item.type === "card" && item.cardDef) {
+            return (
+              <div key={item.id} className="flex flex-col items-center gap-1.5">
+                <GameCard
+                  definition={item.cardDef}
+                  canPlay={!isSold && canBuyItem}
+                  size="sm"
+                  onClick={
+                    !isSold && canBuyItem ? () => handleBuy(item) : undefined
+                  }
+                />
+                <span
+                  className={cn(
+                    "text-xs font-bold tabular-nums",
+                    isSold
+                      ? "text-gray-600"
+                      : canBuyItem
+                        ? "text-yellow-300"
+                        : "text-gray-500"
+                  )}
+                >
+                  {isSold
+                    ? t("shop.sold")
+                    : t("shop.priceGold", { price: item.price })}
+                </span>
+              </div>
+            );
+          }
+
+          // ── Non-card items: card-like tile with art zone ──────────────────
+          const tileAccent =
+            item.type === "relic"
+              ? {
+                  border: "border-amber-500/50",
+                  artGrad: "from-amber-900/70 via-amber-950/50 to-slate-950",
+                  label: "text-amber-300",
+                  iconColor: "text-amber-400/50",
+                  icon: "✦",
+                  typeKey: t("shop.itemName.relic", { defaultValue: "Relic" }),
+                }
+              : item.type === "heal"
+                ? {
+                    border: "border-emerald-500/50",
+                    artGrad:
+                      "from-emerald-900/70 via-emerald-950/50 to-slate-950",
+                    label: "text-emerald-300",
+                    iconColor: "text-emerald-400/50",
+                    icon: "♥",
+                    typeKey: t("shop.itemName.heal"),
+                  }
+                : isMaxHp
+                  ? {
+                      border: "border-red-500/50",
+                      artGrad: "from-red-900/70 via-red-950/50 to-slate-950",
+                      label: "text-red-300",
+                      iconColor: "text-red-400/50",
+                      icon: "▲",
+                      typeKey: t("shop.itemName.maxHp"),
+                    }
+                  : item.type === "purge"
+                    ? {
+                        border: "border-rose-500/50",
+                        artGrad:
+                          "from-rose-900/70 via-rose-950/50 to-slate-950",
+                        label: "text-rose-300",
+                        iconColor: "text-rose-400/50",
+                        icon: "✕",
+                        typeKey: t("shop.itemName.purge"),
+                      }
+                    : item.type === "blood_purge"
+                      ? {
+                          border: "border-fuchsia-500/50",
+                          artGrad:
+                            "from-fuchsia-900/70 via-fuchsia-950/50 to-slate-950",
+                          label: "text-fuchsia-300",
+                          iconColor: "text-fuchsia-400/50",
+                          icon: "✕",
+                          typeKey: t("shop.itemName.bloodPurge"),
+                        }
+                      : isAlly
+                        ? {
+                            border: "border-teal-500/50",
+                            artGrad:
+                              "from-teal-900/70 via-teal-950/50 to-slate-950",
+                            label: "text-teal-300",
+                            iconColor: "text-teal-400/50",
+                            icon: "⚔",
+                            typeKey: t("shop.itemName.ally"),
+                          }
+                        : {
+                            border: "border-orange-500/50",
+                            artGrad:
+                              "from-orange-900/70 via-orange-950/50 to-slate-950",
+                            label: "text-orange-300",
+                            iconColor: "text-orange-400/50",
+                            icon: "◈",
+                            typeKey: t("shop.itemName.item", {
+                              defaultValue: "Item",
+                            }),
+                          };
+
+          const tileName =
+            item.type === "relic"
+              ? localizeRelicName(item.relicId, item.relicName)
+              : item.type === "heal"
+                ? t("shop.itemName.heal")
+                : isMaxHp
+                  ? t("shop.itemName.maxHp")
+                  : item.type === "purge"
+                    ? t("shop.itemName.purge")
+                    : item.type === "blood_purge"
+                      ? t("shop.itemName.bloodPurge")
+                      : isAlly
+                        ? (localizedAllyName ?? t("shop.itemName.ally"))
+                        : localizeUsableItemName(
+                            item.usableItemDef?.id,
+                            item.usableItemDef?.name
+                          );
+
+          const tileDesc =
+            item.type === "relic"
+              ? localizeRelicDescription(item.relicId, item.relicDescription)
+              : item.type === "heal"
+                ? t("shop.itemDescription.heal", { amount: item.healAmount })
+                : isMaxHp
+                  ? t("shop.itemDescription.maxHp", {
+                      amount: item.maxHpAmount ?? 10,
+                    })
+                  : item.type === "purge"
+                    ? t("shop.itemDescription.purge")
+                    : item.type === "blood_purge"
+                      ? t("shop.itemDescription.bloodPurge", {
+                          amount: item.hpCost ?? 0,
+                        })
+                      : isAlly
+                        ? localizedAllySummary
+                        : localizeUsableItemDescription(
+                            item.usableItemDef?.id,
+                            item.usableItemDef?.description
+                          );
+
+          const tilePrice = isSold
+            ? t("shop.sold")
+            : isUsableItem && isUsableInventoryFull
+              ? t("shop.inventoryFull")
+              : item.type === "blood_purge"
+                ? t("shop.priceHp", { price: item.hpCost ?? 0 })
+                : t("shop.priceGold", { price: item.price });
+
           return (
-            <RogueButton
+            <button
               key={item.id}
+              type="button"
               disabled={isSold || !canBuyItem}
-              type="text"
-              onClick={() => handleBuy(item)}
+              onClick={
+                !isSold && canBuyItem ? () => handleBuy(item) : undefined
+              }
               className={cn(
-                "!flex !h-auto !w-44 !flex-col !items-center !justify-start !gap-2 !whitespace-normal !rounded-lg !border-2 !p-4 transition",
+                "group relative flex w-36 flex-col overflow-hidden rounded-xl border bg-slate-950 text-left shadow-md transition-all duration-200",
+                tileAccent.border,
                 isSold
-                  ? "border-gray-700 bg-gray-900/30 opacity-40"
+                  ? "opacity-35 grayscale"
                   : canBuyItem
-                    ? "cursor-pointer hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/10"
-                    : "cursor-not-allowed opacity-60",
-                item.type === "card" &&
-                  item.cardDef &&
-                  (typeColors[item.cardDef.type] ??
-                    "border-gray-500 bg-gray-800"),
-                item.type === "relic" && "border-amber-500 bg-amber-950/50",
-                item.type === "heal" && "border-green-500 bg-green-950/50",
-                isMaxHp && "border-red-500 bg-red-950/50",
-                item.type === "purge" && "border-rose-600 bg-rose-950/50",
-                item.type === "blood_purge" &&
-                  "border-fuchsia-600 bg-fuchsia-950/50",
-                isUsableItem && "border-orange-500 bg-orange-950/50",
-                isAlly && "border-teal-500 bg-teal-950/50"
+                    ? "cursor-pointer hover:scale-[1.03] hover:shadow-xl hover:brightness-110"
+                    : "cursor-not-allowed opacity-50"
               )}
             >
-              <span className="text-2xl">
-                {item.type === "card"
-                  ? "C"
-                  : item.type === "relic"
-                    ? "R"
-                    : item.type === "heal"
-                      ? "H"
-                      : item.type === "max_hp"
-                        ? "M"
-                        : item.type === "purge"
-                          ? "P"
-                          : item.type === "blood_purge"
-                            ? "B"
-                            : item.type === "ally"
-                              ? "⚔"
-                              : "U"}
-              </span>
-
-              <span
+              {/* Art zone */}
+              <div
                 className={cn(
-                  "break-words text-sm font-bold",
-                  item.type === "card" && item.cardDef
-                    ? (rarityColors[item.cardDef.rarity] ?? "text-white")
-                    : item.type === "relic"
-                      ? "text-amber-300"
-                      : item.type === "heal"
-                        ? "text-green-300"
-                        : item.type === "max_hp"
-                          ? "text-red-300"
-                          : item.type === "purge"
-                            ? "text-rose-300"
-                            : item.type === "ally"
-                              ? "text-teal-300"
-                              : "text-orange-300"
+                  "relative flex h-[72px] shrink-0 items-center justify-center overflow-hidden bg-gradient-to-b",
+                  tileAccent.artGrad
                 )}
               >
-                {item.type === "card" && item.cardDef
-                  ? localizeCardName(item.cardDef, t)
-                  : item.type === "relic"
-                    ? localizeRelicName(item.relicId, item.relicName)
-                    : item.type === "heal"
-                      ? t("shop.itemName.heal")
-                      : item.type === "max_hp"
-                        ? t("shop.itemName.maxHp")
-                        : item.type === "purge"
-                          ? t("shop.itemName.purge")
-                          : item.type === "blood_purge"
-                            ? t("shop.itemName.bloodPurge")
-                            : item.type === "ally"
-                              ? (localizedAllyName ?? t("shop.itemName.ally"))
-                              : localizeUsableItemName(
-                                  item.usableItemDef?.id,
-                                  item.usableItemDef?.name
-                                )}
-              </span>
-
-              <span className="break-words text-center text-xs text-gray-400">
-                {item.type === "card" && item.cardDef
-                  ? localizeCardDescription(item.cardDef, t)
-                  : item.type === "relic"
-                    ? localizeRelicDescription(
-                        item.relicId,
-                        item.relicDescription
-                      )
-                    : item.type === "heal"
-                      ? t("shop.itemDescription.heal", {
-                          amount: item.healAmount,
-                        })
-                      : item.type === "max_hp"
-                        ? t("shop.itemDescription.maxHp", {
-                            amount: item.maxHpAmount ?? 10,
-                          })
-                        : item.type === "purge"
-                          ? t("shop.itemDescription.purge")
-                          : item.type === "blood_purge"
-                            ? t("shop.itemDescription.bloodPurge", {
-                                amount: item.hpCost ?? 0,
-                              })
-                            : item.type === "ally"
-                              ? localizedAllySummary
-                              : localizeUsableItemDescription(
-                                  item.usableItemDef?.id,
-                                  item.usableItemDef?.description
-                                )}
-              </span>
-
-              {item.type === "card" && item.cardDef && (
-                <RogueTag
-                  bordered={false}
-                  className="rounded bg-gray-700 px-1.5 py-0.5 text-[10px] text-gray-300"
+                <span
+                  className={cn(
+                    "text-[52px] leading-none",
+                    tileAccent.iconColor
+                  )}
                 >
-                  {localizeCardType(item.cardDef.type, t)} -{" "}
-                  {t("shop.energyCost", { cost: item.cardDef.energyCost })}
-                </RogueTag>
-              )}
-
-              {isAlly && allyDef && (
-                <div className="w-full space-y-1">
-                  {allyDef.abilities.map((ability, i) => (
-                    <div
-                      key={i}
-                      className="rounded border border-teal-800/70 bg-teal-900/30 px-1.5 py-1"
-                    >
-                      <div className="truncate text-[10px] font-semibold text-teal-100">
-                        {localizeAllyAbilityName(allyDef.id, ability.name)}
-                      </div>
-                    </div>
-                  ))}
+                  {tileAccent.icon}
+                </span>
+                <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-slate-950 to-transparent" />
+                <div className="absolute left-2 top-2">
+                  <span
+                    className={cn(
+                      "text-[8px] font-black uppercase tracking-widest",
+                      tileAccent.label
+                    )}
+                  >
+                    {tileAccent.typeKey}
+                  </span>
                 </div>
-              )}
+              </div>
 
-              <span
-                className={cn(
-                  "mt-auto text-sm font-bold",
-                  canBuyItem && !isSold ? "text-yellow-300" : "text-gray-500"
+              {/* Content */}
+              <div className="flex flex-1 flex-col gap-1 px-2.5 pb-2 pt-2">
+                <p className="text-[11px] font-black leading-tight text-white [overflow-wrap:anywhere]">
+                  {tileName}
+                </p>
+                <p className="text-[10px] leading-relaxed text-slate-400 [overflow-wrap:anywhere]">
+                  {tileDesc}
+                </p>
+                {isAlly && allyDef && (
+                  <div className="mt-1 space-y-1">
+                    {allyDef.abilities.map((ability, i) => (
+                      <div
+                        key={i}
+                        className="rounded border border-teal-800/60 bg-teal-900/20 px-1.5 py-0.5"
+                      >
+                        <span className="truncate text-[9px] font-semibold text-teal-100">
+                          {localizeAllyAbilityName(allyDef.id, ability.name)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 )}
-              >
-                {isSold
-                  ? t("shop.sold")
-                  : isUsableItem && isUsableInventoryFull
-                    ? t("shop.inventoryFull")
-                    : item.type === "blood_purge"
-                      ? t("shop.priceHp", { price: item.hpCost ?? 0 })
-                      : t("shop.priceGold", { price: item.price })}
-              </span>
-              {item.type === "blood_purge" && !canAffordBloodPurge && (
-                <RogueTag
-                  bordered={false}
-                  className="text-[10px] text-fuchsia-300/80"
+              </div>
+
+              {/* Price footer */}
+              <div className="border-white/8 flex items-center justify-between gap-1 border-t bg-black/25 px-2.5 py-1.5">
+                <span
+                  className={cn(
+                    "text-[11px] font-black tabular-nums",
+                    isSold
+                      ? "text-gray-600"
+                      : canBuyItem
+                        ? "text-yellow-300"
+                        : "text-gray-500"
+                  )}
                 >
-                  {t("shop.requiresMoreHp")}
-                </RogueTag>
-              )}
-            </RogueButton>
+                  {tilePrice}
+                </span>
+                {item.type === "blood_purge" && !canAffordBloodPurge && (
+                  <span className="text-[8px] text-fuchsia-300/70">
+                    {t("shop.requiresMoreHp")}
+                  </span>
+                )}
+              </div>
+            </button>
           );
         })}
       </div>

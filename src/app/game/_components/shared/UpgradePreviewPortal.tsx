@@ -85,7 +85,7 @@ export function UpgradePreviewPortal({ info }: UpgradePreviewPortalProps) {
           : { left: -9999, top: -9999 }
       }
     >
-      <CardUpgradePreview definition={info.definition} size="sm" />
+      <CardUpgradePreview definition={info.definition} size="md" />
     </div>,
     document.body
   );
