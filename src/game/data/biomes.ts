@@ -39,7 +39,7 @@ export const BIOME_METADATA: Record<BiomeType, BiomeMetadata> = {
     name: "The Eternal Sands",
     description: "Undying guardians protect the secrets of the pharaohs.",
     icon: "🏺",
-    enemyPreview: "Coming soon...",
+    enemyPreview: "Tomb Priests, Apep Scions, Judgment of Osiris",
     flavor: "Death is but the beginning.",
   },
   LOVECRAFTIAN: {
@@ -47,7 +47,7 @@ export const BIOME_METADATA: Record<BiomeType, BiomeMetadata> = {
     name: "The Outer Void",
     description: "Eldritch horrors from beyond reality itself.",
     icon: "🐙",
-    enemyPreview: "Coming soon...",
+    enemyPreview: "Cultist Scribes, Star Spawn, Nyarlathotep's Shard",
     flavor: "The stars align in patterns no mind should witness.",
   },
   AZTEC: {
@@ -55,7 +55,7 @@ export const BIOME_METADATA: Record<BiomeType, BiomeMetadata> = {
     name: "The Obsidian Temple",
     description: "Jaguar warriors and feathered serpents demand tribute.",
     icon: "🌞",
-    enemyPreview: "Coming soon...",
+    enemyPreview: "Eagle Knights, Flayed Cultists, Tezcatlipoca's Echo",
     flavor: "The fifth sun must be fed.",
   },
   CELTIC: {
@@ -63,7 +63,7 @@ export const BIOME_METADATA: Record<BiomeType, BiomeMetadata> = {
     name: "The Mist-Veiled Otherworld",
     description: "Fae creatures and druidic spirits dwell beyond the veil.",
     icon: "🌿",
-    enemyPreview: "Coming soon...",
+    enemyPreview: "Sidhe Raiders, Briar Beasts, Cernunnos' Shade",
     flavor: "The old ways have long memories.",
   },
   RUSSIAN: {
@@ -71,7 +71,7 @@ export const BIOME_METADATA: Record<BiomeType, BiomeMetadata> = {
     name: "The Winter Forest",
     description: "Slavic spirits and forest demons lurk in eternal night.",
     icon: "❄️",
-    enemyPreview: "Coming soon...",
+    enemyPreview: "Winter Wolves, Rusalkas, Koschei the Deathless",
     flavor: "Baba Yaga's hut turns on its chicken legs.",
   },
   AFRICAN: {
@@ -79,7 +79,7 @@ export const BIOME_METADATA: Record<BiomeType, BiomeMetadata> = {
     name: "The Spirit Savanna",
     description: "Orishas and ancestral beasts walk the sacred plains.",
     icon: "🦁",
-    enemyPreview: "Coming soon...",
+    enemyPreview: "Impundulus, Oya's Harbingers, Anansi the Weaver",
     flavor: "The ancestors watch over those who remember them.",
   },
 };

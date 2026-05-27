@@ -11,9 +11,13 @@ import { pickRandomStatusCardDefinitionId } from "./status-cards";
 export const ATLAS_OF_REALMS_RELIC_ID = "atlas_of_realms";
 export const HUNTERS_SIGNET_RELIC_ID = "hunters_signet";
 export const HUNTERS_SIGNET_USED_FLAG = "hunters_signet_used";
+export const POTION_CAPACITY_RELIC_ID = "alchemists_bandolier";
+export const POTION_REWARD_RELIC_ID = "quartermaster_cork";
+export const POTION_DOUBLE_RELIC_ID = "distillers_prism";
 const MENDERS_INKWELL_FLAG = "menders_inkwell_owned";
 const ECHOING_INKSTONE_FLAG = "echoing_inkstone_owned";
 const INK_RELIC_MULTIPLIER = 2;
+const POTION_CAPACITY_BONUS = 2;
 
 const FULL_INK_AMPLIFY_EFFECT_TYPES = new Set<Effect["type"]>([
   "DAMAGE",
@@ -130,6 +134,14 @@ export function addRelicToRunState(
   };
 
   switch (relicId) {
+    case POTION_CAPACITY_RELIC_ID:
+      next = {
+        ...next,
+        usableItemCapacity:
+          (next.usableItemCapacity ?? GAME_CONSTANTS.MAX_USABLE_ITEMS) +
+          POTION_CAPACITY_BONUS,
+      };
+      break;
     case "library_guardian_chain":
       next = {
         ...next,
@@ -239,12 +251,12 @@ export function applyRelicsOnCombatStart(
         break;
 
       case "ink_stamp":
-        // Start combat with 3 ink
+        // Start combat with 4 ink
         current = {
           ...current,
           player: {
             ...current.player,
-            inkCurrent: current.player.inkCurrent + 3,
+            inkCurrent: current.player.inkCurrent + 4,
           },
         };
         break;
@@ -422,7 +434,7 @@ export function applyRelicsOnCombatStart(
           ...current,
           player: {
             ...current.player,
-            block: current.player.block + 12,
+            block: current.player.block + 10,
           },
         };
         break;
@@ -470,7 +482,7 @@ export function applyRelicsOnCombatStart(
           ...current,
           player: {
             ...current.player,
-            block: current.player.block + 8,
+            block: current.player.block + 6,
             buffs: [
               ...current.player.buffs,
               { type: "THORNS" as const, stacks: 1 },
@@ -542,7 +554,7 @@ export function applyRelicsOnCombatStart(
               ? enemy
               : {
                   ...enemy,
-                  buffs: [...enemy.buffs, { type: "POISON", stacks: 2 }],
+                  buffs: [...enemy.buffs, { type: "POISON", stacks: 3 }],
                 }
           ),
         };
@@ -868,7 +880,9 @@ export function applyRelicsOnCombatStart(
           ...current,
           relicModifiers: {
             ...(current.relicModifiers ?? {}),
-            enemyPoisonDamageMultiplier: 1.5,
+            enemyPoisonDamageMultiplier:
+              (current.relicModifiers?.enemyPoisonDamageMultiplier ?? 1.5) +
+              1.0,
           },
         };
         break;
@@ -886,7 +900,8 @@ export function applyRelicsOnCombatStart(
           ...current,
           relicModifiers: {
             ...(current.relicModifiers ?? {}),
-            enemyBleedDamageMultiplier: 1.5,
+            enemyBleedDamageMultiplier:
+              (current.relicModifiers?.enemyBleedDamageMultiplier ?? 1.5) + 1.0,
           },
         };
         break;
@@ -1132,6 +1147,82 @@ export function applyRelicsOnCombatStart(
         // These "first SKILL each turn" relics must already be armed on turn 1.
         current = setFlag(current, "turn_first_skill_relic_active", true);
         break;
+      case "scroll_of_marginalia":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            drawCount: current.player.drawCount + 2,
+          },
+        };
+        break;
+      case "venom_grimoire":
+        current = {
+          ...current,
+          relicModifiers: {
+            ...(current.relicModifiers ?? {}),
+            enemyPoisonDamageMultiplier:
+              (current.relicModifiers?.enemyPoisonDamageMultiplier ?? 1.5) +
+              1.0,
+          },
+        };
+        break;
+      case "hemorrhage_codex":
+        current = {
+          ...current,
+          relicModifiers: {
+            ...(current.relicModifiers ?? {}),
+            enemyBleedDamageMultiplier:
+              (current.relicModifiers?.enemyBleedDamageMultiplier ?? 1.5) + 1.0,
+          },
+        };
+        break;
+      case "plague_vial":
+        current = {
+          ...current,
+          enemies: current.enemies.map((enemy) =>
+            enemy.currentHp <= 0
+              ? enemy
+              : {
+                  ...enemy,
+                  buffs: [
+                    ...enemy.buffs,
+                    { type: "POISON" as const, stacks: 6 },
+                  ],
+                }
+          ),
+        };
+        break;
+      case "crimson_covenant":
+        current = {
+          ...current,
+          enemies: current.enemies.map((enemy) =>
+            enemy.currentHp <= 0
+              ? enemy
+              : {
+                  ...enemy,
+                  buffs: [
+                    ...enemy.buffs,
+                    { type: "BLEED" as const, stacks: 5 },
+                  ],
+                }
+          ),
+        };
+        break;
+      case "philosophers_tome":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            strength: current.player.strength + 6,
+            regenPerTurn: current.player.regenPerTurn + 5,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + 5
+            ),
+          },
+        };
+        break;
     }
   }
 
@@ -1241,7 +1332,7 @@ export function applyRelicsOnTurnStart(
             ...current.player,
             inkCurrent: Math.min(
               current.player.inkMax,
-              current.player.inkCurrent + 1
+              current.player.inkCurrent + 2
             ),
           },
         };
@@ -1341,7 +1432,7 @@ export function applyRelicsOnTurnStart(
           ...current,
           player: {
             ...current.player,
-            block: current.player.block + 6,
+            block: current.player.block + 2,
           },
         };
         break;
@@ -1456,6 +1547,67 @@ export function applyRelicsOnTurnStart(
         // Marker flags consumed in applyRelicsOnCardPlayed.
         current = setFlag(current, "turn_first_skill_relic_active", true);
         break;
+      case "arcane_reservoir":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + 3
+            ),
+          },
+        };
+        break;
+      case "bleeding_thistle":
+      case "crimson_covenant":
+        current = {
+          ...current,
+          enemies: current.enemies.map((enemy) => {
+            if (enemy.currentHp <= 0) return enemy;
+            const existing = enemy.buffs.find((b) => b.type === "BLEED");
+            return {
+              ...enemy,
+              buffs: existing
+                ? enemy.buffs.map((b) =>
+                    b.type === "BLEED" ? { ...b, stacks: b.stacks + 1 } : b
+                  )
+                : [...enemy.buffs, { type: "BLEED" as const, stacks: 1 }],
+            };
+          }),
+        };
+        break;
+      case "venom_pouch":
+        current = {
+          ...current,
+          enemies: current.enemies.map((enemy) => {
+            if (enemy.currentHp <= 0) return enemy;
+            const existing = enemy.buffs.find((b) => b.type === "POISON");
+            return {
+              ...enemy,
+              buffs: existing
+                ? enemy.buffs.map((b) =>
+                    b.type === "POISON" ? { ...b, stacks: b.stacks + 1 } : b
+                  )
+                : [...enemy.buffs, { type: "POISON" as const, stacks: 1 }],
+            };
+          }),
+        };
+        break;
+      case "eternal_flow":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + 3
+            ),
+            block: current.player.block + 2,
+            strength: current.player.strength + 1,
+          },
+        };
+        break;
     }
   }
 
@@ -1523,7 +1675,7 @@ export function applyRelicsOnTurnEnd(
           ...current,
           player: {
             ...current.player,
-            block: current.player.block + 8,
+            block: current.player.block + 4,
           },
         };
         break;
@@ -1631,6 +1783,25 @@ export function applyRelicsOnTurnEnd(
           };
         }
         break;
+      case "endless_codex": {
+        const drawn = getCounter(current, "turn_drawn_count");
+        if (drawn > 0) {
+          const damage = drawn * 2;
+          current = {
+            ...current,
+            enemies: current.enemies.map((enemy) => {
+              if (enemy.currentHp <= 0) return enemy;
+              const result = applyDamage(enemy, damage);
+              return {
+                ...enemy,
+                currentHp: result.currentHp,
+                block: result.block,
+              };
+            }),
+          };
+        }
+        break;
+      }
     }
   }
 

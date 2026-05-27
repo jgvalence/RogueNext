@@ -161,7 +161,11 @@ export type GameAction =
   | { type: "REMOVE_CARD_FROM_DECK"; payload: { cardInstanceId: string } }
   | { type: "APPLY_EVENT"; payload: { event: GameEvent; choiceIndex: number } }
   | { type: "CHOOSE_BIOME"; payload: { biome: BiomeType } }
-  | { type: "CHOOSE_CHARACTER"; payload: { characterId: string } };
+  | { type: "CHOOSE_CHARACTER"; payload: { characterId: string } }
+  | {
+      type: "EXCHANGE_RELIC";
+      payload: { giveRelicId: string; takeRelicId: string };
+    };
 
 interface ReducerDeps {
   cardDefs: Map<string, CardDefinition>;
@@ -774,6 +778,17 @@ export function createGameReducer(deps: ReducerDeps) {
 
       case "PICK_RELIC_REWARD":
         return addRelicToRunState(state, action.payload.relicId);
+
+      case "EXCHANGE_RELIC": {
+        const { giveRelicId, takeRelicId } = action.payload;
+        if (!state.relicIds.includes(giveRelicId)) return state;
+        if (state.relicIds.includes(takeRelicId)) return state;
+        const withoutGiven = {
+          ...state,
+          relicIds: state.relicIds.filter((id) => id !== giveRelicId),
+        };
+        return addRelicToRunState(withoutGiven, takeRelicId);
+      }
 
       case "GAIN_MAX_HP":
         return {

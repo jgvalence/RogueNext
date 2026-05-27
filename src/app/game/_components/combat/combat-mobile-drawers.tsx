@@ -8,10 +8,14 @@ import type {
   UsableItemDefinition,
   UsableItemInstance,
 } from "@/game/schemas/items";
-import { localizeUsableItemName } from "@/lib/i18n/entity-text";
+import {
+  localizeUsableItemDescription,
+  localizeUsableItemName,
+} from "@/lib/i18n/entity-text";
 import { RogueButton } from "@/components/ui/rogue";
 import { InkGauge } from "./InkGauge";
 import { getCombatBiomeTheme } from "./combat-biome-theme";
+import { getUsableItemUiMeta } from "./usable-item-ui";
 
 interface MobileInkPanelOverlayProps {
   isOpen: boolean;
@@ -52,7 +56,10 @@ export function MobileInkPanelOverlay({
         onClick={(event) => event.stopPropagation()}
       >
         <div
-          className={cn("mx-auto mb-3 h-1.5 w-12 rounded-full", theme.drawerHandle)}
+          className={cn(
+            "mx-auto mb-3 h-1.5 w-12 rounded-full",
+            theme.drawerHandle
+          )}
         />
         <InkGauge
           player={combat.player}
@@ -122,7 +129,12 @@ export function MobileInventoryPanelOverlay({
         )}
         onClick={(event) => event.stopPropagation()}
       >
-        <div className={cn("mx-auto mb-3 h-1 w-10 rounded-full", theme.drawerHandle)} />
+        <div
+          className={cn(
+            "mx-auto mb-3 h-1 w-10 rounded-full",
+            theme.drawerHandle
+          )}
+        />
         {usableItems.length === 0 ? (
           <div
             className={cn(
@@ -138,6 +150,7 @@ export function MobileInventoryPanelOverlay({
               const def = usableItemDefs.get(item.definitionId);
               if (!def) return null;
               const isSelected = selectedUsableItemId === item.instanceId;
+              const itemMeta = getUsableItemUiMeta(def);
               return (
                 <RogueButton
                   key={item.instanceId}
@@ -153,7 +166,25 @@ export function MobileInventoryPanelOverlay({
                   )}
                   disabled={!canAct}
                 >
-                  {localizeUsableItemName(def.id, def.name)}
+                  <span className="flex items-start gap-2">
+                    <span
+                      className={cn(
+                        "mt-0.5 shrink-0 rounded border px-1.5 py-1 text-[10px] font-black leading-none",
+                        itemMeta.className
+                      )}
+                    >
+                      {itemMeta.label}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-xs font-black uppercase tracking-wide">
+                        {localizeUsableItemName(def.id, def.name)}
+                      </span>
+                      <span className="mt-0.5 block text-[11px] normal-case leading-snug tracking-normal opacity-75">
+                        {itemMeta.targetLabel} -{" "}
+                        {localizeUsableItemDescription(def.id, def.description)}
+                      </span>
+                    </span>
+                  </span>
                 </RogueButton>
               );
             })}

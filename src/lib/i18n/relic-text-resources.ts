@@ -32,7 +32,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     colossus_tome_plate: {
       name: "Plaque du Colosse-Tome",
-      description: "Commencez chaque combat avec 12 Armure.",
+      description: "Commencez chaque combat avec 10 Armure.",
     },
     giant_baobab_seed: {
       name: "Graine du Baobab geant",
@@ -52,9 +52,30 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
       name: "Couronne de l'Archonte d'encre",
       description: "Commencez chaque combat avec 3 Epines.",
     },
+    alchemists_bandolier: {
+      name: "Bandouliere d'alchimiste",
+      description: "Vous pouvez transporter 2 potions supplementaires.",
+    },
+    quartermaster_cork: {
+      name: "Bouchon de quartier-maitre",
+      description:
+        "Apres chaque combat, gagnez une potion aleatoire s'il reste de la place.",
+    },
+    distillers_prism: {
+      name: "Prisme du distillateur",
+      description: "Les effets des potions sont doubles.",
+    },
     automaton_bronze_gear: {
       name: "Pignon de l'Automate de bronze",
       description: "Chaque carte Attaque jouee vous donne 2 Armure.",
+    },
+    spectral_inkwell: {
+      name: "Encrier Spectral",
+      description: "Au debut du tour, gagnez 2 Encres.",
+    },
+    ink_stamp: {
+      name: "Cachet d'Encre",
+      description: "Commencez chaque combat avec 4 Encres.",
     },
     cossack_iron_spur: {
       name: "Eperon du Cosaque de fer",
@@ -62,7 +83,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     guard_czar_medal: {
       name: "Medaille du Garde du tsar",
-      description: "A la fin du tour, gagnez 8 Armure.",
+      description: "A la fin du tour, gagnez 4 Armure.",
     },
     guardian_dune_amulet: {
       name: "Amulette des dunes gardiennes",
@@ -70,7 +91,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     hound_amber_fang: {
       name: "Croc d'ambre",
-      description: "Gagnez 6 Armure au debut de chaque tour.",
+      description: "Gagnez 2 Armure au debut de chaque tour.",
     },
     idol_sun_fragment: {
       name: "Fragment solaire de l'idole",
@@ -91,7 +112,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     shaman_storm_totem: {
       name: "Totem d'orage du chaman",
-      description: "Commencez chaque combat avec 8 Armure et 1 Epine.",
+      description: "Commencez chaque combat avec 6 Armure et 1 Epine.",
     },
     wadjet_emerald_eye: {
       name: "Oeil d'emeraude de Wadjet",
@@ -222,8 +243,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
         "A la fin du tour, si vous avez au moins 6 cartes en main, gagnez 1 Energie au tour suivant.",
     },
     egypt_scarab_idol: {
-      description:
-        "Les ennemis sous Poison subissent 50 % de degats de Poison supplementaires.",
+      description: "Le Poison inflige 2,5 degats par stack au lieu de 1,5.",
     },
     egypt_tomb_censer: {
       description:
@@ -277,8 +297,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
         "A chaque affaiblissement inflige, gagnez 1 Epine (max 5 par combat).",
     },
     celtic_briar_seed: {
-      description:
-        "Les ennemis sous Bleed subissent 50 % de degats de Bleed supplementaires.",
+      description: "Le Saignement inflige 2,5 degats par stack au lieu de 1,5.",
     },
     celtic_morrigan_cauldron: {
       description: "A la fin d'un combat d'elite, soignez 8 PV.",
@@ -343,6 +362,59 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     bibliothecaire_restricted_index: {
       description:
         "A la 3e carte Competence d'un tour, gagnez 1 Energie et 6 Armure.",
+    },
+    scroll_of_marginalia: {
+      name: "Parchemin de Marginalia",
+      description: "Commencez chaque combat avec +2 pioche.",
+    },
+    bleeding_thistle: {
+      name: "Chardon Sanglant",
+      description:
+        "Au debut de chaque tour, appliquez 1 Saignement a tous les ennemis.",
+    },
+    venom_pouch: {
+      name: "Bourse de Venin",
+      description:
+        "Au debut de chaque tour, appliquez 1 Poison a tous les ennemis.",
+    },
+    arcane_reservoir: {
+      name: "Reservoir Arcanique",
+      description: "Gagnez 3 Encre au debut de chaque tour.",
+    },
+    plague_vial: {
+      name: "Fiole de Peste",
+      description:
+        "Au debut du combat, appliquez 10 Poison a tous les ennemis.",
+    },
+    endless_codex: {
+      name: "Codex Infini",
+      description:
+        "En fin de tour, infligez 2 degats par carte piochee ce tour a tous les ennemis.",
+    },
+    crimson_covenant: {
+      name: "Pacte Cramoisi",
+      description:
+        "Au debut du combat, appliquez 5 Saignement a tous les ennemis. Chaque tour, appliquez 1 Saignement supplementaire a tous les ennemis.",
+    },
+    philosophers_tome: {
+      name: "Tome du Philosophe",
+      description:
+        "Commencez chaque combat avec +6 Force, +5 regeneration de PV par tour et +5 Encre.",
+    },
+    eternal_flow: {
+      name: "Flux Eternel",
+      description:
+        "Au debut de chaque tour, gagnez +3 Encre, +2 Armure et +1 Force.",
+    },
+    venom_grimoire: {
+      name: "Grimoire Venimeux",
+      description:
+        "Le Poison inflige +1,0 degats par stack (cumulable avec autres reliques Poison).",
+    },
+    hemorrhage_codex: {
+      name: "Codex Hemorragique",
+      description:
+        "Le Saignement inflige +1,0 degats par stack (cumulable avec autres reliques Saignement).",
     },
   },
 };

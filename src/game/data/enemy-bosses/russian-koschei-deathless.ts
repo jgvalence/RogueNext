@@ -59,6 +59,21 @@ export const koscheiDeathlessBossEnemyDefinitions: RawEnemyDefinition[] = [
         ],
       },
       {
+        name: "Death's Gaze",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_BLOCK_ABOVE", value: 12 },
+            weightMultiplier: 4,
+          },
+        ],
+      },
+      {
         name: "Frozen Soul",
         weight: 1,
         target: "PLAYER",

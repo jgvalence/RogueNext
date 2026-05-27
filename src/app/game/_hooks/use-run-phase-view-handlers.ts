@@ -154,6 +154,16 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
     [dispatch, setPhase]
   );
 
+  const handleRelicExchange = useCallback(
+    (giveRelicId: string, takeRelicId: string) => {
+      dispatch({
+        type: "EXCHANGE_RELIC",
+        payload: { giveRelicId, takeRelicId },
+      });
+    },
+    [dispatch]
+  );
+
   const handleSpecialSkip = useCallback(() => {
     dispatch({ type: "ADVANCE_ROOM" });
     setPhase("MAP");
@@ -195,6 +205,7 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
     handleSpecialEventContinue,
     handleSpecialHealRoomBloodPurge,
     handleSpecialEventPurge,
+    handleRelicExchange,
     handleSpecialSkip,
     handlePreBossHeal,
     handlePreBossUpgrade,

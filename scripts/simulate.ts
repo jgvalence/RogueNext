@@ -63,6 +63,7 @@ import {
   generateShopInventory,
   buyShopItem,
 } from "../src/game/engine/merchant";
+import { applyUsableItem } from "../src/game/engine/items";
 import { createRNG } from "../src/game/engine/rng";
 import {
   allCardDefinitions,
@@ -377,6 +378,47 @@ const RELIC_SCORES: Record<
   bookmark: { base: 55, draw: 120, mixed: 70 },
   blighted_compass: { base: 40, draw: 110 },
   kikimora_night_lantern: { base: 45, draw: 100, ink: 70 },
+  golem_pulp_core: { base: 65, draw: 115, mixed: 80 },
+  priest_obsidian_censer: { base: 60, draw: 90, ink: 75, mixed: 70 },
+  viking_valkyrie_feather: { base: 50, draw: 95, mixed: 70 },
+
+  // Poison (biome-gated but impactful when available)
+  cultist_flayed_mask: { base: 45, poison: 115, mixed: 60 },
+  egypt_scarab_idol: { base: 40, poison: 125, mixed: 60 },
+
+  // Bleed (biome-gated but impactful when available)
+  celtic_briar_seed: { base: 35, bleed: 120, mixed: 50 },
+  celtic_morrigan_feather: { base: 40, bleed: 85, armor: 60, mixed: 55 },
+  broodling_hydra_spine: { base: 55, bleed: 90, draw: 70, mixed: 65 },
+
+  // Difficulty-unlock relics (diff 2-5)
+  scroll_of_marginalia: { base: 70, draw: 140, mixed: 90 },
+  bleeding_thistle: { base: 60, bleed: 145, mixed: 70 },
+  venom_pouch: { base: 60, poison: 145, mixed: 70 },
+  arcane_reservoir: { base: 75, ink: 155, mixed: 85 },
+  plague_vial: { base: 65, poison: 155, mixed: 75 },
+  endless_codex: { base: 70, draw: 155, mixed: 80 },
+  crimson_covenant: { base: 65, bleed: 155, mixed: 75 },
+  philosophers_tome: {
+    base: 95,
+    mixed: 110,
+    ink: 110,
+    draw: 100,
+    bleed: 100,
+    poison: 100,
+    armor: 95,
+  },
+  eternal_flow: {
+    base: 95,
+    ink: 115,
+    mixed: 115,
+    bleed: 100,
+    poison: 100,
+    draw: 100,
+    armor: 100,
+  },
+  venom_grimoire: { base: 55, poison: 155, mixed: 65 },
+  hemorrhage_codex: { base: 55, bleed: 155, mixed: 65 },
 };
 
 function scoreAllyForBuild(allyId: string, buildType: BuildType): number {
@@ -630,7 +672,7 @@ function simulateCombat(
 
     if (combat.phase === "COMBAT_WON" || combat.phase === "COMBAT_LOST") break;
 
-    // Potion usage: use block potion when about to take fatal/heavy damage in boss fights
+    // Potion usage
     if (usableItems.length > 0) {
       const hpRatio = combat.player.currentHp / combat.player.maxHp;
       const aliveEnemies = combat.enemies.filter((e) => e.currentHp > 0);
@@ -649,43 +691,54 @@ function simulateCombat(
         );
       }, 0);
       const netDamage = Math.max(0, incomingDmg - combat.player.block);
+      const lowestHpEnemy =
+        aliveEnemies.length > 0
+          ? [...aliveEnemies].sort((a, b) => a.currentHp - b.currentHp)[0]!
+          : null;
 
-      const blockPotion = usableItems.find(
-        (i) => i.definitionId === "potion_block"
-      );
-      if (
-        blockPotion &&
-        (hpRatio < 0.4 || netDamage >= combat.player.currentHp)
-      ) {
-        combat = {
-          ...combat,
-          player: { ...combat.player, block: combat.player.block + 12 },
-        };
-        usableItems = usableItems.filter(
-          (i) => i.instanceId !== blockPotion.instanceId
+      const applyPotion = (defId: string, targetId: string | null) => {
+        const item = usableItems.find((i) => i.definitionId === defId);
+        if (!item) return;
+        const tempState = { ...runState, combat, usableItems };
+        const result = applyUsableItem(
+          tempState,
+          item.instanceId,
+          targetId,
+          rng
         );
+        if (result.combat) combat = result.combat;
+        usableItems = result.usableItems ?? [];
+      };
+
+      // Block / guardian potions: use when about to take fatal/heavy damage
+      if (hpRatio < 0.4 || netDamage >= combat.player.currentHp) {
+        applyPotion("potion_block", null);
+        applyPotion("potion_guardian", null);
       }
 
-      // Damage potion: use at start of boss turn 1 or when enemy is near death
-      const dmgPotion = usableItems.find(
-        (i) => i.definitionId === "potion_damage"
-      );
-      if (dmgPotion && isBossFight && aliveEnemies.length > 0) {
-        const target = [...aliveEnemies].sort(
-          (a, b) => a.currentHp - b.currentHp
-        )[0]!;
-        // Apply 14 damage (accounting for enemy block)
-        const dmg = Math.max(0, 14 - (target.block ?? 0));
-        const newEnemies = combat.enemies.map((e) =>
-          e.instanceId === target.instanceId
-            ? { ...e, currentHp: Math.max(0, e.currentHp - dmg) }
-            : e
-        );
-        combat = checkCombatEnd({ ...combat, enemies: newEnemies });
-        usableItems = usableItems.filter(
-          (i) => i.instanceId !== dmgPotion.instanceId
-        );
+      // Offensive potions in boss fights
+      if (isBossFight && lowestHpEnemy) {
+        applyPotion("potion_damage", lowestHpEnemy.instanceId);
+        applyPotion("potion_poison", lowestHpEnemy.instanceId);
+        applyPotion("potion_bleed", lowestHpEnemy.instanceId);
+        applyPotion("potion_weakness", lowestHpEnemy.instanceId);
+        applyPotion("potion_vulnerable", lowestHpEnemy.instanceId);
       }
+
+      // Buff potions in boss fights
+      if (isBossFight) {
+        applyPotion("potion_strength", null);
+        applyPotion("potion_focus", null);
+        applyPotion("potion_ink", null);
+        applyPotion("potion_energy", null);
+      }
+
+      // Draw potion: use when hand is near empty
+      if (combat.hand.length <= 1) {
+        applyPotion("potion_draw", null);
+      }
+
+      combat = checkCombatEnd(combat);
     }
 
     // End turn → enemies act
@@ -908,6 +961,22 @@ function simulateRun(runIndex: number): SimRunResult {
           }
         }
 
+        // Elite: pick the offered relic (always offered at diff < 5)
+        if (
+          (room.isElite ?? false) &&
+          !isBoss &&
+          rewards.relicChoices.length > 0
+        ) {
+          const bestRelic = rewards.relicChoices.reduce((a, b) =>
+            scoreRelicForBuild(a.id, config.buildType) >=
+            scoreRelicForBuild(b.id, config.buildType)
+              ? a
+              : b
+          );
+          run = addRelicToRunState(run, bestRelic.id);
+          result.relicsGained++;
+        }
+
         if (config.verbose) {
           const label = isBoss
             ? "BOSS"
@@ -986,7 +1055,25 @@ function simulateRun(runIndex: number): SimRunResult {
           }
         }
 
-        // Priority 2: buy usable_item (potion) if we have a slot and can afford it
+        // Priority 2: buy best relic if affordable
+        const relicOffers = shopItems.filter(
+          (i) => i.type === "relic" && run.gold >= i.price
+        );
+        if (relicOffers.length > 0) {
+          const best = relicOffers.reduce((a, b) =>
+            scoreRelicForBuild(a.relicId ?? "", config.buildType) >=
+            scoreRelicForBuild(b.relicId ?? "", config.buildType)
+              ? a
+              : b
+          );
+          const updated = buyShopItem(run, best);
+          if (updated) {
+            run = updated;
+            result.relicsGained++;
+          }
+        }
+
+        // Priority 3: buy usable_item (potion) if we have a slot and can afford it
         for (const item of shopItems) {
           if (item.type === "usable_item" && run.gold >= item.price) {
             const updated = buyShopItem(run, item);
@@ -997,7 +1084,7 @@ function simulateRun(runIndex: number): SimRunResult {
           }
         }
 
-        // Priority 3: buy ally if we have a free slot
+        // Priority 4: buy ally if we have a free slot
         const allySlots = run.metaBonuses?.allySlots ?? 0;
         if ((run.allyIds ?? []).length < allySlots) {
           const allyOffers = shopItems.filter(
@@ -1015,7 +1102,7 @@ function simulateRun(runIndex: number): SimRunResult {
           }
         }
 
-        // Priority 4: purge STATUS/CURSE cards from deck (max 1 purge per merchant)
+        // Priority 5: purge STATUS/CURSE cards from deck (max 1 purge per merchant)
         const badCards = run.deck.filter((c) => {
           const def = cardDefs.get(c.definitionId);
           return def && (def.type === "STATUS" || def.type === "CURSE");
@@ -1043,7 +1130,7 @@ function simulateRun(runIndex: number): SimRunResult {
           }
         }
 
-        // Priority 5: upgrade best unupgraded attack/skill cards (up to 2)
+        // Priority 6: upgrade best unupgraded attack/skill cards (up to 2)
         const UPGRADE_COST = 75;
         let upgraded = 0;
         while (run.gold >= UPGRADE_COST && upgraded < 2) {

@@ -20,6 +20,7 @@ import { EnergyOrb } from "../shared/EnergyOrb";
 import { Tooltip } from "../shared/Tooltip";
 import { RogueButton } from "@/components/ui/rogue";
 import { getCombatBiomeTheme } from "./combat-biome-theme";
+import { getUsableItemUiMeta } from "./usable-item-ui";
 
 interface CombatPlayerZoneProps {
   combat: CombatState;
@@ -106,9 +107,7 @@ export function CombatPlayerZone({
 }: CombatPlayerZoneProps) {
   const { t } = useTranslation();
   const theme = getCombatBiomeTheme(biome);
-  const endTurnClass = canEndTurn
-    ? theme.endTurnReady
-    : theme.endTurnDisabled;
+  const endTurnClass = canEndTurn ? theme.endTurnReady : theme.endTurnDisabled;
 
   return (
     <div
@@ -119,7 +118,7 @@ export function CombatPlayerZone({
     >
       <div
         className={cn(
-          "relative border-t px-1.5 pb-0.75 pt-0.75 lg:px-4 lg:pb-3 lg:pt-2.5 [@media(max-height:540px)]:px-1.25 [@media(max-height:540px)]:pb-0.5 [@media(max-height:540px)]:pt-0.5",
+          "pb-0.75 pt-0.75 [@media(max-height:540px)]:px-1.25 relative border-t px-1.5 lg:px-4 lg:pb-3 lg:pt-2.5 [@media(max-height:540px)]:pb-0.5 [@media(max-height:540px)]:pt-0.5",
           theme.playerZoneRule
         )}
       >
@@ -261,19 +260,20 @@ export function CombatPlayerZone({
                     const def = usableItemDefs.get(item.definitionId);
                     if (!def) return null;
                     const isSelected = selectedUsableItemId === item.instanceId;
+                    const itemMeta = getUsableItemUiMeta(def);
                     return (
                       <Tooltip
                         key={item.instanceId}
-                        content={localizeUsableItemDescription(
+                        content={`${itemMeta.targetLabel} - ${localizeUsableItemDescription(
                           def.id,
                           def.description
-                        )}
+                        )}`}
                       >
                         <RogueButton
                           type="text"
                           onClick={() => onUseItemClick(item.instanceId)}
                           className={cn(
-                            "!h-9 !min-w-24 !rounded-lg !border !px-2 !text-[9px] !font-semibold !uppercase !tracking-wide !transition",
+                            "!h-auto !min-h-9 !min-w-24 !rounded-lg !border !px-1.5 !py-1 !text-left !transition",
                             isSelected
                               ? theme.inventoryButtonSelected
                               : theme.inventoryButton,
@@ -281,7 +281,19 @@ export function CombatPlayerZone({
                           )}
                           disabled={!canUseItems}
                         >
-                          {localizeUsableItemName(def.id, def.name)}
+                          <span className="flex min-w-0 items-center gap-1.5">
+                            <span
+                              className={cn(
+                                "shrink-0 rounded border px-1 py-0.5 text-[8px] font-black leading-none",
+                                itemMeta.className
+                              )}
+                            >
+                              {itemMeta.label}
+                            </span>
+                            <span className="min-w-0 truncate text-[9px] font-semibold uppercase tracking-wide">
+                              {localizeUsableItemName(def.id, def.name)}
+                            </span>
+                          </span>
                         </RogueButton>
                       </Tooltip>
                     );
@@ -351,7 +363,9 @@ export function CombatPlayerZone({
                 >
                   Epuise
                 </span>
-                <span className={cn("text-xl font-black", theme.pileButtonValue)}>
+                <span
+                  className={cn("text-xl font-black", theme.pileButtonValue)}
+                >
                   {combat.exhaustPile.length}
                 </span>
               </RogueButton>

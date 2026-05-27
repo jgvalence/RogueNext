@@ -16,7 +16,8 @@ import {
   type GameEvent,
 } from "@/game/engine/run";
 import { buildArchetypeEventCardChoices } from "@/game/engine/archetype-offers";
-import { relicDefinitions } from "@/game/data/relics";
+import { relicDefinitions, type RelicDefinitionData } from "@/game/data/relics";
+import { weightedSampleByRarity } from "@/game/engine/loot";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -52,6 +53,7 @@ interface SpecialRoomViewProps {
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
   onPickCardReward: (definitionId: string) => void;
   onEventContinue: () => void;
+  onRelicExchange: (giveRelicId: string, takeRelicId: string) => void;
   onSkip: () => void;
 }
 
@@ -73,6 +75,7 @@ export function SpecialRoomView({
   onEventChoice,
   onPickCardReward,
   onEventContinue,
+  onRelicExchange,
   onSkip,
 }: SpecialRoomViewProps) {
   const roomType = useMemo(() => {
@@ -122,6 +125,15 @@ export function SpecialRoomView({
           onPickCardReward={onPickCardReward}
           onPurgeCard={onPurgeCard}
           onEventContinue={onEventContinue}
+        />
+      );
+    case "RELIC_BAZAAR":
+      return (
+        <RelicBazaarRoom
+          rng={rng}
+          runState={runState}
+          onExchange={onRelicExchange}
+          onLeave={onSkip}
         />
       );
   }
@@ -426,6 +438,237 @@ function UpgradeRoom({
 
       <Divider dim />
       <UpgradePreviewPortal info={hoverInfo ?? pinnedInfo} />
+    </div>
+  );
+}
+
+// ── RelicBazaarRoom ───────────────────────────────────────────────────────────
+
+const BAZAAR_OFFER_COUNT = 3;
+
+function generateBazaarOffers(
+  runState: RunState | undefined,
+  rng: RNG,
+  excludeIds: string[]
+): RelicDefinitionData[] {
+  const ownedIds = new Set([...(runState?.relicIds ?? []), ...excludeIds]);
+  const pool = relicDefinitions.filter(
+    (r) =>
+      !ownedIds.has(r.id) &&
+      r.rarity !== "BOSS" &&
+      (!runState?.unlockedRelicIds || runState.unlockedRelicIds.includes(r.id))
+  );
+  return weightedSampleByRarity(pool, BAZAAR_OFFER_COUNT, rng, 0);
+}
+
+function RelicBazaarRoom({
+  rng,
+  runState,
+  onExchange,
+  onLeave,
+}: {
+  rng: RNG;
+  runState?: RunState;
+  onExchange: (giveRelicId: string, takeRelicId: string) => void;
+  onLeave: () => void;
+}) {
+  const { t } = useTranslation();
+  const [offeredRelics, setOfferedRelics] = useState<RelicDefinitionData[]>(
+    () => generateBazaarOffers(runState, rng, [])
+  );
+  const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
+  const [selectedOwned, setSelectedOwned] = useState<string | null>(null);
+
+  const ownedRelics = useMemo(
+    () =>
+      (runState?.relicIds ?? [])
+        .map((id) => relicDefinitions.find((r) => r.id === id))
+        .filter((r): r is RelicDefinitionData => r !== undefined),
+    [runState?.relicIds]
+  );
+
+  const canExchange = selectedOffer !== null && selectedOwned !== null;
+
+  const handleConfirm = () => {
+    if (!selectedOffer || !selectedOwned) return;
+    onExchange(selectedOwned, selectedOffer);
+    setOfferedRelics(generateBazaarOffers(runState, rng, [selectedOffer]));
+    setSelectedOffer(null);
+    setSelectedOwned(null);
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-5 px-4 py-10">
+      <Divider />
+      <RoomLabel label="Bazar des Reliques" />
+      <RoomTitle>Le Marchand des Âmes</RoomTitle>
+      <div className="h-px w-10 bg-gradient-to-r from-amber-500/60 to-transparent" />
+      <p className="max-w-md text-center text-sm italic leading-relaxed text-amber-200/60">
+        Un étrange marchand vous propose d&apos;échanger vos trésors. Les offres
+        se renouvellent après chaque échange.
+      </p>
+
+      {/* Offered relics */}
+      <div className="w-full max-w-lg">
+        <p
+          className={cn(
+            cinzel.className,
+            "mb-2 text-center text-[0.5rem] uppercase tracking-[0.4em] text-amber-400/50"
+          )}
+        >
+          Offres du marchand
+        </p>
+        <div className="flex flex-col gap-2">
+          {offeredRelics.map((relic) => {
+            const rarityStyle = RARITY_STYLES[relic.rarity];
+            const isSelected = selectedOffer === relic.id;
+            return (
+              <button
+                key={relic.id}
+                onClick={() => setSelectedOffer(isSelected ? null : relic.id)}
+                disabled={offeredRelics.length === 0}
+                className={cn(
+                  "w-full rounded border px-4 py-3 text-left transition-all duration-150",
+                  isSelected
+                    ? "border-amber-400/60 bg-amber-900/40"
+                    : cn(
+                        rarityStyle?.border ?? "border-gray-500/20",
+                        "bg-amber-950/10 hover:border-amber-500/35 hover:bg-amber-950/25"
+                      ),
+                  offeredRelics.length === 0 && "cursor-not-allowed opacity-40"
+                )}
+              >
+                <p
+                  className={cn(
+                    cinzel.className,
+                    "text-[0.45rem] uppercase tracking-[0.5em]",
+                    rarityStyle?.badge ?? "text-gray-400/70"
+                  )}
+                >
+                  {relic.rarity}
+                </p>
+                <p
+                  className={cn(
+                    cinzel.className,
+                    "font-semibold tracking-wide text-amber-100"
+                  )}
+                >
+                  {localizeRelicName(relic.id, relic.name)}
+                </p>
+                <p className="mt-0.5 text-xs leading-relaxed text-amber-200/50">
+                  {localizeRelicDescription(relic.id, relic.description)}
+                </p>
+              </button>
+            );
+          })}
+          {offeredRelics.length === 0 && (
+            <p className="text-center text-xs italic text-amber-100/30">
+              Le marchand n&apos;a plus rien à offrir.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Separator */}
+      <div className="flex items-center gap-3 text-amber-500/30">
+        <div className="h-px w-12 bg-amber-500/20" />
+        <span className={cn(cinzel.className, "text-[0.6rem] tracking-widest")}>
+          contre
+        </span>
+        <div className="h-px w-12 bg-amber-500/20" />
+      </div>
+
+      {/* Owned relics */}
+      <div className="w-full max-w-lg">
+        <p
+          className={cn(
+            cinzel.className,
+            "mb-2 text-center text-[0.5rem] uppercase tracking-[0.4em] text-amber-400/50"
+          )}
+        >
+          Vos reliques
+        </p>
+        <div className="flex flex-col gap-2">
+          {ownedRelics.map((relic) => {
+            const rarityStyle = RARITY_STYLES[relic.rarity];
+            const isSelected = selectedOwned === relic.id;
+            return (
+              <button
+                key={relic.id}
+                onClick={() => setSelectedOwned(isSelected ? null : relic.id)}
+                disabled={offeredRelics.length === 0}
+                className={cn(
+                  "w-full rounded border px-4 py-3 text-left transition-all duration-150",
+                  isSelected
+                    ? "border-rose-400/60 bg-rose-900/30"
+                    : cn(
+                        rarityStyle?.border ?? "border-gray-500/20",
+                        "bg-amber-950/10 hover:border-rose-500/30 hover:bg-rose-950/15"
+                      ),
+                  offeredRelics.length === 0 && "cursor-not-allowed opacity-40"
+                )}
+              >
+                <p
+                  className={cn(
+                    cinzel.className,
+                    "text-[0.45rem] uppercase tracking-[0.5em]",
+                    rarityStyle?.badge ?? "text-gray-400/70"
+                  )}
+                >
+                  {relic.rarity}
+                </p>
+                <p
+                  className={cn(
+                    cinzel.className,
+                    "font-semibold tracking-wide text-amber-100"
+                  )}
+                >
+                  {localizeRelicName(relic.id, relic.name)}
+                </p>
+                <p className="mt-0.5 text-xs leading-relaxed text-amber-200/50">
+                  {localizeRelicDescription(relic.id, relic.description)}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-6">
+        <RogueButton
+          onClick={handleConfirm}
+          disabled={!canExchange}
+          type="text"
+          className={cn(
+            cinzel.className,
+            "!group !flex !h-auto !items-center !gap-3 !py-[0.42rem] !uppercase",
+            "!text-[1.05rem] !font-semibold !tracking-[0.16em] !outline-none !transition-all !duration-150",
+            canExchange
+              ? "!text-amber-100"
+              : "!cursor-not-allowed !text-amber-100/20"
+          )}
+        >
+          {canExchange && (
+            <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
+          )}
+          Échanger
+        </RogueButton>
+
+        <RogueButton
+          onClick={onLeave}
+          type="text"
+          className={cn(
+            cinzel.className,
+            "!group !flex !h-auto !items-center !gap-2 !py-[0.42rem] !text-[1rem] !font-normal !uppercase !tracking-[0.14em]",
+            "!cursor-pointer !text-amber-100/30 !transition-colors !duration-150 hover:!text-amber-100/70"
+          )}
+        >
+          {t("reward.skip")}
+        </RogueButton>
+      </div>
+
+      <Divider dim />
     </div>
   );
 }

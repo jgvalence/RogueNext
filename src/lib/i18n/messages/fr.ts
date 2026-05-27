@@ -1107,6 +1107,46 @@ export const fr = {
       name: "Potion de bouclier",
       description: "Gagne 12 armure.",
     },
+    potion_ink: {
+      name: "Fiole d'encre claire",
+      description: "Gagne 3 Encre.",
+    },
+    potion_focus: {
+      name: "Tonique de concentration",
+      description: "Gagne 2 Concentration.",
+    },
+    potion_strength: {
+      name: "Philtre de vigueur",
+      description: "Gagne 2 Force.",
+    },
+    potion_draw: {
+      name: "Infusion de notes",
+      description: "Pioche 3 cartes.",
+    },
+    potion_energy: {
+      name: "Elixir d'elan",
+      description: "Gagne 2 Energie.",
+    },
+    potion_poison: {
+      name: "Fiole de venin",
+      description: "Applique 8 Poison a un ennemi.",
+    },
+    potion_bleed: {
+      name: "Ampoule ecarlate",
+      description: "Applique 8 Saignement a un ennemi.",
+    },
+    potion_weakness: {
+      name: "Brume pale",
+      description: "Applique 2 Faiblesse a un ennemi.",
+    },
+    potion_vulnerable: {
+      name: "Solvant de marge",
+      description: "Applique 2 Vulnerable a un ennemi.",
+    },
+    potion_guardian: {
+      name: "Baume de garde",
+      description: "Gagne 8 Armure et 1 Epine.",
+    },
   },
   gameCard: {
     type: {
@@ -1221,7 +1261,7 @@ export const fr = {
     POISON: {
       label: "Poison",
       description:
-        "Inflige {{stacks}} degats en fin de tour, puis diminue de 1.",
+        "Inflige 1,5 x {{stacks}} degats en fin de tour, puis diminue de 1.",
     },
     WEAK: {
       label: "Faible",
@@ -1254,7 +1294,7 @@ export const fr = {
     BLEED: {
       label: "Saignement",
       description:
-        "Inflige {{stacks}} degats en fin de tour (ne diminue pas, expire par duree).",
+        "Inflige 1,5 x {{stacks}} degats en fin de tour (ne diminue pas, expire par duree).",
     },
     WARD: {
       label: "Garde",

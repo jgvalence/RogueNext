@@ -57,7 +57,9 @@ import {
 import {
   applyRelicsOnCardPlayed,
   applyRelicsOnCombatStart,
+  addRelicToRunState,
 } from "../engine/relics";
+import { applyUsableItem, createUsableItemInstance } from "../engine/items";
 import { resolveEffects, type EffectContext } from "../engine/effects";
 import { executeOneEnemyTurn } from "../engine/enemies";
 import { getCernunnosUiState } from "../engine/cernunnos-shade";
@@ -6451,6 +6453,97 @@ describe("Merchant", () => {
     expect(updated).not.toBeNull();
     expect(updated?.gold).toBe(run.gold);
     expect(updated?.playerCurrentHp).toBe(run.playerCurrentHp - 8);
+  });
+
+  it("Alchemist's Bandolier increases usable item capacity", () => {
+    const run = createNewRun(
+      "run-potion-capacity",
+      "run-potion-capacity",
+      getStarterCardsForCharacter("scribe"),
+      createRNG("run-potion-capacity")
+    );
+
+    const updated = addRelicToRunState(run, "alchemists_bandolier");
+
+    expect(updated.relicIds).toContain("alchemists_bandolier");
+    expect(updated.usableItemCapacity).toBe(
+      GAME_CONSTANTS.MAX_USABLE_ITEMS + 2
+    );
+  });
+
+  it("Distiller's Prism doubles potion effects", () => {
+    const run = createNewRun(
+      "run-potion-double",
+      "run-potion-double",
+      getStarterCardsForCharacter("scribe"),
+      createRNG("run-potion-double")
+    );
+    const combat = makeMinimalCombat({
+      enemies: [
+        {
+          instanceId: "e1",
+          definitionId: "ink_slime",
+          name: "Ink Slime",
+          currentHp: 20,
+          maxHp: 20,
+          block: 0,
+          speed: 2,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+    const potion = createUsableItemInstance("potion_damage");
+
+    const result = applyUsableItem(
+      {
+        ...run,
+        relicIds: ["distillers_prism"],
+        combat,
+        usableItems: [potion],
+      },
+      potion.instanceId,
+      "e1",
+      createRNG("run-potion-double")
+    );
+
+    expect(result.combat?.enemies[0]?.currentHp).toBeLessThanOrEqual(0);
+    expect(result.usableItems).toHaveLength(0);
+  });
+
+  it("Quartermaster's Cork adds a potion after combat when there is room", () => {
+    const run = createNewRun(
+      "run-potion-reward",
+      "run-potion-reward",
+      getStarterCardsForCharacter("scribe"),
+      createRNG("run-potion-reward")
+    );
+    const combat = makeMinimalCombat({
+      phase: "COMBAT_WON",
+      enemies: [
+        {
+          instanceId: "e1",
+          definitionId: "ink_slime",
+          name: "Ink Slime",
+          currentHp: 0,
+          maxHp: 14,
+          block: 0,
+          speed: 2,
+          buffs: [],
+          intentIndex: 0,
+        },
+      ],
+    });
+
+    const result = completeCombat(
+      { ...run, relicIds: ["quartermaster_cork"] },
+      combat,
+      0,
+      makeDeterministicRng("run-potion-reward")
+    );
+
+    expect(result.usableItems).toHaveLength(1);
+    expect(result.usableItems[0]?.definitionId).toBe("potion_damage");
   });
 
   it("getCardOfferWeight only boosts tuned signatures in their intended offer sources", () => {

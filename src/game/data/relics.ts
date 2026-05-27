@@ -19,7 +19,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "colossus_tome_plate",
     name: "Plaque du Colosse-Tome",
-    description: "Start each combat with 12 Block.",
+    description: "Start each combat with 10 Block.",
     rarity: "COMMON",
   },
   {
@@ -44,6 +44,12 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "warded_ribbon",
     name: "Warded Ribbon",
     description: "Start each combat with 4 Block and 1 Thorn.",
+    rarity: "COMMON",
+  },
+  {
+    id: "alchemists_bandolier",
+    name: "Alchemist's Bandolier",
+    description: "You can carry 2 additional potions.",
     rarity: "COMMON",
   },
   {
@@ -97,7 +103,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "guard_czar_medal",
     name: "MAdaille du Garde du Tsar",
-    description: "At end of turn, gain 8 Block.",
+    description: "At end of turn, gain 4 Block.",
     rarity: "UNCOMMON",
   },
   {
@@ -115,7 +121,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "hound_amber_fang",
     name: "Croc d'Ambre",
-    description: "Gain 6 Block at the start of each turn.",
+    description: "Gain 2 Block at the start of each turn.",
     rarity: "UNCOMMON",
   },
   {
@@ -140,7 +146,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "ink_stamp",
     name: "Ink Stamp",
-    description: "Start each combat with 3 ink.",
+    description: "Start each combat with 4 ink.",
     rarity: "UNCOMMON",
   },
   {
@@ -159,6 +165,12 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "lucky_charm",
     name: "Lucky Charm",
     description: "Increases loot luck for better rarity rolls.",
+    rarity: "UNCOMMON",
+  },
+  {
+    id: "quartermaster_cork",
+    name: "Quartermaster's Cork",
+    description: "After each combat, gain a random potion if you have room.",
     rarity: "UNCOMMON",
   },
   {
@@ -189,13 +201,13 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "shaman_storm_totem",
     name: "Totem d'Orage du Shaman",
-    description: "Start each combat with 8 Block and 1 Thorn.",
+    description: "Start each combat with 6 Block and 1 Thorn.",
     rarity: "UNCOMMON",
   },
   {
     id: "spectral_inkwell",
     name: "Spectral Inkwell",
-    description: "Gain 1 Ink at the start of each turn.",
+    description: "Gain 2 Ink at the start of each turn.",
     rarity: "UNCOMMON",
   },
   {
@@ -262,7 +274,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "cultist_flayed_mask",
     name: "Masque de l'AcorchA",
-    description: "Apply 2 Poison to all enemies at combat start.",
+    description: "Apply 3 Poison to all enemies at combat start.",
     rarity: "RARE",
   },
   {
@@ -349,6 +361,12 @@ export const relicDefinitions: RelicDefinitionData[] = [
     name: "Echoing Inkstone",
     description:
       "Inked cards, cards with Ink cost, and current-ink payoffs have their effects doubled.",
+    rarity: "RARE",
+  },
+  {
+    id: "distillers_prism",
+    name: "Distiller's Prism",
+    description: "Potion effects are doubled.",
     rarity: "RARE",
   },
   {
@@ -736,7 +754,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "egypt_scarab_idol",
     name: "Idole Scarabee",
-    description: "Les ennemis sous POISON subissent +50% de degats de POISON.",
+    description: "POISON deals 2.5 damage per stack instead of 1.5.",
     rarity: "RARE",
   },
   {
@@ -922,7 +940,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "celtic_briar_seed",
     name: "Graine de Ronce",
-    description: "Les ennemis sous BLEED subissent +50% de degats de BLEED.",
+    description: "BLEED deals 2.5 damage per stack instead of 1.5.",
     rarity: "RARE",
   },
   {
@@ -1161,6 +1179,79 @@ export const relicDefinitions: RelicDefinitionData[] = [
     name: "Grand Catalogue",
     description:
       "Fin de tour: si vous avez joue au moins 2 SKILL et gardez au moins 2 cartes en main, gagnez 1 Focus, 4 Block et +1 Energy au prochain tour.",
+    rarity: "RARE",
+  },
+  // ── Difficulty-unlock relics ──────────────────────────────────────────────
+  {
+    id: "scroll_of_marginalia",
+    name: "Scroll of Marginalia",
+    description: "Start each combat with +2 draw.",
+    rarity: "RARE",
+  },
+  {
+    id: "bleeding_thistle",
+    name: "Bleeding Thistle",
+    description: "At the start of each turn, apply 1 Bleed to all enemies.",
+    rarity: "RARE",
+  },
+  {
+    id: "venom_pouch",
+    name: "Venom Pouch",
+    description: "At the start of each turn, apply 1 Poison to all enemies.",
+    rarity: "RARE",
+  },
+  {
+    id: "arcane_reservoir",
+    name: "Arcane Reservoir",
+    description: "Gain 3 Ink at the start of each turn.",
+    rarity: "RARE",
+  },
+  {
+    id: "plague_vial",
+    name: "Plague Vial",
+    description: "Apply 10 Poison to all enemies at combat start.",
+    rarity: "RARE",
+  },
+  {
+    id: "endless_codex",
+    name: "Endless Codex",
+    description:
+      "At end of turn, deal 2 damage per card drawn this turn to all enemies.",
+    rarity: "RARE",
+  },
+  {
+    id: "crimson_covenant",
+    name: "Crimson Covenant",
+    description:
+      "Apply 5 Bleed to all enemies at combat start. Each turn, apply 1 more Bleed to all enemies.",
+    rarity: "RARE",
+  },
+  {
+    id: "philosophers_tome",
+    name: "Philosopher's Tome",
+    description:
+      "Start each combat with +6 Strength, +5 HP regen per turn, and +5 Ink.",
+    rarity: "RARE",
+  },
+  {
+    id: "eternal_flow",
+    name: "Eternal Flow",
+    description:
+      "At the start of each turn, gain +3 Ink, +2 Block, and +1 Strength.",
+    rarity: "RARE",
+  },
+  {
+    id: "venom_grimoire",
+    name: "Venom Grimoire",
+    description:
+      "POISON deals +1.0 damage per stack (stackable with other Poison relics).",
+    rarity: "RARE",
+  },
+  {
+    id: "hemorrhage_codex",
+    name: "Hemorrhage Codex",
+    description:
+      "BLEED deals +1.0 damage per stack (stackable with other Bleed relics).",
     rarity: "RARE",
   },
 ];

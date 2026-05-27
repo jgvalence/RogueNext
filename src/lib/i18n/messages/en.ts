@@ -1133,6 +1133,46 @@ export const en = {
       name: "Shield Potion",
       description: "Gain 12 block.",
     },
+    potion_ink: {
+      name: "Clear Ink Vial",
+      description: "Gain 3 Ink.",
+    },
+    potion_focus: {
+      name: "Focus Tonic",
+      description: "Gain 2 Focus.",
+    },
+    potion_strength: {
+      name: "Vigor Philtre",
+      description: "Gain 2 Strength.",
+    },
+    potion_draw: {
+      name: "Notes Infusion",
+      description: "Draw 3 cards.",
+    },
+    potion_energy: {
+      name: "Momentum Elixir",
+      description: "Gain 2 Energy.",
+    },
+    potion_poison: {
+      name: "Venom Vial",
+      description: "Apply 8 Poison to one enemy.",
+    },
+    potion_bleed: {
+      name: "Scarlet Ampoule",
+      description: "Apply 8 Bleed to one enemy.",
+    },
+    potion_weakness: {
+      name: "Pale Mist",
+      description: "Apply 2 Weak to one enemy.",
+    },
+    potion_vulnerable: {
+      name: "Margin Solvent",
+      description: "Apply 2 Vulnerable to one enemy.",
+    },
+    potion_guardian: {
+      name: "Guardian Balm",
+      description: "Gain 8 Block and 1 Thorn.",
+    },
   },
   gameCard: {
     type: {
@@ -1242,7 +1282,7 @@ export const en = {
     POISON: {
       label: "Poison",
       description:
-        "Deals {{stacks}} damage at end of turn, then decreases by 1.",
+        "Deals 1.5 × {{stacks}} damage at end of turn, then decreases by 1.",
     },
     WEAK: {
       label: "Weak",
@@ -1275,7 +1315,7 @@ export const en = {
     BLEED: {
       label: "Bleed",
       description:
-        "Deals {{stacks}} damage at end of round (does not decrease, expires by duration).",
+        "Deals 1.5 × {{stacks}} damage at end of round (does not decrease, expires by duration).",
     },
     WARD: {
       label: "Ward",

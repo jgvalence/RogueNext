@@ -14,6 +14,7 @@ import { executeAlliesTurn, executeEnemiesTurn } from "./enemies";
 import { applyMetaBonusesToCombat } from "./meta";
 import { applyRelicsOnTurnStart, applyRelicsOnTurnEnd } from "./relics";
 import {
+  getDiff0FloorRamp,
   getDifficultyModifiers,
   getEnemyStartingBlock,
   getPostFloorCapEscalation,
@@ -198,14 +199,20 @@ export function initCombat(
     runState.floor,
     isInfiniteRunConditionId(runState.selectedRunConditionId)
   );
+  const diff0Ramp =
+    difficultyLevel === 0
+      ? getDiff0FloorRamp(runState.floor)
+      : { enemyHpMultiplier: 1, enemyDamageMultiplier: 1 };
   const floorEnemyHpMultiplier =
     (1 + (runState.floor - 1) * 0.15) *
     difficultyMods.enemyHpMultiplier *
-    postFloorEscalation.enemyHpMultiplier;
+    postFloorEscalation.enemyHpMultiplier *
+    diff0Ramp.enemyHpMultiplier;
   const enemyDamageScale =
     (1 + (runState.floor - 1) * 0.18) *
     difficultyMods.enemyDamageMultiplier *
-    postFloorEscalation.enemyDamageMultiplier;
+    postFloorEscalation.enemyDamageMultiplier *
+    diff0Ramp.enemyDamageMultiplier;
   const enemySpawnCountByDef: Record<string, number> = {};
   const scriptedArchivistAdds = enemyIds.includes("the_archivist")
     ? [ARCHIVIST_BLACK_INKWELL_ID, ARCHIVIST_PALE_INKWELL_ID].filter(

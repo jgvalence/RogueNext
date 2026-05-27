@@ -1,251 +1,116 @@
 # Panlibrarium - TODO
 
-## Fait
-
-### Gameplay core
-
-- [x] Combat loop complet (joueur/ennemis, energie, block, pioche, defausse)
-- [x] Systeme Ink + powers (REWRITE, LOST_CHAPTER, SEAL)
-- [x] Variantes Inked
-- [x] Buffs/debuffs principaux (POISON, STRENGTH, WEAK, VULNERABLE, FOCUS, THORNS)
-- [x] Buff BLEED (saignement, expire par duree uniquement, distinct du POISON)
-- [x] `venom_echo` ne s'exhaust plus
-- [x] Nouvelle mecanique anti-armure (`DAMAGE_PER_TARGET_BLOCK`) pour punir les runs full block
-- [x] Malediction `Shrouded Omen` : cache les intentions ennemies tant qu'elle reste en main
-- [x] RNG seedee reproductible
-- [x] Preview degats entrants (affichage des intentions ennemies avec estimation de degats)
-
-### Progression run
-
-- [x] 3 etages (`MAX_FLOORS = 3`)
-- [x] Difficulte croissante par etage
-- [x] HP ennemis scales par floor
-- [x] Chance elite augmente par floor
-- [x] Taille des groupes ennemis augmente par floor
-- [x] Selection ennemis ponderee par difficulte (`tier`) + etage
-
-### Contenu
-
-- [x] Cartes lootables pour tous les biomes (LIBRARY + 8 biomes)
-- [x] Ennemis pour tous les biomes (normaux + elite + boss)
-- [x] Multi-boss (deux boss par biome, choix aleatoire)
-- [x] Relique unique par boss (18 reliques boss-specifiques, debloquees apres 3 victoires sur ce boss)
-- [x] Cartes bestiaire: 1 carte biome par ennemi normal (unlock a 15 kills) + 1 carte rare par elite (unlock a 5 kills)
-- [x] IA boss conditionnelle (poids conditionnels par situation, phase 2 differenciee)
-- [x] 24+ ennemis supplementaires (2 normaux + 1 elite par biome hors LIBRARY, + Wadjet Guardian)
-- [x] 23+ nouvelles cartes (7 ALWAYS LIBRARY + 8 COMMON biome + 8 UNCOMMON biome)
-- [x] Unlocks progressifs tier 2 (BIOME_ELITE_KILLS count:2, BIOME_BOSS_KILLS count:2)
-- [x] 8 nouvelles reliques a mecaniques reactives (turn-start, turn-end, card-played)
-- [x] Renames lore : Judgment of Osiris, Apep Scion / Wadjet Guardian, Flayed Cultist, Snow Maiden
-
-### Meta progression (Bibliotheque)
-
-- [x] 45 histoires (9 biomes x 5)
-- [x] Ressources biome + accumulation en fin de run
-- [x] Gain ressources scale: normal < elite (~x1.35) < boss (~x2.2), avec multiplicateur biome
-- [x] Bonus victoire run x1.25
-- [x] Difficultes deja validees : gain de ressources reduit sur les re-clears
-- [x] `HEAL_AFTER_COMBAT` implemente
-- [x] Bonus defensifs ajoutes: regen par tour + reduction premier hit
-
-### Unlock cartes
-
-- [x] Systeme cartes lock/unlock entre runs
-- [x] Conditions supportees:
-  - premiere entree biome
-  - kill elite biome
-  - kill boss biome
-  - nb de runs completes par biome
-  - kills par ennemi (ID precis)
-  - unlock via histoire (arbre de competences)
-- [x] Rewards cartes filtrees par cartes debloquees
-- [x] Shop cartes filtre selon cartes debloquees
-
-### Difficulte et Run Conditions
-
-- [x] 6 niveaux de difficulte (0-5), debloquables progressivement apres victoires
-- [x] Plus de gating cartes/reliques par difficulte
-- [x] Combats elite renforces par des escorts possibles selon la difficulte
-- [x] Run Conditions de base (modificateurs de run) avec unlock progressif
-- [x] 1 option de debut de fight par boss (deblocage a 3 kills de ce boss)
-- [x] Conditions modifient: or de depart, HP max, cartes de depart, regles de map
-- [x] Branding narratif chapitres (Chapitre I a VI + sous-titres lore dans l'UI difficulte)
-
-### Systeme audio
-
-- [x] Musique de fond par zone
-- [x] SFX (jouer carte, hit, victoire...)
-- [x] Toggle mute
-
-### UI / admin / divers
-
-- [x] Bouton `Dev Kill` visible uniquement pour role `ADMIN`
-- [x] Ecran biome select entre floors + transitions
-- [x] Choix de biome a l'ouverture du run (2 options aleatoires)
-- [x] Evenement relic garanti une fois par run (Sealed Reliquary)
-- [x] HUD rewards ressources
-- [x] Menu in-game (abandon run, mute, regles, logout)
-- [x] Support mobile + fullscreen (detection orientation, prompt rotation)
-- [x] Modal inspection deck complet
-- [x] Systeme tooltips (descriptions buffs au survol)
-- [x] Apercu upgrade carte au survol
-- [x] Ecran setup de run (choix difficulte, condition de run, marchand de depart)
-- [x] Leaderboard (page + classement global)
-- [x] Minimap de progression de floor (`FloorMap`)
+> Tout ce qui est complété a été retiré. Ne reste que l'ouvert.
 
 ---
 
-## A faire
+## Equilibrage
 
-### Equilibrage
+### Playtest requis
 
-- [ ] Passer d'un calibrage "fonctionnel" a un calibrage fin biome par biome (HP, degats, frequences)
-- [x] Ajuster la cadence des unlocks cartes / reliques / conditions de run (pass progression 2026-03-15)
 - [ ] Verifier en playtest la nouvelle cadence d'unlocks (early runs, builds signatures, starts speciaux)
 - [ ] Verifier la courbe difficulte floors 2-3 en conditions reelles
-- [x] Reequilibrer l'economie d'action de la meta (`EXTRA_DRAW`, `EXTRA_ENERGY_MAX`, `EXTRA_HAND_AT_START`)
-- [x] Reduire les redondances de l'arbre meta (`STARTING_BLOCK`, `EXTRA_CARD_REWARD_CHOICES`, `EXHAUST_KEEP_CHANCE`)
 - [ ] Verifier en playtest la nouvelle repartition des `ALLY_SLOTS` entre arbres (cap cible `3`)
-- [x] Revoir la grille de cout des histoires (tiers fixes trop homogenes, cross-cost `PAGES` avantageux)
-- [x] Ajouter un garde-fou simple pour detecter les ecarts description/code des histoires
 - [ ] Verifier en playtest le nouveau cluster meta `LIBRARY` (`draw`, `energy`, `opening hand`) apres les nerfs
 - [ ] Verifier si `RUSSIAN` tier 2 reste trop fade apres le pass couts/identite
 
-#### Problemes identifies par le simulateur (scripts/simulate.ts)
+### Problemes identifies par le simulateur (scripts/simulate.ts)
 
 > Baseline conservatrice (events skippés, navigation non-stratégique) — les vraies valeurs sont ~5-10pp plus hautes.
 > Limites simulateur : GREEK et RUSSIAN sous-evalues de ~10-15pp (mecanique multi-cibles + boss phases).
-> Cibles visées : diff 0 = ~80% (max), ~35-40% (average) ; diff 2 = ~25-30% (max) toutes builds.
+> Cibles visées : diff 0 minimal meta = ~20% (new player clears floor 3) ; diff 0 average meta = ~45% ; diff 2 = ~25-30% (max) toutes builds.
 
-- [x] **Meta none/minimal = 0% victoire** — starter deck buffé (Strike 6→8, Defend 5→6) + presets minimal renforcés
-- [x] **Average ≈ Strong** — strong différencié (str 4→5, block 7→9, atkBonus 2→3, regen 1→2)
-- [x] **Falaises difficulté** — `disruptionWeightBonus` lissé [0,0.2,0.4,0.9,2.0,3.5], seuils bypass/block décalés +1 palier
-- [x] **Ecart boss par biome** — GREEK +17pp avg (48→67% max), CELTIC +11pp max (65→76%), RUSSIAN +11pp avg. Voir `project_simulator.md` pour valeurs finales.
-- [ ] **Build armor dominant** — 85.5% (max diff 0) vs 82.5% ink (révisés) ; l'ecart croît avec la difficulte ; à surveiller
-- [ ] **Build ink structurellement faible** — 82.5% diff 0 max (amélioré) mais diff 2 : 37.5% vs armor 49% ; nerfler ou buffler cartes POWER
+- [x] **Diff 0 inaccessible nouveaux joueurs** — floor ramp implémenté : floor 1 à 0.70×HP/0.80×dmg, floor 2 à 0.88×HP/0.90×dmg, floor 3 intact. Résultat : minimal meta 19% wins, 70% défaites sur floor 3 ; average meta 44%.
+- [x] **Build ink structurellement faible** — spectral_inkwell 1→2 ink/tour, ink_stamp 3→4 ; rage_of_ages, ancient_grove, griot_legacy génèrent 1 ink en jouant une carte POWER
+- [x] **Recalibration difficulté prestige (diff 3/4/5)** — HP/DMG/disruption ajustés pour cibles 15-20% / 5-10% / 1-5% (meta max, build armor). `blockPenetrationFraction` 5% à diff 4 pour nerf ciblé armor sans pénaliser DOT. Résultats : armor diff3=26.7% diff4=6.7% diff5=1.7%.
+- [x] **DOT sous-évalué** — tick POISON/BLEED porté à 1.5× par stack (base). Bonus reliques +1.0 (scarab_idol, briar_seed, venom_grimoire, hemorrhage_codex). Gap armor/DOT structurel accepté — DOT viable en meta max diff 3 uniquement.
+- [ ] **Build armor dominant** — nerf partiel via blockPenetrationFraction diff 4. Gap résiduel armor vs DOT à diff 4/5 accepté structurellement.
 - [ ] **Spread builds trop large** — diff 1 : draw 82.5% vs ink 58.5% (24pp) ; cible : tous les builds dans un couloir de ±10pp
 - [ ] **Falaise difficulte 1 → 2** — winrate mixed : 76% → 46% (÷1.65) ; acceptable mais à surveiller
-- [ ] **Diff 3 prestige** — mixed 19.5%, armor 17% ; acceptable comme mode prestige difficile
-- [ ] **LIBRARY max trivial** (99%) — structurel : boss sans mécanique complexe, max meta DPS écraserait même 200 HP ; accepter ou ajouter une mécanique défensive
+- [ ] **LIBRARY max trivial** (99%) — structurel : boss sans mécanique complexe ; accepter ou ajouter une mécanique défensive
 
-### Contenu cartes/enemies
+---
 
-- [x] Enrichir le pool de cartes STATUS/CURSE (types implementes, pool elargi avec effets de draw/tempo/hand disruption)
-- [x] Enrichir les patterns conditionnels de boss (IA plus contextuelle + intentions alignees sur les mecanique speciales)
-- [x] Poser une base de synergies inter-biomes et de bridges de build (couverture transverse deja satisfaite)
-- [ ] Verifier en playtest et affiner les routes inter-biomes existantes (desirabilite des bridges, ajouter seulement des ponts cibles si besoin)
+## Contenu
 
-### Meta progression
+### Cartes / ennemis
+
+- [ ] Verifier en playtest et affiner les routes inter-biomes existantes (desirabilite des bridges, ponts cibles si besoin)
+
+### Personnages jouables
 
 - [ ] Ajouter des personnages jouables supplementaires (decks/stats differents)
 - [ ] Eventuelles histoires dediees a l'unlock de cartes precises (au lieu de regles generiques seulement)
 
-### Narration & Histoire
+### Contenu manquant
+
+- [x] Objets utilisables — pool élargi avec 10 potions supplementaires
+- [x] Previews biomes — 6 biomes sur 9 affichent "Coming soon..." dans `biomes.ts` (champ `enemyPreview`) ; rédiger les descriptions
+- [x] Contenu alliés — 5 allies supplementaires ajoutes au pool
+- [x] **Bazar des Reliques** — nouvelle salle spéciale (~8% de chance) : marchand propose 3 reliques, offres renouvelées après chaque échange, pas de cap. Action `EXCHANGE_RELIC` dans le reducer.
+
+### Bestiaire
+
+- [ ] **Monster background mythologique** — voir [docs/monster-background.md](monster-background.md)
+- [ ] **Remplacer le lore bestiaire genere** — ecrire de vraies entrees uniques pour chaque ennemi et chaque palier de lore
+  - Prioriser au minimum les ennemis les plus vus du biome `LIBRARY`
+
+---
+
+## Narration & Histoire
 
 > Voir `docs/evolution-histoire.md` pour le detail complet de chaque phase.
 
-- [x] **Phase 3** — Events enrichis (narration 2 phases + biomes)
-  - [x] Ajouter `biome?` et `flavorText?` a l'interface `GameEvent` + mise a jour de `pickEvent` (filtre biome courant)
-  - [x] Ajouter `outcomeText?` a l'interface `EventChoice`
-  - [x] UI 2 phases dans `EventRoom` : CHOIX → RÉSULTAT + bouton "Continuer" (fini l'auto-advance)
-  - [x] Reecrire les 11 events neutres en i18n avec flavor Panlibrarium (fr + en)
-  - [x] 3 events pilotes : Miroir de Bronze (GREEK), Maison qui Tourne (RUSSIAN), Page Blanche (ANY floor>=3)
-  - [x] 3 events par biome — 21 nouveaux events biome-specifiques (GREEK, RUSSIAN, VIKING, EGYPTIAN, LOVECRAFTIAN, AZTEC, CELTIC, AFRICAN)
-  - [x] Personnages recurrents introduits par biome (Pythie, Ariane, Zhar-Ptitsa, Kochtchei, Huginn, Valkyrie, Anubis, Thoth, Sphinx, Bibliothecaire Sans Nom, Quetzalcoatl, Prêtresse du Codex, Xolotl, Druide, Dame du Lac, Morrigan, Anansi, Griot, Nyame)
-  - [ ] Ajouter `flags?: Record<string, boolean>` a `RunState` (schema Zod + migration DB) _(reporte en Phase 4+6)_
-  - [ ] Helpers `setFlag` / `hasFlag` dans `run.ts` _(reporte en Phase 4+6)_
+### Reste de Phase 3 (reporté en Phase 4+6)
 
-- [x] **Phase 5** — Scribe Efface (PNJ recurrent, 10 rencontres)
-  - [x] `GameEvent.once?: boolean` + `RunState.seenEventIds` — events uniques par run
-  - [x] `RunState.scribeAttitude: number` — suit la posture du joueur (+1 compassion / 0 neutre / -1 hostilite)
-  - [x] Chaine narrative garantie par conditions `seenEventIds.includes(...)` (ordre preserve)
-  - [x] 10 events sans recompense — lore pur, attitude uniquement :
-    - `scribe_1_first_meeting` — LIBRARY, fl.1-2 (decouverte)
-    - `scribe_2_lost_words` — LIBRARY, fl.1-2, req. #1 (pages dechireees)
-    - `scribe_3_familiar_face` — ANY, fl.2+, req. #2 (il vous croit connu)
-    - `scribe_4_torn_pages` — ANY, fl.2+, req. #3 (l'encre effacee)
-    - `scribe_5_the_name` — ANY, fl.3+, diff>=1, req. #4 (il cherche son nom)
-    - `scribe_6_the_warning` — ANY, fl.3+, diff>=2, req. #5 (l'avertissement)
-    - `scribe_7_the_other` — ANY, fl.3+, diff>=2, req. #6 (il parle de lui sans le savoir)
-    - `scribe_8_the_truth` — ANY, avant-dernier etage+, diff>=3, req. #7 (l'Archiviste d'avant)
-    - `scribe_9_the_choice` — ANY, avant-dernier etage+, diff>=4, req. #8 (ce que tu ferais)
-    - `scribe_10_the_reveal` — ANY, avant-dernier etage+, diff>=5, req. #9 (il est le Censeur)
-  - [x] Persistance metaprogression dans `UserProgression.resources` (via `endRunAction`) :
-    - 10 cles `__SCRIBE_1_ATT` … `__SCRIBE_10_ATT` — reponse individuelle par rencontre
-    - Encodage : 0/absent = pas vue, 1 = hostile, 2 = neutre, 3 = compassion
-    - Ecrasement a chaque run (garde la reponse la plus recente)
-    - `RunState.scribeChoices` — map eventId → delta (-1/0/+1) enregistre via `applyEventChoice`
-  - [ ] Hook boss final : Le Censeur reagit selon `scribeAttitude` (positif / neutre / negatif) _(Phase 9)_
+- [ ] Ajouter `flags?: Record<string, boolean>` a `RunState` (schema Zod + migration DB)
+- [ ] Helpers `setFlag` / `hasFlag` dans `run.ts`
 
-- [ ] **Phase 4+6** — Stats mythiques (sprint unique)
-  - `hubris?: number` a `RunState` (GREEK, 0-10)
-  - `maatBalance?: number` a `RunState` (EGYPTIAN, -5 a +5)
-  - Events biome-specifiques branchant ces stats
-  - `Judgment of Osiris` reagit a `maatBalance` (meca conditionnelle)
-  - Affichage discret dans l'UI pendant le run
+### Reste de Phase 5 (dépend du boss final)
 
-- [ ] **Phase 7** — Quetes de run (serments / propheties)
-  - Interface `RunQuest` + `activeQuest` dans `RunState`
-  - `checkQuestCompletion` a chaque fin de combat
-  - 2 quetes pilotes VIKING + UI header
+- [ ] Hook boss final : Le Censeur reagit selon `scribeAttitude` (positif / neutre / negatif) _(Phase 9)_
 
-- [ ] **Phase 8** — Sceaux de Tome (metaprogression narrative)
-  - Stocker via le systeme `resources` existant (cles `__SEAL_X`), pas dans `RunState`
-  - Generer un sceau apres certains boss (`rewards.ts`)
-  - 5 textes de sceaux revelant l'histoire de la Censure
-  - Affichage dans l'ecran de fin de run
+### Phase 4+6 — Stats mythiques (sprint unique)
 
-- [ ] **Phase 9** — Boss final : Le Censeur _(objectif long terme)_
-  - Entree boss `the_censor` dans `enemies.ts` (asset SVG deja prevu dans `assets.ts`)
-  - Mecanique "censure des cartes" (phase 1) — nouveau type d'effet engine
-  - HP caches reveles par les degats (phase 2)
-  - 4 endings selon flags majeurs + `hubris` + sceaux
+- [ ] `hubris?: number` a `RunState` (GREEK, 0-10)
+- [ ] `maatBalance?: number` a `RunState` (EGYPTIAN, -5 a +5)
+- [ ] Events biome-specifiques branchant ces stats
+- [ ] `Judgment of Osiris` reagit a `maatBalance` (meca conditionnelle)
+- [ ] Affichage discret dans l'UI pendant le run
 
-### Bestiaire (Encyclopedie des ennemis)
+### Phase 7 — Quetes de run (serments / propheties)
 
-- [x] **Systeme de decouverte** — stocker les IDs d'ennemis rencontres dans la metaprogression (DB, cle `encounteredEnemies`)
-  - Enregistrer la premiere rencontre d'un ennemi en fin de combat
-  - Distinguer : normal / elite / boss
-- [x] **Donnees ennemis enrichies** — ajouter `loreText?`/`loreEntries?` (description narrative) a chaque entree dans `enemies.ts`
-  - 3 paliers lore debloques par nombre de victoires:
-    - normal: 1, 5, 15
-    - elite: 1, 3, 5
-    - boss: 1, 2, 3
-- [x] **Page Bestiaire** — accessible depuis la Bibliotheque (hub)
-  - Entrees verrouillees affichees avec silhouette + "???" avant rencontre
-  - A la decouverte : nom, illustration (asset SVG existant), stats de base, description lore
-  - Filtres par biome + type (normal / elite / boss)
-- [x] **Notification** premiere decouverte en fin de combat ("Nouvelle entree dans le Bestiaire")
-- [ ] **Remplacer le lore bestiaire genere** — ecrire de vraies entrees uniques, non generiques, pour chaque ennemi et chaque palier de lore
-  - Supprimer progressivement les fallbacks auto-generes au profit de textes auteurises
-  - Prioriser au minimum les ennemis les plus vus du biome `LIBRARY`
+- [ ] Interface `RunQuest` + `activeQuest` dans `RunState`
+- [ ] `checkQuestCompletion` a chaque fin de combat
+- [ ] 2 quetes pilotes VIKING + UI header
 
-### Dynamisme visuel
+### Phase 8 — Sceaux de Tome (metaprogression narrative)
+
+- [ ] Stocker via le systeme `resources` existant (cles `__SEAL_X`)
+- [ ] Generer un sceau apres certains boss (`rewards.ts`)
+- [ ] 5 textes de sceaux revelant l'histoire de la Censure
+- [ ] Affichage dans l'ecran de fin de run
+
+### Phase 9 — Boss final : Le Censeur _(objectif long terme)_
+
+- [ ] Entree boss `the_censor` dans `enemies.ts` (asset SVG deja prevu dans `assets.ts`)
+- [ ] Mecanique "censure des cartes" (phase 1) — nouveau type d'effet engine
+- [ ] HP caches reveles par les degats (phase 2)
+- [ ] 4 endings selon flags majeurs + `hubris` + sceaux
+
+---
+
+## Dynamisme visuel
 
 - [ ] Transitions entre écrans — aucune transition animée entre les vues (marchand, carte, événement) : tout apparaît instantanément
-- [x] Animation de mort des ennemis — flash lumineux → désaturation → fondu vers l'état grisé (0.5s) dans `EnemyCard.tsx`
-- [x] Application buff/debuff — overlay vert (buff) ou rouge (debuff) lors de l'application sur l'ennemi (`EnemyCard.tsx`)
-- [x] Idle animations ennemis — l'image de l'ennemi respire doucement (scale 1→1.06, 3.6s, stoppée pendant acting/attacking)
-- [x] Écran récompenses sans fanfare — `animate-screen-enter` + cascade par item (55ms entre chaque carte/relique)
-- [ ] Cartes en main — pas de hover 3D, pas de flottement léger au repos (le fan mobile existe déjà)
-- [x] VFX cartes Power/Encre — glow violet pulsant permanent (`animate-power-pulse`) sur les cartes POWER jouables
-- [x] Signal de transition de phase boss — overlay doré + texte "Phase 2" sur 1.1s au déclenchement (`EnemyCard.tsx`)
-- [x] Minimap statique — `animate-ping` teal sur les nœuds de la salle courante disponibles (`FloorMap.tsx`)
+- [ ] Cartes en main — pas de hover 3D, pas de flottement léger au repos
 - [ ] Feedback résolution d'effet AoE — les cartes ciblant `ALL_ENEMIES` ne montrent pas d'enchaînement visuel sur chaque ennemi
 
-### Contenu manquant
+---
 
-- [ ] Objets utilisables — seulement 2 potions (dégâts + bouclier) alors que le système supporte bien plus ; élargir le pool
-- [ ] Previews biomes — 6 biomes sur 9 affichent "Coming soon..." dans `biomes.ts` (champ `enemyPreview`) ; rédiger les descriptions
-- [ ] Contenu alliés — 3 alliés seulement (Scribe Apprentice, Ward Knight, Ink Familiar) ; le système supporte davantage
-
-### UX / technique
+## UX / technique
 
 - [ ] Historique de runs (query key existe, page manquante)
 - [ ] Tutoriel/onboarding
 - [ ] Option vitesse/skip animations
 - [ ] Auth DB adapter désactivé (`src/lib/auth/config.ts:39`) — réactiver une fois le conflit `@auth/core` résolu
-- [x] FloorMap — deduplication des salles combat en apercu
-  - Si plusieurs salles combat ont le meme nombre d'ennemis, n'en afficher qu'une seule
-  - Conserver toutes les salles si les nombres d'ennemis sont differents (ex: 1 ennemi vs 2 ennemis = afficher les deux)
-  - Les salles non-combat (Marchand, Evenement, Pre-Boss) ne sont jamais deduplicees

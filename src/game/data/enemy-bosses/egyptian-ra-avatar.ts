@@ -57,6 +57,21 @@ export const raAvatarBossEnemyDefinitions: RawEnemyDefinition[] = [
           },
         ],
       },
+      {
+        name: "Solar Pierce",
+        weight: 1,
+        target: "PLAYER",
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_BLOCK_ABOVE", value: 15 },
+            weightMultiplier: 4,
+          },
+        ],
+      },
     ],
     isBoss: true,
     isElite: false,

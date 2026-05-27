@@ -36,13 +36,16 @@ import {
   getDifficultyModifiers,
   getPostFloorCapEscalation,
 } from "./difficulty";
-import { createUsableItemInstance } from "./items";
+import {
+  createUsableItemInstance,
+  pickRandomUsableItemDefinitionId,
+} from "./items";
 import {
   deriveEncounteredEnemyType,
   mergeEncounteredEnemies,
   type EncounteredEnemyType,
 } from "./bestiary";
-import { addRelicToRunState } from "./relics";
+import { addRelicToRunState, POTION_REWARD_RELIC_ID } from "./relics";
 import { createFirstRunScriptedMap } from "./first-run-script";
 import { isClogCardDefinitionId } from "./status-cards";
 
@@ -2230,11 +2233,16 @@ export function completeCombat(
     runState.usableItemCapacity ?? GAME_CONSTANTS.MAX_USABLE_ITEMS;
   const hasUsableItemSlot =
     (runState.usableItems?.length ?? 0) < usableItemCapacity;
+  const effectiveUsableItemDropDefinitionId =
+    usableItemDropDefinitionId ??
+    (activeRelicIds.includes(POTION_REWARD_RELIC_ID)
+      ? pickRandomUsableItemDefinitionId(rng)
+      : null);
   const nextUsableItems =
-    usableItemDropDefinitionId && hasUsableItemSlot
+    effectiveUsableItemDropDefinitionId && hasUsableItemSlot
       ? [
           ...(runState.usableItems ?? []),
-          createUsableItemInstance(usableItemDropDefinitionId),
+          createUsableItemInstance(effectiveUsableItemDropDefinitionId),
         ]
       : (runState.usableItems ?? []);
   const nextGold = runState.gold + goldReward + skaldGoldBonus;
@@ -2410,7 +2418,7 @@ export function applyHealRoomBloodPurge(
 // Special Room Subtypes
 // ============================
 
-export type SpecialRoomType = "HEAL" | "UPGRADE" | "EVENT";
+export type SpecialRoomType = "HEAL" | "UPGRADE" | "EVENT" | "RELIC_BAZAAR";
 
 export function pickSpecialRoomType(rng: RNG): SpecialRoomType {
   return pickSpecialRoomTypeWithDifficulty(rng, 0);
@@ -2423,11 +2431,13 @@ export function pickSpecialRoomTypeWithDifficulty(
   const modifiers = getDifficultyModifiers(difficultyLevel);
   const healWeight = 0.4 * modifiers.specialRoomHealWeightMultiplier;
   const upgradeWeight = 0.3;
-  const eventWeight = 0.3 + modifiers.specialRoomEventWeightBonus;
-  const totalWeight = healWeight + upgradeWeight + eventWeight;
+  const bazaarWeight = 0.08;
+  const eventWeight = 0.22 + modifiers.specialRoomEventWeightBonus;
+  const totalWeight = healWeight + upgradeWeight + bazaarWeight + eventWeight;
   const roll = rng.next() * totalWeight;
   if (roll < healWeight) return "HEAL";
   if (roll < healWeight + upgradeWeight) return "UPGRADE";
+  if (roll < healWeight + upgradeWeight + bazaarWeight) return "RELIC_BAZAAR";
   return "EVENT";
 }
 

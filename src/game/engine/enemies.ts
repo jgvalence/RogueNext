@@ -364,9 +364,9 @@ export function executeEnemiesTurn(
     enemies: current.enemies.map((e) => {
       if (e.currentHp <= 0) return e;
       const enemyPoisonMultiplier =
-        current.relicModifiers?.enemyPoisonDamageMultiplier ?? 1;
+        current.relicModifiers?.enemyPoisonDamageMultiplier ?? 1.5;
       const enemyBleedMultiplier =
-        current.relicModifiers?.enemyBleedDamageMultiplier ?? 1;
+        current.relicModifiers?.enemyBleedDamageMultiplier ?? 1.5;
       const afterPoison = applyPoison(e, enemyPoisonMultiplier);
       const afterBleed = applyBleed(afterPoison, enemyBleedMultiplier);
       return {
@@ -443,9 +443,9 @@ export function finalizeEnemyRound(state: CombatState): CombatState {
     enemies: current.enemies.map((e) => {
       if (e.currentHp <= 0) return e;
       const enemyPoisonMultiplier =
-        current.relicModifiers?.enemyPoisonDamageMultiplier ?? 1;
+        current.relicModifiers?.enemyPoisonDamageMultiplier ?? 1.5;
       const enemyBleedMultiplier =
-        current.relicModifiers?.enemyBleedDamageMultiplier ?? 1;
+        current.relicModifiers?.enemyBleedDamageMultiplier ?? 1.5;
       const afterPoison = applyPoison(e, enemyPoisonMultiplier);
       const afterBleed = applyBleed(afterPoison, enemyBleedMultiplier);
       return {

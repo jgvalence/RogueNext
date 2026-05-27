@@ -24,7 +24,11 @@ import {
   applyChapterGuardianIncomingDamageModifier,
   registerChapterGuardianBlockGain,
 } from "./chapter-guardian";
-import { enemyDebuffsBypassBlock, getBossDebuffBonus } from "./difficulty";
+import {
+  enemyDebuffsBypassBlock,
+  getBossDebuffBonus,
+  getDifficultyModifiers,
+} from "./difficulty";
 import { registerBabaYagaBlockGain } from "./baba-yaga";
 import { registerFenrirHuntHit } from "./fenrir";
 import { registerHydraDamage, synchronizeHydraCombatState } from "./hydra";
@@ -386,7 +390,15 @@ function applyDamageToTarget(
     }
 
     const hpBefore = nextState.player.currentHp;
-    const result = applyDamage(nextState.player, finalDmg);
+    // At diff 4+, a fraction of enemy attacks bypasses player block entirely.
+    const penetrationFraction = sourceEnemy
+      ? getDifficultyModifiers(nextState.difficultyLevel ?? 0)
+          .blockPenetrationFraction
+      : 0;
+    const penetrationDmg = Math.floor(finalDmg * penetrationFraction);
+    const normalDmg = finalDmg - penetrationDmg;
+    const normalResult = applyDamage(nextState.player, normalDmg);
+    const result = applyDirectDamage(normalResult, penetrationDmg);
     nextState = {
       ...updatePlayer(nextState, (p) => ({
         ...p,

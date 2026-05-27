@@ -381,6 +381,21 @@ export function unlockNextDifficultyOnVictory(
   };
 }
 
+/**
+ * Diff 0 only: graduated floor ramp so early floors feel approachable to new
+ * players while the floor-3 boss remains at full strength.
+ * Floor 1 → strong reduction, floor 2 → light reduction, floor 3+ → none.
+ */
+export function getDiff0FloorRamp(floor: number): {
+  enemyHpMultiplier: number;
+  enemyDamageMultiplier: number;
+} {
+  if (floor <= 1) return { enemyHpMultiplier: 0.7, enemyDamageMultiplier: 0.8 };
+  if (floor <= 2)
+    return { enemyHpMultiplier: 0.88, enemyDamageMultiplier: 0.9 };
+  return { enemyHpMultiplier: 1.0, enemyDamageMultiplier: 1.0 };
+}
+
 export function getDifficultyModifiers(level: number): {
   enemyHpMultiplier: number;
   enemyDamageMultiplier: number;
@@ -389,18 +404,24 @@ export function getDifficultyModifiers(level: number): {
   specialRoomEventWeightBonus: number;
   enemyPackSizeBonus: number;
   disruptionWeightBonus: number;
+  blockPenetrationFraction: number;
 } {
   const l = clampDifficulty(level);
-  const enemyHpMultiplier = ([1, 1.12, 1.24, 1.36, 1.6, 1.72] as const)[l] ?? 1;
+  const enemyHpMultiplier = ([1, 1.12, 1.24, 1.56, 1.62, 1.7] as const)[l] ?? 1;
   const enemyDamageMultiplier =
-    ([1, 1.1, 1.2, 1.35, 1.55, 1.7] as const)[l] ?? 1;
-  const eliteChanceBonus = l >= 5 ? 0.24 : l >= 4 ? 0.16 : 0;
-  const specialRoomHealWeightMultiplier = l >= 5 ? 0.25 : l >= 4 ? 0.35 : 1;
+    ([1, 1.1, 1.2, 1.3, 1.36, 1.44] as const)[l] ?? 1;
+  const eliteChanceBonus = l >= 5 ? 0.15 : l >= 4 ? 0.1 : l >= 3 ? 0.05 : 0;
+  const specialRoomHealWeightMultiplier =
+    l >= 5 ? 0.55 : l >= 4 ? 0.7 : l >= 3 ? 0.88 : 1;
   const specialRoomEventWeightBonus = l >= 5 ? 0.2 : l >= 4 ? 0.12 : 0;
-  const enemyPackSizeBonus = l >= 5 ? 1 : 0;
+  const enemyPackSizeBonus = 0;
   // Boost the weight of enemy disruption abilities by difficulty
   // Diff 0: none, Diff 1-2: light, Diff 3: moderate, Diff 4-5: heavy
-  const disruptionWeightBonus = ([0, 0.2, 0.4, 0.9, 2.0, 3.5] as const)[l] ?? 0;
+  const disruptionWeightBonus =
+    ([0, 0.2, 0.4, 0.48, 0.58, 0.72] as const)[l] ?? 0;
+  // At diff 4+, a fraction of all enemy attacks bypass the player's block entirely.
+  // This specifically targets block-heavy (armor) builds without penalizing DOT builds.
+  const blockPenetrationFraction = l >= 4 && l < 5 ? 0.05 : 0;
   return {
     enemyHpMultiplier,
     enemyDamageMultiplier,
@@ -409,16 +430,14 @@ export function getDifficultyModifiers(level: number): {
     specialRoomEventWeightBonus,
     enemyPackSizeBonus,
     disruptionWeightBonus,
+    blockPenetrationFraction,
   };
 }
 
 export function enemyDebuffsBypassBlock(
-  level: number,
-  source: { isBoss?: boolean; isElite?: boolean }
+  _level: number,
+  _source: { isBoss?: boolean; isElite?: boolean }
 ): boolean {
-  const l = clampDifficulty(level);
-  if (l >= 5) return Boolean(source.isBoss || source.isElite);
-  if (l >= 4) return Boolean(source.isBoss);
   return false;
 }
 
@@ -453,9 +472,9 @@ export function getEnemyStartingBlock(
   source: { isBoss?: boolean; isElite?: boolean }
 ): number {
   const l = clampDifficulty(level);
-  if (l < 4) return 0;
-  if (source.isBoss) return Math.max(0, floor) * 6;
-  if (l >= 5 && source.isElite) return Math.max(0, floor) * 5;
+  if (l < 5) return 0;
+  if (source.isBoss) return Math.max(0, floor) * 2;
+  if (l >= 5 && source.isElite) return Math.max(0, floor) * 3;
   return 0;
 }
 

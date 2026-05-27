@@ -64,6 +64,20 @@ export const tezcatlipocaEchoBossEnemyDefinitions: RawEnemyDefinition[] = [
           { condition: { type: "ENEMY_HAS_NO_BLOCK" }, weightMultiplier: 2 },
         ],
       },
+      {
+        name: "Mirror Smash",
+        weight: 1,
+        effects: [
+          { type: "DAMAGE", value: 8 },
+          { type: "DAMAGE_PER_TARGET_BLOCK", value: 2 },
+        ],
+        conditionalWeights: [
+          {
+            condition: { type: "PLAYER_BLOCK_ABOVE", value: 15 },
+            weightMultiplier: 4,
+          },
+        ],
+      },
     ],
     isBoss: true,
     isElite: false,

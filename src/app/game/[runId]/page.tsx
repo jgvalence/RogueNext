@@ -466,6 +466,7 @@ function GameContent({
     handleSpecialEventContinue,
     handleSpecialHealRoomBloodPurge,
     handleSpecialEventPurge,
+    handleRelicExchange,
     handleSpecialSkip,
     handlePreBossHeal,
     handlePreBossUpgrade,
@@ -781,6 +782,7 @@ function GameContent({
             onEventChoice={handleSpecialEventChoice}
             onPickCardReward={handleSpecialEventCardReward}
             onEventContinue={handleSpecialEventContinue}
+            onRelicExchange={handleRelicExchange}
             onSkip={handleSpecialSkip}
           />
         )}
