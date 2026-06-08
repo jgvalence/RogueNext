@@ -93,6 +93,18 @@ export async function endRunForUser(
 
   if (input.status !== "ABANDONED" && input.deckSnapshot) {
     const snap = input.deckSnapshot;
+    const progression = await prisma.userProgression.findUnique({
+      where: { userId: input.userId },
+      select: { unlockedStoryIds: true },
+    });
+    const unlockedStoryCount =
+      (progression?.unlockedStoryIds as string[] | null)?.length ?? 0;
+    const powerScore =
+      snap.floor * 10 +
+      snap.difficultyLevel * 8 +
+      snap.relicIds.length * 3 +
+      unlockedStoryCount * 2;
+
     await prisma.pvpDeckSnapshot.create({
       data: {
         userId: input.userId,
@@ -106,6 +118,8 @@ export async function endRunForUser(
         hp: snap.hp,
         maxHp: snap.maxHp,
         gold: snap.gold,
+        unlockedStoryCount,
+        powerScore,
       },
     });
   }

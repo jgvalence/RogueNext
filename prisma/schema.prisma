@@ -194,16 +194,19 @@ model PvpDeckSnapshot {
   biome           String
   status          String   // "VICTORY" | "DEFEAT"
 
-  deck            Json     // CardInstance[]
-  relicIds        Json     // string[]
-  hp              Int
-  maxHp           Int
-  gold            Int      @default(0)
+  deck               Json     // CardInstance[]
+  relicIds           Json     // string[]
+  hp                 Int
+  maxHp              Int
+  gold               Int      @default(0)
 
-  createdAt       DateTime @default(now())
+  unlockedStoryCount Int      @default(0)
+  powerScore         Int      @default(0)
+
+  createdAt          DateTime @default(now())
 
   @@index([userId])
-  @@index([floor, difficultyLevel])
+  @@index([powerScore])
   @@map("pvp_deck_snapshots")
 }
 
