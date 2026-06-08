@@ -199,6 +199,17 @@ function GameContent({
         stateRef.current.startMerchantSpentResources ?? {},
       encounteredEnemies: stateRef.current.encounteredEnemies ?? {},
       enemyKillCounts: stateRef.current.enemyKillCounts ?? {},
+      deckSnapshot: {
+        characterId: stateRef.current.characterId ?? "scribe",
+        floor: stateRef.current.floor,
+        difficultyLevel: stateRef.current.selectedDifficultyLevel ?? 0,
+        biome: stateRef.current.currentBiome,
+        deck: stateRef.current.deck,
+        relicIds: stateRef.current.relicIds,
+        hp: stateRef.current.playerCurrentHp,
+        maxHp: stateRef.current.playerMaxHp,
+        gold: stateRef.current.gold,
+      },
     }),
     [getCurrentDurationMs, isInfiniteMode]
   );

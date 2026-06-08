@@ -35,10 +35,11 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  accounts    Account[]
-  sessions    Session[]
-  runs        Run[]
-  progression UserProgression?
+  accounts         Account[]
+  sessions         Session[]
+  runs             Run[]
+  progression      UserProgression?
+  pvpDeckSnapshots PvpDeckSnapshot[]
 
   @@index([username])
   @@index([email])
@@ -180,6 +181,30 @@ model AllyDefinition {
   updatedAt DateTime @updatedAt
 
   @@map("ally_definitions")
+}
+
+model PvpDeckSnapshot {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  characterId     String
+  floor           Int
+  difficultyLevel Int      @default(0)
+  biome           String
+  status          String   // "VICTORY" | "DEFEAT"
+
+  deck            Json     // CardInstance[]
+  relicIds        Json     // string[]
+  hp              Int
+  maxHp           Int
+  gold            Int      @default(0)
+
+  createdAt       DateTime @default(now())
+
+  @@index([userId])
+  @@index([floor, difficultyLevel])
+  @@map("pvp_deck_snapshots")
 }
 
 model UserProgression {

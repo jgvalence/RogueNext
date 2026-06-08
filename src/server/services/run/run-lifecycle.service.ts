@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+import { prisma } from "@/lib/db/prisma";
 import type { RunState } from "@/game/schemas/run-state";
 import { incrementRunStatsInternal } from "@/server/actions/progression";
 import {
@@ -15,6 +17,18 @@ export type { ActiveRunSnapshot } from "./run-state.service";
 
 export type RunCompletionStatus = "VICTORY" | "DEFEAT" | "ABANDONED";
 
+export interface DeckSnapshotInput {
+  characterId: string;
+  floor: number;
+  difficultyLevel: number;
+  biome: string;
+  deck: unknown;
+  relicIds: string[];
+  hp: number;
+  maxHp: number;
+  gold: number;
+}
+
 export interface EndRunForUserInput {
   userId: string;
   runId: string;
@@ -25,6 +39,7 @@ export interface EndRunForUserInput {
   scriptedOutcome?: "FIRST_RUN_ENERGY_TUTORIAL";
   encounteredEnemies?: RunState["encounteredEnemies"];
   enemyKillCounts?: RunState["enemyKillCounts"];
+  deckSnapshot?: DeckSnapshotInput;
 }
 
 export async function createRunForUser(
@@ -75,6 +90,26 @@ export async function endRunForUser(
     encounteredEnemies: input.encounteredEnemies,
     enemyKillCounts: input.enemyKillCounts,
   });
+
+  if (input.status !== "ABANDONED" && input.deckSnapshot) {
+    const snap = input.deckSnapshot;
+    await prisma.pvpDeckSnapshot.create({
+      data: {
+        userId: input.userId,
+        characterId: snap.characterId,
+        floor: snap.floor,
+        difficultyLevel: snap.difficultyLevel,
+        biome: snap.biome,
+        status: input.status,
+        deck: snap.deck as Prisma.InputJsonValue,
+        relicIds: snap.relicIds,
+        hp: snap.hp,
+        maxHp: snap.maxHp,
+        gold: snap.gold,
+      },
+    });
+  }
+
   await deleteRunById(input.runId);
 
   return true;

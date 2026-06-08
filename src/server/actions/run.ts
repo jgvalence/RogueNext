@@ -64,6 +64,19 @@ const endRunSchema = z.object({
     .record(z.string(), z.enum(["NORMAL", "ELITE", "BOSS"]))
     .optional(),
   enemyKillCounts: z.record(z.string(), z.number().int().min(0)).optional(),
+  deckSnapshot: z
+    .object({
+      characterId: z.string(),
+      floor: z.number().int(),
+      difficultyLevel: z.number().int().default(0),
+      biome: z.string(),
+      deck: z.unknown(),
+      relicIds: z.array(z.string()),
+      hp: z.number().int(),
+      maxHp: z.number().int(),
+      gold: z.number().int().default(0),
+    })
+    .optional(),
 });
 
 export async function endRunAction(input: z.infer<typeof endRunSchema>) {
@@ -80,6 +93,9 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       scriptedOutcome: validated.scriptedOutcome,
       encounteredEnemies: validated.encounteredEnemies,
       enemyKillCounts: validated.enemyKillCounts,
+      deckSnapshot: validated.deckSnapshot as
+        | import("@/server/services/run/run-lifecycle.service").DeckSnapshotInput
+        | undefined,
     });
 
     if (!ended) {
