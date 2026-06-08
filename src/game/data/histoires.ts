@@ -247,9 +247,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 2,
     cout: { GLYPHES: 26 },
     prerequis: ["hymne_a_re"],
-    bonus: { type: "STARTING_STRENGTH", value: 1 },
+    bonus: { type: "STARTING_INK", value: 3 },
     description:
-      "Le célèbre papyrus funéraire d'Ani, reflet de la force divine. +1 Force de départ à chaque combat.",
+      "Le célèbre papyrus funéraire d'Ani, chargé d'énergie mystique. Commence chaque combat avec 3 Ink.",
     visuel: "parchemin",
   },
   {
