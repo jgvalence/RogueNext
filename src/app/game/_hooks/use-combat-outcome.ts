@@ -44,6 +44,9 @@ interface UseCombatOutcomeParams {
   setIsEliteRewards: Dispatch<SetStateAction<boolean>>;
   setPhase: Dispatch<SetStateAction<GamePhase>>;
   setNewBestiaryEntries: Dispatch<SetStateAction<string[]>>;
+  setRerollGenerator: Dispatch<
+    SetStateAction<((rerollIndex: number) => CardDefinition[]) | null>
+  >;
   onCombatLost: () => void;
   onScriptedFirstRunDefeat: () => void;
 }
@@ -67,6 +70,7 @@ export function useCombatOutcome({
   setIsEliteRewards,
   setPhase,
   setNewBestiaryEntries,
+  setRerollGenerator,
   onCombatLost,
   onScriptedFirstRunDefeat,
 }: UseCombatOutcomeParams) {
@@ -148,6 +152,70 @@ export function useCombatOutcome({
       setRewards(combatRewards);
       setIsBossRewards(isBoss);
       setIsEliteRewards(isElite);
+
+      // Capture params for reroll generation
+      const rerollParams = {
+        floor: state.floor,
+        currentRoom: state.currentRoom,
+        isBoss,
+        isElite,
+        enemyCount,
+        allCards: [...cardDefs.values()],
+        seed: state.seed,
+        encounterBiome,
+        relicIds: state.relicIds,
+        unlockedCardIds: state.unlockedCardIds,
+        allyIds: state.allyIds,
+        allySlots: state.metaBonuses?.allySlots ?? 0,
+        unlockedDifficultyLevelSnapshot:
+          state.unlockedDifficultyLevelSnapshot ?? 0,
+        defeatedBossId,
+        extraCardRewardChoices: state.metaBonuses?.extraCardRewardChoices ?? 0,
+        lootLuck: state.metaBonuses?.lootLuck ?? 0,
+        selectedDifficultyLevel: state.selectedDifficultyLevel ?? 0,
+        projectedUnlockedRelicIds: [...projectedUnlockedRelicIds],
+        runConditionRewardMultiplier,
+        isInfiniteMode,
+        characterId: state.characterId ?? "scribe",
+        deck: state.deck,
+        playerCurrentHp: combat.player.currentHp,
+        playerMaxHp: combat.player.maxHp,
+      };
+      setRerollGenerator(() => (rerollIndex: number) => {
+        const rerollRng = createRNG(
+          rerollParams.seed +
+            "-rewards-" +
+            rerollParams.currentRoom +
+            "-reroll-" +
+            rerollIndex
+        );
+        return generateCombatRewards(
+          rerollParams.floor,
+          rerollParams.currentRoom,
+          rerollParams.isBoss,
+          rerollParams.isElite,
+          rerollParams.enemyCount,
+          rerollParams.allCards,
+          rerollRng,
+          rerollParams.encounterBiome,
+          rerollParams.relicIds,
+          rerollParams.unlockedCardIds,
+          rerollParams.allyIds,
+          rerollParams.allySlots,
+          rerollParams.unlockedDifficultyLevelSnapshot,
+          rerollParams.defeatedBossId,
+          rerollParams.extraCardRewardChoices,
+          rerollParams.lootLuck,
+          rerollParams.selectedDifficultyLevel,
+          rerollParams.projectedUnlockedRelicIds,
+          rerollParams.runConditionRewardMultiplier,
+          rerollParams.isInfiniteMode,
+          rerollParams.characterId,
+          rerollParams.deck,
+          rerollParams.playerCurrentHp,
+          rerollParams.playerMaxHp
+        ).cardChoices;
+      });
 
       playSound("VICTORY", 0.8);
       dispatch({

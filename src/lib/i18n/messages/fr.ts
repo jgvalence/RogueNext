@@ -1331,6 +1331,7 @@ export const fr = {
     chooseCardToAdd: "Choisissez une carte a ajouter a votre deck:",
     continue: "Continuer",
     skip: "Passer",
+    reroll: "Relancer",
     vitality: "Vitalite",
     maxHp: "PV max",
     maxHpDescription: "Augmente votre sante maximale de facon permanente",

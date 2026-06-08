@@ -37,6 +37,8 @@ interface RewardScreenProps {
   onPickAlly: (allyId: string) => void;
   onPickMaxHp?: (amount: number) => void;
   onSkip: () => void;
+  rerollsRemaining?: number;
+  onRerollCards?: () => void;
   showFirstRewardTutorial?: boolean;
   onDismissFirstRewardTutorial?: () => void;
 }
@@ -56,6 +58,8 @@ export function RewardScreen({
   onPickAlly,
   onPickMaxHp,
   onSkip,
+  rerollsRemaining,
+  onRerollCards,
   showFirstRewardTutorial = false,
   onDismissFirstRewardTutorial,
 }: RewardScreenProps) {
@@ -332,9 +336,20 @@ export function RewardScreen({
             ))}
           </div>
           <div
-            className="animate-reward-enter"
+            className="flex animate-reward-enter items-center gap-3"
             style={{ animationDelay: `${200 + cardChoices.length * 55}ms` }}
           >
+            {rerollsRemaining !== undefined &&
+              rerollsRemaining > 0 &&
+              onRerollCards && (
+                <RogueButton
+                  type="text"
+                  className="!h-auto !rounded-lg !border !border-indigo-600/60 !px-4 !py-2 !text-sm !text-indigo-300 !transition hover:!border-indigo-400 hover:!bg-indigo-950/40"
+                  onClick={onRerollCards}
+                >
+                  {t("reward.reroll")} ({rerollsRemaining})
+                </RogueButton>
+              )}
             <RogueButton
               type="text"
               className="!h-auto !rounded-lg !border !border-gray-600 !px-6 !py-2 !text-sm !text-gray-400 !transition hover:!bg-gray-800"

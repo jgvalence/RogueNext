@@ -1576,6 +1576,7 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "ADD_CARD_TO_DRAW", value: 1, copySourceCard: true },
       { type: "EXHAUST", value: 0 },
     ],
+    inkedVariant: null,
     upgrade: {
       description:
         "Deal 3 damage. Draw 1 card. Add a copy of this card to your draw pile. Exhaust.",

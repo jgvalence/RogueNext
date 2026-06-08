@@ -139,6 +139,10 @@ const DESCRIPTION_RULES: Record<MetaBonus["type"], DescriptionRule> = {
     fr: [/carte rare aleatoire/],
     en: [/random rare card/],
   },
+  REWARD_REROLLS: {
+    fr: [/relancez les recompenses/],
+    en: [/reroll.*reward|reward.*reroll/],
+  },
 };
 
 function normalizeAuditText(text: string): string {

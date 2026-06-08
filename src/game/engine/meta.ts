@@ -176,6 +176,9 @@ function applyBonusToComputed(
     case "STARTING_RARE_CARD":
       result.startingRareCard = true;
       break;
+    case "REWARD_REROLLS":
+      result.rewardRerolls += bonus.value;
+      break;
   }
 }
 

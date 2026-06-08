@@ -153,6 +153,13 @@ function GameContent({
   const [rewards, setRewards] = useState<CombatRewards | null>(null);
   const [isBossRewards, setIsBossRewards] = useState(false);
   const [isEliteRewards, setIsEliteRewards] = useState(false);
+  const rerollsTotal = (state.metaBonuses?.rewardRerolls ?? 0) + 1;
+  const [rerollsRemaining, setRerollsRemaining] = useState(rerollsTotal);
+  const [rerollCounter, setRerollCounter] = useState(0);
+  const [rerollGenerator, setRerollGenerator] = useState<
+    | ((rerollIndex: number) => import("@/game/schemas/cards").CardDefinition[])
+    | null
+  >(null);
   const [firstCombatTutorialDismissed, setFirstCombatTutorialDismissed] =
     useState(false);
   const [firstRewardTutorialDismissed, setFirstRewardTutorialDismissed] =
@@ -422,6 +429,7 @@ function GameContent({
     setIsEliteRewards,
     setPhase,
     setNewBestiaryEntries,
+    setRerollGenerator,
     onCombatLost: cancelEnemyTurnFlow,
     onScriptedFirstRunDefeat: () => router.push("/library"),
   });
@@ -452,6 +460,23 @@ function GameContent({
     setPhase,
     setRewards,
   });
+
+  // Reset reroll state each time a new reward screen opens
+  const prevRewardsRef = useRef<CombatRewards | null>(null);
+  if (rewards !== null && prevRewardsRef.current === null) {
+    setRerollsRemaining(rerollsTotal);
+    setRerollCounter(0);
+  }
+  prevRewardsRef.current = rewards;
+
+  const handleRerollCards = useCallback(() => {
+    if (!rerollGenerator || rerollsRemaining <= 0) return;
+    const newIndex = rerollCounter + 1;
+    const newChoices = rerollGenerator(newIndex);
+    setRewards((prev) => (prev ? { ...prev, cardChoices: newChoices } : null));
+    setRerollCounter(newIndex);
+    setRerollsRemaining((r) => r - 1);
+  }, [rerollGenerator, rerollsRemaining, rerollCounter]);
 
   const {
     handleEndRun,
@@ -728,6 +753,8 @@ function GameContent({
             onPickAlly={handlePickAlly}
             onPickMaxHp={handlePickMaxHp}
             onSkip={handleSkipReward}
+            rerollsRemaining={isBossRewards ? undefined : rerollsRemaining}
+            onRerollCards={isBossRewards ? undefined : handleRerollCards}
           />
         )}
 

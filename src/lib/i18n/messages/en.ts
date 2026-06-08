@@ -1350,6 +1350,7 @@ export const en = {
     chooseCardToAdd: "Choose a card to add to your deck:",
     continue: "Continue",
     skip: "Skip",
+    reroll: "Reroll",
     vitality: "Vitality",
     maxHp: "Max HP",
     maxHpDescription: "Increase your maximum health permanently",

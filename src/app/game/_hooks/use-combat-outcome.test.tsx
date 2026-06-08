@@ -100,6 +100,7 @@ function makeParams(
     setIsEliteRewards: overrides.setIsEliteRewards ?? vi.fn(),
     setPhase: overrides.setPhase ?? vi.fn(),
     setNewBestiaryEntries: overrides.setNewBestiaryEntries ?? vi.fn(),
+    setRerollGenerator: overrides.setRerollGenerator ?? vi.fn(),
     onCombatLost: overrides.onCombatLost ?? vi.fn(),
     onScriptedFirstRunDefeat: overrides.onScriptedFirstRunDefeat ?? vi.fn(),
   };

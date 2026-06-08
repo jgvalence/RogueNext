@@ -182,9 +182,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 2,
     cout: { LAURIERS: 28 },
     prerequis: ["la_republique"],
-    bonus: { type: "STARTING_UNCOMMON_CARD_CHOICE" },
+    bonus: { type: "REWARD_REROLLS", value: 2 },
     description:
-      "Des hymnes aux dieux de l'Olympe qui attirent les faveurs divines. Commence chaque run avec un choix parmi 3 cartes inhabituelles.",
+      "Des hymnes aux dieux de l'Olympe dont les faveurs multiplient les choix. Relancez les récompenses de cartes deux fois de plus par combat.",
     visuel: "parchemin",
   },
   {
@@ -211,9 +211,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { GLYPHES: 11 },
     prerequis: [],
-    bonus: { type: "EXTRA_INK_MAX", value: 2 },
+    bonus: { type: "EXTRA_HP", value: 10 },
     description:
-      "Le guide égyptien de l'au-delà, riche en formules magiques. +2 Ink max.",
+      "Le guide égyptien de l'au-delà, riche en formules de protection. +10 HP max.",
     visuel: "parchemin",
   },
   {
@@ -223,9 +223,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { GLYPHES: 16 },
     prerequis: [],
-    bonus: { type: "INK_PER_CARD_CHANCE", value: 35 },
+    bonus: { type: "HEAL_AFTER_COMBAT_FLAT", value: 3 },
     description:
-      "Un hymne au dieu soleil qui infuse chaque geste d'énergie divine. +35% de chance de gain d'Ink par carte jouée.",
+      "Un hymne au dieu soleil qui régénère l'énergie vitale. Récupère 3 PV après chaque combat.",
     visuel: "tablette",
   },
   {
@@ -247,9 +247,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 2,
     cout: { GLYPHES: 26 },
     prerequis: ["hymne_a_re"],
-    bonus: { type: "STARTING_INK", value: 3 },
+    bonus: { type: "STARTING_STRENGTH", value: 1 },
     description:
-      "Le célèbre papyrus funéraire d'Ani, chargé d'énergie mystique. Commence chaque combat avec 3 Ink.",
+      "Le célèbre papyrus funéraire d'Ani, reflet de la force divine. +1 Force de départ à chaque combat.",
     visuel: "parchemin",
   },
   {
@@ -340,9 +340,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { FRAGMENTS: 16 },
     prerequis: [],
-    bonus: { type: "EXHAUST_KEEP_CHANCE", value: 30 },
+    bonus: { type: "EXTRA_HP", value: 10 },
     description:
-      "Un fragment du livre maudit. Les cartes non-Power avec Exhaust ont 30% de chance de ne pas etre exhaustees.",
+      "Un fragment du livre maudit, source de résistance surnaturelle. +10 HP max.",
     visuel: "grimoire",
   },
   {
@@ -377,9 +377,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 2,
     cout: { FRAGMENTS: 30 },
     prerequis: ["journal_de_miskatonic"],
-    bonus: { type: "SURVIVAL_ONCE" },
+    bonus: { type: "REWARD_REROLLS", value: 1 },
     description:
-      "Une révélation sur la nature insaisissable de la réalité. Survit à 1 HP une fois par run (si non déjà obtenu via les Runes).",
+      "Une révélation sur les fils parallèles du destin. Relancez les récompenses de cartes une fois de plus par combat.",
     visuel: "grimoire",
   },
   {
@@ -389,9 +389,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 3,
     cout: { FRAGMENTS: 78, GLYPHES: 10 },
     prerequis: ["cultes_innommables", "mondes_sans_nom"],
-    bonus: { type: "EXHAUST_KEEP_CHANCE", value: 20 },
+    bonus: { type: "LOOT_LUCK", value: 1 },
     description:
-      "Le signe mystique qui permet de manipuler les lois du cosmos. +20% de chance supplementaire de ne pas exhaust une carte non-Power.",
+      "Le signe mystique qui attire les trésors du cosmos vers celui qui le porte. +1 qualité de butin.",
     visuel: "tablette",
   },
 
@@ -405,9 +405,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { AMBRE: 11 },
     prerequis: [],
-    bonus: { type: "STARTING_BLOCK", value: 3 },
+    bonus: { type: "HEAL_AFTER_COMBAT_FLAT", value: 3 },
     description:
-      "Les contes gallois de la Première Branche. Commence chaque combat avec 3 Block.",
+      "Les contes gallois de la Première Branche, symboles de renaissance. Récupère 3 PV après chaque combat.",
     visuel: "parchemin",
   },
   {
@@ -469,9 +469,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { SCEAUX: 11 },
     prerequis: [],
-    bonus: { type: "STARTING_BLOCK", value: 4 },
+    bonus: { type: "EXTRA_HP", value: 12 },
     description:
-      "Les chants héroïques d'Ilya Mouromets, héros du peuple russe. +4 Block au début de chaque combat.",
+      "Les chants héroïques d'Ilya Mouromets, héros du peuple russe. +12 HP max.",
     visuel: "parchemin",
   },
   {
@@ -481,9 +481,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { SCEAUX: 14 },
     prerequis: [],
-    bonus: { type: "FIRST_HIT_DAMAGE_REDUCTION", value: 30 },
+    bonus: { type: "STARTING_REGEN", value: 1 },
     description:
-      "Les contes de la sorcière de la forêt russe. Le premier coup subi en combat inflige 30% de dégâts en moins.",
+      "Les contes de la sorcière de la forêt russe, gardienne des secrets de guérison. Récupère 1 HP au début de chaque tour.",
     visuel: "livre",
   },
   {
@@ -493,9 +493,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 2,
     cout: { SCEAUX: 22 },
     prerequis: ["byliny_de_ilya"],
-    bonus: { type: "STARTING_GOLD", value: 20 },
+    bonus: { type: "STARTING_GOLD", value: 30 },
     description:
-      "Le conte de la capture de l'oiseau mythique. +20 or de départ à chaque run.",
+      "Le conte de la capture de l'oiseau mythique, porteur de richesses. +30 or de départ à chaque run.",
     visuel: "parchemin",
   },
   {
@@ -505,9 +505,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 2,
     cout: { SCEAUX: 22 },
     prerequis: ["contes_de_baba_yaga"],
-    bonus: { type: "STARTING_BLOCK", value: 4 },
+    bonus: { type: "HEAL_AFTER_COMBAT_FLAT", value: 4 },
     description:
-      "Les rituels pour s'attirer les faveurs de l'esprit protecteur du foyer. +4 Block supplémentaires.",
+      "Les rituels pour s'attirer les faveurs de l'esprit protecteur du foyer. Récupère 4 PV après chaque combat.",
     visuel: "livre",
   },
   {

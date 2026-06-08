@@ -46,6 +46,7 @@ export const MetaBonusSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("LOOT_LUCK"), value: z.number().int() }),
   z.object({ type: z.literal("STARTING_UNCOMMON_CARD_CHOICE") }),
   z.object({ type: z.literal("STARTING_RARE_CARD") }),
+  z.object({ type: z.literal("REWARD_REROLLS"), value: z.number().int() }),
 ]);
 export type MetaBonus = z.infer<typeof MetaBonusSchema>;
 
@@ -118,6 +119,7 @@ export const ComputedMetaBonusesSchema = z.object({
   freeUpgradePerRun: z.boolean().default(false),
   startingUncommonCardChoice: z.boolean().default(false),
   startingRareCard: z.boolean().default(false),
+  rewardRerolls: z.number().int().default(0),
 });
 export type ComputedMetaBonuses = z.infer<typeof ComputedMetaBonusesSchema>;
 
