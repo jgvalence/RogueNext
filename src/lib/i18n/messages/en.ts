@@ -84,9 +84,11 @@ export const en = {
   auth: {
     back: "Back",
     password: "Password",
+    username: "Username",
+    usernamePlaceholder: "Explorer",
     signin: {
       subtitle: "Sign in to continue",
-      invalidCredentials: "Incorrect email or password",
+      invalidCredentials: "Incorrect username or password",
       loading: "Signing in...",
       submit: "Sign in",
       noAccount: "No account yet?",
@@ -94,8 +96,6 @@ export const en = {
     },
     signup: {
       subtitle: "Create your account to play",
-      nameOptional: "Name (optional)",
-      namePlaceholder: "Explorer",
       passwordPlaceholder: "6 characters minimum",
       loading: "Signing up...",
       submit: "Sign up",
@@ -320,7 +320,7 @@ export const en = {
       },
       inked_beginning: {
         name: "Inked Beginning",
-        description: "Start each combat with +2 ink.",
+        description: "Start each combat with +2 ink and gain 10 starting gold.",
       },
       battle_manual: {
         name: "Battle Manual",
@@ -357,7 +357,8 @@ export const en = {
       },
       single_path: {
         name: "Single Path",
-        description: "Only one room option at each step.",
+        description:
+          "Only one room option at each step. Upgrade 1 random card and gain 10 starting gold.",
       },
       eventful_routes: {
         name: "Eventful Routes",
@@ -378,7 +379,7 @@ export const en = {
       },
       veterans_oath: {
         name: "Snokin's Vow",
-        description: "Recover 100% HP after each combat, but lose 50 max HP.",
+        description: "Recover 100% HP after each combat, but lose 30 max HP.",
       },
       ink_lender: {
         name: "Ink Loan",
@@ -411,7 +412,7 @@ export const en = {
       cursed_compendium: {
         name: "Cursed Compendium",
         description:
-          "Add 2 random cards, but also add 2 Haunting Regret cards to your deck.",
+          "Add 3 random Common or Uncommon cards, but also add 1 Haunting Regret to your deck.",
       },
       crystal_loan: {
         name: "Crystal Loan",
@@ -431,12 +432,12 @@ export const en = {
       isolated_trials: {
         name: "Isolated Trials",
         description:
-          "Only one path at each room, remove 1 random starter card, and upgrade 1 random card.",
+          "Only one path at each room, remove 1 random starter card, upgrade 1 random card, and add 1 random Uncommon or Rare card.",
       },
       grim_shortcuts: {
         name: "Grim Shortcuts",
         description:
-          "Single-path routes with more special rooms, +10 gold, but add 1 Haunting Regret to your deck.",
+          "Single-path routes with more special rooms and +20 starting gold.",
       },
       fateful_manuscript: {
         name: "Fateful Manuscript",
@@ -2052,6 +2053,9 @@ export const en = {
     eventRewardPickerTitle: "Choose 1 card",
     eventRewardPickerSubtitle:
       "The scriptorium offers cards aligned with your chosen archetype.",
+    relicPickerTitle: "Choose a relic",
+    relicPickerSubtitle: "All available relics are open to you.",
+    relicPickerEmpty: "No relics available.",
   },
   startMerchant: {
     kicker: "Pre-Expedition",
@@ -3482,6 +3486,48 @@ export const en = {
           description: "Refuse to hear it.",
           outcomeText:
             "He does not call you back. When you look behind you, he is gone. In the empty corridor, a page still floats — covered in handwriting you now recognize as his.",
+        },
+      ],
+    },
+    arcane_library: {
+      title: "The Forbidden Library",
+      flavorText:
+        "A wing of the Library is sealed behind a blackened iron gate. Through the bars, you can make out shelves stretching into infinity — cards no one is permitted to touch. The lock has given way. No one is watching.",
+      description:
+        "Every known card is within reach. But forbidden knowledge leaves scars.",
+      choices: [
+        {
+          label: "Enter and take a card (-15 HP)",
+          description: "Choose any card. Lose 15 HP.",
+          outcomeText:
+            "The card tears free from the shelf with an imperceptible resistance, as though it knew it should not leave. Something burns in your chest — not the pain of a wound, but the pain of an understanding your body was not prepared to receive.",
+        },
+        {
+          label: "Close the gate",
+          description: "Take nothing. Move on.",
+          outcomeText:
+            "You turn your back on the forbidden wing. The gate closes behind you with a final clang. Some knowledge is better left where it lies.",
+        },
+      ],
+    },
+    forbidden_vault: {
+      title: "The Vault of Civilizations",
+      flavorText:
+        "A low door opens onto an underground chamber. Dusty display cases line the walls with relics from dozens of civilizations — Greek, Egyptian, Celtic, others without names. A placard on the largest case reads: 'Everything is for sale. To those who can pay.'",
+      description:
+        "Relics from every people, gathered in forgotten depths. Some wait to be claimed.",
+      choices: [
+        {
+          label: "Purchase a relic (75 gold)",
+          description: "Choose any relic. Pay 75 gold.",
+          outcomeText:
+            "You set the coins on the placard. They vanish before they touch the surface. The relic you chose is cold in your hand — cold and alive, as though it had been waiting for this moment for a long time.",
+        },
+        {
+          label: "Leave the vault",
+          description: "Take nothing. Move on.",
+          outcomeText:
+            "You leave empty-handed. Behind you, the vault door closes. You hear the sound of many locks turning.",
         },
       ],
     },

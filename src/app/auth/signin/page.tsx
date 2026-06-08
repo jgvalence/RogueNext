@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/rogue";
 
 interface SignInFormValues {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -33,7 +33,7 @@ function SignInForm() {
     setLoading(true);
 
     const result = await signIn("credentials", {
-      email: values.email,
+      username: values.username,
       password: values.password,
       redirect: false,
     });
@@ -81,13 +81,13 @@ function SignInForm() {
             className="[&_.ant-form-item-label>label]:!text-sm [&_.ant-form-item-label>label]:!font-medium [&_.ant-form-item-label>label]:!text-gray-400 [&_.ant-form-item]:!mb-4"
           >
             <RogueFormItem
-              name="email"
-              label="Email"
-              rules={[{ required: true, type: "email" }]}
+              name="username"
+              label={t("auth.username")}
+              rules={[{ required: true }]}
             >
               <RogueInput
-                placeholder="user@example.com"
-                autoComplete="email"
+                placeholder={t("auth.usernamePlaceholder")}
+                autoComplete="username"
                 className="!bg-gray-900"
               />
             </RogueFormItem>

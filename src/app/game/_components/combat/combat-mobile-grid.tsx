@@ -1,24 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
 import {
-  buildEnemyStatusMarkers,
   buildMobileEnemyIntentChips,
-  buildPlayerStatusMarkers,
   formatAllyIntent,
-  renderCompactEnemyStatusMarkers,
-  renderCompactBuffs,
-  renderCompactStatusMarkersForPlayer,
-  summarizeEnemyIntentLabels,
 } from "./combat-view-helpers";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
 import { getEnemyImageSrc, PLAYER_AVATAR } from "@/lib/assets";
-import { HpBar } from "../shared/HpBar";
 import { localizeAllyName } from "@/lib/i18n/entity-text";
 
 interface CombatMobileGridProps {
@@ -46,100 +38,37 @@ interface CombatMobileGridProps {
   isArmorTutorialStep: boolean;
 }
 
-type MobileOccupiedSlot =
-  | { type: "ally"; ally: CombatState["allies"][number] }
-  | { type: "player" }
-  | { type: "enemy"; enemy: CombatState["enemies"][number] };
-
 function getMonogram(label: string, fallback: string): string {
   const parts = label
     .trim()
     .split(/\s+/)
-    .map((part) => part.trim())
+    .map((p) => p.trim())
     .filter(Boolean);
   const letters = parts
     .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
+    .map((p) => p[0]?.toUpperCase() ?? "")
     .join("");
-
   return letters || fallback;
 }
 
-function MobileValuePill({
-  label,
-  value,
+function MiniHpBar({
+  current,
+  max,
   className,
-  highlight = false,
 }: {
-  label: string;
-  value: string | number;
-  className: string;
-  highlight?: boolean;
+  current: number;
+  max: number;
+  className?: string;
 }) {
+  const pct = Math.max(0, Math.min(100, (current / max) * 100));
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.1em]",
-        highlight &&
-          "ring-1 ring-cyan-200/80 ring-offset-1 ring-offset-slate-950",
-        className
-      )}
-    >
-      <span className="opacity-70">{label}</span>
-      <span className="text-[10px] leading-none">{value}</span>
-    </span>
-  );
-}
-
-function MobileIntentPreview({
-  labels,
-  className,
-  maxVisible = 2,
-}: {
-  labels: string[];
-  className: string;
-  maxVisible?: number;
-}) {
-  const { visibleLabels, remaining } = summarizeEnemyIntentLabels(
-    labels,
-    maxVisible
-  );
-
-  return (
-    <div className="mt-1.5 flex min-h-[34px] flex-wrap gap-1">
-      {visibleLabels.map((label, index) => (
-        <span
-          key={`${label}-${index}`}
-          className={cn(
-            "block max-w-full rounded-xl border px-2 py-1 text-[10px] font-semibold leading-tight",
-            className
-          )}
-          style={{
-            display: "-webkit-box",
-            WebkitBoxOrient: "vertical",
-            WebkitLineClamp: 2,
-            overflow: "hidden",
-          }}
-        >
-          {label}
-        </span>
-      ))}
-      {remaining > 0 && (
-        <span className="inline-flex items-center rounded-xl border border-slate-600/80 bg-slate-900/80 px-2 py-1 text-[9px] font-black text-slate-100">
-          +{remaining}
-        </span>
-      )}
+    <div className={cn("overflow-hidden rounded-full bg-white/15", className)}>
+      <div
+        className="h-full rounded-full bg-emerald-400/80 transition-all duration-500"
+        style={{ width: `${pct}%` }}
+      />
     </div>
   );
-}
-
-function buildMobileRows(
-  occupiedSlots: MobileOccupiedSlot[],
-  allyCount: number
-): MobileOccupiedSlot[][] {
-  const alliedRow = occupiedSlots.slice(0, allyCount + 1);
-  const enemyRow = occupiedSlots.slice(allyCount + 1);
-  return [alliedRow, enemyRow].filter((row) => row.length > 0);
 }
 
 export function CombatMobileGrid({
@@ -155,7 +84,6 @@ export function CombatMobileGrid({
   isSelectingCheatKillTarget,
   newlySummonedIds,
   enemyArtFailures,
-  attackBonus,
   playerHit,
   avatarFailed,
   onAvatarError,
@@ -167,525 +95,366 @@ export function CombatMobileGrid({
   isArmorTutorialStep,
 }: CombatMobileGridProps) {
   const { t } = useTranslation();
-  const playerStatusMarkers = useMemo(
-    () =>
-      buildPlayerStatusMarkers(
-        combat.player,
-        combat.playerDisruption,
-        combat.nextPlayerDisruption,
-        attackBonus
-      ),
-    [
-      attackBonus,
-      combat.nextPlayerDisruption,
-      combat.player,
-      combat.playerDisruption,
-    ]
-  );
 
-  const mobileOccupiedSlots = useMemo<MobileOccupiedSlot[]>(
-    () => [
-      ...combat.allies.map((ally) => ({ type: "ally" as const, ally })),
-      { type: "player" as const },
-      ...combat.enemies.map((enemy) => ({ type: "enemy" as const, enemy })),
-    ],
-    [combat.allies, combat.enemies]
-  );
-  const mobileRows = useMemo(
-    () => buildMobileRows(mobileOccupiedSlots, combat.allies.length),
-    [mobileOccupiedSlots, combat.allies.length]
-  );
+  const enemyCount = combat.enemies.length;
 
-  const isDuelMobileSlots = mobileOccupiedSlots.length <= 2;
-  const isSingleRowMobileSlots = mobileRows.length === 1;
-  const isDenseMobileLayout = mobileRows.length >= 2;
-  const mobileSlotHeightClass = isDuelMobileSlots
-    ? "h-[148px] [@media(max-height:540px)]:h-[134px]"
-    : isSingleRowMobileSlots
-      ? "h-[142px] [@media(max-height:540px)]:h-[128px]"
-      : "h-[128px] [@media(max-height:540px)]:h-[114px]";
-  const mobileSlotWidthClass = isDuelMobileSlots
-    ? "w-[82vw] min-w-[15rem] max-w-[19rem]"
-    : isSingleRowMobileSlots
-      ? "w-[68vw] min-w-[13rem] max-w-[17rem]"
-      : "w-[70vw] min-w-[12.5rem] max-w-[16.5rem]";
-  const mobileArtSizeClass = isDuelMobileSlots
-    ? "h-[62px] w-[62px] [@media(max-height:540px)]:h-[56px] [@media(max-height:540px)]:w-[56px]"
-    : isSingleRowMobileSlots
-      ? "h-[64px] w-[64px] [@media(max-height:540px)]:h-[56px] [@media(max-height:540px)]:w-[56px]"
-      : "h-[52px] w-[52px] [@media(max-height:540px)]:h-[46px] [@media(max-height:540px)]:w-[46px]";
+  // Ally strip height: taller when no allies (just player), compact otherwise
+  const stripHeight =
+    combat.allies.length === 0
+      ? "h-[88px] [@media(max-height:540px)]:h-[72px]"
+      : "h-[92px] [@media(max-height:540px)]:h-[76px]";
 
   return (
-    <div className="w-full lg:hidden">
-      <div
-        className={cn(
-          "flex flex-col",
-          isDenseMobileLayout ? "gap-2.5" : "gap-2"
-        )}
-      >
-        {mobileRows.map((row, rowIndex) => (
-          <div
-            key={`mobile-row-${rowIndex}`}
-            data-mobile-row={row.length}
-            data-mobile-rail={
-              row.some((entry) => entry.type === "enemy") ? "enemy" : "friendly"
-            }
-            className="space-y-1.5"
-          >
-            <div className="flex items-center justify-between px-1">
-              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-slate-400/80">
-                {row.some((entry) => entry.type === "enemy")
-                  ? t("combat.enemy", { defaultValue: "Ennemis" })
-                  : combat.allies.length > 0
-                    ? `${t("combat.ally", { defaultValue: "Allie" })} + ${t(
-                        "combat.player",
-                        {
-                          defaultValue: "Joueur",
-                        }
-                      )}`
-                    : t("combat.player", { defaultValue: "Joueur" })}
-              </p>
-              <span className="text-[10px] font-semibold text-slate-500">
-                {row.length}
-              </span>
-            </div>
-            <div className="flex gap-2 overflow-x-auto overflow-y-visible pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {row.map((entry, index) => {
-                const slotIndex =
-                  mobileRows
-                    .slice(0, rowIndex)
-                    .reduce(
-                      (total, currentRow) => total + currentRow.length,
-                      0
-                    ) + index;
-                if (entry.type === "ally") {
-                  const ally = entry.ally;
-                  const def = allyDefs.get(ally.definitionId);
-                  const intent = def?.abilities[ally.intentIndex];
-                  const localizedAllyName = localizeAllyName(
-                    ally.definitionId,
-                    ally.name
-                  );
-                  const canTarget =
-                    (selectingAllyTarget || selfCanRetargetToAlly) &&
-                    ally.currentHp > 0 &&
-                    !actingEnemyId;
-                  const isDead = ally.currentHp <= 0;
-                  const allyIntentSummary = intent
-                    ? formatAllyIntent(intent, t)
-                    : t("combat.noAbility", { defaultValue: "Aucune action" });
+    <div className="flex h-full w-full flex-col gap-1.5 px-1 pb-1 pt-1 lg:hidden">
+      {/* ── ENEMY PORTRAIT ZONE ─────────────────────────────
+          Takes all remaining height. Enemies are displayed as
+          tall portrait cards with art as the focal point.     */}
+      <div className="flex min-h-0 flex-1 gap-1.5">
+        {combat.enemies.map((enemy) => {
+          const def = enemyDefs.get(enemy.definitionId);
+          if (!def) return null;
 
-                  return (
-                    <button
-                      key={`mobile-ally-${ally.instanceId}`}
-                      type="button"
-                      data-keep-selection="true"
-                      onClick={() => onMobileAllyPress(ally.instanceId)}
-                      className={cn(
-                        "relative shrink-0 overflow-hidden border text-left shadow-[0_18px_36px_rgba(2,6,23,0.34)] transition-all duration-200",
-                        isDenseMobileLayout
-                          ? "rounded-[18px] px-2 py-1.5"
-                          : "rounded-[22px] px-2.5 py-2",
-                        mobileSlotWidthClass,
-                        mobileSlotHeightClass,
-                        isDead
-                          ? "border-slate-800/80 bg-slate-950/70 opacity-45 grayscale"
-                          : "border-cyan-500/45 bg-[linear-gradient(180deg,rgba(8,145,178,0.22),rgba(2,6,23,0.88))]",
-                        canTarget &&
-                          "border-cyan-300 shadow-[0_0_22px_rgba(34,211,238,0.3)] ring-2 ring-cyan-300/70"
-                      )}
-                    >
-                      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_55%)]" />
-                      <div className="bg-white/12 pointer-events-none absolute inset-x-0 top-0 h-px" />
+          const ability = def.abilities[enemy.intentIndex];
+          const resolvedTarget = ability
+            ? resolveEnemyAbilityTarget(combat, enemy, ability)
+            : "player";
+          const hideIntent = shouldHideEnemyIntent(
+            combat.difficultyLevel ?? 0,
+            combat.turnNumber,
+            enemy,
+            { playerHand: combat.hand }
+          );
+          const intentLabels = buildMobileEnemyIntentChips(
+            combat,
+            enemy,
+            resolvedTarget,
+            ability,
+            hideIntent,
+            t
+          );
+          const firstIntent =
+            !hideIntent && enemy.currentHp > 0
+              ? (intentLabels[0] ?? null)
+              : null;
 
-                      <div className="relative flex h-full flex-col">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-cyan-200/65">
-                              {t("combat.ally", { defaultValue: "Allie" })}
-                            </p>
-                            <p className="truncate text-[13px] font-black text-cyan-50">
-                              {localizedAllyName}
-                            </p>
-                          </div>
-                          <MobileValuePill
-                            label="ARM"
-                            value={Math.max(0, ally.block)}
-                            className={
-                              ally.block > 0
-                                ? "border-cyan-400/30 bg-cyan-950/80 text-cyan-100"
-                                : "border-slate-700/70 bg-slate-900/70 text-slate-400"
-                            }
-                            highlight={isArmorTutorialStep}
-                          />
-                        </div>
+          const isDead = enemy.currentHp <= 0;
+          const isTargetable =
+            selectingEnemyTarget &&
+            selectedCardId !== null &&
+            enemy.currentHp > 0 &&
+            !actingEnemyId;
+          const isCheatSelectable =
+            isSelectingCheatKillTarget && enemy.currentHp > 0;
+          const isActing = actingEnemyId === enemy.instanceId;
+          const enemyArtSrc = getEnemyImageSrc(enemy.definitionId);
+          const enemyArtFailed = enemyArtFailures.has(enemy.definitionId);
+          const name = getEnemyDisplayName(enemy);
+          const roleLabel = def.isBoss
+            ? t("enemyCard.boss")
+            : def.isElite
+              ? t("enemyCard.elite")
+              : null;
 
-                        <div
-                          className={cn(
-                            "flex min-h-0 flex-1 gap-2",
-                            isDenseMobileLayout ? "mt-1.5" : "mt-2"
-                          )}
-                        >
-                          <div
-                            className={cn(
-                              "relative shrink-0 overflow-hidden rounded-[18px] border border-cyan-400/15 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.1),transparent_55%),linear-gradient(180deg,rgba(8,145,178,0.28),rgba(8,47,73,0.72))]",
-                              mobileArtSizeClass
-                            )}
-                          >
-                            <div className="flex h-full w-full items-center justify-center text-lg font-black uppercase tracking-[0.18em] text-cyan-50/90">
-                              {getMonogram(localizedAllyName, "AL")}
-                            </div>
-                          </div>
+          // Wider cards when fewer enemies
+          const cardRounding =
+            enemyCount === 1
+              ? "rounded-[24px]"
+              : def.isBoss
+                ? "rounded-[22px]"
+                : "rounded-[20px]";
 
-                          <div className="min-w-0 flex-1">
-                            <div className="flex min-h-[20px] flex-wrap gap-1 overflow-hidden">
-                              {renderCompactBuffs(ally.buffs)}
-                            </div>
+          return (
+            <button
+              key={`mobile-enemy-${enemy.instanceId}`}
+              type="button"
+              data-keep-selection="true"
+              onClick={() => onMobileEnemyPress(enemy.instanceId)}
+              className={cn(
+                "relative flex-1 overflow-hidden border text-left transition-all duration-200",
+                cardRounding,
+                isDead
+                  ? "border-slate-800/50 bg-slate-950/70 opacity-40 grayscale"
+                  : def.isBoss
+                    ? "border-amber-500/35 bg-[linear-gradient(180deg,rgba(120,53,15,0.18),rgba(15,23,42,0.82))]"
+                    : "border-rose-500/35 bg-[linear-gradient(180deg,rgba(159,18,57,0.15),rgba(15,23,42,0.82))]",
+                isTargetable || isCheatSelectable
+                  ? "border-red-400 shadow-[0_0_32px_rgba(248,113,113,0.45)] ring-2 ring-red-400/80"
+                  : def.isBoss && !isDead
+                    ? "shadow-[0_0_24px_rgba(245,158,11,0.12)]"
+                    : "",
+                !isDead &&
+                  !isActing &&
+                  attackingEnemyId !== enemy.instanceId &&
+                  !newlySummonedIds.has(enemy.instanceId) &&
+                  "animate-enemy-idle",
+                isActing && "animate-enemy-acting",
+                attackingEnemyId === enemy.instanceId && "animate-enemy-attack",
+                newlySummonedIds.has(enemy.instanceId) &&
+                  "animate-enemy-summon-enter"
+              )}
+            >
+              {/* Art — fills the card */}
+              <div className="absolute inset-0">
+                {!enemyArtFailed ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={enemyArtSrc}
+                    alt={name}
+                    className="h-full w-full object-contain object-bottom"
+                    onError={() => markEnemyArtFailure(enemy.definitionId)}
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center">
+                    <span className="select-none text-5xl font-black uppercase tracking-widest text-rose-50/10">
+                      {getMonogram(name, "EN")}
+                    </span>
+                  </div>
+                )}
+              </div>
 
-                            <div
-                              className={cn(
-                                "rounded-2xl border border-cyan-400/15 bg-black/20 px-2",
-                                isDenseMobileLayout
-                                  ? "mt-1 py-1.5"
-                                  : "mt-1.5 py-2"
-                              )}
-                            >
-                              <p
-                                className="text-[10px] font-semibold leading-tight text-cyan-100/85"
-                                style={{
-                                  display: "-webkit-box",
-                                  WebkitBoxOrient: "vertical",
-                                  WebkitLineClamp: 2,
-                                  overflow: "hidden",
-                                }}
-                              >
-                                {isDead ? "KO" : allyIntentSummary}
-                              </p>
-                              <HpBar
-                                current={Math.max(0, ally.currentHp)}
-                                max={ally.maxHp}
-                                showText={false}
-                                color="green"
-                                className="mt-2 h-1.5 rounded-full bg-slate-800"
-                              />
-                              <div className="mt-1.5 flex items-center justify-between gap-2 text-[11px] font-semibold text-slate-200">
-                                <span className="tabular-nums">
-                                  {Math.max(0, ally.currentHp)}/{ally.maxHp}
-                                </span>
-                                {isDead && (
-                                  <span className="rounded-full border border-slate-700/80 bg-slate-900/80 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.16em] text-slate-300">
-                                    KO
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                }
+              {/* Atmospheric overlays */}
+              <div
+                className={cn(
+                  "pointer-events-none absolute inset-0",
+                  def.isBoss
+                    ? "bg-[radial-gradient(ellipse_at_50%_0%,rgba(120,53,15,0.35),transparent_55%)]"
+                    : "bg-[radial-gradient(ellipse_at_50%_0%,rgba(159,18,57,0.30),transparent_55%)]"
+                )}
+              />
+              {/* Bottom fade so info strip is readable */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/20 to-transparent" />
 
-                if (entry.type === "player") {
-                  return (
-                    <button
-                      key={`mobile-player-${slotIndex}`}
-                      type="button"
-                      data-keep-selection="true"
-                      onClick={onOpenPlayerInfo}
-                      className={cn(
-                        "relative shrink-0 overflow-hidden border text-left shadow-[0_18px_36px_rgba(2,6,23,0.36)] transition-all duration-200",
-                        isDenseMobileLayout
-                          ? "rounded-[18px] px-2 py-1.5"
-                          : "rounded-[22px] px-2.5 py-2",
-                        mobileSlotWidthClass,
-                        mobileSlotHeightClass,
-                        playerHit
-                          ? "border-red-400 bg-[linear-gradient(180deg,rgba(127,29,29,0.2),rgba(30,41,59,0.92))] shadow-[0_0_24px_rgba(248,113,113,0.35)]"
-                          : "border-indigo-400/45 bg-[linear-gradient(180deg,rgba(79,70,229,0.22),rgba(15,23,42,0.92))]",
-                        isArmorTutorialStep &&
-                          "ring-1 ring-cyan-300/75 ring-offset-1 ring-offset-slate-950"
-                      )}
-                    >
-                      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(129,140,248,0.16),transparent_58%)]" />
-                      <div className="bg-white/12 pointer-events-none absolute inset-x-0 top-0 h-px" />
-
-                      <div className="relative flex h-full flex-col">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-indigo-200/65">
-                              {t("combat.player")}
-                            </p>
-                            <p className="truncate text-[13px] font-black text-indigo-50">
-                              {t("combat.player")}
-                            </p>
-                          </div>
-                          <div className="flex flex-wrap justify-end gap-1">
-                            <MobileValuePill
-                              label={t("combat.energyShort", {
-                                defaultValue: "EN",
-                              })}
-                              value={combat.player.energyCurrent}
-                              className="border-amber-400/30 bg-amber-950/75 text-amber-100"
-                            />
-                            <MobileValuePill
-                              label="INK"
-                              value={combat.player.inkCurrent}
-                              className="border-cyan-400/30 bg-cyan-950/75 text-cyan-100"
-                            />
-                            <MobileValuePill
-                              label="ARM"
-                              value={Math.max(0, combat.player.block)}
-                              className={
-                                combat.player.block > 0
-                                  ? "border-cyan-400/30 bg-cyan-950/80 text-cyan-100"
-                                  : "border-slate-700/70 bg-slate-900/70 text-slate-400"
-                              }
-                              highlight={isArmorTutorialStep}
-                            />
-                          </div>
-                        </div>
-
-                        <div
-                          className={cn(
-                            "flex min-h-0 flex-1 gap-2",
-                            isDenseMobileLayout ? "mt-1.5" : "mt-2"
-                          )}
-                        >
-                          <div
-                            className={cn(
-                              "relative shrink-0 overflow-hidden rounded-[18px] border border-indigo-300/20 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.12),transparent_52%),linear-gradient(180deg,rgba(99,102,241,0.2),rgba(30,41,59,0.82))]",
-                              mobileArtSizeClass
-                            )}
-                          >
-                            {!avatarFailed ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img
-                                src={PLAYER_AVATAR}
-                                alt={t("combat.player")}
-                                className="h-full w-full object-contain p-1.5"
-                                onError={onAvatarError}
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center text-lg font-black uppercase tracking-[0.18em] text-indigo-50/90">
-                                J
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="min-w-0 flex-1">
-                            <div className="flex min-h-[20px] flex-wrap gap-1 overflow-hidden">
-                              {renderCompactStatusMarkersForPlayer(
-                                playerStatusMarkers
-                              )}
-                            </div>
-
-                            <div
-                              className={cn(
-                                "rounded-2xl border border-indigo-300/15 bg-black/20 px-2",
-                                isDenseMobileLayout
-                                  ? "mt-1 py-1.5"
-                                  : "mt-1.5 py-2"
-                              )}
-                            >
-                              <HpBar
-                                current={Math.max(0, combat.player.currentHp)}
-                                max={combat.player.maxHp}
-                                showText={false}
-                                color="green"
-                                className="h-1.5 rounded-full bg-slate-800"
-                              />
-                              <div className="mt-1.5 flex items-center justify-between gap-2 text-[11px] font-semibold text-slate-200">
-                                <span className="tabular-nums">
-                                  {Math.max(0, combat.player.currentHp)}/
-                                  {combat.player.maxHp}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                }
-
-                const enemy = entry.enemy;
-                const def = enemyDefs.get(enemy.definitionId);
-                if (!def) return null;
-                const ability = def.abilities[enemy.intentIndex];
-                const resolvedTarget = ability
-                  ? resolveEnemyAbilityTarget(combat, enemy, ability)
-                  : "player";
-                const hideIntent = shouldHideEnemyIntent(
-                  combat.difficultyLevel ?? 0,
-                  combat.turnNumber,
-                  enemy,
-                  { playerHand: combat.hand }
-                );
-                const enemyIntentLabels = buildMobileEnemyIntentChips(
-                  combat,
-                  enemy,
-                  resolvedTarget,
-                  ability,
-                  hideIntent,
-                  t
-                );
-                const enemyStatusMarkers = buildEnemyStatusMarkers(enemy);
-                const isDead = enemy.currentHp <= 0;
-                const isTargetable =
-                  selectingEnemyTarget &&
-                  selectedCardId !== null &&
-                  enemy.currentHp > 0 &&
-                  !actingEnemyId;
-                const isCheatSelectable =
-                  isSelectingCheatKillTarget && enemy.currentHp > 0;
-                const isActing = actingEnemyId === enemy.instanceId;
-                const enemyArtSrc = getEnemyImageSrc(enemy.definitionId);
-                const enemyArtFailed = enemyArtFailures.has(enemy.definitionId);
-                const roleLabel = def.isBoss
-                  ? t("enemyCard.boss")
-                  : def.isElite
-                    ? t("enemyCard.elite")
-                    : t("combat.enemy", { defaultValue: "Ennemi" });
-
-                return (
-                  <button
-                    key={`mobile-enemy-${enemy.instanceId}`}
-                    type="button"
-                    data-keep-selection="true"
-                    onClick={() => onMobileEnemyPress(enemy.instanceId)}
+              {/* Intent badge — top, full width */}
+              {firstIntent && !isDead && (
+                <div className="absolute left-1.5 right-1.5 top-1.5">
+                  <span
                     className={cn(
-                      "relative shrink-0 overflow-hidden border text-left shadow-[0_18px_36px_rgba(2,6,23,0.36)] transition-all duration-200",
-                      isDenseMobileLayout
-                        ? "rounded-[18px] px-2 py-1.5"
-                        : "rounded-[22px] px-2.5 py-2",
-                      mobileSlotWidthClass,
-                      mobileSlotHeightClass,
-                      isDead
-                        ? "border-slate-800/80 bg-slate-950/70 opacity-45 grayscale"
-                        : "border-rose-500/45 bg-[linear-gradient(180deg,rgba(159,18,57,0.22),rgba(15,23,42,0.92))]",
-                      (isTargetable || isCheatSelectable) &&
-                        "border-red-300 shadow-[0_0_24px_rgba(248,113,113,0.36)] ring-2 ring-red-300/70",
-                      !isDead &&
-                        !isActing &&
-                        attackingEnemyId !== enemy.instanceId &&
-                        !newlySummonedIds.has(enemy.instanceId) &&
-                        "animate-enemy-idle",
-                      isActing && "animate-enemy-acting",
-                      attackingEnemyId === enemy.instanceId &&
-                        "animate-enemy-attack",
-                      newlySummonedIds.has(enemy.instanceId) &&
-                        "animate-enemy-summon-enter"
+                      "block truncate rounded-xl border px-2 py-0.5 text-[9px] font-bold leading-tight backdrop-blur-sm",
+                      def.isBoss
+                        ? "border-amber-400/40 bg-slate-950/75 text-amber-200"
+                        : "border-rose-400/35 bg-slate-950/75 text-rose-200"
                     )}
                   >
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(251,113,133,0.15),transparent_56%)]" />
-                    <div className="bg-white/12 pointer-events-none absolute inset-x-0 top-0 h-px" />
+                    {firstIntent}
+                  </span>
+                </div>
+              )}
 
-                    <div className="relative flex h-full flex-col">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-rose-200/65">
-                            {roleLabel}
-                          </p>
-                          <p className="truncate text-[13px] font-black text-rose-50">
-                            {getEnemyDisplayName(enemy)}
-                          </p>
-                        </div>
-                        <MobileValuePill
-                          label="ARM"
-                          value={Math.max(0, enemy.block)}
-                          className={
-                            enemy.block > 0
-                              ? "border-cyan-400/30 bg-cyan-950/80 text-cyan-100"
-                              : "border-slate-700/70 bg-slate-900/70 text-slate-400"
-                          }
-                          highlight={isArmorTutorialStep}
-                        />
-                      </div>
+              {/* ARM badge */}
+              {enemy.block > 0 && (
+                <div
+                  className={cn(
+                    "absolute right-1.5",
+                    firstIntent && !isDead ? "top-8" : "top-1.5"
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "rounded-full border px-1.5 py-0.5 text-[9px] font-black backdrop-blur-sm",
+                      isArmorTutorialStep
+                        ? "border-cyan-300 bg-cyan-950/80 text-cyan-100 ring-1 ring-cyan-300"
+                        : "border-cyan-400/40 bg-slate-950/70 text-cyan-200"
+                    )}
+                  >
+                    ARM {enemy.block}
+                  </span>
+                </div>
+              )}
 
-                      <div
-                        className={cn(
-                          "flex min-h-0 flex-1 gap-2",
-                          isDenseMobileLayout ? "mt-1.5" : "mt-2"
-                        )}
-                      >
-                        <div
-                          className={cn(
-                            "relative shrink-0 overflow-hidden rounded-[18px] border border-rose-400/15 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.1),transparent_52%),linear-gradient(180deg,rgba(190,24,93,0.18),rgba(15,23,42,0.84))]",
-                            mobileArtSizeClass
-                          )}
-                        >
-                          {!enemyArtFailed ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={enemyArtSrc}
-                              alt={getEnemyDisplayName(enemy)}
-                              className="h-full w-full object-contain object-center p-1.5"
-                              onError={() =>
-                                markEnemyArtFailure(enemy.definitionId)
-                              }
-                            />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center text-lg font-black uppercase tracking-[0.18em] text-rose-50/90">
-                              {getMonogram(getEnemyDisplayName(enemy), "EN")}
-                            </div>
-                          )}
-                          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/45 to-transparent" />
-                        </div>
+              {/* Bottom info strip */}
+              <div className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-8">
+                <div className="flex items-end justify-between gap-1">
+                  <p className="min-w-0 truncate text-[11px] font-black leading-tight text-white">
+                    {name}
+                  </p>
+                  {roleLabel && (
+                    <span
+                      className={cn(
+                        "shrink-0 text-[8px] font-black uppercase tracking-wide",
+                        def.isBoss ? "text-amber-300" : "text-purple-300"
+                      )}
+                    >
+                      {roleLabel}
+                    </span>
+                  )}
+                </div>
+                <MiniHpBar
+                  current={Math.max(0, enemy.currentHp)}
+                  max={enemy.maxHp}
+                  className="mt-1 h-[3px]"
+                />
+                <p className="mt-0.5 text-[9px] font-semibold tabular-nums text-white/55">
+                  {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
+                </p>
+              </div>
 
-                        <div className="min-w-0 flex-1">
-                          <div className="flex min-h-[20px] flex-wrap gap-1 overflow-hidden">
-                            {renderCompactEnemyStatusMarkers(
-                              enemyStatusMarkers
-                            )}
-                          </div>
+              {/* Targeting pulse overlay */}
+              {(isTargetable || isCheatSelectable) && (
+                <div className="bg-red-500/8 pointer-events-none absolute inset-0 animate-pulse rounded-[inherit]" />
+              )}
+            </button>
+          );
+        })}
+      </div>
 
-                          <MobileIntentPreview
-                            labels={
-                              isDead
-                                ? ["KO"]
-                                : enemyIntentLabels.length > 0
-                                  ? enemyIntentLabels
-                                  : ["-"]
-                            }
-                            className="border-rose-400/18 bg-black/20 text-rose-50"
-                            maxVisible={2}
-                          />
+      {/* ── ALLY + PLAYER STRIP ─────────────────────────────
+          Fixed height at the bottom. Compact cards, tappable
+          for targeting or info.                              */}
+      <div className={cn("flex shrink-0 gap-1.5", stripHeight)}>
+        {/* Allies */}
+        {combat.allies.map((ally) => {
+          const def = allyDefs.get(ally.definitionId);
+          const intent = def?.abilities[ally.intentIndex];
+          const localizedAllyName = localizeAllyName(
+            ally.definitionId,
+            ally.name
+          );
+          const canTarget =
+            (selectingAllyTarget || selfCanRetargetToAlly) &&
+            ally.currentHp > 0 &&
+            !actingEnemyId;
+          const isDead = ally.currentHp <= 0;
+          const allyIntentSummary =
+            intent && !isDead ? formatAllyIntent(intent, t) : null;
 
-                          <div
-                            className={cn(
-                              "rounded-2xl border border-rose-400/15 bg-black/20 px-2",
-                              isDenseMobileLayout
-                                ? "mt-1 py-1.5"
-                                : "mt-1.5 py-2"
-                            )}
-                          >
-                            <HpBar
-                              current={Math.max(0, enemy.currentHp)}
-                              max={enemy.maxHp}
-                              showText={false}
-                              className="h-1.5 rounded-full bg-slate-800"
-                            />
-                            <div className="mt-1.5 flex items-center justify-between gap-2 text-[11px] font-semibold text-slate-200">
-                              <span className="tabular-nums">
-                                {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
-                              </span>
-                              {isDead && (
-                                <span className="rounded-full border border-slate-700/80 bg-slate-900/80 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.16em] text-slate-300">
-                                  KO
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
+          return (
+            <button
+              key={`mobile-ally-${ally.instanceId}`}
+              type="button"
+              data-keep-selection="true"
+              onClick={() => onMobileAllyPress(ally.instanceId)}
+              className={cn(
+                "relative flex-1 overflow-hidden rounded-[14px] border p-2 text-left transition-all duration-200",
+                isDead
+                  ? "border-slate-800/50 bg-slate-950/70 opacity-40 grayscale"
+                  : "border-cyan-500/35 bg-[linear-gradient(135deg,rgba(8,145,178,0.20),rgba(2,6,23,0.90))]",
+                canTarget &&
+                  "border-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.3)] ring-2 ring-cyan-300/70"
+              )}
+            >
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.10),transparent_55%)]" />
+
+              <div className="relative flex h-full flex-col justify-between gap-0.5">
+                {/* Name + ARM */}
+                <div className="flex items-start justify-between gap-1">
+                  <div className="min-w-0">
+                    <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-cyan-300/55">
+                      {t("combat.ally", { defaultValue: "Allié" })}
+                    </p>
+                    <p className="truncate text-[11px] font-black leading-tight text-cyan-50">
+                      {localizedAllyName}
+                    </p>
+                  </div>
+                  {ally.block > 0 && (
+                    <span
+                      className={cn(
+                        "shrink-0 rounded-full border px-1.5 py-0.5 text-[8px] font-black",
+                        isArmorTutorialStep
+                          ? "border-cyan-300 bg-cyan-950 text-cyan-100 ring-1 ring-cyan-300"
+                          : "border-cyan-400/30 bg-cyan-950/70 text-cyan-200"
+                      )}
+                    >
+                      ARM {ally.block}
+                    </span>
+                  )}
+                </div>
+
+                {/* Intent summary */}
+                {allyIntentSummary && (
+                  <p
+                    className="truncate text-[8px] font-medium leading-tight text-cyan-200/55"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 1,
+                      overflow: "hidden",
+                    }}
+                  >
+                    {allyIntentSummary}
+                  </p>
+                )}
+
+                {/* HP */}
+                <div>
+                  <MiniHpBar
+                    current={Math.max(0, ally.currentHp)}
+                    max={ally.maxHp}
+                    className="h-[3px]"
+                  />
+                  <p className="mt-0.5 text-[9px] font-semibold tabular-nums text-white/50">
+                    {Math.max(0, ally.currentHp)}/{ally.maxHp}
+                  </p>
+                </div>
+              </div>
+            </button>
+          );
+        })}
+
+        {/* Player */}
+        <button
+          type="button"
+          data-keep-selection="true"
+          onClick={onOpenPlayerInfo}
+          className={cn(
+            "relative flex-1 overflow-hidden rounded-[14px] border p-2 text-left transition-all duration-200",
+            playerHit
+              ? "border-red-400/50 bg-[linear-gradient(135deg,rgba(127,29,29,0.28),rgba(2,6,23,0.90))] shadow-[0_0_20px_rgba(248,113,113,0.22)]"
+              : "border-indigo-400/35 bg-[linear-gradient(135deg,rgba(79,70,229,0.20),rgba(2,6,23,0.90))]",
+            isArmorTutorialStep && "ring-1 ring-cyan-300/75"
+          )}
+        >
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(129,140,248,0.12),transparent_55%)]" />
+
+          {/* Small avatar top-right */}
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-20">
+            {!avatarFailed ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={PLAYER_AVATAR}
+                alt=""
+                aria-hidden
+                className="h-10 w-10 object-contain"
+                onError={onAvatarError}
+              />
+            ) : null}
+          </div>
+
+          <div className="relative flex h-full flex-col justify-between gap-0.5">
+            {/* EN + INK + ARM pills */}
+            <div className="flex flex-wrap gap-0.5">
+              <span className="rounded-full border border-amber-400/35 bg-amber-950/65 px-1.5 py-0.5 text-[8px] font-black text-amber-100">
+                EN {combat.player.energyCurrent}
+              </span>
+              <span className="rounded-full border border-cyan-400/35 bg-cyan-950/65 px-1.5 py-0.5 text-[8px] font-black text-cyan-100">
+                INK {combat.player.inkCurrent}
+              </span>
+              {combat.player.block > 0 && (
+                <span
+                  className={cn(
+                    "rounded-full border px-1.5 py-0.5 text-[8px] font-black",
+                    isArmorTutorialStep
+                      ? "border-cyan-300 bg-cyan-950 text-cyan-100 ring-1 ring-cyan-300"
+                      : "border-slate-500/35 bg-slate-900/65 text-slate-200"
+                  )}
+                >
+                  ARM {combat.player.block}
+                </span>
+              )}
+            </div>
+
+            {/* HP */}
+            <div>
+              <MiniHpBar
+                current={Math.max(0, combat.player.currentHp)}
+                max={combat.player.maxHp}
+                className="h-[3px]"
+              />
+              <p className="mt-0.5 text-[9px] font-semibold tabular-nums text-white/50">
+                {Math.max(0, combat.player.currentHp)}/{combat.player.maxHp}
+              </p>
             </div>
           </div>
-        ))}
+        </button>
       </div>
     </div>
   );

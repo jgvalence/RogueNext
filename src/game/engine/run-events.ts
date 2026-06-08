@@ -34,6 +34,10 @@ export interface EventChoice {
   goldCost?: number;
   rewardArchetypeTag?: CardArchetypeTag;
   minimumRewardChoices?: number;
+  /** Show a picker with ALL eligible cards for this character (no archetype filter). */
+  rewardAllCards?: boolean;
+  /** Show a picker with ALL available (non-owned, non-boss) relics. */
+  requiresRelicChoice?: boolean;
   canApply?: (state: RunState) => boolean;
   apply: (state: RunState) => RunState;
 }
@@ -1875,6 +1879,61 @@ const EVENTS: GameEvent[] = [
           scribeAttitude: s.scribeAttitude - 1,
           currentRoom: s.currentRoom + 1,
         }),
+      },
+    ],
+  },
+  // ── Rare unique events ─────────────────────────────────────────────────────
+  {
+    id: "arcane_library",
+    title: "events.arcane_library.title",
+    flavorText: "events.arcane_library.flavorText",
+    description: "events.arcane_library.description",
+    once: true,
+    choices: [
+      {
+        label: "events.arcane_library.choices.0.label",
+        description: "events.arcane_library.choices.0.description",
+        outcomeText: "events.arcane_library.choices.0.outcomeText",
+        rewardAllCards: true,
+        canApply: (s) => s.playerCurrentHp > 15,
+        apply: (s) => ({
+          ...s,
+          playerCurrentHp: Math.max(1, s.playerCurrentHp - 15),
+          currentRoom: s.currentRoom + 1,
+        }),
+      },
+      {
+        label: "events.arcane_library.choices.1.label",
+        description: "events.arcane_library.choices.1.description",
+        outcomeText: "events.arcane_library.choices.1.outcomeText",
+        apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
+      },
+    ],
+  },
+  {
+    id: "forbidden_vault",
+    title: "events.forbidden_vault.title",
+    flavorText: "events.forbidden_vault.flavorText",
+    description: "events.forbidden_vault.description",
+    once: true,
+    choices: [
+      {
+        label: "events.forbidden_vault.choices.0.label",
+        description: "events.forbidden_vault.choices.0.description",
+        outcomeText: "events.forbidden_vault.choices.0.outcomeText",
+        requiresRelicChoice: true,
+        goldCost: 75,
+        apply: (s) => ({
+          ...s,
+          gold: s.gold - 75,
+          currentRoom: s.currentRoom + 1,
+        }),
+      },
+      {
+        label: "events.forbidden_vault.choices.1.label",
+        description: "events.forbidden_vault.choices.1.description",
+        outcomeText: "events.forbidden_vault.choices.1.outcomeText",
+        apply: (s) => ({ ...s, currentRoom: s.currentRoom + 1 }),
       },
     ],
   },

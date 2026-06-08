@@ -464,6 +464,7 @@ function GameContent({
     handleSpecialEventChoice,
     handleSpecialEventCardReward,
     handleSpecialEventContinue,
+    handleSpecialEventRelicPick,
     handleSpecialHealRoomBloodPurge,
     handleSpecialEventPurge,
     handleRelicExchange,
@@ -782,6 +783,7 @@ function GameContent({
             onEventChoice={handleSpecialEventChoice}
             onPickCardReward={handleSpecialEventCardReward}
             onEventContinue={handleSpecialEventContinue}
+            onEventRelicPick={handleSpecialEventRelicPick}
             onRelicExchange={handleRelicExchange}
             onSkip={handleSpecialSkip}
           />

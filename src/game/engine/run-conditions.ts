@@ -120,6 +120,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     category: "LIGHT_BOON",
     unlock: {},
     effects: {
+      startingGoldDelta: 10,
       addMetaBonuses: {
         startingInk: 2,
       },
@@ -185,7 +186,11 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     id: "single_path",
     category: "SPECIAL_RULE",
     unlock: { totalRuns: 3 },
-    effects: { mapRules: { forceSingleChoice: true } },
+    effects: {
+      mapRules: { forceSingleChoice: true },
+      upgradeRandomDeckCardsCount: 1,
+      startingGoldDelta: 10,
+    },
   },
   {
     id: "eventful_routes",
@@ -224,7 +229,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     category: "BOON_WITH_DRAWBACK",
     unlock: { totalRuns: 1 },
     effects: {
-      maxHpDelta: -50,
+      maxHpDelta: -30,
       addMetaBonuses: {
         healAfterCombat: 100,
       },
@@ -293,8 +298,9 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     category: "GOOD_BAD_CARD",
     unlock: { totalRuns: 3 },
     effects: {
-      addRandomCardsCount: 2,
-      addCardIds: ["haunting_regret", "haunting_regret"],
+      addRandomCardsCount: 3,
+      addRandomCardRarities: ["COMMON", "UNCOMMON"],
+      addCardIds: ["haunting_regret"],
     },
   },
   {
@@ -333,6 +339,8 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
       mapRules: { forceSingleChoice: true },
       removeRandomStarterCardsCount: 1,
       upgradeRandomDeckCardsCount: 1,
+      addRandomCardsCount: 1,
+      addRandomCardRarities: ["UNCOMMON", "RARE"],
     },
   },
   {
@@ -341,8 +349,7 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     unlock: { totalRuns: 6, wonRuns: 2 },
     effects: {
       mapRules: { forceSingleChoice: true, extraSpecialRoom: true },
-      startingGoldDelta: 10,
-      addCardIds: ["haunting_regret"],
+      startingGoldDelta: 20,
     },
   },
   {

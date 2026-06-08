@@ -209,7 +209,7 @@ export function CombatBattlefield({
 
       <div
         ref={enemyRowRef}
-        className="relative z-10 flex min-h-[220px] w-full flex-1 items-start justify-stretch overflow-y-auto py-1 lg:min-h-0 lg:items-center lg:justify-center lg:overflow-visible lg:py-4 [@media(max-height:540px)]:min-h-[190px]"
+        className="relative z-10 flex min-h-0 w-full flex-1 overflow-hidden lg:items-center lg:justify-center lg:overflow-visible lg:py-4"
       >
         <CombatMobileGrid
           combat={combat}

@@ -85,9 +85,11 @@ export const fr = {
   auth: {
     back: "Retour",
     password: "Mot de passe",
+    username: "Pseudo",
+    usernamePlaceholder: "Explorateur",
     signin: {
       subtitle: "Connectez-vous pour continuer",
-      invalidCredentials: "Email ou mot de passe incorrect",
+      invalidCredentials: "Pseudo ou mot de passe incorrect",
       loading: "Connexion...",
       submit: "Se connecter",
       noAccount: "Pas encore de compte ?",
@@ -95,8 +97,6 @@ export const fr = {
     },
     signup: {
       subtitle: "Creez votre compte pour jouer",
-      nameOptional: "Nom (optionnel)",
-      namePlaceholder: "Explorateur",
       passwordPlaceholder: "6 caracteres minimum",
       loading: "Inscription...",
       submit: "S'inscrire",
@@ -324,7 +324,8 @@ export const fr = {
       },
       inked_beginning: {
         name: "Encre initiale",
-        description: "Commence chaque combat avec +2 encre.",
+        description:
+          "Commence chaque combat avec +2 encre et gagnez 10 or de depart.",
       },
       battle_manual: {
         name: "Manuel de bataille",
@@ -362,7 +363,8 @@ export const fr = {
       },
       single_path: {
         name: "Chemin unique",
-        description: "Une seule option de salle a chaque etape.",
+        description:
+          "Une seule option de salle a chaque etape. Ameliore 1 carte et gagnez 10 or de depart.",
       },
       eventful_routes: {
         name: "Routes agitees",
@@ -384,7 +386,7 @@ export const fr = {
       veterans_oath: {
         name: "Voeu de Snokin",
         description:
-          "Recuperez tous vos PV apres chaque combat, mais perdez 50 PV max.",
+          "Recuperez tous vos PV apres chaque combat, mais perdez 30 PV max.",
       },
       ink_lender: {
         name: "Pret d'encre",
@@ -417,7 +419,7 @@ export const fr = {
       cursed_compendium: {
         name: "Compendium maudit",
         description:
-          "Ajoute 2 cartes aleatoires, mais aussi 2 cartes Regret hantant a votre deck.",
+          "Ajoute 3 cartes communes ou peu communes aleatoires, mais aussi 1 carte Regret hantant a votre deck.",
       },
       crystal_loan: {
         name: "Pret de cristal",
@@ -437,12 +439,12 @@ export const fr = {
       isolated_trials: {
         name: "Epreuves isolees",
         description:
-          "Un seul chemin a chaque salle, retire 1 carte de depart aleatoire et ameliore 1 carte aleatoire.",
+          "Un seul chemin a chaque salle, retire 1 carte de depart, ameliore 1 carte et ajoute 1 carte peu commune ou rare aleatoire.",
       },
       grim_shortcuts: {
         name: "Raccourcis funestes",
         description:
-          "Un seul chemin, davantage de salles speciales, +10 or, mais ajoute 1 carte Regret hantant a votre deck.",
+          "Un seul chemin, davantage de salles speciales et +20 or de depart.",
       },
       fateful_manuscript: {
         name: "Manuscrit fatal",
@@ -2054,6 +2056,10 @@ export const fr = {
     eventRewardPickerTitle: "Choisissez 1 carte",
     eventRewardPickerSubtitle:
       "Le scriptorium vous propose des cartes alignees avec l'archetype choisi.",
+    relicPickerTitle: "Choisissez une relique",
+    relicPickerSubtitle:
+      "Toutes les reliques disponibles vous sont accessibles.",
+    relicPickerEmpty: "Aucune relique disponible.",
   },
   startMerchant: {
     kicker: "Avant-partie",
@@ -3495,6 +3501,48 @@ export const fr = {
           description: "Ne pas vouloir entendre.",
           outcomeText:
             "Il ne vous rappelle pas. Quand vous regardez derriere vous, il n'est plus la. Dans le couloir vide, une page flotte encore — couverte d'une ecriture que vous reconnaissez maintenant comme la sienne.",
+        },
+      ],
+    },
+    arcane_library: {
+      title: "La Bibliotheque Interdite",
+      flavorText:
+        "Une aile de la Bibliotheque est condamnee derriere une grille de fer noirci. A travers les barreaux, vous distinguez des etageres qui s'etendent a l'infini — des cartes que personne n'a le droit de toucher. La serrure a cede. Personne ne regarde.",
+      description:
+        "Toutes les cartes connues sont a portee de main. Mais la connaissance interdite laisse des cicatrices.",
+      choices: [
+        {
+          label: "Entrer et choisir une carte (-15 PV)",
+          description: "Choisissez n'importe quelle carte. Perdez 15 PV.",
+          outcomeText:
+            "La carte s'arrache de l'etagere avec une resistance imperceptible, comme si elle savait qu'elle ne devrait pas partir. Quelque chose brule dans votre poitrine — pas la douleur d'une blessure, mais celle d'une comprehension que votre corps n'etait pas pret a recevoir.",
+        },
+        {
+          label: "Refermer la grille",
+          description: "Ne prenez rien. Continuez.",
+          outcomeText:
+            "Vous tournez le dos a l'aile interdite. La grille se referme dans votre dos avec un claquement definitif. Certaines connaissances sont mieux laissees la ou elles sont.",
+        },
+      ],
+    },
+    forbidden_vault: {
+      title: "Le Caveau des Civilisations",
+      flavorText:
+        "Une porte basse s'ouvre sur une salle souterraine. Des vitrines poussiereuses alignent des reliques de dizaines de civilisations — grecques, egyptiennes, celtes, d'autres sans nom. Un cartel pose sur la plus grande vitrine dit : « Tout est a vendre. A ceux qui peuvent payer. »",
+      description:
+        "Des reliques de tous les peuples, entassees dans l'oubli. Certaines attendent d'etre reclamees.",
+      choices: [
+        {
+          label: "Acheter une relique (75 or)",
+          description: "Choisissez n'importe quelle relique. Payez 75 or.",
+          outcomeText:
+            "Vous deposez les pieces sur le cartel. Elles disparaissent avant meme d'avoir touche la surface. La relique que vous avez choisie est froide dans votre main — froide et vivante, comme si elle avait attendu ce moment depuis longtemps.",
+        },
+        {
+          label: "Quitter le caveau",
+          description: "Ne prenez rien. Continuez.",
+          outcomeText:
+            "Vous ressortez les mains vides. Derriere vous, la porte du caveau se referme. Vous entendez le bruit de nombreuses serrures.",
         },
       ],
     },

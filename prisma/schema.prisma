@@ -23,7 +23,8 @@ enum UserRole {
 
 model User {
   id            String    @id @default(cuid())
-  email         String    @unique
+  username      String?   @unique
+  email         String?   @unique
   emailVerified DateTime?
   name          String?
   image         String?
@@ -39,6 +40,7 @@ model User {
   runs        Run[]
   progression UserProgression?
 
+  @@index([username])
   @@index([email])
   @@map("users")
 }

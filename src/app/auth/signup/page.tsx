@@ -16,8 +16,7 @@ import {
 import { signUpAction } from "@/server/actions/auth";
 
 interface SignUpFormValues {
-  name?: string;
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -35,8 +34,7 @@ function SignUpForm() {
     setLoading(true);
 
     const signUpResult = await signUpAction({
-      name: values.name ?? "",
-      email: values.email,
+      username: values.username,
       password: values.password,
     });
 
@@ -47,7 +45,7 @@ function SignUpForm() {
     }
 
     const signInResult = await signIn("credentials", {
-      email: values.email,
+      username: values.username,
       password: values.password,
       redirect: false,
     });
@@ -95,22 +93,14 @@ function SignUpForm() {
             onFinish={handleSubmit}
             className="[&_.ant-form-item-label>label]:!text-sm [&_.ant-form-item-label>label]:!font-medium [&_.ant-form-item-label>label]:!text-gray-400 [&_.ant-form-item]:!mb-4"
           >
-            <RogueFormItem name="name" label={t("auth.signup.nameOptional")}>
-              <RogueInput
-                placeholder={t("auth.signup.namePlaceholder")}
-                autoComplete="name"
-                className="!bg-gray-900"
-              />
-            </RogueFormItem>
-
             <RogueFormItem
-              name="email"
-              label="Email"
-              rules={[{ required: true, type: "email" }]}
+              name="username"
+              label={t("auth.username")}
+              rules={[{ required: true, min: 3, max: 30 }]}
             >
               <RogueInput
-                placeholder="user@example.com"
-                autoComplete="email"
+                placeholder={t("auth.usernamePlaceholder")}
+                autoComplete="username"
                 className="!bg-gray-900"
               />
             </RogueFormItem>

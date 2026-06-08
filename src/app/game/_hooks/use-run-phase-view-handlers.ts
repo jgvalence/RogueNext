@@ -131,6 +131,13 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
     setPhase("MAP");
   }, [setPhase]);
 
+  const handleSpecialEventRelicPick = useCallback(
+    (relicId: string) => {
+      dispatch({ type: "PICK_RELIC_REWARD", payload: { relicId } });
+    },
+    [dispatch]
+  );
+
   const handleSpecialHealRoomBloodPurge = useCallback(
     (cardInstanceId: string) => {
       dispatch({
@@ -203,6 +210,7 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
     handleSpecialEventChoice,
     handleSpecialEventCardReward,
     handleSpecialEventContinue,
+    handleSpecialEventRelicPick,
     handleSpecialHealRoomBloodPurge,
     handleSpecialEventPurge,
     handleRelicExchange,

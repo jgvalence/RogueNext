@@ -30,7 +30,7 @@ import {
   localizeRelicDescription,
   localizeRelicName,
 } from "@/lib/i18n/entity-text";
-import { RogueButton } from "@/components/ui/rogue";
+import { RogueButton, RogueEmpty, RogueModal } from "@/components/ui/rogue";
 import { GameCard } from "../combat/GameCard";
 
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
@@ -53,6 +53,7 @@ interface SpecialRoomViewProps {
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
   onPickCardReward: (definitionId: string) => void;
   onEventContinue: () => void;
+  onEventRelicPick?: (relicId: string) => void;
   onRelicExchange: (giveRelicId: string, takeRelicId: string) => void;
   onSkip: () => void;
 }
@@ -75,6 +76,7 @@ export function SpecialRoomView({
   onEventChoice,
   onPickCardReward,
   onEventContinue,
+  onEventRelicPick,
   onRelicExchange,
   onSkip,
 }: SpecialRoomViewProps) {
@@ -123,6 +125,7 @@ export function SpecialRoomView({
           cardDefs={cardDefs}
           onEventChoice={onEventChoice}
           onPickCardReward={onPickCardReward}
+          onEventRelicPick={onEventRelicPick}
           onPurgeCard={onPurgeCard}
           onEventContinue={onEventContinue}
         />
@@ -708,6 +711,7 @@ function EventRoom({
   cardDefs,
   onEventChoice,
   onPickCardReward,
+  onEventRelicPick,
   onPurgeCard,
   onEventContinue,
 }: {
@@ -722,6 +726,7 @@ function EventRoom({
   cardDefs: Map<string, CardDefinition>;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
   onPickCardReward: (definitionId: string) => void;
+  onEventRelicPick?: (relicId: string) => void;
   onPurgeCard: (cardInstanceId: string) => void;
   onEventContinue: () => void;
 }) {
@@ -744,6 +749,22 @@ function EventRoom({
   const [showPurgePicker, setShowPurgePicker] = useState(false);
   const [pendingArchetypeChoiceIndex, setPendingArchetypeChoiceIndex] =
     useState<number | null>(null);
+  const [pendingRelicChoiceIndex, setPendingRelicChoiceIndex] = useState<
+    number | null
+  >(null);
+
+  // Relics available for the "pick any relic" event choice.
+  const availableRelicsForPick = useMemo(() => {
+    if (!runState) return [] as RelicDefinitionData[];
+    const ownedIds = new Set(runState.relicIds);
+    return relicDefinitions.filter(
+      (r) =>
+        !ownedIds.has(r.id) &&
+        r.rarity !== "BOSS" &&
+        (!runState.unlockedRelicIds?.length ||
+          runState.unlockedRelicIds.includes(r.id))
+    );
+  }, [runState]);
 
   const archetypeRewardChoicesByIndex = useMemo(() => {
     const choices = new Map<number, CardDefinition[]>();
@@ -751,6 +772,18 @@ function EventRoom({
 
     const allCards = [...cardDefs.values()];
     event.choices.forEach((choice, choiceIndex) => {
+      if (choice.rewardAllCards) {
+        const unlockedIds = new Set(runState.unlockedCardIds ?? []);
+        const eligible = allCards.filter(
+          (card) =>
+            !card.isStarterCard &&
+            card.isCollectible !== false &&
+            (!card.characterId || card.characterId === runState.characterId) &&
+            (unlockedIds.size === 0 || unlockedIds.has(card.id))
+        );
+        choices.set(choiceIndex, eligible);
+        return;
+      }
       if (!choice.rewardArchetypeTag) return;
       const choiceRng = createRNG(
         `${runState.seed}-event-archetype-${event.id}-${choiceIndex}-${runState.floor}-${runState.currentRoom}`
@@ -773,17 +806,25 @@ function EventRoom({
 
   const handleChoice = (choiceIndex: number) => {
     const choice = event.choices[choiceIndex];
-    const archetypeChoices = archetypeRewardChoicesByIndex.get(choiceIndex);
+    const cardChoices = archetypeRewardChoicesByIndex.get(choiceIndex);
     const isMissingArchetypeReward =
-      Boolean(choice?.rewardArchetypeTag) &&
-      (archetypeChoices?.length ?? 0) === 0;
-    if (!choice || isMissingArchetypeReward) {
+      Boolean(choice?.rewardArchetypeTag) && (cardChoices?.length ?? 0) === 0;
+    const isMissingAllCardsReward =
+      Boolean(choice?.rewardAllCards) && (cardChoices?.length ?? 0) === 0;
+    if (!choice || isMissingArchetypeReward || isMissingAllCardsReward) {
       return;
     }
     if (!runState || !isEventChoiceAvailable(runState, choice)) {
       return;
     }
-    if (choice?.rewardArchetypeTag && (archetypeChoices?.length ?? 0) > 0) {
+    if (choice?.requiresRelicChoice) {
+      setPendingRelicChoiceIndex(choiceIndex);
+      return;
+    }
+    if (
+      (choice?.rewardArchetypeTag || choice?.rewardAllCards) &&
+      (cardChoices?.length ?? 0) > 0
+    ) {
       setPendingArchetypeChoiceIndex(choiceIndex);
       return;
     }
@@ -812,7 +853,11 @@ function EventRoom({
       !runState ||
       !isEventChoiceAvailable(runState, choice) ||
       (Boolean(choice.rewardArchetypeTag) &&
-        (archetypeRewardChoicesByIndex.get(index)?.length ?? 0) === 0),
+        (archetypeRewardChoicesByIndex.get(index)?.length ?? 0) === 0) ||
+      (Boolean(choice.rewardAllCards) &&
+        (archetypeRewardChoicesByIndex.get(index)?.length ?? 0) === 0) ||
+      (Boolean(choice.requiresRelicChoice) &&
+        availableRelicsForPick.length === 0),
   }));
 
   // ── Phase OUTCOME ─────────────────────────────────────────────────────────
@@ -997,6 +1042,115 @@ function EventRoom({
           onCancel={() => setPendingArchetypeChoiceIndex(null)}
         />
       )}
+
+      {pendingRelicChoiceIndex !== null && (
+        <RelicPickerModal
+          relics={availableRelicsForPick}
+          onPick={(relicId) => {
+            onEventRelicPick?.(relicId);
+            onEventChoice(event, pendingRelicChoiceIndex);
+            setChosenIndex(pendingRelicChoiceIndex);
+            setPendingRelicChoiceIndex(null);
+          }}
+          onCancel={() => setPendingRelicChoiceIndex(null)}
+        />
+      )}
     </div>
+  );
+}
+
+// ── RelicPickerModal ──────────────────────────────────────────────────────────
+
+function RelicPickerModal({
+  relics,
+  onPick,
+  onCancel,
+}: {
+  relics: RelicDefinitionData[];
+  onPick: (relicId: string) => void;
+  onCancel: () => void;
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <RogueModal
+      open
+      onCancel={onCancel}
+      footer={null}
+      centered
+      destroyOnClose
+      closable
+      keyboard
+      maskClosable
+      width={680}
+      title={
+        <div className="pr-2">
+          <h3 className="text-base font-bold text-slate-100">
+            {t("special.relicPickerTitle")}
+          </h3>
+          <p className="mt-0.5 text-xs text-slate-400">
+            {t("special.relicPickerSubtitle")}
+          </p>
+        </div>
+      }
+      className="[&_.ant-modal-content]:!max-h-[85vh] [&_.ant-modal-content]:!overflow-hidden [&_.ant-modal-content]:!rounded-xl [&_.ant-modal-content]:!border [&_.ant-modal-content]:!border-amber-700/50 [&_.ant-modal-content]:!bg-slate-900 [&_.ant-modal-header]:!border-b [&_.ant-modal-header]:!border-slate-700/60 [&_.ant-modal-header]:!bg-transparent"
+    >
+      <div className="max-h-[65vh] overflow-y-auto p-1">
+        {relics.length === 0 ? (
+          <RogueEmpty
+            description={t("special.relicPickerEmpty")}
+            className="py-8 [&_.ant-empty-description]:!text-sm [&_.ant-empty-description]:!text-slate-500"
+          />
+        ) : (
+          <div className="flex flex-col gap-2">
+            {relics.map((relic) => {
+              const rs = RARITY_STYLES[relic.rarity];
+              return (
+                <button
+                  key={relic.id}
+                  onClick={() => onPick(relic.id)}
+                  className={cn(
+                    "w-full rounded border px-4 py-3 text-left transition-all duration-150",
+                    rs?.border ?? "border-gray-500/20",
+                    "bg-amber-950/10 hover:border-amber-500/35 hover:bg-amber-950/25"
+                  )}
+                >
+                  <p
+                    className={cn(
+                      cinzel.className,
+                      "text-[0.45rem] uppercase tracking-[0.5em]",
+                      rs?.badge ?? "text-gray-400/70"
+                    )}
+                  >
+                    {t(`gameCard.rarity.${relic.rarity}`, {
+                      defaultValue: relic.rarity,
+                    })}
+                  </p>
+                  <p
+                    className={cn(
+                      cinzel.className,
+                      "font-semibold tracking-wide text-amber-100"
+                    )}
+                  >
+                    {localizeRelicName(relic.id, relic.name)}
+                  </p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-amber-200/50">
+                    {localizeRelicDescription(relic.id, relic.description)}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      <div className="mt-3 flex justify-end">
+        <RogueButton
+          onClick={onCancel}
+          className="!rounded !border !border-slate-600 !bg-transparent !px-2.5 !py-1 !text-xs !font-semibold !text-slate-300 hover:!border-slate-400 hover:!text-white"
+        >
+          {t("cardPicker.cancel")}
+        </RogueButton>
+      </div>
+    </RogueModal>
   );
 }
