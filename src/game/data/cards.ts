@@ -1576,24 +1576,6 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "ADD_CARD_TO_DRAW", value: 1, copySourceCard: true },
       { type: "EXHAUST", value: 0 },
     ],
-    inkedVariant: {
-      description:
-        "Deal 3 damage. Add 2 copies of this card to your draw pile. Exhaust.",
-      effects: [
-        { type: "DAMAGE", value: 3 },
-        { type: "ADD_CARD_TO_DRAW", value: 2, copySourceCard: true },
-        { type: "EXHAUST", value: 0 },
-      ],
-      inkMarkCost: 1,
-      upgradedDescription:
-        "Deal 3 damage. Draw 1 card. Add 2 copies of this card to your draw pile. Exhaust.",
-      upgradedEffects: [
-        { type: "DAMAGE", value: 3 },
-        { type: "DRAW_CARDS", value: 1 },
-        { type: "ADD_CARD_TO_DRAW", value: 2, copySourceCard: true },
-        { type: "EXHAUST", value: 0 },
-      ],
-    },
     upgrade: {
       description:
         "Deal 3 damage. Draw 1 card. Add a copy of this card to your draw pile. Exhaust.",
