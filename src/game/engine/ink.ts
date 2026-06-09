@@ -137,6 +137,24 @@ export function canUseInkPower(
       return state.enemies.some(
         (e) => e.currentHp > 0 && getBuffStacks(e.buffs, "STUN_IMMUNITY") <= 0
       );
+    // Griot
+    case "VENIN":
+      return state.enemies.some((e) => e.currentHp > 0);
+    case "SAIGNEMENT":
+      return state.enemies.some((e) => e.currentHp > 0);
+    case "GRISGRIS":
+      return state.enemies.some(
+        (e) =>
+          e.currentHp > 0 &&
+          getBuffStacks(e.buffs, "POISON") + getBuffStacks(e.buffs, "BLEED") > 0
+      );
+    // Fou
+    case "DOUBLE_MISE":
+      return true;
+    case "PACTE_SANG":
+      return state.player.inkCurrent < state.player.inkMax;
+    case "FRENETIQUE":
+      return state.drawPile.length > 0 || state.discardPile.length > 0;
     // Legacy
     case "REWRITE":
       return state.discardPile.length > 0;
@@ -322,6 +340,161 @@ export function applyInkPower(
         ...markedWithRussianState,
         enemies: updatedEnemies,
       });
+    }
+
+    // Griot
+    case "VENIN": {
+      const updatedEnemies = markedWithRussianState.enemies.map((e) => {
+        if (e.currentHp <= 0) return e;
+        return {
+          ...e,
+          buffs: applyBuff(
+            e.buffs,
+            "POISON",
+            GAME_CONSTANTS.VENIN_POISON_STACKS
+          ),
+        };
+      });
+      return synchronizeBossStates({
+        ...markedWithRussianState,
+        enemies: updatedEnemies,
+      });
+    }
+
+    case "SAIGNEMENT": {
+      if (!targetInstanceId) return state;
+      const updatedEnemies = markedWithRussianState.enemies.map((e) => {
+        if (e.instanceId !== targetInstanceId || e.currentHp <= 0) return e;
+        return {
+          ...e,
+          buffs: applyBuff(
+            e.buffs,
+            "BLEED",
+            GAME_CONSTANTS.SAIGNEMENT_BLEED_STACKS,
+            GAME_CONSTANTS.SAIGNEMENT_BLEED_STACKS
+          ),
+        };
+      });
+      return synchronizeBossStates({
+        ...markedWithRussianState,
+        enemies: updatedEnemies,
+      });
+    }
+
+    case "GRISGRIS": {
+      if (!targetInstanceId) return state;
+      const targetEnemy = markedWithRussianState.enemies.find(
+        (e) => e.instanceId === targetInstanceId
+      );
+      if (!targetEnemy || targetEnemy.currentHp <= 0) return state;
+      const dotStacks =
+        getBuffStacks(targetEnemy.buffs, "POISON") +
+        getBuffStacks(targetEnemy.buffs, "BLEED");
+      if (dotStacks <= 0) return state;
+      const quetzalModifiedDamage = modifyQuetzalcoatlIncomingDamage(
+        markedWithRussianState,
+        targetInstanceId,
+        "player",
+        dotStacks
+      );
+      const modifiedDamage = modifyCernunnosIncomingDamage(
+        markedWithRussianState,
+        targetInstanceId,
+        "player",
+        quetzalModifiedDamage
+      );
+      const result = applyDamage(targetEnemy, modifiedDamage);
+      let current = {
+        ...markedWithRussianState,
+        enemies: markedWithRussianState.enemies.map((e) =>
+          e.instanceId === targetInstanceId
+            ? { ...e, currentHp: result.currentHp, block: result.block }
+            : e
+        ),
+      };
+      if (modifiedDamage > 0) {
+        current = registerRaSolarBarrierBreak(
+          current,
+          targetInstanceId,
+          "player",
+          targetEnemy.block,
+          result.block
+        );
+        const actualDamage =
+          Math.max(0, targetEnemy.currentHp - result.currentHp) +
+          Math.max(0, targetEnemy.block - result.block);
+        if (actualDamage > 0) {
+          current = registerSoundiataInterruptDamage(
+            current,
+            targetInstanceId,
+            actualDamage,
+            "player"
+          );
+          current = registerOsirisDamageDealt(current, actualDamage, "player");
+          current = registerHydraDamage(current, targetInstanceId, "player");
+          current = registerQuetzalcoatlDamage(
+            current,
+            targetInstanceId,
+            "player"
+          );
+          current = registerCernunnosDamage(
+            current,
+            targetInstanceId,
+            "player"
+          );
+        }
+      }
+      return synchronizeBossStates(current);
+    }
+
+    // Fou
+    case "DOUBLE_MISE": {
+      return synchronizeBossStates({
+        ...markedWithRussianState,
+        nextCardDoubleDamage: true as const,
+      });
+    }
+
+    case "PACTE_SANG": {
+      const hpAfter = Math.max(
+        0,
+        markedWithRussianState.player.currentHp -
+          GAME_CONSTANTS.PACTE_SANG_HP_COST
+      );
+      return synchronizeBossStates({
+        ...markedWithRussianState,
+        player: {
+          ...markedWithRussianState.player,
+          currentHp: hpAfter,
+          inkCurrent: Math.min(
+            markedWithRussianState.player.inkMax,
+            markedWithRussianState.player.inkCurrent +
+              GAME_CONSTANTS.PACTE_SANG_INK_GAIN
+          ),
+        },
+      });
+    }
+
+    case "FRENETIQUE": {
+      let current = drawCards(
+        markedWithRussianState,
+        GAME_CONSTANTS.FRENETIQUE_DRAW,
+        rng,
+        "PLAYER",
+        "INK_POWER:FRENETIQUE"
+      );
+      if (current.hand.length > 0) {
+        const idx = rng.nextInt(0, current.hand.length - 1);
+        const discarded = current.hand[idx];
+        if (discarded) {
+          current = {
+            ...current,
+            hand: current.hand.filter((_, i) => i !== idx),
+            discardPile: [...current.discardPile, discarded],
+          };
+        }
+      }
+      return synchronizeBossStates(current);
     }
 
     // Legacy

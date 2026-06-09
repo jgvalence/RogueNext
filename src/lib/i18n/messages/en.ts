@@ -1587,6 +1587,32 @@ export const en = {
         label: "Shhh",
         desc: "An enemy loses their next turn. Elites and bosses resist stun for 1 turn after that",
       },
+      // Griot
+      VENIN: {
+        label: "Venom",
+        desc: "Apply 3 Poison to all enemies",
+      },
+      SAIGNEMENT: {
+        label: "Bleed",
+        desc: "Apply 4 Bleed to a targeted enemy",
+      },
+      GRISGRIS: {
+        label: "Gris-Gris",
+        desc: "Deal damage equal to target's Poison + Bleed stacks",
+      },
+      // Fou
+      DOUBLE_MISE: {
+        label: "Double Down",
+        desc: "Next card played deals ×2 damage",
+      },
+      PACTE_SANG: {
+        label: "Blood Pact",
+        desc: "Lose 6 HP. Gain 3 ink",
+      },
+      FRENETIQUE: {
+        label: "Frenetic",
+        desc: "Draw 3 cards. Discard 1 random card",
+      },
       // Legacy
       REWRITE: {
         label: "Rewrite",
@@ -1608,6 +1634,16 @@ export const en = {
       name: "The Librarian",
       description:
         "Guardian of knowledge. Manipulates the draw pile and can silence enemies.",
+    },
+    griot: {
+      name: "The Griot",
+      description:
+        "Bearer of memory and curses. Poisons, bleeds, and detonates accumulated afflictions.",
+    },
+    fou: {
+      name: "The Fool",
+      description:
+        "Fragile and unpredictable. Sacrifices HP for resources and strikes with devastating power.",
     },
   },
   combat: {

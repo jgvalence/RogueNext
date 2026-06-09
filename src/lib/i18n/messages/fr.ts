@@ -1579,6 +1579,32 @@ export const fr = {
         label: "Chhhut",
         desc: "Un ennemi passe son prochain tour. Les elites et boss resistent 1 tour ensuite",
       },
+      // Griot
+      VENIN: {
+        label: "Venin",
+        desc: "Applique 3 Poison à tous les ennemis",
+      },
+      SAIGNEMENT: {
+        label: "Saignement",
+        desc: "Applique 4 Saignement à un ennemi ciblé",
+      },
+      GRISGRIS: {
+        label: "Gris-Gris",
+        desc: "Inflige des dégâts égaux aux stacks de Poison + Saignement de la cible",
+      },
+      // Fou
+      DOUBLE_MISE: {
+        label: "Double Mise",
+        desc: "La prochaine carte jouée inflige ×2 dégâts",
+      },
+      PACTE_SANG: {
+        label: "Pacte de Sang",
+        desc: "Perd 6 PV. Gagne 3 encre",
+      },
+      FRENETIQUE: {
+        label: "Frénétique",
+        desc: "Pioche 3 cartes. Défausse 1 carte aléatoire",
+      },
       // Legacy
       REWRITE: {
         label: "Reecriture",
@@ -1600,6 +1626,16 @@ export const fr = {
       name: "La Bibliothécaire",
       description:
         "Gardienne des savoirs. Manipule la pioche et peut réduire ses ennemis au silence.",
+    },
+    griot: {
+      name: "Le Griot",
+      description:
+        "Porteur de mémoire et de malédictions. Empoisonne, saigne et déclenche ses sorts accumulés.",
+    },
+    fou: {
+      name: "Le Fou",
+      description:
+        "Fragile et imprévisible. Sacrifie ses PV pour des ressources et frappe avec une puissance dévastatrice.",
     },
   },
   combat: {

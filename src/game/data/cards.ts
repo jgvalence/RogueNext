@@ -6619,6 +6619,455 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     isCurseCard: true,
     biome: "LIBRARY",
   },
+
+  // =========================================================
+  // GRIOT — cartes lootables (biome LIBRARY)
+  // =========================================================
+  {
+    id: "danse_des_esprits",
+    name: "Danse des Esprits",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Inflige 4 dégâts. Applique 3 Poison.",
+    effects: [
+      { type: "DAMAGE", value: 4 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description: "Inflige 6 dégâts. Applique 5 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 5, buff: "POISON" },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Inflige 6 dégâts. Applique 4 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 6 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "griot",
+  },
+  {
+    id: "scarification",
+    name: "Scarification",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "COMMON",
+    description: "Applique 5 Saignement.",
+    effects: [{ type: "APPLY_DEBUFF", value: 5, buff: "BLEED", duration: 4 }],
+    inkedVariant: {
+      description: "Applique 7 Saignement.",
+      effects: [{ type: "APPLY_DEBUFF", value: 7, buff: "BLEED", duration: 4 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Applique 7 Saignement.",
+      effects: [{ type: "APPLY_DEBUFF", value: 7, buff: "BLEED", duration: 4 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "griot",
+  },
+  {
+    id: "coup_de_tambour",
+    name: "Coup de Tambour",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description: "Piochez 2 cartes. Applique 1 Poison à tous les ennemis.",
+    effects: [
+      { type: "DRAW_CARDS", value: 2 },
+      { type: "APPLY_DEBUFF", value: 1, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description: "Piochez 2 cartes. Applique 2 Poison à tous les ennemis.",
+      effects: [
+        { type: "DRAW_CARDS", value: 2 },
+        { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Piochez 3 cartes. Applique 1 Poison à tous les ennemis.",
+      effects: [
+        { type: "DRAW_CARDS", value: 3 },
+        { type: "APPLY_DEBUFF", value: 1, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "griot",
+  },
+  {
+    id: "venin_du_serpent",
+    name: "Venin du Serpent",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Inflige 8 dégâts. Applique 6 Poison.",
+    effects: [
+      { type: "DAMAGE", value: 8 },
+      { type: "APPLY_DEBUFF", value: 6, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description: "Inflige 12 dégâts. Applique 9 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 12 },
+        { type: "APPLY_DEBUFF", value: 9, buff: "POISON" },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Inflige 10 dégâts. Applique 8 Poison.",
+      effects: [
+        { type: "DAMAGE", value: 10 },
+        { type: "APPLY_DEBUFF", value: 8, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "griot",
+  },
+  {
+    id: "transe_vaudou",
+    name: "Transe Vaudou",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Double le Poison sur la cible.",
+    effects: [{ type: "DOUBLE_POISON", value: 2 }],
+    inkedVariant: {
+      description: "Triple le Poison sur la cible.",
+      effects: [{ type: "DOUBLE_POISON", value: 3 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Double le Poison sur la cible. Piochez 1 carte.",
+      effects: [
+        { type: "DOUBLE_POISON", value: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "griot",
+  },
+  {
+    id: "frappe_maudite",
+    name: "Frappe Maudite",
+    type: "ATTACK",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description:
+      "Inflige 6 dégâts. Inflige 2 dégâts supplémentaires par débuff sur la cible.",
+    effects: [
+      { type: "DAMAGE", value: 6 },
+      { type: "DAMAGE_PER_DEBUFF", value: 2, buff: "POISON" },
+    ],
+    inkedVariant: {
+      description:
+        "Inflige 8 dégâts. Inflige 3 dégâts supplémentaires par débuff sur la cible.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "DAMAGE_PER_DEBUFF", value: 3, buff: "POISON" },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description:
+        "Inflige 8 dégâts. Inflige 2 dégâts supplémentaires par débuff sur la cible.",
+      effects: [
+        { type: "DAMAGE", value: 8 },
+        { type: "DAMAGE_PER_DEBUFF", value: 2, buff: "POISON" },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "griot",
+  },
+  {
+    id: "rituel_interdit",
+    name: "Rituel Interdit",
+    type: "SKILL",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description:
+      "Exhaust. Applique 8 Poison et 5 Saignement à tous les ennemis.",
+    effects: [
+      { type: "EXHAUST", value: 0 },
+      { type: "APPLY_DEBUFF", value: 8, buff: "POISON" },
+      { type: "APPLY_DEBUFF", value: 5, buff: "BLEED", duration: 5 },
+    ],
+    inkedVariant: {
+      description:
+        "Exhaust. Applique 12 Poison et 7 Saignement à tous les ennemis.",
+      effects: [
+        { type: "EXHAUST", value: 0 },
+        { type: "APPLY_DEBUFF", value: 12, buff: "POISON" },
+        { type: "APPLY_DEBUFF", value: 7, buff: "BLEED", duration: 5 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Applique 8 Poison et 5 Saignement à tous les ennemis.",
+      effects: [
+        { type: "APPLY_DEBUFF", value: 8, buff: "POISON" },
+        { type: "APPLY_DEBUFF", value: 5, buff: "BLEED", duration: 5 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "griot",
+  },
+  {
+    id: "invocation_ancestrale",
+    name: "Invocation Ancestrale",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "RARE",
+    description:
+      "Inflige des dégâts égaux aux stacks de Poison + Saignement de la cible × 3.",
+    effects: [{ type: "DAMAGE_PER_DOT_STACKS", value: 3 }],
+    inkedVariant: {
+      description:
+        "Inflige des dégâts égaux aux stacks de Poison + Saignement de la cible × 5.",
+      effects: [{ type: "DAMAGE_PER_DOT_STACKS", value: 5 }],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description:
+        "Inflige des dégâts égaux aux stacks de Poison + Saignement de la cible × 4.",
+      effects: [{ type: "DAMAGE_PER_DOT_STACKS", value: 4 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "griot",
+  },
+
+  // =========================================================
+  // FOU — cartes lootables (biome LIBRARY)
+  // =========================================================
+  {
+    id: "eclair_ephemere",
+    name: "Éclair Éphémère",
+    type: "ATTACK",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "COMMON",
+    description:
+      "Inflige 3 dégâts par encre actuelle à tous les ennemis. Dépense toute l'encre.",
+    effects: [{ type: "DAMAGE_PER_CURRENT_INK", value: 3 }],
+    inkedVariant: {
+      description:
+        "Inflige 4 dégâts par encre actuelle à tous les ennemis. Dépense toute l'encre.",
+      effects: [{ type: "DAMAGE_PER_CURRENT_INK", value: 4 }],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description:
+        "Inflige 4 dégâts par encre actuelle à tous les ennemis. Dépense toute l'encre.",
+      effects: [{ type: "DAMAGE_PER_CURRENT_INK", value: 4 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "fou",
+  },
+  {
+    id: "frisson_du_risque",
+    name: "Frisson du Risque",
+    type: "SKILL",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "COMMON",
+    description: "Gagnez 1 Force. Piochez 1 carte.",
+    effects: [
+      { type: "GAIN_STRENGTH", value: 1 },
+      { type: "DRAW_CARDS", value: 1 },
+    ],
+    inkedVariant: {
+      description: "Gagnez 2 Force. Piochez 1 carte.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gagnez 2 Force. Piochez 1 carte.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 2 },
+        { type: "DRAW_CARDS", value: 1 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "fou",
+  },
+  {
+    id: "concentration_totale",
+    name: "Concentration Totale",
+    type: "SKILL",
+    energyCost: 1,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Exhaust. Gagnez 3 Force.",
+    effects: [
+      { type: "EXHAUST", value: 0 },
+      { type: "GAIN_STRENGTH", value: 3 },
+    ],
+    inkedVariant: {
+      description: "Exhaust. Gagnez 4 Force.",
+      effects: [
+        { type: "EXHAUST", value: 0 },
+        { type: "GAIN_STRENGTH", value: 4 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gagnez 3 Force.",
+      effects: [{ type: "GAIN_STRENGTH", value: 3 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "fou",
+  },
+  {
+    id: "double_ou_rien",
+    name: "Double ou Rien",
+    type: "ATTACK",
+    energyCost: 2,
+    inkCost: 0,
+    targeting: "SINGLE_ENEMY",
+    rarity: "UNCOMMON",
+    description: "Inflige 22 dégâts.",
+    effects: [{ type: "DAMAGE", value: 22 }],
+    inkedVariant: {
+      description: "Inflige 32 dégâts.",
+      effects: [{ type: "DAMAGE", value: 32 }],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Inflige 28 dégâts.",
+      effects: [{ type: "DAMAGE", value: 28 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "fou",
+  },
+  {
+    id: "adrenaline_pure",
+    name: "Adrénaline Pure",
+    type: "SKILL",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "UNCOMMON",
+    description: "Exhaust. Gagnez 2 énergie.",
+    effects: [
+      { type: "EXHAUST", value: 0 },
+      { type: "GAIN_ENERGY", value: 2 },
+    ],
+    inkedVariant: {
+      description: "Exhaust. Gagnez 3 énergie.",
+      effects: [
+        { type: "EXHAUST", value: 0 },
+        { type: "GAIN_ENERGY", value: 3 },
+      ],
+      inkMarkCost: 2,
+    },
+    upgrade: {
+      description: "Gagnez 2 énergie.",
+      effects: [{ type: "GAIN_ENERGY", value: 2 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "fou",
+  },
+  {
+    id: "tempete_d_encre",
+    name: "Tempête d'Encre",
+    type: "ATTACK",
+    energyCost: 3,
+    inkCost: 0,
+    targeting: "ALL_ENEMIES",
+    rarity: "RARE",
+    description:
+      "Inflige 4 dégâts par encre actuelle à tous les ennemis. Dépense toute l'encre.",
+    effects: [{ type: "DAMAGE_PER_CURRENT_INK", value: 4 }],
+    inkedVariant: {
+      description:
+        "Inflige 6 dégâts par encre actuelle à tous les ennemis. Dépense toute l'encre.",
+      effects: [{ type: "DAMAGE_PER_CURRENT_INK", value: 6 }],
+      inkMarkCost: 4,
+    },
+    upgrade: {
+      description:
+        "Inflige 5 dégâts par encre actuelle à tous les ennemis. Dépense toute l'encre.",
+      effects: [{ type: "DAMAGE_PER_CURRENT_INK", value: 5 }],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "fou",
+  },
+  {
+    id: "pacte_final",
+    name: "Pacte Final",
+    type: "SKILL",
+    energyCost: 0,
+    inkCost: 0,
+    targeting: "SELF",
+    rarity: "RARE",
+    description: "Exhaust. Gagnez 5 Force. Piochez 3 cartes.",
+    effects: [
+      { type: "EXHAUST", value: 0 },
+      { type: "GAIN_STRENGTH", value: 5 },
+      { type: "DRAW_CARDS", value: 3 },
+    ],
+    inkedVariant: {
+      description: "Exhaust. Gagnez 7 Force. Piochez 3 cartes.",
+      effects: [
+        { type: "EXHAUST", value: 0 },
+        { type: "GAIN_STRENGTH", value: 7 },
+        { type: "DRAW_CARDS", value: 3 },
+      ],
+      inkMarkCost: 3,
+    },
+    upgrade: {
+      description: "Gagnez 5 Force. Piochez 3 cartes.",
+      effects: [
+        { type: "GAIN_STRENGTH", value: 5 },
+        { type: "DRAW_CARDS", value: 3 },
+      ],
+    },
+    isStarterCard: false,
+    biome: "LIBRARY",
+    characterId: "fou",
+  },
 ];
 
 function buildEnemyCardName(enemy: EnemyDefinition, suffix: string): string {

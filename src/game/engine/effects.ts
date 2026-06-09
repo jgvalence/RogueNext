@@ -2145,6 +2145,30 @@ export function resolveEffect(
         ctx
       );
 
+    case "DAMAGE_PER_DOT_STACKS": {
+      const dotTarget = ctx.target;
+      if (typeof dotTarget !== "object" || dotTarget.type !== "enemy") {
+        return state;
+      }
+      const enemy = state.enemies.find(
+        (e) => e.instanceId === dotTarget.instanceId
+      );
+      if (!enemy || enemy.currentHp <= 0) return state;
+      const dotStacks =
+        getBuffStacks(enemy.buffs, "POISON") +
+        getBuffStacks(enemy.buffs, "BLEED");
+      if (dotStacks <= 0) return state;
+      return applyDamageToTarget(
+        state,
+        ctx.target,
+        dotStacks * effect.value,
+        ctx.source
+      );
+    }
+
+    case "NEXT_CARD_DOUBLE_DAMAGE":
+      return { ...state, nextCardDoubleDamage: true as const };
+
     case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND": {
       const hasUpgraded = state.hand.some((c) => c.upgraded);
       if (!hasUpgraded) return state;
@@ -2213,6 +2237,16 @@ export function resolveEffects(
   rng: RNG
 ): CombatState {
   let current = state;
+
+  // DOUBLE_MISE (Fou): double tous les effets DAMAGE de cette carte
+  let effectsToResolve = effects;
+  if (ctx.source === "player" && current.nextCardDoubleDamage === true) {
+    effectsToResolve = effects.map((e) =>
+      e.type === "DAMAGE" ? { ...e, value: e.value * 2 } : e
+    );
+    current = { ...current, nextCardDoubleDamage: undefined };
+  }
+
   let damageFullyBlocked = false;
   const sourceEnemyId =
     typeof ctx.source === "object" && ctx.source.type === "enemy"
@@ -2226,7 +2260,7 @@ export function resolveEffects(
     sourceEnemy != null &&
     enemyDebuffsBypassBlock(state.difficultyLevel ?? 0, sourceEnemy);
 
-  for (const effect of effects) {
+  for (const effect of effectsToResolve) {
     // When an enemy attacks the player and damage was fully blocked,
     // skip debuffs and ink drain — they only apply if damage gets through
     if (

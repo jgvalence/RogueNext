@@ -71,6 +71,8 @@ export const EffectType = z.enum([
   "FORCE_DISCARD_RANDOM",
   "DAMAGE_BONUS_IF_UPGRADED_IN_HAND",
   "UPGRADE_RANDOM_CARD_IN_HAND",
+  "DAMAGE_PER_DOT_STACKS",
+  "NEXT_CARD_DOUBLE_DAMAGE",
 ]);
 export type EffectType = z.infer<typeof EffectType>;
 
@@ -100,6 +102,14 @@ export const InkPowerType = z.enum([
   "VISION",
   "INDEX",
   "SILENCE",
+  // Griot
+  "VENIN",
+  "SAIGNEMENT",
+  "GRISGRIS",
+  // Fou
+  "DOUBLE_MISE",
+  "PACTE_SANG",
+  "FRENETIQUE",
   // Legacy (conservés pour la compatibilité des saves existantes)
   "REWRITE",
   "LOST_CHAPTER",

@@ -346,6 +346,7 @@ export function initCombat(
       playerBleedDamageMultiplier: 1,
       enemyBleedDamageMultiplier: 1,
     },
+    nextCardDoubleDamage: false,
   };
 
   // Apply meta-progression bonuses if any

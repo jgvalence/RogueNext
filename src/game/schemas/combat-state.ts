@@ -98,5 +98,6 @@ export const CombatStateSchema = z.object({
       enemyBleedDamageMultiplier: z.number().optional(),
     })
     .optional(),
+  nextCardDoubleDamage: z.boolean().optional(),
 });
 export type CombatState = z.infer<typeof CombatStateSchema>;

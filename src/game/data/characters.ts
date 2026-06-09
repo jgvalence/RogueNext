@@ -45,6 +45,42 @@ export const characterDefinitions: CharacterDefinition[] = [
     ],
     unlockCondition: { totalRuns: 2 },
   },
+  {
+    id: "griot",
+    powers: ["VENIN", "SAIGNEMENT", "GRISGRIS"],
+    starterDeckIds: [
+      "strike",
+      "strike",
+      "strike",
+      "strike",
+      "defend",
+      "defend",
+      "ink_surge",
+      "piqure",
+      "piqure",
+      "rythme_mortel",
+      "masque_de_bois",
+    ],
+    unlockCondition: { totalRuns: 5 },
+  },
+  {
+    id: "fou",
+    powers: ["DOUBLE_MISE", "PACTE_SANG", "FRENETIQUE"],
+    starterDeckIds: [
+      "strike",
+      "strike",
+      "strike",
+      "defend",
+      "ink_surge",
+      "frappe_folle",
+      "frappe_folle",
+      "soif_de_puissance",
+      "rage_aveugle",
+      "rage_aveugle",
+      "coup_de_grace_starter",
+    ],
+    unlockCondition: { totalRuns: 10 },
+  },
 ];
 
 export function getCharacterById(id: string): CharacterDefinition {

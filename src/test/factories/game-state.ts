@@ -64,6 +64,7 @@ export function makeTestCombat(
     drawDebugHistory: [],
     inkPowerUsedThisTurn: false,
     firstHitReductionUsed: false,
+    nextCardDoubleDamage: false,
     playerDisruption: {
       extraCardCost: 0,
       drawPenalty: 0,
