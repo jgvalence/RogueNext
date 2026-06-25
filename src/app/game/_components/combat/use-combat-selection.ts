@@ -156,6 +156,10 @@ export function useCombatSelection({
 
   const handleEnemyClick = useCallback(
     (enemyInstanceId: string) => {
+      const enemy = combat.enemies.find(
+        (e) => e.instanceId === enemyInstanceId
+      );
+      if (enemy && enemy.currentHp <= 0) return;
       if (!canAct && !(isSelectingCheatKillTarget && onCheatKillEnemy)) return;
       if (isSelectingCheatKillTarget && onCheatKillEnemy) {
         onCheatKillEnemy(enemyInstanceId);
@@ -179,6 +183,7 @@ export function useCombatSelection({
       }
     },
     [
+      combat.enemies,
       canAct,
       isSelectingCheatKillTarget,
       onCheatKillEnemy,

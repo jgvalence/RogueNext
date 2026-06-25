@@ -70,6 +70,7 @@ interface CombatDesktopGridProps {
   onEnemyClick: (enemyInstanceId: string) => void;
   isArmorTutorialStep: boolean;
   isIncomingDamageTutorialStep: boolean;
+  aoeFlashMap: Map<string, { delay: number; color: string }>;
 }
 
 export function CombatDesktopGrid({
@@ -99,6 +100,7 @@ export function CombatDesktopGrid({
   onEnemyClick,
   isArmorTutorialStep,
   isIncomingDamageTutorialStep,
+  aoeFlashMap,
 }: CombatDesktopGridProps) {
   const { t } = useTranslation();
   const playerStatusMarkers = buildPlayerStatusMarkers(
@@ -405,7 +407,9 @@ export function CombatDesktopGrid({
             <button
               type="button"
               data-keep-selection="true"
-              onClick={() => onEnemyClick(enemy.instanceId)}
+              onClick={() => {
+                if (!isDead) onEnemyClick(enemy.instanceId);
+              }}
               className={cn(
                 "relative h-28 w-full rounded-xl border bg-rose-950/35 p-1.5 text-left transition-all sm:h-32 sm:p-2 lg:h-56 lg:p-2.5",
                 isIncomingDamageTutorialStep &&
@@ -503,6 +507,16 @@ export function CombatDesktopGrid({
                   {incomingDamageByEnemyId.get(enemy.instanceId)}
                 </p>
               ) : null}
+              {aoeFlashMap.has(enemy.instanceId) && (
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 animate-aoe-hit rounded-xl"
+                  style={{
+                    animationDelay: `${aoeFlashMap.get(enemy.instanceId)!.delay}ms`,
+                    backgroundColor: aoeFlashMap.get(enemy.instanceId)!.color,
+                  }}
+                />
+              )}
             </button>
           </Tooltip>
         );

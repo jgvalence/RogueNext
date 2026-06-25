@@ -156,6 +156,7 @@ function renderGrid(combat: CombatState) {
       getEnemyDisplayName={(enemy) => enemy.name}
       markEnemyArtFailure={vi.fn()}
       isArmorTutorialStep={false}
+      aoeFlashMap={new Map()}
     />
   );
 }

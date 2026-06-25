@@ -110,12 +110,6 @@ const baseRunConditionDefinitions: RunConditionDefinition[] = [
     effects: { addCardIds: ["fortify"] },
   },
   {
-    id: "recursive_scratch_opening",
-    category: "UNIQUE_MECHANIC",
-    unlock: { lootedCardId: "recursive_scratch" },
-    effects: { startCombatCardIds: ["recursive_scratch"] },
-  },
-  {
     id: "inked_beginning",
     category: "LIGHT_BOON",
     unlock: {},

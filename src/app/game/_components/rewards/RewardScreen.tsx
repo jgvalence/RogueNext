@@ -556,6 +556,17 @@ function formatEffect(effect: Effect, t: TFunction): string {
   }
 }
 
+const ARCHETYPE_TAG_STYLES: Record<string, string> = {
+  BLEED: "border-rose-500/50 bg-rose-500/15 text-rose-200",
+  BLOCK: "border-slate-400/50 bg-slate-400/15 text-slate-200",
+  DRAW: "border-sky-400/50 bg-sky-400/15 text-sky-200",
+  EXHAUST: "border-violet-400/50 bg-violet-400/15 text-violet-200",
+  HEAL: "border-emerald-400/50 bg-emerald-400/15 text-emerald-200",
+  INK: "border-cyan-400/50 bg-cyan-400/15 text-cyan-200",
+  POISON: "border-lime-400/50 bg-lime-400/15 text-lime-200",
+  STRENGTH: "border-orange-400/50 bg-orange-400/15 text-orange-200",
+};
+
 const RELIC_RARITY_STYLES: Record<
   string,
   { border: string; bg: string; glow: string; label: string; icon: string }
@@ -629,6 +640,22 @@ function RelicCard({
       <span className="block w-full whitespace-normal text-xs leading-relaxed text-gray-300/80 [overflow-wrap:anywhere]">
         {localizeRelicDescription(relic.id, relic.description)}
       </span>
+      {relic.archetypeTags && relic.archetypeTags.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-1">
+          {relic.archetypeTags.map((tag) => (
+            <span
+              key={tag}
+              className={cn(
+                "rounded-full border px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.14em]",
+                ARCHETYPE_TAG_STYLES[tag] ??
+                  "border-slate-500/40 bg-slate-500/10 text-slate-300"
+              )}
+            >
+              {t(`relicArchetype.${tag}`, { defaultValue: tag })}
+            </span>
+          ))}
+        </div>
+      )}
     </RogueButton>
   );
 }

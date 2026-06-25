@@ -71,6 +71,7 @@ interface CombatBattlefieldProps {
   onAllyClick: (allyInstanceId: string) => void;
   onEnemyClick: (enemyInstanceId: string) => void;
   isIncomingDamageTutorialStep: boolean;
+  aoeFlashMap: Map<string, { delay: number; color: string }>;
   children?: ReactNode;
 }
 
@@ -121,6 +122,7 @@ export function CombatBattlefield({
   onAllyClick,
   onEnemyClick,
   isIncomingDamageTutorialStep,
+  aoeFlashMap,
   children,
 }: CombatBattlefieldProps) {
   const { t } = useTranslation();
@@ -234,6 +236,7 @@ export function CombatBattlefield({
           getEnemyDisplayName={getEnemyDisplayName}
           markEnemyArtFailure={markEnemyArtFailure}
           isArmorTutorialStep={isArmorTutorialStep}
+          aoeFlashMap={aoeFlashMap}
         />
 
         <CombatDesktopGrid
@@ -263,6 +266,7 @@ export function CombatBattlefield({
           onEnemyClick={onEnemyClick}
           isArmorTutorialStep={isArmorTutorialStep}
           isIncomingDamageTutorialStep={isIncomingDamageTutorialStep}
+          aoeFlashMap={aoeFlashMap}
         />
       </div>
 

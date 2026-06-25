@@ -3,7 +3,10 @@
 import { useRef, useLayoutEffect, useMemo, useState, useEffect } from "react";
 import type { PointerEvent as ReactPointerEvent, RefObject } from "react";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
-import type { CombatState } from "@/game/schemas/combat-state";
+import type {
+  CardRedactionType,
+  CombatState,
+} from "@/game/schemas/combat-state";
 import { canPlayCard, canPlayCardInked } from "@/game/engine/cards";
 import {
   getArchivistCardCostModifier,
@@ -90,6 +93,7 @@ interface MobileHandCardProps {
   isFrozen: boolean;
   isPetrified: boolean;
   isWebbed: boolean;
+  redactionTypes?: CardRedactionType[];
   canPlay: boolean;
   canPlayInked: boolean;
   onOpenPreview: () => void;
@@ -120,6 +124,9 @@ function getDisplayedCardState(
       combatState,
       card.instanceId
     ),
+    redactionTypes: (combatState.cardRedactions ?? [])
+      .filter((r) => r.cardInstanceId === card.instanceId)
+      .map((r) => r.type) as CardRedactionType[],
   };
 }
 
@@ -132,6 +139,7 @@ function MobileHandCard({
   isFrozen,
   isPetrified,
   isWebbed,
+  redactionTypes = [],
   canPlay,
   canPlayInked,
   onOpenPreview,
@@ -294,9 +302,23 @@ function MobileHandCard({
           {!isFrozen && upgraded && (
             <div className="mt-1.5 h-1.5 w-9 rounded-full bg-gradient-to-r from-amber-400 via-yellow-200 to-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.26)]" />
           )}
-          {!isFrozen && !isWebbed && !isPetrified && !upgraded && (
-            <div className="mt-1.5 h-1.5" />
+          {redactionTypes.includes("COST") && (
+            <span className="bg-amber-300/16 mt-1.5 inline-flex rounded-full border border-amber-200/45 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.14em] text-amber-50">
+              {t("gameCard.labels.redaction.COST", { defaultValue: "Cout +1" })}
+            </span>
           )}
+          {redactionTypes.includes("TEXT") && (
+            <span className="mt-1.5 inline-flex rounded-full border border-slate-200/30 bg-slate-200/10 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.14em] text-slate-100">
+              {t("gameCard.labels.redaction.TEXT", {
+                defaultValue: "Texte censure",
+              })}
+            </span>
+          )}
+          {!isFrozen &&
+            !isWebbed &&
+            !isPetrified &&
+            !upgraded &&
+            redactionTypes.length === 0 && <div className="mt-1.5 h-1.5" />}
         </div>
 
         {hasInkedVariant ? (
@@ -360,6 +382,11 @@ export function HandArea({
 }: HandAreaProps) {
   const { t } = useTranslation();
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
+  const [tilt, setTilt] = useState<{
+    instanceId: string;
+    rx: number;
+    ry: number;
+  } | null>(null);
   const [mobilePreviewCardId, setMobilePreviewCardId] = useState<string | null>(
     null
   );
@@ -485,6 +512,7 @@ export function HandArea({
                   mobilePreviewCard.instanceId
                 )
               }
+              redactionTypes={mobilePreviewDisplay?.redactionTypes ?? []}
               attackBonus={attackBonus}
               canPlay
               canPlayInked={mobilePreviewCanInked}
@@ -581,6 +609,7 @@ export function HandArea({
                     isFrozen={isFrozen}
                     isPetrified={petrifiedCostBonus > 0}
                     isWebbed={isWebbed}
+                    redactionTypes={display.redactionTypes}
                     canPlay={displayedCanPlay}
                     canPlayInked={displayedCanPlayInked}
                     onOpenPreview={() => {
@@ -666,6 +695,9 @@ export function HandArea({
               ? "animate-card-discard"
               : "";
 
+          const tiltForCard =
+            isHovered && tilt?.instanceId === card.instanceId ? tilt : null;
+
           return (
             <div
               key={card.instanceId}
@@ -687,42 +719,68 @@ export function HandArea({
                     : `translateX(${hoverShiftPx}px) translateY(${translateYPx}px) rotate(${rotateDeg}deg) scale(${scale})`,
               }}
               onMouseEnter={() => setHoveredCardId(card.instanceId)}
-              onMouseLeave={() =>
+              onMouseLeave={() => {
                 setHoveredCardId((current) =>
                   current === card.instanceId ? null : current
-                )
-              }
+                );
+                setTilt((current) =>
+                  current?.instanceId === card.instanceId ? null : current
+                );
+              }}
+              onMouseMove={(e) => {
+                if (!isHovered || isPlaying || isDiscarding) return;
+                const rect = e.currentTarget.getBoundingClientRect();
+                const rx = ((e.clientY - rect.top) / rect.height - 0.5) * -10;
+                const ry = ((e.clientX - rect.left) / rect.width - 0.5) * 10;
+                setTilt({ instanceId: card.instanceId, rx, ry });
+              }}
             >
-              <GameCard
-                instanceId={card.instanceId}
-                definition={display.definition}
-                costModifier={
-                  globalCostModifier +
-                  display.archivistCostModifier +
-                  petrifiedCostBonus
-                }
-                attackBonus={attackBonus}
-                canPlay={displayedCanPlay}
-                canPlayInked={displayedCanPlayInked}
-                isSelected={isSelected}
-                isPendingInked={isSelected && pendingInked}
-                isFrozen={isFrozen}
-                isPetrified={petrifiedCostBonus > 0}
-                isWebbed={isWebbed}
-                upgraded={display.upgraded}
-                detailMode={isHovered || isSelected ? "full" : "condensed"}
-                className={
-                  isTutorialPlayableInkedCard
-                    ? "ring-2 ring-cyan-300/85 ring-offset-2 ring-offset-slate-950"
-                    : undefined
-                }
-                onClick={() => onPlayCard(card.instanceId, false)}
-                onDoubleClick={() => onDoublePlayCard?.(card.instanceId, false)}
-                onInkedClick={() => onPlayCard(card.instanceId, true)}
-                onInkedDoubleClick={() =>
-                  onDoublePlayCard?.(card.instanceId, true)
-                }
-              />
+              <div
+                style={{
+                  transform: tiltForCard
+                    ? `perspective(700px) rotateX(${tiltForCard.rx}deg) rotateY(${tiltForCard.ry}deg)`
+                    : "perspective(700px) rotateX(0deg) rotateY(0deg)",
+                  transition:
+                    isHovered && !isPlaying && !isDiscarding
+                      ? "transform 80ms ease-out"
+                      : "none",
+                  willChange: isHovered ? "transform" : "auto",
+                }}
+              >
+                <GameCard
+                  instanceId={card.instanceId}
+                  definition={display.definition}
+                  costModifier={
+                    globalCostModifier +
+                    display.archivistCostModifier +
+                    petrifiedCostBonus
+                  }
+                  redactionTypes={display.redactionTypes}
+                  attackBonus={attackBonus}
+                  canPlay={displayedCanPlay}
+                  canPlayInked={displayedCanPlayInked}
+                  isSelected={isSelected}
+                  isPendingInked={isSelected && pendingInked}
+                  isFrozen={isFrozen}
+                  isPetrified={petrifiedCostBonus > 0}
+                  isWebbed={isWebbed}
+                  upgraded={display.upgraded}
+                  detailMode={isHovered || isSelected ? "full" : "condensed"}
+                  className={
+                    isTutorialPlayableInkedCard
+                      ? "ring-2 ring-cyan-300/85 ring-offset-2 ring-offset-slate-950"
+                      : undefined
+                  }
+                  onClick={() => onPlayCard(card.instanceId, false)}
+                  onDoubleClick={() =>
+                    onDoublePlayCard?.(card.instanceId, false)
+                  }
+                  onInkedClick={() => onPlayCard(card.instanceId, true)}
+                  onInkedDoubleClick={() =>
+                    onDoublePlayCard?.(card.instanceId, true)
+                  }
+                />
+              </div>
             </div>
           );
         })}

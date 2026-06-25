@@ -103,6 +103,16 @@ export const fr = {
       DEFEAT: "Defaite",
     },
   },
+  relicArchetype: {
+    BLEED: "Saignement",
+    BLOCK: "Armure",
+    DRAW: "Pioche",
+    EXHAUST: "Epuisement",
+    HEAL: "Soin",
+    INK: "Encre",
+    POISON: "Poison",
+    STRENGTH: "Force",
+  },
   auth: {
     back: "Retour",
     password: "Mot de passe",
@@ -339,10 +349,6 @@ export const fr = {
         name: "Grimoire ouvert",
         description: "Ajoute Sceau d'Archive au deck de depart.",
       },
-      recursive_scratch_opening: {
-        name: "Griffure recursive",
-        description: "Commence chaque combat avec Griffure recursive en main.",
-      },
       inked_beginning: {
         name: "Encre initiale",
         description:
@@ -527,6 +533,10 @@ export const fr = {
     continue: "Lancer l'expedition",
     readyHint: "Preparation complete. Tu peux lancer l'expedition.",
     missingHint: "Finalise les choix obligatoires pour continuer.",
+    characterLocked: "Personnage verrouille",
+    unlockAtRuns: "Disponible apres {{count}} parties",
+    difficultyLocked: "Niveau verrouille",
+    difficultyLockedHint: "Complete le niveau precedent pour debloquer",
   },
   runDifficulty: {
     select: {
@@ -1196,8 +1206,8 @@ export const fr = {
       webbed: "Capturee",
       neutral: "Neutre",
       redaction: {
-        COST: "Cout +1",
-        TEXT: "Texte censure",
+        COST: "Cout corrompu",
+        TEXT: "Effets censures",
       },
     },
     effect: {
@@ -1809,9 +1819,9 @@ export const fr = {
     redactCardText: "Redige {{value}} carte : upgrade/encre coupes",
     redactCardFlexible: "Redige {{value}} carte : cout ou texte",
     restoreCostRedactionsOnDefeat:
-      "Detruire : restaure les cartes a cout augmente",
+      "En vie : corrompt les couts | Vaincre : leve la corruption",
     restoreTextRedactionsOnDefeat:
-      "Detruire : restaure les cartes au texte redige",
+      "En vie : censure les effets | Vaincre : leve la censure",
     bonusDamageFlat: "+{{bonus}} bonus",
     conditionalBonusVsDebuffed: "+{{bonus}} si le joueur est affaibli",
     conditionalBonusVsLowInk: "+{{bonus}} si <= {{threshold}} encre",

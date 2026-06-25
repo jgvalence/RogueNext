@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { EnemyDefinition, AllyDefinition } from "@/game/schemas/entities";
@@ -38,6 +38,17 @@ import {
   getFirstInkedCardInHand,
   getInkedCardTotalInkCost,
 } from "@/game/engine/first-combat-tutorial";
+
+function getAoeHitColor(def: CardDefinition): string {
+  const tags = def.archetypeTags ?? [];
+  if (tags.includes("BLEED")) return "rgba(244,63,94,0.60)";
+  if (tags.includes("POISON")) return "rgba(132,204,22,0.55)";
+  const hasVulnerable = def.effects.some(
+    (e) => e.type === "APPLY_DEBUFF" && e.buff === "VULNERABLE"
+  );
+  if (hasVulnerable) return "rgba(245,158,11,0.52)";
+  return "rgba(251,146,60,0.55)";
+}
 
 interface CombatViewProps {
   combat: CombatState;
@@ -137,6 +148,15 @@ export function CombatView({
   const drawBtnRef = useRef<HTMLButtonElement>(null);
   const discardBtnRef = useRef<HTMLButtonElement>(null);
   const enemyRowRef = useRef<HTMLDivElement>(null);
+  const [aoeFlashMap, setAoeFlashMap] = useState<
+    Map<string, { delay: number; color: string }>
+  >(new Map());
+  const aoeFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    return () => {
+      if (aoeFlashTimerRef.current) clearTimeout(aoeFlashTimerRef.current);
+    };
+  }, []);
 
   const getEnemyDisplayName = useCallback(
     (enemy: CombatState["enemies"][number]) => {
@@ -223,6 +243,33 @@ export function CombatView({
 
   const handleTutorialPlayCard = useCallback(
     (instanceId: string, targetId: string | null, useInked: boolean) => {
+      // Detect AOE card and trigger staggered hit flash before state update
+      const cardInst = combat.hand.find((c) => c.instanceId === instanceId);
+      const rawDef = cardInst ? cardDefs.get(cardInst.definitionId) : undefined;
+      const effectiveDef =
+        cardInst && rawDef
+          ? getArchivistEffectiveCardDefinition(combat, instanceId, rawDef)
+          : rawDef;
+      if (effectiveDef?.targeting === "ALL_ENEMIES") {
+        const liveEnemies = combat.enemies.filter((e) => e.currentHp > 0);
+        if (liveEnemies.length >= 2) {
+          const hitColor = getAoeHitColor(effectiveDef);
+          const newMap = new Map<string, { delay: number; color: string }>();
+          liveEnemies.forEach((e, i) =>
+            newMap.set(e.instanceId, { delay: i * 80, color: hitColor })
+          );
+          setAoeFlashMap(newMap);
+          if (aoeFlashTimerRef.current) clearTimeout(aoeFlashTimerRef.current);
+          aoeFlashTimerRef.current = setTimeout(
+            () =>
+              setAoeFlashMap(
+                new Map<string, { delay: number; color: string }>()
+              ),
+            liveEnemies.length * 80 + 350
+          );
+        }
+      }
+
       if (!isFirstCombatTutorialVisible) {
         onPlayCard(instanceId, targetId, useInked);
         return;
@@ -236,6 +283,8 @@ export function CombatView({
       handleFirstCombatTutorialNext();
     },
     [
+      combat,
+      cardDefs,
       isFirstCombatTutorialVisible,
       isInkedCardTutorialStep,
       tutorialInkedCardId,
@@ -528,6 +577,7 @@ export function CombatView({
         onAllyClick={handleAllyClick}
         onEnemyClick={handleEnemyClick}
         isIncomingDamageTutorialStep={isIncomingDamageTutorialStep}
+        aoeFlashMap={aoeFlashMap}
       >
         <CombatTargetPrompts
           needsTarget={needsTarget}

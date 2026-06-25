@@ -72,24 +72,6 @@ describe("Run conditions", () => {
     expect(unlocked.includes("boss_start_option_chapter_guardian")).toBe(true);
   });
 
-  it("unlocks recursive_scratch_opening after looting Recursive Scratch once", () => {
-    const locked = computeUnlockedRunConditionIds({
-      totalRuns: 5,
-      wonRuns: 2,
-      resources: {},
-    });
-    expect(locked.includes("recursive_scratch_opening")).toBe(false);
-
-    const unlocked = computeUnlockedRunConditionIds({
-      totalRuns: 5,
-      wonRuns: 2,
-      resources: {
-        __RUN_CONDITION_CARD__recursive_scratch: 1,
-      },
-    });
-    expect(unlocked.includes("recursive_scratch_opening")).toBe(true);
-  });
-
   it("normalizes the legacy vanilla identifier", () => {
     expect(normalizeRunConditionId("vanilla")).toBe("vanilla_run");
     expect(getRunConditionById("vanilla")?.id).toBe("vanilla_run");
@@ -102,9 +84,7 @@ describe("Run conditions", () => {
 
   it("avoids dead negative starting-gold drawbacks in starting options", () => {
     const conditionsWithNegativeGoldDelta = runConditionDefinitions
-      .filter(
-        (condition) => (condition.effects.startingGoldDelta ?? 0) < 0
-      )
+      .filter((condition) => (condition.effects.startingGoldDelta ?? 0) < 0)
       .map((condition) => condition.id);
 
     expect(conditionsWithNegativeGoldDelta).toEqual([]);

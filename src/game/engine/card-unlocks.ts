@@ -208,7 +208,11 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
 
   // LOVECRAFTIAN
   forbidden_whisper: { type: "BIOME_FIRST_ENTRY", biome: "LOVECRAFTIAN" },
-  recursive_scratch: { type: "ALWAYS" },
+  recursive_scratch: {
+    type: "BIOME_BOSS_KILLS",
+    biome: "LOVECRAFTIAN",
+    count: 1,
+  },
   madness_spike: { type: "BIOME_ELITE_KILLS", biome: "LOVECRAFTIAN", count: 1 },
   void_touch: { type: "BIOME_ELITE_KILLS", biome: "LOVECRAFTIAN", count: 2 },
   void_shield: { type: "BIOME_BOSS_KILLS", biome: "LOVECRAFTIAN", count: 1 },

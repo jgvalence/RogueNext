@@ -279,7 +279,6 @@ export function RunSetupScreen({
     if (pendingCharacterChoices.length > 0) return pendingCharacterChoices;
     return fallbackCharacterChoices;
   }, [runState.pendingCharacterChoices, fallbackCharacterChoices]);
-  const hasCharacterChoice = characterChoices.length > 1;
 
   const difficultyChoices = useMemo(() => {
     const difficultyMaxByCharacter = runState.difficultyMaxByCharacter ?? {};
@@ -487,101 +486,126 @@ export function RunSetupScreen({
           </section>
         )}
 
-        {/* Character selection (when 2+ are available) */}
-        {hasCharacterChoice && (
-          <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100/80">
-                {t("runSetup.sections.character")}
-              </h3>
-              {hasCharacterChoice && (
-                <RogueTag
-                  bordered
-                  className="!m-0 rounded border-violet-300/35 bg-violet-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-violet-100"
+        {/* Character selection \u2014 always shows all characters, locked ones grayed out */}
+        <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100/80">
+              {t("runSetup.sections.character")}
+            </h3>
+            <RogueTag
+              bordered
+              className="!m-0 rounded border-violet-300/35 bg-violet-300/15 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-violet-100"
+            >
+              {t(`characters.${draftCharacterId}.name`, draftCharacterId)}
+            </RogueTag>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {characterDefinitions.map((charDef) => {
+              const charId = charDef.id;
+              const isUnlocked = characterChoices.includes(charId);
+              const isSelected = draftCharacterId === charId;
+              const slots = runState.metaBonuses?.unlockedPowerSlots ?? [1];
+              return (
+                <RogueButton
+                  key={charId}
+                  type="text"
+                  disabled={!isUnlocked}
+                  onClick={
+                    isUnlocked
+                      ? () => {
+                          setDraftCharacterId(charId);
+                          const charMax =
+                            runState.difficultyMaxByCharacter?.[charId];
+                          const maxDifficulty =
+                            typeof charMax === "number" &&
+                            Number.isFinite(charMax)
+                              ? Math.max(0, Math.floor(charMax))
+                              : 0;
+                          setDraftDifficulty((current) => {
+                            if (current === null) return null;
+                            return current <= maxDifficulty ? current : null;
+                          });
+                        }
+                      : undefined
+                  }
+                  className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition disabled:!cursor-not-allowed disabled:!opacity-55 ${
+                    isSelected && isUnlocked
+                      ? "!border-violet-300/55 !bg-violet-300/10"
+                      : isUnlocked
+                        ? "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
+                        : "!border-amber-100/8 !bg-amber-100/3"
+                  }`}
                 >
-                  {t(`characters.${draftCharacterId}.name`, draftCharacterId)}
-                </RogueTag>
-              )}
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {characterChoices.map((charId) => {
-                const charDef = characterDefinitions.find(
-                  (c) => c.id === charId
-                );
-                if (!charDef) return null;
-                const isSelected = draftCharacterId === charId;
-                const slots = runState.metaBonuses?.unlockedPowerSlots ?? [1];
-                return (
-                  <RogueButton
-                    key={charId}
-                    type="text"
-                    onClick={() => {
-                      setDraftCharacterId(charId);
-                      const charMax =
-                        runState.difficultyMaxByCharacter?.[charId];
-                      const maxDifficulty =
-                        typeof charMax === "number" && Number.isFinite(charMax)
-                          ? Math.max(0, Math.floor(charMax))
-                          : 0;
-                      setDraftDifficulty((current) => {
-                        if (current === null) return null;
-                        return current <= maxDifficulty ? current : null;
-                      });
-                    }}
-                    className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition ${
-                      isSelected
-                        ? "!border-violet-300/55 !bg-violet-300/10"
-                        : "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
-                    }`}
-                  >
-                    <p className="text-base font-bold text-amber-50">
-                      {t(`characters.${charId}.name`, charId)}
-                    </p>
-                    <p className="mt-1 text-xs italic text-amber-100/60">
-                      {t(`characters.${charId}.description`, "")}
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-1">
-                      {charDef.powers.map((power, i) => {
-                        const unlocked = slots.includes(i + 1);
-                        const powerLabel = t(
-                          `inkGauge.powers.${power}.label`,
-                          power
-                        );
-                        const powerDescription = t(
-                          `inkGauge.powers.${power}.desc`,
-                          ""
-                        );
-                        const powerTooltip = powerDescription
-                          ? `${powerLabel}: ${powerDescription}`
-                          : powerLabel;
-                        const tooltip = unlocked
-                          ? powerTooltip
-                          : `${t("playerStats.inkPowerLocked")} - ${powerTooltip}`;
-                        return (
-                          <RogueTooltip key={power} title={tooltip}>
-                            <RogueTag
-                              bordered={false}
-                              aria-label={tooltip}
-                              className={`!m-0 rounded px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider ${
-                                unlocked
-                                  ? "bg-violet-400/20 text-violet-200"
-                                  : "bg-amber-100/5 text-amber-100/30"
-                              }`}
-                            >
-                              {unlocked
-                                ? t(`inkGauge.powers.${power}.label`, power)
-                                : "\uD83D\uDD12"}
-                            </RogueTag>
-                          </RogueTooltip>
-                        );
-                      })}
-                    </div>
-                  </RogueButton>
-                );
-              })}
-            </div>
-          </section>
-        )}
+                  {isUnlocked ? (
+                    <>
+                      <p className="text-base font-bold text-amber-50">
+                        {t(`characters.${charId}.name`, charId)}
+                      </p>
+                      <p className="mt-1 text-xs italic text-amber-100/60">
+                        {t(`characters.${charId}.description`, "")}
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-1">
+                        {charDef.powers.map((power, i) => {
+                          const unlocked = slots.includes(i + 1);
+                          const powerLabel = t(
+                            `inkGauge.powers.${power}.label`,
+                            power
+                          );
+                          const powerDescription = t(
+                            `inkGauge.powers.${power}.desc`,
+                            ""
+                          );
+                          const powerTooltip = powerDescription
+                            ? `${powerLabel}: ${powerDescription}`
+                            : powerLabel;
+                          const tooltip = unlocked
+                            ? powerTooltip
+                            : `${t("playerStats.inkPowerLocked")} - ${powerTooltip}`;
+                          return (
+                            <RogueTooltip key={power} title={tooltip}>
+                              <RogueTag
+                                bordered={false}
+                                aria-label={tooltip}
+                                className={`!m-0 rounded px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wider ${
+                                  unlocked
+                                    ? "bg-violet-400/20 text-violet-200"
+                                    : "bg-amber-100/5 text-amber-100/30"
+                                }`}
+                              >
+                                {unlocked
+                                  ? t(`inkGauge.powers.${power}.label`, power)
+                                  : "\uD83D\uDD12"}
+                              </RogueTag>
+                            </RogueTooltip>
+                          );
+                        })}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">\uD83D\uDD12</span>
+                        <p className="text-base font-bold text-amber-50/50">
+                          {t(`characters.${charId}.name`, charId)}
+                        </p>
+                      </div>
+                      <p className="mt-1 text-xs italic text-amber-100/35">
+                        {t(`characters.${charId}.description`, "")}
+                      </p>
+                      {charDef.unlockCondition && (
+                        <p className="mt-2 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-amber-100/40">
+                          {t("runSetup.unlockAtRuns", {
+                            count: charDef.unlockCondition.totalRuns,
+                          })}
+                        </p>
+                      )}
+                    </>
+                  )}
+                </RogueButton>
+              );
+            })}
+          </div>
+        </section>
 
         <section className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.3)] sm:p-5">
           <div className="mb-3 flex items-center justify-between gap-3">
@@ -598,30 +622,48 @@ export function RunSetupScreen({
             )}
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {difficultyChoices.map((level) => {
+            {Array.from({ length: 6 }, (_, i) => i).map((level) => {
+              const isUnlocked = difficultyChoices.includes(level);
               const isSelected = draftDifficulty === level;
               return (
                 <RogueButton
                   key={level}
                   type="text"
-                  onClick={() => setDraftDifficulty(level)}
-                  className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition ${
-                    isSelected
+                  disabled={!isUnlocked}
+                  onClick={
+                    isUnlocked ? () => setDraftDifficulty(level) : undefined
+                  }
+                  className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition disabled:!cursor-not-allowed disabled:!opacity-55 ${
+                    isSelected && isUnlocked
                       ? "!border-emerald-300/55 !bg-emerald-300/10"
-                      : "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
+                      : isUnlocked
+                        ? "!border-amber-100/15 !bg-amber-100/5 hover:!border-amber-300/45"
+                        : "!border-amber-100/8 !bg-amber-100/3"
                   }`}
                 >
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-amber-100/70">
-                    {t(`runDifficulty.levels.${level}.chapter`)}
+                  <p
+                    className={`text-xs font-semibold uppercase tracking-[0.14em] ${isUnlocked ? "text-amber-100/70" : "text-amber-100/35"}`}
+                  >
+                    {isUnlocked
+                      ? t(`runDifficulty.levels.${level}.chapter`)
+                      : `🔒 ${t(`runDifficulty.levels.${level}.chapter`)}`}
                   </p>
-                  <p className="mt-1 text-base font-bold text-amber-50">
+                  <p
+                    className={`mt-1 text-base font-bold ${isUnlocked ? "text-amber-50" : "text-amber-50/50"}`}
+                  >
                     {t(`runDifficulty.levels.${level}.name`)}
                   </p>
-                  <p className="text-xs italic text-amber-700/80">
+                  <p
+                    className={`text-xs italic ${isUnlocked ? "text-amber-700/80" : "text-amber-700/45"}`}
+                  >
                     {t(`runDifficulty.levels.${level}.subtitle`)}
                   </p>
-                  <p className="mt-1 text-xs text-amber-100/70">
-                    {t(`runDifficulty.levels.${level}.description`)}
+                  <p
+                    className={`mt-1 text-xs ${isUnlocked ? "text-amber-100/70" : "text-amber-100/35"}`}
+                  >
+                    {isUnlocked
+                      ? t(`runDifficulty.levels.${level}.description`)
+                      : t("runSetup.difficultyLockedHint")}
                   </p>
                 </RogueButton>
               );

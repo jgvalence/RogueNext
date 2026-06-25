@@ -7016,36 +7016,6 @@ describe("Relics", () => {
     );
   });
 
-  it("recursive_scratch_opening starts combat with Recursive Scratch in hand", () => {
-    const rng = createRNG("recursive-scratch-opening");
-    const starterCards = [...cardDefs.values()].filter(
-      (card) => card.isStarterCard
-    );
-    const run = createNewRun(
-      "run-recursive-scratch-opening",
-      "run-recursive-scratch-opening",
-      starterCards,
-      rng
-    );
-    const combat = initCombat(
-      {
-        ...run,
-        selectedDifficultyLevel: 0,
-        selectedRunConditionId: "recursive_scratch_opening",
-      },
-      ["ink_slime"],
-      enemyDefs,
-      allyDefs,
-      cardDefs,
-      createRNG("recursive-scratch-opening-combat")
-    );
-
-    expect(
-      combat.hand.some((card) => card.definitionId === "recursive_scratch")
-    ).toBe(true);
-    expect(combat.hand).toHaveLength(GAME_CONSTANTS.STARTING_DRAW_COUNT + 1);
-  });
-
   it("spawn_void_ichor grants ink only on the first exhaust each turn", () => {
     const rng = createRNG("spawn-void-ichor");
     const cardDefs = buildCardDefsMap();

@@ -175,6 +175,12 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-5px)" },
         },
+        // AOE card hit: staggered flash per enemy; backgroundColor set inline per card type
+        "aoe-hit": {
+          "0%": { opacity: "0" },
+          "28%": { opacity: "0.9" },
+          "100%": { opacity: "0" },
+        },
         // Reward item staggered entry
         "reward-enter": {
           "0%": { opacity: "0", transform: "translateY(10px) scale(0.97)" },
@@ -210,6 +216,7 @@ const config: Config = {
         "boss-phase-flash": "boss-phase-flash 1.0s ease-out forwards",
         "enemy-idle": "enemy-idle 3.6s ease-in-out infinite",
         "reward-enter": "reward-enter 0.36s ease-out both",
+        "aoe-hit": "aoe-hit 0.28s ease-out both",
         "power-pulse": "power-pulse 2.4s ease-in-out infinite",
       },
     },

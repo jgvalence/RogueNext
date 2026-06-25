@@ -7,6 +7,7 @@ import { setSoundsEnabled } from "@/lib/sound";
 import { setMusicEnabled } from "@/lib/music";
 import { setLocale, supportedLocales, type SupportedLocale } from "@/lib/i18n";
 import { RogueButton, RogueModal, RogueTag } from "@/components/ui/rogue";
+import { cn } from "@/lib/utils/cn";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { relicDefinitions } from "@/game/data/relics";
 import { isRunConditionCardLootUnlockResourceKey } from "@/game/engine/run-conditions";
@@ -16,6 +17,17 @@ import {
   localizeRelicDescription,
   localizeRelicName,
 } from "@/lib/i18n/entity-text";
+
+const ARCHETYPE_TAG_STYLES: Record<string, string> = {
+  BLEED: "border-rose-500/50 bg-rose-500/15 text-rose-200",
+  BLOCK: "border-slate-400/50 bg-slate-400/15 text-slate-200",
+  DRAW: "border-sky-400/50 bg-sky-400/15 text-sky-200",
+  EXHAUST: "border-violet-400/50 bg-violet-400/15 text-violet-200",
+  HEAL: "border-emerald-400/50 bg-emerald-400/15 text-emerald-200",
+  INK: "border-cyan-400/50 bg-cyan-400/15 text-cyan-200",
+  POISON: "border-lime-400/50 bg-lime-400/15 text-lime-200",
+  STRENGTH: "border-orange-400/50 bg-orange-400/15 text-orange-200",
+};
 
 function formatRunDuration(totalMs: number): string {
   const totalSeconds = Math.max(0, Math.floor(totalMs / 1000));
@@ -478,12 +490,26 @@ export function GameLayout({
                   key={relic.id}
                   className="rounded border border-slate-700 bg-slate-950/60 p-3"
                 >
-                  <p className="text-sm font-semibold text-slate-100">
-                    {localizeRelicName(relic.id, relic.name)}{" "}
-                    <RogueTag className="ml-1 text-xs uppercase tracking-wide text-slate-400">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <p className="text-sm font-semibold text-slate-100">
+                      {localizeRelicName(relic.id, relic.name)}
+                    </p>
+                    <RogueTag className="text-xs uppercase tracking-wide text-slate-400">
                       {relic.rarity}
                     </RogueTag>
-                  </p>
+                    {relic.archetypeTags?.map((tag) => (
+                      <span
+                        key={tag}
+                        className={cn(
+                          "rounded-full border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.14em]",
+                          ARCHETYPE_TAG_STYLES[tag] ??
+                            "border-slate-500/40 bg-slate-500/10 text-slate-300"
+                        )}
+                      >
+                        {t(`relicArchetype.${tag}`, { defaultValue: tag })}
+                      </span>
+                    ))}
+                  </div>
                   <p className="text-sm text-slate-300">
                     {localizeRelicDescription(relic.id, relic.description)}
                   </p>

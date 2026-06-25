@@ -101,6 +101,16 @@ export const en = {
       DEFEAT: "Defeat",
     },
   },
+  relicArchetype: {
+    BLEED: "Bleed",
+    BLOCK: "Block",
+    DRAW: "Draw",
+    EXHAUST: "Exhaust",
+    HEAL: "Heal",
+    INK: "Ink",
+    POISON: "Poison",
+    STRENGTH: "Strength",
+  },
   auth: {
     back: "Back",
     password: "Password",
@@ -334,10 +344,6 @@ export const en = {
         name: "Open Grimoire",
         description: "Add Archive Seal to your starting deck.",
       },
-      recursive_scratch_opening: {
-        name: "Recursive Scratch",
-        description: "Start each combat with Recursive Scratch in hand.",
-      },
       inked_beginning: {
         name: "Inked Beginning",
         description: "Start each combat with +2 ink and gain 10 starting gold.",
@@ -518,6 +524,10 @@ export const en = {
     continue: "Start Expedition",
     readyHint: "Setup complete. You can start the expedition.",
     missingHint: "Finish the required choices to continue.",
+    characterLocked: "Character locked",
+    unlockAtRuns: "Available after {{count}} runs",
+    difficultyLocked: "Level locked",
+    difficultyLockedHint: "Complete the previous level to unlock",
   },
   runDifficulty: {
     select: {
@@ -1220,8 +1230,8 @@ export const en = {
       webbed: "Webbed",
       neutral: "Neutral",
       redaction: {
-        COST: "Cost +1",
-        TEXT: "Text Redacted",
+        COST: "Cost Corrupted",
+        TEXT: "Effects Redacted",
       },
     },
     effect: {
@@ -1814,8 +1824,10 @@ export const en = {
     redactCardCost: "Redacts {{value}} card: +1 cost",
     redactCardText: "Redacts {{value}} card: upgrade/inked disabled",
     redactCardFlexible: "Redacts {{value}} card: cost or text",
-    restoreCostRedactionsOnDefeat: "Destroy: restore cost-redacted cards",
-    restoreTextRedactionsOnDefeat: "Destroy: restore text-redacted cards",
+    restoreCostRedactionsOnDefeat:
+      "Alive: corrupts costs | Defeat: lifts corruption",
+    restoreTextRedactionsOnDefeat:
+      "Alive: redacts effects | Defeat: lifts redaction",
     bonusDamageFlat: "+{{bonus}} bonus",
     conditionalBonusVsDebuffed: "+{{bonus}} if player is debuffed",
     conditionalBonusVsLowInk: "+{{bonus}} if <= {{threshold}} ink",

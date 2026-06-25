@@ -36,6 +36,7 @@ interface CombatMobileGridProps {
   getEnemyDisplayName: (enemy: CombatState["enemies"][number]) => string;
   markEnemyArtFailure: (enemyDefinitionId: string) => void;
   isArmorTutorialStep: boolean;
+  aoeFlashMap: Map<string, { delay: number; color: string }>;
 }
 
 function getMonogram(label: string, fallback: string): string {
@@ -93,6 +94,7 @@ export function CombatMobileGrid({
   getEnemyDisplayName,
   markEnemyArtFailure,
   isArmorTutorialStep,
+  aoeFlashMap,
 }: CombatMobileGridProps) {
   const { t } = useTranslation();
 
@@ -168,7 +170,9 @@ export function CombatMobileGrid({
               key={`mobile-enemy-${enemy.instanceId}`}
               type="button"
               data-keep-selection="true"
-              onClick={() => onMobileEnemyPress(enemy.instanceId)}
+              onClick={() => {
+                if (!isDead) onMobileEnemyPress(enemy.instanceId);
+              }}
               className={cn(
                 "relative flex-1 overflow-hidden border text-left transition-all duration-200",
                 cardRounding,
@@ -291,6 +295,16 @@ export function CombatMobileGrid({
               {/* Targeting pulse overlay */}
               {(isTargetable || isCheatSelectable) && (
                 <div className="bg-red-500/8 pointer-events-none absolute inset-0 animate-pulse rounded-[inherit]" />
+              )}
+              {aoeFlashMap.has(enemy.instanceId) && (
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 animate-aoe-hit rounded-[inherit]"
+                  style={{
+                    animationDelay: `${aoeFlashMap.get(enemy.instanceId)!.delay}ms`,
+                    backgroundColor: aoeFlashMap.get(enemy.instanceId)!.color,
+                  }}
+                />
               )}
             </button>
           );
