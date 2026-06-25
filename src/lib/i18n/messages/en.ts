@@ -12,6 +12,7 @@ export const en = {
     play: "Play",
     library: "Library",
     leaderboard: "Leaderboard",
+    runs: "History",
     rules: "Rules",
     logout: "Logout",
     signup: "Sign up",
@@ -79,6 +80,25 @@ export const en = {
       bestTime: "Times by Difficulty",
       bestTimeVictory: "Victory Time",
       bestTimeDifficulty: "Victory Time D{{difficulty}}",
+    },
+  },
+  runs: {
+    kicker: "Expedition Log",
+    title: "Run History",
+    subtitle: "Your last 50 completed runs.",
+    backHome: "Home",
+    loadError: "Unable to load history: {{message}}",
+    empty: "No completed runs yet. Start your first expedition!",
+    columns: {
+      floor: "Floor",
+      difficulty: "Diff.",
+      score: "Score",
+      relics: "Relics",
+      stories: "Stories",
+    },
+    status: {
+      VICTORY: "Victory",
+      DEFEAT: "Defeat",
     },
   },
   auth: {

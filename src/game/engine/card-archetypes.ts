@@ -39,6 +39,10 @@ function inferTagFromEffect(effect: Effect, tags: Set<CardArchetypeTag>): void {
     tags.add("BLEED");
   }
 
+  if (effect.buff === "POISON" || effect.scalingBuff === "POISON") {
+    tags.add("POISON");
+  }
+
   if (
     BLOCK_EFFECT_TYPES.has(effect.type) ||
     effect.buff === "WARD" ||
@@ -61,6 +65,18 @@ function inferTagFromEffect(effect: Effect, tags: Set<CardArchetypeTag>): void {
     effect.scalingBuff === "EXHAUST_ENERGY"
   ) {
     tags.add("EXHAUST");
+  }
+
+  if (effect.type === "DRAW_CARDS") {
+    tags.add("DRAW");
+  }
+
+  if (
+    effect.type === "GAIN_STRENGTH" ||
+    effect.buff === "STRENGTH" ||
+    effect.scalingBuff === "STRENGTH"
+  ) {
+    tags.add("STRENGTH");
   }
 }
 

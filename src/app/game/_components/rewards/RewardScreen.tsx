@@ -87,7 +87,7 @@ export function RewardScreen({
   const hasAnyEliteChoice = hasCardChoices || hasRelicChoices || hasAllyChoices;
 
   return (
-    <div className="relative flex animate-screen-enter flex-col items-center gap-6 py-4 sm:py-8">
+    <div className="relative flex flex-col items-center gap-6 py-4 sm:py-8">
       {/* Atmospheric background glow */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_0%,rgba(34,197,94,0.08),transparent)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_30%_at_50%_15%,rgba(250,204,21,0.05),transparent)]" />

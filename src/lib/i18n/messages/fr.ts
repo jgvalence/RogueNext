@@ -13,6 +13,7 @@ export const fr = {
     play: "Jouer",
     library: "Bibliotheque",
     leaderboard: "Classement",
+    runs: "Historique",
     rules: "Regles",
     logout: "Deconnexion",
     signup: "S'inscrire",
@@ -80,6 +81,26 @@ export const fr = {
       bestTime: "Temps par difficulte",
       bestTimeVictory: "Temps victoire",
       bestTimeDifficulty: "Temps victoire D{{difficulty}}",
+    },
+  },
+  runs: {
+    kicker: "Journal des expeditions",
+    title: "Historique",
+    subtitle: "Tes 50 dernieres parties terminees.",
+    backHome: "Accueil",
+    loadError: "Impossible de charger l'historique : {{message}}",
+    empty:
+      "Aucune partie terminee pour le moment. Lance ta premiere expedition !",
+    columns: {
+      floor: "Etage",
+      difficulty: "Diff.",
+      score: "Score",
+      relics: "Reliques",
+      stories: "Histoires",
+    },
+    status: {
+      VICTORY: "Victoire",
+      DEFEAT: "Defaite",
     },
   },
   auth: {

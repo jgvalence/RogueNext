@@ -538,8 +538,9 @@ function GameContent({
   return (
     <GameLayout elapsedMs={elapsedMs} onAbandonRun={handleAbandonRun}>
       <div
+        key={phase}
         className={cn(
-          "flex min-h-0 flex-col",
+          "flex min-h-0 animate-screen-enter flex-col",
           phase === "COMBAT" && "h-full overflow-hidden"
         )}
       >

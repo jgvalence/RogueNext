@@ -212,13 +212,32 @@ export function generateCombatRewards(
     characterId
   );
   const allCardDefs = new Map(allCards.map((card) => [card.id, card]));
+  const archetypeCounts = getDeckArchetypeCounts(currentDeck, allCardDefs);
   const offerContext: CardOfferContext | undefined =
     currentDeck.length > 0 || playerCurrentHp != null || playerMaxHp != null
       ? {
-          archetypeCounts: getDeckArchetypeCounts(currentDeck, allCardDefs),
+          archetypeCounts,
           playerCurrentHp,
           playerMaxHp,
         }
+      : undefined;
+
+  const topArchetypes = Object.entries(archetypeCounts)
+    .filter(([, count]) => count >= 3)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 2)
+    .map(([tag]) => tag);
+  const synergyMult = Math.min(
+    GAME_CONSTANTS.RELIC_SYNERGY_BASE +
+      lootLuck * GAME_CONSTANTS.RELIC_SYNERGY_LUCK_BONUS,
+    GAME_CONSTANTS.RELIC_SYNERGY_MAX
+  );
+  const relicSynergyWeight =
+    topArchetypes.length > 0
+      ? (relic: RelicDefinitionData): number =>
+          relic.archetypeTags?.some((t) => topArchetypes.includes(t))
+            ? synergyMult
+            : 1
       : undefined;
   const rareRewardCards = rewardEligibleCards.filter(
     (card) => card.rarity === "RARE"
@@ -306,7 +325,8 @@ export function generateCombatRewards(
       pool.length >= 3 ? pool : nonBossRelics,
       3,
       rng,
-      lootLuck
+      lootLuck,
+      relicSynergyWeight
     );
 
     // Guarantee the boss-specific relic as a choice if available and not owned
@@ -345,7 +365,8 @@ export function generateCombatRewards(
         pool.length > 0 ? pool : availableRelics,
         1,
         rng,
-        lootLuck
+        lootLuck,
+        relicSynergyWeight
       );
     } else {
       relicChoices = [];

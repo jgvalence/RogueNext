@@ -67,7 +67,8 @@ export function weightedSampleByRarity<T extends { rarity: LootRarity }>(
   items: readonly T[],
   count: number,
   rng: RNG,
-  luck: number
+  luck: number,
+  synergyWeight?: (item: T) => number
 ): T[] {
   if (count <= 0 || items.length === 0) return [];
   const pool = [...items].filter(
@@ -78,7 +79,8 @@ export function weightedSampleByRarity<T extends { rarity: LootRarity }>(
   while (pool.length > 0 && picks.length < count) {
     const picked = weightedPick(
       pool,
-      (item) => getLootRarityWeight(item.rarity, luck),
+      (item) =>
+        getLootRarityWeight(item.rarity, luck) * (synergyWeight?.(item) ?? 1),
       rng
     );
     picks.push(picked);

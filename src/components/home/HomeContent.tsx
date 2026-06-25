@@ -108,6 +108,11 @@ export function HomeContent({ isSignedIn }: HomeContentProps) {
                 font={cinzel.className}
               />
               <MenuItem
+                href="/runs"
+                label={t("home.runs")}
+                font={cinzel.className}
+              />
+              <MenuItem
                 href="/rules"
                 label={t("home.rules")}
                 font={cinzel.className}

@@ -154,8 +154,11 @@ export type BiomeResource = z.infer<typeof BiomeResource>;
 export const CardArchetypeTag = z.enum([
   "BLEED",
   "BLOCK",
+  "DRAW",
   "EXHAUST",
   "HEAL",
   "INK",
+  "POISON",
+  "STRENGTH",
 ]);
 export type CardArchetypeTag = z.infer<typeof CardArchetypeTag>;
