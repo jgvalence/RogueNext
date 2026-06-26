@@ -14,6 +14,7 @@ import { relicDefinitions } from "@/game/data/relics";
 import { isRunConditionCardLootUnlockResourceKey } from "@/game/engine/run-conditions";
 import { DeckViewerModal } from "./DeckViewerModal";
 import { RulesModal } from "./RulesModal";
+import { LandscapeRequired } from "@/components/shared/LandscapeRequired";
 import {
   localizeRelicDescription,
   localizeRelicName,
@@ -142,15 +143,7 @@ export function GameLayout({
 
   return (
     <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-slate-950 text-white">
-      <div className="fixed inset-0 z-50 hidden flex-col items-center justify-center gap-6 bg-slate-950 sm:hidden portrait:flex">
-        <div className="text-5xl font-black tracking-[0.2em]">
-          {t("layout.rotate")}
-        </div>
-        <p className="text-xl font-bold text-white">
-          {t("layout.rotateDevice")}
-        </p>
-        <p className="text-sm text-slate-400">{t("layout.rotateHint")}</p>
-      </div>
+      <LandscapeRequired />
 
       <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/90 px-2 py-1.5 backdrop-blur-sm sm:px-5 sm:py-2.5 [@media(max-height:540px)]:gap-2 [@media(max-height:540px)]:px-2 [@media(max-height:540px)]:py-1">
         <div className="flex items-center gap-2">

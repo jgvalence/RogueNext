@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Cinzel } from "next/font/google";
 import { useTranslation } from "react-i18next";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { LandscapeRequired } from "@/components/shared/LandscapeRequired";
 
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -20,16 +21,7 @@ export function HomeContent({ isSignedIn }: HomeContentProps) {
       className="relative h-screen w-screen overflow-hidden bg-[#040608]"
       style={{ fontFamily: cinzel.style.fontFamily }}
     >
-      {/* ── OVERLAY PORTRAIT (mobile uniquement) ── */}
-      <div className="fixed inset-0 z-50 hidden flex-col items-center justify-center gap-6 bg-slate-950 sm:hidden portrait:flex">
-        <div className="text-5xl font-black tracking-[0.2em]">
-          {t("layout.rotate")}
-        </div>
-        <p className="text-xl font-bold text-white">
-          {t("layout.rotateDevice")}
-        </p>
-        <p className="text-sm text-slate-400">{t("layout.rotateHint")}</p>
-      </div>
+      <LandscapeRequired />
 
       {/* ── BACKGROUND ── */}
       <div className="pointer-events-none absolute inset-0">

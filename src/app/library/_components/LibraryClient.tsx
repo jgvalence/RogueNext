@@ -19,6 +19,7 @@ import {
 import { dismissLibraryIntroTutorialAction } from "@/server/actions/progression";
 import { cn } from "@/lib/utils/cn";
 import { FIRST_RUN_GUIDED_STORY_ID } from "@/game/engine/first-run-script";
+import { LandscapeRequired } from "@/components/shared/LandscapeRequired";
 
 interface LibraryClientProps {
   initialProgression: MetaProgress;
@@ -106,6 +107,7 @@ export function LibraryClient({
 
   return (
     <div className="relative flex min-h-screen flex-col bg-gray-950 text-white">
+      <LandscapeRequired />
       <div className="pointer-events-none fixed inset-0">
         <div className="absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-900/10 blur-[128px]" />
         <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] rounded-full bg-purple-900/10 blur-[128px]" />
