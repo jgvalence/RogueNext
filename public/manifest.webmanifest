@@ -1,0 +1,25 @@
+{
+  "name": "Panlibrarium",
+  "short_name": "Panlibrarium",
+  "description": "Deckbuilder roguelike — forge ton deck, affronte les biomes, bats les boss.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "categories": ["games"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
