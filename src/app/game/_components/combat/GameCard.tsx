@@ -450,7 +450,7 @@ export function GameCard({
     <div
       data-keep-selection="true"
       className={cn(
-        "group relative isolate z-0 flex select-none flex-col overflow-hidden rounded-[18px] border bg-slate-950/95 shadow-[0_10px_24px_rgba(2,6,23,0.45)] transition-all duration-200",
+        "group relative isolate z-0 flex touch-manipulation select-none flex-col overflow-hidden rounded-[18px] border bg-slate-950/95 shadow-[0_10px_24px_rgba(2,6,23,0.45)] transition-all duration-200 [-webkit-touch-callout:none]",
         typeStyle.border,
         sizeStyle.cardW,
         sizeStyle.cardH,
