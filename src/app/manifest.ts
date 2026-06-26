@@ -4,10 +4,11 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Panlibrarium",
     short_name: "Panlibrarium",
-    description: "Panlibrarium - roguelike deckbuilder",
+    description:
+      "Deckbuilder roguelike — forge ton deck, affronte les biomes, bats les boss.",
     start_url: "/",
     display: "standalone",
-    orientation: "landscape",
+    orientation: "portrait",
     background_color: "#020617",
     theme_color: "#020617",
     icons: [
@@ -15,15 +16,25 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/icon-192.png",
         sizes: "192x192",
         type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
       },
       {
         src: "/icon-512.png",
         sizes: "512x512",
         type: "image/png",
+        purpose: "any",
       },
       {
-        src: "/favicon.ico",
-        sizes: "any",
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
       },
     ],
   };
