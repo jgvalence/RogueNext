@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
@@ -17,6 +17,7 @@ import {
   localizeRelicName,
 } from "@/lib/i18n/entity-text";
 import { GameCard } from "../combat/GameCard";
+import { CardActionModal } from "../shared/CardActionModal";
 import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
@@ -67,6 +68,14 @@ export function RewardScreen({
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
   );
+  const [pendingPickCard, setPendingPickCard] = useState<CardDefinition | null>(
+    null
+  );
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    setIsTouchDevice(window.matchMedia("(hover: none)").matches);
+  }, []);
 
   const handleCardMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLDivElement>, card: CardDefinition) => {
@@ -171,7 +180,11 @@ export function RewardScreen({
                     <GameCard
                       definition={card}
                       canPlay={true}
-                      onClick={() => onPickCard(card.id)}
+                      onClick={
+                        isTouchDevice
+                          ? () => setPendingPickCard(card)
+                          : () => onPickCard(card.id)
+                      }
                       size="md"
                     />
                   </div>
@@ -269,7 +282,11 @@ export function RewardScreen({
                 <GameCard
                   definition={card}
                   canPlay={true}
-                  onClick={() => onPickCard(card.id)}
+                  onClick={
+                    isTouchDevice
+                      ? () => setPendingPickCard(card)
+                      : () => onPickCard(card.id)
+                  }
                   size="md"
                 />
               </div>
@@ -329,7 +346,11 @@ export function RewardScreen({
                 <GameCard
                   definition={card}
                   canPlay={true}
-                  onClick={() => onPickCard(card.id)}
+                  onClick={
+                    isTouchDevice
+                      ? () => setPendingPickCard(card)
+                      : () => onPickCard(card.id)
+                  }
                   size="md"
                 />
               </div>
@@ -361,6 +382,17 @@ export function RewardScreen({
         </>
       )}
       <UpgradePreviewPortal info={hoverInfo} />
+      {pendingPickCard && (
+        <CardActionModal
+          card={pendingPickCard}
+          actionLabel={t("reward.pickThisCard")}
+          onAction={() => {
+            onPickCard(pendingPickCard.id);
+            setPendingPickCard(null);
+          }}
+          onCancel={() => setPendingPickCard(null)}
+        />
+      )}
     </div>
   );
 }

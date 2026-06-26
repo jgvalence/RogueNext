@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Cinzel } from "next/font/google";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { CardInstance } from "@/game/schemas/cards";
@@ -20,6 +20,7 @@ import { relicDefinitions, type RelicDefinitionData } from "@/game/data/relics";
 import { weightedSampleByRarity } from "@/game/engine/loot";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { cn } from "@/lib/utils/cn";
+import { CardActionModal } from "../shared/CardActionModal";
 import {
   UpgradePreviewPortal,
   type UpgradePreviewHoverInfo,
@@ -338,7 +339,16 @@ function UpgradeRoom({
   const [pinnedInfo, setPinnedInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
   );
+  const [pendingUpgrade, setPendingUpgrade] = useState<{
+    instanceId: string;
+    def: CardDefinition;
+  } | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const cardElsRef = useRef<Map<string, HTMLElement>>(new Map());
+
+  useEffect(() => {
+    setIsTouchDevice(window.matchMedia("(hover: none)").matches);
+  }, []);
 
   const handleCardMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLElement>, def: CardDefinition) => {
@@ -352,11 +362,15 @@ function UpgradeRoom({
 
   const handleCardClick = useCallback(
     (instanceId: string, def: CardDefinition) => {
-      setSelected(instanceId);
-      const el = cardElsRef.current.get(instanceId);
-      if (el) setPinnedInfo({ definition: def, anchorEl: el });
+      if (isTouchDevice) {
+        setPendingUpgrade({ instanceId, def });
+      } else {
+        setSelected(instanceId);
+        const el = cardElsRef.current.get(instanceId);
+        if (el) setPinnedInfo({ definition: def, anchorEl: el });
+      }
     },
-    []
+    [isTouchDevice]
   );
 
   const upgradable = deck.filter((c) => {
@@ -375,7 +389,9 @@ function UpgradeRoom({
       <div className="h-px w-10 bg-gradient-to-r from-amber-500/60 to-transparent" />
 
       <p className="max-w-md text-center text-sm italic text-amber-200/50">
-        {t("special.upgradeHint")}
+        {isTouchDevice
+          ? t("special.upgradeHintTouch")
+          : t("special.upgradeHint")}
       </p>
 
       <div className="flex max-w-4xl flex-wrap justify-center gap-3">
@@ -407,25 +423,41 @@ function UpgradeRoom({
         })}
       </div>
 
-      <div className="mt-2 flex gap-4">
-        <RogueButton
-          disabled={!selected}
-          onClick={() => selected && onUpgrade(selected)}
-          type="text"
-          className={cn(
-            cinzel.className,
-            "!group !flex !h-auto !items-center !gap-3 !py-[0.42rem] !text-[1.1rem] !font-semibold !uppercase !tracking-[0.16em] !outline-none !transition-all !duration-150",
-            selected
-              ? "!cursor-pointer !text-amber-100"
-              : "!cursor-not-allowed !text-amber-100/20"
-          )}
-        >
-          {selected && (
-            <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
-          )}
-          {t("special.upgradeAction")}
-        </RogueButton>
+      {!isTouchDevice && (
+        <div className="mt-2 flex gap-4">
+          <RogueButton
+            disabled={!selected}
+            onClick={() => selected && onUpgrade(selected)}
+            type="text"
+            className={cn(
+              cinzel.className,
+              "!group !flex !h-auto !items-center !gap-3 !py-[0.42rem] !text-[1.1rem] !font-semibold !uppercase !tracking-[0.16em] !outline-none !transition-all !duration-150",
+              selected
+                ? "!cursor-pointer !text-amber-100"
+                : "!cursor-not-allowed !text-amber-100/20"
+            )}
+          >
+            {selected && (
+              <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
+            )}
+            {t("special.upgradeAction")}
+          </RogueButton>
 
+          <RogueButton
+            onClick={onSkip}
+            type="text"
+            className={cn(
+              cinzel.className,
+              "!group !flex !h-auto !items-center !gap-2 !py-[0.42rem] !text-[1rem] !font-normal !uppercase !tracking-[0.14em]",
+              "!cursor-pointer !text-amber-100/30 !transition-colors !duration-150 hover:!text-amber-100/70"
+            )}
+          >
+            {t("reward.skip")}
+          </RogueButton>
+        </div>
+      )}
+
+      {isTouchDevice && (
         <RogueButton
           onClick={onSkip}
           type="text"
@@ -437,10 +469,22 @@ function UpgradeRoom({
         >
           {t("reward.skip")}
         </RogueButton>
-      </div>
+      )}
 
       <Divider dim />
       <UpgradePreviewPortal info={hoverInfo ?? pinnedInfo} />
+
+      {pendingUpgrade && (
+        <CardActionModal
+          card={pendingUpgrade.def}
+          actionLabel={t("special.upgradeAction")}
+          onAction={() => {
+            onUpgrade(pendingUpgrade.instanceId);
+            setPendingUpgrade(null);
+          }}
+          onCancel={() => setPendingUpgrade(null)}
+        />
+      )}
     </div>
   );
 }
