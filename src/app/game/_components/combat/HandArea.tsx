@@ -234,7 +234,7 @@ function MobileHandCard({
       onPointerCancel={handlePointerEnd}
       onPointerLeave={handlePointerEnd}
       className={cn(
-        "bg-slate-950/96 relative flex h-[150px] w-[106px] shrink-0 cursor-pointer touch-manipulation select-none flex-col overflow-hidden rounded-[18px] border p-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.45)] transition-all duration-200 [-webkit-touch-callout:none] [@media(max-height:540px)]:h-[132px] [@media(max-height:540px)]:w-[94px]",
+        "bg-slate-950/96 relative flex h-[150px] w-[106px] shrink-0 cursor-pointer touch-none select-none flex-col overflow-hidden rounded-[18px] border p-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.45)] transition-all duration-200 [-webkit-touch-callout:none] [@media(max-height:540px)]:h-[132px] [@media(max-height:540px)]:w-[94px]",
         style.border,
         isSelected &&
           (isPendingInked
