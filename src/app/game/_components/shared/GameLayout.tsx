@@ -84,9 +84,6 @@ export function GameLayout({
     1,
     Math.min(state.currentRoom + 1, totalRooms)
   );
-  const canRequestCombatEndTurn =
-    state.combat?.phase === "PLAYER_TURN" &&
-    (state.combat.pendingHandOverflowExhaust ?? 0) <= 0;
   const visibleEarnedResources = Object.entries(
     state.earnedResources ?? {}
   ).filter(
@@ -126,10 +123,6 @@ export function GameLayout({
         detail: { action },
       })
     );
-  };
-
-  const requestCombatEndTurn = () => {
-    window.dispatchEvent(new Event("game:end-turn-request"));
   };
 
   return (
@@ -238,36 +231,6 @@ export function GameLayout({
           >
             {isFullscreen ? t("layout.exitFullscreen") : t("layout.fullscreen")}
           </RogueButton>
-
-          {state.combat && (
-            <div className="flex items-center gap-1 lg:hidden">
-              <div className="rounded border border-yellow-700/50 bg-yellow-950/30 px-1.5 py-1 text-[10px] font-black text-yellow-100">
-                {t("combat.energy")} {state.combat.player.energyCurrent}
-              </div>
-
-              <RogueButton
-                onClick={() => triggerMobileCombatAction("open-ink")}
-                className="!h-auto !rounded !border !border-cyan-700/60 !bg-cyan-950/25 !px-1.5 !py-1 !text-[10px] !font-black !text-cyan-100"
-              >
-                {t("combat.ink")} {state.combat.player.inkCurrent}
-              </RogueButton>
-
-              <RogueButton
-                onClick={() => triggerMobileCombatAction("open-inventory")}
-                className="!h-auto !rounded !border !border-amber-700/60 !bg-slate-900/80 !px-1.5 !py-1 !text-[10px] !font-black !text-amber-200"
-              >
-                {t("combat.inventory")} {state.usableItems?.length ?? 0}
-              </RogueButton>
-
-              <RogueButton
-                onClick={requestCombatEndTurn}
-                disabled={!canRequestCombatEndTurn}
-                className="!h-auto !rounded !border !border-emerald-300/30 !bg-emerald-600 !px-1.5 !py-1 !text-[10px] !font-black !uppercase !tracking-wide !text-white disabled:!cursor-not-allowed disabled:!border-slate-700 disabled:!bg-slate-700 disabled:!text-slate-500"
-              >
-                {t("combat.endTurn")}
-              </RogueButton>
-            </div>
-          )}
 
           {state.relicIds.length > 0 && (
             <RogueButton
@@ -401,6 +364,22 @@ export function GameLayout({
                       </p>
                       <p className="text-base font-black text-slate-100">
                         {state.combat.exhaustPile.length}
+                      </p>
+                    </RogueButton>
+                  )}
+                  {(state.usableItems?.length ?? 0) > 0 && (
+                    <RogueButton
+                      onClick={() => {
+                        triggerMobileCombatAction("open-inventory");
+                        setShowMenu(false);
+                      }}
+                      className="!h-auto !rounded !border !border-amber-700/60 !bg-slate-800 !px-2 !py-1.5 !text-left"
+                    >
+                      <p className="text-[10px] font-semibold uppercase text-amber-400/80">
+                        {t("combat.inventory")}
+                      </p>
+                      <p className="text-base font-black text-slate-100">
+                        {state.usableItems?.length ?? 0}
                       </p>
                     </RogueButton>
                   )}

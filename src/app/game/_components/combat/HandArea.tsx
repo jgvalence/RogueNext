@@ -234,7 +234,7 @@ function MobileHandCard({
       onPointerCancel={handlePointerEnd}
       onPointerLeave={handlePointerEnd}
       className={cn(
-        "bg-slate-950/96 relative flex h-[136px] w-[94px] shrink-0 cursor-pointer flex-col overflow-hidden rounded-[18px] border p-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.45)] transition-all duration-200 [@media(max-height:540px)]:h-[124px] [@media(max-height:540px)]:w-[86px]",
+        "bg-slate-950/96 relative flex h-[150px] w-[106px] shrink-0 cursor-pointer flex-col overflow-hidden rounded-[18px] border p-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.45)] transition-all duration-200 [@media(max-height:540px)]:h-[132px] [@media(max-height:540px)]:w-[94px]",
         style.border,
         isSelected &&
           (isPendingInked
@@ -270,8 +270,8 @@ function MobileHandCard({
         <div className="flex-1 px-0.5 pt-0.5">
           <p
             className={cn(
-              "pl-8 pr-4 font-black leading-[1.02] text-slate-50 [text-wrap:balance]",
-              hasInkedVariant ? "text-[13px]" : "text-[14px]"
+              "pl-8 pr-2 font-bold leading-[1.06] text-slate-50 [text-wrap:balance]",
+              hasInkedVariant ? "text-[12px]" : "text-[13px]"
             )}
             style={{
               display: "-webkit-box",
@@ -543,7 +543,7 @@ export function HandArea({
             )}
           </div>
         )}
-        <div className="flex h-[168px] w-full min-w-0 touch-pan-x items-end gap-0 overflow-x-auto overflow-y-hidden overscroll-x-contain px-1.5 pb-1 pr-1.5 [-webkit-overflow-scrolling:touch] [@media(max-height:540px)]:h-[154px]">
+        <div className="flex h-[182px] w-full min-w-0 touch-pan-x items-end gap-0 overflow-x-auto overflow-y-hidden overscroll-x-contain px-1.5 pb-1 pr-1.5 [-webkit-overflow-scrolling:touch] [@media(max-height:540px)]:h-[164px]">
           <div className="mx-auto flex h-full w-max min-w-full items-end justify-center">
             {hand.map((card, index) => {
               const def = cardDefs.get(card.definitionId);

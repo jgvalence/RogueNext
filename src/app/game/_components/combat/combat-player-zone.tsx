@@ -122,6 +122,46 @@ export function CombatPlayerZone({
           theme.playerZoneRule
         )}
       >
+        {/* ── MOBILE ACTION BAR ─────────────────────────────
+            Energy + inline InkGauge + End Turn always visible.
+            Only shown on mobile (lg:hidden).                  */}
+        <div className="mb-1.5 flex items-center gap-1.5 lg:hidden [@media(max-height:540px)]:mb-1">
+          <div className="shrink-0 rounded-lg border border-amber-600/50 bg-amber-950/35 px-2 py-1.5">
+            <span className="text-[10px] font-black leading-none text-amber-200">
+              EN {combat.player.energyCurrent}/{combat.player.energyMax}
+            </span>
+          </div>
+          <div className="min-w-0 flex-1">
+            <InkGauge
+              player={combat.player}
+              combatState={combat}
+              onUsePower={onUseInkPower}
+              unlockedPowers={unlockedInkPowers}
+              allowedPowers={allowedInkPowers}
+              compact
+              shellClassName={theme.inkGaugeShell}
+              labelClassName={theme.inkGaugeLabel}
+              fillClassName={theme.inkGaugeFill}
+              readyPowerClassName={theme.inkPowerReady}
+            />
+          </div>
+          <RogueButton
+            type="text"
+            className={cn(
+              "!h-auto !shrink-0 !rounded-lg !px-3 !py-2 !text-[11px] !font-black !uppercase !tracking-wide !transition-all",
+              isEndTurnTutorialStep &&
+                "!ring-2 !ring-emerald-300/85 !ring-offset-2 !ring-offset-slate-950",
+              isInkedCardTutorialStep &&
+                "!opacity-60 !ring-1 !ring-slate-700 !ring-offset-2 !ring-offset-slate-950",
+              endTurnClass
+            )}
+            disabled={!canEndTurn}
+            onClick={onEndTurn}
+          >
+            {t("combat.endTurn")}
+          </RogueButton>
+        </div>
+
         <div className="flex items-start gap-2 lg:gap-4">
           <div
             className={cn(
