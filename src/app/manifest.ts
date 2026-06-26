@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
       "Deckbuilder roguelike — forge ton deck, affronte les biomes, bats les boss.",
     start_url: "/",
     display: "standalone",
-    orientation: "portrait",
+    orientation: "any",
     background_color: "#020617",
     theme_color: "#020617",
     icons: [
