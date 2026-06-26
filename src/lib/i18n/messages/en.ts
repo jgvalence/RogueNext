@@ -1512,6 +1512,8 @@ export const en = {
     menu: "Menu",
     mute: "Mute",
     unmute: "Unmute",
+    vibrationOn: "Vibration: ON",
+    vibrationOff: "Vibration: OFF",
     abandonConfirm: "End this expedition now?",
     abandonRun: "End expedition",
     yourRelics: "Your relics",

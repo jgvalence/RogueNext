@@ -237,6 +237,7 @@ export function CombatBattlefield({
           markEnemyArtFailure={markEnemyArtFailure}
           isArmorTutorialStep={isArmorTutorialStep}
           aoeFlashMap={aoeFlashMap}
+          incomingDamageByEnemyId={incomingDamageByEnemyId}
         />
 
         <CombatDesktopGrid

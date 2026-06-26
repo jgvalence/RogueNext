@@ -34,6 +34,7 @@ import { useTranslation } from "react-i18next";
 import { localizeEnemyName } from "@/lib/i18n/entity-text";
 import { useGame } from "@/app/game/_providers/game-provider";
 import { GAME_CONSTANTS } from "@/game/constants";
+import { useWakeLock } from "@/app/game/_hooks/use-wake-lock";
 import {
   getFirstInkedCardInHand,
   getInkedCardTotalInkCost,
@@ -170,6 +171,7 @@ export function CombatView({
   );
 
   const isPlayerTurn = combat.phase === "PLAYER_TURN";
+  useWakeLock(combat.phase !== "COMBAT_WON" && combat.phase !== "COMBAT_LOST");
   const pendingHandOverflowExhaust = Math.max(
     0,
     combat.pendingHandOverflowExhaust ?? 0

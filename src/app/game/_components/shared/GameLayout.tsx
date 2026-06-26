@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useGame } from "../../_providers/game-provider";
 import { setSoundsEnabled } from "@/lib/sound";
 import { setMusicEnabled } from "@/lib/music";
+import { setHapticsEnabled } from "@/lib/haptics";
 import { setLocale, supportedLocales, type SupportedLocale } from "@/lib/i18n";
 import { RogueButton, RogueModal, RogueTag } from "@/components/ui/rogue";
 import { cn } from "@/lib/utils/cn";
@@ -55,11 +56,19 @@ export function GameLayout({
   const { t, i18n } = useTranslation();
   const { state, cardDefs } = useGame();
   const [muted, setMuted] = useState(false);
+  const [vibrationOn, setVibrationOn] = useState(true);
+  const [supportsVibration, setSupportsVibration] = useState(false);
   const [showRelics, setShowRelics] = useState(false);
   const [showDeckViewer, setShowDeckViewer] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    setSupportsVibration(
+      typeof navigator !== "undefined" && "vibrate" in navigator
+    );
+  }, []);
 
   useEffect(() => {
     const syncFullscreenState = () => {
@@ -96,6 +105,12 @@ export function GameLayout({
     setMuted(next);
     setSoundsEnabled(!next);
     setMusicEnabled(!next);
+  };
+
+  const toggleVibration = () => {
+    const next = !vibrationOn;
+    setVibrationOn(next);
+    setHapticsEnabled(next);
   };
 
   const toggleFullscreen = async () => {
@@ -415,6 +430,17 @@ export function GameLayout({
             >
               {muted ? t("layout.unmute") : t("layout.mute")}
             </RogueButton>
+
+            {supportsVibration && (
+              <RogueButton
+                onClick={toggleVibration}
+                className="!h-auto !w-full !rounded !border !border-slate-600 !bg-transparent !px-3 !py-2 !text-sm !font-semibold !text-slate-200 hover:!border-slate-400 hover:!text-white"
+              >
+                {vibrationOn
+                  ? t("layout.vibrationOn")
+                  : t("layout.vibrationOff")}
+              </RogueButton>
+            )}
 
             {onAbandonRun && (
               <RogueButton

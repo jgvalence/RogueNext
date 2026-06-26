@@ -1497,6 +1497,8 @@ export const fr = {
     menu: "Menu",
     mute: "Couper le son",
     unmute: "Remettre le son",
+    vibrationOn: "Vibration : ON",
+    vibrationOff: "Vibration : OFF",
     abandonConfirm: "Terminer cette expedition maintenant ?",
     abandonRun: "Terminer l'expedition",
     yourRelics: "Vos reliques",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useLayoutEffect, useMemo, useState, useEffect } from "react";
+import { vibrate } from "@/lib/haptics";
 import type { PointerEvent as ReactPointerEvent, RefObject } from "react";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
 import type {
@@ -411,6 +412,7 @@ export function HandArea({
     hand.length <= 5 ? 1.4 : hand.length <= 7 ? 1.8 : 2.2;
 
   const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const mobileWrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mobilePreviewRef = useRef<HTMLDivElement | null>(null);
   const mobilePreviewCard = useMemo(
     () => hand.find((card) => card.instanceId === mobilePreviewCardId) ?? null,
@@ -468,6 +470,41 @@ export function HandArea({
       el.style.setProperty("--ty", `${discardCy - cardCy}px`);
     });
   }, [isDiscarding, discardBtnRef]);
+
+  useLayoutEffect(() => {
+    if (!isDiscarding || !discardBtnRef?.current) return;
+    const discardRect = discardBtnRef.current.getBoundingClientRect();
+    const discardCx = discardRect.left + discardRect.width / 2;
+    const discardCy = discardRect.top + discardRect.height / 2;
+    mobileWrapperRefs.current.forEach((el) => {
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const cardCx = rect.left + rect.width / 2;
+      const cardCy = rect.top + rect.height / 2;
+      el.style.setProperty("--tx", `${discardCx - cardCx}px`);
+      el.style.setProperty("--ty", `${discardCy - cardCy}px`);
+    });
+  }, [isDiscarding, discardBtnRef]);
+
+  useLayoutEffect(() => {
+    if (!playingCardId || !enemyRowRef?.current) return;
+    const enemyRect = enemyRowRef.current.getBoundingClientRect();
+    const enemyCx = enemyRect.left + enemyRect.width / 2;
+    const enemyCy = enemyRect.top + enemyRect.height / 2;
+    const idx = hand.findIndex((c) => c.instanceId === playingCardId);
+    const mobileEl = mobileWrapperRefs.current[idx];
+    if (mobileEl) {
+      const rect = mobileEl.getBoundingClientRect();
+      mobileEl.style.setProperty(
+        "--tx",
+        `${enemyCx - (rect.left + rect.width / 2)}px`
+      );
+      mobileEl.style.setProperty(
+        "--ty",
+        `${enemyCy - (rect.top + rect.height / 2)}px`
+      );
+    }
+  }, [playingCardId, enemyRowRef, hand]);
 
   useLayoutEffect(() => {
     if (!playingCardId || !enemyRowRef?.current) return;
@@ -586,14 +623,33 @@ export function HandArea({
               const fanLiftPx = Math.max(0, 3.5 - Math.abs(fanOffset) * 0.9);
               const selectedLiftPx = isSelected ? 9 : fanLiftPx;
 
+              const isPlaying = playingCardId === card.instanceId;
+              const mobileAnimClass = isPlaying
+                ? "animate-card-play"
+                : isDiscarding
+                  ? "animate-card-discard"
+                  : "";
+
               return (
                 <div
                   key={`mobile-card-${card.instanceId}`}
-                  className="relative shrink-0 origin-bottom snap-start transition-all duration-200 ease-out"
+                  ref={(el) => {
+                    mobileWrapperRefs.current[index] = el;
+                  }}
+                  className={[
+                    "relative shrink-0 origin-bottom snap-start transition-all duration-200 ease-out",
+                    mobileAnimClass,
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                   style={{
                     marginLeft: index === 0 ? 0 : -mobileOverlapPx,
-                    transform: `translateY(-${selectedLiftPx}px) rotate(${fanRotateDeg}deg) scale(${isSelected ? 1.04 : 1})`,
                     zIndex: isSelected ? 90 : 30 + index,
+                    ...(isPlaying || isDiscarding
+                      ? {}
+                      : {
+                          transform: `translateY(-${selectedLiftPx}px) rotate(${fanRotateDeg}deg) scale(${isSelected ? 1.04 : 1})`,
+                        }),
                   }}
                 >
                   <MobileHandCard
@@ -615,8 +671,14 @@ export function HandArea({
                     onOpenPreview={() => {
                       setMobilePreviewCardId(card.instanceId);
                     }}
-                    onPlay={() => onPlayCard(card.instanceId, false)}
-                    onPlayInked={() => onPlayCard(card.instanceId, true)}
+                    onPlay={() => {
+                      vibrate(5);
+                      onPlayCard(card.instanceId, false);
+                    }}
+                    onPlayInked={() => {
+                      vibrate(5);
+                      onPlayCard(card.instanceId, true);
+                    }}
                   />
                   {isTutorialPlayableInkedCard && (
                     <div className="pointer-events-none absolute inset-0 rounded-[18px] ring-2 ring-cyan-300/85 ring-offset-2 ring-offset-slate-950" />

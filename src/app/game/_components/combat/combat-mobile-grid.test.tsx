@@ -157,6 +157,7 @@ function renderGrid(combat: CombatState) {
       markEnemyArtFailure={vi.fn()}
       isArmorTutorialStep={false}
       aoeFlashMap={new Map()}
+      incomingDamageByEnemyId={new Map()}
     />
   );
 }
