@@ -234,6 +234,10 @@ export function useCombatOutcome({
       playSound("DEFEAT", 0.8);
       const isScriptedFirstRunDefeat = isFirstRunScriptedEliteRoom(state);
 
+      const defeatEnemyId = combat.enemies.find(
+        (e) => e.currentHp > 0
+      )?.definitionId;
+
       if (!runEndedRef.current) {
         runEndedRef.current = true;
         if (isScriptedFirstRunDefeat) {
@@ -244,6 +248,7 @@ export function useCombatOutcome({
               ...buildEndRunPayload(),
               earnedResources: getFirstRunScriptedEndResources(),
               scriptedOutcome: FIRST_RUN_GUIDED_STORY_TUTORIAL_OUTCOME,
+              defeatEnemyId,
             });
 
             if (result.success) {
@@ -260,6 +265,7 @@ export function useCombatOutcome({
           runId: stateRef.current.runId,
           status: "DEFEAT",
           ...buildEndRunPayload(),
+          defeatEnemyId,
         });
       }
       setPhase("DEFEAT");

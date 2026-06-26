@@ -40,6 +40,7 @@ model User {
   runs             Run[]
   progression      UserProgression?
   pvpDeckSnapshots PvpDeckSnapshot[]
+  runSummaries     RunSummary[]
 
   @@index([username])
   @@index([email])
@@ -208,6 +209,35 @@ model PvpDeckSnapshot {
   @@index([userId])
   @@index([powerScore])
   @@map("pvp_deck_snapshots")
+}
+
+model RunSummary {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  status           String   // "VICTORY" | "DEFEAT" | "ABANDONED"
+  characterId      String
+  difficultyLevel  Int      @default(0)
+  biome            String
+  floorReached     Int
+  roomReached      Int
+  buildArchetype   String   @default("mixed") // "ink" | "armor" | "draw" | "bleed" | "poison" | "mixed"
+  defeatEnemyId    String?  // definitionId de l'ennemi qui a tué le joueur (null si victoire)
+  bossesDefeated   Json     @default("[]") // string[] de definitionIds
+  relicIds         Json     @default("[]") // string[]
+  deckSize         Int      @default(0)
+  unlockedStoryCount Int    @default(0)
+  durationMs       Int      @default(0)
+
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([status])
+  @@index([difficultyLevel])
+  @@index([buildArchetype])
+  @@index([defeatEnemyId])
+  @@map("run_summaries")
 }
 
 model UserProgression {

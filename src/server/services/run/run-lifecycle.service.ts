@@ -12,6 +12,8 @@ import {
   buildInitialRunStateForUser,
   getActiveRunSnapshotForUser,
 } from "./run-state.service";
+import { deriveRunBuildArchetype } from "@/game/engine/run-analytics";
+import { buildCardDefsMap } from "@/game/data";
 
 export type { ActiveRunSnapshot } from "./run-state.service";
 
@@ -39,6 +41,8 @@ export interface EndRunForUserInput {
   scriptedOutcome?: "FIRST_RUN_ENERGY_TUTORIAL";
   encounteredEnemies?: RunState["encounteredEnemies"];
   enemyKillCounts?: RunState["enemyKillCounts"];
+  defeatEnemyId?: string;
+  bossesDefeated?: string[];
   deckSnapshot?: DeckSnapshotInput;
 }
 
@@ -123,6 +127,44 @@ export async function endRunForUser(
       },
     });
   }
+
+  // Write analytics summary (never deleted)
+  const runState = run.state as unknown as RunState;
+  const cardDefs = buildCardDefsMap();
+  const buildArchetype = deriveRunBuildArchetype(runState.deck ?? [], cardDefs);
+  const progression = await prisma.userProgression.findUnique({
+    where: { userId: input.userId },
+    select: { unlockedStoryIds: true },
+  });
+  const unlockedStoryCount =
+    (progression?.unlockedStoryIds as string[] | null)?.length ?? 0;
+  const runDurationMs = Math.max(
+    0,
+    Math.floor(
+      input.runDurationMs ??
+        runState.activePlayMs ??
+        Date.now() - run.createdAt.getTime()
+    )
+  );
+
+  await prisma.runSummary.create({
+    data: {
+      userId: input.userId,
+      status: input.status,
+      characterId: runState.characterId ?? "scribe",
+      difficultyLevel: runState.selectedDifficultyLevel ?? 0,
+      biome: runState.currentBiome ?? "LIBRARY",
+      floorReached: runState.floor ?? 1,
+      roomReached: runState.currentRoom ?? 0,
+      buildArchetype,
+      defeatEnemyId: input.defeatEnemyId ?? null,
+      bossesDefeated: [] as string[],
+      relicIds: runState.relicIds ?? [],
+      deckSize: (runState.deck ?? []).length,
+      unlockedStoryCount,
+      durationMs: runDurationMs,
+    },
+  });
 
   await deleteRunById(input.runId);
 

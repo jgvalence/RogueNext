@@ -64,6 +64,8 @@ const endRunSchema = z.object({
     .record(z.string(), z.enum(["NORMAL", "ELITE", "BOSS"]))
     .optional(),
   enemyKillCounts: z.record(z.string(), z.number().int().min(0)).optional(),
+  defeatEnemyId: z.string().optional(),
+  bossesDefeated: z.array(z.string()).optional(),
   deckSnapshot: z
     .object({
       characterId: z.string(),
@@ -93,6 +95,8 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       scriptedOutcome: validated.scriptedOutcome,
       encounteredEnemies: validated.encounteredEnemies,
       enemyKillCounts: validated.enemyKillCounts,
+      defeatEnemyId: validated.defeatEnemyId,
+      bossesDefeated: validated.bossesDefeated,
       deckSnapshot: validated.deckSnapshot as
         | import("@/server/services/run/run-lifecycle.service").DeckSnapshotInput
         | undefined,
