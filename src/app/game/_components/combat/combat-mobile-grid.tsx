@@ -220,7 +220,8 @@ function MobileEnemyPortrait({
     VISIBLE_BUFF_TYPES.has(b.type)
   );
   const hasArmor = enemy.block > 0;
-  const armBadgeTop = firstIntent && !isDead ? "top-8" : "top-1.5";
+  const armBadgeTop =
+    (firstIntent && !isDead) || incomingDamage > 0 ? "top-8" : "top-1.5";
 
   return (
     <button
@@ -229,7 +230,7 @@ function MobileEnemyPortrait({
       data-keep-selection="true"
       onClick={onClick}
       className={cn(
-        "relative min-w-[46%] flex-1 shrink-0 snap-start overflow-hidden border text-left transition-all duration-200",
+        "relative min-w-[46%] flex-1 shrink-0 snap-start border text-left transition-all duration-200",
         cardRounding,
         isDying && "animate-enemy-death",
         isDead && !isDying
@@ -262,8 +263,8 @@ function MobileEnemyPortrait({
         />
       ))}
 
-      {/* Art — fills the card */}
-      <div className="absolute inset-0">
+      {/* Art — fills the card (overflow-hidden here so art is clipped, not the damage popups) */}
+      <div className="absolute inset-0 overflow-hidden rounded-[inherit]">
         {!enemyArtFailed ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -284,18 +285,18 @@ function MobileEnemyPortrait({
       {/* Atmospheric overlays */}
       <div
         className={cn(
-          "pointer-events-none absolute inset-0",
+          "pointer-events-none absolute inset-0 rounded-[inherit]",
           def.isBoss
             ? "bg-[radial-gradient(ellipse_at_50%_0%,rgba(120,53,15,0.35),transparent_55%)]"
             : "bg-[radial-gradient(ellipse_at_50%_0%,rgba(159,18,57,0.30),transparent_55%)]"
         )}
       />
       {/* Bottom fade so info strip is readable */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/20 to-transparent" />
+      <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-t from-slate-950/95 via-slate-950/20 to-transparent" />
 
       {/* Intent badge — top, full width */}
       {firstIntent && !isDead && (
-        <div className="absolute left-1.5 top-1.5 max-w-[calc(100%-12px)]">
+        <div className="absolute left-1.5 top-1.5 max-w-[calc(100%-12px)] [@media(max-height:400px)]:left-auto [@media(max-height:400px)]:right-1.5">
           <span
             className={cn(
               "inline-block max-w-full truncate rounded-xl border px-2 py-0.5 text-[9px] font-bold leading-tight backdrop-blur-sm",
@@ -311,7 +312,14 @@ function MobileEnemyPortrait({
 
       {/* ARM badge */}
       {hasArmor && (
-        <div className={cn("absolute right-1.5", armBadgeTop)}>
+        <div
+          className={cn(
+            "absolute",
+            "right-1.5 [@media(max-height:400px)]:left-1.5 [@media(max-height:400px)]:right-auto",
+            "[@media(max-height:400px)]:top-1.5",
+            armBadgeTop
+          )}
+        >
           <span
             className={cn(
               "rounded-full border px-1.5 py-0.5 text-[9px] font-black backdrop-blur-sm",
@@ -329,8 +337,8 @@ function MobileEnemyPortrait({
       {incomingDamage > 0 && !isDead && (
         <div
           className={cn(
-            "absolute left-1.5",
-            firstIntent && !isDead ? "top-8" : "top-1.5"
+            "absolute right-1.5 top-1.5",
+            firstIntent && !isDead && "[@media(max-height:400px)]:top-8"
           )}
         >
           <span className="animate-pulse rounded-full border border-red-400/70 bg-red-950/80 px-1.5 py-0.5 text-[9px] font-black text-red-300 backdrop-blur-sm">
@@ -340,7 +348,7 @@ function MobileEnemyPortrait({
       )}
 
       {/* Bottom info strip */}
-      <div className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-8">
+      <div className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-8 [@media(max-height:400px)]:pt-2">
         {/* Buff/debuff chips */}
         {visibleBuffs.length > 0 && (
           <div className="mb-1 flex flex-wrap gap-0.5">
@@ -381,7 +389,7 @@ function MobileEnemyPortrait({
         <MiniHpBar
           current={Math.max(0, enemy.currentHp)}
           max={enemy.maxHp}
-          className="mt-1 h-[3px]"
+          className="mt-1 h-[3px] [@media(max-height:400px)]:h-[5px]"
         />
         <p className="mt-0.5 text-[9px] font-semibold tabular-nums text-white/55">
           {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
@@ -541,7 +549,7 @@ export function CombatMobileGrid({
       {/* ── ENEMY PORTRAIT ZONE ─────────────────────────────
           Horizontal snap-scroll when 3+ enemies so each
           portrait stays readable (min ~46% of viewport).      */}
-      <div className="min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto pt-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="flex h-full gap-1.5" style={{ minWidth: "100%" }}>
           {combat.enemies.map((enemy) => {
             const def = enemyDefs.get(enemy.definitionId);
