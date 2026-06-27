@@ -1481,6 +1481,9 @@ export const fr = {
     backToLibrary: "Bibliotheque",
   },
   layout: {
+    iosInstallTitle: "Installe l'app pour jouer sans les barres du navigateur",
+    iosInstallHint: "Partager → Sur l'ecran d'accueil",
+    iosInstallDismiss: "Plus tard",
     rotate: "TOURNE",
     rotateDevice: "Tourne ton appareil",
     rotateHint: "Panlibrarium necessite le mode paysage",

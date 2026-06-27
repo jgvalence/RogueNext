@@ -1496,6 +1496,9 @@ export const en = {
     backToLibrary: "Library",
   },
   layout: {
+    iosInstallTitle: "Install the app to play without browser bars",
+    iosInstallHint: "Share → Add to Home Screen",
+    iosInstallDismiss: "Later",
     rotate: "ROTATE",
     rotateDevice: "Rotate your device",
     rotateHint: "Panlibrarium requires landscape mode",

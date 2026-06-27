@@ -64,11 +64,13 @@ export function GameLayout({
   const [showRules, setShowRules] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [supportsFullscreen, setSupportsFullscreen] = useState(false);
 
   useEffect(() => {
     setSupportsVibration(
       typeof navigator !== "undefined" && "vibrate" in navigator
     );
+    setSupportsFullscreen(Boolean(document.fullscreenEnabled));
   }, []);
 
   useEffect(() => {
@@ -142,7 +144,7 @@ export function GameLayout({
   };
 
   return (
-    <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-slate-950 text-white">
+    <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-slate-950 text-white [padding-bottom:env(safe-area-inset-bottom)] [padding-left:env(safe-area-inset-left)] [padding-right:env(safe-area-inset-right)]">
       <LandscapeRequired />
 
       <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/90 px-2 py-1.5 backdrop-blur-sm sm:px-5 sm:py-2.5 [@media(max-height:540px)]:gap-2 [@media(max-height:540px)]:px-2 [@media(max-height:540px)]:py-1">
@@ -232,13 +234,17 @@ export function GameLayout({
               {state.deck.length}
             </span>
           </RogueButton>
-          <RogueButton
-            onClick={toggleFullscreen}
-            className="!h-auto !rounded !border !border-cyan-700/70 !bg-transparent !px-2 !py-1 !text-xs !font-semibold !text-cyan-200 transition hover:!border-cyan-400 hover:!text-white"
-            title={t("layout.fullscreen")}
-          >
-            {isFullscreen ? t("layout.exitFullscreen") : t("layout.fullscreen")}
-          </RogueButton>
+          {supportsFullscreen && (
+            <RogueButton
+              onClick={toggleFullscreen}
+              className="!h-auto !rounded !border !border-cyan-700/70 !bg-transparent !px-2 !py-1 !text-xs !font-semibold !text-cyan-200 transition hover:!border-cyan-400 hover:!text-white"
+              title={t("layout.fullscreen")}
+            >
+              {isFullscreen
+                ? t("layout.exitFullscreen")
+                : t("layout.fullscreen")}
+            </RogueButton>
+          )}
 
           {state.relicIds.length > 0 && (
             <RogueButton

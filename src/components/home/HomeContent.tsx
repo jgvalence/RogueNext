@@ -6,6 +6,7 @@ import { Cinzel } from "next/font/google";
 import { useTranslation } from "react-i18next";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { LandscapeRequired } from "@/components/shared/LandscapeRequired";
+import { IOSInstallBanner } from "@/components/shared/IOSInstallBanner";
 
 const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
@@ -22,6 +23,7 @@ export function HomeContent({ isSignedIn }: HomeContentProps) {
       style={{ fontFamily: cinzel.style.fontFamily }}
     >
       <LandscapeRequired />
+      <IOSInstallBanner />
 
       {/* ── BACKGROUND ── */}
       <div className="pointer-events-none absolute inset-0">
