@@ -27,7 +27,11 @@ export default auth((req) => {
   // );
 
   // API routes that require authentication
-  if (pathname.startsWith("/api") && !pathname.startsWith("/api/auth")) {
+  if (
+    pathname.startsWith("/api") &&
+    !pathname.startsWith("/api/auth") &&
+    pathname !== "/api/version"
+  ) {
     if (!isAuthenticated) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
