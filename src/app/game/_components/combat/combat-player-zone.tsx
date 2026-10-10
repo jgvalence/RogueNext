@@ -107,10 +107,14 @@ export function CombatPlayerZone({
 }: CombatPlayerZoneProps) {
   const { t } = useTranslation();
   const theme = getCombatBiomeTheme(biome);
-  const endTurnClass = canEndTurn ? theme.endTurnReady : theme.endTurnDisabled;
+  const endTurnClass = cn(
+    "combat-end-turn",
+    canEndTurn ? theme.endTurnReady : theme.endTurnDisabled
+  );
 
   return (
     <div
+      data-player-zone="true"
       className={cn(
         "relative z-20 shrink-0 backdrop-blur-sm [@media(max-height:540px)]:border-t-slate-800/70",
         theme.playerZoneShell
@@ -125,10 +129,16 @@ export function CombatPlayerZone({
         {/* ── MOBILE ACTION BAR ─────────────────────────────
             Energy + inline InkGauge + End Turn always visible.
             Only shown on mobile (lg:hidden).                  */}
-        <div className="mb-1.5 flex items-center gap-1.5 lg:hidden [@media(max-height:540px)]:mb-1">
+        {(combat.pendingEnergyDebt ?? 0) > 0 && (
+          <p role="status" className="mb-1 text-xs text-amber-200">
+            {t("gameCard.energyDebt", { value: combat.pendingEnergyDebt })}
+          </p>
+        )}
+        <div className="combat-action-bar mb-1.5 flex items-center gap-1.5 lg:hidden [@media(max-height:540px)]:mb-1">
           <div className="shrink-0 rounded-lg border border-amber-600/50 bg-amber-950/35 px-2 py-1.5">
             <span className="text-[10px] font-black leading-none text-amber-200">
-              EN {combat.player.energyCurrent}/{combat.player.energyMax}
+              {t("combat.energy")} {combat.player.energyCurrent}/
+              {combat.player.energyMax}
             </span>
           </div>
           <div className="min-w-0 flex-1">
@@ -139,6 +149,13 @@ export function CombatPlayerZone({
               unlockedPowers={unlockedInkPowers}
               allowedPowers={allowedInkPowers}
               compact
+              onOpenPowers={() =>
+                window.dispatchEvent(
+                  new CustomEvent("game:mobile-combat-action", {
+                    detail: { action: "open-ink" },
+                  })
+                )
+              }
               shellClassName={theme.inkGaugeShell}
               labelClassName={theme.inkGaugeLabel}
               fillClassName={theme.inkGaugeFill}
@@ -165,14 +182,14 @@ export function CombatPlayerZone({
         <div className="flex items-start gap-2 lg:gap-4">
           <div
             className={cn(
-              "hidden w-40 flex-shrink-0 flex-col gap-2 lg:flex",
+              "combat-resources hidden w-40 flex-shrink-0 flex-col gap-2 lg:flex",
               (isInkTutorialStep || isInkPowersTutorialStep) &&
                 "rounded-2xl border border-cyan-400/60 bg-cyan-950/15 p-1"
             )}
           >
             <div
               className={cn(
-                "rounded-xl p-2",
+                "combat-energy-panel rounded-xl p-2",
                 theme.sidePanelShell,
                 isEnergyTutorialStep &&
                   "ring-2 ring-yellow-300/85 ring-offset-2 ring-offset-slate-950"
@@ -184,7 +201,7 @@ export function CombatPlayerZone({
                   theme.sidePanelTitle
                 )}
               >
-                Energie
+                {t("combat.energy")}
               </p>
               <EnergyOrb
                 current={combat.player.energyCurrent}
@@ -275,7 +292,7 @@ export function CombatPlayerZone({
             />
           </div>
 
-          <div className="hidden w-56 flex-shrink-0 flex-col gap-2 lg:flex">
+          <div className="combat-tools hidden w-56 flex-shrink-0 flex-col gap-2 lg:flex">
             <div className={cn("rounded-xl px-2 py-1.5", theme.sidePanelShell)}>
               <p
                 className={cn(

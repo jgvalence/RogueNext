@@ -43,25 +43,6 @@ export const starterCardDefinitions: CardDefinition[] = [
     isStarterCard: true,
     biome: "LIBRARY",
   },
-  {
-    id: "ink_surge",
-    name: "Ink Surge",
-    type: "SKILL",
-    energyCost: 1,
-    inkCost: 0,
-    targeting: "SELF",
-    rarity: "STARTER",
-    description: "Gain 3 ink.",
-    effects: [{ type: "GAIN_INK", value: 3 }],
-    inkedVariant: null,
-    upgrade: {
-      energyCost: 0,
-      description: "Gain 3 ink.",
-      effects: [{ type: "GAIN_INK", value: 3 }],
-    },
-    isStarterCard: true,
-    biome: "LIBRARY",
-  },
 
   // ─── Cartes uniques du Scribe ─────────────────────────────────────────────
   {
@@ -99,10 +80,10 @@ export const starterCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SELF",
     rarity: "STARTER",
-    description: "Gagnez 4 bouclier. Gagnez 1 encre.",
+    description: "Gagnez 4 bouclier. Gagnez 2 encre.",
     effects: [
       { type: "BLOCK", value: 4 },
-      { type: "GAIN_INK", value: 1 },
+      { type: "GAIN_INK", value: 2 },
     ],
     inkedVariant: {
       description: "Gagnez 6 bouclier. Gagnez 3 encre.",
@@ -113,10 +94,10 @@ export const starterCardDefinitions: CardDefinition[] = [
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Gagnez 6 bouclier. Gagnez 1 encre.",
+      description: "Gagnez 6 bouclier. Gagnez 2 encre.",
       effects: [
         { type: "BLOCK", value: 6 },
-        { type: "GAIN_INK", value: 1 },
+        { type: "GAIN_INK", value: 2 },
       ],
     },
     isStarterCard: true,
@@ -240,17 +221,17 @@ export const starterCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "STARTER",
-    description: "Inflige 5 dégâts. Applique 2 Poison.",
+    description: "Inflige 6 dégâts. Applique 3 Poison.",
     effects: [
-      { type: "DAMAGE", value: 5 },
-      { type: "APPLY_DEBUFF", value: 2, buff: "POISON" },
+      { type: "DAMAGE", value: 6 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
     ],
     inkedVariant: null,
     upgrade: {
-      description: "Inflige 7 dégâts. Applique 3 Poison.",
+      description: "Inflige 8 dégâts. Applique 4 Poison.",
       effects: [
-        { type: "DAMAGE", value: 7 },
-        { type: "APPLY_DEBUFF", value: 3, buff: "POISON" },
+        { type: "DAMAGE", value: 8 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "POISON" },
       ],
     },
     isStarterCard: true,
@@ -265,12 +246,22 @@ export const starterCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "ALL_ENEMIES",
     rarity: "STARTER",
-    description: "Applique 3 Saignement à tous les ennemis.",
-    effects: [{ type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 3 }],
+    description:
+      "Inflige 3 dégâts et applique 3 Saignement à tous les ennemis. Alternez Attaque et Comp?tence : gagnez 1 Encre ; tous les 3 temps, piochez 1 carte et gagnez 1 ?nergie.",
+    effects: [
+      { type: "DAMAGE", value: 3 },
+      { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 3 },
+      { type: "RHYTHM_REWARD", value: 1 },
+    ],
     inkedVariant: null,
     upgrade: {
-      description: "Applique 4 Saignement à tous les ennemis.",
-      effects: [{ type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 3 }],
+      description:
+        "Inflige 5 dégâts et applique 4 Saignement à tous les ennemis. Alternez Attaque et Comp?tence : gagnez 1 Encre ; tous les 3 temps, piochez 1 carte et gagnez 1 ?nergie.",
+      effects: [
+        { type: "DAMAGE", value: 5 },
+        { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 3 },
+      { type: "RHYTHM_REWARD", value: 1 },
+      ],
     },
     isStarterCard: true,
     biome: "LIBRARY",
@@ -280,20 +271,20 @@ export const starterCardDefinitions: CardDefinition[] = [
     id: "masque_de_bois",
     name: "Masque de Bois",
     type: "SKILL",
-    energyCost: 1,
+    energyCost: 0,
     inkCost: 0,
-    targeting: "SELF",
+    targeting: "ALL_ENEMIES",
     rarity: "STARTER",
-    description: "Gagnez 6 bouclier. Appliquez 1 Faible à tous les ennemis.",
+    description: "Gagnez 8 bouclier. Appliquez 1 Faible à tous les ennemis.",
     effects: [
-      { type: "BLOCK", value: 6 },
+      { type: "BLOCK", value: 8 },
       { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 2 },
     ],
     inkedVariant: null,
     upgrade: {
-      description: "Gagnez 8 bouclier. Appliquez 2 Faible à tous les ennemis.",
+      description: "Gagnez 10 bouclier. Appliquez 2 Faible à tous les ennemis.",
       effects: [
-        { type: "BLOCK", value: 8 },
+        { type: "BLOCK", value: 10 },
         { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
       ],
     },

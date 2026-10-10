@@ -1,24 +1,38 @@
 "use client";
 
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { Checkbox, Slider } from "antd";
 import { useTranslation } from "react-i18next";
 import { useGame } from "../../_providers/game-provider";
 import { setSoundsEnabled } from "@/lib/sound";
-import { setMusicEnabled } from "@/lib/music";
+import {
+  readAudioPreferences,
+  writeAudioPreferences,
+} from "@/lib/audio-preferences";
+import { setMusicEnabled, refreshMusicVolume } from "@/lib/music";
 import { setHapticsEnabled } from "@/lib/haptics";
 import { setLocale, supportedLocales, type SupportedLocale } from "@/lib/i18n";
-import { RogueButton, RogueModal, RogueTag } from "@/components/ui/rogue";
+import {
+  RogueButton,
+  RogueModal,
+  RogueTag,
+  RogueTooltip,
+} from "@/components/ui/rogue";
 import { cn } from "@/lib/utils/cn";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { relicDefinitions } from "@/game/data/relics";
 import { isRunConditionCardLootUnlockResourceKey } from "@/game/engine/run-conditions";
 import { DeckViewerModal } from "./DeckViewerModal";
 import { RulesModal } from "./RulesModal";
-import { LandscapeRequired } from "@/components/shared/LandscapeRequired";
 import {
   localizeRelicDescription,
   localizeRelicName,
 } from "@/lib/i18n/entity-text";
+import {
+  readCombatSpeed,
+  writeCombatSpeed,
+  type CombatSpeed,
+} from "@/lib/combat-speed";
 
 const ARCHETYPE_TAG_STYLES: Record<string, string> = {
   BLEED: "border-rose-500/50 bg-rose-500/15 text-rose-200",
@@ -31,6 +45,13 @@ const ARCHETYPE_TAG_STYLES: Record<string, string> = {
   STRENGTH: "border-orange-400/50 bg-orange-400/15 text-orange-200",
 };
 
+const RELIC_RARITY_STYLES: Record<string, string> = {
+  COMMON: "border-slate-500/70 bg-slate-700/70 text-slate-100",
+  UNCOMMON: "border-cyan-500/60 bg-cyan-950/80 text-cyan-100",
+  RARE: "border-violet-400/60 bg-violet-950/80 text-violet-100",
+  BOSS: "border-amber-400/65 bg-amber-950/80 text-amber-100",
+};
+
 function formatRunDuration(totalMs: number): string {
   const totalSeconds = Math.max(0, Math.floor(totalMs / 1000));
   const hours = Math.floor(totalSeconds / 3600);
@@ -41,6 +62,14 @@ function formatRunDuration(totalMs: number): string {
   const mm = String(minutes).padStart(2, "0");
   const ss = String(seconds).padStart(2, "0");
   return `${hh}:${mm}:${ss}`;
+}
+
+function getRelicMonogram(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length >= 2) {
+    return `${words[0]![0] ?? ""}${words[1]![0] ?? ""}`.toLocaleUpperCase();
+  }
+  return name.slice(0, 2).toLocaleUpperCase();
 }
 
 interface GameLayoutProps {
@@ -57,6 +86,8 @@ export function GameLayout({
   const { t, i18n } = useTranslation();
   const { state, cardDefs } = useGame();
   const [muted, setMuted] = useState(false);
+  const [audioLevels, setAudioLevels] = useState({ music: 1, effects: 1 });
+  const [largeText, setLargeText] = useState(false);
   const [vibrationOn, setVibrationOn] = useState(true);
   const [supportsVibration, setSupportsVibration] = useState(false);
   const [showRelics, setShowRelics] = useState(false);
@@ -65,13 +96,54 @@ export function GameLayout({
   const [showMenu, setShowMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [supportsFullscreen, setSupportsFullscreen] = useState(false);
+  const [combatSpeed, setCombatSpeed] = useState<CombatSpeed>(1);
+  const layoutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setSupportsVibration(
       typeof navigator !== "undefined" && "vibrate" in navigator
     );
     setSupportsFullscreen(Boolean(document.fullscreenEnabled));
+    setCombatSpeed(readCombatSpeed());
+    setAudioLevels(readAudioPreferences());
+    try {
+      setLargeText(localStorage.getItem("panlibrarium.largeText") === "true");
+    } catch {
+      /* Storage unavailable. */
+    }
   }, []);
+
+  const selectCombatSpeed = (speed: CombatSpeed) => {
+    setCombatSpeed(speed);
+    writeCombatSpeed(speed);
+  };
+
+  useEffect(() => {
+    const root = layoutRef.current;
+    if (!root || typeof root.getAnimations !== "function") return;
+
+    let frame = 0;
+    const applyPlaybackRate = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        for (const animation of root.getAnimations({ subtree: true })) {
+          animation.playbackRate = combatSpeed;
+        }
+      });
+    };
+    applyPlaybackRate();
+    const observer = new MutationObserver(applyPlaybackRate);
+    observer.observe(root, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["class", "style"],
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [combatSpeed]);
 
   useEffect(() => {
     const syncFullscreenState = () => {
@@ -144,10 +216,12 @@ export function GameLayout({
   };
 
   return (
-    <div className="flex h-dvh min-h-0 flex-col overflow-hidden bg-slate-950 text-white [padding-bottom:env(safe-area-inset-bottom)] [padding-left:env(safe-area-inset-left)] [padding-right:env(safe-area-inset-right)]">
-      <LandscapeRequired />
-
-      <div className="flex items-center justify-between border-b border-slate-700/60 bg-slate-900/90 px-2 py-1.5 backdrop-blur-sm sm:px-5 sm:py-2.5 [@media(max-height:540px)]:gap-2 [@media(max-height:540px)]:px-2 [@media(max-height:540px)]:py-1">
+    <div
+      data-large-text={largeText}
+      ref={layoutRef}
+      className="game-shell combat-speed-root flex h-dvh min-h-0 flex-col overflow-hidden bg-slate-950 text-white [padding-bottom:env(safe-area-inset-bottom)] [padding-left:env(safe-area-inset-left)] [padding-right:env(safe-area-inset-right)]"
+    >
+      <div className="game-topbar flex shrink-0 items-center justify-between border-b border-slate-700/60 bg-slate-900/90 px-2 py-1.5 backdrop-blur-sm sm:px-5 sm:py-2.5 [@media(max-height:540px)]:gap-2 [@media(max-height:540px)]:px-2 [@media(max-height:540px)]:py-1">
         <div className="flex items-center gap-2">
           <RogueTag
             bordered={false}
@@ -249,7 +323,7 @@ export function GameLayout({
           {state.relicIds.length > 0 && (
             <RogueButton
               onClick={() => setShowRelics((v) => !v)}
-              className="!hidden !h-auto items-center gap-1.5 !rounded !border !border-purple-700/50 !bg-transparent !px-2 !py-1 hover:!border-purple-500/70 sm:!flex"
+              className="!hidden !h-auto items-center gap-1.5 !rounded !border !border-purple-700/50 !bg-transparent !px-2 !py-1 hover:!border-purple-500/70 sm:!flex lg:!hidden"
               title={t("layout.showRelics")}
             >
               <span className="text-xs text-purple-400">
@@ -259,6 +333,64 @@ export function GameLayout({
                 {state.relicIds.length}
               </span>
             </RogueButton>
+          )}
+          {ownedRelics.length > 0 && (
+            <div
+              className="hidden items-center gap-1 lg:flex"
+              aria-label={t("layout.relics")}
+            >
+              {ownedRelics.slice(0, 5).map((relic) => {
+                const name = localizeRelicName(relic.id, relic.name);
+                const description = localizeRelicDescription(
+                  relic.id,
+                  relic.description
+                );
+                return (
+                  <RogueTooltip
+                    key={relic.id}
+                    placement="bottom"
+                    mouseEnterDelay={0.15}
+                    title={
+                      <div className="max-w-72 space-y-1 p-1">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="font-bold text-white">{name}</span>
+                          <span className="text-[10px] uppercase tracking-wider text-purple-200/70">
+                            {t(`gameCard.rarity.${relic.rarity}`, {
+                              defaultValue: relic.rarity,
+                            })}
+                          </span>
+                        </div>
+                        <p className="text-xs leading-relaxed text-slate-200">
+                          {description}
+                        </p>
+                      </div>
+                    }
+                  >
+                    <RogueButton
+                      onClick={() => setShowRelics(true)}
+                      aria-label={`${name}: ${description}`}
+                      className={cn(
+                        "!flex !h-8 !w-8 !min-w-0 !items-center !justify-center !rounded-full !border !p-0 !text-xs !font-black !shadow-sm transition hover:!-translate-y-0.5 hover:!brightness-125 focus-visible:!ring-2 focus-visible:!ring-purple-300",
+                        RELIC_RARITY_STYLES[relic.rarity] ??
+                          RELIC_RARITY_STYLES.COMMON
+                      )}
+                    >
+                      {getRelicMonogram(name)}
+                    </RogueButton>
+                  </RogueTooltip>
+                );
+              })}
+              {ownedRelics.length > 5 && (
+                <RogueTooltip placement="bottom" title={t("layout.showRelics")}>
+                  <RogueButton
+                    onClick={() => setShowRelics(true)}
+                    className="!flex !h-8 !min-w-8 !items-center !justify-center !rounded-full !border !border-purple-500/50 !bg-purple-950/80 !px-1.5 !text-[10px] !font-bold !text-purple-100 hover:!border-purple-300"
+                  >
+                    +{ownedRelics.length - 5}
+                  </RogueButton>
+                </RogueTooltip>
+              )}
+            </div>
           )}
           <RogueButton
             onClick={() => setShowMenu(true)}
@@ -270,7 +402,7 @@ export function GameLayout({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">{children}</div>
+      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">{children}</div>
 
       {showDeckViewer && (
         <DeckViewerModal
@@ -305,6 +437,68 @@ export function GameLayout({
           </div>
 
           <div className="space-y-2">
+            <div className="space-y-3 rounded border border-slate-700 p-3">
+              {(["music", "effects"] as const).map((channel) => (
+                <div key={channel} className="block text-sm text-slate-100">
+                  {t(`layout.audio.${channel}`)} :{" "}
+                  {Math.round(audioLevels[channel] * 100)} %
+                  <Slider
+                    ariaLabelForHandle={t(`layout.audio.${channel}`)}
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={audioLevels[channel]}
+                    onChange={(value) => {
+                      const next = {
+                        ...audioLevels,
+                        [channel]: value,
+                      };
+                      setAudioLevels(next);
+                      writeAudioPreferences(next);
+                      refreshMusicVolume();
+                    }}
+                  />
+                </div>
+              ))}
+              <Checkbox
+                className="!text-slate-100"
+                checked={largeText}
+                onChange={(event) => {
+                  setLargeText(event.target.checked);
+                  try {
+                    localStorage.setItem(
+                      "panlibrarium.largeText",
+                      String(event.target.checked)
+                    );
+                  } catch {
+                    /* Storage unavailable. */
+                  }
+                }}
+              >
+                {t("layout.largeText")}
+              </Checkbox>
+            </div>
+            <div className="space-y-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                {t("layout.combatSpeed")}
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {([1, 1.5, 2] as const).map((speed) => (
+                  <RogueButton
+                    key={speed}
+                    onClick={() => selectCombatSpeed(speed)}
+                    className={`!h-auto !rounded !border !px-3 !py-2 !text-sm !font-semibold ${
+                      combatSpeed === speed
+                        ? "!border-cyan-300 !bg-cyan-200 !text-slate-950"
+                        : "!border-slate-600 !bg-transparent !text-slate-200 hover:!border-slate-400"
+                    }`}
+                  >
+                    ×{speed}
+                  </RogueButton>
+                ))}
+              </div>
+            </div>
+
             <div className="space-y-2">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                 {t("common.language")}

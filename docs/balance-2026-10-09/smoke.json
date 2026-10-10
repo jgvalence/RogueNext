@@ -1,0 +1,221 @@
+{
+  "config": {
+    "numRuns": 3,
+    "difficulty": 0,
+    "biome": null,
+    "character": "griot",
+    "metaPreset": "average",
+    "seed": "balance",
+    "buildType": "rhythm",
+    "maxTurnsPerCombat": 60,
+    "writeCsv": false,
+    "verbose": false,
+    "extraStartCards": []
+  },
+  "runs": [
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 47,
+      "finalGold": 303,
+      "totalTurns": 87,
+      "damageTaken": 177,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 24,
+      "relicsGained": 13,
+      "deckSizeAtEnd": 35,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 105,
+      "finalGold": 663,
+      "totalTurns": 86,
+      "damageTaken": 302,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 24,
+      "relicsGained": 15,
+      "deckSizeAtEnd": 35,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 264,
+      "totalTurns": 48,
+      "damageTaken": 204,
+      "combats": 22,
+      "bossesDefeated": 1,
+      "cardsAdded": 17,
+      "relicsGained": 7,
+      "deckSizeAtEnd": 28,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 15,
+      "error": null
+    }
+  ],
+  "wins": 2,
+  "errors": [],
+  "draftStats": {
+    "venin_du_serpent": {
+      "offered": 17,
+      "picked": 4
+    },
+    "black_page": {
+      "offered": 7,
+      "picked": 0
+    },
+    "sacred_papyrus": {
+      "offered": 6,
+      "picked": 3
+    },
+    "ink_surge": {
+      "offered": 7,
+      "picked": 5
+    },
+    "cursed_inscription": {
+      "offered": 9,
+      "picked": 0
+    },
+    "iron_verse": {
+      "offered": 9,
+      "picked": 0
+    },
+    "frappe_maudite": {
+      "offered": 5,
+      "picked": 2
+    },
+    "starborn_omen": {
+      "offered": 21,
+      "picked": 2
+    },
+    "frost_rune_shield": {
+      "offered": 14,
+      "picked": 0
+    },
+    "coup_de_tambour": {
+      "offered": 11,
+      "picked": 2
+    },
+    "ancient_grove": {
+      "offered": 11,
+      "picked": 0
+    },
+    "scarification": {
+      "offered": 10,
+      "picked": 3
+    },
+    "kells_strike": {
+      "offered": 8,
+      "picked": 4
+    },
+    "danse_des_esprits": {
+      "offered": 5,
+      "picked": 3
+    },
+    "labyrinth": {
+      "offered": 11,
+      "picked": 2
+    },
+    "transe_vaudou": {
+      "offered": 5,
+      "picked": 0
+    },
+    "codex_strike": {
+      "offered": 7,
+      "picked": 7
+    },
+    "rituel_interdit": {
+      "offered": 3,
+      "picked": 3
+    },
+    "thorn_slash": {
+      "offered": 3,
+      "picked": 3
+    },
+    "bardic_verse": {
+      "offered": 5,
+      "picked": 4
+    },
+    "druids_breath": {
+      "offered": 1,
+      "picked": 0
+    },
+    "epic_simile": {
+      "offered": 6,
+      "picked": 2
+    },
+    "poison_herb": {
+      "offered": 3,
+      "picked": 1
+    },
+    "sun_ritual": {
+      "offered": 2,
+      "picked": 0
+    },
+    "invocation_ancestrale": {
+      "offered": 5,
+      "picked": 0
+    },
+    "cauldron_lore": {
+      "offered": 1,
+      "picked": 0
+    },
+    "iron_bard": {
+      "offered": 2,
+      "picked": 1
+    },
+    "obsidian_jab": {
+      "offered": 2,
+      "picked": 0
+    },
+    "scald_cry": {
+      "offered": 8,
+      "picked": 4
+    },
+    "shield_wall": {
+      "offered": 3,
+      "picked": 3
+    },
+    "rune_curse": {
+      "offered": 4,
+      "picked": 0
+    },
+    "berserker_charge": {
+      "offered": 3,
+      "picked": 0
+    },
+    "canopic_ward": {
+      "offered": 3,
+      "picked": 0
+    },
+    "anubis_strike": {
+      "offered": 3,
+      "picked": 2
+    },
+    "death_scroll": {
+      "offered": 2,
+      "picked": 1
+    },
+    "plague_of_words": {
+      "offered": 2,
+      "picked": 0
+    },
+    "philosophers_quill": {
+      "offered": 4,
+      "picked": 4
+    }
+  },
+  "upgradeStats": {
+    "A": 0,
+    "B": 18
+  }
+}

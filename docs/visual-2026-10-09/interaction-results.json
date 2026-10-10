@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "Read opens within viewport without playing a card",
+    "Close button closes card reading",
+    "Escape closes card reading",
+    "Long hand scrolls horizontally",
+    "Touch swipe scrolls the hand without playing a card",
+    "Ink button opens powers and closes",
+    "Select attack then enemy plays exactly one card through the game reducer",
+    "Reduced motion removes looping animation duration",
+    "Player health remains visible at 320 x 568",
+    "Player health remains visible at 667 x 375",
+    "A failed painted background falls back to the original SVG"
+  ]
+}

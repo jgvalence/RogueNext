@@ -1,12 +1,15 @@
 import type { CardDefinition, CardInstance } from "../schemas/cards";
 import type { CardArchetypeTag } from "../schemas/enums";
 import type { Effect } from "../schemas/effects";
+import { buildUpgradedCardDefinition } from "./card-upgrades";
 
 const BLOCK_EFFECT_TYPES = new Set([
   "BLOCK",
   "BLOCK_PER_CURRENT_INK",
   "BLOCK_PER_DEBUFF",
   "BLOCK_PER_EXHAUSTED_CARD",
+  "EMPTY_DRAW_PILE_BLOCK",
+  "EXACT_ENERGY_REWARD",
 ]);
 
 const INK_EFFECT_TYPES = new Set([
@@ -14,6 +17,8 @@ const INK_EFFECT_TYPES = new Set([
   "DRAIN_INK",
   "BLOCK_PER_CURRENT_INK",
   "DAMAGE_PER_CURRENT_INK",
+  "RHYTHM_REWARD",
+  "EXACT_INK_REWARD",
 ]);
 
 const EXHAUST_EFFECT_TYPES = new Set([
@@ -23,18 +28,36 @@ const EXHAUST_EFFECT_TYPES = new Set([
   "APPLY_BUFF_PER_EXHAUSTED_CARD",
 ]);
 
-function collectCardEffects(card: CardDefinition): Effect[] {
+function collectCardEffects(
+  card: CardDefinition,
+  includeUpgrades: boolean
+): Effect[] {
   return [
     ...card.effects,
     ...(card.onRandomDiscardEffects ?? []),
     ...(card.inkedVariant?.effects ?? []),
-    ...(card.upgrade?.effects ?? []),
-    ...(card.upgrade?.onRandomDiscardEffects ?? []),
-    ...(card.inkedVariant?.upgradedEffects ?? []),
+    ...(includeUpgrades ? (card.upgrade?.effects ?? []) : []),
+    ...(includeUpgrades ? (card.upgrade?.onRandomDiscardEffects ?? []) : []),
+    ...(includeUpgrades ? (card.inkedVariant?.upgradedEffects ?? []) : []),
+    ...(includeUpgrades
+      ? (card.upgradeBranches?.flatMap((branch) => [
+          ...branch.effects,
+          ...(branch.onRandomDiscardEffects ?? []),
+        ]) ?? [])
+      : []),
   ];
 }
 
 function inferTagFromEffect(effect: Effect, tags: Set<CardArchetypeTag>): void {
+  if (effect.type === "DOUBLE_POISON" || effect.buff === "POISON_BURST")
+    tags.add("POISON");
+  if (
+    effect.type === "PROPAGATE_DOT" ||
+    effect.type === "DAMAGE_PER_DOT_STACKS"
+  ) {
+    tags.add("POISON");
+    tags.add("BLEED");
+  }
   if (effect.buff === "BLEED" || effect.scalingBuff === "BLEED") {
     tags.add("BLEED");
   }
@@ -67,7 +90,11 @@ function inferTagFromEffect(effect: Effect, tags: Set<CardArchetypeTag>): void {
     tags.add("EXHAUST");
   }
 
-  if (effect.type === "DRAW_CARDS") {
+  if (
+    effect.type === "DRAW_CARDS" ||
+    effect.type === "ARCHIVE_AND_DRAW" ||
+    effect.type === "DAMAGE_PER_DRAWN_THIS_TURN"
+  ) {
     tags.add("DRAW");
   }
 
@@ -80,14 +107,17 @@ function inferTagFromEffect(effect: Effect, tags: Set<CardArchetypeTag>): void {
   }
 }
 
-export function getCardArchetypeTags(card: CardDefinition): CardArchetypeTag[] {
+export function getCardArchetypeTags(
+  card: CardDefinition,
+  includeUpgrades = true
+): CardArchetypeTag[] {
   const tags = new Set<CardArchetypeTag>(card.archetypeTags ?? []);
 
   if (card.inkCost > 0) {
     tags.add("INK");
   }
 
-  for (const effect of collectCardEffects(card)) {
+  for (const effect of collectCardEffects(card, includeUpgrades)) {
     inferTagFromEffect(effect, tags);
   }
 
@@ -104,7 +134,10 @@ export function getDeckArchetypeCounts(
     const definition = cardDefs.get(card.definitionId);
     if (!definition) continue;
 
-    for (const tag of getCardArchetypeTags(definition)) {
+    const effective = card.upgraded
+      ? buildUpgradedCardDefinition(definition, card.upgradeBranch ?? "A")
+      : definition;
+    for (const tag of getCardArchetypeTags(effective, false)) {
       counts[tag] = (counts[tag] ?? 0) + 1;
     }
   }

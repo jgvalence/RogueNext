@@ -84,6 +84,7 @@ export function DeckViewerModal({
                   definition={def}
                   instanceId={card.instanceId}
                   upgraded={card.upgraded}
+                  upgradeBranch={card.upgradeBranch ?? "A"}
                   canPlay={false}
                   size="sm"
                 />

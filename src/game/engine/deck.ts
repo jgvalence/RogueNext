@@ -27,6 +27,7 @@ export function reshuffleDiscardIntoDraw(
     ...state,
     drawPile: newDrawPile,
     discardPile: [],
+    revealedDrawCards: 0,
   };
 }
 
@@ -213,6 +214,7 @@ export function drawCards(
     current = {
       ...current,
       drawPile: current.drawPile.slice(1),
+      revealedDrawCards: Math.max(0, (current.revealedDrawCards ?? 0) - 1),
     };
     remaining--;
   }
@@ -286,10 +288,14 @@ export function drawCards(
 export function discardHand(state: CombatState): CombatState {
   const discardCards: CardInstance[] = [];
   const exhaustCards: CardInstance[] = [];
+  const keptCards: CardInstance[] = [];
+  const retained = new Set(state.retainedHandCardIds ?? []);
 
   for (const card of state.hand) {
     if (shouldExhaustAtEndOfTurn(card.definitionId)) {
       exhaustCards.push(card);
+    } else if (retained.has(card.instanceId)) {
+      keptCards.push(card);
     } else {
       discardCards.push(card);
     }
@@ -299,7 +305,8 @@ export function discardHand(state: CombatState): CombatState {
     ...state,
     discardPile: [...state.discardPile, ...discardCards],
     exhaustPile: [...state.exhaustPile, ...exhaustCards],
-    hand: [],
+    hand: keptCards,
+    retainedHandCardIds: [],
   };
 }
 

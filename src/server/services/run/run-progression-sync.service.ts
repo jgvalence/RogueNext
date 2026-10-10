@@ -21,7 +21,7 @@ import {
 } from "@/game/engine/difficulty";
 import { isInfiniteRunConditionId } from "@/game/engine/run-conditions";
 import type { RunState } from "@/game/schemas/run-state";
-import { incrementRunStatsInternal } from "@/server/actions/progression";
+import { incrementRunStatsInternal } from "@/server/services/progression-stats.service";
 import { markFirstRunGuidedStoryTutorialPending } from "@/game/engine/library-tutorial";
 
 const EMPTY_CARD_UNLOCK_PROGRESS = {
@@ -248,7 +248,8 @@ function applyScribeChoices(
 }
 
 export async function syncRunEndProgression(
-  input: SyncRunEndProgressionInput
+  input: SyncRunEndProgressionInput,
+  db: Prisma.TransactionClient = prisma
 ): Promise<void> {
   const runState = input.run.state as unknown as RunState;
   const isInfiniteRun = isInfiniteRunConditionId(
@@ -258,7 +259,7 @@ export async function syncRunEndProgression(
     ? {}
     : (input.earnedResources ?? runState.earnedResources ?? {});
 
-  const progression = await prisma.userProgression.findUnique({
+  const progression = await db.userProgression.findUnique({
     where: { userId: input.userId },
     select: { resources: true, unlockedStoryIds: true, winsByDifficulty: true },
   });
@@ -294,7 +295,11 @@ export async function syncRunEndProgression(
       );
 
   nextResources = applyScribeChoices(nextResources, runState);
-  if (input.scriptedOutcome === "FIRST_RUN_ENERGY_TUTORIAL") {
+  if (
+    input.scriptedOutcome === "FIRST_RUN_ENERGY_TUTORIAL" ||
+    (runState.firstRunScript?.enabled &&
+      (runState.earnedResources.PAGES ?? 0) >= 11)
+  ) {
     nextResources = markFirstRunGuidedStoryTutorialPending(nextResources);
   }
 
@@ -316,7 +321,7 @@ export async function syncRunEndProgression(
     mergedEnemyKillCounts
   );
 
-  await prisma.userProgression.upsert({
+  await db.userProgression.upsert({
     where: { userId: input.userId },
     create: {
       userId: input.userId,
@@ -336,8 +341,14 @@ export async function syncRunEndProgression(
         Date.now() - input.run.createdAt.getTime()
     )
   );
-  await incrementRunStatsInternal(input.userId, input.status, 1, {
-    difficultyLevel: runState.selectedDifficultyLevel ?? 0,
-    runDurationMs,
-  });
+  await incrementRunStatsInternal(
+    input.userId,
+    input.status,
+    1,
+    {
+      difficultyLevel: runState.selectedDifficultyLevel ?? 0,
+      runDurationMs,
+    },
+    db
+  );
 }

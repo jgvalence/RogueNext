@@ -1,0 +1,170 @@
+{
+  "uniqueCardIds": 275,
+  "duplicateIds": [
+    {
+      "id": "ink_surge",
+      "definitions": [
+        {
+          "isStarterCard": true,
+          "description": "Gain 3 ink.",
+          "effects": [
+            {
+              "type": "GAIN_INK",
+              "value": 3
+            }
+          ]
+        },
+        {
+          "isStarterCard": false,
+          "description": "Gain 2 Ink. Upgrade 1 random card in hand. Draw 1 card.",
+          "effects": [
+            {
+              "type": "GAIN_INK",
+              "value": 2
+            },
+            {
+              "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+              "value": 1
+            },
+            {
+              "type": "DRAW_CARDS",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "conditions": 50,
+  "items": 12,
+  "eventSamples": [
+    {
+      "difficulty": 0,
+      "counts": {
+        "scribe_7_the_other": 35,
+        "anansi_story": 32,
+        "forbidden_vault": 46,
+        "quetzalcoatl_blessing": 26,
+        "turning_house": 35,
+        "wandering_knight": 31,
+        "scribe_10_the_reveal": 27,
+        "druid_memory": 28,
+        "scribe_5_the_name": 34,
+        "scarlet_index": 34,
+        "blank_page": 27,
+        "arcane_library": 27,
+        "scribe_2_lost_words": 28,
+        "ink_fountain": 31,
+        "deep_echo": 37,
+        "sphinx_riddle": 31,
+        "wandering_scribe": 25,
+        "scribe_8_the_truth": 23,
+        "scriptorium_catalog": 34,
+        "griot_song": 38,
+        "scribe_6_the_warning": 37,
+        "xolotl_crossing": 35,
+        "loyal_scribe": 29,
+        "firebird_feather": 33,
+        "ink_familiar_encounter": 37,
+        "oracle_of_delphi": 21,
+        "valkyrie_verdict": 29,
+        "scribe_4_torn_pages": 28,
+        "scribe_9_the_choice": 29,
+        "scribe_1_first_meeting": 24,
+        "war_ledger": 38,
+        "scribe_3_familiar_face": 31
+      }
+    },
+    {
+      "difficulty": 3,
+      "counts": {
+        "scribe_7_the_other": 35,
+        "anansi_story": 32,
+        "forbidden_vault": 46,
+        "quetzalcoatl_blessing": 26,
+        "turning_house": 35,
+        "wandering_knight": 31,
+        "scribe_10_the_reveal": 27,
+        "druid_memory": 28,
+        "scribe_5_the_name": 34,
+        "scarlet_index": 34,
+        "blank_page": 27,
+        "arcane_library": 27,
+        "scribe_2_lost_words": 28,
+        "ink_fountain": 31,
+        "deep_echo": 37,
+        "sphinx_riddle": 31,
+        "wandering_scribe": 25,
+        "scribe_8_the_truth": 23,
+        "scriptorium_catalog": 34,
+        "griot_song": 38,
+        "scribe_6_the_warning": 37,
+        "xolotl_crossing": 35,
+        "loyal_scribe": 29,
+        "firebird_feather": 33,
+        "ink_familiar_encounter": 37,
+        "oracle_of_delphi": 21,
+        "valkyrie_verdict": 29,
+        "scribe_4_torn_pages": 28,
+        "scribe_9_the_choice": 29,
+        "scribe_1_first_meeting": 24,
+        "war_ledger": 38,
+        "scribe_3_familiar_face": 31
+      }
+    },
+    {
+      "difficulty": 4,
+      "counts": {
+        "anansi_story": 10,
+        "quetzalcoatl_blessing": 8,
+        "turning_house": 10,
+        "forbidden_vault": 17,
+        "lady_of_the_lake": 38,
+        "druid_memory": 11,
+        "scarlet_index": 9,
+        "blank_page": 9,
+        "scribe_2_lost_words": 9,
+        "ink_fountain": 7,
+        "kostchei_needle": 44,
+        "wandering_scribe": 11,
+        "scriptorium_catalog": 9,
+        "ruthless_scrivener": 42,
+        "nyame_trial": 48,
+        "scribe_6_the_warning": 14,
+        "forbidden_lexicon": 43,
+        "whispering_idol": 39,
+        "dreaming_gate": 44,
+        "morrigan_crow": 35,
+        "mirror_of_bronze": 38,
+        "skald_fire": 45,
+        "mysterious_tome": 46,
+        "valkyrie_verdict": 11,
+        "wandering_knight": 10,
+        "scribe_7_the_other": 7,
+        "thread_of_ariadne": 30,
+        "scribe_4_torn_pages": 5,
+        "obsidian_altar": 42,
+        "scribe_8_the_truth": 7,
+        "thoth_archives": 43,
+        "war_ledger": 11,
+        "arcane_library": 10,
+        "scribe_10_the_reveal": 8,
+        "anubis_scales": 40,
+        "deep_echo": 9,
+        "griot_song": 17,
+        "huginn_bargain": 47,
+        "scribe_9_the_choice": 12,
+        "scribe_5_the_name": 11,
+        "sphinx_riddle": 9,
+        "firebird_feather": 12,
+        "ink_familiar_encounter": 10,
+        "ancient_sarcophagus": 34,
+        "xolotl_crossing": 8,
+        "oracle_of_delphi": 8,
+        "scribe_3_familiar_face": 5,
+        "scribe_1_first_meeting": 7,
+        "loyal_scribe": 1
+      }
+    }
+  ]
+}

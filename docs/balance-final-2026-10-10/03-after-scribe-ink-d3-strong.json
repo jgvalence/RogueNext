@@ -1,0 +1,4251 @@
+{
+  "config": {
+    "numRuns": 20,
+    "difficulty": 3,
+    "biome": null,
+    "character": "scribe",
+    "metaPreset": "strong",
+    "seed": "final-pass-high",
+    "buildType": "ink",
+    "noArmorPayoffs": false,
+    "maxTurnsPerCombat": 60,
+    "writeCsv": false,
+    "verbose": false,
+    "extraStartCards": []
+  },
+  "runs": [
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 131,
+      "finalGold": 724,
+      "totalTurns": 66,
+      "damageTaken": 187,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 24,
+      "relicsGained": 14,
+      "deckSizeAtEnd": 35,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ares_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 295,
+      "totalTurns": 55,
+      "damageTaken": 191,
+      "combats": 22,
+      "bossesDefeated": 2,
+      "cardsAdded": 19,
+      "relicsGained": 6,
+      "deckSizeAtEnd": 30,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 0,
+      "error": null,
+      "defeatedBy": [
+        "stone_idol",
+        "eagle_knight",
+        "obsidian_priest",
+        "obsidian_priest"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "permafrost_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bear_claw",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 133,
+      "finalGold": 1388,
+      "totalTurns": 70,
+      "damageTaken": 164,
+      "combats": 35,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 13,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ares_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "battle_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "battle_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 73,
+      "finalGold": 957,
+      "totalTurns": 75,
+      "damageTaken": 164,
+      "combats": 34,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "battle_inscription",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "battle_inscription",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 171,
+      "finalGold": 887,
+      "totalTurns": 70,
+      "damageTaken": 268,
+      "combats": 30,
+      "bossesDefeated": 3,
+      "cardsAdded": 23,
+      "relicsGained": 13,
+      "deckSizeAtEnd": 34,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "logos_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 600,
+      "totalTurns": 56,
+      "damageTaken": 177,
+      "combats": 25,
+      "bossesDefeated": 2,
+      "cardsAdded": 20,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 31,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 1,
+      "error": null,
+      "defeatedBy": [
+        "serpent_oracle",
+        "mask_hunter",
+        "impundulu",
+        "tokoloshe"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ares_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "exploit_weakness",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "eye_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 345,
+      "totalTurns": 65,
+      "damageTaken": 258,
+      "combats": 23,
+      "bossesDefeated": 2,
+      "cardsAdded": 21,
+      "relicsGained": 5,
+      "deckSizeAtEnd": 32,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 1,
+      "error": null,
+      "defeatedBy": [
+        "cyclops",
+        "lamia",
+        "gorgon"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "heavy_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "anubis_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 449,
+      "totalTurns": 55,
+      "damageTaken": 267,
+      "combats": 27,
+      "bossesDefeated": 2,
+      "cardsAdded": 22,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 35,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 5,
+      "error": null,
+      "defeatedBy": [
+        "baobab_giant",
+        "mask_hunter",
+        "serpent_oracle",
+        "tokoloshe"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 13,
+      "finalGold": 684,
+      "totalTurns": 61,
+      "damageTaken": 279,
+      "combats": 30,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "celtic_illumination",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "war_dance",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "celtic_illumination",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancestral_verse",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 305,
+      "totalTurns": 51,
+      "damageTaken": 379,
+      "combats": 25,
+      "bossesDefeated": 2,
+      "cardsAdded": 23,
+      "relicsGained": 5,
+      "deckSizeAtEnd": 36,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 3,
+      "error": null,
+      "defeatedBy": [
+        "einherjar",
+        "shield_maiden",
+        "frost_troll"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "exploit_weakness",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 320,
+      "totalTurns": 52,
+      "damageTaken": 314,
+      "combats": 26,
+      "bossesDefeated": 2,
+      "cardsAdded": 21,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 32,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 9,
+      "error": null,
+      "defeatedBy": [
+        "flayed_cultist",
+        "stone_idol",
+        "eagle_knight",
+        "obsidian_priest"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rune_storm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "eye_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "griot_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 465,
+      "totalTurns": 54,
+      "damageTaken": 168,
+      "combats": 22,
+      "bossesDefeated": 2,
+      "cardsAdded": 19,
+      "relicsGained": 6,
+      "deckSizeAtEnd": 31,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 1,
+      "error": null,
+      "defeatedBy": [
+        "eagle_knight",
+        "stone_idol",
+        "obsidian_priest",
+        "obsidian_priest"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "logos_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 129,
+      "finalGold": 765,
+      "totalTurns": 80,
+      "damageTaken": 291,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 524,
+      "totalTurns": 58,
+      "damageTaken": 209,
+      "combats": 30,
+      "bossesDefeated": 2,
+      "cardsAdded": 25,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 36,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 11,
+      "error": null,
+      "defeatedBy": [
+        "void_tendril",
+        "byakhee",
+        "shoggoth_spawn",
+        "star_spawn"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "exploit_weakness",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "anubis_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "anubis_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 153,
+      "finalGold": 636,
+      "totalTurns": 56,
+      "damageTaken": 139,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ares_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "exploit_weakness",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_of_ancestors",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "illuminated_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 73,
+      "finalGold": 569,
+      "totalTurns": 82,
+      "damageTaken": 463,
+      "combats": 30,
+      "bossesDefeated": 3,
+      "cardsAdded": 26,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "illuminated_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "celtic_illumination",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "exploit_weakness",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "war_dance",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bestiary_normal_mask_hunter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "celtic_illumination",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 444,
+      "totalTurns": 47,
+      "damageTaken": 295,
+      "combats": 25,
+      "bossesDefeated": 2,
+      "cardsAdded": 22,
+      "relicsGained": 6,
+      "deckSizeAtEnd": 33,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 3,
+      "error": null,
+      "defeatedBy": [
+        "mask_hunter",
+        "impundulu",
+        "tokoloshe",
+        "serpent_oracle"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 18,
+      "finalGold": 700,
+      "totalTurns": 54,
+      "damageTaken": 220,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 26,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "exploit_weakness",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "xipe_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 723,
+      "totalTurns": 55,
+      "damageTaken": 241,
+      "combats": 23,
+      "bossesDefeated": 2,
+      "cardsAdded": 20,
+      "relicsGained": 6,
+      "deckSizeAtEnd": 31,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 3,
+      "error": null,
+      "defeatedBy": [
+        "eagle_knight",
+        "stone_idol",
+        "obsidian_priest",
+        "obsidian_priest"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necrotic_words",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 145,
+      "finalGold": 862,
+      "totalTurns": 76,
+      "damageTaken": 199,
+      "combats": 30,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trace_tranchant",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "parchemin_de_soin",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotation",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "shield_wall",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hieroglyph_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "saga_of_blood",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "written_prophecy",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_flow",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "mjolnir_echo",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spell_inscription",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_ink_burst",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hermes_dash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    }
+  ],
+  "wins": 10,
+  "errors": [],
+  "draftStats": {
+    "ancestral_drum": {
+      "offered": 42,
+      "picked": 0
+    },
+    "tome_strike": {
+      "offered": 67,
+      "picked": 0
+    },
+    "curse_word": {
+      "offered": 60,
+      "picked": 0
+    },
+    "ares_verse": {
+      "offered": 49,
+      "picked": 4
+    },
+    "war_dance": {
+      "offered": 33,
+      "picked": 2
+    },
+    "ink_flow": {
+      "offered": 191,
+      "picked": 65
+    },
+    "necrotic_words": {
+      "offered": 50,
+      "picked": 24
+    },
+    "sacred_ink_burst": {
+      "offered": 48,
+      "picked": 47
+    },
+    "starborn_omen": {
+      "offered": 49,
+      "picked": 0
+    },
+    "ink_surge": {
+      "offered": 64,
+      "picked": 44
+    },
+    "double_strike": {
+      "offered": 43,
+      "picked": 0
+    },
+    "exploit_weakness": {
+      "offered": 56,
+      "picked": 6
+    },
+    "hermes_dash": {
+      "offered": 59,
+      "picked": 21
+    },
+    "spell_inscription": {
+      "offered": 62,
+      "picked": 52
+    },
+    "ink_of_ancestors": {
+      "offered": 12,
+      "picked": 10
+    },
+    "rune_storm": {
+      "offered": 82,
+      "picked": 1
+    },
+    "void_quill": {
+      "offered": 69,
+      "picked": 0
+    },
+    "logos_strike": {
+      "offered": 73,
+      "picked": 2
+    },
+    "hieroglyph_strike": {
+      "offered": 51,
+      "picked": 22
+    },
+    "griot_strike": {
+      "offered": 8,
+      "picked": 1
+    },
+    "iron_will": {
+      "offered": 67,
+      "picked": 0
+    },
+    "spirit_drum": {
+      "offered": 7,
+      "picked": 0
+    },
+    "labyrinth": {
+      "offered": 45,
+      "picked": 9
+    },
+    "obsidian_quill": {
+      "offered": 84,
+      "picked": 62
+    },
+    "trickster_snare": {
+      "offered": 5,
+      "picked": 0
+    },
+    "sun_ritual": {
+      "offered": 32,
+      "picked": 0
+    },
+    "battle_inscription": {
+      "offered": 62,
+      "picked": 4
+    },
+    "heavy_strike": {
+      "offered": 67,
+      "picked": 1
+    },
+    "obsidian_jab": {
+      "offered": 16,
+      "picked": 0
+    },
+    "blood_offering": {
+      "offered": 9,
+      "picked": 0
+    },
+    "written_prophecy": {
+      "offered": 50,
+      "picked": 22
+    },
+    "saga_of_blood": {
+      "offered": 27,
+      "picked": 15
+    },
+    "olympian_guard": {
+      "offered": 18,
+      "picked": 4
+    },
+    "buffalo_charge": {
+      "offered": 1,
+      "picked": 0
+    },
+    "jaguar_pounce": {
+      "offered": 7,
+      "picked": 0
+    },
+    "xipe_shield": {
+      "offered": 6,
+      "picked": 1
+    },
+    "frost_nail": {
+      "offered": 17,
+      "picked": 0
+    },
+    "iron_samovar": {
+      "offered": 22,
+      "picked": 0
+    },
+    "winter_inscription": {
+      "offered": 8,
+      "picked": 0
+    },
+    "shield_wall": {
+      "offered": 24,
+      "picked": 1
+    },
+    "permafrost_ward": {
+      "offered": 2,
+      "picked": 1
+    },
+    "berserker_charge": {
+      "offered": 9,
+      "picked": 0
+    },
+    "bear_claw": {
+      "offered": 1,
+      "picked": 1
+    },
+    "ancient_grove": {
+      "offered": 40,
+      "picked": 22
+    },
+    "gorgons_gaze": {
+      "offered": 9,
+      "picked": 0
+    },
+    "heros_challenge": {
+      "offered": 7,
+      "picked": 0
+    },
+    "olympian_cleave": {
+      "offered": 10,
+      "picked": 0
+    },
+    "sun_codex": {
+      "offered": 2,
+      "picked": 0
+    },
+    "bestiary_normal_tzitzimitl": {
+      "offered": 3,
+      "picked": 0
+    },
+    "bestiary_elite_huitzilopochtli_enforcer": {
+      "offered": 1,
+      "picked": 0
+    },
+    "forbidden_whisper": {
+      "offered": 23,
+      "picked": 3
+    },
+    "madness_spike": {
+      "offered": 11,
+      "picked": 9
+    },
+    "void_shield": {
+      "offered": 4,
+      "picked": 0
+    },
+    "void_touch": {
+      "offered": 8,
+      "picked": 0
+    },
+    "rune_strike": {
+      "offered": 9,
+      "picked": 0
+    },
+    "thorn_slash": {
+      "offered": 49,
+      "picked": 7
+    },
+    "illuminated_shield": {
+      "offered": 3,
+      "picked": 2
+    },
+    "canopic_ward": {
+      "offered": 14,
+      "picked": 0
+    },
+    "sand_whip": {
+      "offered": 8,
+      "picked": 0
+    },
+    "eye_of_ra": {
+      "offered": 2,
+      "picked": 2
+    },
+    "anubis_strike": {
+      "offered": 11,
+      "picked": 3
+    },
+    "folk_epic": {
+      "offered": 4,
+      "picked": 0
+    },
+    "wild_gale": {
+      "offered": 7,
+      "picked": 0
+    },
+    "celtic_illumination": {
+      "offered": 4,
+      "picked": 4
+    },
+    "ancestral_verse": {
+      "offered": 1,
+      "picked": 1
+    },
+    "bestiary_normal_mask_hunter": {
+      "offered": 4,
+      "picked": 1
+    },
+    "recursive_scratch": {
+      "offered": 2,
+      "picked": 0
+    },
+    "pharaohs_curse": {
+      "offered": 3,
+      "picked": 0
+    },
+    "bestiary_normal_ushabti_servant": {
+      "offered": 2,
+      "picked": 0
+    },
+    "bestiary_normal_shield_maiden": {
+      "offered": 5,
+      "picked": 0
+    },
+    "druids_breath": {
+      "offered": 1,
+      "picked": 0
+    },
+    "mjolnir_echo": {
+      "offered": 1,
+      "picked": 1
+    },
+    "valkyries_dive": {
+      "offered": 2,
+      "picked": 0
+    }
+  },
+  "upgradeStats": {
+    "A": 63,
+    "B": 0
+  }
+}

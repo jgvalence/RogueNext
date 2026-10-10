@@ -3,7 +3,11 @@
 import { useRef, useLayoutEffect, useMemo, useState, useEffect } from "react";
 import { vibrate } from "@/lib/haptics";
 import type { PointerEvent as ReactPointerEvent, RefObject } from "react";
-import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
+import type {
+  CardInstance,
+  CardDefinition,
+  CardUpgradeBranch,
+} from "@/game/schemas/cards";
 import type {
   CardRedactionType,
   CombatState,
@@ -16,10 +20,16 @@ import {
 } from "@/game/engine/archivist";
 import { isCardWebbed } from "@/game/engine/anansi-weaver";
 import { getCardPetrifiedCostBonus } from "@/game/engine/medusa";
+import { RogueButton } from "@/components/ui/rogue";
+import { CardArtwork } from "../shared/CardArtwork";
 import { GameCard } from "./GameCard";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
-import { localizeCardName } from "@/lib/i18n/card-text";
+import {
+  localizeCardName,
+  localizeCardDescription,
+} from "@/lib/i18n/card-text";
+import { buildUpgradedCardDefinition } from "@/game/engine/card-upgrades";
 
 interface HandAreaProps {
   hand: CardInstance[];
@@ -88,10 +98,12 @@ const MOBILE_HAND_STYLES: Record<
 interface MobileHandCardProps {
   definition: CardDefinition;
   upgraded: boolean;
+  upgradeBranch?: CardUpgradeBranch | null;
   costModifier: number;
   isSelected: boolean;
   isPendingInked: boolean;
   isFrozen: boolean;
+  isRetained?: boolean;
   isPetrified: boolean;
   isWebbed: boolean;
   redactionTypes?: CardRedactionType[];
@@ -121,6 +133,7 @@ function getDisplayedCardState(
       card.instanceId,
       card.upgraded
     ),
+    upgradeBranch: card.upgradeBranch ?? "A",
     archivistCostModifier: getArchivistCardCostModifier(
       combatState,
       card.instanceId
@@ -134,10 +147,12 @@ function getDisplayedCardState(
 function MobileHandCard({
   definition,
   upgraded,
+  upgradeBranch,
   costModifier,
   isSelected,
   isPendingInked,
   isFrozen,
+  isRetained,
   isPetrified,
   isWebbed,
   redactionTypes = [],
@@ -148,15 +163,20 @@ function MobileHandCard({
   onPlayInked,
 }: MobileHandCardProps) {
   const { t } = useTranslation();
-  const style = MOBILE_HAND_STYLES[definition.type];
-  const localizedName = localizeCardName(definition, t);
-  const displayedEnergyCost = Math.max(0, definition.energyCost + costModifier);
-  const hasInkedVariant = Boolean(definition.inkedVariant);
-  const inkMarkCost = definition.inkedVariant?.inkMarkCost ?? 0;
+  const displayDefinition = upgraded
+    ? buildUpgradedCardDefinition(definition, upgradeBranch ?? "A")
+    : definition;
+  const style = MOBILE_HAND_STYLES[displayDefinition.type];
+  const localizedName = localizeCardName(displayDefinition, t);
+  const displayedEnergyCost = Math.max(
+    0,
+    displayDefinition.energyCost + costModifier
+  );
+  const hasInkedVariant = Boolean(displayDefinition.inkedVariant);
+  const inkMarkCost = displayDefinition.inkedVariant?.inkMarkCost ?? 0;
   const longPressTimeoutRef = useRef<number | null>(null);
   const longPressOriginRef = useRef<{ x: number; y: number } | null>(null);
   const suppressNextClickRef = useRef(false);
-  const suppressInkedClickRef = useRef(false);
 
   const clearLongPress = () => {
     if (longPressTimeoutRef.current !== null) {
@@ -222,6 +242,23 @@ function MobileHandCard({
   return (
     <div
       data-keep-selection="true"
+      data-mobile-hand-card="true"
+      data-card-type={displayDefinition.type}
+      data-card-rarity={displayDefinition.rarity}
+      data-card-selected={isSelected}
+      data-card-inked={isPendingInked}
+      data-has-ink={hasInkedVariant}
+      role="button"
+      tabIndex={0}
+      aria-label={`${localizedName}. ${localizeCardDescription(displayDefinition, t)}`}
+      aria-disabled={!canPlay}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          if (canPlay) onPlay();
+        }
+      }}
       onClick={() => {
         if (suppressNextClickRef.current) {
           suppressNextClickRef.current = false;
@@ -235,7 +272,7 @@ function MobileHandCard({
       onPointerCancel={handlePointerEnd}
       onPointerLeave={handlePointerEnd}
       className={cn(
-        "bg-slate-950/96 relative flex h-[150px] w-[106px] shrink-0 cursor-pointer touch-none select-none flex-col overflow-hidden rounded-[18px] border p-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.45)] transition-all duration-200 [-webkit-touch-callout:none] [@media(max-height:400px)]:h-[108px] [@media(max-height:400px)]:w-[76px] [@media(max-height:540px)]:h-[132px] [@media(max-height:540px)]:w-[94px]",
+        "bg-slate-950/96 relative flex h-[150px] w-[106px] shrink-0 cursor-pointer touch-pan-x select-none flex-col overflow-hidden rounded-[18px] border p-2 text-left shadow-[0_10px_18px_rgba(2,6,23,0.45)] transition-all duration-200 [-webkit-touch-callout:none] [@media(max-height:400px)]:!h-[108px] [@media(max-height:400px)]:!w-[76px] [@media(max-height:540px)]:h-[132px] [@media(max-height:540px)]:w-[94px]",
         style.border,
         isSelected &&
           (isPendingInked
@@ -252,14 +289,19 @@ function MobileHandCard({
     >
       <div
         className={cn(
-          "absolute inset-0 bg-gradient-to-b opacity-95",
+          "card-binding absolute inset-0 bg-gradient-to-b opacity-95",
           style.shell
         )}
       />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),transparent_18%,transparent_82%,rgba(255,255,255,0.03))]" />
 
+      <CardArtwork
+        definition={displayDefinition}
+        thumbnail
+        className="mobile-card-art pointer-events-none absolute inset-x-0 top-8 h-16 w-full object-cover object-center"
+      />
       <div className="relative z-10 flex h-full flex-col">
-        <div className="pointer-events-none absolute left-1 top-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/15 bg-black/30 text-[13px] font-black text-slate-50 shadow-[0_8px_18px_rgba(0,0,0,0.35)]">
+        <div className="card-cost pointer-events-none absolute left-1 top-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/15 bg-black/30 text-[13px] font-black text-slate-50 shadow-[0_8px_18px_rgba(0,0,0,0.35)]">
           {displayedEnergyCost}
         </div>
         {upgraded && (
@@ -285,7 +327,12 @@ function MobileHandCard({
           </p>
           {isFrozen && (
             <span className="bg-cyan-300/12 mt-1.5 inline-flex rounded-full border border-cyan-200/45 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.14em] text-cyan-50">
-              Frozen
+              {t("gameCard.labels.frozen")}
+            </span>
+          )}
+          {isRetained && (
+            <span className="mt-1 inline-flex rounded border border-emerald-300/60 bg-emerald-950 px-1 text-[9px] text-emerald-100">
+              {t("gameCard.retained")}
             </span>
           )}
           {isWebbed && (
@@ -297,7 +344,7 @@ function MobileHandCard({
           )}
           {!isFrozen && isPetrified && (
             <span className="mt-1.5 inline-flex rounded-full border border-stone-300/35 bg-stone-200/10 px-1.5 py-0.5 text-[7px] font-black uppercase tracking-[0.14em] text-stone-100">
-              Petrified
+              {t("gameCard.labels.petrified")}
             </span>
           )}
           {!isFrozen && upgraded && (
@@ -322,6 +369,17 @@ function MobileHandCard({
             redactionTypes.length === 0 && <div className="mt-1.5 h-1.5" />}
         </div>
 
+        <RogueButton
+          type="text"
+          className="mobile-card-inspect"
+          aria-label={`${t("visual.inspectCard")}: ${localizedName}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            onOpenPreview();
+          }}
+        >
+          {t("visual.inspectCard")}
+        </RogueButton>
         {hasInkedVariant ? (
           <button
             type="button"
@@ -331,28 +389,13 @@ function MobileHandCard({
               canPlayInked ? style.inkButton : style.inkButtonDisabled,
               isPendingInked && "ring-1 ring-cyan-200/70"
             )}
-            onPointerDown={(event) => {
-              event.stopPropagation();
-              suppressInkedClickRef.current = false;
-            }}
-            onPointerUp={(event) => {
-              event.stopPropagation();
-              suppressInkedClickRef.current = true;
-              triggerInkedPlay();
-            }}
-            onPointerCancel={() => {
-              suppressInkedClickRef.current = false;
-            }}
+            disabled={!canPlayInked}
             onClick={(event) => {
               event.stopPropagation();
-              if (suppressInkedClickRef.current) {
-                suppressInkedClickRef.current = false;
-                return;
-              }
               triggerInkedPlay();
             }}
           >
-            <span>Encre</span>
+            <span>{t("gameCard.labels.ink")}</span>
             <span className="inline-flex min-w-[22px] items-center justify-center rounded-full border border-cyan-100/20 bg-black/20 px-1.5 py-0.5 text-[10px] leading-none text-cyan-50">
               {inkMarkCost}
             </span>
@@ -445,12 +488,21 @@ export function HandArea({
       const target = event.target as Node | null;
       if (!target) return;
       if (mobilePreviewRef.current?.contains(target)) return;
+      // Artwork lives in a portal outside the card-reading panel.
+      if (document.querySelector(".card-art-viewer")) return;
       setMobilePreviewCardId(null);
     };
 
     document.addEventListener("pointerdown", handlePointerDown, true);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !document.querySelector(".card-art-viewer")) {
+        setMobilePreviewCardId(null);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown, true);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [mobilePreviewCardId]);
 
@@ -534,13 +586,21 @@ export function HandArea({
           <div
             data-keep-selection="true"
             ref={mobilePreviewRef}
-            className="fixed bottom-[3.75rem] left-1/2 z-[140] -translate-x-1/2 [@media(max-height:540px)]:bottom-[3.15rem]"
+            className="mobile-card-preview fixed bottom-[3.75rem] left-1/2 z-[140] -translate-x-1/2 [@media(max-height:540px)]:bottom-[3.15rem]"
           >
+            <RogueButton
+              type="text"
+              className="mobile-preview-close"
+              onClick={() => setMobilePreviewCardId(null)}
+            >
+              {t("common.close")}
+            </RogueButton>
             <GameCard
               definition={mobilePreviewDisplay?.definition ?? mobilePreviewDef}
               upgraded={
                 mobilePreviewDisplay?.upgraded ?? mobilePreviewCard.upgraded
               }
+              upgradeBranch={mobilePreviewCard.upgradeBranch ?? "A"}
               costModifier={
                 globalCostModifier +
                 (mobilePreviewDisplay?.archivistCostModifier ?? 0) +
@@ -568,19 +628,18 @@ export function HandArea({
                 onPlayCard(mobilePreviewCard.instanceId, true)
               }
               size="lg"
+              scrollable
               className="!h-[288px] !w-[176px] !cursor-default !opacity-100 shadow-[0_26px_54px_rgba(2,6,23,0.82)] !saturate-100"
             />
             {(mobilePreviewDef.targeting === "SINGLE_ENEMY" ||
               mobilePreviewDef.targeting === "SINGLE_ALLY") && (
               <p className="mt-2 text-center text-[11px] font-semibold leading-tight text-slate-100">
-                {t("combat.mobileCardPreviewTargetHint", {
-                  defaultValue: "Choisis ensuite une cible.",
-                })}
+                {t("visual.previewHint")}
               </p>
             )}
           </div>
         )}
-        <div className="flex h-[182px] w-full min-w-0 touch-pan-x items-end gap-0 overflow-x-auto overflow-y-hidden overscroll-x-contain px-1.5 pb-1 pr-1.5 [-webkit-overflow-scrolling:touch] [@media(max-height:400px)]:h-[136px] [@media(max-height:540px)]:h-[164px]">
+        <div className="mobile-hand-scroll flex h-[182px] w-full min-w-0 touch-pan-x items-end gap-0 overflow-x-auto overflow-y-hidden overscroll-x-contain px-1.5 pb-1 pr-1.5 [-webkit-overflow-scrolling:touch] [@media(max-height:400px)]:!h-[124px] [@media(max-height:540px)]:h-[164px]">
           <div className="mx-auto flex h-full w-max min-w-full items-end justify-center">
             {hand.map((card, index) => {
               const def = cardDefs.get(card.definitionId);
@@ -633,11 +692,12 @@ export function HandArea({
               return (
                 <div
                   key={`mobile-card-${card.instanceId}`}
+                  data-resting={!isPlaying && !isDiscarding}
                   ref={(el) => {
                     mobileWrapperRefs.current[index] = el;
                   }}
                   className={[
-                    "relative shrink-0 origin-bottom snap-start transition-all duration-200 ease-out",
+                    "mobile-hand-slot relative shrink-0 origin-bottom snap-start transition-all duration-200 ease-out",
                     mobileAnimClass,
                   ]
                     .filter(Boolean)
@@ -655,6 +715,7 @@ export function HandArea({
                   <MobileHandCard
                     definition={display.definition}
                     upgraded={display.upgraded}
+                    upgradeBranch={display.upgradeBranch}
                     costModifier={
                       globalCostModifier +
                       display.archivistCostModifier +
@@ -663,6 +724,9 @@ export function HandArea({
                     isSelected={isSelected}
                     isPendingInked={isSelected && pendingInked}
                     isFrozen={isFrozen}
+                    isRetained={combatState.retainedHandCardIds?.includes(
+                      card.instanceId
+                    )}
                     isPetrified={petrifiedCostBonus > 0}
                     isWebbed={isWebbed}
                     redactionTypes={display.redactionTypes}
@@ -781,6 +845,14 @@ export function HandArea({
                     : `translateX(${hoverShiftPx}px) translateY(${translateYPx}px) rotate(${rotateDeg}deg) scale(${scale})`,
               }}
               onMouseEnter={() => setHoveredCardId(card.instanceId)}
+              onFocus={() => setHoveredCardId(card.instanceId)}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  setHoveredCardId((current) =>
+                    current === card.instanceId ? null : current
+                  );
+                }
+              }}
               onMouseLeave={() => {
                 setHoveredCardId((current) =>
                   current === card.instanceId ? null : current
@@ -824,9 +896,13 @@ export function HandArea({
                   isSelected={isSelected}
                   isPendingInked={isSelected && pendingInked}
                   isFrozen={isFrozen}
+                  isRetained={combatState.retainedHandCardIds?.includes(
+                    card.instanceId
+                  )}
                   isPetrified={petrifiedCostBonus > 0}
                   isWebbed={isWebbed}
                   upgraded={display.upgraded}
+                  upgradeBranch={display.upgradeBranch}
                   detailMode={isHovered || isSelected ? "full" : "condensed"}
                   className={
                     isTutorialPlayableInkedCard

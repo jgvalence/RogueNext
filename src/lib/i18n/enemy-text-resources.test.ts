@@ -43,9 +43,7 @@ describe("enemy bestiary localization resources", () => {
     expect(localizeEnemyName("chapter_guardian", "Chapter Guardian")).toBe(
       "Gardien de chapitre"
     );
-    expect(localizeEnemyLoreEntry("chapter_guardian", 0, "")).toContain(
-      "Gardien de chapitre"
-    );
+    expect(localizeEnemyLoreEntry("chapter_guardian", 0, "")).toContain("Trois reliures");
   });
 
   it("keeps enemy definitions free of generated lore text", () => {

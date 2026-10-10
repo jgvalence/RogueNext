@@ -1,129 +1,129 @@
-import { act, renderHook } from "@testing-library/react";
+﻿import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { makeTestCombat, makeTestRunState } from "@/test/factories/game-state";
 import { useAutoSave } from "./use-auto-save";
-
-const { saveRunStateActionMock } = vi.hoisted(() => ({
-  saveRunStateActionMock: vi.fn(),
-}));
-
-vi.mock("@/server/actions/run", () => ({
-  saveRunStateAction: (...args: unknown[]) => saveRunStateActionMock(...args),
-}));
-
-describe("useAutoSave", () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-    vi.clearAllMocks();
-    saveRunStateActionMock.mockResolvedValue({ success: true });
+import { resetRunSaveSession } from "../_services/run-save-client";
+const { save } = vi.hoisted(() => ({ save: vi.fn() }));
+vi.mock("@/server/actions/run", () => ({ saveRunStateAction: save }));
+beforeEach(() => {
+  vi.useFakeTimers();
+  vi.clearAllMocks();
+  resetRunSaveSession(makeTestRunState().runId);
+  save.mockResolvedValue({ success: true, data: { saved: true } });
+});
+afterEach(() => {
+  vi.clearAllTimers();
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+});
+const tick = async (ms = 2100) => {
+  await act(async () => {
+    await vi.advanceTimersByTimeAsync(ms);
   });
-
-  afterEach(() => {
-    vi.clearAllTimers();
-    vi.useRealTimers();
-    vi.unstubAllGlobals();
-  });
-
-  it("debounces non-checkpoint state changes", () => {
-    const baseState = makeTestRunState();
-    const { rerender } = renderHook(({ state }) => useAutoSave(state), {
-      initialProps: { state: baseState },
-    });
-
-    const nextState = {
-      ...baseState,
-      gold: baseState.gold + 7,
-    };
-    rerender({ state: nextState });
-
-    expect(saveRunStateActionMock).not.toHaveBeenCalled();
-
-    act(() => {
-      vi.advanceTimersByTime(1999);
-    });
-    expect(saveRunStateActionMock).not.toHaveBeenCalled();
-
-    act(() => {
-      vi.advanceTimersByTime(1);
-    });
-
-    expect(saveRunStateActionMock).toHaveBeenCalledWith({
-      runId: nextState.runId,
-      state: nextState,
-    });
-  });
-
-  it("saves immediately when a checkpoint transition happens", () => {
-    const baseState = makeTestRunState();
-    const { rerender } = renderHook(({ state }) => useAutoSave(state), {
-      initialProps: { state: baseState },
-    });
-
-    const nextState = {
-      ...baseState,
-      combat: makeTestCombat({ phase: "COMBAT_WON" }),
-    };
-    rerender({ state: nextState });
-
-    expect(saveRunStateActionMock).toHaveBeenCalledTimes(1);
-    expect(saveRunStateActionMock).toHaveBeenCalledWith({
-      runId: nextState.runId,
-      state: nextState,
-    });
-  });
-
-  it("flushes the latest state through the keepalive endpoint on pagehide", () => {
-    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
-    vi.stubGlobal("fetch", fetchMock);
-
-    const state = makeTestRunState();
+};
+describe("autosave acknowledgements and complete snapshots", () => {
+  it("saves the final boss offer before victory finalization", async () => {
+    const state = makeTestRunState({status: "VICTORY", pendingRewards: {
+      floor: 3, room: 16, isBoss: true, isElite: false,
+      gold: 50, biomeResources: {}, cardIds: ["heavy_strike"], relicIds: [], allyIds: [],
+      bossMaxHpBonus: 10, usableItemDropDefinitionId: null,
+      rerollsRemaining: 0, rerollCounter: 0, rerollCardIds: [],
+    }});
     renderHook(() => useAutoSave(state));
-
-    act(() => {
+    await tick();
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(save.mock.calls[0]![0].state.pendingRewards.cardIds).toEqual(["heavy_strike"]);
+  });
+  it("debounces ordinary changes and increments acknowledged revisions", async () => {
+    const state = makeTestRunState();
+    const { rerender } = renderHook(({ state }) => useAutoSave(state), {
+      initialProps: { state },
+    });
+    rerender({ state: { ...state, gold: 42 } });
+    await tick(1999);
+    expect(save).not.toHaveBeenCalled();
+    await tick(1);
+    expect(save).toHaveBeenLastCalledWith({
+      runId: state.runId,
+      state: { ...state, gold: 42, saveRevision: 0 },
+    });
+    rerender({ state: { ...state, gold: 43 } });
+    await tick();
+    expect(save.mock.calls[1]![0].state.saveRevision).toBe(1);
+  });
+  it("saves checkpoint transitions immediately", async () => {
+    const state = makeTestRunState();
+    const { rerender } = renderHook(({ state }) => useAutoSave(state), {
+      initialProps: { state },
+    });
+    rerender({ state: { ...state, combat: makeTestCombat() } });
+    expect(save).toHaveBeenCalledTimes(1);
+    await tick(0);
+  });
+  it("retries returned business failures without waiting for another action", async () => {
+    save.mockResolvedValueOnce({
+      success: false,
+      error: { message: "offline" },
+    });
+    const { result } = renderHook(() => useAutoSave(makeTestRunState()));
+    await tick();
+    expect(result.current.saveError).toBe("failed");
+    await tick(5000);
+    expect(save).toHaveBeenCalledTimes(2);
+    expect(result.current.saveError).toBeNull();
+    expect(save.mock.calls[1]![0].state.saveRevision).toBe(0);
+  });
+  it("does not overwrite a conflicting tab or silently retry its revision", async () => {
+    save.mockResolvedValue({ success: true, data: { saved: false } });
+    const { result } = renderHook(() => useAutoSave(makeTestRunState()));
+    await tick();
+    expect(result.current.saveError).toBe("conflict");
+    await tick(20000);
+    expect(save).toHaveBeenCalledTimes(1);
+  });
+  it("persists ink-only, upgrade-only and inventory changes", async () => {
+    let state = makeTestRunState({ combat: makeTestCombat() });
+    const { rerender } = renderHook(({ state }) => useAutoSave(state), {
+      initialProps: { state },
+    });
+    await tick();
+    state = {
+      ...state,
+      combat: {
+        ...state.combat!,
+        player: { ...state.combat!.player, inkCurrent: 4 },
+      },
+    };
+    rerender({ state });
+    await tick();
+    state = {
+      ...state,
+      deck: state.deck.map((card, i) =>
+        i === 0 ? { ...card, upgraded: true } : card
+      ),
+      usableItemCapacity: 4,
+    };
+    rerender({ state });
+    await tick();
+    expect(save).toHaveBeenCalledTimes(3);
+  });
+  it("flushes through the authenticated keepalive endpoint", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue({ ok: true, json: async () => ({ saved: true }) });
+    vi.stubGlobal("fetch", fetchMock);
+    renderHook(() => useAutoSave(makeTestRunState()));
+    await act(async () => {
       window.dispatchEvent(new Event("pagehide"));
     });
-
-    expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/run/save",
-      expect.objectContaining({
-        method: "POST",
-        credentials: "same-origin",
-        keepalive: true,
-      })
+      expect.objectContaining({ keepalive: true, credentials: "same-origin" })
     );
-
-    const [, requestInit] = fetchMock.mock.calls[0]!;
-    const body = JSON.parse((requestInit as RequestInit).body as string);
-    expect(body.runId).toBe(state.runId);
-    expect(body.state.runId).toBe(state.runId);
   });
-
-  it("does not autosave or flush when the run is already terminal", () => {
-    const fetchMock = vi.fn().mockResolvedValue({ ok: true });
-    vi.stubGlobal("fetch", fetchMock);
-
-    const terminalState = makeTestRunState({
-      status: "VICTORY",
-    });
-
-    const { rerender } = renderHook(({ state }) => useAutoSave(state), {
-      initialProps: { state: terminalState },
-    });
-
-    rerender({
-      state: {
-        ...terminalState,
-        gold: terminalState.gold + 5,
-      },
-    });
-
-    act(() => {
-      vi.advanceTimersByTime(2500);
-      window.dispatchEvent(new Event("pagehide"));
-    });
-
-    expect(saveRunStateActionMock).not.toHaveBeenCalled();
-    expect(fetchMock).not.toHaveBeenCalled();
+  it("leaves terminal state to atomic finalization", async () => {
+    renderHook(() => useAutoSave(makeTestRunState({ status: "VICTORY" })));
+    await tick();
+    expect(save).not.toHaveBeenCalled();
   });
 });

@@ -4,7 +4,7 @@ import {
   type MutableRefObject,
   type SetStateAction,
 } from "react";
-import { endRunAction } from "@/server/actions/run";
+import { endRunAction } from "../_services/run-save-client";
 import {
   generateCombatRewards,
   type CombatRewards,
@@ -217,6 +217,14 @@ export function useCombatOutcome({
         ).cardChoices;
       });
 
+      dispatch({
+        type: "RECORD_REWARD_OFFER",
+        payload: {
+          key: `${state.floor}:${state.currentRoom}:initial`,
+          cards: combatRewards.cardChoices.map((card) => card.id),
+          relics: combatRewards.relicChoices.map((relic) => relic.id),
+        },
+      });
       playSound("VICTORY", 0.8);
       dispatch({
         type: "COMPLETE_COMBAT",
@@ -234,10 +242,6 @@ export function useCombatOutcome({
       playSound("DEFEAT", 0.8);
       const isScriptedFirstRunDefeat = isFirstRunScriptedEliteRoom(state);
 
-      const defeatEnemyId = combat.enemies.find(
-        (e) => e.currentHp > 0
-      )?.definitionId;
-
       if (!runEndedRef.current) {
         runEndedRef.current = true;
         if (isScriptedFirstRunDefeat) {
@@ -248,7 +252,6 @@ export function useCombatOutcome({
               ...buildEndRunPayload(),
               earnedResources: getFirstRunScriptedEndResources(),
               scriptedOutcome: FIRST_RUN_GUIDED_STORY_TUTORIAL_OUTCOME,
-              defeatEnemyId,
             });
 
             if (result.success) {
@@ -256,6 +259,7 @@ export function useCombatOutcome({
               return;
             }
 
+            runEndedRef.current = false;
             setPhase("DEFEAT");
           })();
           return;
@@ -265,13 +269,20 @@ export function useCombatOutcome({
           runId: stateRef.current.runId,
           status: "DEFEAT",
           ...buildEndRunPayload(),
-          defeatEnemyId,
+        }).then((result) => {
+          if (!result.success) runEndedRef.current = false;
         });
       }
       setPhase("DEFEAT");
     }
   }, [
     state,
+    dispatch,
+    setIsBossRewards,
+    setIsEliteRewards,
+    setNewBestiaryEntries,
+    setRerollGenerator,
+    setRewards,
     cardDefs,
     isInfiniteMode,
     buildEndRunPayload,

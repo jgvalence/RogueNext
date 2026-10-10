@@ -11,8 +11,8 @@ import {
 } from "../engine/run-conditions";
 
 describe("Run conditions", () => {
-  it("defines 51 total starting options (including boss starts)", () => {
-    expect(runConditionDefinitions).toHaveLength(51);
+  it("defines 50 total starting options (including boss starts)", () => {
+    expect(runConditionDefinitions).toHaveLength(50);
   });
 
   it("ensures each boss start option has a unique mechanic signature", () => {

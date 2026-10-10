@@ -50,7 +50,7 @@ export function MobileInkPanelOverlay({
       <div
         data-keep-selection="true"
         className={cn(
-          "w-full max-w-sm rounded-xl border p-3 shadow-2xl",
+          "mobile-powers-panel max-h-[calc(100dvh-24px)] w-full max-w-sm overflow-y-auto rounded-xl border p-3 shadow-2xl",
           theme.drawerShell
         )}
         onClick={(event) => event.stopPropagation()}
@@ -62,6 +62,7 @@ export function MobileInkPanelOverlay({
           )}
         />
         <InkGauge
+          showDescriptions
           player={combat.player}
           combatState={combat}
           onUsePower={onUsePower}

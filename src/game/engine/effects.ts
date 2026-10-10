@@ -1,6 +1,7 @@
 import type { CombatState } from "../schemas/combat-state";
 import type { CardDefinition } from "../schemas/cards";
 import type { Effect } from "../schemas/effects";
+import { GAME_CONSTANTS } from "../constants";
 import type {
   PlayerState,
   EnemyState,
@@ -83,6 +84,8 @@ export interface EffectContext {
   drawReason?: string;
   cardDefs?: Map<string, CardDefinition>;
   sourceCardInstanceId?: string;
+  /** Resource balance immediately after paying the card's energy cost. */
+  energyAfterCardCost?: number;
 }
 
 const WEAK_ATTACK_THORNS_RETRIGGER_COUNTER = "weak_attack_thorns_retrigger";
@@ -1814,11 +1817,19 @@ export function resolveEffect(
         energyCurrent: p.energyCurrent + effect.value,
       }));
 
-    case "GAIN_INK":
-      return updatePlayer(state, (p) => ({
-        ...p,
-        inkCurrent: Math.min(p.inkMax, p.inkCurrent + effect.value),
-      }));
+    case "GAIN_INK": {
+      const gained = Math.max(
+        0,
+        Math.min(effect.value, state.player.inkMax - state.player.inkCurrent)
+      );
+      return {
+        ...updatePlayer(state, (p) => ({
+          ...p,
+          inkCurrent: Math.min(p.inkMax, p.inkCurrent + effect.value),
+        })),
+        analyticsInkGenerated: (state.analyticsInkGenerated ?? 0) + gained,
+      };
+    }
 
     case "GAIN_STRENGTH": {
       if (getFriendlySupportTarget(ctx.source, ctx.target) !== "player") {
@@ -1843,6 +1854,14 @@ export function resolveEffect(
     case "APPLY_BUFF":
     case "APPLY_DEBUFF": {
       if (!effect.buff) return state;
+      // A card can attack an enemy and grant a positive buff to its owner.
+      // As with Block/Heal, positive player support follows the friendly target.
+      if (effect.type === "APPLY_BUFF" && ctx.source === "player") {
+        ctx = {
+          ...ctx,
+          target: getFriendlySupportTarget(ctx.source, ctx.target),
+        };
+      }
       const sourceEnemyId =
         typeof ctx.source === "object" && ctx.source.type === "enemy"
           ? ctx.source.instanceId
@@ -2066,6 +2085,26 @@ export function resolveEffect(
     case "FREEZE_HAND_CARDS":
       return freezeCardsInHand(state, Math.max(0, Math.floor(effect.value)));
 
+    case "RETAIN_CARDS": {
+      const retained = new Set(state.retainedHandCardIds ?? []);
+      const candidates = state.hand.filter(
+        (card) =>
+          card.instanceId !== ctx.sourceCardInstanceId &&
+          !isClogCardDefinitionId(card.definitionId) &&
+          !retained.has(card.instanceId)
+      );
+      for (
+        let i = 0;
+        i < Math.max(0, Math.floor(effect.value)) && candidates.length;
+        i++
+      ) {
+        const picked = rng.pick(candidates);
+        retained.add(picked.instanceId);
+        candidates.splice(candidates.indexOf(picked), 1);
+      }
+      return { ...state, retainedHandCardIds: [...retained] };
+    }
+
     case "NEXT_DRAW_TO_DISCARD_THIS_TURN":
       return {
         ...state,
@@ -2146,6 +2185,23 @@ export function resolveEffect(
       );
 
     case "DAMAGE_PER_DOT_STACKS": {
+      if (ctx.target === "all_enemies") {
+        return state.enemies
+          .filter((enemy) => enemy.currentHp > 0)
+          .reduce(
+            (current, enemy) =>
+              resolveEffect(
+                current,
+                effect,
+                {
+                  ...ctx,
+                  target: { type: "enemy", instanceId: enemy.instanceId },
+                },
+                rng
+              ),
+            state
+          );
+      }
       const dotTarget = ctx.target;
       if (typeof dotTarget !== "object" || dotTarget.type !== "enemy") {
         return state;
@@ -2168,6 +2224,190 @@ export function resolveEffect(
 
     case "NEXT_CARD_DOUBLE_DAMAGE":
       return { ...state, nextCardDoubleDamage: true as const };
+
+    case "RHYTHM_REWARD": {
+      const sourceCard = ctx.sourceCardInstanceId
+        ? state.hand.find(
+            (card) => card.instanceId === ctx.sourceCardInstanceId
+          )
+        : undefined;
+      const sourceDefinition = sourceCard
+        ? ctx.cardDefs?.get(sourceCard.definitionId)
+        : undefined;
+      const alternates = Boolean(
+        sourceDefinition &&
+        ((sourceDefinition.type === "ATTACK" &&
+          state.lastPlayedCardType === "SKILL") ||
+          (sourceDefinition.type === "SKILL" &&
+            state.lastPlayedCardType === "ATTACK"))
+      );
+      if (!alternates) return { ...state, rhythmStreak: 0 };
+      const nextStreak = (state.rhythmStreak ?? 0) + 1;
+      let next = resolveEffect(
+        state,
+        { type: "GAIN_INK", value: Math.max(1, effect.value) },
+        ctx,
+        rng
+      );
+      if (nextStreak % 3 === 0) {
+        next = drawCards(next, 1, rng, "PLAYER", "RHYTHM_REFRAIN");
+        next = resolveEffect(next, { type: "GAIN_ENERGY", value: 1 }, ctx, rng);
+      }
+      return { ...next, rhythmStreak: nextStreak };
+    }
+
+    case "TAKE_ENERGY_DEBT":
+      return {
+        ...state,
+        pendingEnergyDebt:
+          (state.pendingEnergyDebt ?? 0) +
+          Math.max(0, Math.floor(effect.value)),
+        player: {
+          ...state.player,
+          energyCurrent: state.player.energyCurrent + Math.max(0, effect.value),
+        },
+      };
+
+    case "COPY_LAST_CARD_TO_HAND": {
+      if (!state.lastPlayedCardDefinitionId) return state;
+      const copy = {
+        instanceId: nanoid(),
+        definitionId: state.lastPlayedCardDefinitionId,
+        upgraded: false,
+      };
+      return state.hand.length < GAME_CONSTANTS.MAX_HAND_SIZE
+        ? { ...state, hand: [...state.hand, copy] }
+        : { ...state, discardPile: [...state.discardPile, copy] };
+    }
+
+    case "TOPDECK_FROM_DISCARD": {
+      const candidates = state.discardPile.filter(
+        (card) => !isClogCardDefinitionId(card.definitionId)
+      );
+      if (candidates.length === 0) return state;
+      const picked = rng.pick(candidates);
+      return {
+        ...state,
+        discardPile: state.discardPile.filter(
+          (card) => card.instanceId !== picked.instanceId
+        ),
+        drawPile: [picked, ...state.drawPile],
+      };
+    }
+
+    case "ARCHIVE_AND_DRAW": {
+      const candidates = state.hand.filter(
+        (card) =>
+          card.instanceId !== ctx.sourceCardInstanceId &&
+          !isClogCardDefinitionId(card.definitionId)
+      );
+      if (candidates.length === 0) return state;
+      const picked = rng.pick(candidates);
+      const archived = {
+        ...picked,
+        upgraded: true,
+        upgradeBranch: picked.upgradeBranch ?? ("A" as const),
+      };
+      const withoutCard = {
+        ...state,
+        hand: state.hand.filter(
+          (card) => card.instanceId !== picked.instanceId
+        ),
+        archivedCards: [...(state.archivedCards ?? []), archived],
+      };
+      return drawCards(
+        withoutCard,
+        Math.max(1, effect.value),
+        rng,
+        "PLAYER",
+        "ARCHIVE_REPLACEMENT"
+      );
+    }
+
+    case "REVEAL_AND_REVERSE_TOP": {
+      const count = Math.min(Math.max(0, effect.value), state.drawPile.length);
+      if (count < 2) {
+        return { ...state, revealedDrawCards: count };
+      }
+      return {
+        ...state,
+        drawPile: [
+          ...state.drawPile.slice(0, count).reverse(),
+          ...state.drawPile.slice(count),
+        ],
+        revealedDrawCards: count,
+      };
+    }
+
+    case "EMPTY_DRAW_PILE_BLOCK":
+      return state.drawPile.length === 0
+        ? applyBlockToTarget(
+            state,
+            "player",
+            effect.value,
+            sourceStats.focus,
+            ctx.source
+          )
+        : state;
+
+    case "PROPAGATE_DOT": {
+      if (typeof ctx.target !== "object" || ctx.target.type !== "enemy")
+        return state;
+      const targetInstanceId = ctx.target.instanceId;
+      const sourceEnemy = state.enemies.find(
+        (enemy) => enemy.instanceId === targetInstanceId
+      );
+      if (!sourceEnemy) return state;
+      const poison = getBuffStacks(sourceEnemy.buffs, "POISON");
+      const bleed = getBuffStacks(sourceEnemy.buffs, "BLEED");
+      if (poison + bleed === 0) return state;
+      return {
+        ...state,
+        enemies: state.enemies.map((enemy) =>
+          enemy.instanceId === sourceEnemy.instanceId || enemy.currentHp <= 0
+            ? enemy
+            : {
+                ...enemy,
+                buffs: applyBuff(
+                  applyBuff(
+                    enemy.buffs,
+                    "POISON",
+                    Math.max(
+                      0,
+                      Math.ceil(poison * effect.value) -
+                        getBuffStacks(enemy.buffs, "POISON")
+                    )
+                  ),
+                  "BLEED",
+                  Math.max(
+                    0,
+                    Math.ceil(bleed * effect.value) -
+                      getBuffStacks(enemy.buffs, "BLEED")
+                  )
+                ),
+              }
+        ),
+      };
+    }
+
+    case "EXACT_ENERGY_REWARD":
+      return (ctx.energyAfterCardCost ?? state.player.energyCurrent) === 0
+        ? applyBlockToTarget(
+            state,
+            "player",
+            effect.value,
+            sourceStats.focus,
+            ctx.source
+          )
+        : state;
+
+    case "EXACT_INK_REWARD":
+      return state.player.inkCurrent === 0
+        ? updatePlayer(state, (player) => ({
+            ...player,
+            energyCurrent: player.energyCurrent + effect.value,
+          }))
+        : state;
 
     case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND": {
       const hasUpgraded = state.hand.some((c) => c.upgraded);

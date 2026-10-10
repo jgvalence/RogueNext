@@ -1,189 +1,109 @@
-"use client";
-
-import { useEffect, useRef } from "react";
+﻿"use client";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { RunState } from "@/game/schemas/run-state";
-import { saveRunStateAction } from "@/server/actions/run";
+import {
+  persistRunState,
+  SaveConflictError,
+} from "../_services/run-save-client";
 
-const DEBOUNCE_MS = 2000;
-
-function isTerminalRunStatus(status: RunState["status"]): boolean {
-  return status === "VICTORY" || status === "DEFEAT" || status === "ABANDONED";
-}
-
-function buildMapCompletionSignature(state: RunState): string {
-  return state.map
-    .map((slot) => slot.map((room) => (room.completed ? "1" : "0")).join(""))
-    .join("|");
-}
-
-function buildAutoSaveStateKey(state: RunState): string {
-  return JSON.stringify({
-    floor: state.floor,
-    currentRoom: state.currentRoom,
-    mapCompletion: buildMapCompletionSignature(state),
-    gold: state.gold,
-    playerCurrentHp: state.playerCurrentHp,
-    deckLength: state.deck.length,
-    relicIds: state.relicIds,
-    status: state.status,
-    combat: state.combat
-      ? {
-          phase: state.combat.phase,
-          turnNumber: state.combat.turnNumber,
-          playerCurrentHp: state.combat.player.currentHp,
-          playerBlock: state.combat.player.block,
-          enemySnapshot: state.combat.enemies.map((enemy) => ({
-            instanceId: enemy.instanceId,
-            currentHp: enemy.currentHp,
-            block: enemy.block,
-            intentIndex: enemy.intentIndex,
-          })),
-          handIds: state.combat.hand.map((card) => card.instanceId),
-          drawPileLength: state.combat.drawPile.length,
-          discardPileLength: state.combat.discardPile.length,
-          exhaustPileLength: state.combat.exhaustPile.length,
-        }
-      : null,
-  });
-}
-
+const terminal = (state: RunState) =>
+  (state.status !== "IN_PROGRESS" &&
+    !(state.status === "VICTORY" && state.pendingRewards)) ||
+  state.combat?.phase === "COMBAT_LOST";
+const stateKey = (state: RunState) => JSON.stringify(state);
+const checkpoint = (state: RunState) =>
+  JSON.stringify([
+    state.floor,
+    state.currentRoom,
+    state.status,
+    state.pendingRewards,
+    state.merchantCheckpoint,
+    state.map,
+    state.combat === null,
+    state.combat?.phase === "COMBAT_WON",
+    state.combat?.phase === "COMBAT_LOST",
+  ]);
 export function useAutoSave(
   state: RunState,
   buildStateSnapshot?: (state: RunState) => RunState
 ) {
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastSavedRef = useRef<string>("");
-  const lastSavedActivePlayMsRef = useRef<number>(state.activePlayMs ?? 0);
-  const latestStateRef = useRef(state);
-  const latestStateKeyRef = useRef(buildAutoSaveStateKey(state));
-  const previousStateRef = useRef(state);
-
-  latestStateRef.current = state;
-  latestStateKeyRef.current = buildAutoSaveStateKey(state);
-
-  useEffect(() => {
-    if (isTerminalRunStatus(state.status)) {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
+  const [saveError, setSaveError] = useState<
+    "offline" | "failed" | "conflict" | null
+  >(null);
+  const latest = useRef(state);
+  const buildSnapshot = useRef(buildStateSnapshot);
+  const confirmed = useRef("");
+  const previousCheckpoint = useRef(checkpoint(state));
+  const retryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const mounted = useRef(true);
+  latest.current = state;
+  buildSnapshot.current = buildStateSnapshot;
+  const save = useCallback(async (keepalive = false) => {
+    const current = latest.current;
+    if (terminal(current)) return;
+    const snapshot = buildSnapshot.current?.(current) ?? current;
+    const key = stateKey(current);
+    if (key === confirmed.current && !keepalive) return;
+    try {
+      await persistRunState(snapshot, keepalive);
+      confirmed.current = key;
+      if (mounted.current) setSaveError(null);
+    } catch (error) {
+      if (!mounted.current) return;
+      const conflict = error instanceof SaveConflictError;
+      setSaveError(
+        conflict
+          ? "conflict"
+          : navigator.onLine === false
+            ? "offline"
+            : "failed"
+      );
+      if (!conflict && !keepalive) {
+        if (retryTimer.current) clearTimeout(retryTimer.current);
+        retryTimer.current = setTimeout(() => {
+          void save();
+        }, 5000);
       }
-      previousStateRef.current = state;
+    }
+  }, []);
+  useEffect(() => {
+    const next = checkpoint(state);
+    const immediate = next !== previousCheckpoint.current;
+    previousCheckpoint.current = next;
+    if (terminal(state)) return;
+    if (immediate) {
+      void save();
       return;
     }
-
-    const previousState = previousStateRef.current;
-    const stateKey = latestStateKeyRef.current;
-    const previousMapCompletion = buildMapCompletionSignature(previousState);
-    const currentMapCompletion = buildMapCompletionSignature(state);
-    const enteredOrLeftCombat =
-      (previousState.combat === null) !== (state.combat === null);
-    const reachedCombatOutcome =
-      previousState.combat?.phase !== state.combat?.phase &&
-      (state.combat?.phase === "COMBAT_WON" ||
-        state.combat?.phase === "COMBAT_LOST");
-    const isCheckpointTransition =
-      previousState.floor !== state.floor ||
-      previousState.currentRoom !== state.currentRoom ||
-      previousMapCompletion !== currentMapCompletion ||
-      previousState.status !== state.status ||
-      enteredOrLeftCombat ||
-      reachedCombatOutcome;
-
-    previousStateRef.current = state;
-
-    if (stateKey === lastSavedRef.current) return;
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    if (isCheckpointTransition) {
-      const snapshotState = buildStateSnapshot
-        ? buildStateSnapshot(state)
-        : state;
-      void saveRunStateAction({
-        runId: snapshotState.runId,
-        state: snapshotState,
-      })
-        .then(() => {
-          lastSavedRef.current = stateKey;
-          lastSavedActivePlayMsRef.current = snapshotState.activePlayMs ?? 0;
-        })
-        .catch((error) => {
-          console.error("Checkpoint save failed:", error);
-        });
-      return;
-    }
-
-    timeoutRef.current = setTimeout(async () => {
-      try {
-        const snapshotState = buildStateSnapshot
-          ? buildStateSnapshot(state)
-          : state;
-        await saveRunStateAction({
-          runId: snapshotState.runId,
-          state: snapshotState,
-        });
-        lastSavedRef.current = stateKey;
-        lastSavedActivePlayMsRef.current = snapshotState.activePlayMs ?? 0;
-      } catch (error) {
-        console.error("Auto-save failed:", error);
-      }
-    }, DEBOUNCE_MS);
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [state]);
-
+    const timer = setTimeout(() => {
+      void save();
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [state, save]);
   useEffect(() => {
-    const flushLatestState = () => {
-      const latestState = latestStateRef.current;
-      if (isTerminalRunStatus(latestState.status)) {
-        return;
-      }
-      const latestStateKey = latestStateKeyRef.current;
-      const snapshotState = buildStateSnapshot
-        ? buildStateSnapshot(latestState)
-        : latestState;
-      const snapshotActivePlayMs = snapshotState.activePlayMs ?? 0;
-      if (
-        latestStateKey === lastSavedRef.current &&
-        snapshotActivePlayMs <= lastSavedActivePlayMsRef.current
-      ) {
-        return;
-      }
-
-      void fetch("/api/run/save", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "same-origin",
-        keepalive: true,
-        body: JSON.stringify({
-          runId: snapshotState.runId,
-          state: snapshotState,
-        }),
-      }).catch((error) => {
-        console.error("Auto-save flush failed:", error);
-      });
+    mounted.current = true;
+    const flush = () => {
+      void save(true);
     };
-
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        flushLatestState();
-      }
+    const visibility = () => {
+      if (document.visibilityState === "hidden") flush();
     };
-
-    window.addEventListener("pagehide", flushLatestState);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
+    const online = () => {
+      void save();
+    };
+    const offline = () => setSaveError("offline");
+    window.addEventListener("pagehide", flush);
+    window.addEventListener("online", online);
+    window.addEventListener("offline", offline);
+    document.addEventListener("visibilitychange", visibility);
     return () => {
-      window.removeEventListener("pagehide", flushLatestState);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      mounted.current = false;
+      if (retryTimer.current) clearTimeout(retryTimer.current);
+      window.removeEventListener("pagehide", flush);
+      window.removeEventListener("online", online);
+      window.removeEventListener("offline", offline);
+      document.removeEventListener("visibilitychange", visibility);
     };
-  }, [buildStateSnapshot]);
+  }, [save]);
+  return { saveError, retrySave: () => save() };
 }

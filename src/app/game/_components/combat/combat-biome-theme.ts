@@ -27,6 +27,86 @@ export interface CombatBiomeTheme {
   drawerClose: string;
 }
 
+export interface CombatSceneDepthTheme {
+  horizon: string;
+  ground: string;
+  groundLight: string;
+  contactShadow: string;
+  motes: string;
+}
+
+const COMBAT_SCENE_DEPTH_THEMES: Record<BiomeType, CombatSceneDepthTheme> = {
+  LIBRARY: {
+    horizon: "from-transparent via-amber-200/10 to-amber-950/30",
+    ground: "from-[#16100b]/20 via-[#120d09]/72 to-[#07090d]",
+    groundLight: "from-amber-300/14 via-amber-700/5 to-transparent",
+    contactShadow: "before:bg-amber-950/70",
+    motes: "bg-amber-200/45",
+  },
+  VIKING: {
+    horizon: "from-transparent via-cyan-100/10 to-sky-950/32",
+    ground: "from-[#102737]/18 via-[#0a1a27]/74 to-[#050a12]",
+    groundLight: "from-cyan-200/13 via-sky-700/5 to-transparent",
+    contactShadow: "before:bg-sky-950/75",
+    motes: "bg-cyan-100/50",
+  },
+  GREEK: {
+    horizon: "from-transparent via-sky-100/11 to-indigo-950/30",
+    ground: "from-[#252239]/18 via-[#15172b]/74 to-[#080a13]",
+    groundLight: "from-yellow-200/12 via-sky-600/5 to-transparent",
+    contactShadow: "before:bg-indigo-950/70",
+    motes: "bg-yellow-100/45",
+  },
+  EGYPTIAN: {
+    horizon: "from-transparent via-yellow-100/12 to-orange-950/32",
+    ground: "from-[#4a2a10]/18 via-[#291608]/75 to-[#0c0807]",
+    groundLight: "from-yellow-200/16 via-orange-700/6 to-transparent",
+    contactShadow: "before:bg-orange-950/75",
+    motes: "bg-yellow-200/55",
+  },
+  LOVECRAFTIAN: {
+    horizon: "from-transparent via-emerald-100/8 to-violet-950/35",
+    ground: "from-[#13262a]/16 via-[#11172a]/76 to-[#070811]",
+    groundLight: "from-emerald-200/10 via-violet-600/7 to-transparent",
+    contactShadow: "before:bg-violet-950/75",
+    motes: "bg-emerald-200/45",
+  },
+  AZTEC: {
+    horizon: "from-transparent via-orange-100/10 to-emerald-950/28",
+    ground: "from-[#352211]/18 via-[#21170b]/75 to-[#0c0907]",
+    groundLight: "from-orange-200/14 via-emerald-700/5 to-transparent",
+    contactShadow: "before:bg-orange-950/75",
+    motes: "bg-orange-200/50",
+  },
+  CELTIC: {
+    horizon: "from-transparent via-lime-100/9 to-emerald-950/30",
+    ground: "from-[#18301d]/16 via-[#102116]/75 to-[#070c09]",
+    groundLight: "from-lime-200/11 via-emerald-700/6 to-transparent",
+    contactShadow: "before:bg-emerald-950/75",
+    motes: "bg-lime-200/45",
+  },
+  RUSSIAN: {
+    horizon: "from-transparent via-sky-100/12 to-rose-950/28",
+    ground: "from-[#27263b]/17 via-[#19192c]/76 to-[#090912]",
+    groundLight: "from-sky-100/13 via-rose-700/5 to-transparent",
+    contactShadow: "before:bg-slate-950/80",
+    motes: "bg-sky-100/55",
+  },
+  AFRICAN: {
+    horizon: "from-transparent via-amber-100/11 to-orange-950/32",
+    ground: "from-[#422515]/18 via-[#28160e]/75 to-[#0d0807]",
+    groundLight: "from-amber-200/15 via-orange-700/6 to-transparent",
+    contactShadow: "before:bg-orange-950/75",
+    motes: "bg-amber-200/50",
+  },
+};
+
+export function getCombatSceneDepthTheme(
+  biome: BiomeType
+): CombatSceneDepthTheme {
+  return COMBAT_SCENE_DEPTH_THEMES[biome];
+}
+
 const DISABLED_ACTION_CLASS =
   "cursor-not-allowed border border-slate-700 bg-slate-800 text-slate-500 opacity-50";
 

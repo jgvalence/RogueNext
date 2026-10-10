@@ -1,9 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Cinzel } from "next/font/google";
-import type { CardDefinition } from "@/game/schemas/cards";
-import type { CardInstance } from "@/game/schemas/cards";
+
+import type {
+  CardDefinition,
+  CardInstance,
+  CardUpgradeBranch,
+} from "@/game/schemas/cards";
 import { createRNG, type RNG } from "@/game/engine/rng";
 import type { RunState } from "@/game/schemas/run-state";
 import {
@@ -27,14 +30,17 @@ import {
 } from "../shared/UpgradePreviewPortal";
 import { CardPickerModal } from "../shared/CardPickerModal";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import {
   localizeRelicDescription,
   localizeRelicName,
 } from "@/lib/i18n/entity-text";
 import { RogueButton, RogueEmpty, RogueModal } from "@/components/ui/rogue";
 import { GameCard } from "../combat/GameCard";
+import { playSound } from "@/lib/sound";
+import { RoomArtwork } from "../shared/RoomArtwork";
 
-const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
+const cinzel = { className: "font-serif" };
 
 interface SpecialRoomViewProps {
   playerCurrentHp: number;
@@ -48,7 +54,7 @@ interface SpecialRoomViewProps {
   forcedRoomType?: "HEAL" | "UPGRADE" | "EVENT";
   runState?: RunState;
   onHeal: () => void;
-  onUpgrade: (cardInstanceId: string) => void;
+  onUpgrade: (cardInstanceId: string, branch: CardUpgradeBranch) => void;
   onHealRoomBloodPurge: (cardInstanceId: string) => void;
   onPurgeCard: (cardInstanceId: string) => void;
   onEventChoice: (event: GameEvent, choiceIndex: number) => void;
@@ -194,7 +200,19 @@ function RoomTitle({
   );
 }
 
-// ── HealRoom ──────────────────────────────────────────────────────────────────
+type RoomSceneKind = "heal" | "upgrade" | "bazaar" | "event";
+
+const ROOM_SCENES = { heal: "rest", upgrade: "forge", bazaar: "forbidden_vault", event: "mysterious_tome" };
+function RoomBackdrop({ kind, eventId }: { kind: RoomSceneKind; eventId?: string }) {
+  return <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+    <RoomArtwork scene={eventId ?? ROOM_SCENES[kind]} background className="absolute inset-x-0 top-0 block h-[70vh] opacity-40" />
+    <div className="absolute inset-0 bg-gradient-to-b from-slate-950/30 via-slate-950/85 to-slate-950" />
+  </div>;
+}
+
+function RoomEmblem({ kind, eventId }: { kind: RoomSceneKind; eventId?: string }) {
+  return <RoomArtwork scene={eventId ?? ROOM_SCENES[kind]} className="room-encounter-art block h-[clamp(180px,32vh,360px)] w-full max-w-3xl overflow-hidden rounded-2xl border border-amber-300/25 shadow-[0_18px_60px_#0008]" />;
+}
 
 function HealRoom({
   playerCurrentHp,
@@ -221,9 +239,12 @@ function HealRoom({
   const canBloodPurge = hasPurgeableCard && playerCurrentHp > bloodPurgeHpCost;
 
   return (
-    <div className="flex flex-col items-center gap-5 px-4 py-10">
+    <div className="relative isolate flex min-h-full flex-col items-center gap-5 overflow-hidden px-4 py-10">
+      <RoomBackdrop kind="heal" />
       <Divider />
       <RoomLabel label={t("special.healTitle")} />
+
+      <RoomEmblem kind="heal" />
 
       <RoomTitle>{t("special.healTitle")}</RoomTitle>
 
@@ -328,7 +349,7 @@ function UpgradeRoom({
 }: {
   deck: CardInstance[];
   cardDefs: Map<string, CardDefinition>;
-  onUpgrade: (cardInstanceId: string) => void;
+  onUpgrade: (cardInstanceId: string, branch: CardUpgradeBranch) => void;
   onSkip: () => void;
 }) {
   const { t } = useTranslation();
@@ -380,9 +401,12 @@ function UpgradeRoom({
   });
 
   return (
-    <div className="flex flex-col items-center gap-5 px-4 py-10">
+    <div className="relative isolate flex min-h-full flex-col items-center gap-5 overflow-hidden px-4 py-10">
+      <RoomBackdrop kind="upgrade" />
       <Divider />
       <RoomLabel label={t("special.upgradeTitle")} />
+
+      <RoomEmblem kind="upgrade" />
 
       <RoomTitle>{t("special.upgradeTitle")}</RoomTitle>
 
@@ -412,6 +436,7 @@ function UpgradeRoom({
               <GameCard
                 definition={def}
                 upgraded={card.upgraded}
+                upgradeBranch={card.upgradeBranch ?? "A"}
                 canPlay={true}
                 isSelected={isSelected}
                 size="sm"
@@ -427,7 +452,12 @@ function UpgradeRoom({
         <div className="mt-2 flex gap-4">
           <RogueButton
             disabled={!selected}
-            onClick={() => selected && onUpgrade(selected)}
+            onClick={() => {
+              if (!selected) return;
+              const card = deck.find((entry) => entry.instanceId === selected);
+              const def = card ? cardDefs.get(card.definitionId) : undefined;
+              if (def) setPendingUpgrade({ instanceId: selected, def });
+            }}
             type="text"
             className={cn(
               cinzel.className,
@@ -478,8 +508,8 @@ function UpgradeRoom({
         <CardActionModal
           card={pendingUpgrade.def}
           actionLabel={t("special.upgradeAction")}
-          onAction={() => {
-            onUpgrade(pendingUpgrade.instanceId);
+          onAction={(branch) => {
+            onUpgrade(pendingUpgrade.instanceId, branch);
             setPendingUpgrade(null);
           }}
           onCancel={() => setPendingUpgrade(null)}
@@ -545,9 +575,11 @@ function RelicBazaarRoom({
   };
 
   return (
-    <div className="flex flex-col items-center gap-5 px-4 py-10">
+    <div className="relative isolate flex min-h-full flex-col items-center gap-5 overflow-hidden px-4 py-10">
+      <RoomBackdrop kind="bazaar" />
       <Divider />
       <RoomLabel label="Bazar des Reliques" />
+      <RoomEmblem kind="bazaar" />
       <RoomTitle>Le Marchand des Âmes</RoomTitle>
       <div className="h-px w-10 bg-gradient-to-r from-amber-500/60 to-transparent" />
       <p className="max-w-md text-center text-sm italic leading-relaxed text-amber-200/60">
@@ -741,9 +773,185 @@ const RARITY_STYLES: Record<string, { badge: string; border: string }> = {
   },
 };
 
+type ChoiceSignal = {
+  kind: "cost" | "gain" | "risk" | "action";
+  text: string;
+};
+
+function buildChoiceSignals(
+  choice: GameEvent["choices"][number],
+  localizedDescription: string,
+  t: TFunction
+): ChoiceSignal[] {
+  const signals: ChoiceSignal[] = [];
+  if ((choice.goldCost ?? 0) > 0) {
+    signals.push({
+      kind: "cost",
+      text: t("special.choiceSignals.goldCost", {
+        amount: choice.goldCost,
+      }),
+    });
+  }
+  const hpLoss = localizedDescription.match(
+    /(?:perd(?:ez|re)|sacrifi(?:ez|e)|lose|sacrifice)\D{0,12}(\d+)\s*(?:pv|hp)/i
+  )?.[1];
+  if (hpLoss) {
+    signals.push({
+      kind: "cost",
+      text: t("special.choiceSignals.hpCost", { amount: hpLoss }),
+    });
+  }
+  const hpGain = localizedDescription.match(
+    /(?:gagn(?:ez|e)|soign(?:ez|e)|gain|heal|restore)\D{0,12}(\d+)\s*(?:pv|hp)/i
+  )?.[1];
+  if (hpGain) {
+    signals.push({
+      kind: "gain",
+      text: t("special.choiceSignals.hpGain", { amount: hpGain }),
+    });
+  }
+  const goldGain = localizedDescription.match(
+    /(?:gagn(?:ez|e)|recev(?:ez|e)|obten(?:ez|ez)|gain|receive|get)\D{0,12}(\d+)\s*(?:or|gold)/i
+  )?.[1];
+  if (goldGain) {
+    signals.push({
+      kind: "gain",
+      text: t("special.choiceSignals.goldGain", { amount: goldGain }),
+    });
+  }
+  if (choice.requiresPurge) {
+    signals.push({
+      kind: "action",
+      text: t("special.choiceSignals.removeCard"),
+    });
+  }
+  if (choice.rewardArchetypeTag || choice.rewardAllCards) {
+    signals.push({
+      kind: "gain",
+      text: t("special.choiceSignals.chooseCard"),
+    });
+  }
+  if (choice.requiresRelicChoice) {
+    signals.push({
+      kind: "gain",
+      text: t("special.choiceSignals.chooseRelic"),
+    });
+  }
+  if (
+    !choice.requiresRelicChoice &&
+    /(?:gagn(?:ez|e)|recev(?:ez|e)|obten(?:ez|ez)|gain|receive|get).{0,24}(?:relique|relic)/i.test(
+      localizedDescription
+    )
+  ) {
+    signals.push({
+      kind: "gain",
+      text: t("special.choiceSignals.relic"),
+    });
+  }
+  if (
+    /(?:malediction|malédiction|curse)/i.test(localizedDescription) &&
+    /(?:ajout|recev|gain|add)/i.test(localizedDescription)
+  ) {
+    signals.push({
+      kind: "cost",
+      text: t("special.choiceSignals.curse"),
+    });
+  }
+  if (
+    /(?:risque|inconnu|aleatoire|hasard|chance|risk|unknown|random)/i.test(
+      localizedDescription
+    )
+  ) {
+    signals.push({
+      kind: "risk",
+      text: t("special.choiceSignals.risk"),
+    });
+  }
+  return signals;
+}
+
+const CHOICE_SIGNAL_STYLES: Record<ChoiceSignal["kind"], string> = {
+  cost: "border-rose-400/30 bg-rose-500/10 text-rose-200",
+  gain: "border-emerald-400/30 bg-emerald-500/10 text-emerald-200",
+  risk: "border-fuchsia-400/30 bg-fuchsia-500/10 text-fuchsia-200",
+  action: "border-sky-400/30 bg-sky-500/10 text-sky-200",
+};
+
+const CHOICE_SIGNAL_ICONS: Record<ChoiceSignal["kind"], string> = {
+  cost: "−",
+  gain: "+",
+  risk: "?",
+  action: "→",
+};
+
+function EventChoiceButton({
+  choice,
+  index,
+  isUnavailable,
+  onChoose,
+}: {
+  choice: GameEvent["choices"][number];
+  index: number;
+  isUnavailable: boolean;
+  onChoose: (index: number) => void;
+}) {
+  const { t } = useTranslation();
+  const localizedDescription = t(choice.description);
+  const signals = buildChoiceSignals(choice, localizedDescription, t);
+
+  return (
+    <RogueButton
+      disabled={isUnavailable}
+      onClick={() => onChoose(index)}
+      type="text"
+      className={cn(
+        "!group !flex !h-auto !flex-col !items-start !gap-2 !rounded-xl !border !border-amber-500/15",
+        "!bg-gradient-to-r !from-amber-950/20 !to-slate-950/55 !px-5 !py-4 !text-left",
+        "!shadow-[0_12px_28px_rgba(0,0,0,0.18)] !transition-all !duration-150",
+        isUnavailable
+          ? "!cursor-not-allowed !opacity-45"
+          : "hover:!-translate-y-0.5 hover:!border-amber-500/40 hover:!from-amber-950/40"
+      )}
+    >
+      <span className="flex items-center gap-3">
+        <span className="inline-block h-[1.5px] w-0 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-0 transition-all duration-200 group-hover:w-4 group-hover:opacity-70" />
+        <span
+          className={cn(
+            cinzel.className,
+            "text-sm font-semibold uppercase tracking-[0.1em] text-amber-100"
+          )}
+        >
+          {t(choice.label)}
+        </span>
+      </span>
+      {signals.length > 0 && (
+        <span className="flex flex-wrap gap-1.5">
+          {signals.map((signal, signalIndex) => (
+            <span
+              key={`${signal.kind}-${signalIndex}`}
+              className={cn(
+                "rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.1em]",
+                CHOICE_SIGNAL_STYLES[signal.kind]
+              )}
+            >
+              <span aria-hidden="true">
+                {CHOICE_SIGNAL_ICONS[signal.kind]}{" "}
+              </span>
+              {signal.text}
+            </span>
+          ))}
+        </span>
+      )}
+      <span className="text-xs leading-relaxed text-amber-100/55">
+        {localizedDescription}
+      </span>
+    </RogueButton>
+  );
+}
+
 // ── EventRoom ─────────────────────────────────────────────────────────────────
 
-function EventRoom({
+export function EventRoom({
   rng,
   difficultyLevel,
   forcedEvent,
@@ -874,6 +1082,7 @@ function EventRoom({
     }
 
     onEventChoice(event, choiceIndex);
+    playSound("BUTTON_CLICK", 0.45);
     setChosenIndex(choiceIndex);
   };
 
@@ -907,20 +1116,65 @@ function EventRoom({
   // ── Phase OUTCOME ─────────────────────────────────────────────────────────
   if (chosenIndex !== null) {
     const choice = event.choices[chosenIndex];
+    const localizedChoiceDescription = choice ? t(choice.description) : "";
+    const outcomeSignals = choice
+      ? buildChoiceSignals(choice, localizedChoiceDescription, t)
+      : [];
     return (
-      <div className="flex flex-col items-center gap-5 px-4 py-10">
+      <div
+        className="relative isolate flex min-h-full flex-col items-center gap-5 overflow-hidden px-4 py-10"
+        aria-live="polite"
+      >
+        <RoomBackdrop kind="event" eventId={event.id} />
         <Divider />
         <RoomLabel label={t("special.eventLabel")} />
+
+        <RoomEmblem kind="event" eventId={event.id} />
 
         <RoomTitle>{t(event.title)}</RoomTitle>
 
         <div className="h-px w-10 bg-gradient-to-r from-amber-500/60 to-transparent" />
 
-        {choice?.outcomeText && (
-          <p className="max-w-lg border-l-2 border-amber-500/30 pl-5 text-center text-sm italic leading-relaxed text-amber-200/70">
-            {t(choice.outcomeText)}
+        <div className="relative w-full max-w-xl animate-screen-enter overflow-hidden rounded-2xl border border-amber-400/25 bg-slate-950/70 px-6 py-6 text-center shadow-[0_22px_60px_rgba(0,0,0,0.38),0_0_35px_rgba(245,158,11,0.06)]">
+          <div className="pointer-events-none absolute inset-x-12 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+          <div
+            className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-amber-300/30 bg-amber-500/10 text-2xl text-amber-200"
+            aria-hidden="true"
+          >
+            ✓
+          </div>
+          <p
+            className={cn(
+              cinzel.className,
+              "text-xs font-bold uppercase tracking-[0.2em] text-amber-300/75"
+            )}
+          >
+            {t(choice?.label ?? event.title)}
           </p>
-        )}
+          {choice?.outcomeText && (
+            <p className="mx-auto mt-3 max-w-lg text-sm italic leading-relaxed text-amber-100/75">
+              {t(choice.outcomeText)}
+            </p>
+          )}
+          {outcomeSignals.length > 0 && (
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              {outcomeSignals.map((signal, signalIndex) => (
+                <span
+                  key={`${signal.kind}-${signalIndex}`}
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.1em]",
+                    CHOICE_SIGNAL_STYLES[signal.kind]
+                  )}
+                >
+                  <span aria-hidden="true">
+                    {CHOICE_SIGNAL_ICONS[signal.kind]}{" "}
+                  </span>
+                  {signal.text}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
         {!showPurgePicker && (
           <RogueButton
@@ -960,10 +1214,13 @@ function EventRoom({
 
   // ── Phase CHOOSING ────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col items-center gap-5 px-4 py-10">
+    <div className="relative isolate flex min-h-full flex-col items-center gap-5 overflow-hidden px-4 py-10">
+      <RoomBackdrop kind="event" eventId={event.id} />
       <Divider />
 
       <RoomLabel label={t("special.eventLabel")} />
+
+      <RoomEmblem kind="event" eventId={event.id} />
 
       <RoomTitle>{t(event.title)}</RoomTitle>
 
@@ -1032,36 +1289,13 @@ function EventRoom({
       {/* Choices */}
       <div className="flex w-full max-w-md flex-col gap-3">
         {displayedChoices.map(({ choice, index, isUnavailable }) => (
-          <RogueButton
+          <EventChoiceButton
             key={index}
-            disabled={isUnavailable}
-            onClick={() => handleChoice(index)}
-            type="text"
-            className={cn(
-              "!group !flex !h-auto !flex-col !items-start !gap-1.5 !rounded !border !border-amber-500/15",
-              "!bg-amber-950/10 !px-6 !py-3 !text-left",
-              "!transition-all !duration-150",
-              isUnavailable
-                ? "!cursor-not-allowed !opacity-45"
-                : "hover:!border-amber-500/35 hover:!bg-amber-950/30"
-            )}
-          >
-            <div className="flex items-center gap-3">
-              <span className="inline-block h-[1.5px] w-0 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-0 transition-all duration-200 group-hover:w-4 group-hover:opacity-70" />
-              <span
-                className={cn(
-                  cinzel.className,
-                  "text-sm font-semibold uppercase tracking-[0.1em] text-amber-100",
-                  "transition-all duration-200 group-hover:translate-x-0"
-                )}
-              >
-                {t(choice.label)}
-              </span>
-            </div>
-            <span className="pl-0 text-xs text-amber-200/45 transition-all duration-200 group-hover:pl-7">
-              {t(choice.description)}
-            </span>
-          </RogueButton>
+            choice={choice}
+            index={index}
+            isUnavailable={isUnavailable}
+            onChoose={handleChoice}
+          />
         ))}
       </div>
 

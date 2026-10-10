@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Cinzel } from "next/font/google";
 import { useTranslation } from "react-i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { RelicDefinitionData } from "@/game/data/relics";
@@ -15,8 +14,9 @@ import { GameCard } from "../combat/GameCard";
 import { Tooltip } from "../shared/Tooltip";
 
 type RunOutcomeStatus = "VICTORY" | "DEFEAT" | "ABANDONED";
+type DefeatEncounterType = "NORMAL" | "ELITE" | "BOSS";
 
-const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
+const cinzel = { className: "font-serif" };
 
 interface RunOutcomeScreenProps {
   status: RunOutcomeStatus;
@@ -31,6 +31,7 @@ interface RunOutcomeScreenProps {
   earnedResourceMultiplier: number;
   newlyUnlockedCards: CardDefinition[];
   newlyUnlockedRelics: RelicDefinitionData[];
+  defeatEncounterType?: DefeatEncounterType;
   onBackToLibrary: () => Promise<void> | void;
 }
 
@@ -47,11 +48,18 @@ export function RunOutcomeScreen({
   earnedResourceMultiplier,
   newlyUnlockedCards,
   newlyUnlockedRelics,
+  defeatEncounterType = "NORMAL",
   onBackToLibrary,
 }: RunOutcomeScreenProps) {
   const { t } = useTranslation();
   const totalNewUnlocks =
     newlyUnlockedCards.length + newlyUnlockedRelics.length;
+  const defeatNarrativeKey =
+    defeatEncounterType === "ELITE"
+      ? "run.defeatNarrative.elite"
+      : defeatEncounterType === "BOSS"
+        ? "run.defeatNarrative.boss"
+        : "run.defeatNarrative.normal";
 
   const titleKey =
     status === "VICTORY"
@@ -174,6 +182,43 @@ export function RunOutcomeScreen({
           </div>
         </div>
       </section>
+
+      {status === "VICTORY" && (
+        <section className="relative mt-6 rounded-[24px] border border-emerald-300/25 bg-gradient-to-br from-emerald-950/50 to-slate-950 p-6 sm:p-8">
+          <p className="text-xs uppercase tracking-widest text-emerald-300">
+            {t("run.ending.kicker")}
+          </p>
+          <h3 className="mt-3 font-serif text-2xl text-emerald-50">
+            {t("run.ending.title")}
+          </h3>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-200">
+            {t("run.ending.text")}
+          </p>
+          <p className="mt-4 max-w-3xl border-l-2 border-emerald-300/40 pl-4 text-sm leading-6 text-emerald-100">
+            {t("run.ending.consequence")}
+          </p>
+        </section>
+      )}
+
+      {status === "DEFEAT" && (
+        <section className="relative mt-6 overflow-hidden rounded-[24px] border border-rose-400/20 bg-gradient-to-br from-rose-950/45 via-slate-950/90 to-slate-950 p-6 shadow-[0_18px_60px_rgba(76,5,25,0.22)] sm:p-8">
+          <div className="pointer-events-none absolute -right-10 -top-16 text-[12rem] leading-none text-rose-300/[0.035]">
+            ✦
+          </div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-rose-300/60">
+            {t("run.defeatNarrative.kicker")}
+          </p>
+          <h3 className={cn(cinzel.className, "mt-3 text-2xl text-rose-100")}>
+            {t(`${defeatNarrativeKey}.title`)}
+          </h3>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300 sm:text-base">
+            {t(`${defeatNarrativeKey}.text`)}
+          </p>
+          <p className="mt-4 border-l-2 border-amber-300/30 pl-4 text-sm italic leading-relaxed text-amber-100/65">
+            {t("run.defeatNarrative.returnPromise")}
+          </p>
+        </section>
+      )}
 
       <div className="mt-6 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <section className="bg-slate-950/78 rounded-[24px] border border-slate-800 p-5 shadow-[0_18px_60px_rgba(0,0,0,0.3)]">

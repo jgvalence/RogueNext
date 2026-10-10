@@ -1,4 +1,5 @@
 import type { CardDefinition } from "../schemas/cards";
+import type { Effect } from "../schemas/effects";
 import type { EnemyDefinition } from "../schemas/entities";
 import type { BiomeType } from "../schemas/enums";
 import { enemyDefinitions } from "./enemies";
@@ -342,8 +343,8 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     description: "Gain 3 ink.",
     effects: [{ type: "GAIN_INK", value: 3 }],
     inkedVariant: {
-      description: "Gain 5 ink.",
-      effects: [{ type: "GAIN_INK", value: 5 }],
+      description: "Gain 3 ink.",
+      effects: [{ type: "GAIN_INK", value: 3 }],
       inkMarkCost: 1,
     },
     upgrade: {
@@ -1576,7 +1577,22 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "ADD_CARD_TO_DRAW", value: 1, copySourceCard: true },
       { type: "EXHAUST", value: 0 },
     ],
-    inkedVariant: null,
+    inkedVariant: {
+      description:
+        "Deal 3 damage. Add 2 copies of this card to your draw pile. Exhaust.",
+      effects: [
+        { type: "DAMAGE", value: 3 },
+        { type: "ADD_CARD_TO_DRAW", value: 2, copySourceCard: true },
+        { type: "EXHAUST", value: 0 },
+      ],
+      upgradedEffects: [
+        { type: "DAMAGE", value: 3 },
+        { type: "DRAW_CARDS", value: 1 },
+        { type: "ADD_CARD_TO_DRAW", value: 2, copySourceCard: true },
+        { type: "EXHAUST", value: 0 },
+      ],
+      inkMarkCost: 1,
+    },
     upgrade: {
       description:
         "Deal 3 damage. Draw 1 card. Add a copy of this card to your draw pile. Exhaust.",
@@ -2439,10 +2455,10 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       { type: "BLOCK_PER_DEBUFF", value: 2, buff: "BLEED" },
     ],
     inkedVariant: {
-      description: "Gain 7 block. Gain 3 block per Bleed on enemies.",
+      description: "Gain 5 block. Gain 2 block per Bleed on enemies.",
       effects: [
-        { type: "BLOCK", value: 7 },
-        { type: "BLOCK_PER_DEBUFF", value: 3, buff: "BLEED" },
+        { type: "BLOCK", value: 5 },
+        { type: "BLOCK_PER_DEBUFF", value: 2, buff: "BLEED" },
       ],
       inkMarkCost: 2,
     },
@@ -3682,27 +3698,30 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     inkCost: 0,
     targeting: "SINGLE_ENEMY",
     rarity: "UNCOMMON",
-    description: "Deal 10 damage. Apply 3 Bleed. Draw 1 card.",
+    description:
+      "Deal 10 damage. Apply 3 Bleed. Gain 2 Block per Bleed on enemies.",
     effects: [
       { type: "DAMAGE", value: 10 },
       { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
-      { type: "DRAW_CARDS", value: 1 },
+      { type: "BLOCK_PER_DEBUFF", value: 2, buff: "BLEED" },
     ],
     inkedVariant: {
-      description: "Deal 13 damage. Apply 4 Bleed. Draw 1 card.",
+      description:
+        "Deal 13 damage. Apply 4 Bleed. Gain 2 Block per Bleed on enemies.",
       effects: [
         { type: "DAMAGE", value: 13 },
         { type: "APPLY_DEBUFF", value: 4, buff: "BLEED", duration: 4 },
-        { type: "DRAW_CARDS", value: 1 },
+        { type: "BLOCK_PER_DEBUFF", value: 2, buff: "BLEED" },
       ],
       inkMarkCost: 3,
     },
     upgrade: {
-      description: "Deal 13 damage. Apply 3 Bleed. Draw 1 card.",
+      description:
+        "Deal 13 damage. Apply 3 Bleed. Gain 2 Block per Bleed on enemies.",
       effects: [
         { type: "DAMAGE", value: 13 },
         { type: "APPLY_DEBUFF", value: 3, buff: "BLEED", duration: 4 },
-        { type: "DRAW_CARDS", value: 1 },
+        { type: "BLOCK_PER_DEBUFF", value: 2, buff: "BLEED" },
       ],
     },
     isStarterCard: false,
@@ -5235,19 +5254,23 @@ const baseLootableCardDefinitions: CardDefinition[] = [
     type: "SKILL",
     energyCost: 1,
     inkCost: 0,
-    targeting: "ALL_ENEMIES",
+    targeting: "SELF",
     rarity: "UNCOMMON",
-    description: "Gain 2 ink. Apply 2 Weak to ALL enemies.",
+    description:
+      "Gain 1 Ink and 6 Block. Alternate Attack and Skill to gain 1 more Ink; every third beat draws a card and grants 1 Energy.",
     effects: [
-      { type: "GAIN_INK", value: 2 },
-      { type: "APPLY_DEBUFF", value: 2, buff: "WEAK", duration: 2 },
+      { type: "GAIN_INK", value: 1 },
+      { type: "BLOCK", value: 6 },
+      { type: "RHYTHM_REWARD", value: 1 },
     ],
     inkedVariant: null,
     upgrade: {
-      description: "Gain 2 ink. Apply 3 Weak to ALL enemies.",
+      description:
+        "Gain 1 Ink and 8 Block. Alternate Attack and Skill to gain 1 more Ink; every third beat draws a card and grants 1 Energy.",
       effects: [
-        { type: "GAIN_INK", value: 2 },
-        { type: "APPLY_DEBUFF", value: 3, buff: "WEAK", duration: 2 },
+        { type: "GAIN_INK", value: 1 },
+        { type: "BLOCK", value: 8 },
+        { type: "RHYTHM_REWARD", value: 1 },
       ],
     },
     isStarterCard: false,
@@ -7001,8 +7024,11 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       inkMarkCost: 2,
     },
     upgrade: {
-      description: "Gagnez 2 énergie.",
-      effects: [{ type: "GAIN_ENERGY", value: 2 }],
+      description: "Exhaust. Gagnez 3 énergie.",
+      effects: [
+        { type: "EXHAUST", value: 0 },
+        { type: "GAIN_ENERGY", value: 3 },
+      ],
     },
     isStarterCard: false,
     biome: "LIBRARY",
@@ -7058,9 +7084,10 @@ const baseLootableCardDefinitions: CardDefinition[] = [
       inkMarkCost: 3,
     },
     upgrade: {
-      description: "Gagnez 5 Force. Piochez 3 cartes.",
+      description: "Exhaust. Gagnez 6 Force. Piochez 3 cartes.",
       effects: [
-        { type: "GAIN_STRENGTH", value: 5 },
+        { type: "EXHAUST", value: 0 },
+        { type: "GAIN_STRENGTH", value: 6 },
         { type: "DRAW_CARDS", value: 3 },
       ],
     },
@@ -7074,24 +7101,53 @@ function buildEnemyCardName(enemy: EnemyDefinition, suffix: string): string {
   return `${enemy.name} ${suffix}`;
 }
 
-const BESTIARY_CHARACTER_OVERRIDES: Record<
-  string,
-  "scribe" | "bibliothecaire"
-> = {
-  deep_one: "scribe",
+// Ten active mastery cards per character, assigned by mechanics rather than
+// by a checksum that excluded Griot and Fool entirely. Existing IDs stay valid.
+const BESTIARY_CHARACTER_OVERRIDES: Record<string, string> = {
+  shield_maiden: "scribe",
+  cyclops: "scribe",
+  tomb_priest: "scribe",
+  ushabti_servant: "scribe",
+  tzitzimitl: "scribe",
+  mask_hunter: "scribe",
+  sekhmet_chosen: "scribe",
+  huitzilopochtli_enforcer: "scribe",
+  domovoi_titan: "scribe",
+  morrigan_chosen: "scribe",
+  snow_maiden: "bibliothecaire",
+  rusalka: "bibliothecaire",
+  cultist_scribe: "bibliothecaire",
+  sidhe_raider: "bibliothecaire",
+  tokoloshe: "bibliothecaire",
+  gorgon: "bibliothecaire",
+  harpy: "bibliothecaire",
+  koschei_herald: "bibliothecaire",
+  legba_emissary: "bibliothecaire",
+  minotaur: "bibliothecaire",
+  frost_troll: "griot",
+  satyr: "griot",
+  scarab_swarm: "griot",
+  jaguar_warrior: "griot",
+  morrigan_wisp: "griot",
+  briar_beast: "griot",
+  serpent_oracle: "griot",
+  anubis_champion: "griot",
+  jormungandr_spawn: "griot",
+  wild_hunt_hound: "griot",
+  draugr: "fou",
+  deep_one: "fou",
+  star_spawn: "fou",
+  byakhee: "fou",
+  eagle_knight: "fou",
+  winter_wolf: "fou",
+  hyena_pack: "fou",
+  elder_hybrid: "fou",
+  quetzal_harbinger: "fou",
+  valkyrie: "fou",
 };
 
 function getBestiaryCharacterId(enemy: EnemyDefinition): string | undefined {
-  // Keep exactly one Russian bestiary card neutral to hit the target of 5 neutral cards in that biome.
-  if (enemy.id === "winter_wolf") return undefined;
-
-  const override = BESTIARY_CHARACTER_OVERRIDES[enemy.id];
-  if (override) return override;
-
-  // Deterministic split between characters for generated bestiary cards.
-  let checksum = 0;
-  for (const ch of enemy.id) checksum += ch.charCodeAt(0);
-  return checksum % 2 === 0 ? "scribe" : "bibliothecaire";
+  return BESTIARY_CHARACTER_OVERRIDES[enemy.id];
 }
 
 type BestiaryCardTemplate = Omit<
@@ -8441,7 +8497,406 @@ const generatedEnemyMasteryCards: CardDefinition[] = enemyDefinitions
       : buildNormalEnemyMasteryCard(enemy)
   );
 
+// Character pools deliberately share the same size. These assignments reuse
+// existing cards instead of inflating the already large catalogue, and give
+// the Griot and Fool full biome coverage from the beginning.
+const GRIOT_REASSIGNED_CARD_IDS = new Set([
+  "iron_verse",
+  "rune_curse",
+  "scald_cry",
+  "frost_rune_shield",
+  "death_scroll",
+  "embalmed_tome",
+  "sacred_papyrus",
+  "plague_of_words",
+  "forbidden_verse",
+  "cursed_inscription",
+  "black_page",
+  "library_horror",
+  "jaguars_blood",
+  "codex_strike",
+  "poison_herb",
+  "star_chart",
+  "philosophers_quill",
+  "oracle_scroll",
+  "epic_simile",
+  "labyrinth_trap",
+  "kells_strike",
+  "bardic_verse",
+  "iron_bard",
+  "cauldron_lore",
+  "koschei_strike",
+  "byliny_verse",
+  "folk_curse",
+  "blizzard_verse",
+  "drum_strike",
+  "anansi_tale",
+  "spider_web",
+]);
+
+const FOOL_REASSIGNED_CARD_IDS = new Set([
+  "saga_archive",
+  "valhalla_codex",
+  "epic_saga",
+  "odin_script",
+  "osiris_archive",
+  "book_of_ra",
+  "scribes_judgment",
+  "desert_wisdom",
+  "void_librarian",
+  "void_scripture",
+  "readers_pact",
+  "forbidden_index",
+  "blood_codex",
+  "hummingbird_strike",
+  "feathered_serpent",
+  "sacrificial_word",
+  "pythian_codex",
+  "titans_wrath",
+  "shield_of_athena",
+  "olympian_scripture",
+  "green_man_verse",
+  "world_tree",
+  "morrigan_curse",
+  "ancient_manuscript",
+  "snowstorm_trap",
+  "firebird_script",
+  "bogatyr_strike",
+  "folklore_archive",
+  "cosmic_spider",
+  "sunbird_power",
+  "healing_rhythm",
+  "ancestor_archive",
+]);
+
+function applyCharacterPoolRebalance(card: CardDefinition): CardDefinition {
+  if (GRIOT_REASSIGNED_CARD_IDS.has(card.id)) {
+    return { ...card, characterId: "griot" };
+  }
+  if (FOOL_REASSIGNED_CARD_IDS.has(card.id)) {
+    return { ...card, characterId: "fou" };
+  }
+  return card;
+}
+
+const DISTINCTIVE_EFFECTS: Record<string, Effect> = {
+  heavy_strike: { type: "DAMAGE_BONUS_IF_UPGRADED_IN_HAND", value: 6 },
+  hieroglyph_strike: { type: "DAMAGE_PER_CURRENT_INK", value: 1 },
+  curse_word: { type: "DAMAGE_PER_CURRENT_INK", value: 1 },
+  sand_whip: { type: "APPLY_DEBUFF", value: 1, buff: "WEAK", duration: 1 },
+  healing_script: { type: "RETAIN_CARDS", value: 1 },
+  vulnerability_hex: { type: "DRAW_CARDS", value: 1 },
+  transe_vaudou: { type: "RHYTHM_REWARD", value: 1 },
+  mythic_blow: { type: "DAMAGE_BONUS_IF_UPGRADED_IN_HAND", value: 5 },
+  double_ou_rien: { type: "TAKE_ENERGY_DEBT", value: 1 },
+  scribes_judgment: { type: "DAMAGE_PER_DOT_STACKS", value: 1 },
+  ancient_ward: { type: "TOPDECK_FROM_DISCARD", value: 1 },
+  bear_claw: { type: "DAMAGE_IF_TARGET_HAS_DEBUFF", value: 7, buff: "WEAK" },
+  codex_strike: { type: "RHYTHM_REWARD", value: 1 },
+  spell_inscription: { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+  titans_wrath: { type: "TAKE_ENERGY_DEBT", value: 1 },
+  jaguars_blood: { type: "BLOCK_PER_DEBUFF", value: 1, buff: "BLEED" },
+  necrotic_words: { type: "DAMAGE_PER_CLOG_IN_DISCARD", value: 3 },
+  ancient_manuscript: { type: "DRAW_CARDS", value: 1 },
+  drum_strike: { type: "RHYTHM_REWARD", value: 1 },
+  labyrinth_trap: { type: "NEXT_DRAW_TO_DISCARD_THIS_TURN", value: 1 },
+  obsidian_ward: { type: "BLOCK_PER_DEBUFF", value: 2, buff: "POISON" },
+  danse_des_esprits: { type: "PROPAGATE_DOT", value: 1 },
+  tempete_d_encre: { type: "DRAIN_INK", value: 99 },
+  war_dance: { type: "DAMAGE_PER_THIS_CARD_PLAYED", value: 1 },
+  ink_of_ancestors: { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+  buffalo_charge: { type: "DAMAGE_PER_DRAWN_THIS_TURN", value: 1 },
+  ancestral_verse: { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
+  sunbird_power: {
+    type: "APPLY_BUFF_PER_EXHAUSTED_CARD",
+    value: 1,
+    buff: "STRENGTH",
+  },
+  spider_web: { type: "BLOCK_PER_DEBUFF", value: 1, buff: "WEAK" },
+  baobab_shield: { type: "BLOCK_PER_EXHAUSTED_CARD", value: 1 },
+  healing_rhythm: { type: "RETAIN_CARDS", value: 1 },
+  ancestor_archive: { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
+  cosmic_spider: { type: "DAMAGE_PER_CLOG_IN_DISCARD", value: 2 },
+  kells_strike: { type: "DAMAGE_BONUS_IF_UPGRADED_IN_HAND", value: 4 },
+  bardic_verse: { type: "DAMAGE_PER_THIS_CARD_PLAYED", value: 1 },
+  illuminated_shield: { type: "BLOCK_PER_CURRENT_INK", value: 1 },
+  iron_bard: { type: "PROPAGATE_DOT", value: 0.5 },
+  triquetra_mark: { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+  ogham_inscription: { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
+  celtic_illumination: { type: "BLOCK_PER_EXHAUSTED_CARD", value: 1 },
+  green_man_verse: {
+    type: "APPLY_BUFF_PER_EXHAUSTED_CARD",
+    value: 1,
+    buff: "THORNS",
+  },
+  world_tree: { type: "BLOCK_PER_CURRENT_INK", value: 1 },
+  hummingbird_strike: { type: "DAMAGE_PER_DRAWN_THIS_TURN", value: 1 },
+  blood_codex: { type: "BLOCK_PER_EXHAUSTED_CARD", value: 2 },
+  sacrificial_word: { type: "NEXT_CARD_DOUBLE_DAMAGE", value: 1 },
+  poison_herb: { type: "BLOCK_PER_DEBUFF", value: 1, buff: "POISON" },
+  sacred_papyrus: { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+  annotated_thesis: { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+  forbidden_appendix: { type: "COPY_LAST_CARD_TO_HAND", value: 1 },
+  written_prophecy: { type: "COPY_LAST_CARD_TO_HAND", value: 1 },
+  index_of_echoes: { type: "TOPDECK_FROM_DISCARD", value: 1 },
+  apollos_archive: { type: "REVEAL_AND_REVERSE_TOP", value: 3 },
+  book_of_the_dead: { type: "EMPTY_DRAW_PILE_BLOCK", value: 10 },
+  temple_archive: { type: "ARCHIVE_AND_DRAW", value: 1 },
+  cosmic_archive: { type: "ARCHIVE_AND_DRAW", value: 2 },
+  necronomicon_page: { type: "ARCHIVE_AND_DRAW", value: 1 },
+  frisson_du_risque: { type: "TAKE_ENERGY_DEBT", value: 2 },
+  concentration_totale: { type: "EXACT_ENERGY_REWARD", value: 8 },
+  eclair_ephemere: { type: "EXACT_INK_REWARD", value: 1 },
+  pacte_final: { type: "EXACT_INK_REWARD", value: 2 },
+};
+
+function applyDistinctiveMechanics(card: CardDefinition): CardDefinition {
+  const effect = DISTINCTIVE_EFFECTS[card.id];
+  if (!effect) return card;
+  const append = (effects: Effect[]) =>
+    effects.some(
+      (entry) =>
+        entry.type === effect.type &&
+        entry.buff === effect.buff &&
+        entry.scalingBuff === effect.scalingBuff
+    )
+      ? effects
+      : [...effects, effect];
+  return {
+    ...card,
+    description: `${card.description} Signature: ${effect.type}.`,
+    effects: append(card.effects),
+    upgrade: card.upgrade
+      ? { ...card.upgrade, effects: append(card.upgrade.effects) }
+      : card.upgrade,
+    upgradeBranches: card.upgradeBranches?.map((branch) => ({
+      ...branch,
+      effects: append(branch.effects),
+    })) as CardDefinition["upgradeBranches"],
+    inkedVariant: card.inkedVariant
+      ? {
+          ...card.inkedVariant,
+          effects: append(card.inkedVariant.effects),
+          upgradedEffects: card.inkedVariant.upgradedEffects
+            ? append(card.inkedVariant.upgradedEffects)
+            : undefined,
+        }
+      : null,
+  };
+}
+
+const TRANSFORMATIVE_INK_EFFECTS: Record<string, Effect> = {
+  ink_flow: { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+  frost_rune_shield: { type: "APPLY_BUFF", value: 1, buff: "WARD" },
+  heavy_strike: { type: "DAMAGE_EQUAL_BLOCK", value: 1 },
+  mythic_blow: { type: "DAMAGE_PER_TARGET_BLOCK", value: 1 },
+  fortify: { type: "DRAW_CARDS", value: 1 },
+  healing_script: { type: "GAIN_INK", value: 2 },
+  rage_of_ages: { type: "TAKE_ENERGY_DEBT", value: 1 },
+  final_chapter: { type: "DAMAGE_PER_DOT_STACKS", value: 1 },
+  brace: { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
+  berserker_charge: { type: "NEXT_CARD_DOUBLE_DAMAGE", value: 1 },
+  shield_wall: { type: "APPLY_BUFF", value: 2, buff: "THORNS" },
+  saga_of_blood: { type: "BLOCK_PER_EXHAUSTED_CARD", value: 2 },
+  olympian_guard: { type: "GAIN_STRENGTH", value: 1 },
+  labyrinth: { type: "RETAIN_CARDS", value: 1 },
+  eye_of_ra: { type: "EXACT_INK_REWARD", value: 1 },
+  forbidden_whisper: { type: "ADD_CARD_TO_DISCARD", value: 1, cardId: "clog" },
+  void_shield: { type: "BLOCK_PER_EXHAUSTED_CARD", value: 2 },
+  quick_recovery: { type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND", value: 1 },
+  jaguars_blood: { type: "DAMAGE_PER_DOT_STACKS", value: 1 },
+  ancient_grove: { type: "APPLY_BUFF", value: 3, buff: "THORNS" },
+  bear_claw: { type: "DAMAGE_IF_TARGET_HAS_DEBUFF", value: 8, buff: "WEAK" },
+  trickster_snare: { type: "EXACT_ENERGY_REWARD", value: 7 },
+  annotated_thesis: { type: "COPY_LAST_CARD_TO_HAND", value: 1 },
+  rune_storm: { type: "DAMAGE_PER_EXHAUSTED_CARD", value: 1 },
+  spell_inscription: { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+  drum_strike: { type: "DAMAGE_PER_THIS_CARD_PLAYED", value: 3 },
+  tempete_d_encre: { type: "NEXT_CARD_DOUBLE_DAMAGE", value: 1 },
+};
+
+const TRANSFORMATIVE_INK_TARGETING: Record<
+  string,
+  CardDefinition["targeting"]
+> = {
+  heavy_strike: "ALL_ENEMIES",
+  fortify: "ALL_ALLIES",
+};
+
+function applyTransformativeInk(card: CardDefinition): CardDefinition {
+  const extra = TRANSFORMATIVE_INK_EFFECTS[card.id];
+  if (!extra || !card.inkedVariant) return card;
+  return {
+    ...card,
+    inkedVariant: {
+      ...card.inkedVariant,
+      targeting: TRANSFORMATIVE_INK_TARGETING[card.id],
+      description: `${card.inkedVariant.description} Ink transformation: ${extra.type}.`,
+      effects: [...card.inkedVariant.effects, extra],
+      upgradedEffects: card.inkedVariant.upgradedEffects
+        ? [...card.inkedVariant.upgradedEffects, extra]
+        : undefined,
+    },
+  };
+}
+
+function effectPattern(effects: Effect[]): string {
+  return JSON.stringify(
+    effects.map(({ value: _value, duration: _duration, ...effect }) => effect)
+  );
+}
+
+function stableCardParity(id: string): number {
+  return (
+    [...id].reduce((total, character) => total + character.charCodeAt(0), 0) % 2
+  );
+}
+
+function inkSpecializationCandidates(card: CardDefinition): Array<{
+  effect: Effect;
+  text: string;
+}> {
+  if (card.id === "ink_surge") {
+    return [{ effect: { type: "RETAIN_CARDS", value: 1 }, text: "Retain another card for next turn." }];
+  }
+  if (card.characterId === "scribe") {
+    return [
+      {
+        effect: { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 },
+        text: "Upgrade a random card in your hand for this combat.",
+      },
+      {
+        effect: { type: "COPY_LAST_CARD_TO_HAND", value: 1 },
+        text: "Copy the last card played into your hand.",
+      },
+    ];
+  }
+  if (card.characterId === "bibliothecaire") {
+    return [
+      {
+        effect: { type: "ARCHIVE_AND_DRAW", value: 1 },
+        text: "Archive a card from your hand; it returns upgraded next turn. Draw a card.",
+      },
+      {
+        effect: { type: "TOPDECK_FROM_DISCARD", value: 1 },
+        text: "Put a card from your discard pile on top of your draw pile.",
+      },
+    ];
+  }
+  if (card.characterId === "griot") {
+    return card.targeting === "SINGLE_ENEMY"
+      ? [
+          {
+            effect: { type: "PROPAGATE_DOT", value: 1 },
+            text: "Raise other enemies' Poison and Bleed to the target's concentration without adding to existing stacks.",
+          },
+          {
+            effect: { type: "RHYTHM_REWARD", value: 1 },
+            text: "Alternate Attack and Skill to gain Ink; every third beat draws a card and grants 1 Energy.",
+          },
+        ]
+      : [
+          {
+            effect: { type: "RHYTHM_REWARD", value: 1 },
+            text: "Alternate Attack and Skill to gain Ink; every third beat draws a card and grants 1 Energy.",
+          },
+        ];
+  }
+  if (card.characterId === "fou") {
+    return [
+      {
+        effect: { type: "TAKE_ENERGY_DEBT", value: 1 },
+        text: "Borrow 1 Energy now; repay it at the start of upcoming turns.",
+      },
+      {
+        effect: { type: "EXACT_ENERGY_REWARD", value: 7 },
+        text: "If this spends your last Energy, gain 7 Block.",
+      },
+      {
+        effect: { type: "EXACT_INK_REWARD", value: 1 },
+        text: "If your Ink is empty, gain 1 Energy.",
+      },
+    ];
+  }
+
+  const selfSafe = [
+    {
+      effect: {
+        type: "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND",
+        value: 1,
+      } as Effect,
+      text: "Return a non-Clog card from your discard pile to your hand.",
+    },
+    {
+      effect: { type: "APPLY_BUFF", value: 2, buff: "THORNS" } as Effect,
+      text: "Gain 2 Thorns.",
+    },
+    {
+      effect: { type: "UPGRADE_RANDOM_CARD_IN_HAND", value: 1 } as Effect,
+      text: "Upgrade a random card in your hand for this combat.",
+    },
+  ];
+  const attackOnly = [
+    {
+      effect: { type: "DAMAGE_PER_EXHAUSTED_CARD", value: 2 } as Effect,
+      text: "Deal 2 additional damage per exhausted card.",
+    },
+    {
+      effect: { type: "DAMAGE_PER_CLOG_IN_DISCARD", value: 3 } as Effect,
+      text: "Deal 3 additional damage per Clog in your discard pile.",
+    },
+    {
+      effect: { type: "DAMAGE_PER_DOT_STACKS", value: 1 } as Effect,
+      text: "Deal 1 additional damage per Poison or Bleed on the target.",
+    },
+  ];
+  return card.type === "ATTACK" ? [...attackOnly, ...selfSafe] : selfSafe;
+}
+
+/**
+ * Completes the creative Ink pass without making every common card complex:
+ * all uncommon/rare numeric variants and half of common numeric variants gain
+ * a new role. Existing authored transformations always win.
+ */
+function applyCreativeInkSpecialization(card: CardDefinition): CardDefinition {
+  if (!card.inkedVariant) return card;
+  if (effectPattern(card.effects) !== effectPattern(card.inkedVariant.effects))
+    return card;
+  if (card.rarity === "COMMON" && stableCardParity(card.id) !== 0) return card;
+
+  const existingTypes = new Set(
+    card.inkedVariant.effects.map((effect) => effect.type)
+  );
+  const candidates = inkSpecializationCandidates(card);
+  const offset = [...card.id].reduce(
+    (sum, character) => sum + character.charCodeAt(0),
+    0
+  );
+  const ordered = candidates.map(
+    (_, index) => candidates[(index + offset) % candidates.length]!
+  );
+  const choice =
+    ordered.find(({ effect }) => !existingTypes.has(effect.type)) ?? ordered[0];
+  if (!choice) return card;
+
+  return {
+    ...card,
+    inkedVariant: {
+      ...card.inkedVariant,
+      description: `${card.inkedVariant.description} ${choice.text}`,
+      effects: [...card.inkedVariant.effects, choice.effect],
+      upgradedEffects: card.inkedVariant.upgradedEffects
+        ? [...card.inkedVariant.upgradedEffects, choice.effect]
+        : undefined,
+    },
+  };
+}
+
 export const lootableCardDefinitions: CardDefinition[] = [
   ...baseLootableCardDefinitions,
   ...generatedEnemyMasteryCards,
-];
+]
+  .map(applyCharacterPoolRebalance)
+  .map(applyDistinctiveMechanics)
+  .map(applyTransformativeInk)
+  .map(applyCreativeInkSpecialization);

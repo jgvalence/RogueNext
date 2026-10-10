@@ -1,7 +1,11 @@
 import type { CombatState } from "../schemas/combat-state";
-import type { CardDefinition } from "../schemas/cards";
+import type { CardDefinition, CardUpgradeBranch } from "../schemas/cards";
 import type { Targeting } from "../schemas/enums";
-import { boostEffectsForUpgrade } from "./card-upgrades";
+import {
+  boostEffectsForUpgrade,
+  buildUpgradedCardDefinition,
+  getCardUpgrade,
+} from "./card-upgrades";
 import { moveCardToDiscard, moveCardToExhaust } from "./deck";
 import { resolveEffects, type EffectTarget } from "./effects";
 import type { RNG } from "./rng";
@@ -83,11 +87,13 @@ function getEffectiveCardEnergyCost(
   state: CombatState,
   definition: CardDefinition,
   instanceId: string,
-  upgraded: boolean
+  upgraded: boolean,
+  upgradeBranch: CardUpgradeBranch = "A"
 ): number {
   const petrifiedCostBonus = getCardPetrifiedCostBonus(state, instanceId);
-  if (upgraded && definition.upgrade?.energyCost !== undefined) {
-    return definition.upgrade.energyCost + petrifiedCostBonus;
+  const upgrade = upgraded ? getCardUpgrade(definition, upgradeBranch) : null;
+  if (upgrade?.energyCost !== undefined) {
+    return upgrade.energyCost + petrifiedCostBonus;
   }
   return definition.energyCost + petrifiedCostBonus;
 }
@@ -116,7 +122,13 @@ export function canPlayCard(
     return false;
 
   const effectiveEnergyCost =
-    getEffectiveCardEnergyCost(state, def, instanceId, effectiveUpgraded) +
+    getEffectiveCardEnergyCost(
+      state,
+      def,
+      instanceId,
+      effectiveUpgraded,
+      cardInst.upgradeBranch ?? "A"
+    ) +
     (state.playerDisruption?.extraCardCost ?? 0) +
     getArchivistCardCostModifier(state, instanceId);
   if (state.player.energyCurrent < effectiveEnergyCost) return false;
@@ -184,10 +196,17 @@ export function playCard(
     instanceId,
     cardInst.upgraded
   );
+  const selectedUpgrade = effectiveUpgraded
+    ? getCardUpgrade(effectiveDefinition, cardInst.upgradeBranch ?? "A")
+    : null;
 
   const isUsingInkedVariant = Boolean(
     useInked && effectiveDefinition.inkedVariant
   );
+  const effectiveTargeting = isUsingInkedVariant
+    ? (effectiveDefinition.inkedVariant?.targeting ??
+      effectiveDefinition.targeting)
+    : effectiveDefinition.targeting;
   let effects = isUsingInkedVariant
     ? effectiveDefinition.inkedVariant!.effects
     : effectiveDefinition.effects;
@@ -201,16 +220,18 @@ export function playCard(
     state,
     effectiveDefinition,
     instanceId,
-    effectiveUpgraded
+    effectiveUpgraded,
+    cardInst.upgradeBranch ?? "A"
   );
   if (effectiveUpgraded) {
     if (isUsingInkedVariant) {
-      // Inked branch may define its own upgraded behavior; otherwise use the generic boost.
-      effects =
-        effectiveDefinition.inkedVariant?.upgradedEffects ??
-        boostEffectsForUpgrade(effects);
-    } else if (effectiveDefinition.upgrade) {
-      effects = effectiveDefinition.upgrade.effects;
+      // Preview and resolution use exactly the same branch/Ink composition.
+      effects = buildUpgradedCardDefinition(
+        effectiveDefinition,
+        cardInst.upgradeBranch ?? "A"
+      ).inkedVariant!.effects;
+    } else if (selectedUpgrade) {
+      effects = selectedUpgrade.effects;
     } else {
       effects = boostEffectsForUpgrade(effects);
     }
@@ -243,6 +264,20 @@ export function playCard(
   // Deduct costs
   let current: CombatState = {
     ...state,
+    analyticsInkSpent: (state.analyticsInkSpent ?? 0) + inkCost,
+    analyticsInkedCardsPlayed:
+      (state.analyticsInkedCardsPlayed ?? 0) + (isUsingInkedVariant ? 1 : 0),
+    analyticsCardPlays: {
+      ...(state.analyticsCardPlays ?? {}),
+      [def.id]: (state.analyticsCardPlays?.[def.id] ?? 0) + 1,
+    },
+    analyticsCardModePlays: {
+      ...(state.analyticsCardModePlays ?? {}),
+      [`${def.id}:${isUsingInkedVariant ? "INKED" : "NORMAL"}`]:
+        (state.analyticsCardModePlays?.[
+          `${def.id}:${isUsingInkedVariant ? "INKED" : "NORMAL"}`
+        ] ?? 0) + 1,
+    },
     player: {
       ...state.player,
       energyCurrent: state.player.energyCurrent - energyCost,
@@ -261,7 +296,7 @@ export function playCard(
   }
 
   // Resolve effects
-  const target = targetingToEffectTarget(def.targeting, targetId);
+  const target = targetingToEffectTarget(effectiveTargeting, targetId);
   current = resolveEffects(
     current,
     effects,
@@ -271,9 +306,21 @@ export function playCard(
       drawReason: `CARD:${def.id}`,
       cardDefs,
       sourceCardInstanceId: instanceId,
+      energyAfterCardCost: current.player.energyCurrent,
     },
     rng
   );
+  if (
+    effectiveDefinition.type === "ATTACK" ||
+    effectiveDefinition.type === "SKILL" ||
+    effectiveDefinition.type === "POWER"
+  ) {
+    current = {
+      ...current,
+      lastPlayedCardDefinitionId: effectiveDefinition.id,
+      lastPlayedCardType: effectiveDefinition.type,
+    };
+  }
   current = synchronizeArchivistCombatState(current);
   const wasPetrified = getCardPetrifiedCostBonus(current, instanceId) > 0;
   const wasWebbed = isCardWebbed(current, instanceId);
@@ -309,8 +356,14 @@ export function playCard(
         ? current.player.inkPerCardValue
         : 0;
     if (gainedInk > 0) {
+      const actualGain = Math.max(
+        0,
+        Math.min(gainedInk, current.player.inkMax - current.player.inkCurrent)
+      );
       current = {
         ...current,
+        analyticsInkGenerated:
+          (current.analyticsInkGenerated ?? 0) + actualGain,
         player: {
           ...current.player,
           inkCurrent: Math.min(

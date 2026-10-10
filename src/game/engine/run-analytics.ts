@@ -1,3 +1,4 @@
+import { getCardArchetypeTags } from "./card-archetypes";
 import type { CardInstance, CardDefinition } from "../schemas/cards";
 
 export type RunBuildArchetype =
@@ -6,10 +7,16 @@ export type RunBuildArchetype =
   | "draw"
   | "bleed"
   | "poison"
+  | "exhaust"
+  | "heal"
+  | "strength"
   | "mixed";
 
 const TAG_TO_ARCHETYPE: Record<string, RunBuildArchetype> = {
   INK: "ink",
+  EXHAUST: "exhaust",
+  HEAL: "heal",
+  STRENGTH: "strength",
   BLOCK: "armor",
   DRAW: "draw",
   BLEED: "bleed",
@@ -25,7 +32,7 @@ export function deriveRunBuildArchetype(
   for (const card of deck) {
     const def = cardDefs.get(card.definitionId);
     if (!def) continue;
-    for (const tag of def.archetypeTags ?? []) {
+    for (const tag of getCardArchetypeTags(def)) {
       const archetype = TAG_TO_ARCHETYPE[tag];
       if (archetype) {
         counts[archetype] = (counts[archetype] ?? 0) + 1;

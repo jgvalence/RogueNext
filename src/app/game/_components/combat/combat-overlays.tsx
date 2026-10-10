@@ -46,6 +46,7 @@ function getOverlayCardState(
       card.instanceId,
       card.upgraded
     ),
+    upgradeBranch: card.upgradeBranch ?? "A",
     archivistCostModifier: getArchivistCardCostModifier(
       combatState,
       card.instanceId
@@ -135,6 +136,7 @@ export function CombatOverlays({
                       <GameCard
                         definition={displayState.definition}
                         upgraded={displayState.upgraded}
+                        upgradeBranch={displayState.upgradeBranch}
                         costModifier={displayState.archivistCostModifier}
                         redactionTypes={displayState.redactionTypes}
                         size="sm"
@@ -217,6 +219,7 @@ export function CombatOverlays({
                           <GameCard
                             definition={displayState.definition}
                             upgraded={displayState.upgraded}
+                            upgradeBranch={displayState.upgradeBranch}
                             costModifier={displayState.archivistCostModifier}
                             redactionTypes={displayState.redactionTypes}
                             size="sm"
@@ -226,6 +229,7 @@ export function CombatOverlays({
                         <GameCard
                           definition={displayState.definition}
                           upgraded={displayState.upgraded}
+                          upgradeBranch={displayState.upgradeBranch}
                           costModifier={displayState.archivistCostModifier}
                           redactionTypes={displayState.redactionTypes}
                           size="sm"

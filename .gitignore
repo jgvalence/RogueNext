@@ -41,6 +41,7 @@ next-env.d.ts
 /public/sw.js
 /public/workbox-*.js
 /public/worker-*.js
+/public/swe-worker-*.js
 /public/fallback-*.js
 /public/sw.js.map
 /public/workbox-*.js.map
@@ -48,6 +49,8 @@ next-env.d.ts
 # prisma
 prisma/migrations/*
 !prisma/migrations/.gitkeep
+!prisma/migrations/20260804000000_add_run_analytics/
+!prisma/migrations/20260804000000_add_run_analytics/migration.sql
 
 # sentry
 .sentryclirc
@@ -66,3 +69,8 @@ sentry.properties
 
 # OS
 Thumbs.db
+
+# Isolated local end-to-end test database and browser profiles
+/.local-e2e/
+/.claude/settings.json
+/nul

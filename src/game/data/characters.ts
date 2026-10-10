@@ -5,6 +5,7 @@ export interface CharacterDefinition {
   /** Clés i18n : characters.<id>.name / .description */
   powers: [InkPowerType, InkPowerType, InkPowerType]; // slot 1, 2, 3
   starterDeckIds: string[];
+  starterRelicId: string;
   unlockCondition?: { totalRuns: number };
 }
 
@@ -12,6 +13,7 @@ export const characterDefinitions: CharacterDefinition[] = [
   {
     id: "scribe",
     powers: ["CALLIGRAPHIE", "ENCRE_NOIRE", "SEAL"],
+    starterRelicId: "scribe_opening_glyph",
     starterDeckIds: [
       "strike",
       "strike",
@@ -30,29 +32,31 @@ export const characterDefinitions: CharacterDefinition[] = [
   {
     id: "bibliothecaire",
     powers: ["VISION", "INDEX", "SILENCE"],
+    starterRelicId: "bibliothecaire_margin_tabs",
     starterDeckIds: [
       "strike",
       "strike",
       "strike",
       "strike",
+      "strike",
       "defend",
       "defend",
-      "ink_surge",
       "ink_surge",
       "catalogue",
       "chuchotement",
       "marque_page",
     ],
-    unlockCondition: { totalRuns: 2 },
+    // Available immediately as the tactical alternative to the Scribe.
   },
   {
     id: "griot",
     powers: ["VENIN", "SAIGNEMENT", "GRISGRIS"],
+    starterRelicId: "bleeding_thistle",
     starterDeckIds: [
       "strike",
       "strike",
       "strike",
-      "strike",
+      "defend",
       "defend",
       "defend",
       "ink_surge",
@@ -61,25 +65,26 @@ export const characterDefinitions: CharacterDefinition[] = [
       "rythme_mortel",
       "masque_de_bois",
     ],
-    unlockCondition: { totalRuns: 5 },
+    unlockCondition: { totalRuns: 3 },
   },
   {
     id: "fou",
     powers: ["DOUBLE_MISE", "PACTE_SANG", "FRENETIQUE"],
+    starterRelicId: "scroll_of_marginalia",
     starterDeckIds: [
       "strike",
       "strike",
       "strike",
+      "defend",
       "defend",
       "ink_surge",
       "frappe_folle",
       "frappe_folle",
       "soif_de_puissance",
       "rage_aveugle",
-      "rage_aveugle",
       "coup_de_grace_starter",
     ],
-    unlockCondition: { totalRuns: 10 },
+    unlockCondition: { totalRuns: 6 },
   },
 ];
 

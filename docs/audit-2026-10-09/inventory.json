@@ -1,0 +1,528 @@
+{
+  "counts": {
+    "cards": 276,
+    "enemies": 101,
+    "bosses": 18,
+    "elites": 19,
+    "allies": 8,
+    "relics": 194,
+    "stories": 45,
+    "cardArt": 3
+  },
+  "biomes": [
+    {
+      "biome": "LIBRARY",
+      "normal": 5,
+      "elites": 3,
+      "bosses": [
+        {
+          "id": "chapter_guardian",
+          "hp": 150,
+          "abilities": [
+            "Heavy Slam",
+            "Page Storm",
+            "Fortify Binding",
+            "Ink Devour",
+            "Crushing Verdict",
+            "Binding Curse",
+            "Shatter Binding",
+            "Rebind Chapter",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        },
+        {
+          "id": "the_archivist",
+          "hp": 144,
+          "abilities": [
+            "Spectral Strike",
+            "Ink Erasure",
+            "Corrupted Index",
+            "Void Library",
+            "Cover Tear",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        }
+      ]
+    },
+    {
+      "biome": "VIKING",
+      "normal": 6,
+      "elites": 2,
+      "bosses": [
+        {
+          "id": "fenrir",
+          "hp": 170,
+          "abilities": [
+            "Snap",
+            "Pack Howl",
+            "Lunge",
+            "Chain Break",
+            "Ragnarok Bite",
+            "Armor Rend",
+            "World's End",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        },
+        {
+          "id": "hel_queen",
+          "hp": 175,
+          "abilities": [
+            "Half-World Strike",
+            "Death's Grasp",
+            "Niflheim Surge",
+            "Realm Wall",
+            "Death's Reckoning",
+            "Frost Crush",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        }
+      ]
+    },
+    {
+      "biome": "GREEK",
+      "normal": 6,
+      "elites": 2,
+      "bosses": [
+        {
+          "id": "medusa",
+          "hp": 122,
+          "abilities": [
+            "Petrifying Gaze",
+            "Serpent Bite",
+            "Stone Crush",
+            "Viper Lash",
+            "Gorgon Crush",
+            "Full Petrification",
+            "Aegis Oath",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        },
+        {
+          "id": "hydra_aspect",
+          "hp": 118,
+          "abilities": [
+            "Triple Fang",
+            "Venom Surge",
+            "Hydra's Wrath",
+            "Regeneration",
+            "Necrotic Snap",
+            "Scale Crush",
+            "Aegis Oath",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        }
+      ]
+    },
+    {
+      "biome": "EGYPTIAN",
+      "normal": 7,
+      "elites": 2,
+      "bosses": [
+        {
+          "id": "ra_avatar",
+          "hp": 165,
+          "abilities": [
+            "Sun Spear",
+            "Blazing Decree",
+            "Solar Barrier",
+            "Divine Scorch",
+            "Solar Pierce",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        },
+        {
+          "id": "osiris_judgment",
+          "hp": 170,
+          "abilities": [
+            "Feather Judgment",
+            "Maat's Decree",
+            "Anubis Seal",
+            "Soul Drain",
+            "Scale of Maat",
+            "Weighing Strike",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        }
+      ]
+    },
+    {
+      "biome": "LOVECRAFTIAN",
+      "normal": 6,
+      "elites": 2,
+      "bosses": [
+        {
+          "id": "nyarlathotep_shard",
+          "hp": 188,
+          "abilities": [
+            "Black Flame",
+            "Mad Prophecy",
+            "Cosmic Drain",
+            "Void Mantle",
+            "Void Crush",
+            "Mind Freeze",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        },
+        {
+          "id": "shub_spawn",
+          "hp": 198,
+          "abilities": [
+            "Dark Young Stomp",
+            "Spore Cloud",
+            "Spawn Eruption",
+            "Eldritch Veil",
+            "Festering Touch",
+            "Crushing Tendrils",
+            "Mind Freeze",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        }
+      ]
+    },
+    {
+      "biome": "AZTEC",
+      "normal": 6,
+      "elites": 2,
+      "bosses": [
+        {
+          "id": "tezcatlipoca_echo",
+          "hp": 152,
+          "abilities": [
+            "Mirror Slash",
+            "Dark Sun",
+            "Obsidian Hunger",
+            "Night Mantle",
+            "Mirror Smash",
+            "Ritual Tax",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        },
+        {
+          "id": "quetzalcoatl_wrath",
+          "hp": 162,
+          "abilities": [
+            "Sky Strike",
+            "Feathered Slash",
+            "Wind Scorch",
+            "Serpent Coil",
+            "Solar Dive",
+            "Feather Pierce",
+            "Ritual Tax",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        }
+      ]
+    },
+    {
+      "biome": "CELTIC",
+      "normal": 6,
+      "elites": 2,
+      "bosses": [
+        {
+          "id": "dagda_shadow",
+          "hp": 132,
+          "abilities": [
+            "Club of Ruin",
+            "Cauldron Steam",
+            "Ancient Feast",
+            "Famine Curse",
+            "Earthen Crash",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        },
+        {
+          "id": "cernunnos_shade",
+          "hp": 135,
+          "abilities": [
+            "Antler Gore",
+            "Wild Thorns",
+            "Primal Roar",
+            "Forest Mist",
+            "Nature Rend",
+            "Ancient Wrath",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        }
+      ]
+    },
+    {
+      "biome": "RUSSIAN",
+      "normal": 6,
+      "elites": 2,
+      "bosses": [
+        {
+          "id": "baba_yaga_hut",
+          "hp": 122,
+          "abilities": [
+            "Stomping Legs",
+            "Witchfire",
+            "Bone Fence",
+            "Soul Stew",
+            "Grinding Stomp",
+            "Whiteout",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        },
+        {
+          "id": "koschei_deathless",
+          "hp": 148,
+          "abilities": [
+            "Deathless Blow",
+            "Bone Chain",
+            "Immortal Ward",
+            "Death's Gaze",
+            "Frozen Soul",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        }
+      ]
+    },
+    {
+      "biome": "AFRICAN",
+      "normal": 6,
+      "elites": 2,
+      "bosses": [
+        {
+          "id": "soundiata_spirit",
+          "hp": 169,
+          "abilities": [
+            "Lion King's Blow",
+            "Epic Command",
+            "Griot's Shield",
+            "Royal Tribute",
+            "Shield Breach",
+            "War Chorus",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        },
+        {
+          "id": "anansi_weaver",
+          "hp": 162,
+          "abilities": [
+            "Web Trap",
+            "Silk Snare",
+            "Trickster's Bite",
+            "Ancestral Weave",
+            "Web Collapse",
+            "Story's End",
+            "Dominion Sweep",
+            "Ally Reckoning"
+          ]
+        }
+      ]
+    }
+  ],
+  "missingEnemyArt": [
+    {
+      "id": "archivist_black_inkwell",
+      "path": "/images/enemies/archivist_black_inkwell.svg"
+    },
+    {
+      "id": "archivist_pale_inkwell",
+      "path": "/images/enemies/archivist_pale_inkwell.svg"
+    },
+    {
+      "id": "hydra_head_left",
+      "path": "/images/enemies/hydra_head_left.svg"
+    },
+    {
+      "id": "hydra_head_right",
+      "path": "/images/enemies/hydra_head_right.svg"
+    },
+    {
+      "id": "hydra_head_center",
+      "path": "/images/enemies/hydra_head_center.svg"
+    },
+    {
+      "id": "shub_brood_nest",
+      "path": "/images/enemies/shub_brood_nest.svg"
+    },
+    {
+      "id": "dagda_cauldron",
+      "path": "/images/enemies/dagda_cauldron.svg"
+    },
+    {
+      "id": "koschei_bone_chest",
+      "path": "/images/enemies/koschei_bone_chest.svg"
+    },
+    {
+      "id": "koschei_black_egg",
+      "path": "/images/enemies/koschei_black_egg.svg"
+    },
+    {
+      "id": "koschei_hidden_needle",
+      "path": "/images/enemies/koschei_hidden_needle.svg"
+    }
+  ],
+  "maxRealMeta": {
+    "extraDraw": 1,
+    "extraEnergyMax": 0,
+    "extraInkMax": 0,
+    "inkPerCardChance": 0,
+    "inkPerCardValue": 0,
+    "startingInk": 5,
+    "startingBlock": 0,
+    "startingStrength": 2,
+    "startingFocus": 1,
+    "startingRegen": 1,
+    "firstHitDamageReduction": 0,
+    "extraHp": 15,
+    "extraHandAtStart": 1,
+    "attackBonus": 1,
+    "allySlots": 3,
+    "allyHpPercent": 25,
+    "startingGold": 55,
+    "extraCardRewardChoices": 1,
+    "relicDiscount": 20,
+    "lootLuck": 4,
+    "unlockedPowerSlots": [
+      1,
+      2,
+      3
+    ],
+    "healAfterCombat": 5,
+    "healAfterCombatFlat": 4,
+    "exhaustKeepChance": 0,
+    "survivalOnce": true,
+    "freeUpgradePerRun": true,
+    "startingUncommonCardChoice": true,
+    "startingRareCard": false,
+    "rewardRerolls": 3
+  },
+  "difficulties": [
+    {
+      "difficulty": 0,
+      "enemyHpMultiplier": 1,
+      "enemyDamageMultiplier": 1,
+      "eliteChanceBonus": 0,
+      "specialRoomHealWeightMultiplier": 1,
+      "specialRoomEventWeightBonus": 0,
+      "enemyPackSizeBonus": 0,
+      "disruptionWeightBonus": 0,
+      "blockPenetrationFraction": 0
+    },
+    {
+      "difficulty": 1,
+      "enemyHpMultiplier": 1.12,
+      "enemyDamageMultiplier": 1.1,
+      "eliteChanceBonus": 0,
+      "specialRoomHealWeightMultiplier": 1,
+      "specialRoomEventWeightBonus": 0,
+      "enemyPackSizeBonus": 0,
+      "disruptionWeightBonus": 0.2,
+      "blockPenetrationFraction": 0
+    },
+    {
+      "difficulty": 2,
+      "enemyHpMultiplier": 1.24,
+      "enemyDamageMultiplier": 1.2,
+      "eliteChanceBonus": 0,
+      "specialRoomHealWeightMultiplier": 1,
+      "specialRoomEventWeightBonus": 0,
+      "enemyPackSizeBonus": 0,
+      "disruptionWeightBonus": 0.4,
+      "blockPenetrationFraction": 0
+    },
+    {
+      "difficulty": 3,
+      "enemyHpMultiplier": 1.56,
+      "enemyDamageMultiplier": 1.3,
+      "eliteChanceBonus": 0.05,
+      "specialRoomHealWeightMultiplier": 0.88,
+      "specialRoomEventWeightBonus": 0,
+      "enemyPackSizeBonus": 0,
+      "disruptionWeightBonus": 0.48,
+      "blockPenetrationFraction": 0
+    },
+    {
+      "difficulty": 4,
+      "enemyHpMultiplier": 1.62,
+      "enemyDamageMultiplier": 1.36,
+      "eliteChanceBonus": 0.1,
+      "specialRoomHealWeightMultiplier": 0.7,
+      "specialRoomEventWeightBonus": 0.12,
+      "enemyPackSizeBonus": 0,
+      "disruptionWeightBonus": 0.58,
+      "blockPenetrationFraction": 0.05
+    },
+    {
+      "difficulty": 5,
+      "enemyHpMultiplier": 1.7,
+      "enemyDamageMultiplier": 1.44,
+      "eliteChanceBonus": 0.15,
+      "specialRoomHealWeightMultiplier": 0.55,
+      "specialRoomEventWeightBonus": 0.2,
+      "enemyPackSizeBonus": 0,
+      "disruptionWeightBonus": 0.72,
+      "blockPenetrationFraction": 0
+    }
+  ],
+  "floorRamp": [
+    {
+      "floor": 1,
+      "enemyHpMultiplier": 0.56,
+      "enemyDamageMultiplier": 0.65
+    },
+    {
+      "floor": 2,
+      "enemyHpMultiplier": 0.68,
+      "enemyDamageMultiplier": 0.72
+    },
+    {
+      "floor": 3,
+      "enemyHpMultiplier": 0.8,
+      "enemyDamageMultiplier": 0.82
+    }
+  ],
+  "starts": [
+    {
+      "character": "scribe",
+      "inferred": "scribe",
+      "start": 48,
+      "forced": 237,
+      "afterAdvance": 50,
+      "relics": 194
+    },
+    {
+      "character": "bibliothecaire",
+      "inferred": "bibliothecaire",
+      "start": 55,
+      "forced": 237,
+      "afterAdvance": 57,
+      "relics": 194
+    },
+    {
+      "character": "griot",
+      "inferred": "griot",
+      "start": 43,
+      "forced": 237,
+      "afterAdvance": 46,
+      "relics": 194
+    },
+    {
+      "character": "fou",
+      "inferred": "fou",
+      "start": 52,
+      "forced": 237,
+      "afterAdvance": 54,
+      "relics": 194
+    }
+  ]
+}

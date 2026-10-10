@@ -1,9 +1,11 @@
 import { lootableCardDefinitions } from "../src/game/data/cards";
 import type { CardDefinition } from "../src/game/schemas/cards";
 import {
+  buildEffectPatternSignature,
   buildCardExactMechanicSignature,
   buildCardPatternSignature,
 } from "../src/game/engine/card-audit";
+import { getCardUpgradeBranches } from "../src/game/engine/card-upgrades";
 
 type Biome =
   | "LIBRARY"
@@ -16,7 +18,7 @@ type Biome =
   | "RUSSIAN"
   | "AFRICAN";
 
-type CharacterBucket = "neutral" | "scribe" | "bibliothecaire";
+type CharacterBucket = "neutral" | "scribe" | "bibliothecaire" | "griot" | "fou";
 type BuildKey =
   | "vulnerable"
   | "weak"
@@ -44,6 +46,8 @@ type CountRow = {
   neutral: number;
   scribe: number;
   bibliothecaire: number;
+  griot: number;
+  fou: number;
   total: number;
 };
 
@@ -73,7 +77,16 @@ const CHARACTER_BUCKETS: CharacterBucket[] = [
   "neutral",
   "scribe",
   "bibliothecaire",
+  "griot",
+  "fou",
 ];
+
+const INTENTIONAL_PATTERN_EXCEPTIONS = [
+  {
+    cards: ["frost_nail", "bestiary_normal_winter_wolf"],
+    reason: "The mastery card deliberately teaches the Winter Wolf pattern.",
+  },
+] as const;
 
 const BUILD_TAGS: BuildTagDefinition[] = [
   {
@@ -182,6 +195,8 @@ function isBestiary(card: CardDefinition): boolean {
 function getCharacterBucket(card: CardDefinition): CharacterBucket {
   if (card.characterId === "scribe") return "scribe";
   if (card.characterId === "bibliothecaire") return "bibliothecaire";
+  if (card.characterId === "griot") return "griot";
+  if (card.characterId === "fou") return "fou";
   return "neutral";
 }
 
@@ -197,6 +212,8 @@ function countByBiomeAndCharacter(cards: CardDefinition[]): CountRow[] {
       neutral: 0,
       scribe: 0,
       bibliothecaire: 0,
+      griot: 0,
+      fou: 0,
       total: biomeCards.length,
     };
 
@@ -286,6 +303,27 @@ function groupDuplicateCards(
     }));
 }
 
+function groupEffectPatterns(
+  cards: CardDefinition[],
+  effectsFor: (card: CardDefinition) => CardDefinition["effects"] | null
+): DuplicateGroup[] {
+  const groups = new Map<string, CardDefinition[]>();
+  for (const card of cards) {
+    const effects = effectsFor(card);
+    if (!effects) continue;
+    const signature = buildEffectPatternSignature(effects);
+    groups.set(signature, [...(groups.get(signature) ?? []), card]);
+  }
+  return [...groups.entries()]
+    .filter(([, cardsInGroup]) => cardsInGroup.length >= 2)
+    .map(([signature, cardsInGroup]) => ({
+      signature,
+      count: cardsInGroup.length,
+      cards: cardsInGroup.map(formatCardLabel),
+    }))
+    .sort((left, right) => right.count - left.count);
+}
+
 function formatMarkdownTable(
   headers: string[],
   rows: Array<Array<string | number>>
@@ -352,6 +390,150 @@ function main() {
     activeCards,
     buildCardPatternSignature
   );
+  const simpleEffectTypes = new Set([
+    "DAMAGE", "BLOCK", "HEAL", "DRAW_CARDS", "GAIN_ENERGY", "GAIN_INK",
+    "GAIN_STRENGTH", "GAIN_FOCUS", "APPLY_BUFF", "APPLY_DEBUFF", "EXHAUST",
+  ]);
+  const simpleCards = activeNonBestiaryCards.filter((card) =>
+    card.effects.every((effect) => simpleEffectTypes.has(effect.type))
+  );
+  const simpleByCharacter = Object.fromEntries(
+    CHARACTER_BUCKETS.map((bucket) => {
+      const cards = activeNonBestiaryCards.filter(
+        (card) => getCharacterBucket(card) === bucket
+      );
+      const simple = cards.filter((card) =>
+        card.effects.every((effect) => simpleEffectTypes.has(effect.type))
+      ).length;
+      return [bucket, { simple, total: cards.length, rate: cards.length ? simple / cards.length : 0 }];
+    })
+  );
+  const simpleByBiome = Object.fromEntries(
+    BIOMES.map((biome) => {
+      const cards = activeNonBestiaryCards.filter((card) => card.biome === biome);
+      const simple = cards.filter((card) =>
+        card.effects.every((effect) => simpleEffectTypes.has(effect.type))
+      ).length;
+      return [biome, { simple, total: cards.length, rate: cards.length ? simple / cards.length : 0 }];
+    })
+  );
+  const numericOnlyInked = activeNonBestiaryCards.filter(
+    (card) => card.inkedVariant &&
+      buildEffectPatternSignature(card.effects) ===
+        buildEffectPatternSignature(card.inkedVariant.effects)
+  ).map((card) => card.id);
+  const numericOnlyLegacyUpgrades = activeNonBestiaryCards.filter(
+    (card) => card.upgrade &&
+      buildEffectPatternSignature(card.effects) ===
+        buildEffectPatternSignature(card.upgrade.effects)
+  ).map((card) => card.id);
+  const numericOnlyUpgradeA = activeNonBestiaryCards.filter((card) => {
+    const [upgradeA] = getCardUpgradeBranches(card);
+    return buildEffectPatternSignature(card.effects) ===
+      buildEffectPatternSignature(upgradeA.effects);
+  }).map((card) => card.id);
+  const numericOnlyUpgradeB = activeNonBestiaryCards.filter((card) => {
+    const [, upgradeB] = getCardUpgradeBranches(card);
+    return buildEffectPatternSignature(card.effects) ===
+      buildEffectPatternSignature(upgradeB.effects);
+  }).map((card) => card.id);
+  const overloadedCardStages = activeNonBestiaryCards.flatMap((card) => {
+    const [upgradeA, upgradeB] = getCardUpgradeBranches(card);
+    const stages = [
+      ["normal", card.effects],
+      ["inked", card.inkedVariant?.effects ?? []],
+      ["upgradeA", upgradeA.effects],
+      ["upgradeB", upgradeB.effects],
+    ] as const;
+    return stages.flatMap(([stage, effects]) => {
+      const advancedFamilies = new Set(
+        effects
+          .filter((effect) => !simpleEffectTypes.has(effect.type))
+          .map((effect) => effect.type)
+      );
+      return advancedFamilies.size > 4
+        ? [{ cardId: card.id, stage, advancedFamilies: [...advancedFamilies] }]
+        : [];
+    });
+  });
+  const inkDirections = {
+    targetChange: activeNonBestiaryCards.filter(
+      (card) => card.inkedVariant?.targeting && card.inkedVariant.targeting !== card.targeting
+    ).map((card) => card.id),
+    delay: activeNonBestiaryCards.filter((card) =>
+      card.inkedVariant?.effects.some((effect) => effect.type === "TAKE_ENERGY_DEBT" || effect.type === "ARCHIVE_AND_DRAW")
+    ).map((card) => card.id),
+    copy: activeNonBestiaryCards.filter((card) =>
+      card.inkedVariant?.effects.some((effect) => effect.type === "COPY_LAST_CARD_TO_HAND" || effect.copySourceCard)
+    ).map((card) => card.id),
+    conversion: activeNonBestiaryCards.filter((card) =>
+      card.inkedVariant?.effects.some((effect) => effect.type === "DAMAGE_EQUAL_BLOCK" || effect.type === "DOUBLE_POISON")
+    ).map((card) => card.id),
+    overload: activeNonBestiaryCards.filter((card) =>
+      card.inkedVariant?.effects.some((effect) => effect.type === "DRAIN_INK" || effect.type === "TAKE_ENERGY_DEBT")
+    ).map((card) => card.id),
+    exactSpend: activeNonBestiaryCards.filter((card) =>
+      card.inkedVariant?.effects.some((effect) => effect.type === "EXACT_ENERGY_REWARD" || effect.type === "EXACT_INK_REWARD")
+    ).map((card) => card.id),
+    persistentCombat: activeNonBestiaryCards.filter((card) =>
+      card.inkedVariant?.effects.some((effect) => effect.type === "RHYTHM_REWARD" || effect.type === "NEXT_CARD_DOUBLE_DAMAGE")
+    ).map((card) => card.id),
+  };
+  const identityEffectTypes = {
+    scribe: new Set(["UPGRADE_RANDOM_CARD_IN_HAND", "COPY_LAST_CARD_TO_HAND"]),
+    bibliothecaire: new Set([
+      "TOPDECK_FROM_DISCARD",
+      "ARCHIVE_AND_DRAW",
+      "REVEAL_AND_REVERSE_TOP",
+      "EMPTY_DRAW_PILE_BLOCK",
+    ]),
+    griot: new Set(["RHYTHM_REWARD", "PROPAGATE_DOT"]),
+    fou: new Set(["TAKE_ENERGY_DEBT", "EXACT_ENERGY_REWARD", "EXACT_INK_REWARD"]),
+  };
+  const identityMechanicCoverage = Object.fromEntries(
+    Object.entries(identityEffectTypes).map(([characterId, types]) => [
+      characterId,
+      activeNonBestiaryCards.filter((card) => {
+        if (card.characterId !== characterId) return false;
+        const [upgradeA, upgradeB] = getCardUpgradeBranches(card);
+        const effects = [
+          ...card.effects,
+          ...(card.inkedVariant?.effects ?? []),
+          ...upgradeA.effects,
+          ...upgradeB.effects,
+        ];
+        return effects.some((effect) => types.has(effect.type));
+      }).map((card) => card.id),
+    ])
+  );
+  const invalidUpgradeBranches = activeNonBestiaryCards.filter((card) => {
+    const [a, b] = getCardUpgradeBranches(card);
+    return buildEffectPatternSignature(a.effects) === buildEffectPatternSignature(b.effects) &&
+      (a.energyCost ?? card.energyCost) === (b.energyCost ?? card.energyCost);
+  }).map((card) => card.id);
+  const ownedPoolSizes = Object.fromEntries(
+    (["scribe", "bibliothecaire", "griot", "fou"] as const).map((id) => [
+      id,
+      activeNonBestiaryCards.filter((card) => card.characterId === id).length,
+    ])
+  );
+  const rarePatternDuplicates = groupDuplicateCards(
+    activeNonBestiaryCards.filter((card) => card.rarity === "RARE"),
+    buildCardPatternSignature
+  );
+  const stagePatternGroups = {
+    normal: groupEffectPatterns(activeNonBestiaryCards, (card) => card.effects),
+    upgradeA: groupEffectPatterns(activeNonBestiaryCards, (card) =>
+      getCardUpgradeBranches(card)[0].effects
+    ),
+    upgradeB: groupEffectPatterns(activeNonBestiaryCards, (card) =>
+      getCardUpgradeBranches(card)[1].effects
+    ),
+    inked: groupEffectPatterns(
+      activeNonBestiaryCards,
+      (card) => card.inkedVariant?.effects ?? null
+    ),
+  };
 
   const payload = {
     generatedAt: new Date().toISOString(),
@@ -373,10 +555,47 @@ function main() {
     bestiaryPatternDuplicateGroups,
     allCardExactDuplicateGroups,
     allCardPatternDuplicateGroups,
+    simplicity: {
+      simple: simpleCards.length,
+      total: activeNonBestiaryCards.length,
+      rate: simpleCards.length / activeNonBestiaryCards.length,
+      byCharacter: simpleByCharacter,
+      byBiome: simpleByBiome,
+    },
+    numericOnlyInked,
+    numericOnlyLegacyUpgrades,
+    numericOnlyUpgradeA,
+    numericOnlyUpgradeB,
+    overloadedCardStages,
+    inkDirections,
+    identityMechanicCoverage,
+    invalidUpgradeBranches,
+    ownedPoolSizes,
+    rarePatternDuplicates,
+    intentionalPatternExceptions: INTENTIONAL_PATTERN_EXCEPTIONS,
+    stagePatternGroups,
   };
+
+  const poolCounts = Object.values(ownedPoolSizes);
+  const violations: string[] = [];
+  if (activeNonBestiaryCards.length > 197) violations.push(`card budget exceeded: ${activeNonBestiaryCards.length}/197`);
+  if (new Set(poolCounts).size !== 1) violations.push(`character pools differ: ${JSON.stringify(ownedPoolSizes)}`);
+  if (invalidUpgradeBranches.length) violations.push(`${invalidUpgradeBranches.length} cards lack two distinct upgrade branches`);
+  if (numericOnlyUpgradeA.length) violations.push(`${numericOnlyUpgradeA.length} branch-A upgrades are numeric-only`);
+  if (numericOnlyUpgradeB.length) violations.push(`${numericOnlyUpgradeB.length} branch-B upgrades are numeric-only`);
+  if (numericOnlyInked.length > 20) violations.push(`${numericOnlyInked.length} Ink variants are numeric-only (budget: 20)`);
+  if (overloadedCardStages.length) violations.push(`${overloadedCardStages.length} card stages exceed the four-mechanic readability budget`);
+  if (rarePatternDuplicates.length) violations.push(`${rarePatternDuplicates.length} duplicate rare-card patterns require an explicit exception`);
+  for (const [direction, cards] of Object.entries(inkDirections)) {
+    if (cards.length === 0) violations.push(`missing transformative Ink direction: ${direction}`);
+  }
+  for (const [characterId, cards] of Object.entries(identityMechanicCoverage)) {
+    if (cards.length < 3) violations.push(`${characterId} has fewer than 3 identity-mechanic cards`);
+  }
 
   if (process.argv.includes("--json")) {
     console.log(JSON.stringify(payload, null, 2));
+    if (violations.length) process.exitCode = 1;
     return;
   }
 
@@ -405,12 +624,14 @@ function main() {
   lines.push("");
   lines.push(
     formatMarkdownTable(
-      ["Biome", "Neutral", "Scribe", "Bibliothecaire", "Total"],
+      ["Biome", "Neutral", "Scribe", "Bibliothecaire", "Griot", "Fou", "Total"],
       collectionRows.map((row) => [
         row.biome,
         row.neutral,
         row.scribe,
         row.bibliothecaire,
+        row.griot,
+        row.fou,
         row.total,
       ])
     )
@@ -422,12 +643,14 @@ function main() {
   lines.push("");
   lines.push(
     formatMarkdownTable(
-      ["Biome", "Neutral", "Scribe", "Bibliothecaire", "Total"],
+      ["Biome", "Neutral", "Scribe", "Bibliothecaire", "Griot", "Fou", "Total"],
       activeRows.map((row) => [
         row.biome,
         row.neutral,
         row.scribe,
         row.bibliothecaire,
+        row.griot,
+        row.fou,
         row.total,
       ])
     )
@@ -439,12 +662,14 @@ function main() {
   lines.push("");
   lines.push(
     formatMarkdownTable(
-      ["Biome", "Neutral", "Scribe", "Bibliothecaire", "Total"],
+      ["Biome", "Neutral", "Scribe", "Bibliothecaire", "Griot", "Fou", "Total"],
       activeNonBestiaryRows.map((row) => [
         row.biome,
         row.neutral,
         row.scribe,
         row.bibliothecaire,
+        row.griot,
+        row.fou,
         row.total,
       ])
     )
@@ -458,12 +683,14 @@ function main() {
   lines.push("");
   lines.push(
     formatMarkdownTable(
-      ["Biome", "Neutral", "Scribe", "Bibliothecaire", "Total"],
+      ["Biome", "Neutral", "Scribe", "Bibliothecaire", "Griot", "Fou", "Total"],
       bestiaryRows.map((row) => [
         row.biome,
         row.neutral,
         row.scribe,
         row.bibliothecaire,
+        row.griot,
+        row.fou,
         row.total,
       ])
     )
@@ -569,6 +796,19 @@ function main() {
     allCardPatternDuplicateGroups,
     "No repeated mechanic patterns detected across active cards."
   );
+
+  lines.push("## Guardrails", "", `- Character pools: ${JSON.stringify(ownedPoolSizes)}`,
+    `- Simple cards: ${simpleCards.length}/${activeNonBestiaryCards.length}`,
+    `- Numeric-only inked variants: ${numericOnlyInked.length}`,
+    `- Numeric-only legacy upgrades: ${numericOnlyLegacyUpgrades.length}`,
+    `- Numeric-only resolved branch-A upgrades: ${numericOnlyUpgradeA.length}`,
+    `- Numeric-only resolved branch-B upgrades: ${numericOnlyUpgradeB.length}`,
+    `- Invalid dual upgrades: ${invalidUpgradeBranches.length}`,
+    `- Stages over the readability budget: ${overloadedCardStages.length}`, "");
+  if (violations.length) {
+    lines.push("## Violations", "", ...violations.map((violation) => `- ${violation}`), "");
+    process.exitCode = 1;
+  }
 
   console.log(lines.join("\n"));
 }

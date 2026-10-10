@@ -1,0 +1,39 @@
+{
+  "runs": [
+    {
+      "name": "desktop",
+      "runId": "cmv28t4vs0002tw5grwdpm2xj",
+      "status": "DEFEAT",
+      "floor": 3,
+      "room": 12,
+      "bossCombatWins": 2,
+      "bossesDefeated": [
+        "the_archivist"
+      ],
+      "oneSummary": true,
+      "onePvpSnapshot": true,
+      "clearedRewardCheckpoint": false
+    },
+    {
+      "name": "mobile",
+      "runId": "cmv2acqz00001twtkq5ifts3n",
+      "status": "VICTORY",
+      "floor": 3,
+      "room": 16,
+      "bossCombatWins": 3,
+      "bossesDefeated": [
+        "chapter_guardian",
+        "ra_avatar",
+        "koschei_deathless"
+      ],
+      "oneSummary": true,
+      "onePvpSnapshot": true,
+      "clearedRewardCheckpoint": true
+    }
+  ],
+  "historyShowsVictory": true,
+  "historyReloadDoesNotDuplicateRewards": true,
+  "wonRunsBeforeFixture": 50,
+  "wonRunsAfter": 51,
+  "errors": []
+}

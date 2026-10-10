@@ -183,6 +183,10 @@ describe("gameReducer", () => {
       payload: { characterId: "bibliothecaire" },
     });
 
+    expect(state.relicIds).toContain("scribe_opening_glyph");
+    expect(next.relicIds).toContain("bibliothecaire_margin_tabs");
+    expect(next.relicIds).not.toContain("scribe_opening_glyph");
+
     expect(
       next.cardUnlockProgress.byCharacter?.bibliothecaire?.enteredBiomes.LIBRARY
     ).toBe(1);

@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import { nanoid } from "nanoid";
 import { prisma } from "@/lib/db/prisma";
 import { GAME_CONSTANTS } from "@/game/constants";
@@ -50,11 +51,12 @@ export interface ActiveRunSnapshot {
 
 export async function buildInitialRunStateForUser(
   userId: string,
-  requestedSeed?: string
+  requestedSeed?: string,
+  db: Prisma.TransactionClient = prisma
 ): Promise<{ seed: string; state: RunState }> {
   const seed = requestedSeed ?? `${Date.now()}-${nanoid()}`;
   const rng = createRNG(seed);
-  const progression = await prisma.userProgression.findUnique({
+  const progression = await db.userProgression.findUnique({
     where: { userId },
     select: {
       resources: true,
@@ -143,6 +145,7 @@ export async function buildInitialRunStateForUser(
     winsByDifficulty
   );
 
+  state.analytics.totalRunsAtStart = totalRuns;
   return { seed, state };
 }
 

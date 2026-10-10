@@ -1,0 +1,1043 @@
+[
+  {
+    "id": "heavy_strike",
+    "name": "Inkstone Blow",
+    "character": "scribe",
+    "cost": 2,
+    "rarity": "COMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 12
+      }
+    ],
+    "ink": {
+      "description": "Deal 18 damage. Ink transformation: DAMAGE_EQUAL_BLOCK.",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 18
+        },
+        {
+          "type": "DAMAGE_EQUAL_BLOCK",
+          "value": 1
+        }
+      ],
+      "inkMarkCost": 2,
+      "targeting": "ALL_ENEMIES"
+    },
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 18
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 1
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 12
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "tome_strike",
+    "name": "Tome Strike",
+    "character": "scribe",
+    "cost": 0,
+    "rarity": "COMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 3
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 1
+      }
+    ],
+    "ink": null,
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 4
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 3
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 1
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "curse_word",
+    "name": "Curse Word",
+    "character": "scribe",
+    "cost": 2,
+    "rarity": "UNCOMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 10
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 5,
+        "buff": "POISON"
+      }
+    ],
+    "ink": null,
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 10
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 5,
+        "buff": "POISON"
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 10
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 5,
+        "buff": "POISON"
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "ink_surge",
+    "name": "Ink Surge",
+    "cost": 1,
+    "rarity": "UNCOMMON",
+    "type": "SKILL",
+    "effects": [
+      {
+        "type": "GAIN_INK",
+        "value": 2
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      }
+    ],
+    "ink": {
+      "description": "Gain 3 Ink. Upgrade 1 random card in hand. Draw 2 cards. Gain 2 Thorns.",
+      "effects": [
+        {
+          "type": "GAIN_INK",
+          "value": 3
+        },
+        {
+          "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+          "value": 1
+        },
+        {
+          "type": "DRAW_CARDS",
+          "value": 2
+        },
+        {
+          "type": "APPLY_BUFF",
+          "value": 2,
+          "buff": "THORNS"
+        }
+      ],
+      "inkMarkCost": 2
+    },
+    "A": [
+      {
+        "type": "GAIN_INK",
+        "value": 2
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 2
+      },
+      {
+        "type": "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND",
+        "value": 1
+      }
+    ],
+    "B": [
+      {
+        "type": "GAIN_INK",
+        "value": 2
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      },
+      {
+        "type": "TOPDECK_FROM_DISCARD",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "mjolnir_echo",
+    "name": "Mjolnir's Echo",
+    "cost": 2,
+    "rarity": "RARE",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 10
+      }
+    ],
+    "ink": {
+      "description": "Deal 15 damage to ALL enemies. Deal 3 additional damage per Clog in your discard pile.",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 15
+        },
+        {
+          "type": "DAMAGE_PER_CLOG_IN_DISCARD",
+          "value": 3
+        }
+      ],
+      "inkMarkCost": 3
+    },
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 14
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 1,
+        "buff": "VULNERABLE",
+        "duration": 2
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 10
+      },
+      {
+        "type": "DAMAGE_PER_EXHAUSTED_CARD",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "id": "gorgons_gaze",
+    "name": "Gorgon's Gaze",
+    "cost": 1,
+    "rarity": "UNCOMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 5
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 1,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      }
+    ],
+    "ink": {
+      "description": "Deal 7 damage to ALL. Apply 2 Vulnerable to ALL. Draw 1 card. Deal 3 additional damage per Clog in your discard pile.",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 7
+        },
+        {
+          "type": "APPLY_DEBUFF",
+          "value": 2,
+          "buff": "VULNERABLE",
+          "duration": 2
+        },
+        {
+          "type": "DRAW_CARDS",
+          "value": 1
+        },
+        {
+          "type": "DAMAGE_PER_CLOG_IN_DISCARD",
+          "value": 3
+        }
+      ],
+      "inkMarkCost": 3
+    },
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 7
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 2,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      },
+      {
+        "type": "BLOCK",
+        "value": 4
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 5
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 1,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      },
+      {
+        "type": "TAKE_ENERGY_DEBT",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "pharaohs_curse",
+    "name": "Pharaoh's Curse",
+    "cost": 1,
+    "rarity": "UNCOMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 6
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 3,
+        "buff": "POISON"
+      }
+    ],
+    "ink": null,
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 8
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 4,
+        "buff": "POISON"
+      },
+      {
+        "type": "BLOCK",
+        "value": 4
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 6
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 3,
+        "buff": "POISON"
+      },
+      {
+        "type": "ARCHIVE_AND_DRAW",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "sand_whip",
+    "name": "Sand Whip",
+    "cost": 1,
+    "rarity": "COMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 5
+      }
+    ],
+    "ink": {
+      "description": "Deal 8 damage to ALL enemies.",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 8
+        }
+      ],
+      "inkMarkCost": 2
+    },
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 8
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 1
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 5
+      },
+      {
+        "type": "ARCHIVE_AND_DRAW",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "obsidian_jab",
+    "name": "Obsidian Jab",
+    "cost": 1,
+    "rarity": "COMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 9
+      }
+    ],
+    "ink": {
+      "description": "Deal 13 damage.",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 13
+        }
+      ],
+      "inkMarkCost": 2
+    },
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 13
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 1,
+        "buff": "VULNERABLE",
+        "duration": 2
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 9
+      },
+      {
+        "type": "DAMAGE_PER_DOT_STACKS",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "sun_ritual",
+    "name": "Sun Ritual",
+    "cost": 1,
+    "rarity": "UNCOMMON",
+    "type": "SKILL",
+    "effects": [
+      {
+        "type": "BLOCK",
+        "value": 7
+      },
+      {
+        "type": "GAIN_STRENGTH",
+        "value": 1
+      }
+    ],
+    "ink": null,
+    "A": [
+      {
+        "type": "BLOCK",
+        "value": 10
+      },
+      {
+        "type": "GAIN_STRENGTH",
+        "value": 2
+      },
+      {
+        "type": "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND",
+        "value": 1
+      }
+    ],
+    "B": [
+      {
+        "type": "BLOCK",
+        "value": 7
+      },
+      {
+        "type": "GAIN_STRENGTH",
+        "value": 1
+      },
+      {
+        "type": "EXACT_INK_REWARD",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "logos_strike",
+    "name": "Logos Strike",
+    "character": "scribe",
+    "cost": 1,
+    "rarity": "COMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 5
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 1,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      }
+    ],
+    "ink": {
+      "description": "Deal 8 damage. Apply 2 Vulnerable. Draw 1 card.",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 8
+        },
+        {
+          "type": "APPLY_DEBUFF",
+          "value": 2,
+          "buff": "VULNERABLE",
+          "duration": 2
+        },
+        {
+          "type": "DRAW_CARDS",
+          "value": 1
+        }
+      ],
+      "inkMarkCost": 2
+    },
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 8
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 1,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      },
+      {
+        "type": "DAMAGE_IF_TARGET_HAS_DEBUFF",
+        "value": 4,
+        "buff": "WEAK"
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 5
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 1,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "ares_verse",
+    "name": "Ares Verse",
+    "character": "scribe",
+    "cost": 1,
+    "rarity": "UNCOMMON",
+    "type": "SKILL",
+    "effects": [
+      {
+        "type": "BLOCK",
+        "value": 6
+      },
+      {
+        "type": "GAIN_STRENGTH",
+        "value": 2
+      }
+    ],
+    "ink": {
+      "description": "Gain 8 block. Gain 3 Strength. Copy the last card played into your hand.",
+      "effects": [
+        {
+          "type": "BLOCK",
+          "value": 8
+        },
+        {
+          "type": "GAIN_STRENGTH",
+          "value": 3
+        },
+        {
+          "type": "COPY_LAST_CARD_TO_HAND",
+          "value": 1
+        }
+      ],
+      "inkMarkCost": 2,
+      "upgradedDescription": "Gain 10 block. Gain 3 Strength.",
+      "upgradedEffects": [
+        {
+          "type": "BLOCK",
+          "value": 10
+        },
+        {
+          "type": "GAIN_STRENGTH",
+          "value": 3
+        },
+        {
+          "type": "COPY_LAST_CARD_TO_HAND",
+          "value": 1
+        }
+      ]
+    },
+    "A": [
+      {
+        "type": "BLOCK",
+        "value": 8
+      },
+      {
+        "type": "GAIN_STRENGTH",
+        "value": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      }
+    ],
+    "B": [
+      {
+        "type": "BLOCK",
+        "value": 6
+      },
+      {
+        "type": "GAIN_STRENGTH",
+        "value": 2
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "hieroglyph_strike",
+    "name": "Hieroglyph Strike",
+    "character": "scribe",
+    "cost": 1,
+    "rarity": "COMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 8
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 1
+      }
+    ],
+    "ink": {
+      "description": "Deal 12 damage. Gain 2 ink. Upgrade a random card in your hand for this combat.",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 12
+        },
+        {
+          "type": "GAIN_INK",
+          "value": 2
+        },
+        {
+          "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+          "value": 1
+        }
+      ],
+      "inkMarkCost": 2
+    },
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 11
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 1
+      },
+      {
+        "type": "DAMAGE_IF_TARGET_HAS_DEBUFF",
+        "value": 4,
+        "buff": "WEAK"
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 8
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 1
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "griot_strike",
+    "name": "Griot Strike",
+    "character": "scribe",
+    "cost": 1,
+    "rarity": "UNCOMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 8
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 2,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      }
+    ],
+    "ink": null,
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 11
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 2,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      },
+      {
+        "type": "DAMAGE_IF_TARGET_HAS_DEBUFF",
+        "value": 4,
+        "buff": "WEAK"
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 8
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 2,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      },
+      {
+        "type": "UPGRADE_RANDOM_CARD_IN_HAND",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "oral_history",
+    "name": "Oral History",
+    "character": "bibliothecaire",
+    "cost": 1,
+    "rarity": "UNCOMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 5
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 2,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      }
+    ],
+    "ink": null,
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 7
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 2,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 1
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 5
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 2,
+        "buff": "VULNERABLE",
+        "duration": 2
+      },
+      {
+        "type": "DRAW_CARDS",
+        "value": 1
+      },
+      {
+        "type": "TOPDECK_FROM_DISCARD",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "plague_of_words",
+    "name": "Plague of Words",
+    "character": "griot",
+    "cost": 1,
+    "rarity": "UNCOMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 4
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 3,
+        "buff": "POISON"
+      }
+    ],
+    "ink": {
+      "description": "Deal 6 damage to ALL enemies. Apply 4 Poison to ALL enemies. Alternate Attack and Skill to gain Ink; every third beat draws a card and grants 1 Energy.",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 6
+        },
+        {
+          "type": "APPLY_DEBUFF",
+          "value": 4,
+          "buff": "POISON"
+        },
+        {
+          "type": "RHYTHM_REWARD",
+          "value": 1
+        }
+      ],
+      "inkMarkCost": 2
+    },
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 6
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 3,
+        "buff": "POISON"
+      },
+      {
+        "type": "BLOCK",
+        "value": 4
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 4
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 3,
+        "buff": "POISON"
+      },
+      {
+        "type": "RHYTHM_REWARD",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "venin_du_serpent",
+    "name": "Venin du Serpent",
+    "character": "griot",
+    "cost": 2,
+    "rarity": "UNCOMMON",
+    "type": "ATTACK",
+    "effects": [
+      {
+        "type": "DAMAGE",
+        "value": 8
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 6,
+        "buff": "POISON"
+      }
+    ],
+    "ink": {
+      "description": "Inflige 12 dégâts. Applique 9 Poison. Raise other enemies' Poison and Bleed to the target's concentration without adding to existing stacks.",
+      "effects": [
+        {
+          "type": "DAMAGE",
+          "value": 12
+        },
+        {
+          "type": "APPLY_DEBUFF",
+          "value": 9,
+          "buff": "POISON"
+        },
+        {
+          "type": "PROPAGATE_DOT",
+          "value": 1
+        }
+      ],
+      "inkMarkCost": 3
+    },
+    "A": [
+      {
+        "type": "DAMAGE",
+        "value": 10
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 8,
+        "buff": "POISON"
+      },
+      {
+        "type": "GAIN_INK",
+        "value": 1
+      }
+    ],
+    "B": [
+      {
+        "type": "DAMAGE",
+        "value": 8
+      },
+      {
+        "type": "APPLY_DEBUFF",
+        "value": 6,
+        "buff": "POISON"
+      },
+      {
+        "type": "RHYTHM_REWARD",
+        "value": 1
+      }
+    ]
+  }
+]

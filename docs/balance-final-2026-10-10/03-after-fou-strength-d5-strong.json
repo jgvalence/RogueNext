@@ -1,0 +1,3806 @@
+{
+  "config": {
+    "numRuns": 20,
+    "difficulty": 5,
+    "biome": null,
+    "character": "fou",
+    "metaPreset": "strong",
+    "seed": "final-pass-high",
+    "buildType": "strength",
+    "noArmorPayoffs": false,
+    "maxTurnsPerCombat": 60,
+    "writeCsv": false,
+    "verbose": false,
+    "extraStartCards": []
+  },
+  "runs": [
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 506,
+      "totalTurns": 59,
+      "damageTaken": 291,
+      "combats": 22,
+      "bossesDefeated": 2,
+      "cardsAdded": 20,
+      "relicsGained": 5,
+      "deckSizeAtEnd": 32,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 0,
+      "error": null,
+      "defeatedBy": [
+        "czar_guard",
+        "snow_maiden",
+        "kikimora",
+        "rusalka"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_nail",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bestiary_normal_hyena_pack",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 251,
+      "totalTurns": 45,
+      "damageTaken": 256,
+      "combats": 18,
+      "bossesDefeated": 1,
+      "cardsAdded": 16,
+      "relicsGained": 4,
+      "deckSizeAtEnd": 28,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 12,
+      "error": null,
+      "defeatedBy": [
+        "bog_beast",
+        "morrigan_wisp",
+        "amber_hound",
+        "druid_apprentice"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blood_codex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 158,
+      "finalGold": 387,
+      "totalTurns": 82,
+      "damageTaken": 194,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "green_man_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "firebird_script",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "firebird_script",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bear_claw",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "blood_codex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "folklore_archive",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 97,
+      "finalGold": 332,
+      "totalTurns": 86,
+      "damageTaken": 386,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 29,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 40,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "green_man_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "green_man_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "jaguar_pounce",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "jaguar_pounce",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "jaguar_pounce",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "green_man_verse",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 0,
+      "finalHp": 0,
+      "finalGold": 343,
+      "totalTurns": 17,
+      "damageTaken": 99,
+      "combats": 5,
+      "bossesDefeated": 0,
+      "cardsAdded": 4,
+      "relicsGained": 0,
+      "deckSizeAtEnd": 17,
+      "defeatedAtFloor": 1,
+      "defeatedAtRoom": 6,
+      "error": null,
+      "defeatedBy": [
+        "void_tendril",
+        "byakhee",
+        "star_spawn",
+        "star_spawn"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "haunting_regret",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 78,
+      "finalGold": 624,
+      "totalTurns": 69,
+      "damageTaken": 181,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "anubis_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scribes_judgment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "eye_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "anubis_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 358,
+      "totalTurns": 45,
+      "damageTaken": 250,
+      "combats": 14,
+      "bossesDefeated": 1,
+      "cardsAdded": 12,
+      "relicsGained": 3,
+      "deckSizeAtEnd": 24,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 6,
+      "error": null,
+      "defeatedBy": [
+        "snow_maiden",
+        "iron_cossack",
+        "winter_wolf",
+        "czar_guard"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "odin_script",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 248,
+      "totalTurns": 58,
+      "damageTaken": 248,
+      "combats": 23,
+      "bossesDefeated": 2,
+      "cardsAdded": 21,
+      "relicsGained": 5,
+      "deckSizeAtEnd": 32,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 1,
+      "error": null,
+      "defeatedBy": [
+        "briar_beast",
+        "amber_hound",
+        "sidhe_raider",
+        "sidhe_raider"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rune_strike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "scribes_judgment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 460,
+      "totalTurns": 47,
+      "damageTaken": 180,
+      "combats": 16,
+      "bossesDefeated": 1,
+      "cardsAdded": 14,
+      "relicsGained": 3,
+      "deckSizeAtEnd": 25,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 7,
+      "error": null,
+      "defeatedBy": [
+        "domovoi_titan"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 307,
+      "totalTurns": 38,
+      "damageTaken": 241,
+      "combats": 12,
+      "bossesDefeated": 1,
+      "cardsAdded": 11,
+      "relicsGained": 2,
+      "deckSizeAtEnd": 25,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 1,
+      "error": null,
+      "defeatedBy": [
+        "cyclops",
+        "gorgon",
+        "lamia"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "haunting_regret",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scribes_judgment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 390,
+      "totalTurns": 33,
+      "damageTaken": 113,
+      "combats": 13,
+      "bossesDefeated": 1,
+      "cardsAdded": 11,
+      "relicsGained": 3,
+      "deckSizeAtEnd": 23,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 1,
+      "error": null,
+      "defeatedBy": [
+        "deep_one",
+        "byakhee",
+        "star_spawn",
+        "cultist_scribe"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scribes_judgment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 471,
+      "totalTurns": 41,
+      "damageTaken": 168,
+      "combats": 15,
+      "bossesDefeated": 1,
+      "cardsAdded": 13,
+      "relicsGained": 3,
+      "deckSizeAtEnd": 25,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 6,
+      "error": null,
+      "defeatedBy": [
+        "sand_guardian",
+        "mummy_knight",
+        "wadjet_guardian",
+        "tomb_priest"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blood_codex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 11,
+      "finalGold": 678,
+      "totalTurns": 83,
+      "damageTaken": 476,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 30,
+      "relicsGained": 7,
+      "deckSizeAtEnd": 42,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blood_codex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_scripture",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_cleave",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "odin_script",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 661,
+      "totalTurns": 62,
+      "damageTaken": 381,
+      "combats": 25,
+      "bossesDefeated": 2,
+      "cardsAdded": 24,
+      "relicsGained": 4,
+      "deckSizeAtEnd": 36,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 6,
+      "error": null,
+      "defeatedBy": [
+        "quetzal_harbinger"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scribes_judgment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bestiary_normal_winter_wolf",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "adrenaline_pure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "starborn_omen",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bogatyr_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_jab",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 661,
+      "totalTurns": 59,
+      "damageTaken": 371,
+      "combats": 29,
+      "bossesDefeated": 2,
+      "cardsAdded": 25,
+      "relicsGained": 7,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 13,
+      "error": null,
+      "defeatedBy": [
+        "briar_beast",
+        "bog_beast",
+        "druid_apprentice",
+        "amber_hound"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bestiary_normal_hyena_pack",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blood_codex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "gorgons_gaze",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "blood_codex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 423,
+      "totalTurns": 31,
+      "damageTaken": 146,
+      "combats": 12,
+      "bossesDefeated": 1,
+      "cardsAdded": 9,
+      "relicsGained": 4,
+      "deckSizeAtEnd": 21,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 0,
+      "error": null,
+      "defeatedBy": [
+        "gorgon",
+        "lamia",
+        "cyclops"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "morrigan_curse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "green_man_verse",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 24,
+      "finalGold": 443,
+      "totalTurns": 86,
+      "damageTaken": 557,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 29,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 40,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scribes_judgment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_scripture",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_cleave",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "anubis_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "eye_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "desert_wisdom",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pythian_codex",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 426,
+      "totalTurns": 49,
+      "damageTaken": 190,
+      "combats": 16,
+      "bossesDefeated": 1,
+      "cardsAdded": 13,
+      "relicsGained": 4,
+      "deckSizeAtEnd": 25,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 6,
+      "error": null,
+      "defeatedBy": [
+        "bog_beast",
+        "sidhe_raider",
+        "amber_hound",
+        "druid_apprentice"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sun_ritual",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 336,
+      "totalTurns": 27,
+      "damageTaken": 213,
+      "combats": 11,
+      "bossesDefeated": 1,
+      "cardsAdded": 10,
+      "relicsGained": 2,
+      "deckSizeAtEnd": 24,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 0,
+      "error": null,
+      "defeatedBy": [
+        "gorgon",
+        "bronze_automaton",
+        "harpy",
+        "harpy"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "concentration_totale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "titans_wrath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "haunting_regret",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 123,
+      "finalGold": 589,
+      "totalTurns": 70,
+      "damageTaken": 263,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frappe_folle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "soif_de_puissance",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "rage_aveugle",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "coup_de_grace_starter",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scribes_judgment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scribes_judgment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bestiary_normal_draugr",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "berserker_charge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frisson_du_risque",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sunbird_power",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pacte_final",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_rhythm",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trickster_snare",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "double_ou_rien",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blood_codex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacrificial_word",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hummingbird_strike",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    }
+  ],
+  "wins": 6,
+  "errors": [],
+  "draftStats": {
+    "ancestral_drum": {
+      "offered": 43,
+      "picked": 0
+    },
+    "eclair_ephemere": {
+      "offered": 124,
+      "picked": 0
+    },
+    "titans_wrath": {
+      "offered": 72,
+      "picked": 11
+    },
+    "concentration_totale": {
+      "offered": 62,
+      "picked": 40
+    },
+    "sunbird_power": {
+      "offered": 24,
+      "picked": 10
+    },
+    "double_ou_rien": {
+      "offered": 70,
+      "picked": 19
+    },
+    "frisson_du_risque": {
+      "offered": 110,
+      "picked": 27
+    },
+    "sacrificial_word": {
+      "offered": 72,
+      "picked": 49
+    },
+    "adrenaline_pure": {
+      "offered": 113,
+      "picked": 1
+    },
+    "bestiary_normal_hyena_pack": {
+      "offered": 9,
+      "picked": 2
+    },
+    "labyrinth": {
+      "offered": 11,
+      "picked": 0
+    },
+    "tempete_d_encre": {
+      "offered": 14,
+      "picked": 0
+    },
+    "book_of_ra": {
+      "offered": 71,
+      "picked": 59
+    },
+    "ink_surge": {
+      "offered": 66,
+      "picked": 5
+    },
+    "epic_saga": {
+      "offered": 35,
+      "picked": 0
+    },
+    "bogatyr_strike": {
+      "offered": 27,
+      "picked": 13
+    },
+    "healing_rhythm": {
+      "offered": 11,
+      "picked": 10
+    },
+    "frost_nail": {
+      "offered": 27,
+      "picked": 1
+    },
+    "spirit_drum": {
+      "offered": 11,
+      "picked": 0
+    },
+    "iron_samovar": {
+      "offered": 25,
+      "picked": 0
+    },
+    "blood_codex": {
+      "offered": 13,
+      "picked": 7
+    },
+    "ancestor_archive": {
+      "offered": 2,
+      "picked": 0
+    },
+    "ancient_grove": {
+      "offered": 17,
+      "picked": 5
+    },
+    "odin_script": {
+      "offered": 14,
+      "picked": 2
+    },
+    "starborn_omen": {
+      "offered": 19,
+      "picked": 1
+    },
+    "thorn_slash": {
+      "offered": 33,
+      "picked": 20
+    },
+    "bestiary_normal_winter_wolf": {
+      "offered": 8,
+      "picked": 1
+    },
+    "void_scripture": {
+      "offered": 14,
+      "picked": 0
+    },
+    "shield_of_athena": {
+      "offered": 26,
+      "picked": 0
+    },
+    "scribes_judgment": {
+      "offered": 22,
+      "picked": 8
+    },
+    "olympian_guard": {
+      "offered": 23,
+      "picked": 7
+    },
+    "olympian_scripture": {
+      "offered": 11,
+      "picked": 2
+    },
+    "green_man_verse": {
+      "offered": 9,
+      "picked": 5
+    },
+    "gorgons_gaze": {
+      "offered": 2,
+      "picked": 1
+    },
+    "snowstorm_trap": {
+      "offered": 1,
+      "picked": 0
+    },
+    "pacte_final": {
+      "offered": 11,
+      "picked": 10
+    },
+    "permafrost_ward": {
+      "offered": 6,
+      "picked": 0
+    },
+    "firebird_script": {
+      "offered": 3,
+      "picked": 2
+    },
+    "olympian_cleave": {
+      "offered": 15,
+      "picked": 2
+    },
+    "hummingbird_strike": {
+      "offered": 11,
+      "picked": 10
+    },
+    "bear_claw": {
+      "offered": 1,
+      "picked": 1
+    },
+    "folklore_archive": {
+      "offered": 1,
+      "picked": 1
+    },
+    "obsidian_jab": {
+      "offered": 14,
+      "picked": 1
+    },
+    "jaguar_pounce": {
+      "offered": 6,
+      "picked": 3
+    },
+    "sun_ritual": {
+      "offered": 14,
+      "picked": 1
+    },
+    "anubis_strike": {
+      "offered": 15,
+      "picked": 3
+    },
+    "canopic_ward": {
+      "offered": 27,
+      "picked": 0
+    },
+    "forbidden_whisper": {
+      "offered": 17,
+      "picked": 5
+    },
+    "pharaohs_curse": {
+      "offered": 2,
+      "picked": 0
+    },
+    "desert_wisdom": {
+      "offered": 6,
+      "picked": 1
+    },
+    "osiris_archive": {
+      "offered": 6,
+      "picked": 0
+    },
+    "eye_of_ra": {
+      "offered": 2,
+      "picked": 2
+    },
+    "sand_whip": {
+      "offered": 6,
+      "picked": 0
+    },
+    "shield_wall": {
+      "offered": 38,
+      "picked": 0
+    },
+    "berserker_charge": {
+      "offered": 20,
+      "picked": 19
+    },
+    "mjolnir_echo": {
+      "offered": 3,
+      "picked": 0
+    },
+    "rune_strike": {
+      "offered": 3,
+      "picked": 1
+    },
+    "druids_breath": {
+      "offered": 4,
+      "picked": 0
+    },
+    "wild_gale": {
+      "offered": 1,
+      "picked": 0
+    },
+    "bestiary_normal_star_spawn": {
+      "offered": 3,
+      "picked": 0
+    },
+    "trickster_snare": {
+      "offered": 5,
+      "picked": 1
+    },
+    "pythian_codex": {
+      "offered": 2,
+      "picked": 1
+    },
+    "bestiary_normal_draugr": {
+      "offered": 7,
+      "picked": 1
+    },
+    "madness_spike": {
+      "offered": 3,
+      "picked": 2
+    },
+    "bestiary_normal_deep_one": {
+      "offered": 1,
+      "picked": 0
+    },
+    "void_touch": {
+      "offered": 2,
+      "picked": 0
+    },
+    "readers_pact": {
+      "offered": 1,
+      "picked": 0
+    },
+    "morrigan_curse": {
+      "offered": 2,
+      "picked": 1
+    },
+    "blood_offering": {
+      "offered": 5,
+      "picked": 0
+    },
+    "bestiary_normal_eagle_knight": {
+      "offered": 2,
+      "picked": 0
+    },
+    "forbidden_index": {
+      "offered": 1,
+      "picked": 0
+    }
+  },
+  "upgradeStats": {
+    "A": 46,
+    "B": 0
+  }
+}

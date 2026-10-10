@@ -1,0 +1,5 @@
+ALTER TABLE "run_summaries"
+ADD COLUMN "runConditionId" TEXT,
+ADD COLUMN "metaBonuses" JSONB NOT NULL DEFAULT '{}',
+ADD COLUMN "analytics" JSONB NOT NULL DEFAULT '{}',
+ADD COLUMN "finalDeck" JSONB NOT NULL DEFAULT '[]';

@@ -20,6 +20,17 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "no-store, max-age=0" },
+          { key: "Service-Worker-Allowed", value: "/" },
+        ],
+      },
+      {
+        source: "/manifest.webmanifest",
+        headers: [{ key: "Cache-Control", value: "no-cache, max-age=0" }],
+      },
+      {
         source: "/:path*",
         headers: [
           {
@@ -66,11 +77,52 @@ const nextConfig: NextConfig = {
 
 export default withPWA({
   dest: "public",
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
+  cacheStartUrl: false,
+  cacheOnFrontEndNav: false,
+  aggressiveFrontEndNavCaching: false,
+  reloadOnOnline: false,
+  // Fetch card, enemy and room paintings as they are viewed, without precaching them.
+  publicExcludes: [
+    "!noprecache/**/*",
+    "!images/cards/painted-v1/**/*",
+    "!images/enemies/painted-v1/**/*",
+    "!images/rooms/painted-v1/**/*",
+  ],
   disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
+    runtimeCaching: [
+      {
+        urlPattern: /\/images\/rooms\/painted-v1\/.*\.webp$/,
+        handler: "StaleWhileRevalidate",
+        options: {
+          cacheName: "room-paintings-v1",
+          expiration: { maxEntries: 90, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [200] },
+        },
+      },
+      {
+        urlPattern: /\/images\/enemies\/painted-v1\/.*\.webp$/,
+        handler: "StaleWhileRevalidate",
+        options: {
+          cacheName: "enemy-paintings-v1",
+          expiration: { maxEntries: 120, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [200] },
+        },
+      },
+      {
+        urlPattern: /\/images\/cards\/painted-v1\/.*\.webp$/,
+        handler: "StaleWhileRevalidate",
+        options: {
+          cacheName: "card-paintings-v1",
+          expiration: { maxEntries: 180, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [200] },
+        },
+      },
+      {
+        urlPattern: /\/api\/|\/game(?:\/|$)|\/library(?:\/|$)|\/runs(?:\/|$)/,
+        handler: "NetworkOnly",
+      },
+    ],
   },
 })(nextConfig);

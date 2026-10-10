@@ -7,12 +7,15 @@ import type { CombatState } from "../schemas/combat-state";
 import type { CardDefinition, CardInstance } from "../schemas/cards";
 import type { BiomeType, BiomeResource } from "../schemas/enums";
 import type { ComputedMetaBonuses } from "../schemas/meta";
+import { DEFAULT_RUN_ANALYTICS } from "../schemas/analytics";
 import { GAME_CONSTANTS } from "../constants";
 import { enemyDefinitions } from "../data/enemies";
 import { relicDefinitions } from "../data/relics";
+import { getCharacterById } from "../data/characters";
 import type { CardUnlockProgress } from "./card-unlocks";
 import { matchesCardCharacter } from "./card-filters";
 import {
+  addInitialCharacterCardUnlocks,
   computeUnlockedCardIds,
   onBossKilled,
   onEliteKilled,
@@ -46,7 +49,10 @@ import {
   type EncounteredEnemyType,
 } from "./bestiary";
 import { addRelicToRunState, POTION_REWARD_RELIC_ID } from "./relics";
-import { createFirstRunScriptedMap } from "./first-run-script";
+import {
+  createFirstRunScriptedMap,
+  getFirstRunScriptedEndResources,
+} from "./first-run-script";
 import { isClogCardDefinitionId } from "./status-cards";
 
 type EnemyDef = (typeof enemyDefinitions)[0];
@@ -404,7 +410,9 @@ export function createNewRun(
         initialEnemyKillCounts
       )
     : [];
-  const unlockedCardIds = unlockedCardIdsRaw;
+  const unlockedCardIds = allCards
+    ? addInitialCharacterCardUnlocks(unlockedCardIdsRaw, runCharacterId)
+    : [];
 
   return {
     runId,
@@ -417,12 +425,13 @@ export function createNewRun(
     gold: startingGold,
     maxGoldReached: startingGold,
     merchantRerollCount: 0,
+    analytics: structuredClone(DEFAULT_RUN_ANALYTICS),
     playerMaxHp: GAME_CONSTANTS.STARTING_HP + extraHp,
     playerCurrentHp: GAME_CONSTANTS.STARTING_HP + extraHp,
     deck,
     allyIds: [],
     allyCurrentHps: {},
-    relicIds: [],
+    relicIds: [getCharacterById(runCharacterId).starterRelicId],
     relicRunFlags: {},
     usableItems: [],
     usableItemCapacity: GAME_CONSTANTS.MAX_USABLE_ITEMS,
@@ -856,7 +865,7 @@ function assignGraphRoomTypes(template: FloorMapTemplate, rng: RNG): void {
     pickGeneratedNode(template, [4, 5], ["BALANCED"], rng),
     "UPGRADE"
   );
-  assignPlanElite(pickGeneratedNode(template, [6, 7], ["BALANCED"], rng));
+  assignPlanElite(pickGeneratedNode(template, [7, 8], ["BALANCED"], rng));
   assignPlanMerchant(pickGeneratedNode(template, [8], ["BALANCED"], rng));
   assignPlanSpecial(
     pickGeneratedNode(template, [9, 10], ["BALANCED"], rng),
@@ -871,7 +880,7 @@ function assignGraphRoomTypes(template: FloorMapTemplate, rng: RNG): void {
     pickGeneratedNode(template, [1, 2], ["GREEDY"], rng),
     rng.next() < 0.5 ? "EVENT" : "HEAL"
   );
-  assignPlanElite(pickGeneratedNode(template, [2, 3], ["GREEDY"], rng));
+  assignPlanElite(pickGeneratedNode(template, [5, 6], ["GREEDY"], rng));
   assignPlanSpecial(
     pickGeneratedNode(template, [4, 5], ["GREEDY"], rng),
     "EVENT"
@@ -881,7 +890,7 @@ function assignGraphRoomTypes(template: FloorMapTemplate, rng: RNG): void {
     "UPGRADE"
   );
   assignPlanMerchant(pickGeneratedNode(template, [8], ["GREEDY"], rng));
-  assignPlanElite(pickGeneratedNode(template, [9, 10], ["GREEDY"], rng));
+  assignPlanElite(pickGeneratedNode(template, [10, 11], ["GREEDY"], rng));
   assignPlanSpecial(
     pickGeneratedNode(template, [12, 13], ["GREEDY"], rng),
     "EVENT"
@@ -1262,10 +1271,11 @@ function buildFloorMapCandidate(
   biome: BiomeType,
   mapRules: ReturnType<typeof getRunConditionMapRules>,
   difficultyLevel: number,
-  isInfiniteMode: boolean
+  isInfiniteMode: boolean,
+  templateOverride?: FloorMapTemplate
 ): RoomNode[][] {
   const template = applyTemplateMapRules(
-    pickTemplate(mapRules, rng),
+    templateOverride ?? pickTemplate(mapRules, rng),
     mapRules,
     rng
   );
@@ -1463,11 +1473,16 @@ function summarizePathIdentity(path: RoomNode[]): string {
   ].join("|");
 }
 
-function isValidFloorMapCandidate(map: RoomNode[][]): boolean {
+export function isValidFloorMapCandidate(
+  map: RoomNode[][],
+  rules: ReturnType<typeof getRunConditionMapRules> = {}
+): boolean {
   const bossRoomIndex = getBossRoomIndexForMap(map);
   const preBossRoomIndex = getPreBossRoomIndexForMap(map);
   const paths = enumerateFloorMapPaths(map);
   if (paths.length === 0) return false;
+  if (rules.forceSingleChoice || rules.bossOnlyCombats)
+    return paths.every((path) => path.length === map.length);
 
   let safePathExists = false;
   let balancedPathExists = false;
@@ -1548,9 +1563,13 @@ function isValidFloorMapCandidate(map: RoomNode[][]): boolean {
     const merchantIndexes = beforePreBoss
       .filter((node) => node.type === "MERCHANT")
       .map((node) => node.index);
-    if (merchantCount < 1) return false;
+    if (!rules.noMerchants && merchantCount < 1) return false;
     if (merchantCount > 2) return false;
-    if ((merchantIndexes[0] ?? Number.POSITIVE_INFINITY) > 8) return false;
+    if (
+      !rules.noMerchants &&
+      (merchantIndexes[0] ?? Number.POSITIVE_INFINITY) > 8
+    )
+      return false;
     for (let index = 1; index < merchantIndexes.length; index += 1) {
       if (merchantIndexes[index]! - merchantIndexes[index - 1]! <= 1) {
         return false;
@@ -1559,7 +1578,9 @@ function isValidFloorMapCandidate(map: RoomNode[][]): boolean {
     safePathExists ||=
       eliteCount === 0 && recoveryOrUpgradeCount >= 2 && eventLikeCount >= 1;
     balancedPathExists ||=
-      eliteCount === 1 && supportKinds.size >= 3 && merchantCount >= 1;
+      eliteCount === 1 &&
+      supportKinds.size >= 3 &&
+      (rules.noMerchants || merchantCount >= 1);
     greedyPathExists ||= eliteCount >= 2 && eventLikeCount >= 1;
 
     pathIdentities.add(summarizePathIdentity(beforePreBoss));
@@ -1577,6 +1598,60 @@ function isValidFloorMapCandidate(map: RoomNode[][]): boolean {
   );
 }
 
+function buildFallbackTemplate(): FloorMapTemplate {
+  const map: FloorMapTemplate = [
+    [
+      {
+        key: "start",
+        lane: 2,
+        type: "COMBAT",
+        nextKeys: ["f1-0", "f1-1", "f1-2"],
+      },
+    ],
+  ];
+  for (let depth = 1; depth < GAME_CONSTANTS.BOSS_ROOM_INDEX - 1; depth++) {
+    map.push(
+      [0, 1, 2].map((route): TemplateNode => {
+        const support = (
+          {
+            2: "MERCHANT",
+            4: "EVENT",
+            6: "HEAL",
+            8: "UPGRADE",
+            11: "EVENT",
+            13: "HEAL",
+          } as Record<number, string>
+        )[depth];
+        return {
+          key: `f${depth}-${route}`,
+          lane: route * 2,
+          type:
+            support === "MERCHANT"
+              ? "MERCHANT"
+              : support
+                ? "SPECIAL"
+                : "COMBAT",
+          ...(support && support !== "MERCHANT"
+            ? { specialType: support as "HEAL" | "UPGRADE" | "EVENT" }
+            : {}),
+          isElite:
+            !support &&
+            ((route >= 1 && depth === 7) || (route === 2 && depth === 10)),
+          nextKeys:
+            depth === GAME_CONSTANTS.BOSS_ROOM_INDEX - 2
+              ? ["preboss"]
+              : [`f${depth + 1}-${route}`],
+        };
+      })
+    );
+  }
+  map.push([{ key: "preboss", lane: 2, type: "PRE_BOSS", nextKeys: ["boss"] }]);
+  map.push([
+    { key: "boss", lane: 2, type: "COMBAT", isBoss: true, nextKeys: [] },
+  ]);
+  return map;
+}
+
 /**
  * Generate a floor map as a connected graph inspired by Slay the Spire.
  * The outer array remains indexed by depth so the rest of the run flow can
@@ -1587,12 +1662,20 @@ export function generateFloorMap(
   rng: RNG,
   biome: BiomeType,
   selectedRunConditionId?: string | null,
-  difficultyLevel = 0
+  difficultyLevel = 0,
+  diagnostics?: {
+    maxAttempts?: number;
+    onGenerated?: (fallback: boolean, attempts: number) => void;
+  }
 ): RoomNode[][] {
   const mapRules = getRunConditionMapRules(selectedRunConditionId);
   const isInfiniteMode = isInfiniteRunConditionId(selectedRunConditionId);
 
-  for (let attempt = 0; attempt < 128; attempt += 1) {
+  const maxAttempts = Math.max(
+    0,
+    Math.min(128, diagnostics?.maxAttempts ?? 128)
+  );
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const candidate = buildFloorMapCandidate(
       floor,
       rng,
@@ -1601,19 +1684,28 @@ export function generateFloorMap(
       difficultyLevel,
       isInfiniteMode
     );
-    if (isValidFloorMapCandidate(candidate)) {
+    if (isValidFloorMapCandidate(candidate, mapRules)) {
+      diagnostics?.onGenerated?.(false, attempt + 1);
       return candidate;
     }
   }
 
-  return buildFloorMapCandidate(
+  // A fixed three-route topology is valid by construction; RNG still picks enemies.
+  const fallback = buildFloorMapCandidate(
     floor,
     rng,
     biome,
     mapRules,
     difficultyLevel,
-    isInfiniteMode
+    isInfiniteMode,
+    mapRules.forceSingleChoice || mapRules.bossOnlyCombats
+      ? cloneTemplate(LINEAR_TEMPLATE)
+      : buildFallbackTemplate()
   );
+  if (!isValidFloorMapCandidate(fallback, mapRules))
+    throw new Error("Invalid fallback map");
+  diagnostics?.onGenerated?.(true, maxAttempts);
+  return fallback;
 }
 
 /**
@@ -2135,12 +2227,20 @@ export function completeCombat(
     Math.floor((newPlayerMaxHp * effectiveHealPct) / 100) +
     healFlat +
     healFlatBonus;
+  const learningRecovery =
+    runState.selectedDifficultyLevel === 0 &&
+    runState.floor === 1 &&
+    !isEliteRoom &&
+    !isBossRoom
+      ? GAME_CONSTANTS.DIFF0_FLOOR_ONE_COMBAT_RECOVERY
+      : 0;
   const hpAfterMetaHeal = Math.min(
     newPlayerMaxHp,
     Math.max(
       1,
       hpAfterCombat +
         healAmount +
+        learningRecovery +
         bloodGrimoireGain +
         tombLedgerHeal +
         eliteCauldronHeal -
@@ -2170,6 +2270,18 @@ export function completeCombat(
       updatedEarnedResources[key] =
         (updatedEarnedResources[key] ?? 0) + (amount as number);
     }
+  }
+
+  // Award the library tutorial budget after the first genuine win, without forcing a defeat.
+  if (
+    runState.firstRunScript?.enabled &&
+    runState.floor === 1 &&
+    runState.currentRoom === 0
+  ) {
+    updatedEarnedResources.PAGES = Math.max(
+      updatedEarnedResources.PAGES ?? 0,
+      getFirstRunScriptedEndResources().PAGES ?? 0
+    );
   }
 
   const encounteredThisCombat: Record<string, EncounteredEnemyType> = {};
@@ -2228,7 +2340,10 @@ export function completeCombat(
     runState.unlockedStoryIdsSnapshot ?? [],
     updatedEnemyKillCounts
   );
-  const unlockedCardIds = unlockedCardIdsRaw;
+  const unlockedCardIds = addInitialCharacterCardUnlocks(
+    unlockedCardIdsRaw,
+    runState.characterId
+  );
   const usableItemCapacity =
     runState.usableItemCapacity ?? GAME_CONSTANTS.MAX_USABLE_ITEMS;
   const hasUsableItemSlot =
@@ -2352,7 +2467,10 @@ export function advanceFloor(
     state.unlockedStoryIdsSnapshot ?? [],
     state.enemyKillCounts ?? {}
   );
-  const unlockedCardIds = unlockedCardIdsRaw;
+  const unlockedCardIds = addInitialCharacterCardUnlocks(
+    unlockedCardIdsRaw,
+    state.characterId
+  );
 
   return {
     ...state,
@@ -2460,7 +2578,8 @@ export function removeCardFromRunDeck(
 
 export function upgradeCardInDeck(
   runState: RunState,
-  cardInstanceId: string
+  cardInstanceId: string,
+  upgradeBranch: import("../schemas/cards").CardUpgradeBranch = "A"
 ): RunState {
   const cardIndex = runState.deck.findIndex(
     (c) => c.instanceId === cardInstanceId
@@ -2471,7 +2590,7 @@ export function upgradeCardInDeck(
   if (card.upgraded) return runState;
 
   const newDeck = [...runState.deck];
-  newDeck[cardIndex] = { ...card, upgraded: true };
+  newDeck[cardIndex] = { ...card, upgraded: true, upgradeBranch };
 
   return {
     ...runState,
@@ -2496,7 +2615,8 @@ export function applyFreeUpgradeInDeck(
   }
 
   const newDeck = [...runState.deck];
-  newDeck[cardIndex] = { ...card, upgraded: true };
+  // Free/random upgrades remain deterministic for backwards-compatible flows.
+  newDeck[cardIndex] = { ...card, upgraded: true, upgradeBranch: "A" };
 
   return {
     ...runState,

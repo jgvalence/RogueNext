@@ -39,6 +39,7 @@ import {
   getFirstInkedCardInHand,
   getInkedCardTotalInkCost,
 } from "@/game/engine/first-combat-tutorial";
+import { scaleCombatDelay } from "@/lib/combat-speed";
 
 function getAoeHitColor(def: CardDefinition): string {
   const tags = def.archetypeTags ?? [];
@@ -139,12 +140,12 @@ export function CombatView({
   biome = "LIBRARY",
   showFirstCombatTutorial = false,
   onDismissFirstCombatTutorial,
-  shouldAutoLoseFirstRunElite = false,
+  shouldAutoLoseFirstRunElite: _shouldAutoLoseFirstRunElite = false,
   debugEnemySelection: _debugEnemySelection,
   debugDrawInfo: _debugDrawInfo,
 }: CombatViewProps) {
   const { t } = useTranslation();
-  const { dispatch } = useGame();
+  const { dispatch, state: runState } = useGame();
 
   const drawBtnRef = useRef<HTMLButtonElement>(null);
   const discardBtnRef = useRef<HTMLButtonElement>(null);
@@ -258,7 +259,10 @@ export function CombatView({
           const hitColor = getAoeHitColor(effectiveDef);
           const newMap = new Map<string, { delay: number; color: string }>();
           liveEnemies.forEach((e, i) =>
-            newMap.set(e.instanceId, { delay: i * 80, color: hitColor })
+            newMap.set(e.instanceId, {
+              delay: scaleCombatDelay(i * 80),
+              color: hitColor,
+            })
           );
           setAoeFlashMap(newMap);
           if (aoeFlashTimerRef.current) clearTimeout(aoeFlashTimerRef.current);
@@ -267,7 +271,7 @@ export function CombatView({
               setAoeFlashMap(
                 new Map<string, { delay: number; color: string }>()
               ),
-            liveEnemies.length * 80 + 350
+            scaleCombatDelay(liveEnemies.length * 80 + 350)
           );
         }
       }
@@ -419,16 +423,6 @@ export function CombatView({
     resetInteractionState,
   ]);
 
-  useEffect(() => {
-    if (!shouldAutoLoseFirstRunElite) return;
-    if (combat.phase !== "PLAYER_TURN") return;
-
-    const timeoutId = window.setTimeout(() => {
-      dispatch({ type: "FORCE_TUTORIAL_COMBAT_DEFEAT" });
-    }, 1400);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [combat.phase, dispatch, shouldAutoLoseFirstRunElite]);
 
   const previewEffects = useMemo(() => {
     if (!selectedDef || !selectedCardId) return [];
@@ -451,7 +445,8 @@ export function CombatView({
       effectiveDefinition,
       effectiveUpgraded,
       pendingInked,
-      attackBonus
+      attackBonus,
+      selectedCard.upgradeBranch ?? "A"
     );
   }, [selectedDef, selectedCardId, combat, pendingInked, attackBonus]);
 
@@ -529,10 +524,11 @@ export function CombatView({
 
   return (
     <div
-      className="relative flex h-full min-h-0 flex-col overflow-hidden"
+      className="combat-view relative flex h-full min-h-0 flex-col overflow-hidden"
       onClick={handleGlobalClick}
     >
       <CombatBattlefield
+        characterId={runState.characterId}
         biome={biome}
         bgFailed={bgFailed}
         onBackgroundError={() => setBgFailed(true)}

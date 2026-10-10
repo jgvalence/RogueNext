@@ -1,5 +1,6 @@
 "use client";
 
+import { computeMetaBonuses } from "@/game/engine/meta";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -109,6 +110,30 @@ export function HistoireModal({
   const storyTitle = localizeStoryTitle(histoire, t);
   const storyAuthor = localizeStoryAuthor(histoire, t);
   const storyDescription = localizeStoryDescription(histoire, t);
+  const alreadyOwned = progression.unlockedStoryIds.includes(histoire.id);
+  const before = computeMetaBonuses(progression.unlockedStoryIds);
+  const after = computeMetaBonuses([
+    ...progression.unlockedStoryIds,
+    histoire.id,
+  ]);
+  const key = histoire.bonus.type
+    .toLowerCase()
+    .replace(/_([a-z])/g, (_, letter: string) =>
+      letter.toUpperCase()
+    ) as keyof typeof before;
+  const previousValue = before[key];
+  const nextValue = after[key];
+  const marginalValue =
+    !alreadyOwned &&
+    "value" in histoire.bonus &&
+    typeof previousValue === "number" &&
+    typeof nextValue === "number"
+      ? nextValue - previousValue
+      : null;
+  const effectiveBonus =
+    marginalValue === null
+      ? histoire.bonus
+      : ({ ...histoire.bonus, value: marginalValue } as MetaBonus);
 
   async function handleUnlock() {
     setIsPending(true);
@@ -185,9 +210,15 @@ export function HistoireModal({
             {t("library.permanentBonus")}
           </p>
           <p className={`text-sm font-semibold ${theme.accent}`}>
-            {formatBonus(histoire.bonus, t)}
+            {formatBonus(effectiveBonus, t)}
           </p>
         </div>
+
+        {marginalValue === 0 && (
+          <p className="text-sm text-amber-200">
+            {t("library.bonusCapReached")}
+          </p>
+        )}
 
         <div>
           <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500">

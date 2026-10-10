@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { useCallback, type Dispatch, type SetStateAction } from "react";
 import type { CombatRewards } from "@/game/engine/rewards";
 import type { GameAction } from "../_providers/game-reducer";
 import type { GamePhase } from "../_services/run-phase";
@@ -13,6 +8,7 @@ import type { GamePhase } from "../_services/run-phase";
 interface UseRewardPhaseHandlersParams {
   dispatch: (action: GameAction) => void;
   isBossRewards: boolean;
+  rewards: CombatRewards | null;
   hasPendingBiomeChoices: boolean;
   queueVictoryRunEnd: () => void;
   setPhase: Dispatch<SetStateAction<GamePhase>>;
@@ -22,12 +18,14 @@ interface UseRewardPhaseHandlersParams {
 export function useRewardPhaseHandlers({
   dispatch,
   isBossRewards,
+  rewards,
   hasPendingBiomeChoices,
   queueVictoryRunEnd,
   setPhase,
   setRewards,
 }: UseRewardPhaseHandlersParams) {
-  const [bossCardPicked, setBossCardPicked] = useState(false);
+  const bossCardPicked =
+    isBossRewards && rewards !== null && rewards.cardChoices.length === 0;
 
   const transitionAfterBossReward = useCallback(() => {
     if (hasPendingBiomeChoices) {
@@ -49,10 +47,12 @@ export function useRewardPhaseHandlers({
 
   const handlePickCard = useCallback(
     (definitionId: string) => {
-      dispatch({ type: "PICK_CARD_REWARD", payload: { definitionId } });
+      dispatch({
+        type: "PICK_CARD_REWARD",
+        payload: { definitionId, combatReward: true },
+      });
       if (isBossRewards) {
         setRewards((prev) => (prev ? { ...prev, cardChoices: [] } : null));
-        setBossCardPicked(true);
         return;
       }
       transitionAfterReward();
@@ -67,7 +67,10 @@ export function useRewardPhaseHandlers({
 
   const handlePickRelic = useCallback(
     (relicId: string) => {
-      dispatch({ type: "PICK_RELIC_REWARD", payload: { relicId } });
+      dispatch({
+        type: "PICK_RELIC_REWARD",
+        payload: { relicId, combatReward: true },
+      });
       transitionAfterReward();
     },
     [dispatch, transitionAfterReward]

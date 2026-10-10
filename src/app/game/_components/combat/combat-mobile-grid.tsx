@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { RogueButton } from "@/components/ui/rogue";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
+import { scaleCombatDelay } from "@/lib/combat-speed";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type {
   AllyDefinition,
@@ -13,6 +15,7 @@ import { buildMobileEnemyIntentChips } from "./combat-view-helpers";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
 import { getEnemyImageSrc } from "@/lib/assets";
+import { EnemyArtwork } from "../shared/EnemyArtwork";
 import { localizeAllyName } from "@/lib/i18n/entity-text";
 import { DamageNumber } from "./DamageNumber";
 import { buffMeta } from "../shared/buff-meta";
@@ -178,7 +181,7 @@ function MobileEnemyPortrait({
     if (!wasDead.current && nowDead) {
       setIsDying(true);
       wasDead.current = true;
-      const timer = setTimeout(() => setIsDying(false), 500);
+      const timer = setTimeout(() => setIsDying(false), scaleCombatDelay(500));
       return () => clearTimeout(timer);
     }
     wasDead.current = nowDead;
@@ -195,9 +198,9 @@ function MobileEnemyPortrait({
     if (!lastBuff) return;
     const flashType = DEBUFF_BUFF_TYPES.has(lastBuff.type) ? "debuff" : "buff";
     setBuffFlash(flashType);
-    const timer = setTimeout(() => setBuffFlash(null), 600);
+    const timer = setTimeout(() => setBuffFlash(null), scaleCombatDelay(600));
     return () => clearTimeout(timer);
-  }, [(enemy.buffs ?? []).length, enemy.currentHp]);
+  }, [enemy.buffs, enemy.currentHp]);
 
   useEffect(() => {
     if (!phase2Key) return undefined;
@@ -205,7 +208,10 @@ function MobileEnemyPortrait({
     if (!prevPhase2.current && isPhase2) {
       setBossPhaseFlash(true);
       prevPhase2.current = true;
-      const timer = setTimeout(() => setBossPhaseFlash(false), 1100);
+      const timer = setTimeout(
+        () => setBossPhaseFlash(false),
+        scaleCombatDelay(1100)
+      );
       return () => clearTimeout(timer);
     }
     prevPhase2.current = isPhase2;
@@ -230,7 +236,7 @@ function MobileEnemyPortrait({
       data-keep-selection="true"
       onClick={onClick}
       className={cn(
-        "relative min-w-[46%] flex-1 shrink-0 snap-start border text-left transition-all duration-200",
+        "mobile-enemy-portrait relative min-w-[46%] flex-1 shrink-0 snap-start border text-left transition-all duration-200",
         cardRounding,
         isDying && "animate-enemy-death",
         isDead && !isDying
@@ -266,11 +272,11 @@ function MobileEnemyPortrait({
       {/* Art — fills the card (overflow-hidden here so art is clipped, not the damage popups) */}
       <div className="absolute inset-0 overflow-hidden rounded-[inherit]">
         {!enemyArtFailed ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <EnemyArtwork
+            enemyId={enemy.definitionId}
             src={enemyArtSrc}
             alt={name}
-            className="h-full w-full object-contain object-bottom"
+            className="h-full w-full object-cover object-center"
             onError={() => markEnemyArtFailure(enemy.definitionId)}
           />
         ) : (
@@ -444,6 +450,7 @@ function MobilePlayerBar({
   isArmorTutorialStep,
   onOpenPlayerInfo,
 }: MobilePlayerBarProps) {
+  const { t } = useTranslation();
   const prevHp = useRef(player.currentHp);
   const popupId = useRef(0);
   const [dmgPopups, setDmgPopups] = useState<{ id: number; value: number }[]>(
@@ -493,15 +500,15 @@ function MobilePlayerBar({
           className="h-[3px]"
         />
         <p className="mt-0.5 text-[8px] tabular-nums text-white/45">
-          {Math.max(0, player.currentHp)}/{player.maxHp} PV
+          {Math.max(0, player.currentHp)}/{player.maxHp} {t("combat.hp")}
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-1.5">
         <span className="text-[9px] font-black text-amber-200">
-          EN {player.energyCurrent}
+          {t("combat.energyShort")} {player.energyCurrent}
         </span>
         <span className="text-[9px] font-black text-cyan-200">
-          INK {player.inkCurrent}
+          {t("combat.ink")} {player.inkCurrent}
         </span>
         {player.block > 0 && (
           <span
@@ -545,11 +552,80 @@ export function CombatMobileGrid({
   const enemyCount = combat.enemies.length;
 
   return (
-    <div className="flex h-full w-full flex-col gap-1 px-1 pb-1 pt-1 lg:hidden">
+    <div className="combat-mobile-grid flex h-full w-full min-w-0 flex-col gap-1 px-1 pb-1 pt-1 lg:hidden">
+      {combat.enemies.filter((enemy) => enemy.currentHp > 0).length > 2 && (
+        <div
+          aria-label={t("combat.enemyOverview")}
+          className="combat-enemy-overview grid w-full shrink-0 grid-cols-2 gap-1 rounded-lg bg-slate-950/90 p-1 sm:grid-cols-4 [@media(max-height:540px)]:flex-1"
+        >
+          {combat.enemies
+            .filter((enemy) => enemy.currentHp > 0)
+            .map((enemy) => {
+              const hidden = shouldHideEnemyIntent(
+                combat.difficultyLevel ?? 0,
+                combat.turnNumber,
+                enemy,
+                { playerHand: combat.hand }
+              );
+              const ability = enemyDefs.get(enemy.definitionId)?.abilities[
+                enemy.intentIndex
+              ];
+              const target = ability
+                ? resolveEnemyAbilityTarget(combat, enemy, ability)
+                : "player";
+              const intent = buildMobileEnemyIntentChips(
+                combat,
+                enemy,
+                target,
+                ability,
+                hidden,
+                t
+              ).join(" · ");
+              return (
+                <RogueButton
+                  htmlType="button"
+                  type="text"
+                  style={{
+                    height: "100%",
+                    display: "block",
+                    whiteSpace: "normal",
+                    color: "#f1f5f9",
+                  }}
+                  key={enemy.instanceId}
+                  data-keep-selection="true"
+                  className="relative min-h-8 min-w-0 overflow-hidden rounded border border-slate-600 px-2 py-1 text-left text-xs text-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300"
+                  onClick={() => onMobileEnemyPress(enemy.instanceId)}
+                >
+                  <EnemyArtwork
+                    enemyId={enemy.definitionId}
+                    src={getEnemyImageSrc(enemy.definitionId, "thumb")}
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-25"
+                  />
+                  <span className="relative block truncate font-semibold">
+                    {getEnemyDisplayName(enemy)} ·{" "}
+                    {Math.max(0, enemy.currentHp)} {t("combat.hp")}
+                  </span>
+                  <span className="relative block break-words text-amber-200">
+                    {hidden ? t("combat.intentHidden") : intent}
+                  </span>
+                </RogueButton>
+              );
+            })}
+        </div>
+      )}
       {/* ── ENEMY PORTRAIT ZONE ─────────────────────────────
           Horizontal snap-scroll when 3+ enemies so each
           portrait stays readable (min ~46% of viewport).      */}
-      <div className="min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto pt-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div
+        data-mobile-row={combat.enemies.length}
+        className={cn(
+          "combat-mobile-enemies min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto pt-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          combat.enemies.filter((enemy) => enemy.currentHp > 0).length > 2 &&
+            "[@media(max-height:540px)]:hidden"
+        )}
+      >
         <div className="flex h-full gap-1.5" style={{ minWidth: "100%" }}>
           {combat.enemies.map((enemy) => {
             const def = enemyDefs.get(enemy.definitionId);
@@ -575,7 +651,7 @@ export function CombatMobileGrid({
             );
             const firstIntent =
               !hideIntent && enemy.currentHp > 0
-                ? (intentLabels[0] ?? null)
+                ? intentLabels.join(" · ") || null
                 : null;
 
             const isDead = enemy.currentHp <= 0;
@@ -587,7 +663,7 @@ export function CombatMobileGrid({
             const isCheatSelectable =
               isSelectingCheatKillTarget && enemy.currentHp > 0;
             const isActing = actingEnemyId === enemy.instanceId;
-            const enemyArtSrc = getEnemyImageSrc(enemy.definitionId);
+            const enemyArtSrc = getEnemyImageSrc(enemy.definitionId, "thumb");
             const enemyArtFailed = enemyArtFailures.has(enemy.definitionId);
             const name = getEnemyDisplayName(enemy);
             const roleLabel = def.isBoss
@@ -639,7 +715,10 @@ export function CombatMobileGrid({
       {/* ── ALLY + PLAYER COMPACT BARS ──────────────────────
           Slim horizontal bars (~42px each) in a column.
           Tappable for targeting or info.                      */}
-      <div className="flex shrink-0 flex-col gap-1">
+      <div
+        data-mobile-row={combat.allies.length + 1}
+        className="combat-mobile-allies flex shrink-0 flex-col gap-1 sm:grid sm:auto-cols-fr sm:grid-flow-col"
+      >
         {combat.allies.map((ally) => {
           const localizedAllyName = localizeAllyName(
             ally.definitionId,

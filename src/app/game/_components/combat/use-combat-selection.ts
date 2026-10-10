@@ -2,12 +2,15 @@
 
 import {
   useCallback,
+  useEffect,
   useState,
+  useRef,
   type MouseEvent as ReactMouseEvent,
 } from "react";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { InkPowerType } from "@/game/schemas/enums";
+import { scaleCombatDelay } from "@/lib/combat-speed";
 import type {
   UsableItemDefinition,
   UsableItemInstance,
@@ -41,6 +44,7 @@ export function useCombatSelection({
   onCheatKillEnemy,
   canAct,
 }: UseCombatSelectionParams) {
+  const selectionOrigin = useRef<HTMLElement | null>(null);
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [selectedUsableItemId, setSelectedUsableItemId] = useState<
     string | null
@@ -60,9 +64,12 @@ export function useCombatSelection({
   const selectedDef = selectedCard
     ? (cardDefs.get(selectedCard.definitionId) ?? null)
     : null;
+  const selectedTargeting =
+    pendingInked && selectedDef?.inkedVariant?.targeting
+      ? selectedDef.inkedVariant.targeting
+      : selectedDef?.targeting;
   const needsTarget =
-    selectedDef?.targeting === "SINGLE_ENEMY" ||
-    selectedDef?.targeting === "SINGLE_ALLY";
+    selectedTargeting === "SINGLE_ENEMY" || selectedTargeting === "SINGLE_ALLY";
   const selectedUsableItem = selectedUsableItemId
     ? usableItems.find((item) => item.instanceId === selectedUsableItemId)
     : null;
@@ -71,11 +78,14 @@ export function useCombatSelection({
     : null;
   const needsItemEnemyTarget =
     selectedUsableItemDef?.targeting === "SINGLE_ENEMY";
-  const selectingEnemyTarget = selectedDef?.targeting === "SINGLE_ENEMY";
-  const selectingAllyTarget = selectedDef?.targeting === "SINGLE_ALLY";
+  const selectingEnemyTarget = selectedTargeting === "SINGLE_ENEMY";
+  const selectingAllyTarget = selectedTargeting === "SINGLE_ALLY";
   const selfCanRetargetToAlly =
-    selectedDef?.targeting === "SELF" &&
-    selectedDef.effects.some(
+    selectedTargeting === "SELF" &&
+    (pendingInked && selectedDef?.inkedVariant
+      ? selectedDef.inkedVariant.effects
+      : (selectedDef?.effects ?? [])
+    ).some(
       (effect) =>
         effect.type === "HEAL" ||
         effect.type === "BLOCK" ||
@@ -95,6 +105,29 @@ export function useCombatSelection({
     setPendingEnemyTargetInkPower(null);
     setIsSelectingCheatKillTarget(false);
   }, []);
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.key !== "Escape" ||
+        (!selectedCardId &&
+          !selectedUsableItemId &&
+          !pendingDiscardTargetInkPower &&
+          !pendingEnemyTargetInkPower)
+      )
+        return;
+      clearAllSelections();
+      if (selectionOrigin.current?.isConnected) selectionOrigin.current.focus();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [
+    clearAllSelections,
+    selectedCardId,
+    selectedUsableItemId,
+    pendingDiscardTargetInkPower,
+    pendingEnemyTargetInkPower,
+  ]);
+
   const clearInkPowerTargets = useCallback(() => {
     setPendingDiscardTargetInkPower(null);
     setPendingEnemyTargetInkPower(null);
@@ -122,7 +155,7 @@ export function useCombatSelection({
       setTimeout(() => {
         onPlayCard(instanceId, targetId, useInked);
         setPlayingCardId(null);
-      }, 280);
+      }, scaleCombatDelay(280));
     },
     [clearCardSelection, onPlayCard]
   );
@@ -130,10 +163,17 @@ export function useCombatSelection({
   const handleDoublePlayCard = useCallback(
     (instanceId: string, useInked: boolean) => {
       if (!canAct) return;
+      selectionOrigin.current =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
       const card = combat.hand.find((entry) => entry.instanceId === instanceId);
       if (!card) return;
       const def = cardDefs.get(card.definitionId);
-      if (!def || def.targeting !== "SINGLE_ENEMY") return;
+      const targeting = useInked
+        ? (def?.inkedVariant?.targeting ?? def?.targeting)
+        : def?.targeting;
+      if (!def || targeting !== "SINGLE_ENEMY") return;
 
       const livingEnemies = combat.enemies.filter(
         (enemy) => enemy.currentHp > 0
@@ -202,6 +242,10 @@ export function useCombatSelection({
   const handleAllyClick = useCallback(
     (allyInstanceId: string) => {
       if (!canAct) return;
+      selectionOrigin.current =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
       if (!selectedCardId || (!selectingAllyTarget && !selfCanRetargetToAlly))
         return;
       triggerCardPlay(selectedCardId, allyInstanceId, pendingInked);
@@ -219,10 +263,17 @@ export function useCombatSelection({
   const handlePlayCard = useCallback(
     (instanceId: string, useInked: boolean) => {
       if (!canAct) return;
+      selectionOrigin.current =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
       const card = combat.hand.find((entry) => entry.instanceId === instanceId);
       if (!card) return;
       const def = cardDefs.get(card.definitionId);
       if (!def) return;
+      const targeting = useInked
+        ? (def.inkedVariant?.targeting ?? def.targeting)
+        : def.targeting;
 
       const isSameCardSelected = selectedCardId === instanceId;
       const sameSelection = isSameCardSelected && pendingInked === useInked;
@@ -233,8 +284,8 @@ export function useCombatSelection({
           isSameCardSelected &&
           pendingInked &&
           !useInked &&
-          def.targeting !== "SINGLE_ENEMY" &&
-          def.targeting !== "SINGLE_ALLY"
+          targeting !== "SINGLE_ENEMY" &&
+          targeting !== "SINGLE_ALLY"
         ) {
           // Avoid accidental downgrade from inked -> normal on second tap.
           triggerCardPlay(instanceId, null, true);
@@ -247,7 +298,7 @@ export function useCombatSelection({
         return;
       }
 
-      if (def.targeting === "SINGLE_ENEMY" || def.targeting === "SINGLE_ALLY") {
+      if (targeting === "SINGLE_ENEMY" || targeting === "SINGLE_ALLY") {
         return;
       }
 
@@ -267,6 +318,10 @@ export function useCombatSelection({
   const handleUseItemClick = useCallback(
     (itemInstanceId: string) => {
       if (!canAct) return;
+      selectionOrigin.current =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
       const item = usableItems.find(
         (entry) => entry.instanceId === itemInstanceId
       );

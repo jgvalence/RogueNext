@@ -36,6 +36,8 @@ function formatEffect(
         : t("gameCard.effect.damage", { value: effect.value });
     case "DAMAGE_EQUAL_BLOCK":
       return t("gameCard.effect.damageEqualBlock");
+    case "DAMAGE_PER_TARGET_BLOCK":
+      return t("gameCard.effect.damagePerTargetBlock", { value: effect.value });
     case "DAMAGE_PER_DEBUFF":
       return t("gameCard.effect.damagePerDebuff", {
         value: effect.value,
@@ -66,6 +68,8 @@ function formatEffect(
       return t("gameCard.effect.damagePerDrawnThisTurn", {
         value: effect.value,
       });
+    case "DAMAGE_PER_DOT_STACKS":
+      return t("gameCard.effect.damagePerDotStacks", { value: effect.value });
     case "DAMAGE_BONUS_IF_UPGRADED_IN_HAND":
       return t("gameCard.effect.damageBonusIfUpgradedInHand", {
         value: effect.value,
@@ -167,6 +171,8 @@ function formatEffect(
       });
     case "FREEZE_HAND_CARDS":
       return t("gameCard.effect.freezeHandCards", { value: effect.value });
+    case "RETAIN_CARDS":
+      return t("gameCard.effect.retainCards", { value: effect.value });
     case "NEXT_DRAW_TO_DISCARD_THIS_TURN":
       return t("gameCard.effect.nextDrawToDiscardThisTurn");
     case "DISABLE_INK_POWER_THIS_TURN":
@@ -189,6 +195,28 @@ function formatEffect(
       return t("gameCard.effect.forceDiscardRandom", { value: effect.value });
     case "UPGRADE_RANDOM_CARD_IN_HAND":
       return t("gameCard.effect.upgradeRandomCardInHand");
+    case "NEXT_CARD_DOUBLE_DAMAGE":
+      return t("gameCard.effect.nextCardDoubleDamage");
+    case "RHYTHM_REWARD":
+      return t("gameCard.effect.rhythmReward", { value: effect.value });
+    case "TAKE_ENERGY_DEBT":
+      return t("gameCard.effect.takeEnergyDebt", { value: effect.value });
+    case "COPY_LAST_CARD_TO_HAND":
+      return t("gameCard.effect.copyLastCardToHand");
+    case "TOPDECK_FROM_DISCARD":
+      return t("gameCard.effect.topdeckFromDiscard");
+    case "ARCHIVE_AND_DRAW":
+      return t("gameCard.effect.archiveAndDraw", { value: effect.value });
+    case "REVEAL_AND_REVERSE_TOP":
+      return t("gameCard.effect.revealAndReverseTop", { value: effect.value });
+    case "EMPTY_DRAW_PILE_BLOCK":
+      return t("gameCard.effect.emptyDrawPileBlock", { value: effect.value });
+    case "PROPAGATE_DOT":
+      return t("gameCard.effect.propagateDot", { value: effect.value });
+    case "EXACT_ENERGY_REWARD":
+      return t("gameCard.effect.exactEnergyReward", { value: effect.value });
+    case "EXACT_INK_REWARD":
+      return t("gameCard.effect.exactInkReward", { value: effect.value });
     default:
       return `${effect.type as EffectType} ${effect.value}`;
   }
@@ -319,7 +347,7 @@ export function localizeInkedDescription(
   }
   return buildFromEffects(
     definition.inkedVariant.effects,
-    definition.targeting,
+    definition.inkedVariant.targeting ?? definition.targeting,
     definition.inkedVariant.description,
     definition.onRandomDiscardEffects ?? [],
     t

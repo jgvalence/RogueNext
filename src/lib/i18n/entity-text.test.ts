@@ -110,9 +110,9 @@ describe("relic fallback localization", () => {
     expect(
       localizeRelicDescription(
         "colossus_tome_plate",
-        "Start each combat with 12 Block."
+        "Start each combat with 10 Block."
       )
-    ).toBe("Commencez chaque combat avec 12 Armure.");
+    ).toBe("Commencez chaque combat avec 10 Armure.");
     expect(
       localizeRelicDescription(
         "giant_baobab_seed",

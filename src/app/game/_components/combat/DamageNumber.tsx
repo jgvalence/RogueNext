@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils/cn";
+import { scaleCombatDelay } from "@/lib/combat-speed";
 
 interface DamageNumberProps {
   value: number;
@@ -16,7 +17,7 @@ export function DamageNumber({ value, type, onDone }: DamageNumberProps) {
     const timer = setTimeout(() => {
       setVisible(false);
       onDone();
-    }, 800);
+    }, scaleCombatDelay(800));
     return () => clearTimeout(timer);
   }, [onDone]);
 

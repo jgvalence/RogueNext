@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { saveRunStateSchema as saveRunSchema } from "@/server/services/run/run-validation";
 import type { RunState } from "@/game/schemas/run-state";
 import { requireAuth } from "@/lib/auth/helpers";
 import { handleApiError } from "@/lib/errors/handlers";
 import { saveRunStateForUser } from "@/server/services/run/run-persistence.service";
-
-const saveRunSchema = z.object({
-  runId: z.string(),
-  state: z.any(),
-});
 
 export async function POST(request: NextRequest) {
   try {

@@ -28,9 +28,9 @@ export const histoireDefinitions: Histoire[] = [
     tier: 1,
     cout: { PAGES: 16 },
     prerequis: [],
-    bonus: { type: "EXTRA_ENERGY_MAX", value: 1 },
+    bonus: { type: "STARTING_INK", value: 2 },
     description:
-      "Un manuel hermétique sur la canalisation de l'énergie vitale. +1 énergie max.",
+      "Un manuel sur la canalisation vitale. Commence chaque combat avec 2 Ink.",
     visuel: "grimoire",
   },
   {

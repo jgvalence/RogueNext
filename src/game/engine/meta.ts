@@ -79,6 +79,22 @@ export function computeMetaBonuses(
     result.allyHpPercent += 25;
   }
 
+  // Horizontal unlocks should broaden a run more than raw stats decide it.
+  // These caps retain meaningful story bonuses while preventing their stacks
+  // from making a fresh profile feel like a different difficulty mode.
+  result.extraHp = Math.min(result.extraHp, 15);
+  result.startingStrength = Math.min(result.startingStrength, 2);
+  result.startingBlock = Math.min(result.startingBlock, 5);
+  result.attackBonus = Math.min(result.attackBonus, 1);
+  result.startingRegen = Math.min(result.startingRegen, 1);
+  result.healAfterCombatFlat = Math.min(result.healAfterCombatFlat, 4);
+  result.extraDraw = Math.min(result.extraDraw, 1);
+  result.extraHandAtStart = Math.min(result.extraHandAtStart, 1);
+  result.extraCardRewardChoices = Math.min(
+    result.extraCardRewardChoices,
+    1
+  );
+
   result.unlockedPowerSlots = Array.from(unlockedSlots).sort((a, b) => a - b);
   return result;
 }

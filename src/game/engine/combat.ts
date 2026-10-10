@@ -14,7 +14,7 @@ import { executeAlliesTurn, executeEnemiesTurn } from "./enemies";
 import { applyMetaBonusesToCombat } from "./meta";
 import { applyRelicsOnTurnStart, applyRelicsOnTurnEnd } from "./relics";
 import {
-  getDiff0FloorRamp,
+  getDifficultyFloorRamp,
   getDifficultyModifiers,
   getEnemyStartingBlock,
   getPostFloorCapEscalation,
@@ -199,10 +199,7 @@ export function initCombat(
     runState.floor,
     isInfiniteRunConditionId(runState.selectedRunConditionId)
   );
-  const diff0Ramp =
-    difficultyLevel === 0
-      ? getDiff0FloorRamp(runState.floor)
-      : { enemyHpMultiplier: 1, enemyDamageMultiplier: 1 };
+  const diff0Ramp = getDifficultyFloorRamp(difficultyLevel, runState.floor);
   const floorEnemyHpMultiplier =
     (1 + (runState.floor - 1) * 0.15) *
     difficultyMods.enemyHpMultiplier *
@@ -302,6 +299,13 @@ export function initCombat(
     difficultyLevel,
     enemyDamageScale,
     turnNumber: 1,
+    analyticsStartHp: runState.playerCurrentHp,
+    analyticsInkGenerated: 0,
+    analyticsInkSpent: 0,
+    analyticsInkedCardsPlayed: 0,
+    analyticsCardPlays: {},
+    analyticsCardModePlays: {},
+    analyticsInkPowerUses: {},
     phase: "PLAYER_TURN",
     player: {
       currentHp: runState.playerCurrentHp,
@@ -347,6 +351,9 @@ export function initCombat(
       enemyBleedDamageMultiplier: 1,
     },
     nextCardDoubleDamage: false,
+    rhythmStreak: 0,
+    pendingEnergyDebt: 0,
+    archivedCards: [],
   };
 
   // Apply meta-progression bonuses if any
@@ -445,6 +452,30 @@ export function startPlayerTurn(
   current = resetHydraTurnState(current);
   current = resetBabaYagaTurnState(current);
   current = applyRelicsOnTurnStart(current, relicIds, rng);
+  const returningArchive = current.archivedCards ?? [];
+  const archiveRoom = Math.max(
+    0,
+    GAME_CONSTANTS.MAX_HAND_SIZE - current.hand.length
+  );
+  const returnedToHand = returningArchive.slice(0, archiveRoom);
+  const returnedToDiscard = returningArchive.slice(archiveRoom);
+  current = {
+    ...current,
+    hand: [...current.hand, ...returnedToHand],
+    discardPile: [...current.discardPile, ...returnedToDiscard],
+    archivedCards: [],
+    player: {
+      ...current.player,
+      energyCurrent: Math.max(
+        0,
+        current.player.energyCurrent - (current.pendingEnergyDebt ?? 0)
+      ),
+    },
+    pendingEnergyDebt: Math.max(
+      0,
+      (current.pendingEnergyDebt ?? 0) - current.player.energyCurrent
+    ),
+  };
   current = resetOsirisTurnState(current);
   current = startNyarlathotepPlayerTurn(current, rng);
   current = startSoundiataPlayerTurn(current);

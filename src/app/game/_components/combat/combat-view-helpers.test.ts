@@ -290,7 +290,7 @@ describe("enemy intent previews", () => {
         cernunnos_shade_antler_layers: 2,
       },
     });
-    const ability = enemyDefs.get("cernunnos_shade")?.abilities[4];
+    const ability = enemyDefs.get("cernunnos_shade")?.abilities[5];
     const combat = buildCombatState(enemy);
 
     expect(ability).toBeDefined();
@@ -522,7 +522,7 @@ describe("enemy intent previews", () => {
     });
     const ability = enemyDefs.get("medusa")?.abilities[0];
     const previewEnemy = buildEnemyState("medusa", 0, {
-      currentHp: 70,
+      currentHp: 60,
       mechanicFlags: {
         medusa_gaze_initialized: 1,
         medusa_gaze_slot_1_pattern: 1,
@@ -1059,7 +1059,7 @@ describe("enemy intent previews", () => {
     );
 
     expect(
-      chips.some((chip) => chip.includes("restore cost-redacted cards"))
+      chips.some((chip) => chip.includes("Defeat: lifts corruption"))
     ).toBe(true);
   });
 

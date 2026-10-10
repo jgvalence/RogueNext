@@ -36,6 +36,70 @@ export interface CardUnlockDetail {
   progress: string | null;
 }
 
+/**
+ * Curated cards available from the first run for each character. These lists
+ * are intentionally character-scoped: neutral cards can teach Griot/Fou
+ * mechanics without inflating every other character's opening pool.
+ */
+export const INITIAL_REWARD_POOL_CARD_IDS: Record<string, readonly string[]> = {
+  scribe: [
+    "rune_storm",
+    "battle_inscription",
+    "hermes_dash",
+    "written_prophecy",
+    "ares_verse",
+    "spell_inscription",
+    "sacred_ink_burst",
+    "necrotic_words",
+  ],
+  bibliothecaire: [
+    "nordic_treatise",
+    "apollos_archive",
+    "necronomicon_page",
+    "obsidian_ward",
+    "morrigan_curse",
+    "oral_history",
+    "annotated_thesis",
+    "forbidden_appendix",
+    "index_of_echoes",
+    "curator_pact",
+    "baobab_shield",
+    "trickster_lore",
+    "fur_binding",
+    "herb_lore",
+    "temple_archive",
+  ],
+  // Rhythm can now be built from both attacks and skills before upgrading.
+  // Poison/block is already available through Sacred Papyrus in the base pool.
+  griot: ["scald_cry", "drum_strike", "star_chart"],
+  fou: [
+    "odin_script",
+    "epic_saga",
+    "titans_wrath",
+    "olympian_scripture",
+    "book_of_ra",
+    "scribes_judgment",
+    "void_scripture",
+    "sacrificial_word",
+    "hummingbird_strike",
+    "blood_codex",
+    "green_man_verse",
+    "sunbird_power",
+  ],
+};
+
+export function addInitialCharacterCardUnlocks(
+  unlockedCardIds: readonly string[],
+  characterId?: string
+): string[] {
+  return Array.from(
+    new Set([
+      ...unlockedCardIds,
+      ...(characterId ? (INITIAL_REWARD_POOL_CARD_IDS[characterId] ?? []) : []),
+    ])
+  );
+}
+
 const BIOMES: BiomeType[] = [
   "LIBRARY",
   "VIKING",
@@ -142,8 +206,8 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   valkyries_dive: { type: "BIOME_BOSS_KILLS", biome: "VIKING", count: 2 },
   saga_of_blood: { type: "STORY_UNLOCK", storyId: "saga_de_ragnar" },
   // VIKING — Scribe (new)
-  iron_verse: { type: "BIOME_FIRST_ENTRY", biome: "VIKING" },
-  frost_rune_shield: { type: "BIOME_FIRST_ENTRY", biome: "VIKING" },
+  iron_verse: { type: "ALWAYS" },
+  frost_rune_shield: { type: "ALWAYS" },
   scald_cry: { type: "BIOME_ELITE_KILLS", biome: "VIKING", count: 1 },
   rune_storm: { type: "BIOME_ELITE_KILLS", biome: "VIKING", count: 2 },
   battle_inscription: { type: "BIOME_ELITE_KILLS", biome: "VIKING", count: 2 },
@@ -165,8 +229,8 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   olympian_cleave: { type: "BIOME_BOSS_KILLS", biome: "GREEK", count: 1 },
   labyrinth: { type: "STORY_UNLOCK", storyId: "l_odyssee" },
   // GREEK — Scribe (new)
-  logos_strike: { type: "BIOME_FIRST_ENTRY", biome: "GREEK" },
-  philosophers_quill: { type: "BIOME_FIRST_ENTRY", biome: "GREEK" },
+  logos_strike: { type: "ALWAYS" },
+  philosophers_quill: { type: "ALWAYS" },
   epic_simile: { type: "BIOME_ELITE_KILLS", biome: "GREEK", count: 1 },
   hermes_dash: { type: "BIOME_ELITE_KILLS", biome: "GREEK", count: 1 },
   written_prophecy: { type: "BIOME_ELITE_KILLS", biome: "GREEK", count: 2 },
@@ -190,8 +254,8 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   eye_of_ra: { type: "BIOME_BOSS_KILLS", biome: "EGYPTIAN", count: 1 },
   solar_hymn: { type: "BIOME_BOSS_KILLS", biome: "EGYPTIAN", count: 2 },
   // EGYPTIAN — Scribe (new)
-  hieroglyph_strike: { type: "BIOME_FIRST_ENTRY", biome: "EGYPTIAN" },
-  sacred_papyrus: { type: "BIOME_FIRST_ENTRY", biome: "EGYPTIAN" },
+  hieroglyph_strike: { type: "ALWAYS" },
+  sacred_papyrus: { type: "ALWAYS" },
   spell_inscription: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 1 },
   book_of_ra: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 2 },
   sacred_ink_burst: { type: "BIOME_ELITE_KILLS", biome: "EGYPTIAN", count: 2 },
@@ -219,8 +283,8 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   eldritch_pact: { type: "BIOME_BOSS_KILLS", biome: "LOVECRAFTIAN", count: 2 },
   starborn_omen: { type: "STORY_UNLOCK", storyId: "necronomicon_fragment" },
   // LOVECRAFTIAN — Scribe (new)
-  void_quill: { type: "BIOME_FIRST_ENTRY", biome: "LOVECRAFTIAN" },
-  cursed_inscription: { type: "BIOME_FIRST_ENTRY", biome: "LOVECRAFTIAN" },
+  void_quill: { type: "ALWAYS" },
+  cursed_inscription: { type: "ALWAYS" },
   black_page: { type: "BIOME_ELITE_KILLS", biome: "LOVECRAFTIAN", count: 1 },
   forbidden_verse: {
     type: "BIOME_ELITE_KILLS",
@@ -267,8 +331,8 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   jaguars_blood: { type: "BIOME_BOSS_KILLS", biome: "AZTEC", count: 2 },
   eclipse_vow: { type: "BIOME_RUNS_COMPLETED", biome: "AZTEC", count: 2 },
   // AZTEC — Scribe (new)
-  obsidian_quill: { type: "BIOME_FIRST_ENTRY", biome: "AZTEC" },
-  codex_strike: { type: "BIOME_FIRST_ENTRY", biome: "AZTEC" },
+  obsidian_quill: { type: "ALWAYS" },
+  codex_strike: { type: "ALWAYS" },
   sacrificial_word: { type: "BIOME_ELITE_KILLS", biome: "AZTEC", count: 1 },
   xipe_shield: { type: "BIOME_ELITE_KILLS", biome: "AZTEC", count: 2 },
   sun_codex: { type: "BIOME_ELITE_KILLS", biome: "AZTEC", count: 3 },
@@ -290,8 +354,8 @@ const EXPLICIT_CARD_UNLOCK_RULES: Record<string, CardUnlockRule> = {
   wild_gale: { type: "BIOME_BOSS_KILLS", biome: "CELTIC", count: 1 },
   ancient_grove: { type: "STORY_UNLOCK", storyId: "mabinogion" },
   // CELTIC — Scribe (new)
-  kells_strike: { type: "BIOME_FIRST_ENTRY", biome: "CELTIC" },
-  bardic_verse: { type: "BIOME_FIRST_ENTRY", biome: "CELTIC" },
+  kells_strike: { type: "ALWAYS" },
+  bardic_verse: { type: "ALWAYS" },
   illuminated_shield: { type: "BIOME_ELITE_KILLS", biome: "CELTIC", count: 1 },
   iron_bard: { type: "BIOME_ELITE_KILLS", biome: "CELTIC", count: 1 },
   triquetra_mark: { type: "BIOME_ELITE_KILLS", biome: "CELTIC", count: 2 },
@@ -444,6 +508,10 @@ function formatCharacterLabel(characterId: string): string {
       return "Scribe";
     case "bibliothecaire":
       return "Bibliothecaire";
+    case "griot":
+      return "Griot";
+    case "fou":
+      return "Fou";
     default:
       return characterId;
   }
@@ -648,7 +716,18 @@ function isRuleUnlocked(
 }
 
 function formatBiome(biome: BiomeType): string {
-  return biome;
+  const labels: Record<BiomeType, string> = {
+    LIBRARY: "Bibliotheque",
+    VIKING: "Viking",
+    GREEK: "Grece antique",
+    EGYPTIAN: "Egypte",
+    LOVECRAFTIAN: "Mythes indicibles",
+    AZTEC: "Empire azteque",
+    CELTIC: "Terres celtiques",
+    RUSSIAN: "Contes russes",
+    AFRICAN: "Legendes africaines",
+  };
+  return labels[biome];
 }
 
 function formatEnemy(enemyId: string): string {

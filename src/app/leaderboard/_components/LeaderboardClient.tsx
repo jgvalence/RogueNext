@@ -316,6 +316,7 @@ export function LeaderboardClient({
         }
       />
 
+      <p className="my-3 rounded border border-amber-700 bg-amber-950/40 p-3 text-sm text-amber-100">{t("leaderboard.unverified")}</p>
       {loadError && (
         <RogueAlert
           type="error"

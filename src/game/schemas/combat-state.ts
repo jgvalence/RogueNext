@@ -65,6 +65,17 @@ export const CombatStateSchema = z.object({
   difficultyLevel: z.number().int().min(0).optional(),
   enemyDamageScale: z.number().default(1),
   turnNumber: z.number().int().default(1),
+  analyticsStartHp: z.number().int().optional(),
+  analyticsInkGenerated: z.number().int().min(0).default(0),
+  analyticsInkSpent: z.number().int().min(0).default(0),
+  analyticsInkedCardsPlayed: z.number().int().min(0).default(0),
+  analyticsCardPlays: z.record(z.string(), z.number().int().min(0)).default({}),
+  analyticsCardModePlays: z
+    .record(z.string(), z.number().int().min(0))
+    .default({}),
+  analyticsInkPowerUses: z
+    .record(z.string(), z.number().int().min(0))
+    .default({}),
   phase: CombatPhase.default("PLAYER_TURN"),
   player: PlayerStateSchema,
   allies: z.array(AllyStateSchema).default([]),
@@ -99,5 +110,38 @@ export const CombatStateSchema = z.object({
     })
     .optional(),
   nextCardDoubleDamage: z.boolean().optional(),
+  lastPlayedCardDefinitionId: z.string().optional(),
+  lastPlayedCardType: z.enum(["ATTACK", "SKILL", "POWER"]).optional(),
+  rhythmStreak: z.number().int().min(0).default(0),
+  pendingEnergyDebt: z.number().int().min(0).default(0),
+  archivedCards: z.array(CardInstanceSchema).default([]),
+  retainedHandCardIds: z.array(z.string()).optional(),
+  revealedDrawCards: z.number().int().min(0).default(0),
 });
-export type CombatState = z.infer<typeof CombatStateSchema>;
+type ParsedCombatState = z.infer<typeof CombatStateSchema>;
+export type CombatState = Omit<
+  ParsedCombatState,
+  | "analyticsStartHp"
+  | "analyticsInkGenerated"
+  | "analyticsInkSpent"
+  | "analyticsInkedCardsPlayed"
+  | "analyticsCardPlays"
+  | "analyticsCardModePlays"
+  | "analyticsInkPowerUses"
+  | "rhythmStreak"
+  | "pendingEnergyDebt"
+  | "archivedCards"
+  | "revealedDrawCards"
+> & {
+  analyticsStartHp?: number;
+  analyticsInkGenerated?: number;
+  analyticsInkSpent?: number;
+  analyticsInkedCardsPlayed?: number;
+  analyticsCardPlays?: Record<string, number>;
+  analyticsCardModePlays?: Record<string, number>;
+  analyticsInkPowerUses?: Record<string, number>;
+  rhythmStreak?: number;
+  pendingEnergyDebt?: number;
+  archivedCards?: z.infer<typeof CardInstanceSchema>[];
+  revealedDrawCards?: number;
+};

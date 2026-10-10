@@ -1,4 +1,5 @@
 import type { CardDefinition } from "../schemas/cards";
+import type { Effect } from "../schemas/effects";
 
 type JsonLike =
   | null
@@ -21,6 +22,7 @@ function normalizeCardForSignature(card: CardDefinition): JsonLike {
           inkMarkCost: card.inkedVariant.inkMarkCost,
           effects: card.inkedVariant.effects,
           upgradedEffects: card.inkedVariant.upgradedEffects ?? null,
+          targeting: card.inkedVariant.targeting ?? card.targeting,
         }
       : null,
     upgrade: card.upgrade
@@ -67,4 +69,12 @@ export function buildCardExactMechanicSignature(card: CardDefinition): string {
 
 export function buildCardPatternSignature(card: CardDefinition): string {
   return stableSerialize(maskNumbers(normalizeCardForSignature(card)));
+}
+
+export function buildEffectExactSignature(effects: Effect[]): string {
+  return stableSerialize(effects as JsonLike);
+}
+
+export function buildEffectPatternSignature(effects: Effect[]): string {
+  return stableSerialize(maskNumbers(effects as JsonLike));
 }

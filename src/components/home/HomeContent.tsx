@@ -2,13 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Cinzel } from "next/font/google";
+
 import { useTranslation } from "react-i18next";
 import { LogoutButton } from "@/components/auth/LogoutButton";
-import { LandscapeRequired } from "@/components/shared/LandscapeRequired";
 import { IOSInstallBanner } from "@/components/shared/IOSInstallBanner";
 
-const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
+const cinzel = { className: "font-serif" };
 
 interface HomeContentProps {
   isSignedIn: boolean;
@@ -19,32 +18,25 @@ export function HomeContent({ isSignedIn }: HomeContentProps) {
 
   return (
     <main
-      className="relative h-screen w-screen overflow-hidden bg-[#040608]"
-      style={{ fontFamily: cinzel.style.fontFamily }}
+      className="panlibrarium-home relative min-h-dvh w-full overflow-x-hidden bg-[#040608]"
+      style={{ fontFamily: "Georgia, Times New Roman, serif" }}
     >
-      <LandscapeRequired />
       <IOSInstallBanner />
 
       {/* ── BACKGROUND ── */}
       <div className="pointer-events-none absolute inset-0">
         {/* Art plein écran */}
         <Image
-          src="/images/backgrounds/map.svg"
+          src="/images/scenes/panlibrarium-v2.webp"
           alt=""
           fill
           priority
-          className="object-cover object-center opacity-50"
-          aria-hidden
-        />
-        <Image
-          src="/images/backgrounds/combat.svg"
-          alt=""
-          fill
-          className="object-cover object-right opacity-25 mix-blend-screen"
+          sizes="100vw"
+          className="object-cover object-center"
           aria-hidden
         />
         {/* Voile sombre : fort à gauche pour la lisibilité du menu */}
-        <div className="from-[#020406]/97 via-[#020406]/72 absolute inset-0 bg-gradient-to-r from-[30%] via-[55%] to-[#020406]/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#020406]/80 via-[#020406]/40 to-transparent" />
         {/* Vignette haut/bas */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#020406]/80 via-transparent to-[#020406]/95" />
         {/* Lueur ambrée basse-gauche */}
@@ -54,7 +46,7 @@ export function HomeContent({ isSignedIn }: HomeContentProps) {
       </div>
 
       {/* ── PERSONNAGE ATMOSPHÉRIQUE (droite) ── */}
-      <div className="pointer-events-none absolute bottom-0 right-[4%] hidden h-[88vh] w-[28vw] lg:block">
+      <div className="pointer-events-none absolute bottom-0 right-[4%] hidden h-[88vh] w-[28vw]">
         <Image
           src="/images/enemies/the_archivist.svg"
           alt=""
@@ -76,7 +68,7 @@ export function HomeContent({ isSignedIn }: HomeContentProps) {
       />
 
       {/* ── MENU ── */}
-      <div className="relative z-10 flex h-full flex-col justify-center pl-10 sm:pl-16 lg:pl-24 xl:pl-32">
+      <div className="home-menu relative z-10 flex min-h-dvh flex-col justify-center px-6 py-16 sm:pl-16 lg:pl-24 xl:pl-32">
         {/* Kicker */}
         <p className="mb-3 text-[0.6rem] font-semibold uppercase tracking-[0.55em] text-amber-400/50">
           {t("home.kicker")}
@@ -84,10 +76,11 @@ export function HomeContent({ isSignedIn }: HomeContentProps) {
 
         {/* Titre principal */}
         <h1
-          className={` ${cinzel.className} mb-12 animate-title-glow text-[clamp(3rem,7.5vw,6.5rem)] font-bold uppercase leading-none tracking-[0.06em] text-amber-100`}
+          className={` ${cinzel.className} mb-5 text-[clamp(1.9rem,7.2vw,6.5rem)] font-bold uppercase leading-none tracking-[0.015em] text-amber-100`}
         >
           Panlibrarium
         </h1>
+        <p className="mb-8 max-w-md text-sm leading-relaxed text-amber-50/75 sm:text-base">{t("home.subtitle")}</p>
 
         {/* Séparateur */}
         <div className="mb-8 h-px w-24 bg-gradient-to-r from-amber-500/60 to-transparent" />
@@ -182,12 +175,11 @@ function MenuItem({
   return (
     <Link
       href={href}
-      className={` ${font} group flex cursor-pointer items-center !border-0 py-[0.42rem] uppercase !outline-none !ring-0 transition-all duration-150 focus:!border-0 focus:!outline-none focus:!ring-0 focus-visible:!border-0 focus-visible:!outline-none focus-visible:!ring-0 ${
+      className={` ${font} home-menu-link group flex min-h-11 w-fit cursor-pointer items-center rounded-sm py-[0.42rem] uppercase transition-all duration-150 ${
         primary
           ? "mb-1 text-[1.45rem] font-semibold tracking-[0.16em] text-amber-100 sm:text-[1.6rem]"
-          : "text-[1.05rem] font-normal tracking-[0.14em] text-amber-100/45 hover:text-amber-100/85 sm:text-[1.15rem]"
+          : "text-[1.05rem] font-normal tracking-[0.14em] text-amber-100/75 hover:text-amber-100 sm:text-[1.15rem]"
       } `}
-      style={{ border: "none", outline: "none", boxShadow: "none" }}
     >
       {/* Barre dorée animée */}
       <span

@@ -4,7 +4,8 @@ import { z } from "zod";
 import { requireAuth } from "@/lib/auth/helpers";
 import { handleServerActionError, success } from "@/lib/errors/handlers";
 import { revalidatePath } from "next/cache";
-import type { RunState } from "@/game/schemas/run-state";
+import { RunStateSchema, type RunState } from "@/game/schemas/run-state";
+import { saveRunStateSchema } from "@/server/services/run/run-validation";
 import {
   createRunForUser,
   endRunForUser,
@@ -30,13 +31,8 @@ export async function createRunAction(input: z.infer<typeof createRunSchema>) {
   }
 }
 
-const saveRunStateSchema = z.object({
-  runId: z.string(),
-  state: z.any(),
-});
-
 export async function saveRunStateAction(
-  input: z.infer<typeof saveRunStateSchema>
+  input: z.input<typeof saveRunStateSchema>
 ) {
   try {
     const validated = saveRunStateSchema.parse(input);
@@ -54,6 +50,7 @@ export async function saveRunStateAction(
 }
 
 const endRunSchema = z.object({
+  finalState: RunStateSchema.strict().optional(),
   runId: z.string(),
   status: z.enum(["VICTORY", "DEFEAT", "ABANDONED"]),
   runDurationMs: z.number().int().nonnegative().optional(),
@@ -81,7 +78,7 @@ const endRunSchema = z.object({
     .optional(),
 });
 
-export async function endRunAction(input: z.infer<typeof endRunSchema>) {
+export async function endRunAction(input: z.input<typeof endRunSchema>) {
   try {
     const validated = endRunSchema.parse(input);
     const user = await requireAuth();
@@ -89,6 +86,7 @@ export async function endRunAction(input: z.infer<typeof endRunSchema>) {
       userId: user.id!,
       runId: validated.runId,
       status: validated.status,
+      finalState: validated.finalState,
       runDurationMs: validated.runDurationMs,
       earnedResources: validated.earnedResources,
       startMerchantSpentResources: validated.startMerchantSpentResources,

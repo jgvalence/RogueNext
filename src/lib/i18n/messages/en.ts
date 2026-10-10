@@ -1,4 +1,20 @@
 export const en = {
+  pwa: {
+    updateReady: "A new version of Panlibrarium is ready.",
+    update: "Update",
+    installHint: "Install Panlibrarium to launch it from your home screen.",
+    install: "Install game",
+  },
+  visual: {
+    illustration: "Artwork",
+    viewIllustration: "View full artwork",
+    closeIllustration: "Close artwork",
+    previewHint: "Close to return to your hand and choose a card.",
+    powers: "Powers",
+    buy: "Buy",
+    inspectCard: "Read",
+    handHint: "Swipe to browse · Read for details",
+  },
   common: {
     language: "Language",
     french: "FR",
@@ -41,6 +57,8 @@ export const en = {
     ],
   },
   leaderboard: {
+    unverified:
+      "Indicative leaderboard: runs are simulated on the player's device and are not certified for competition.",
     kicker: "Global Leaderboard",
     title: "Hall of Archivists",
     subtitle:
@@ -146,6 +164,8 @@ export const en = {
     AFRICAN: "African Savannas",
   },
   library: {
+    bonusCapReached:
+      "The cap has already been reached: this story adds no further bonus of this type.",
     backHome: "Home",
     title: "Panlibrarium Library",
     collectedStories: "{{unlocked}}/{{total}} stories collected",
@@ -482,6 +502,44 @@ export const en = {
     title: "Configure Your Expedition",
     subtitle:
       "Choose your difficulty, pick an expedition type, and prepare your starting options before entering the first room.",
+    intro: {
+      kicker: "The shattered archives",
+      previous: "Previous",
+      next: "Continue",
+      begin: "Prepare the expedition",
+      skip: "Skip prologue",
+      steps: {
+        memory: {
+          symbol: "✦",
+          title: "The Panlibrarium",
+          text: "The Panlibrarium once preserved every story ever told. Then a catastrophe tore through its shelves: tales were scattered, their characters corrupted, and entire worlds began to fade.",
+        },
+        mission: {
+          symbol: "⌁",
+          title: "Recover the lost stories",
+          text: "You are one of its last keepers. Each expedition sends you into a fragment of a tale. Face what holds it captive, recover its pages, then carry them back to the Library and rebuild the Panlibrarium's memory.",
+        },
+        journey: {
+          symbol: "→",
+          title: "Every attempt matters",
+          text: "Cross rooms, choose your battles, and build a deck that can reach the biome guardian. Defeat ends the expedition, but recovered stories, knowledge, and some unlocks prepare your next return.",
+        },
+      },
+      goals: {
+        explore: {
+          label: "Explore",
+          text: "Choose a route and survive room by room.",
+        },
+        recover: {
+          label: "Recover",
+          text: "Gain cards, relics, and fragments of stories.",
+        },
+        return: {
+          label: "Bring back",
+          text: "Return to the Library and restore the Panlibrarium.",
+        },
+      },
+    },
     firstRunTutorial: {
       kicker: "First Expedition",
       title: "Quick tutorial",
@@ -561,21 +619,21 @@ export const en = {
         subtitle: "The Censure is at work",
         name: "Censor",
         description:
-          "Elites and bosses become less predictable, and bosses break through your defense more easily.",
+          "Elite and boss intents are hidden every 3 turns. More disruption.",
       },
       4: {
         chapter: "Chapter V — Amnesia",
         subtitle: "Last chance",
         name: "Abyssal",
         description:
-          "Elite and boss fights become much more aggressive, and events are riskier.",
+          "D3 rules remain active. 3% of attack damage bypasses Block. Slightly riskier events.",
       },
       5: {
         chapter: "Chapter VI — The Abyss",
         subtitle: "There is nothing left to lose",
         name: "Mythic",
         description:
-          "Ultimate mode: more elites, relentless enemies, and less reliable rewards.",
+          "D4 rules remain active. Bosses and elites start with Block; boss debuffs increase by 1. More elites, slightly less healing and a 75% elite relic drop chance.",
       },
     },
   },
@@ -641,8 +699,8 @@ export const en = {
       title: "Read the floor paths",
       description:
         "Chronicles are event rooms, the Scriptorium helps improve your deck, and elite combats pay more but are far more dangerous.",
-      tip: "For this first expedition, study these three options: we are deliberately taking the elite path so you can feel that risk.",
-      forcedChoice: "Pick the 3rd card: the elite challenge.",
+      tip: "Choose an event, merchant or elite fight. Every route is playable; prepare your deck before challenging an elite.",
+      forcedChoice: "Choose your next room freely.",
       gotIt: "Got it",
     },
   },
@@ -655,7 +713,7 @@ export const en = {
     traite_de_lenergie: {
       title: "Treatise of Energy",
       description:
-        "A hermetic manual on channeling vital energy. +1 max energy.",
+        "A manual on channeling vital energy. Start each combat with 2 Ink.",
     },
     grimoire_des_index: {
       title: "Grimoire of Indexes",
@@ -717,7 +775,7 @@ export const en = {
       title: "Homeric Hymns",
       author: "Homer",
       description:
-        "Hymns to the gods of Olympus that attract divine favor. Start each run with a choice of 3 uncommon cards.",
+        "Hymns to the gods of Olympus whose favor multiplies your choices. Reroll card rewards two additional times after each combat.",
     },
     le_banquet: {
       title: "The Symposium",
@@ -727,12 +785,12 @@ export const en = {
     livre_des_morts: {
       title: "Book of the Dead",
       description:
-        "The Egyptian guide to the afterlife, rich with magical formulas. +2 max Ink.",
+        "The Egyptian guide to the afterlife, rich with protective formulas. +10 max HP.",
     },
     hymne_a_re: {
       title: "Hymn to Ra",
       description:
-        "A hymn to the sun god that infuses every action with divine energy. +35% chance to gain Ink when playing a card.",
+        "A hymn to the sun god that restores vital energy. Recover 3 HP after each combat.",
     },
     textes_des_pyramides: {
       title: "Pyramid Texts",
@@ -778,7 +836,7 @@ export const en = {
       title: "Necronomicon (fragment)",
       author: "Abdul Alhazred",
       description:
-        "A fragment of the cursed book. Cards with Exhaust have a 30% chance not to be exhausted.",
+        "A fragment of the cursed book, source of unnatural resilience. +10 max HP.",
     },
     journal_de_miskatonic: {
       title: "Miskatonic Journal",
@@ -794,17 +852,17 @@ export const en = {
     mondes_sans_nom: {
       title: "Nameless Worlds",
       description:
-        "A revelation on the elusive nature of reality. Survive at 1 HP once per run (if not already gained via Runes).",
+        "A revelation about parallel threads of fate. Reroll card rewards one additional time after each combat.",
     },
     le_signe_des_anciens: {
       title: "The Sign of the Ancients",
       description:
-        "The mystic sign that bends the laws of the cosmos. +20% additional chance for a card not to be exhausted.",
+        "The mystic sign draws cosmic treasures to its bearer. +1 loot quality.",
     },
     mabinogion: {
       title: "Mabinogion",
       description:
-        "Welsh tales of the First Branch. Start each combat with 3 Block.",
+        "Welsh tales of the First Branch, symbols of rebirth. Recover 3 HP after each combat.",
     },
     cycle_d_ulster: {
       title: "Ulster Cycle",
@@ -829,12 +887,12 @@ export const en = {
     byliny_de_ilya: {
       title: "Byliny of Ilya",
       description:
-        "Heroic songs of Ilya Muromets, hero of the Russian people. +4 Block at the start of each combat.",
+        "Heroic songs of Ilya Muromets, hero of the Russian people. +12 max HP.",
     },
     contes_de_baba_yaga: {
       title: "Tales of Baba Yaga",
       description:
-        "Stories of the witch of the Russian forest. The first hit taken in combat deals 30% less damage.",
+        "Stories of the witch of the Russian forest and her healing secrets. Recover 1 HP at the start of each turn.",
     },
     l_oiseau_de_feu: {
       title: "The Firebird",
@@ -844,7 +902,7 @@ export const en = {
     domovoi: {
       title: "Domovoi",
       description:
-        "Rituals to win the favor of the household guardian spirit. +4 additional Block.",
+        "Rituals to win the favor of the household guardian spirit. Recover 4 HP after each combat.",
     },
     le_grand_livre_des_sorts: {
       title: "The Great Book of Spells",
@@ -1206,6 +1264,8 @@ export const en = {
     },
   },
   gameCard: {
+    retained: "Retained",
+    energyDebt: "Debt: {{value}} Energy to repay on upcoming turns",
     type: {
       ATTACK: "Attack",
       SKILL: "Skill",
@@ -1227,6 +1287,7 @@ export const en = {
       current: "Current",
       upgraded: "Upgraded",
       petrified: "Petrified",
+      frozen: "Frozen",
       webbed: "Webbed",
       neutral: "Neutral",
       redaction: {
@@ -1238,6 +1299,7 @@ export const en = {
       damage: "Deal {{value}} damage",
       damageAll: "Deal {{value}} damage to all enemies",
       damageEqualBlock: "Deal damage equal to your Block",
+      damagePerTargetBlock: "Deal {{value}} damage per Block on the target",
       damagePerDebuff: "Deal {{value}} damage per {{buff}} on target",
       damageIfTargetHasDebuff:
         "If target already has {{buff}}, deal {{value}} damage",
@@ -1250,6 +1312,8 @@ export const en = {
       damagePerExhaustedCard:
         "Deal {{value}} damage per card in your Exhaust pile",
       damagePerDrawnThisTurn: "Deal {{value}} damage per card drawn this turn",
+      damagePerDotStacks:
+        "Deal {{value}} damage per Poison and Bleed stack on the target",
       damageBonusIfUpgradedInHand:
         "If this card is upgraded in hand: +{{value}} damage",
       block: "Gain {{value}} block",
@@ -1276,6 +1340,23 @@ export const en = {
       applyDebuff: "Apply {{value}} {{buff}}",
       applyDebuffAll: "Apply {{value}} {{buff}} to all enemies",
       applyBuff: "Gain {{value}} {{buff}}",
+      nextCardDoubleDamage: "Your next attack deals double damage",
+      rhythmReward:
+        "When alternating Attack and Skill: gain {{value}} Ink; every third beat, draw 1 card and gain 1 Energy",
+      takeEnergyDebt:
+        "Borrow {{value}} Energy now; repay it at the start of upcoming turns",
+      copyLastCardToHand: "Add a copy of the last card played to your hand",
+      topdeckFromDiscard:
+        "Put a random card from your discard pile on top of your draw pile",
+      archiveAndDraw:
+        "Archive and upgrade another card until next turn, then draw {{value}}",
+      revealAndReverseTop:
+        "Reveal and reverse the top {{value}} cards of your draw pile",
+      emptyDrawPileBlock: "If your draw pile is empty, gain {{value}} Block",
+      propagateDot:
+        "Raise other enemies' Poison and Bleed to at least {{value}} times the target's stacks, without adding to existing stacks",
+      exactEnergyReward: "If Energy is 0 after paying for this card, gain {{value}} Block",
+      exactInkReward: "If Ink is 0 when this effect resolves, gain {{value}} Energy",
       drainInk: "Drain {{value}} ink",
       exhaust: "Exhaust",
       unplayable: "Unplayable",
@@ -1296,6 +1377,7 @@ export const en = {
       moveRandomNonClogDiscardToHand:
         "Return {{value}} random non-Status/Curse card(s) from your discard to your hand",
       freezeHandCards: "Freeze {{value}} card(s) in hand",
+      retainCards: "Retain {{value}} other random card(s) in hand until next turn",
       nextDrawToDiscardThisTurn: "Your next draw goes to discard this turn",
       disableInkPowerThisTurn: "Disable ink power {{power}} this turn",
       increaseCardCostThisTurn: "Cards cost +{{value}} this turn",
@@ -1463,6 +1545,22 @@ export const en = {
     backToMenu: "Back to menu",
   },
   run: {
+    ending: {
+      kicker: "The final leaf",
+      title: "A story saved from erasure",
+      text: "In the silence of the final tome, you find an untouched page. It bears neither your name nor a king’s: only the voices of those you met. You return it to its binding. For the first time since you left, the ink stops running. A shelf in the Library lights up again.",
+      consequence:
+        "This journey is complete. Its pages and memories return with you; unlocked stories and the next difficulty open another expedition, with a different deck or character.",
+    },
+    saveErrors: {
+      offline: "Offline: progress is waiting to be saved. Keep this page open.",
+      failed: "Saving failed. Retrying automatically in a few seconds.",
+      conflict: "This run changed in another tab. Reload the confirmed save.",
+    },
+    endSaveFailed:
+      "The end of this run was not confirmed. Keep this page open and retry returning to the library.",
+    retrySave: "Retry",
+    reloadSave: "Reload",
     loading: "Loading game...",
     notFound: "Run not found",
     freeUpgradeTitle: "Free upgrade (Revision Manual)",
@@ -1473,6 +1571,23 @@ export const en = {
       "You conquered all {{floor}} floors of the Forbidden Library!",
     defeatTitle: "Defeat",
     defeatSubtitle: "Your story ends here...",
+    defeatNarrative: {
+      kicker: "The expedition ends",
+      normal: {
+        title: "The page closes",
+        text: "Your strength fails and the passage dissolves around you. This fragment remains incomplete, but what you tore from it will not be entirely lost.",
+      },
+      elite: {
+        title: "The elite still guards this chapter",
+        text: "You reached a guardian more dangerous than ordinary creatures, but it broke your expedition. This was never meant to be a fair fight: elites demand a prepared deck, reliable defense, and the right moment to spend your ink.",
+      },
+      boss: {
+        title: "The guardian refuses to yield the story",
+        text: "The heart of the tale was within reach. Its guardian closed the chapter before you could free it. You now know part of its design; your next expedition can be built to answer it.",
+      },
+      returnPromise:
+        "The Panlibrarium will remember this attempt. Return to the Library, learn, then open the book again.",
+    },
     abandonedTitle: "Run abandoned",
     abandonedSubtitle: "You left this adventure.",
     goldEarned: "Gold earned: {{gold}}",
@@ -1496,6 +1611,8 @@ export const en = {
     backToLibrary: "Library",
   },
   layout: {
+    audio: { music: "Music", effects: "Sound effects" },
+    largeText: "Larger text (cards and indicators)",
     iosInstallTitle: "Install the app to play without browser bars",
     iosInstallHint: "Share → Add to Home Screen",
     iosInstallDismiss: "Later",
@@ -1514,6 +1631,7 @@ export const en = {
     showRelics: "Show relics",
     relics: "Relics",
     menu: "Menu",
+    combatSpeed: "Combat speed",
     mute: "Mute",
     unmute: "Unmute",
     vibrationOn: "Vibration: ON",
@@ -1594,6 +1712,9 @@ export const en = {
     cardsCount_other: "{{count}} cards",
   },
   inkGauge: {
+    capacityRequired:
+      "Requires {{cost}} Ink capacity. Find a relic that increases capacity.",
+    hpAfterPayment: "HP after payment: {{hp}}. This power cannot kill you.",
     ink: "INK",
     powerTooltip: "{{description}} ({{cost}} ink)",
     powers: {
@@ -1604,16 +1725,16 @@ export const en = {
       },
       ENCRE_NOIRE: {
         label: "Black Ink",
-        desc: "Deal ink x2 damage to all enemies",
+        desc: "Spend 4 Ink and deal twice your Ink before spending as damage to all enemies",
       },
       SEAL: {
         label: "Seal",
-        desc: "Gain 8 block",
+        desc: "Gain 6 Block, plus 2 per upgraded card in hand (maximum +6)",
       },
       // Librarian
       VISION: {
         label: "Vision",
-        desc: "Draw 2 cards",
+        desc: "Reveal and reverse the next 3 cards, then draw 2 cards",
       },
       INDEX: {
         label: "Index",
@@ -1626,20 +1747,20 @@ export const en = {
       // Griot
       VENIN: {
         label: "Venom",
-        desc: "Apply 3 Poison to all enemies",
+        desc: "Apply 4 Poison to all enemies and advance the Refrain",
       },
       SAIGNEMENT: {
         label: "Bleed",
-        desc: "Apply 4 Bleed to a targeted enemy",
+        desc: "Apply 3 Bleed to a target and advance the Refrain",
       },
       GRISGRIS: {
         label: "Gris-Gris",
-        desc: "Deal damage equal to target's Poison + Bleed stacks",
+        desc: "Deal damage equal to the target's Poison + Bleed and advance the Refrain. Every 3rd power refunds 1 Ink and draws 1",
       },
       // Fou
       DOUBLE_MISE: {
         label: "Double Down",
-        desc: "Next card played deals ×2 damage",
+        desc: "Your next card deals x2 damage. Debt: lose 1 Energy next turn",
       },
       PACTE_SANG: {
         label: "Blood Pact",
@@ -1647,7 +1768,7 @@ export const en = {
       },
       FRENETIQUE: {
         label: "Frenetic",
-        desc: "Draw 3 cards. Discard 1 random card",
+        desc: "Draw 3, then discard 1 at random. Refund 1 Ink if it was upgraded",
       },
       // Legacy
       REWRITE: {
@@ -1683,6 +1804,7 @@ export const en = {
     },
   },
   combat: {
+    enemyOverview: "All enemies and their threats",
     noCardsInHand: "No cards in hand",
     enemy: "Enemy",
     summonOne: "{{summoner}} summons {{target}}!",
@@ -1691,6 +1813,7 @@ export const en = {
     enemyTurn: "Enemy turn",
     turn: "Turn",
     drawPile: "Draw pile",
+    drawPileRevealed: "Draw pile · top {{count}} revealed",
     discardPile: "Discard pile",
     exhaustPile: "Exhaust pile",
     debugTitle: "Enemy Spawn Debug",
@@ -1746,6 +1869,7 @@ export const en = {
     ally: "Ally",
     firstCombatTutorial: {
       kicker: "Combat tutorial",
+      actionRequired: "Your turn",
       stepCounter: "Step {{current}} / {{total}}",
       previous: "Previous",
       next: "Next",
@@ -1781,11 +1905,13 @@ export const en = {
           title: "Ink powers",
           description:
             "I am giving you enough ink for this: use your ink power now. Here, it upgrades one card in your hand for this combat.",
+          action: "Activate the highlighted ink power to continue.",
         },
         inkedCard: {
           title: "Inked card",
           description:
             "Your power just upgraded a card: an upgraded card has stronger numbers, and sometimes a better cost or effect for this combat. Look for the golden treatment. Clicking the card plays its base version; the Ink button at the bottom plays the + Ink version. I am topping your ink up again: use the Ink button on the highlighted card now.",
+          action: "Play the highlighted card's Ink variant to continue.",
         },
         deckCycle: {
           title: "Draw / Discard / Exhaust",
@@ -2104,6 +2230,9 @@ export const en = {
     huntTitle: "The Guardian's Challenge",
     huntDesc:
       "An adversary stands watch at the threshold. Defeat them to recover a fragment of a lost relic.",
+    healSignal: "Up to +{{amount}} HP",
+    upgradeSignal: "Upgrade 1 card",
+    huntSignal: "Face the guardian",
   },
   special: {
     healTitle: "Healing Spring",
@@ -2121,6 +2250,18 @@ export const en = {
     eventLabel: "Event",
     relicLabel: "Revealed Relic",
     eventStats: "HP: {{current}}/{{max}} - Gold: {{gold}}",
+    choiceSignals: {
+      goldCost: "-{{amount}} gold",
+      hpCost: "-{{amount}} HP",
+      hpGain: "+{{amount}} HP",
+      goldGain: "+{{amount}} gold",
+      removeCard: "Remove a card",
+      chooseCard: "Choose a card",
+      chooseRelic: "Choose a relic",
+      relic: "Gain a relic",
+      curse: "Receive a curse",
+      risk: "Risk",
+    },
     purgePickerTitle: "Choose a card to remove",
     purgePickerSubtitle:
       "This card will be permanently removed from your deck.",
@@ -2165,7 +2306,18 @@ export const en = {
     bonusMaxHpDescription: "+{{amount}} max HP for this expedition",
   },
   shop: {
+    kicker: "Wandering stall",
     title: "Merchant",
+    stall: "Goods on the counter",
+    hint: "Choose carefully: spent gold does not return.",
+    merchantLines: {
+      welcome:
+        "Come closer. Every object here once belonged to a story that never returned.",
+      purchase: "An interesting choice. Let us see if it keeps you alive.",
+      reroll:
+        "Nothing is lost here. I merely change what you are allowed to see.",
+      leave: "Keep your gold, then. The next chapters will be less patient.",
+    },
     gold: "Gold",
     itemName: {
       heal: "Heal",

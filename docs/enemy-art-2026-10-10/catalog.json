@@ -1,0 +1,810 @@
+[
+  {
+    "id": "ink_slime",
+    "name": "Ink Slime",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "paper_golem",
+    "name": "Paper Golem",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "quill_sprite",
+    "name": "Quill Sprite",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "tome_wraith",
+    "name": "Tome Wraith",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "scroll_serpent",
+    "name": "Scroll Serpent",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "ink_archon",
+    "name": "Ink Archon",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": true,
+    "reuseCard": null
+  },
+  {
+    "id": "tome_colossus",
+    "name": "Tome Colossus",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": true,
+    "reuseCard": null
+  },
+  {
+    "id": "venom_wyrm",
+    "name": "Venom Wyrm",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": true,
+    "reuseCard": null
+  },
+  {
+    "id": "draugr",
+    "name": "Draugr",
+    "biome": "VIKING",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_draugr"
+  },
+  {
+    "id": "rune_berserker",
+    "name": "Rune Berserker",
+    "biome": "VIKING",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "frost_troll",
+    "name": "Frost Troll",
+    "biome": "VIKING",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_frost_troll"
+  },
+  {
+    "id": "shield_maiden",
+    "name": "Shield Maiden",
+    "biome": "VIKING",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_shield_maiden"
+  },
+  {
+    "id": "rune_shaman",
+    "name": "Rune Shaman",
+    "biome": "VIKING",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "einherjar",
+    "name": "Einherjar",
+    "biome": "VIKING",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "valkyrie",
+    "name": "Valkyrie",
+    "biome": "VIKING",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_valkyrie"
+  },
+  {
+    "id": "jormungandr_spawn",
+    "name": "Jormungandr Spawn",
+    "biome": "VIKING",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_jormungandr_spawn"
+  },
+  {
+    "id": "satyr",
+    "name": "Satyr",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_satyr"
+  },
+  {
+    "id": "harpy",
+    "name": "Harpy",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_harpy"
+  },
+  {
+    "id": "cyclops",
+    "name": "Cyclops",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_cyclops"
+  },
+  {
+    "id": "gorgon",
+    "name": "Gorgon",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_gorgon"
+  },
+  {
+    "id": "lamia",
+    "name": "Lamia",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "bronze_automaton",
+    "name": "Bronze Automaton",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "minotaur",
+    "name": "Minotaur",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_minotaur"
+  },
+  {
+    "id": "lernaean_broodling",
+    "name": "Lernaean Broodling",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": true,
+    "reuseCard": null
+  },
+  {
+    "id": "scarab_swarm",
+    "name": "Scarab Swarm",
+    "biome": "EGYPTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_scarab_swarm"
+  },
+  {
+    "id": "sand_guardian",
+    "name": "Sand Guardian",
+    "biome": "EGYPTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "tomb_priest",
+    "name": "Tomb Priest",
+    "biome": "EGYPTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_tomb_priest"
+  },
+  {
+    "id": "mummy_knight",
+    "name": "Mummy Knight",
+    "biome": "EGYPTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "apep_scion",
+    "name": "Apep Scion",
+    "biome": "EGYPTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "wadjet_guardian",
+    "name": "Wadjet Guardian",
+    "biome": "EGYPTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "ushabti_servant",
+    "name": "Ushabti Servant",
+    "biome": "EGYPTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_ushabti_servant"
+  },
+  {
+    "id": "anubis_champion",
+    "name": "Anubis Champion",
+    "biome": "EGYPTIAN",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_anubis_champion"
+  },
+  {
+    "id": "sekhmet_chosen",
+    "name": "Sekhmet's Chosen",
+    "biome": "EGYPTIAN",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_sekhmet_chosen"
+  },
+  {
+    "id": "cultist_scribe",
+    "name": "Cultist Scribe",
+    "biome": "LOVECRAFTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_cultist_scribe"
+  },
+  {
+    "id": "deep_one",
+    "name": "Deep One",
+    "biome": "LOVECRAFTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_deep_one"
+  },
+  {
+    "id": "shoggoth_spawn",
+    "name": "Shoggoth Spawn",
+    "biome": "LOVECRAFTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "void_tendril",
+    "name": "Void Tendril",
+    "biome": "LOVECRAFTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "star_spawn",
+    "name": "Star Spawn",
+    "biome": "LOVECRAFTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_star_spawn"
+  },
+  {
+    "id": "byakhee",
+    "name": "Byakhee",
+    "biome": "LOVECRAFTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_byakhee"
+  },
+  {
+    "id": "elder_hybrid",
+    "name": "Elder Hybrid",
+    "biome": "LOVECRAFTIAN",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_elder_hybrid"
+  },
+  {
+    "id": "mi_go_surgeon",
+    "name": "Mi-Go Surgeon",
+    "biome": "LOVECRAFTIAN",
+    "boss": false,
+    "elite": true,
+    "reuseCard": null
+  },
+  {
+    "id": "jaguar_warrior",
+    "name": "Jaguar Warrior",
+    "biome": "AZTEC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_jaguar_warrior"
+  },
+  {
+    "id": "obsidian_priest",
+    "name": "Obsidian Priest",
+    "biome": "AZTEC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "eagle_knight",
+    "name": "Eagle Knight",
+    "biome": "AZTEC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_eagle_knight"
+  },
+  {
+    "id": "stone_idol",
+    "name": "Stone Idol",
+    "biome": "AZTEC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "flayed_cultist",
+    "name": "Flayed Cultist",
+    "biome": "AZTEC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "tzitzimitl",
+    "name": "Tzitzimitl",
+    "biome": "AZTEC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_tzitzimitl"
+  },
+  {
+    "id": "quetzal_harbinger",
+    "name": "Quetzal Harbinger",
+    "biome": "AZTEC",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_quetzal_harbinger"
+  },
+  {
+    "id": "huitzilopochtli_enforcer",
+    "name": "Huitzilopochtli's Enforcer",
+    "biome": "AZTEC",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_huitzilopochtli_enforcer"
+  },
+  {
+    "id": "sidhe_raider",
+    "name": "Sidhe Raider",
+    "biome": "CELTIC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_sidhe_raider"
+  },
+  {
+    "id": "bog_beast",
+    "name": "Bog Beast",
+    "biome": "CELTIC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "druid_apprentice",
+    "name": "Druid Apprentice",
+    "biome": "CELTIC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "amber_hound",
+    "name": "Amber Hound",
+    "biome": "CELTIC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "morrigan_wisp",
+    "name": "Morrigan's Wisp",
+    "biome": "CELTIC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_morrigan_wisp"
+  },
+  {
+    "id": "briar_beast",
+    "name": "Briar Beast",
+    "biome": "CELTIC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_briar_beast"
+  },
+  {
+    "id": "morrigan_chosen",
+    "name": "Morrigan's Chosen",
+    "biome": "CELTIC",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_morrigan_chosen"
+  },
+  {
+    "id": "wild_hunt_hound",
+    "name": "Wild Hunt Hound",
+    "biome": "CELTIC",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_wild_hunt_hound"
+  },
+  {
+    "id": "winter_wolf",
+    "name": "Winter Wolf",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_winter_wolf"
+  },
+  {
+    "id": "czar_guard",
+    "name": "Czar Guard",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "snow_maiden",
+    "name": "Snow Maiden",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_snow_maiden"
+  },
+  {
+    "id": "iron_cossack",
+    "name": "Iron Cossack",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "kikimora",
+    "name": "Kikimora",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "rusalka",
+    "name": "Rusalka",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_rusalka"
+  },
+  {
+    "id": "koschei_herald",
+    "name": "Koschei Herald",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_koschei_herald"
+  },
+  {
+    "id": "domovoi_titan",
+    "name": "Domovoi Titan",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_domovoi_titan"
+  },
+  {
+    "id": "hyena_pack",
+    "name": "Hyena Pack",
+    "biome": "AFRICAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_hyena_pack"
+  },
+  {
+    "id": "mask_hunter",
+    "name": "Mask Hunter",
+    "biome": "AFRICAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_mask_hunter"
+  },
+  {
+    "id": "baobab_giant",
+    "name": "Baobab Giant",
+    "biome": "AFRICAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "serpent_oracle",
+    "name": "Serpent Oracle",
+    "biome": "AFRICAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_serpent_oracle"
+  },
+  {
+    "id": "impundulu",
+    "name": "Impundulu",
+    "biome": "AFRICAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "tokoloshe",
+    "name": "Tokoloshe",
+    "biome": "AFRICAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": "bestiary_normal_tokoloshe"
+  },
+  {
+    "id": "legba_emissary",
+    "name": "Legba Emissary",
+    "biome": "AFRICAN",
+    "boss": false,
+    "elite": true,
+    "reuseCard": "bestiary_elite_legba_emissary"
+  },
+  {
+    "id": "oya_harbinger",
+    "name": "Oya's Harbinger",
+    "biome": "AFRICAN",
+    "boss": false,
+    "elite": true,
+    "reuseCard": null
+  },
+  {
+    "id": "chapter_guardian",
+    "name": "Chapter Guardian",
+    "biome": "LIBRARY",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "the_archivist",
+    "name": "The Corrupted Archivist",
+    "biome": "LIBRARY",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "archivist_black_inkwell",
+    "name": "Black Inkwell",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "archivist_pale_inkwell",
+    "name": "Pale Inkwell",
+    "biome": "LIBRARY",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "fenrir",
+    "name": "Fenrir",
+    "biome": "VIKING",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "hel_queen",
+    "name": "Hel, Queen of Niflheim",
+    "biome": "VIKING",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "medusa",
+    "name": "Medusa",
+    "biome": "GREEK",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "hydra_aspect",
+    "name": "Aspect of the Hydra",
+    "biome": "GREEK",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "hydra_head_left",
+    "name": "Hydra Head",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "hydra_head_right",
+    "name": "Hydra Head",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "hydra_head_center",
+    "name": "Hydra Head",
+    "biome": "GREEK",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "ra_avatar",
+    "name": "Avatar of Ra",
+    "biome": "EGYPTIAN",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "osiris_judgment",
+    "name": "Judgment of Osiris",
+    "biome": "EGYPTIAN",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "nyarlathotep_shard",
+    "name": "Nyarlathotep Shard",
+    "biome": "LOVECRAFTIAN",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "shub_spawn",
+    "name": "Shub-Niggurath's Spawn",
+    "biome": "LOVECRAFTIAN",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "shub_brood_nest",
+    "name": "Brood Nest",
+    "biome": "LOVECRAFTIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "tezcatlipoca_echo",
+    "name": "Tezcatlipoca Echo",
+    "biome": "AZTEC",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "quetzalcoatl_wrath",
+    "name": "Quetzalcoatl's Wrath",
+    "biome": "AZTEC",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "dagda_shadow",
+    "name": "Dagda's Shadow",
+    "biome": "CELTIC",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "dagda_cauldron",
+    "name": "Dagda's Cauldron",
+    "biome": "CELTIC",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "cernunnos_shade",
+    "name": "Cernunnos's Shade",
+    "biome": "CELTIC",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "baba_yaga_hut",
+    "name": "Baba Yaga's Hut",
+    "biome": "RUSSIAN",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "koschei_deathless",
+    "name": "Koschei the Deathless",
+    "biome": "RUSSIAN",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "koschei_bone_chest",
+    "name": "Bone Chest",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "koschei_black_egg",
+    "name": "Black Egg",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "koschei_hidden_needle",
+    "name": "Hidden Needle",
+    "biome": "RUSSIAN",
+    "boss": false,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "soundiata_spirit",
+    "name": "Soundiata Spirit",
+    "biome": "AFRICAN",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  },
+  {
+    "id": "anansi_weaver",
+    "name": "Anansi the Weaver",
+    "biome": "AFRICAN",
+    "boss": true,
+    "elite": false,
+    "reuseCard": null
+  }
+]

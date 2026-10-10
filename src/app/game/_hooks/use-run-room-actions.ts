@@ -192,9 +192,7 @@ export function useRunRoomActions({
       dispatch,
       hasOpeningBiomeChoice,
       setPhase,
-      state.characterId,
-      state.difficultyMaxByCharacter,
-      state.startMerchantCompleted,
+      state,
     ]
   );
 

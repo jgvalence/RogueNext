@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { RunState, RoomNode } from "@/game/schemas/run-state";
+import { DEFAULT_RUN_ANALYTICS } from "@/game/schemas/analytics";
 import {
-  FIRST_RUN_SCRIPT_FORCED_CHOICE_INDEX,
   createFirstRunScriptedMap,
   getFirstRunForcedMapChoiceIndex,
   getFirstRunScriptedEndResources,
@@ -29,6 +29,7 @@ function makeRunState(overrides: Partial<RunState> = {}): RunState {
     gold: 0,
     maxGoldReached: 0,
     merchantRerollCount: 0,
+    analytics: { ...DEFAULT_RUN_ANALYTICS },
     playerMaxHp: 60,
     playerCurrentHp: 60,
     deck: [],
@@ -102,13 +103,11 @@ describe("first run script helpers", () => {
     expect(scriptedMap[1]?.[2]?.enemyIds).toEqual(["tome_colossus"]);
   });
 
-  it("forces the third map choice during the guided map step", () => {
+  it("keeps every route available during the guided map step", () => {
     const runState = makeRunState();
 
     expect(shouldShowFirstRunMapTutorial(runState)).toBe(true);
-    expect(getFirstRunForcedMapChoiceIndex(runState)).toBe(
-      FIRST_RUN_SCRIPT_FORCED_CHOICE_INDEX
-    );
+    expect(getFirstRunForcedMapChoiceIndex(runState)).toBeNull();
   });
 
   it("grants exactly enough pages for the +1 draw story", () => {

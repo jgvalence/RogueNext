@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { playSound } from "@/lib/sound";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { ReshuffleCardFx } from "./combat-view-types";
+import { scaleCombatDelay } from "@/lib/combat-speed";
 
 interface UseCombatVisualEffectsParams {
   combat: CombatState;
@@ -69,7 +70,10 @@ export function useCombatVisualEffects({
     if (combat.player.currentHp >= prev) return undefined;
     setPlayerHit(true);
     playSound("PLAYER_HIT", 0.7);
-    const timer = setTimeout(() => setPlayerHit(false), 500);
+    const timer = setTimeout(
+      () => setPlayerHit(false),
+      scaleCombatDelay(500)
+    );
     return () => clearTimeout(timer);
   }, [combat.player.currentHp]);
 
@@ -94,7 +98,7 @@ export function useCombatVisualEffects({
           next.delete(enemy.instanceId);
           return next;
         });
-      }, 650);
+      }, scaleCombatDelay(650));
       spawnClearTimersRef.current.push(timer);
     }
 
@@ -116,7 +120,7 @@ export function useCombatVisualEffects({
     setSummonAnnouncement(announcement);
     summonHideTimerRef.current = setTimeout(
       () => setSummonAnnouncement(null),
-      1200
+      scaleCombatDelay(1200)
     );
   }, [combat.enemies, actingEnemyId, t, getEnemyDisplayName]);
 
@@ -161,7 +165,7 @@ export function useCombatVisualEffects({
             tx: toX - fromX + (Math.random() - 0.5) * 20,
             ty: toY - fromY + (Math.random() - 0.5) * 12,
             rot: (Math.random() - 0.5) * 26,
-            delay: index * 55,
+            delay: scaleCombatDelay(index * 55),
           })
         );
         setReshuffleCards(burst);
@@ -170,7 +174,7 @@ export function useCombatVisualEffects({
       const timer = setTimeout(() => {
         setReshuffleFx(false);
         setReshuffleCards([]);
-      }, 980);
+      }, scaleCombatDelay(980));
       prevDrawCountRef.current = drawNow;
       prevDiscardCountRef.current = discardNow;
       return () => clearTimeout(timer);

@@ -1,4 +1,20 @@
 export const fr = {
+  pwa: {
+    updateReady: "Une nouvelle version de Panlibrarium est prête.",
+    update: "Mettre à jour",
+    installHint: "Installez Panlibrarium pour le retrouver sur votre écran d’accueil.",
+    install: "Installer le jeu",
+  },
+  visual: {
+    illustration: "Illustration",
+    viewIllustration: "Voir l’illustration entière",
+    closeIllustration: "Fermer l’illustration",
+    previewHint: "Fermez pour revenir à la main et choisir votre carte.",
+    powers: "Pouvoirs",
+    buy: "Acheter",
+    inspectCard: "Lire",
+    handHint: "Glissez pour parcourir · Lire pour le détail",
+  },
   common: {
     language: "Langue",
     french: "FR",
@@ -42,6 +58,8 @@ export const fr = {
     ],
   },
   leaderboard: {
+    unverified:
+      "Classement indicatif : les parties sont simulées sur l’appareil du joueur et ne sont pas certifiées pour la compétition.",
     kicker: "Classement global",
     title: "Hall des Archivistes",
     subtitle:
@@ -148,6 +166,8 @@ export const fr = {
     AFRICAN: "Savanes Africaines",
   },
   library: {
+    bonusCapReached:
+      "Le plafond est déjà atteint : cette histoire n’ajoute plus de bonus de ce type.",
     backHome: "Accueil",
     title: "Bibliotheque du Panlibrarium",
     collectedStories: "{{unlocked}}/{{total}} histoires collectees",
@@ -490,6 +510,44 @@ export const fr = {
     title: "Configure ton expedition",
     subtitle:
       "Choisis la difficulte, le type d'expedition, puis prepare tes options de depart avant d'entrer dans la premiere salle.",
+    intro: {
+      kicker: "Les archives brisees",
+      previous: "Precedent",
+      next: "Continuer",
+      begin: "Preparer l'expedition",
+      skip: "Passer le prologue",
+      steps: {
+        memory: {
+          symbol: "✦",
+          title: "Le Panlibrarium",
+          text: "Le Panlibrarium conservait toutes les histoires jamais racontees. Puis une catastrophe a dechire ses rayonnages : les recits ont ete disperses, leurs personnages corrompus et des mondes entiers ont commence a s'effacer.",
+        },
+        mission: {
+          symbol: "⌁",
+          title: "Retrouver les histoires perdues",
+          text: "Tu es l'un de ses derniers gardiens. Chaque expedition t'envoie dans un fragment de recit. Affronte ce qui le retient prisonnier, recupere ses pages, puis rapporte-les a la Bibliotheque pour reconstruire la memoire du Panlibrarium.",
+        },
+        journey: {
+          symbol: "→",
+          title: "Chaque tentative compte",
+          text: "Traverse les salles, choisis tes combats et construis un deck capable d'atteindre le gardien du biome. Une defaite met fin a l'expedition, mais les histoires retrouvees, les connaissances et certains debloquages te preparent a revenir plus loin.",
+        },
+      },
+      goals: {
+        explore: {
+          label: "Explorer",
+          text: "Choisis une route et survis salle apres salle.",
+        },
+        recover: {
+          label: "Recuperer",
+          text: "Gagne cartes, reliques et fragments d'histoires.",
+        },
+        return: {
+          label: "Rapporter",
+          text: "Reviens a la Bibliotheque pour restaurer le Panlibrarium.",
+        },
+      },
+    },
     firstRunTutorial: {
       kicker: "Premiere expedition",
       title: "Mini tutoriel",
@@ -571,21 +629,21 @@ export const fr = {
         subtitle: "La Censure agit",
         name: "Censeur",
         description:
-          "Les elites et boss deviennent plus imprevisibles, et les boss percent mieux votre defense.",
+          "Les intentions des élites et boss sont cachées tous les 3 tours. Davantage de contrôles.",
       },
       4: {
         chapter: "Chapitre V — Amnesie",
         subtitle: "Derniere chance",
         name: "Abyssal",
         description:
-          "Les combats elites et boss deviennent nettement plus agressifs, et les evenements sont plus risques.",
+          "Les règles D3 restent actives. 3 % des dégâts des attaques traversent l’armure. Événements un peu plus risqués.",
       },
       5: {
         chapter: "Chapitre VI — L'Abime",
         subtitle: "Il ne reste plus rien a perdre",
         name: "Mythique",
         description:
-          "Mode ultime: plus d'elites, des ennemis impitoyables, et des recompenses moins garanties.",
+          "Les règles D4 restent actives. Boss et élites commencent avec de l’armure ; les altérations des boss augmentent de 1. Plus d’élites, un peu moins de soins et 75 % de chances de relique d’élite.",
       },
     },
   },
@@ -651,8 +709,8 @@ export const fr = {
       title: "Lire les chemins de l'etage",
       description:
         "Les chroniques sont des evenements, le Scriptorium sert a ameliorer ton deck, et les combats d'elite offrent plus mais sont beaucoup plus dangereux.",
-      tip: "Pour cette premiere expedition, observe bien ces trois options: on va volontairement prendre le chemin d'elite pour te montrer le risque.",
-      forcedChoice: "Choisis obligatoirement la 3e carte: l'epreuve d'elite.",
+      tip: "Choisis ton chemin : un événement, un marchand ou un combat d’élite. Toutes les routes sont jouables ; prépare ton deck avant de défier une élite.",
+      forcedChoice: "Choisis librement la prochaine salle.",
       gotIt: "Compris",
     },
   },
@@ -665,7 +723,7 @@ export const fr = {
     traite_de_lenergie: {
       title: "Traite de l'Energie",
       description:
-        "Un manuel hermetique sur la canalisation de l'energie vitale. +1 energie max.",
+        "Un manuel sur la canalisation vitale. Commence chaque combat avec 2 Ink.",
     },
     le_grand_livre_des_sorts: {
       title: "Le Grand Livre des Sorts",
@@ -1182,6 +1240,8 @@ export const fr = {
     },
   },
   gameCard: {
+    retained: "Conservée",
+    energyDebt: "Dette : {{value}} Énergie à rembourser aux prochains tours",
     type: {
       ATTACK: "Attaque",
       SKILL: "Competence",
@@ -1203,6 +1263,7 @@ export const fr = {
       current: "Actuelle",
       upgraded: "Amelioree",
       petrified: "Petrifiee",
+      frozen: "Gelée",
       webbed: "Capturee",
       neutral: "Neutre",
       redaction: {
@@ -1214,6 +1275,8 @@ export const fr = {
       damage: "Inflige {{value}} degats",
       damageAll: "Inflige {{value}} degats a tous les ennemis",
       damageEqualBlock: "Inflige des degats egaux a votre armure",
+      damagePerTargetBlock:
+        "Inflige {{value}} degats par point d'armure de la cible",
       damagePerDebuff: "Inflige {{value}} degats par {{buff}} sur la cible",
       damageIfTargetHasDebuff:
         "Si la cible a deja {{buff}}, inflige {{value}} degats",
@@ -1227,6 +1290,8 @@ export const fr = {
         "Inflige {{value}} degats par carte dans votre pile d'epuisement",
       damagePerDrawnThisTurn:
         "Inflige {{value}} degats par carte piochee ce tour",
+      damagePerDotStacks:
+        "Inflige {{value}} degats par cumul de Poison et Saignement sur la cible",
       damageBonusIfUpgradedInHand:
         "Si cette carte est amelioree en main : +{{value}} degats",
       block: "Gagne {{value}} armure",
@@ -1253,6 +1318,25 @@ export const fr = {
       applyDebuff: "Applique {{value}} {{buff}}",
       applyDebuffAll: "Applique {{value}} {{buff}} a tous les ennemis",
       applyBuff: "Gagne {{value}} {{buff}}",
+      nextCardDoubleDamage: "La prochaine attaque inflige le double de degats",
+      rhythmReward:
+        "En alternant Attaque et Compétence : gagne {{value}} Encre ; tous les 3 temps, pioche 1 carte et gagne 1 Énergie",
+      takeEnergyDebt:
+        "Emprunte {{value}} Énergie maintenant ; rembourse-la au début des prochains tours",
+      copyLastCardToHand: "Ajoute en main une copie de la derniere carte jouee",
+      topdeckFromDiscard:
+        "Place une carte aleatoire de la defausse au sommet de la pioche",
+      archiveAndDraw:
+        "Archive et ameliore une autre carte jusqu'au prochain tour, puis pioche {{value}}",
+      revealAndReverseTop:
+        "Revele et inverse les {{value}} prochaines cartes de ta pioche",
+      emptyDrawPileBlock: "Si ta pioche est vide, gagne {{value}} Blocage",
+      propagateDot:
+        "Porte le Poison et le Saignement des autres ennemis à au moins {{value}} fois ceux de la cible, sans additionner les charges existantes",
+      exactEnergyReward:
+        "Si votre Énergie est à 0 après le paiement de cette carte, gagne {{value}} Armure",
+      exactInkReward:
+        "Si votre Encre est à 0 à la résolution de cet effet, gagne {{value}} Énergie",
       drainInk: "Retire {{value}} encre",
       exhaust: "Epuisement",
       unplayable: "Injouable",
@@ -1273,6 +1357,7 @@ export const fr = {
       moveRandomNonClogDiscardToHand:
         "Remonte {{value}} carte(s) aleatoire(s) non statut/malediction de votre defausse vers votre main",
       freezeHandCards: "Gele {{value}} carte(s) en main",
+      retainCards: "Conserve {{value}} autre(s) carte(s) aléatoire(s) en main jusqu’au prochain tour",
       nextDrawToDiscardThisTurn:
         "Votre prochaine pioche va en defausse ce tour-ci",
       disableInkPowerThisTurn:
@@ -1447,6 +1532,25 @@ export const fr = {
     backToMenu: "Retour au menu",
   },
   run: {
+    ending: {
+      kicker: "Le dernier feuillet",
+      title: "Une histoire sauvée de l’effacement",
+      text: "Dans le silence du dernier tome, tu trouves une page intacte. Elle ne porte ni ton nom, ni celui d’un roi : seulement les voix de ceux que tu as rencontrés. Tu la replaces dans sa reliure. Pour la première fois depuis ton départ, l’encre cesse de fuir. Un rayon de la Bibliothèque se rallume.",
+      consequence:
+        "Ce voyage est terminé. Ses pages et ses souvenirs rentrent avec toi ; les histoires débloquées et le prochain niveau de difficulté ouvrent une nouvelle expédition, avec un autre deck ou un autre personnage.",
+    },
+    saveErrors: {
+      offline:
+        "Hors ligne : la progression attend une sauvegarde. Gardez cette page ouverte.",
+      failed:
+        "La sauvegarde a échoué. Nouvelle tentative automatique dans quelques secondes.",
+      conflict:
+        "Cette partie a été modifiée dans un autre onglet. Rechargez la sauvegarde confirmée.",
+    },
+    endSaveFailed:
+      "La fin de partie n’a pas été confirmée. Gardez cette page ouverte et réessayez le retour à la bibliothèque.",
+    retrySave: "Réessayer",
+    reloadSave: "Recharger",
     loading: "Chargement de la partie...",
     notFound: "Expedition introuvable",
     freeUpgradeTitle: "Amelioration gratuite (Manuel de revision)",
@@ -1457,6 +1561,23 @@ export const fr = {
       "Vous avez conquis les {{floor}} etages de la Bibliotheque Interdite !",
     defeatTitle: "Defaite",
     defeatSubtitle: "Votre histoire s'arrete ici...",
+    defeatNarrative: {
+      kicker: "L'expedition s'acheve",
+      normal: {
+        title: "La page se referme",
+        text: "Tes forces t'abandonnent et le passage se dissout autour de toi. Ce fragment d'histoire reste incomplet, mais ce que tu en as arrache ne sera pas totalement perdu.",
+      },
+      elite: {
+        title: "L'elite gardait encore ce chapitre",
+        text: "Tu as atteint un gardien plus dangereux que les créatures ordinaires, mais il a brisé ton expédition. Les élites exigent un deck préparé, de la défense et le bon moment pour dépenser ton encre.",
+      },
+      boss: {
+        title: "Le gardien refuse de ceder l'histoire",
+        text: "Le coeur du recit etait devant toi. Son gardien a referme le chapitre avant que tu puisses le liberer. Tu connais maintenant une partie de ses mecanismes ; la prochaine expedition pourra etre construite pour les contrer.",
+      },
+      returnPromise:
+        "Le Panlibrarium se souviendra de cette tentative. Retourne a la Bibliotheque, apprends, puis ouvre de nouveau le livre.",
+    },
     abandonedTitle: "Expedition abandonnee",
     abandonedSubtitle: "Vous avez quitte cette aventure.",
     goldEarned: "Or gagne : {{gold}}",
@@ -1481,6 +1602,8 @@ export const fr = {
     backToLibrary: "Bibliotheque",
   },
   layout: {
+    audio: { music: "Musique", effects: "Effets sonores" },
+    largeText: "Texte agrandi (cartes et indicateurs)",
     iosInstallTitle: "Installe l'app pour jouer sans les barres du navigateur",
     iosInstallHint: "Partager → Sur l'ecran d'accueil",
     iosInstallDismiss: "Plus tard",
@@ -1499,6 +1622,7 @@ export const fr = {
     showRelics: "Voir les reliques",
     relics: "Reliques",
     menu: "Menu",
+    combatSpeed: "Vitesse des combats",
     mute: "Couper le son",
     unmute: "Remettre le son",
     vibrationOn: "Vibration : ON",
@@ -1587,6 +1711,10 @@ export const fr = {
     cardsCount_other: "{{count}} cartes",
   },
   inkGauge: {
+    capacityRequired:
+      "Capacité requise : {{cost}} Encre. Cherchez une relique qui augmente la capacité.",
+    hpAfterPayment:
+      "PV après paiement : {{hp}}. Ce pouvoir ne peut pas vous tuer.",
     ink: "ENCRE",
     powerTooltip: "{{description}} ({{cost}} encre)",
     powers: {
@@ -1597,16 +1725,16 @@ export const fr = {
       },
       ENCRE_NOIRE: {
         label: "Encre Noire",
-        desc: "Inflige encre x2 degats a tous les ennemis",
+        desc: "Consomme 4 Encre et inflige à tous les ennemis deux fois ton Encre avant la dépense",
       },
       SEAL: {
         label: "Sceau",
-        desc: "Gagne 8 armure",
+        desc: "Gagne 6 Blocage, plus 2 par carte amelioree en main (maximum +6)",
       },
       // Bibliothecaire
       VISION: {
         label: "Vision",
-        desc: "Pioche 2 cartes",
+        desc: "Revele et inverse les 3 prochaines cartes, puis pioche 2 cartes",
       },
       INDEX: {
         label: "Index",
@@ -1619,28 +1747,28 @@ export const fr = {
       // Griot
       VENIN: {
         label: "Venin",
-        desc: "Applique 3 Poison à tous les ennemis",
+        desc: "Applique 4 Poison a tous les ennemis et avance le Refrain",
       },
       SAIGNEMENT: {
         label: "Saignement",
-        desc: "Applique 4 Saignement à un ennemi ciblé",
+        desc: "Applique 3 Saignement a une cible et avance le Refrain",
       },
       GRISGRIS: {
         label: "Gris-Gris",
-        desc: "Inflige des dégâts égaux aux stacks de Poison + Saignement de la cible",
+        desc: "Inflige Poison + Saignement de la cible en degats et avance le Refrain. Chaque 3e pouvoir rend 1 Encre et pioche 1",
       },
       // Fou
       DOUBLE_MISE: {
         label: "Double Mise",
-        desc: "La prochaine carte jouée inflige ×2 dégâts",
+        desc: "La prochaine carte jouee inflige x2 degats. Dette : -1 Energie au prochain tour",
       },
       PACTE_SANG: {
         label: "Pacte de Sang",
-        desc: "Perd 6 PV. Gagne 3 encre",
+        desc: "Paie 6 PV et gagne 3 Encre. Nécessite plus de 6 PV.",
       },
       FRENETIQUE: {
         label: "Frénétique",
-        desc: "Pioche 3 cartes. Défausse 1 carte aléatoire",
+        desc: "Pioche 3 cartes puis en defausse 1 au hasard. Rend 1 Encre si elle etait amelioree",
       },
       // Legacy
       REWRITE: {
@@ -1676,6 +1804,7 @@ export const fr = {
     },
   },
   combat: {
+    enemyOverview: "Tous les ennemis et leurs menaces",
     noCardsInHand: "Aucune carte en main",
     enemy: "Ennemi",
     summonOne: "{{summoner}} invoque {{target}} !",
@@ -1684,6 +1813,7 @@ export const fr = {
     enemyTurn: "Tour ennemi",
     turn: "Tour",
     drawPile: "Pioche",
+    drawPileRevealed: "Pioche · {{count}} prochaines revelees",
     discardPile: "Defausse",
     exhaustPile: "Epuisement",
     debugTitle: "Debug apparition ennemi",
@@ -1740,6 +1870,7 @@ export const fr = {
     ally: "Allie",
     firstCombatTutorial: {
       kicker: "Tutoriel combat",
+      actionRequired: "A toi de jouer",
       stepCounter: "Etape {{current}} / {{total}}",
       previous: "Precedent",
       next: "Suivant",
@@ -1775,11 +1906,15 @@ export const fr = {
           title: "Pouvoirs d'encre",
           description:
             "Je te donne assez d'encre pour ca: utilise maintenant ton pouvoir d'encre. Ici, il ameliore une carte en main pour ce combat.",
+          action:
+            "Active le pouvoir d'encre indique dans l'interface pour poursuivre.",
         },
         inkedCard: {
           title: "Carte encree",
           description:
             "Le pouvoir vient d'ameliorer une carte: une carte amelioree a des chiffres renforces, et parfois un cout ou un effet meilleur pour ce combat. Repere-la a son habillage dore. Cliquer sur la carte joue sa version normale; le bouton Encre en bas joue sa version + Encre. Je te redonne de l'encre: utilise maintenant le bouton Encre de la carte surlignee dans ta main.",
+          action:
+            "Joue la variante Encre de la carte surlignee pour poursuivre.",
         },
         deckCycle: {
           title: "Pioche / Defausse / Epuise",
@@ -2106,6 +2241,9 @@ export const fr = {
     huntTitle: "Le defi du gardien",
     huntDesc:
       "Un adversaire veille a l'entree. Le vaincre libere un fragment de relique perdue.",
+    healSignal: "Jusqu'a +{{amount}} PV",
+    upgradeSignal: "Ameliorer 1 carte",
+    huntSignal: "Affronter le gardien",
   },
   special: {
     healTitle: "Source de soin",
@@ -2123,6 +2261,18 @@ export const fr = {
     eventLabel: "Evenement",
     relicLabel: "Relique revelee",
     eventStats: "PV : {{current}}/{{max}} - Or : {{gold}}",
+    choiceSignals: {
+      goldCost: "-{{amount}} or",
+      hpCost: "-{{amount}} PV",
+      hpGain: "+{{amount}} PV",
+      goldGain: "+{{amount}} or",
+      removeCard: "Retirer une carte",
+      chooseCard: "Choisir une carte",
+      chooseRelic: "Choisir une relique",
+      relic: "Gagner une relique",
+      curse: "Recevoir une malediction",
+      risk: "Risque",
+    },
     purgePickerTitle: "Choisissez une carte a retirer",
     purgePickerSubtitle:
       "Cette carte sera definitivement supprimee de votre deck.",
@@ -2169,7 +2319,19 @@ export const fr = {
     bonusMaxHpDescription: "+{{amount}} PV max pour cette expedition",
   },
   shop: {
+    kicker: "Echoppe itinerante",
     title: "Marchand",
+    stall: "Objets sur le comptoir",
+    hint: "Choisissez avec soin : l'or depense ne reviendra pas.",
+    merchantLines: {
+      welcome:
+        "Approchez. Chaque objet a deja appartenu a une histoire qui n'est jamais revenue.",
+      purchase: "Un choix interessant. Voyons s'il vous gardera en vie.",
+      reroll:
+        "Rien ne se perd ici. Je change seulement ce que vous pouvez voir.",
+      leave:
+        "Gardez votre or, alors. Les chapitres suivants seront moins patients.",
+    },
     gold: "Or",
     itemName: {
       heal: "Soin",

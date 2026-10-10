@@ -29,13 +29,20 @@ export function useCombatPileOverlay({
   const pileTitle = useMemo(
     () =>
       openPile === "draw"
-        ? t("combat.drawPile")
+        ? (combat.revealedDrawCards ?? 0) > 0
+          ? t("combat.drawPileRevealed", {
+              count: Math.min(
+                combat.revealedDrawCards ?? 0,
+                combat.drawPile.length
+              ),
+            })
+          : t("combat.drawPile")
         : openPile === "discard"
           ? t("combat.discardPile")
           : openPile === "exhaust"
             ? t("combat.exhaustPile")
             : null,
-    [openPile, t]
+    [openPile, t, combat.revealedDrawCards, combat.drawPile.length]
   );
 
   const pileCards = useMemo(() => {
@@ -43,19 +50,29 @@ export function useCombatPileOverlay({
     if (openPile === "discard") return combat.discardPile;
     if (openPile === "exhaust") return combat.exhaustPile;
 
-    // Do not leak real draw order: sort for display.
-    return [...combat.drawPile].sort((a, b) => {
-      const aName = cardDefs.get(a.definitionId)?.name ?? a.definitionId;
-      const bName = cardDefs.get(b.definitionId)?.name ?? b.definitionId;
-      const byName = aName.localeCompare(bName);
-      if (byName !== 0) return byName;
-      return a.instanceId.localeCompare(b.instanceId);
-    });
+    const sortHiddenCards = (cards: CombatState["drawPile"]) =>
+      [...cards].sort((a, b) => {
+        const aName = cardDefs.get(a.definitionId)?.name ?? a.definitionId;
+        const bName = cardDefs.get(b.definitionId)?.name ?? b.definitionId;
+        const byName = aName.localeCompare(bName);
+        if (byName !== 0) return byName;
+        return a.instanceId.localeCompare(b.instanceId);
+      });
+    const revealedCount = Math.min(
+      combat.revealedDrawCards ?? 0,
+      combat.drawPile.length
+    );
+    // Preserve the real order only for cards explicitly revealed by an effect.
+    return [
+      ...combat.drawPile.slice(0, revealedCount),
+      ...sortHiddenCards(combat.drawPile.slice(revealedCount)),
+    ];
   }, [
     openPile,
     combat.discardPile,
     combat.exhaustPile,
     combat.drawPile,
+    combat.revealedDrawCards,
     cardDefs,
   ]);
 

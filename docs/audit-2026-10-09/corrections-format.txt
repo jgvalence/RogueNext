@@ -1,0 +1,61 @@
+eslint.config.mjs 1347ms
+next.config.ts 54ms
+scripts/simulate.ts 403ms
+src/app/admin/stats/page.tsx 238ms
+src/app/api/run/save/route.ts 21ms
+src/app/game/[runId]/page.tsx 172ms
+src/app/game/_services/run-save-client.ts 39ms
+src/app/game/_services/run-save-client.test.ts 43ms
+src/app/game/_hooks/use-auto-save.ts 32ms
+src/app/game/_hooks/use-auto-save.test.tsx 50ms
+src/app/game/_hooks/use-combat-outcome.ts 58ms
+src/app/game/_hooks/use-run-phase-view-handlers.ts 45ms
+src/app/game/_hooks/use-reward-phase-handlers.ts 28ms
+src/app/game/_providers/game-reducer.ts 165ms
+src/app/game/_components/combat/BossMechanicsPanel.tsx 28ms
+src/app/game/_components/combat/BiomeSceneSilhouette.tsx 27ms
+src/app/game/_components/combat/EnemyCard.tsx 155ms
+src/app/game/_components/combat/GameCard.tsx 143ms
+src/app/game/_components/combat/HandArea.tsx 153ms
+src/app/game/_components/combat/InkGauge.tsx 74ms
+src/app/game/_components/combat/combat-mobile-grid.tsx 136ms
+src/app/game/_components/combat/combat-battlefield.tsx 59ms
+src/app/game/_components/combat/use-combat-selection.ts 58ms
+src/app/game/_components/run-end/RunOutcomeScreen.tsx 155ms
+[error] Unable to write file "src/app/game/_components/run-end/RunOutcomeScreen.tsx":
+[error] EPERM: operation not permitted, open 'C:\Projects\RogueNext\src\app\game\_components\run-end\RunOutcomeScreen.tsx'
+src/app/game/_components/shared/GameLayout.tsx 165ms
+src/app/library/_components/HistoireModal.tsx 72ms
+src/game/data/index.ts 25ms
+src/game/data/boss-guides.ts 22ms
+src/game/engine/run.ts 277ms
+src/game/engine/difficulty.ts 66ms
+src/game/engine/first-run-script.ts 23ms
+src/game/engine/ink.ts 54ms
+src/game/engine/run-events.ts 188ms
+src/game/engine/run-analytics.ts 19ms
+src/game/engine/analytics-cohorts.ts 22ms
+src/game/schemas/analytics.ts 36ms
+src/game/schemas/run-state.ts 39ms
+src/game/__tests__/audit-regressions.test.ts 24ms
+src/game/__tests__/analytics-cohorts.test.ts 12ms
+src/lib/audio-preferences.ts 48ms
+src/lib/i18n/bestiary-priority-lore.ts 34ms
+src/lib/i18n/messages/fr.ts 192ms
+src/lib/i18n/messages/en.ts 193ms
+src/lib/music.ts 23ms
+[error] Unable to write file "src/lib/music.ts":
+[error] EPERM: operation not permitted, open 'C:\Projects\RogueNext\src\lib\music.ts'
+src/lib/sound.ts 25ms
+src/server/actions/progression.ts 40ms
+src/server/actions/run.ts 23ms
+src/server/actions/runs.ts 18ms
+src/server/services/progression-stats.service.ts 22ms
+src/server/services/run/run-lifecycle.service.test.ts 31ms
+src/server/services/run/run-lifecycle.service.ts 54ms
+src/server/services/run/run-persistence.service.test.ts 28ms
+src/server/services/run/run-persistence.service.ts 32ms
+src/server/services/run/run-progression-sync.service.ts 30ms
+src/server/services/run/run-state-helpers.ts 16ms (unchanged)
+src/server/services/run/run-state.service.ts 35ms
+src/server/services/run/run-validation.ts 20ms

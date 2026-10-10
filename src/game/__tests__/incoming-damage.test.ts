@@ -110,8 +110,8 @@ describe("computeIncomingDamage", () => {
     const incoming = computeIncomingDamage(combat, enemyDefs);
     const unarmoredIncoming = computeIncomingDamage(unarmoredCombat, enemyDefs);
 
-    expect(incoming.player.total).toBe(7);
-    expect(incoming.player.hpLoss).toBe(5);
+    expect(incoming.player.total).toBe(5);
+    expect(incoming.player.hpLoss).toBe(3);
     expect(unarmoredIncoming.player.hpLoss).toBe(2);
     expect(incoming.player.hpLoss).toBeGreaterThan(unarmoredIncoming.player.hpLoss);
   });
@@ -129,8 +129,8 @@ describe("computeIncomingDamage", () => {
     const incoming = computeIncomingDamage(combat, enemyDefs);
     const unarmoredIncoming = computeIncomingDamage(unarmoredCombat, enemyDefs);
 
-    expect(incoming.player.total).toBe(7);
-    expect(incoming.player.hpLoss).toBe(5);
+    expect(incoming.player.total).toBe(5);
+    expect(incoming.player.hpLoss).toBe(3);
     expect(unarmoredIncoming.player.hpLoss).toBe(2);
     expect(incoming.player.hpLoss).toBeGreaterThan(unarmoredIncoming.player.hpLoss);
   });

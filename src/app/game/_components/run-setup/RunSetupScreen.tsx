@@ -8,6 +8,7 @@ import type { AllyDefinition } from "@/game/schemas/entities";
 import type { RunState } from "@/game/schemas/run-state";
 import { createRNG } from "@/game/engine/rng";
 import {
+  addInitialCharacterCardUnlocks,
   computeUnlockedCardIds,
   onEnterBiome,
 } from "@/game/engine/card-unlocks";
@@ -39,6 +40,8 @@ import {
   localizeRunConditionName,
 } from "@/lib/i18n/run-condition-text";
 import { characterDefinitions } from "@/game/data/characters";
+import { CharacterPortrait } from "../shared/CharacterPortrait";
+import { relicDefinitions } from "@/game/data/relics";
 
 interface RunSetupScreenProps {
   runState: RunState;
@@ -112,6 +115,8 @@ const FIRST_RUN_TUTORIAL_RESTRICTED_STEP_KEYS = [
   "endOfRun",
 ] as const;
 
+const PANLIBRARIUM_INTRO_STEPS = ["memory", "mission", "journey"] as const;
+
 export function RunSetupScreen({
   runState,
   cardDefs,
@@ -120,6 +125,8 @@ export function RunSetupScreen({
   onContinue,
 }: RunSetupScreenProps) {
   const { t } = useTranslation();
+  const [introStepIndex, setIntroStepIndex] = useState(0);
+  const [introCompleted, setIntroCompleted] = useState(false);
 
   const initialCharacterId = runState.characterId ?? "scribe";
   const initialDifficulty = runState.selectedDifficultyLevel;
@@ -167,14 +174,18 @@ export function RunSetupScreen({
   );
   const draftUnlockedCardIds = useMemo(
     () =>
-      computeUnlockedCardIds(
-        [...cardDefs.values()],
-        draftUnlockProgress,
-        runState.unlockedStoryIdsSnapshot ?? [],
-        runState.enemyKillCounts ?? {}
+      addInitialCharacterCardUnlocks(
+        computeUnlockedCardIds(
+          [...cardDefs.values()],
+          draftUnlockProgress,
+          runState.unlockedStoryIdsSnapshot ?? [],
+          runState.enemyKillCounts ?? {}
+        ),
+        draftCharacterId
       ),
     [
       cardDefs,
+      draftCharacterId,
       draftUnlockProgress,
       runState.unlockedStoryIdsSnapshot,
       runState.enemyKillCounts,
@@ -389,6 +400,11 @@ export function RunSetupScreen({
     });
   };
 
+  const showPanlibrariumIntro = showFirstRunTutorial && !introCompleted;
+  const introStep = PANLIBRARIUM_INTRO_STEPS[introStepIndex] ?? "memory";
+  const isLastIntroStep =
+    introStepIndex === PANLIBRARIUM_INTRO_STEPS.length - 1;
+
   const getOfferName = (offer: StartMerchantOffer): string => {
     switch (offer.type) {
       case "CARD": {
@@ -438,8 +454,101 @@ export function RunSetupScreen({
     }
   };
 
+  if (showPanlibrariumIntro) {
+    return (
+      <div className="panlibrarium-intro relative flex min-h-[calc(100vh-3rem)] items-center justify-center overflow-hidden bg-[#03070c] px-4 py-8 text-amber-50">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="bg-amber-500/12 absolute left-1/2 top-[18%] h-80 w-80 -translate-x-1/2 rounded-full blur-[110px]" />
+          <div className="absolute inset-x-[8%] bottom-[8%] h-[38%] rounded-[50%] border-t border-amber-200/10 bg-[radial-gradient(ellipse_at_center,rgba(120,53,15,0.16),transparent_70%)] [transform:perspective(500px)_rotateX(58deg)]" />
+          <div className="absolute inset-0 opacity-[0.055] [background-image:linear-gradient(rgba(251,191,36,0.25)_1px,transparent_1px),linear-gradient(90deg,rgba(251,191,36,0.25)_1px,transparent_1px)] [background-size:42px_42px]" />
+        </div>
+
+        <section className="bg-slate-950/88 relative z-10 w-full max-w-3xl overflow-hidden rounded-[2rem] border border-amber-300/20 shadow-[0_30px_100px_rgba(0,0,0,0.65)] backdrop-blur-md">
+          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(ellipse_at_top,rgba(251,191,36,0.16),transparent_70%)]" />
+          <div className="relative px-6 py-8 text-center sm:px-12 sm:py-12">
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.45em] text-amber-300/60">
+              {t("runSetup.intro.kicker")}
+            </p>
+            <div className="mx-auto mt-6 flex h-20 w-20 items-center justify-center rounded-full border border-amber-300/25 bg-amber-500/10 text-4xl text-amber-200 shadow-[0_0_45px_rgba(245,158,11,0.14)]">
+              {t(`runSetup.intro.steps.${introStep}.symbol`)}
+            </div>
+            <h1 className="mt-6 text-3xl font-black uppercase tracking-[0.1em] text-amber-100 sm:text-5xl">
+              {t(`runSetup.intro.steps.${introStep}.title`)}
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-amber-50/70 sm:text-base sm:leading-8">
+              {t(`runSetup.intro.steps.${introStep}.text`)}
+            </p>
+
+            <div className="mx-auto mt-7 grid max-w-xl gap-2 text-left sm:grid-cols-3">
+              {(["explore", "recover", "return"] as const).map((goal) => (
+                <div
+                  key={goal}
+                  className="border-amber-200/12 rounded-xl border bg-amber-950/20 px-3 py-3"
+                >
+                  <p className="text-[0.58rem] font-bold uppercase tracking-[0.18em] text-amber-300/60">
+                    {t(`runSetup.intro.goals.${goal}.label`)}
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-amber-50/65">
+                    {t(`runSetup.intro.goals.${goal}.text`)}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 flex items-center justify-center gap-2">
+              {PANLIBRARIUM_INTRO_STEPS.map((step, index) => (
+                <span
+                  key={step}
+                  className={`h-1.5 rounded-full transition-all ${
+                    index === introStepIndex
+                      ? "w-10 bg-amber-300"
+                      : index < introStepIndex
+                        ? "w-5 bg-amber-500/60"
+                        : "w-5 bg-slate-700"
+                  }`}
+                />
+              ))}
+            </div>
+
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              {introStepIndex > 0 && (
+                <RogueButton
+                  onClick={() => setIntroStepIndex((index) => index - 1)}
+                  className="!h-auto !rounded-full !border !border-slate-600 !bg-transparent !px-5 !py-2 !text-xs !font-semibold !uppercase !tracking-widest !text-slate-300"
+                >
+                  {t("runSetup.intro.previous")}
+                </RogueButton>
+              )}
+              <RogueButton
+                onClick={() => {
+                  if (isLastIntroStep) {
+                    setIntroCompleted(true);
+                    return;
+                  }
+                  setIntroStepIndex((index) => index + 1);
+                }}
+                className="!h-auto !rounded-full !border !border-amber-300/50 !bg-amber-500/15 !px-6 !py-2.5 !text-xs !font-black !uppercase !tracking-[0.18em] !text-amber-100 hover:!bg-amber-500/25"
+              >
+                {isLastIntroStep
+                  ? t("runSetup.intro.begin")
+                  : t("runSetup.intro.next")}
+              </RogueButton>
+              <RogueButton
+                onClick={() => setIntroCompleted(true)}
+                type="text"
+                className="!h-auto !px-3 !py-2 !text-[0.65rem] !uppercase !tracking-widest !text-slate-500 hover:!text-slate-300"
+              >
+                {t("runSetup.intro.skip")}
+              </RogueButton>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative min-h-[calc(100vh-3rem)] overflow-hidden bg-[#05090F] px-4 py-8 text-amber-50 sm:px-6 sm:py-10">
+    <div className="expedition-setup relative min-h-[calc(100vh-3rem)] overflow-hidden bg-[#05090F] px-4 py-8 text-amber-50 sm:px-6 sm:py-10">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-28 top-8 h-72 w-72 rounded-full bg-amber-700/15 blur-[100px]" />
         <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-sky-700/10 blur-[110px]" />
@@ -528,7 +637,7 @@ export function RunSetupScreen({
                         }
                       : undefined
                   }
-                  className={`!flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition disabled:!cursor-not-allowed disabled:!opacity-55 ${
+                  className={`character-choice !relative !flex !h-auto !w-full !flex-col !items-start !justify-start !whitespace-normal !rounded-xl !border !p-4 !text-left !transition disabled:!cursor-not-allowed disabled:!opacity-55 ${
                     isSelected && isUnlocked
                       ? "!border-violet-300/55 !bg-violet-300/10"
                       : isUnlocked
@@ -536,6 +645,7 @@ export function RunSetupScreen({
                         : "!border-amber-100/8 !bg-amber-100/3"
                   }`}
                 >
+                  <CharacterPortrait identity={charId} className="character-choice-art" />
                   {isUnlocked ? (
                     <>
                       <p className="text-base font-bold text-amber-50">
@@ -544,6 +654,30 @@ export function RunSetupScreen({
                       <p className="mt-1 text-xs italic text-amber-100/60">
                         {t(`characters.${charId}.description`, "")}
                       </p>
+                      {(() => {
+                        const starterRelic = relicDefinitions.find(
+                          (relic) => relic.id === charDef.starterRelicId
+                        );
+                        if (!starterRelic) return null;
+                        const name = localizeRelicName(
+                          starterRelic.id,
+                          starterRelic.name
+                        );
+                        const description = localizeRelicDescription(
+                          starterRelic.id,
+                          starterRelic.description
+                        );
+                        return (
+                          <RogueTooltip title={`${name}: ${description}`}>
+                            <RogueTag
+                              bordered={false}
+                              className="!m-0 !mt-3 rounded bg-amber-300/15 px-2 py-0.5 text-[0.62rem] font-semibold text-amber-100"
+                            >
+                              {name}
+                            </RogueTag>
+                          </RogueTooltip>
+                        );
+                      })()}
                       <div className="mt-3 flex flex-wrap gap-1">
                         {charDef.powers.map((power, i) => {
                           const unlocked = slots.includes(i + 1);
@@ -584,7 +718,7 @@ export function RunSetupScreen({
                   ) : (
                     <>
                       <div className="flex items-center gap-2">
-                        <span className="text-base">\uD83D\uDD12</span>
+                        <span className="text-base" aria-hidden="true">🔒</span>
                         <p className="text-base font-bold text-amber-50/50">
                           {t(`characters.${charId}.name`, charId)}
                         </p>
@@ -789,7 +923,7 @@ export function RunSetupScreen({
                     <p className="mt-2 text-[0.62rem] font-semibold uppercase tracking-[0.14em] text-amber-200/75">
                       {isSelected
                         ? t("runSetup.selected")
-                        : t("runDifficulty.select.pickAction")}
+                        : t("reward.pickThisCard")}
                     </p>
                   </RogueButton>
                 );

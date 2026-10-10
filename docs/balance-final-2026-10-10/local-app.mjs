@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import {spawn} from 'node:child_process';
+const settingsPath='.local-e2e/settings.json';
+const settings=fs.existsSync(settingsPath)?JSON.parse(fs.readFileSync(settingsPath,'utf8')):{secret:crypto.randomBytes(32).toString('hex')};
+fs.writeFileSync(settingsPath,JSON.stringify(settings));
+const env={...process.env,DATABASE_URL:'postgresql://rogue_e2e@127.0.0.1:55439/rogue_e2e?schema=public',DIRECT_URL:'postgresql://rogue_e2e@127.0.0.1:55439/rogue_e2e?schema=public',NEXTAUTH_SECRET:settings.secret,NEXTAUTH_URL:'http://127.0.0.1:4319',NEXT_PUBLIC_APP_URL:'http://127.0.0.1:4319',AUTH_TRUST_HOST:'true',NEXT_PUBLIC_SENTRY_DSN:'',SENTRY_AUTH_TOKEN:'',NEXT_TELEMETRY_DISABLED:'1'};
+const mode=process.argv[2]??'dev';
+const args=mode==='build'?['build']:[mode,'--hostname','127.0.0.1','--port','4319'];
+const child=spawn(process.execPath,['node_modules/next/dist/bin/next',...args],{env,windowsHide:true,stdio:'inherit'});
+child.on('exit',code=>process.exit(code??1));

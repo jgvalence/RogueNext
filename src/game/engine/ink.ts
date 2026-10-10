@@ -76,9 +76,24 @@ function synchronizeBossStates(state: CombatState): CombatState {
   );
 }
 
+function advanceGriotRefrain(state: CombatState, rng: RNG): CombatState {
+  const nextStreak = (state.rhythmStreak ?? 0) + 1;
+  if (nextStreak % 3 !== 0) return { ...state, rhythmStreak: nextStreak };
+  const withInk = gainInk(state, 1);
+  return {
+    ...drawCards(withInk, 1, rng, "PLAYER", "INK_POWER:GRIOT_REFRAIN"),
+    rhythmStreak: nextStreak,
+  };
+}
+
 export function gainInk(state: CombatState, amount: number): CombatState {
+  const gained = Math.max(
+    0,
+    Math.min(amount, state.player.inkMax - state.player.inkCurrent)
+  );
   return {
     ...state,
+    analyticsInkGenerated: (state.analyticsInkGenerated ?? 0) + gained,
     player: {
       ...state.player,
       inkCurrent: Math.min(
@@ -97,6 +112,7 @@ export function spendInk(
 
   return {
     ...state,
+    analyticsInkSpent: (state.analyticsInkSpent ?? 0) + amount,
     player: {
       ...state.player,
       inkCurrent: state.player.inkCurrent - amount,
@@ -152,7 +168,10 @@ export function canUseInkPower(
     case "DOUBLE_MISE":
       return true;
     case "PACTE_SANG":
-      return state.player.inkCurrent < state.player.inkMax;
+      return (
+        state.player.currentHp > GAME_CONSTANTS.PACTE_SANG_HP_COST &&
+        state.player.inkCurrent < state.player.inkMax
+      );
     case "FRENETIQUE":
       return state.drawPile.length > 0 || state.discardPile.length > 0;
     // Legacy
@@ -166,7 +185,7 @@ export function canUseInkPower(
 /**
  * Use an ink power.
  * - CALLIGRAPHIE : améliore une carte aléatoire en main (ce combat)
- * - ENCRE_NOIRE  : inflige encre×2 dégâts à tous les ennemis
+ * - ENCRE_NOIRE: deals twice the Ink before spending to all enemies
  * - SEAL         : gagne 8 armure
  * - VISION       : pioche 2 cartes
  * - INDEX        : récupère une carte de la défausse (targetInstanceId = card)
@@ -206,6 +225,10 @@ export function applyInkPower(
     usedInkPowersThisTurn: Array.from(
       new Set([...(afterSpend.usedInkPowersThisTurn ?? []), power])
     ),
+    analyticsInkPowerUses: {
+      ...(afterSpend.analyticsInkPowerUses ?? {}),
+      [power]: (afterSpend.analyticsInkPowerUses?.[power] ?? 0) + 1,
+    },
   };
   let markedWithRussianState = applyRelicsOnInkSpent(marked, cost);
   markedWithRussianState = registerBabaYagaInkSpent(
@@ -234,7 +257,7 @@ export function applyInkPower(
     }
 
     case "ENCRE_NOIRE": {
-      // Dégâts = inkCurrent (avant dépense) × MULTIPLIER à tous les ennemis
+      // Dégâts = Encre actuelle avant dépense à tous les ennemis.
       const rawInk = state.player.inkCurrent;
       const dmg = rawInk * GAME_CONSTANTS.ENCRE_NOIRE_DAMAGE_MULTIPLIER;
       let current = { ...markedWithRussianState };
@@ -294,26 +317,38 @@ export function applyInkPower(
     }
 
     case "SEAL": {
+      const annotatedCards = markedWithRussianState.hand.filter(
+        (card) => card.upgraded
+      ).length;
+      const block =
+        GAME_CONSTANTS.SEAL_BLOCK_AMOUNT + Math.min(6, annotatedCards * 2);
       return synchronizeBossStates(
         registerOsirisBlockGain(
           {
             ...markedWithRussianState,
             player: {
               ...markedWithRussianState.player,
-              block:
-                markedWithRussianState.player.block +
-                GAME_CONSTANTS.SEAL_BLOCK_AMOUNT,
+              block: markedWithRussianState.player.block + block,
             },
           },
-          GAME_CONSTANTS.SEAL_BLOCK_AMOUNT
+          block
         )
       );
     }
 
     case "VISION": {
+      const revealCount = Math.min(3, markedWithRussianState.drawPile.length);
+      const reordered = {
+        ...markedWithRussianState,
+        drawPile: [
+          ...markedWithRussianState.drawPile.slice(0, revealCount).reverse(),
+          ...markedWithRussianState.drawPile.slice(revealCount),
+        ],
+        revealedDrawCards: revealCount,
+      };
       return synchronizeBossStates(
         drawCards(
-          markedWithRussianState,
+          reordered,
           GAME_CONSTANTS.VISION_DRAW,
           rng,
           "PLAYER",
@@ -355,10 +390,15 @@ export function applyInkPower(
           ),
         };
       });
-      return synchronizeBossStates({
-        ...markedWithRussianState,
-        enemies: updatedEnemies,
-      });
+      return synchronizeBossStates(
+        advanceGriotRefrain(
+          {
+            ...markedWithRussianState,
+            enemies: updatedEnemies,
+          },
+          rng
+        )
+      );
     }
 
     case "SAIGNEMENT": {
@@ -375,10 +415,15 @@ export function applyInkPower(
           ),
         };
       });
-      return synchronizeBossStates({
-        ...markedWithRussianState,
-        enemies: updatedEnemies,
-      });
+      return synchronizeBossStates(
+        advanceGriotRefrain(
+          {
+            ...markedWithRussianState,
+            enemies: updatedEnemies,
+          },
+          rng
+        )
+      );
     }
 
     case "GRISGRIS": {
@@ -444,7 +489,7 @@ export function applyInkPower(
           );
         }
       }
-      return synchronizeBossStates(current);
+      return synchronizeBossStates(advanceGriotRefrain(current, rng));
     }
 
     // Fou
@@ -452,6 +497,7 @@ export function applyInkPower(
       return synchronizeBossStates({
         ...markedWithRussianState,
         nextCardDoubleDamage: true as const,
+        pendingEnergyDebt: (markedWithRussianState.pendingEnergyDebt ?? 0) + 1,
       });
     }
 
@@ -461,18 +507,15 @@ export function applyInkPower(
         markedWithRussianState.player.currentHp -
           GAME_CONSTANTS.PACTE_SANG_HP_COST
       );
-      return synchronizeBossStates({
-        ...markedWithRussianState,
-        player: {
-          ...markedWithRussianState.player,
-          currentHp: hpAfter,
-          inkCurrent: Math.min(
-            markedWithRussianState.player.inkMax,
-            markedWithRussianState.player.inkCurrent +
-              GAME_CONSTANTS.PACTE_SANG_INK_GAIN
-          ),
-        },
-      });
+      return synchronizeBossStates(
+        gainInk(
+          {
+            ...markedWithRussianState,
+            player: { ...markedWithRussianState.player, currentHp: hpAfter },
+          },
+          GAME_CONSTANTS.PACTE_SANG_INK_GAIN
+        )
+      );
     }
 
     case "FRENETIQUE": {
@@ -487,10 +530,18 @@ export function applyInkPower(
         const idx = rng.nextInt(0, current.hand.length - 1);
         const discarded = current.hand[idx];
         if (discarded) {
+          const inkRefund = discarded.upgraded ? 1 : 0;
           current = {
             ...current,
             hand: current.hand.filter((_, i) => i !== idx),
             discardPile: [...current.discardPile, discarded],
+            player: {
+              ...current.player,
+              inkCurrent: Math.min(
+                current.player.inkMax,
+                current.player.inkCurrent + inkRefund
+              ),
+            },
           };
         }
       }

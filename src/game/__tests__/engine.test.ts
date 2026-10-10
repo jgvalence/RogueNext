@@ -43,7 +43,13 @@ import {
   completeCombat,
   advanceFloor,
 } from "../engine/run";
-import { generateCombatRewards, addCardToRunDeck } from "../engine/rewards";
+import {
+  generateCombatRewards,
+  addCardToRunDeck,
+  getCardOfferContrastScore,
+  shouldOfferNormalCardReward,
+} from "../engine/rewards";
+import { matchesCardCharacter } from "../engine/card-filters";
 import {
   buyShopItem,
   generateShopInventory,
@@ -57,6 +63,9 @@ import {
 import {
   applyRelicsOnCardPlayed,
   applyRelicsOnCombatStart,
+  applyRelicsOnTurnStart,
+  applyRelicsOnTurnEnd,
+  applyRelicsOnInkSpent,
   addRelicToRunState,
 } from "../engine/relics";
 import { applyUsableItem, createUsableItemInstance } from "../engine/items";
@@ -69,6 +78,7 @@ import { getMedusaUiState } from "../engine/medusa";
 import { getOsirisUiState } from "../engine/osiris-judgment";
 import { getRaUiState } from "../engine/ra-avatar";
 import {
+  addInitialCharacterCardUnlocks,
   computeUnlockedCardIds,
   getCardUnlockDetails,
   onBossKilled,
@@ -77,6 +87,7 @@ import {
   readUnlockProgressFromResources,
   writeUnlockProgressToResources,
 } from "../engine/card-unlocks";
+import { characterDefinitions } from "../data/characters";
 import type { CardUnlockProgress } from "../engine/card-unlocks";
 import { getLoreEntryIndexForKillCount } from "../engine/bestiary";
 import { getLootRarityWeight } from "../engine/loot";
@@ -822,8 +833,8 @@ describe("Card playing", () => {
     });
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
 
-    // Strike deals 6 damage
-    expect(result.enemies[0]?.currentHp).toBe(14 - 6);
+    // Strike deals 8 damage
+    expect(result.enemies[0]?.currentHp).toBe(14 - 8);
     // Card moved to discard
     expect(result.hand).toHaveLength(0);
     expect(result.discardPile).toHaveLength(1);
@@ -1679,9 +1690,9 @@ describe("Card playing", () => {
 
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
 
-    expect(result.player.strength).toBe(1);
+    expect(result.player.strength).toBe(2);
     expect(result.hand).toHaveLength(1);
-    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(2);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(3);
   });
 
   it("bardic_verse bridges draw and ink into poison", () => {
@@ -1702,7 +1713,7 @@ describe("Card playing", () => {
 
     expect(result.player.inkCurrent).toBe(2);
     expect(result.hand).toHaveLength(1);
-    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(3);
   });
 
   it("byliny_verse bridges draw and ink into team-wide weak", () => {
@@ -1987,7 +1998,7 @@ describe("Card playing", () => {
     expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(2);
   });
 
-  it("iron_bard turns a heavy bleed hit into card flow", () => {
+  it("iron_bard turns a heavy bleed hit into defense", () => {
     const rng = createRNG("iron-bard");
     const state = makeMinimalCombat({
       hand: [{ instanceId: "c1", definitionId: "iron_bard", upgraded: false }],
@@ -1996,7 +2007,8 @@ describe("Card playing", () => {
 
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
 
-    expect(result.hand).toHaveLength(1);
+    expect(result.hand).toHaveLength(0);
+    expect(result.player.block).toBe(6);
     expect(result.enemies[0]?.currentHp).toBe(4);
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(3);
   });
@@ -2418,8 +2430,8 @@ describe("Card playing", () => {
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
     expect(result.hand).toHaveLength(1);
-    expect(result.enemies[0]?.currentHp).toBe(base.enemies[0]!.currentHp - 3);
-    expect(result.enemies[1]?.currentHp).toBe(15);
+    expect(result.enemies[0]?.currentHp).toBe(base.enemies[0]!.currentHp - 5);
+    expect(result.enemies[1]?.currentHp).toBe(13);
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
     expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "VULNERABLE")).toBe(1);
   });
@@ -2435,8 +2447,8 @@ describe("Card playing", () => {
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
 
     expect(result.player.strength).toBe(1);
-    expect(result.enemies[0]?.currentHp).toBe(9);
-    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(3);
+    expect(result.enemies[0]?.currentHp).toBe(6);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(4);
   });
 
   it("frost_nail cashes in existing weak on its target", () => {
@@ -2476,7 +2488,7 @@ describe("Card playing", () => {
 
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
 
-    expect(result.enemies[0]?.currentHp).toBe(14);
+    expect(result.enemies[0]?.currentHp).toBe(11);
     expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "BLEED")).toBe(3);
   });
 
@@ -2508,8 +2520,8 @@ describe("Card playing", () => {
     const result = playCard(state, "c1", "e1", false, cardDefs, rng);
 
     expect(result.hand).toHaveLength(1);
-    expect(result.enemies[0]?.currentHp).toBe(9);
-    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
+    expect(result.enemies[0]?.currentHp).toBe(7);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(3);
   });
 
   it("drum_strike turns bleed pressure into a cantrip attack", () => {
@@ -2775,7 +2787,7 @@ describe("Card playing", () => {
     expect(result.hand).toHaveLength(2);
   });
 
-  it("temple_archive upgrades a drawn card while healing", () => {
+  it("temple_archive archives an upgraded drawn card while healing", () => {
     const rng = createRNG("temple-archive");
     const base = makeMinimalCombat();
     const state = makeMinimalCombat({
@@ -2792,13 +2804,10 @@ describe("Card playing", () => {
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
     expect(result.player.currentHp).toBe(54);
-    expect(result.hand).toHaveLength(1);
-    expect(
-      result.hand.some((card) => card.upgraded) ||
-        result.discardPile.some(
-          (card) => card.definitionId === "temple_archive" && card.upgraded
-        )
-    ).toBe(true);
+    expect(result.hand).toHaveLength(0);
+    expect(result.archivedCards).toEqual([
+      expect.objectContaining({ definitionId: "strike", upgraded: true }),
+    ]);
   });
 
   it("osiris_archive turns sustain into a one-shot draw and ink burst", () => {
@@ -2967,8 +2976,8 @@ describe("Card playing", () => {
     const result = playCard(state, "c1", null, false, cardDefs, rng);
 
     expect(result.player.block).toBe(8);
-    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(1);
-    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "POISON")).toBe(1);
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "POISON")).toBe(3);
+    expect(getBuffStacks(result.enemies[1]?.buffs ?? [], "POISON")).toBe(3);
   });
 
   it("xipe_shield marks the next draw to go to discard", () => {
@@ -3022,6 +3031,7 @@ describe("Ink system", () => {
     });
     const result = gainInk(state, 5);
     expect(result.player.inkCurrent).toBe(10);
+    expect(result.analyticsInkGenerated).toBe(1);
   });
 
   it("spendInk returns null if insufficient", () => {
@@ -3045,8 +3055,10 @@ describe("Ink system", () => {
       player: { ...makeMinimalCombat().player, inkCurrent: 5 },
     });
     const result = applyInkPower(state, "SEAL", null, cardDefs, rng);
-    expect(result.player.block).toBe(8);
+    expect(result.player.block).toBe(6);
     expect(result.player.inkCurrent).toBe(3); // 5 - 2
+    expect(result.analyticsInkSpent).toBe(2);
+    expect(result.analyticsInkPowerUses).toEqual({ SEAL: 1 });
   });
 
   it("applyInkPower REWRITE moves card from discard to hand", () => {
@@ -3126,7 +3138,7 @@ describe("Ink system", () => {
     expect(result).toEqual(state);
   });
 
-  it("applyInkPower ENCRE_NOIRE deals inkCurrent*2 damage to all enemies", () => {
+  it("applyInkPower ENCRE_NOIRE deals twice the Ink before spending to all enemies", () => {
     const rng = createRNG("encrenoire-test");
     const enemy = {
       instanceId: "e1",
@@ -3144,7 +3156,6 @@ describe("Ink system", () => {
       enemies: [enemy],
     });
     const result = applyInkPower(state, "ENCRE_NOIRE", null, cardDefs, rng);
-    // Damage = 5 (inkCurrent before spend) * 2 = 10
     expect(result.enemies[0]!.currentHp).toBe(20);
     expect(result.player.inkCurrent).toBe(1); // 5 - 4
   });
@@ -3169,7 +3180,7 @@ describe("Ink system", () => {
     const result = applyInkPower(state, "SILENCE", "e1", cardDefs, rng);
     const stunBuff = result.enemies[0]!.buffs.find((b) => b.type === "STUN");
     expect(stunBuff).toBeDefined();
-    expect(result.player.inkCurrent).toBe(0); // 7 - 7
+    expect(result.player.inkCurrent).toBe(1); // 7 - 6
   });
 
   it("applyInkPower SILENCE does not spend ink on an elite already under stun immunity", () => {
@@ -3313,7 +3324,7 @@ describe("Ink system", () => {
     const result = applyInkPower(state, "INDEX", "c1", cardDefs, rng);
     expect(result.discardPile).toHaveLength(0);
     expect(result.hand).toHaveLength(1);
-    expect(result.player.inkCurrent).toBe(2); // 5 - 3
+    expect(result.player.inkCurrent).toBe(3); // 5 - 2
   });
 
   it("allows using different ink powers in the same turn, but not the same power twice", () => {
@@ -3325,7 +3336,7 @@ describe("Ink system", () => {
 
     const afterSeal = applyInkPower(state, "SEAL", null, cardDefs, rng);
 
-    expect(afterSeal.player.block).toBe(8);
+    expect(afterSeal.player.block).toBe(6);
     expect(afterSeal.usedInkPowersThisTurn).toEqual(["SEAL"]);
     expect(canUseInkPower(afterSeal, "SEAL")).toBe(false);
     expect(canUseInkPower(afterSeal, "VISION")).toBe(true);
@@ -3410,7 +3421,7 @@ describe("Combat flow", () => {
     expect(combat.allies[0]?.definitionId).toBe("scribe_apprentice");
   });
 
-  it("at difficulty 3, bosses start combat with +6 block per floor", () => {
+  it("does not grant starting block to bosses before difficulty 5", () => {
     const rng = createRNG("combat-boss-start-block");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
     const runState = {
@@ -3429,10 +3440,10 @@ describe("Combat flow", () => {
     );
 
     expect(combat.enemies[0]?.isBoss).toBe(true);
-    expect(combat.enemies[0]?.block).toBe(12);
+    expect(combat.enemies[0]?.block).toBe(0);
   });
 
-  it("at difficulty 4, elites also start combat with +5 block per floor", () => {
+  it("does not grant starting block to elites before difficulty 5", () => {
     const rng = createRNG("combat-elite-start-block");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
     const runState = {
@@ -3451,7 +3462,7 @@ describe("Combat flow", () => {
     );
 
     expect(combat.enemies[0]?.isElite).toBe(true);
-    expect(combat.enemies[0]?.block).toBe(15);
+    expect(combat.enemies[0]?.block).toBe(0);
   });
 
   it("at higher difficulties, elite combats can start with an escort enemy", () => {
@@ -4235,7 +4246,8 @@ describe("Run management", () => {
     expect(run.floor).toBe(1);
     expect(run.currentRoom).toBe(0);
     expect(run.runStartedAtMs).toBeGreaterThan(0);
-    expect(run.playerCurrentHp).toBe(60);
+    expect(run.playerCurrentHp).toBe(68);
+    expect(run.gold).toBe(30);
     expect(run.deck).toHaveLength(starterCards.length);
     expect(run.map).toHaveLength(GAME_CONSTANTS.ROOMS_PER_FLOOR);
   });
@@ -4457,6 +4469,22 @@ describe("Run management", () => {
     }
   });
 
+  it("keeps optional elites out of the opening five rooms", () => {
+    for (let index = 0; index < 24; index += 1) {
+      const map = generateFloorMap(
+        1,
+        createRNG(`no-early-elite-${index}`),
+        "LIBRARY"
+      );
+      expect(
+        map
+          .slice(0, 5)
+          .flat()
+          .some((room) => room.type === "COMBAT" && room.isElite)
+      ).toBe(false);
+    }
+  });
+
   it("generateFloorMap connects every node to the next depth", () => {
     const seeds = [
       "russian-pack-cap-1",
@@ -4654,6 +4682,21 @@ describe("Run management", () => {
     expect(result.playerCurrentHp).toBe(56); // 50 + 10% of 60
   });
 
+  it("difficulty 0 restores 3 HP after normal floor-one combats", () => {
+    const rng = createRNG("learning-recovery");
+    const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
+    const run = applyDifficultyToRun(
+      createNewRun("run-learning", "learning-recovery", starterCards, rng),
+      0
+    );
+    const combatResult = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 50 },
+    });
+
+    const result = completeCombat(run, combatResult, 0, rng);
+    expect(result.playerCurrentHp).toBe(53);
+  });
+
   it("completeCombat boosts percentage healing with menders_charm", () => {
     const rng = createRNG("meta-heal-menders");
     const starterCards = [...cardDefs.values()].filter((c) => c.isStarterCard);
@@ -4674,7 +4717,7 @@ describe("Run management", () => {
       [...cardDefs.values()],
       ["menders_charm"]
     );
-    expect(result.playerCurrentHp).toBe(59); // 50 + floor(60 * 15%)
+    expect(result.playerCurrentHp).toBe(60); // 50 + floor(68 * 15%), capped by combat max HP
   });
 
   it("completeCombat adds flat post-combat healing with vital_flask", () => {
@@ -4931,7 +4974,7 @@ describe("Run management", () => {
       [...cardDefs.values()]
     );
 
-    expect(applied.deck).toHaveLength(run.deck.length - 1);
+    expect(applied.deck).toHaveLength(run.deck.length);
     expect(applied.deck.filter((card) => card.upgraded)).toHaveLength(1);
     expect(applied.map.slice(1, 8).every((depth) => depth.length === 1)).toBe(
       true
@@ -5508,6 +5551,34 @@ describe("Bestiary lore milestones", () => {
 });
 
 describe("Card unlock rules", () => {
+  it("starts every character with 11 deck cards and a 20-card reward pool", () => {
+    const allCards = [...cardDefs.values()];
+    const progress = {
+      enteredBiomes: { LIBRARY: 1 },
+      biomeRunsCompleted: {},
+      eliteKillsByBiome: {},
+      bossKillsByBiome: {},
+      byCharacter: {},
+    };
+    const baseUnlockedIds = computeUnlockedCardIds(allCards, progress, []);
+
+    for (const character of characterDefinitions) {
+      const unlockedIds = new Set(
+        addInitialCharacterCardUnlocks(baseUnlockedIds, character.id)
+      );
+      const rewardPool = allCards.filter(
+        (card) =>
+          unlockedIds.has(card.id) &&
+          !card.isStarterCard &&
+          card.isCollectible !== false &&
+          matchesCardCharacter(card, character.id)
+      );
+
+      expect(character.starterDeckIds, character.id).toHaveLength(11);
+      expect(rewardPool, character.id).toHaveLength(20);
+    }
+  });
+
   it("uses explicit card-id rules independently of input ordering", () => {
     const allCards = [...cardDefs.values()];
     const shuffled = [...allCards].reverse();
@@ -5522,7 +5593,7 @@ describe("Card unlock rules", () => {
     expect(unlocked.includes("berserker_charge")).toBe(true);
     expect(unlocked.includes("shield_wall")).toBe(true);
     expect(unlocked.includes("rune_strike")).toBe(false);
-    expect(unlocked.includes("iron_verse")).toBe(false);
+    expect(unlocked.includes("iron_verse")).toBe(true);
     expect(unlocked.includes("nordic_treatise")).toBe(false);
   });
 
@@ -5545,7 +5616,7 @@ describe("Card unlock rules", () => {
 
     const unlocked = computeUnlockedCardIds(allCards, progress, []);
     expect(unlocked.includes("nordic_treatise")).toBe(true);
-    expect(unlocked.includes("iron_verse")).toBe(false);
+    expect(unlocked.includes("iron_verse")).toBe(true);
     expect(unlocked.includes("berserker_charge")).toBe(false);
   });
 
@@ -5561,7 +5632,8 @@ describe("Card unlock rules", () => {
     const details = getCardUnlockDetails(allCards, progress, []);
     expect(details["rune_strike"]?.unlocked).toBe(false);
     expect(details["rune_strike"]?.missingCondition).toContain("elite");
-    expect(details["iron_verse"]?.missingCondition).toContain("avec Scribe");
+    expect(details["iron_verse"]?.unlocked).toBe(true);
+    expect(details["iron_verse"]?.missingCondition).toBeNull();
     expect(details["nordic_treatise"]?.missingCondition).toContain(
       "avec Bibliothecaire"
     );
@@ -5891,7 +5963,7 @@ describe("Legacy run robustness (missing fields from old DB records)", () => {
       cardDefs,
       createRNG("meta2")
     );
-    expect(combat.player.drawCount).toBe(5); // base 4 + 1 extraDraw
+    expect(combat.player.drawCount).toBe(6); // base 5 + 1 extraDraw
     expect(combat.player.energyMax).toBe(4); // base 3 + 1 extraEnergyMax
   });
 
@@ -5954,6 +6026,24 @@ describe("Legacy run robustness (missing fields from old DB records)", () => {
 // ============================
 
 describe("Rewards", () => {
+  it("scores mechanically distinct reward choices above redundant ones", () => {
+    const attack = cardDefs.get("heavy_strike")!;
+    const redundantAttack = cardDefs.get("mythic_blow")!;
+    const defensiveDraw = cardDefs.get("brace")!;
+
+    expect(getCardOfferContrastScore(attack, defensiveDraw)).toBeGreaterThan(
+      getCardOfferContrastScore(attack, redundantAttack)
+    );
+  });
+
+  it("keeps drafts available and lets the player skip cards", () => {
+    expect(shouldOfferNormalCardReward(1, 1, 16)).toBe(true);
+    expect(shouldOfferNormalCardReward(1, 1, 18)).toBe(true);
+    expect(shouldOfferNormalCardReward(1, 2, 18)).toBe(true);
+    expect(shouldOfferNormalCardReward(1, 4, 25)).toBe(true);
+    expect(shouldOfferNormalCardReward(1, 3, 25)).toBe(true);
+  });
+
   it("generateCombatRewards returns gold and card choices", () => {
     const rng = createRNG("rewards-test");
     const allCards = [...cardDefs.values()];
@@ -6002,6 +6092,18 @@ describe("Rewards", () => {
     expect(
       rewards.cardChoices.filter((card) => card.biome === "VIKING").length
     ).toBe(1);
+    const anchor = rewards.cardChoices.find((card) => card.biome === "VIKING")!;
+    const alternative = rewards.cardChoices.find(
+      (card) => card.id !== anchor.id
+    )!;
+    const bestAvailableContrast = Math.max(
+      ...rewardPool
+        .filter((card) => card.biome !== "VIKING")
+        .map((card) => getCardOfferContrastScore(anchor, card))
+    );
+    expect(getCardOfferContrastScore(anchor, alternative)).toBe(
+      bestAvailableContrast
+    );
   });
 
   it("extra reward card choices still keep current-biome picks capped when off-biome options exist", () => {
@@ -6835,7 +6937,7 @@ describe("Relics", () => {
     ]);
     expect(result.player.inkMax).toBe(12);
     expect(result.player.energyMax).toBe(4);
-    expect(result.player.drawCount).toBe(6);
+    expect(result.player.drawCount).toBe(5);
   });
 
   it("iron_binding increases ink-per-card value", () => {
@@ -6988,7 +7090,7 @@ describe("Relics", () => {
     expect(result.hand).toHaveLength(1);
     expect(result.hand[0]).toMatchObject({
       definitionId: "defend",
-      upgraded: false,
+      upgraded: true,
     });
     expect(result.drawPile).toHaveLength(2);
     expect(
@@ -7120,8 +7222,7 @@ describe("Relics", () => {
     expect(result.player.block).toBe(2);
   });
 
-  it("russian_domovoi_hearth grants 1 ink at the start of each turn and no longer retains block", () => {
-    const rng = createRNG("russian-domovoi-hearth");
+  it("russian_domovoi_hearth grants 3 ink at combat start", () => {
     const state = makeMinimalCombat({
       phase: "ALLIES_ENEMIES_TURN",
       player: {
@@ -7130,9 +7231,8 @@ describe("Relics", () => {
         inkCurrent: 0,
       },
     });
-    const result = startPlayerTurn(state, rng, ["russian_domovoi_hearth"]);
-    expect(result.player.block).toBe(0);
-    expect(result.player.inkCurrent).toBe(1);
+    const result = applyRelicsOnCombatStart(state, ["russian_domovoi_hearth"]);
+    expect(result.player.inkCurrent).toBe(3);
   });
 
   it("eternal_hourglass conserves unspent energy between turns", () => {
@@ -7153,6 +7253,336 @@ describe("Relics", () => {
     const state = makeMinimalCombat();
     const result = applyRelicsOnCombatStart(state, ["briar_codex"]);
     expect(getBuffStacks(result.player.buffs, "THORNS")).toBe(2);
+  });
+
+  it("slime_ink_vial trades part of its starting Block for Ink", () => {
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 0, inkMax: 10 },
+    });
+    const result = applyRelicsOnCombatStart(state, ["slime_ink_vial"]);
+    expect(result.player.block).toBe(4);
+    expect(result.player.inkCurrent).toBe(2);
+  });
+
+  it("guardian_dune_amulet heals only below half health", () => {
+    const healthy = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 40, maxHp: 80 },
+    });
+    const wounded = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 39, maxHp: 80 },
+    });
+    expect(
+      applyRelicsOnTurnStart(healthy, ["guardian_dune_amulet"]).player.currentHp
+    ).toBe(40);
+    expect(
+      applyRelicsOnTurnStart(wounded, ["guardian_dune_amulet"]).player.currentHp
+    ).toBe(41);
+  });
+
+  it("apprentice_oak_scroll heals 2 HP each turn", () => {
+    const state = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, currentHp: 70, maxHp: 80 },
+    });
+    expect(
+      applyRelicsOnTurnStart(state, ["apprentice_oak_scroll"]).player.currentHp
+    ).toBe(72);
+  });
+
+  it("dagdas_club grows thorns instead of only front-loading stats", () => {
+    const started = applyRelicsOnCombatStart(makeMinimalCombat(), [
+      "dagdas_club",
+    ]);
+    const nextTurn = applyRelicsOnTurnStart(started, ["dagdas_club"]);
+
+    expect(getBuffStacks(started.player.buffs, "THORNS")).toBe(2);
+    expect(getBuffStacks(nextTurn.player.buffs, "THORNS")).toBe(3);
+  });
+
+  it("hydra_scale rewards every third Attack with growing thorns", () => {
+    let state = applyRelicsOnCombatStart(makeMinimalCombat(), ["hydra_scale"]);
+    state = applyRelicsOnCardPlayed(state, ["hydra_scale"], "ATTACK");
+    state = applyRelicsOnCardPlayed(state, ["hydra_scale"], "ATTACK");
+    expect(getBuffStacks(state.player.buffs, "THORNS")).toBe(2);
+    state = applyRelicsOnCardPlayed(state, ["hydra_scale"], "ATTACK");
+    expect(getBuffStacks(state.player.buffs, "THORNS")).toBe(4);
+  });
+
+  it("guardian and solar boss relics turn resource timing into decisions", () => {
+    const guardian = applyRelicsOnCombatStart(makeMinimalCombat(), [
+      "guardians_seal",
+    ]);
+    const emptied = applyRelicsOnInkSpent(
+      {
+        ...guardian,
+        player: { ...guardian.player, inkCurrent: 0, energyCurrent: 1 },
+      },
+      2
+    );
+    const repeated = applyRelicsOnInkSpent(emptied, 1);
+    expect(guardian.player.inkMax).toBe(makeMinimalCombat().player.inkMax + 2);
+    expect(emptied.player.energyCurrent).toBe(2);
+    expect(repeated.player.energyCurrent).toBe(2);
+
+    const solar = applyRelicsOnTurnEnd(
+      makeMinimalCombat({
+        player: {
+          ...makeMinimalCombat().player,
+          energyCurrent: 3,
+          inkCurrent: 0,
+          inkMax: 10,
+        },
+      }),
+      ["solar_disc"]
+    );
+    expect(solar.player.energyCurrent).toBe(1);
+    expect(solar.player.inkCurrent).toBe(2);
+  });
+
+  it("archivists_lens rewards the first Power only once per combat", () => {
+    const rng = createRNG("archivists-lens");
+    let state = applyRelicsOnCombatStart(
+      makeMinimalCombat({
+        drawPile: [
+          { instanceId: "lens-1", definitionId: "strike", upgraded: false },
+          { instanceId: "lens-2", definitionId: "defend", upgraded: false },
+        ],
+      }),
+      ["archivists_lens"]
+    );
+    state = applyRelicsOnCardPlayed(state, ["archivists_lens"], "POWER", {
+      rng,
+    });
+    expect(state.player.focus).toBe(2);
+    expect(state.hand).toHaveLength(2);
+    state = applyRelicsOnCardPlayed(state, ["archivists_lens"], "POWER", {
+      rng,
+    });
+    expect(state.player.focus).toBe(2);
+  });
+
+  it("Maat and Quetzal reward committing the first card type", () => {
+    const maat = applyRelicsOnCardPlayed(
+      makeMinimalCombat(),
+      ["eye_of_maat"],
+      "ATTACK"
+    );
+    expect(getBuffStacks(maat.enemies[0]?.buffs ?? [], "WEAK")).toBe(1);
+
+    const quetzal = applyRelicsOnCardPlayed(
+      makeMinimalCombat({
+        player: { ...makeMinimalCombat().player, inkCurrent: 0, inkMax: 10 },
+      }),
+      ["quetzal_feather"],
+      "SKILL"
+    );
+    expect(quetzal.player.inkCurrent).toBe(2);
+  });
+
+  it("Griot, Void and Weaver boss relics use visible card cadences", () => {
+    let griot = makeMinimalCombat();
+    for (let index = 0; index < 3; index += 1) {
+      griot = applyRelicsOnCardPlayed(griot, ["griot_drum"], "ATTACK");
+    }
+    expect(griot.player.strength).toBe(1);
+
+    let voidState = makeMinimalCombat();
+    for (let index = 0; index < 5; index += 1) {
+      voidState = applyRelicsOnCardPlayed(voidState, ["void_shard"], "SKILL");
+    }
+    expect(voidState.player.focus).toBe(2);
+    expect(voidState.discardPile.some((card) => card.definitionId === "dazed")).toBe(true);
+
+    let woven = makeMinimalCombat({
+      drawPile: [
+        { instanceId: "thread-1", definitionId: "strike", upgraded: false },
+      ],
+    });
+    for (let index = 0; index < 3; index += 1) {
+      woven = applyRelicsOnCardPlayed(woven, ["weavers_thread"], "SKILL", {
+        rng: createRNG(`weaver-${index}`),
+      });
+    }
+    expect(woven.player.block).toBe(2);
+    expect(woven.hand).toHaveLength(1);
+  });
+
+  it("Cernunnos, Yaga and the Deathless Bone carry meaningful risks", () => {
+    const cernunnos = applyRelicsOnTurnEnd(
+      applyRelicsOnCombatStart(makeMinimalCombat(), ["cernunnos_horn"]),
+      ["cernunnos_horn"]
+    );
+    expect(getBuffStacks(cernunnos.player.buffs, "THORNS")).toBe(5);
+
+    const yaga = applyRelicsOnTurnStart(
+      { ...applyRelicsOnCombatStart(makeMinimalCombat(), ["yaga_skull"]), turnNumber: 3 },
+      ["yaga_skull"]
+    );
+    expect(yaga.player.drawCount).toBe(makeMinimalCombat().player.drawCount + 1);
+    expect(yaga.discardPile.some((card) => card.definitionId === "dazed")).toBe(true);
+
+    const deathless = applyRelicsOnCombatStart(makeMinimalCombat(), [
+      "deathless_bone",
+    ]);
+    expect(deathless.player.energyMax).toBe(makeMinimalCombat().player.energyMax + 1);
+    expect(deathless.discardPile.some((card) => card.definitionId === "dazed")).toBe(true);
+  });
+
+  it("stone_pendant rewards opening on an undamaged target", () => {
+    const result = applyRelicsOnCardPlayed(
+      makeMinimalCombat(),
+      ["stone_pendant"],
+      "ATTACK",
+      { beforeState: makeMinimalCombat(), targetId: "e1" }
+    );
+    expect(result.player.block).toBe(8);
+  });
+
+  it("Hel and Cernunnos biome relics now reward playing around their boss rule", () => {
+    const helStarted = applyRelicsOnCombatStart(makeMinimalCombat(), [
+      "viking_hel_signet",
+    ]);
+    const hel = applyRelicsOnCardPlayed(
+      helStarted,
+      ["viking_hel_signet"],
+      "ATTACK",
+      { beforeState: helStarted, targetId: "e1" }
+    );
+    expect(getBuffStacks(hel.player.buffs, "THORNS")).toBe(2);
+
+    const antlerStarted = applyRelicsOnCombatStart(
+      makeMinimalCombat({
+        player: { ...makeMinimalCombat().player, currentHp: 70 },
+      }),
+      ["celtic_cernunnos_antler"]
+    );
+    const antler = applyRelicsOnCardPlayed(
+      antlerStarted,
+      ["celtic_cernunnos_antler"],
+      "SKILL"
+    );
+    expect(getBuffStacks(antler.player.buffs, "THORNS")).toBe(3);
+    expect(antler.player.currentHp).toBe(71);
+  });
+
+  it("Griot mastery relics trigger on rhythmic thirds", () => {
+    let attacks = makeMinimalCombat();
+    attacks = applyRelicsOnCardPlayed(attacks, ["bleeding_thistle"], "ATTACK");
+    expect(attacks.player.block).toBe(3);
+    attacks = applyRelicsOnCardPlayed(attacks, ["bleeding_thistle"], "ATTACK");
+    attacks = applyRelicsOnCardPlayed(attacks, ["bleeding_thistle"], "ATTACK");
+    expect(attacks.player.block).toBe(3);
+    expect(getBuffStacks(attacks.enemies[0]?.buffs ?? [], "BLEED")).toBe(2);
+
+    let skills = makeMinimalCombat();
+    skills = applyRelicsOnCardPlayed(skills, ["venom_pouch"], "SKILL");
+    skills = applyRelicsOnCardPlayed(skills, ["venom_pouch"], "SKILL");
+    skills = applyRelicsOnCardPlayed(skills, ["venom_pouch"], "SKILL");
+    expect(getBuffStacks(skills.enemies[0]?.buffs ?? [], "POISON")).toBe(2);
+  });
+
+  it("eternal_flow cycles resources instead of granting all three each turn", () => {
+    const base = makeMinimalCombat({
+      player: { ...makeMinimalCombat().player, inkCurrent: 0 },
+    });
+    const inkTurn = applyRelicsOnTurnStart({ ...base, turnNumber: 1 }, [
+      "eternal_flow",
+    ]);
+    const blockTurn = applyRelicsOnTurnStart({ ...base, turnNumber: 2 }, [
+      "eternal_flow",
+    ]);
+    const strengthTurn = applyRelicsOnTurnStart({ ...base, turnNumber: 3 }, [
+      "eternal_flow",
+    ]);
+
+    expect(inkTurn.player.inkCurrent).toBe(3);
+    expect(blockTurn.player.block).toBe(6);
+    expect(strengthTurn.player.strength).toBe(2);
+  });
+
+  it("library_midnight_press fires on the tenth card", () => {
+    const state = makeMinimalCombat({
+      drawPile: [
+        { instanceId: "draw-a", definitionId: "strike", upgraded: false },
+        { instanceId: "draw-b", definitionId: "defend", upgraded: false },
+      ],
+      relicCounters: { combat_cards_played: 9 },
+      player: { ...makeMinimalCombat().player, inkCurrent: 0 },
+    });
+    const result = applyRelicsOnCardPlayed(
+      state,
+      ["library_midnight_press"],
+      "ATTACK",
+      { rng: createRNG("midnight-press") }
+    );
+
+    expect(result.hand).toHaveLength(2);
+    expect(result.player.inkCurrent).toBe(1);
+  });
+
+  it("greek_harpy_pinion rewards Skill, Skill, Attack", () => {
+    let state = makeMinimalCombat({
+      drawPile: [
+        { instanceId: "harpy-draw", definitionId: "strike", upgraded: false },
+      ],
+    });
+    const context = { rng: createRNG("harpy-pinion") };
+    state = applyRelicsOnCardPlayed(
+      state,
+      ["greek_harpy_pinion"],
+      "SKILL",
+      context
+    );
+    state = applyRelicsOnCardPlayed(
+      state,
+      ["greek_harpy_pinion"],
+      "SKILL",
+      context
+    );
+    state = applyRelicsOnCardPlayed(
+      state,
+      ["greek_harpy_pinion"],
+      "ATTACK",
+      context
+    );
+
+    expect(state.hand).toHaveLength(1);
+  });
+
+  it("celtic_grove_compass converts thorns into Skill defense", () => {
+    const state = makeMinimalCombat({
+      player: {
+        ...makeMinimalCombat().player,
+        buffs: [{ type: "THORNS", stacks: 2 }],
+      },
+    });
+    const result = applyRelicsOnCardPlayed(
+      state,
+      ["celtic_grove_compass"],
+      "SKILL"
+    );
+    expect(result.player.block).toBe(3);
+  });
+
+  it("obsidian_mirror marks the first attacked target as Vulnerable", () => {
+    const result = applyRelicsOnCardPlayed(
+      makeMinimalCombat(),
+      ["obsidian_mirror"],
+      "ATTACK",
+      { targetId: "e1" }
+    );
+    expect(getBuffStacks(result.enemies[0]?.buffs ?? [], "VULNERABLE")).toBe(1);
+  });
+
+  it("wolf_fang executes a wounded target only on the first Attack", () => {
+    const state = makeMinimalCombat({
+      enemies: [
+        { ...makeMinimalCombat().enemies[0]!, currentHp: 9, maxHp: 20 },
+      ],
+    });
+    const result = applyRelicsOnCardPlayed(state, ["wolf_fang"], "ATTACK", {
+      targetId: "e1",
+    });
+    expect(result.enemies[0]?.currentHp).toBe(1);
   });
 
   it("russian_koschei_needle applies vulnerable from the penultimate floor onward", () => {
@@ -7283,18 +7713,20 @@ describe("Relics", () => {
     expect(secondSkill.hand.map((card) => card.instanceId)).toContain("draw-1");
   });
 
-  it("phoenix_ash heals at turn start", () => {
+  it("phoenix_ash heals 4 HP only on even-numbered turns", () => {
     const state = makeMinimalCombat({
-      phase: "ALLIES_ENEMIES_TURN",
       player: {
         ...makeMinimalCombat().player,
         currentHp: 30,
       },
     });
-    const result = startPlayerTurn(state, createRNG("phoenix-ash"), [
-      "phoenix_ash",
-    ]);
-    expect(result.player.currentHp).toBe(32);
+    const odd = applyRelicsOnTurnStart(state, ["phoenix_ash"]);
+    const even = applyRelicsOnTurnStart(
+      { ...state, turnNumber: 2 },
+      ["phoenix_ash"]
+    );
+    expect(odd.player.currentHp).toBe(30);
+    expect(even.player.currentHp).toBe(34);
   });
 
   it("ink_spindle grants focus at turn end when hand is empty", () => {
@@ -7528,7 +7960,7 @@ describe("Debuff blocked by armor", () => {
     expect(getBuffStacks(result.player.buffs, "WEAK")).toBe(3);
   });
 
-  it("at difficulty 3, boss debuffs bypass block", () => {
+  it("at difficulty 3, block prevents boss debuffs", () => {
     const state = makeMinimalCombat({
       difficultyLevel: 3,
       player: { ...makeMinimalCombat().player, block: 10 },
@@ -7551,10 +7983,10 @@ describe("Debuff blocked by armor", () => {
       rng
     );
     expect(result.player.currentHp).toBe(state.player.currentHp);
-    expect(getBuffStacks(result.player.buffs, "WEAK")).toBe(2);
+    expect(getBuffStacks(result.player.buffs, "WEAK")).toBe(0);
   });
 
-  it("at difficulty 4, elite debuffs bypass block", () => {
+  it("at difficulty 4, block prevents elite debuffs", () => {
     const state = makeMinimalCombat({
       difficultyLevel: 4,
       player: { ...makeMinimalCombat().player, block: 10 },
@@ -7577,12 +8009,12 @@ describe("Debuff blocked by armor", () => {
       rng
     );
     expect(result.player.currentHp).toBe(state.player.currentHp);
-    expect(getBuffStacks(result.player.buffs, "POISON")).toBe(3);
+    expect(getBuffStacks(result.player.buffs, "POISON")).toBe(0);
   });
 
-  it("at difficulty 4, boss debuffs gain +1 stack", () => {
+  it.each([[4, 2], [5, 3]])("at difficulty %i, boss poison has %i stacks", (difficultyLevel, stacks) => {
     const state = makeMinimalCombat({
-      difficultyLevel: 4,
+      difficultyLevel,
       player: { ...makeMinimalCombat().player, block: 0 },
       enemies: [
         {
@@ -7601,10 +8033,10 @@ describe("Debuff blocked by armor", () => {
       { source: { type: "enemy", instanceId: "boss-1" }, target: "player" },
       rng
     );
-    expect(getBuffStacks(result.player.buffs, "POISON")).toBe(3);
+    expect(getBuffStacks(result.player.buffs, "POISON")).toBe(stacks);
   });
 
-  it("at difficulty 5, normal enemy debuffs bypass block", () => {
+  it("at difficulty 5, block prevents normal enemy debuffs", () => {
     const state = makeMinimalCombat({
       difficultyLevel: 5,
       player: { ...makeMinimalCombat().player, block: 10 },
@@ -7628,7 +8060,7 @@ describe("Debuff blocked by armor", () => {
       rng
     );
     expect(result.player.currentHp).toBe(state.player.currentHp);
-    expect(getBuffStacks(result.player.buffs, "VULNERABLE")).toBe(1);
+    expect(getBuffStacks(result.player.buffs, "VULNERABLE")).toBe(0);
   });
 
   it("first hit damage reduction applies once per combat", () => {

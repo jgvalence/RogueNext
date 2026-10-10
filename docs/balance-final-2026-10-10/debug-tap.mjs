@@ -1,0 +1,13 @@
+import {connect,stateScript,wait} from './cdp.mjs';
+import fs from 'node:fs';
+const byFiber=eval(fs.readFileSync('docs/balance-final-2026-10-10/full-ui.mjs','utf8').split('\n').find(x=>x.startsWith('const byFiber=')).replace('const byFiber=','').replace(/;$/,''));
+const b=await connect();await b.cdp('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});await b.setTouch(true);await wait(500);
+if(await b.js(`!!(${b.button('Fermer')})`))await b.click(b.button('Fermer'));
+const state=await b.js(stateScript);const card=state.combat.hand.find(c=>c.definitionId==='apollos_archive');const el=byFiber(card.instanceId,'card');
+const target=`[...(${el})?.querySelectorAll('button')??[]].find(e=>e.textContent.toLowerCase().includes('encre'))`;
+await b.js(`(${target}).scrollIntoView({block:'center',inline:'center',behavior:'instant'})`);await wait(500);
+console.log(await b.js(`(()=>{const e=${target},r=e.getBoundingClientRect();return {rect:r.toJSON(),hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.outerHTML,disabled:e.disabled}})()`));
+await b.click(target);await wait(500);
+console.log(await b.js(`({selected:(${el}).dataset.cardSelected,inked:(${el}).dataset.cardInked,text:document.body.innerText})`));
+const enemy=state.combat.enemies.find(e=>e.currentHp>0);await b.click(byFiber(enemy.instanceId,'enemy'));await wait(700);console.log('After enemy',await b.js('document.body.innerText'));
+b.close();

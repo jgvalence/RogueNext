@@ -87,7 +87,7 @@ describe("localized card descriptions", () => {
       "Add 1 copy of this card to your draw pile"
     );
     expect(inkedDescription).toBe(
-      "Deal 3 damage. Add 2 copies of this card to your draw pile. Exhaust."
+      "Deal 3 damage. Add 2 copies of this card to your draw pile. Exhaust. Upgrade a random card in hand."
     );
     expect(upgradedInkedDescription).toContain("Draw 1");
     expect(upgradedInkedDescription).toContain(

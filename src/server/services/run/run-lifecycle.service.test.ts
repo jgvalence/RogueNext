@@ -1,169 +1,149 @@
+﻿// @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeTestRunState } from "@/test/factories/game-state";
 import { createRunForUser, endRunForUser } from "./run-lifecycle.service";
-
-const {
-  buildInitialRunStateForUserMock,
-  getActiveRunSnapshotForUserMock,
-  createActiveRunForUserMock,
-  markRunEndedForUserMock,
-  deleteRunByIdMock,
-  syncRunEndProgressionMock,
-  incrementRunStatsInternalMock,
-} = vi.hoisted(() => ({
-  buildInitialRunStateForUserMock: vi.fn(),
-  getActiveRunSnapshotForUserMock: vi.fn(),
-  createActiveRunForUserMock: vi.fn(),
-  markRunEndedForUserMock: vi.fn(),
-  deleteRunByIdMock: vi.fn(),
-  syncRunEndProgressionMock: vi.fn(),
-  incrementRunStatsInternalMock: vi.fn(),
+const mocks = vi.hoisted(() => ({
+  initial: vi.fn(),
+  create: vi.fn(),
+  owned: vi.fn(),
+  save: vi.fn(),
+  mark: vi.fn(),
+  sync: vi.fn(),
+  stats: vi.fn(),
+  summary: vi.fn(),
+  pvp: vi.fn(),
+  progression: vi.fn(),
+  transaction: vi.fn(),
 }));
-
+const tx = vi.hoisted(() => ({
+  run: { findMany: vi.fn() },
+  userProgression: { findUnique: mocks.progression },
+  runSummary: { create: mocks.summary },
+  pvpDeckSnapshot: { create: mocks.pvp },
+}));
+vi.mock("@/lib/db/prisma", () => ({
+  prisma: { $transaction: mocks.transaction },
+}));
 vi.mock("./run-state.service", () => ({
-  buildInitialRunStateForUser: (...args: unknown[]) =>
-    buildInitialRunStateForUserMock(...args),
-  getActiveRunSnapshotForUser: (...args: unknown[]) =>
-    getActiveRunSnapshotForUserMock(...args),
+  buildInitialRunStateForUser: mocks.initial,
+  getActiveRunSnapshotForUser: vi.fn(),
 }));
-
 vi.mock("./run-persistence.service", () => ({
-  createActiveRunForUser: (...args: unknown[]) =>
-    createActiveRunForUserMock(...args),
-  markRunEndedForUser: (...args: unknown[]) => markRunEndedForUserMock(...args),
-  deleteRunById: (...args: unknown[]) => deleteRunByIdMock(...args),
+  createActiveRunForUser: mocks.create,
+  getOwnedRunForUser: mocks.owned,
+  saveRunStateForUser: mocks.save,
+  markRunEndedForUser: mocks.mark,
 }));
-
 vi.mock("./run-progression-sync.service", () => ({
-  syncRunEndProgression: (...args: unknown[]) =>
-    syncRunEndProgressionMock(...args),
+  syncRunEndProgression: mocks.sync,
 }));
-
-vi.mock("@/server/actions/progression", () => ({
-  incrementRunStatsInternal: (...args: unknown[]) =>
-    incrementRunStatsInternalMock(...args),
+vi.mock("@/server/services/progression-stats.service", () => ({
+  incrementRunStatsInternal: mocks.stats,
 }));
-
-describe("run-lifecycle.service", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    buildInitialRunStateForUserMock.mockResolvedValue({
-      seed: "seed-123",
-      state: makeTestRunState({ runId: "temp-run", seed: "seed-123" }),
-    });
-    createActiveRunForUserMock.mockResolvedValue({
-      runId: "db-run-1",
-      state: makeTestRunState({ runId: "db-run-1", seed: "seed-123" }),
-      abandonedCount: 0,
-    });
-    markRunEndedForUserMock.mockResolvedValue({
-      run: {
-        id: "db-run-1",
-        userId: "user-1",
-        state: makeTestRunState({ runId: "db-run-1", seed: "seed-123" }),
-      },
+beforeEach(() => {
+  vi.clearAllMocks();
+  tx.run.findMany.mockResolvedValue([]);
+  const state = makeTestRunState({
+    runId: "r",
+    status: "VICTORY",
+    activePlayMs: 500,
+    earnedResources: { PAGES: 4 },
+  });
+  const run = {
+    id: "r",
+    userId: "u",
+    status: "IN_PROGRESS",
+    state,
+    createdAt: new Date(),
+  };
+  mocks.transaction.mockImplementation(async (callback) => callback(tx));
+  mocks.owned.mockResolvedValue(run);
+  mocks.mark.mockResolvedValue({ run, ended: true });
+  mocks.save.mockResolvedValue(true);
+  mocks.sync.mockResolvedValue(undefined);
+  mocks.summary.mockResolvedValue({});
+  mocks.pvp.mockResolvedValue({});
+  mocks.progression.mockResolvedValue({ unlockedStoryIds: [] });
+  mocks.initial.mockResolvedValue({ seed: "seed", state });
+  mocks.create.mockResolvedValue({ runId: "r", state, abandonedCount: 0 });
+});
+describe("atomic run lifecycle", () => {
+  it("creates the initial snapshot and records prior abandoned runs", async () => {
+    tx.run.findMany.mockResolvedValueOnce([{ id: "previous" }]);
+    await createRunForUser("u");
+    expect(mocks.sync).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "ABANDONED" }),
+      tx
+    );
+    expect(mocks.create).toHaveBeenCalledWith(
+      "u",
+      "seed",
+      expect.any(Object),
+      tx
+    );
+  });
+  it("uses one serializable transaction for status, progression and both summaries", async () => {
+    expect(
+      await endRunForUser({
+        userId: "u",
+        runId: "r",
+        status: "VICTORY",
+        earnedResources: { PAGES: 99999 },
+      })
+    ).toBe(true);
+    expect(mocks.transaction).toHaveBeenCalledWith(
+      expect.any(Function),
+      expect.objectContaining({ isolationLevel: "Serializable" })
+    );
+    expect(mocks.mark).toHaveBeenCalledWith(
+      { userId: "u", runId: "r", status: "VICTORY" },
+      tx
+    );
+    expect(mocks.sync).toHaveBeenCalledWith(
+      expect.objectContaining({ runDurationMs: 500 }),
+      tx
+    );
+    expect(mocks.sync.mock.calls[0]![0].earnedResources).toBeUndefined();
+    expect(mocks.summary).toHaveBeenCalledTimes(1);
+    expect(mocks.pvp).toHaveBeenCalledTimes(1);
+  });
+  it("is idempotent after a committed finish whose response was lost", async () => {
+    mocks.owned.mockResolvedValueOnce({ status: "VICTORY" });
+    expect(
+      await endRunForUser({ userId: "u", runId: "r", status: "VICTORY" })
+    ).toBe(true);
+    expect(mocks.sync).not.toHaveBeenCalled();
+    expect(mocks.summary).not.toHaveBeenCalled();
+  });
+  it.each(["sync", "summary", "pvp"] as const)(
+    "propagates a %s failure to rollback the transaction",
+    async (stage) => {
+      mocks[stage].mockRejectedValueOnce(new Error("injected failure"));
+      await expect(
+        endRunForUser({ userId: "u", runId: "r", status: "VICTORY" })
+      ).rejects.toThrow("injected failure");
+    }
+  );
+  it("rejects a stale final snapshot before awarding resources", async () => {
+    mocks.save.mockResolvedValueOnce(false);
+    await expect(
+      endRunForUser({
+        userId: "u",
+        runId: "r",
+        status: "VICTORY",
+        finalState: makeTestRunState(),
+      })
+    ).rejects.toThrow("SAVE_CONFLICT");
+    expect(mocks.sync).not.toHaveBeenCalled();
+  });
+  it("rejects a victory unsupported by the saved state", async () => {
+    mocks.mark.mockResolvedValueOnce({
       ended: true,
+      run: { state: makeTestRunState() },
     });
-    syncRunEndProgressionMock.mockResolvedValue(undefined);
-    deleteRunByIdMock.mockResolvedValue(undefined);
-    incrementRunStatsInternalMock.mockResolvedValue(undefined);
-  });
-
-  it("creates a run and records abandoned previous runs when needed", async () => {
-    createActiveRunForUserMock.mockResolvedValueOnce({
-      runId: "db-run-1",
-      state: makeTestRunState({ runId: "db-run-1", seed: "seed-123" }),
-      abandonedCount: 2,
-    });
-
-    const result = await createRunForUser("user-1", "seed-123");
-
-    expect(buildInitialRunStateForUserMock).toHaveBeenCalledWith(
-      "user-1",
-      "seed-123"
-    );
-    expect(createActiveRunForUserMock).toHaveBeenCalledWith(
-      "user-1",
-      "seed-123",
-      expect.objectContaining({ seed: "seed-123" })
-    );
-    expect(incrementRunStatsInternalMock).toHaveBeenCalledWith(
-      "user-1",
-      "ABANDONED",
-      2
-    );
-    expect(result).toEqual({
-      runId: "db-run-1",
-      state: expect.objectContaining({ runId: "db-run-1", seed: "seed-123" }),
-    });
-  });
-
-  it("skips abandoned stats increment when no prior run was abandoned", async () => {
-    await createRunForUser("user-1", "seed-123");
-
-    expect(incrementRunStatsInternalMock).not.toHaveBeenCalled();
-  });
-
-  it("does not sync or delete when the run was already ended", async () => {
-    markRunEndedForUserMock.mockResolvedValueOnce({
-      run: {
-        id: "db-run-1",
-        userId: "user-1",
-        state: makeTestRunState({ runId: "db-run-1" }),
-      },
-      ended: false,
-    });
-
-    const result = await endRunForUser({
-      userId: "user-1",
-      runId: "db-run-1",
-      status: "DEFEAT",
-    });
-
-    expect(result).toBe(false);
-    expect(syncRunEndProgressionMock).not.toHaveBeenCalled();
-    expect(deleteRunByIdMock).not.toHaveBeenCalled();
-  });
-
-  it("syncs progression and deletes the run when ending succeeds", async () => {
-    const run = {
-      id: "db-run-1",
-      userId: "user-1",
-      state: makeTestRunState({ runId: "db-run-1" }),
-    };
-    markRunEndedForUserMock.mockResolvedValueOnce({
-      run,
-      ended: true,
-    });
-
-    const result = await endRunForUser({
-      userId: "user-1",
-      runId: "db-run-1",
-      status: "VICTORY",
-      runDurationMs: 9876,
-      earnedResources: { PAGES: 5 },
-      startMerchantSpentResources: { PAGES: 2 },
-      encounteredEnemies: { ink_slime: "NORMAL" },
-      enemyKillCounts: { ink_slime: 3 },
-    });
-
-    expect(result).toBe(true);
-    expect(markRunEndedForUserMock).toHaveBeenCalledWith({
-      userId: "user-1",
-      runId: "db-run-1",
-      status: "VICTORY",
-    });
-    expect(syncRunEndProgressionMock).toHaveBeenCalledWith({
-      userId: "user-1",
-      run,
-      status: "VICTORY",
-      runDurationMs: 9876,
-      earnedResources: { PAGES: 5 },
-      startMerchantSpentResources: { PAGES: 2 },
-      scriptedOutcome: undefined,
-      encounteredEnemies: { ink_slime: "NORMAL" },
-      enemyKillCounts: { ink_slime: 3 },
-    });
-    expect(deleteRunByIdMock).toHaveBeenCalledWith("db-run-1");
+    await expect(
+      endRunForUser({ userId: "u", runId: "r", status: "VICTORY" })
+    ).rejects.toThrow("Victory");
+    expect(mocks.sync).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import "antd/dist/reset.css";
 import { QueryProvider } from "@/lib/query/provider";
@@ -10,29 +9,29 @@ import { DevtoolsConsoleWarning } from "@/components/shared/DevtoolsConsoleWarni
 import { I18nProvider } from "@/components/providers/I18nProvider";
 import { GlobalLanguageDock } from "@/components/shared/GlobalLanguageDock";
 import { RouteMusicGuard } from "@/components/shared/RouteMusicGuard";
+import { DevServiceWorkerReset } from "@/components/shared/DevServiceWorkerReset";
+import { PwaManager } from "@/components/shared/PwaManager";
 
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
     default: env.NEXT_PUBLIC_APP_NAME,
     template: `%s | ${env.NEXT_PUBLIC_APP_NAME}`,
   },
-  description: "A professional Next.js starter template with best practices",
-  keywords: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
-  authors: [{ name: "Your Name" }],
+  description: "Un deckbuilder roguelite dans une bibliothèque de mythologies.",
+  keywords: ["Panlibrarium", "deckbuilder", "roguelite", "mythologies"],
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "fr_FR",
     url: env.NEXT_PUBLIC_APP_URL,
     siteName: env.NEXT_PUBLIC_APP_NAME,
     title: env.NEXT_PUBLIC_APP_NAME,
-    description: "A professional Next.js starter template",
+    description: "Explorez les mythologies, composez votre deck et maîtrisez l’Encre.",
   },
   twitter: {
     card: "summary_large_image",
     title: env.NEXT_PUBLIC_APP_NAME,
-    description: "A professional Next.js starter template",
+    description: "Explorez les mythologies, composez votre deck et maîtrisez l’Encre.",
   },
   robots: {
     index: true,
@@ -58,9 +57,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className={inter.className}>
+      <body className="font-sans">
         <I18nProvider>
           <AntdProvider>
+            <DevServiceWorkerReset />
+            <PwaManager />
             <DevtoolsConsoleWarning />
             <RouteMusicGuard />
             <GlobalLanguageDock />

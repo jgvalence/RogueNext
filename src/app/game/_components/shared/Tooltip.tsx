@@ -86,6 +86,11 @@ export function Tooltip({
       className={cn("inline-block", className)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onFocus={handleMouseEnter}
+      onBlur={handleMouseLeave}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") handleMouseLeave();
+      }}
     >
       {children}
       {mounted &&

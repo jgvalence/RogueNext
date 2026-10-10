@@ -7,7 +7,28 @@
 
 ## 1. RÃ¨gles GÃ©nÃ©rales
 
+### Regles cardinales du pool
+
+Ces regles priment sur les anciens quotas et sur toute proposition d'ajout de contenu :
+
+1. **Ne pas augmenter sensiblement le nombre total de cartes.** Le pool est deja tres important. Une nouvelle idee de carte doit en priorite remplacer ou transformer une carte generique existante.
+2. **Maintenir une parite stricte entre les personnages.** Les quatre personnages doivent disposer du meme nombre de cartes propres et du meme nombre total de cartes accessibles. Une modification ne doit jamais creuser un ecart de pool.
+3. **Reserver les nouvelles cartes aux mecaniques fortes et nouvelles.** Une carte ajoutee ou entierement remplacee doit creer une decision, une interaction ou un moteur de deck qui n'existe pas deja. Une simple variation de degats, Blocage, pioche ou statut n'est pas une nouvelle carte valide.
+4. **Chaque carte possede deux evolutions possibles et reellement differentes.** Les deux branches doivent modifier le role, le risque, le tempo, la cible ou la synergie de la carte. Deux branches qui ne different que par leurs valeurs numeriques ne respectent pas cette regle.
+
+Consequences pratiques :
+
+- privilegier `1 carte retravaillee = 1 carte remplacee`, sans croissance nette du pool ;
+- si une creation augmente exceptionnellement le pool, appliquer la meme augmentation aux quatre personnages dans le meme lot ;
+- controler automatiquement la parite des pools apres chaque modification ;
+- conserver quelques cartes simples, mais leur donner malgre tout deux evolutions distinctes ;
+- ne jamais dupliquer une mecanique sous un autre nom ou dans un autre biome uniquement pour remplir un quota.
+
 ### Structure d'une carte (CardDefinition)
+
+Actualisation du 9 octobre 2026 : le pool actif accessible après tous les déblocages comprend **90 cartes par personnage** (39 propres hors bestiaire, 10 maîtrises et 41 neutres communes). La parité inclut les maîtrises, pas seulement le catalogue manuel. Voir le [rapport builds et diversité](EQUILIBRAGE_BUILDS_2026-10-09.md).
+
+Pour garder une carte jouable entre deux tours, utiliser `RETAIN_CARDS` : cet effet conserve d’autres cartes aléatoires non encombrantes pendant une seule fin de tour. `FREEZE_HAND_CARDS` rend les cartes concernées injouables et reste un effet de gel volontaire. Une amélioration doit préserver les mécaniques particulières de la carte, y compris en forme encrée, sauf transformation explicitement conçue et testée. Les ajouts de dégâts doivent respecter le ciblage ; un bénéfice défensif ne doit pas ajouter des dégâts contre le joueur.
 
 ```
 id:           string â€” snake_case anglais (ex: "heavy_strike")
@@ -96,6 +117,17 @@ Liste reelle des buffs:
 - `inkMarkCost: 2` standard, `3` pour cartes puissantes
 - Boost de 30â€“50% par rapport Ã  la version normale
 - ~50% des cartes ont une variante encrÃ©e
+
+La variante encree ne remplace pas les deux evolutions permanentes. Elle constitue une decision de combat supplementaire et doit, aussi souvent que possible, transformer l'usage de la carte plutot que seulement augmenter ses valeurs.
+
+### Deux evolutions par carte
+
+- Toute carte collectible doit proposer exactement deux evolutions permanentes.
+- Les deux evolutions doivent etre mutuellement exclusives pour l'instance concernee.
+- Une branche peut etre simple et fiable ; l'autre peut etre specialisee, risquee ou orientee synergie.
+- Les cartes communes peuvent conserver un texte court, mais leurs branches doivent produire deux usages distincts.
+- Les effets d'amelioration aleatoire ou gratuite doivent demander un choix lorsque l'interface le permet ; sinon une regle deterministe documentee selectionne la branche.
+- Les sauvegardes doivent conserver l'identifiant de la branche choisie, pas seulement un booleen `upgraded`.
 
 ### Unlock par raretÃ© (rÃ¨gle gÃ©nÃ©rale)
 
@@ -245,7 +277,7 @@ Rappel de cadrage actuel:
 
 > Date de reference verifiee: 15 mars 2026
 > Source: `src/game/data/cards.ts` via `npm run audit:cards`
-> Audit detaille: `docs/card-pool-audit-2026-03-15.md`
+> Pour un état à jour du pool, lancer `npm run audit:cards`.
 
 ### Collection (page /library/collection)
 
@@ -908,7 +940,7 @@ Rappel de cadrage actuel:
 - Neutres actifs: **42**
 - Repartition neutres active: **LIBRARY 1**, **LOVECRAFTIAN 6**, autres biomes non-LIBRARY a **5**
 - Ecart actif notable: **AZTEC = 11 Scribe / 9 Bibliothecaire**
-- Audit detaille et hotspots de redondance: `docs/card-pool-audit-2026-03-15.md`
+- Audit du pool et hotspots de redondance : `npm run audit:cards`.
 
 | Segment                                | Quantite |
 | -------------------------------------- | -------: |

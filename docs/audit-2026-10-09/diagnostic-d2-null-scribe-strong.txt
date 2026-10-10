@@ -1,0 +1,2482 @@
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+╔══════════════════════════════════════════════════╗
+║          RogueNext — Headless Simulator          ║
+╚══════════════════════════════════════════════════╝
+  Runs: 100  |  Diff: 2  |  Character: scribe  |  Méta: strong  |  Build: mixed
+  Biome: aléatoire  |  Seed: "audit-20261009"
+
+
+── Run 1 ─────────────────────────────────────
+    fl1 d0 NORM [byakhee] HP:83→83 turns:1
+    fl1 d1 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d3 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d5 NORM [deep_one] HP:83→83 turns:1
+    fl1 d6 ELITE [elder_hybrid] HP:83→69 turns:4
+    fl1 d9 NORM [deep_one] HP:76→76 turns:0
+    fl1 d10 ELITE [mi_go_surgeon] HP:83→83 turns:1
+    fl1 d11 NORM [deep_one] HP:83→83 turns:0
+    fl1 d12 NORM [cultist_scribe+cultist_scribe+star_spawn] HP:83→79 turns:2
+    fl1 d14 ELITE [elder_hybrid] HP:83→80 turns:2
+    fl1 d15 BOSS [shub_spawn] HP:83→62 turns:5
+    fl2 d0 NORM [stone_idol+jaguar_warrior] HP:69→68 turns:1
+    fl2 d1 NORM [flayed_cultist+obsidian_priest+obsidian_priest] HP:75→76 turns:1
+    fl2 d2 NORM [flayed_cultist+obsidian_priest+obsidian_priest] HP:83→83 turns:1
+    fl2 d4 NORM [tzitzimitl+obsidian_priest+obsidian_priest] HP:83→83 turns:1
+    fl2 d6 NORM [flayed_cultist+tzitzimitl+jaguar_warrior] HP:83→83 turns:2
+    fl2 d7 ELITE [quetzal_harbinger] HP:83→81 turns:1
+    fl2 d10 NORM [eagle_knight+jaguar_warrior+flayed_cultist] HP:83→79 turns:2
+    fl2 d11 NORM [flayed_cultist+tzitzimitl+jaguar_warrior] HP:83→83 turns:2
+    fl2 d13 NORM [eagle_knight+stone_idol] HP:83→83 turns:1
+    fl2 d14 ELITE [quetzal_harbinger] HP:83→75 turns:1
+    fl2 d15 BOSS [tezcatlipoca_echo] HP:82→52 turns:2
+    fl3 d0 NORM [deep_one+void_tendril+star_spawn] HP:59→60 turns:1
+    fl3 d1 NORM [shoggoth_spawn+byakhee+star_spawn] HP:67→66 turns:1
+    fl3 d3 NORM [byakhee+shoggoth_spawn+cultist_scribe] HP:73→74 turns:1
+    fl3 d5 ELITE [elder_hybrid] HP:81→82 turns:1
+    fl3 d6 NORM [void_tendril+byakhee+deep_one] HP:83→83 turns:1
+    fl3 d9 NORM [deep_one+shoggoth_spawn+star_spawn] HP:83→83 turns:1
+    fl3 d10 NORM [cultist_scribe+star_spawn+deep_one+void_tendril] HP:83→83 turns:1
+    fl3 d11 ELITE [elder_hybrid] HP:83→83 turns:1
+    fl3 d13 NORM [shoggoth_spawn+void_tendril+star_spawn+star_spawn] HP:83→83 turns:0
+    fl3 d14 ELITE [elder_hybrid] HP:83→83 turns:1
+    fl3 d15 BOSS [shub_spawn] HP:83→67 turns:2
+  VICTOIRE fl3 | HP:74 | deck:30 | boss:3 | tours:44
+
+── Run 2 ─────────────────────────────────────
+    fl1 d0 NORM [briar_beast] HP:83→83 turns:1
+    fl1 d1 NORM [amber_hound] HP:83→83 turns:2
+    fl1 d3 NORM [amber_hound] HP:83→83 turns:0
+    fl1 d5 NORM [briar_beast+morrigan_wisp] HP:83→82 turns:3
+    fl1 d6 ELITE [morrigan_chosen] HP:83→76 turns:5
+    fl1 d9 NORM [bog_beast] HP:83→83 turns:3
+    fl1 d10 NORM [druid_apprentice+briar_beast] HP:83→73 turns:4
+    fl1 d11 ELITE [morrigan_chosen] HP:80→79 turns:6
+    fl1 d14 ELITE [morrigan_chosen] HP:83→81 turns:5
+    fl1 d15 BOSS [cernunnos_shade] HP:83→21 turns:11
+    fl2 d0 NORM [serpent_oracle+impundulu] HP:28→41 turns:3
+    fl2 d1 NORM [hyena_pack+baobab_giant] HP:48→59 turns:4
+    fl2 d3 NORM [impundulu+mask_hunter] HP:66→68 turns:4
+    fl2 d7 NORM [baobab_giant+mask_hunter] HP:83→83 turns:4
+    fl2 d9 NORM [impundulu+mask_hunter+hyena_pack] HP:83→72 turns:3
+    fl2 d10 NORM [serpent_oracle+baobab_giant] HP:79→83 turns:3
+    fl2 d11 NORM [serpent_oracle+mask_hunter+hyena_pack] HP:83→83 turns:4
+    fl2 d13 NORM [mask_hunter+baobab_giant] HP:83→83 turns:4
+    fl2 d14 ELITE [oya_harbinger] HP:83→83 turns:5
+    fl2 d15 BOSS [anansi_weaver] HP:83→44 turns:10
+    fl3 d0 NORM [baobab_giant+hyena_pack+mask_hunter] HP:51→44 turns:10
+    fl3 d1 NORM [impundulu+serpent_oracle+mask_hunter] HP:51→50 turns:3
+    fl3 d2 NORM [hyena_pack+mask_hunter+baobab_giant] HP:57→34 turns:8
+    fl3 d5 NORM [impundulu+mask_hunter+baobab_giant] HP:41→24 turns:6
+    fl3 d6 NORM [mask_hunter+serpent_oracle+baobab_giant] HP:31→27 turns:7
+    fl3 d7 ELITE [legba_emissary] HP:34→9 turns:5
+    fl3 d9 NORM [mask_hunter+serpent_oracle+baobab_giant] HP:41→34 turns:6
+  * fl3 d11 NORM [mask_hunter+baobab_giant+impundulu] HP:41→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:41 | deck:27 | boss:2 | tours:132
+
+── Run 3 ─────────────────────────────────────
+    fl1 d0 NORM [byakhee] HP:83→83 turns:0
+    fl1 d1 NORM [void_tendril] HP:83→80 turns:2
+    fl1 d2 NORM [star_spawn+star_spawn] HP:83→74 turns:6
+    fl1 d4 NORM [cultist_scribe+cultist_scribe] HP:81→83 turns:2
+    fl1 d6 NORM [void_tendril+cultist_scribe] HP:83→83 turns:2
+    fl1 d7 ELITE [elder_hybrid] HP:83→78 turns:4
+    fl1 d10 NORM [deep_one] HP:83→83 turns:1
+    fl1 d11 NORM [void_tendril+star_spawn] HP:83→80 turns:3
+    fl1 d12 NORM [byakhee+cultist_scribe] HP:83→83 turns:1
+    fl1 d14 ELITE [mi_go_surgeon] HP:83→83 turns:3
+  * fl1 d15 BOSS [shub_spawn] HP:83→MORT turns:10 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:19 | boss:0 | tours:34
+
+── Run 4 ─────────────────────────────────────
+    fl1 d0 NORM [morrigan_wisp+druid_apprentice] HP:83→83 turns:2
+    fl1 d2 NORM [amber_hound] HP:83→83 turns:0
+    fl1 d3 NORM [druid_apprentice+druid_apprentice] HP:83→78 turns:2
+    fl1 d6 NORM [morrigan_wisp+druid_apprentice] HP:83→83 turns:1
+    fl1 d7 ELITE [morrigan_chosen] HP:83→83 turns:4
+    fl1 d10 NORM [amber_hound+druid_apprentice] HP:83→83 turns:1
+    fl1 d11 NORM [morrigan_wisp+sidhe_raider+druid_apprentice] HP:83→78 turns:3
+    fl1 d12 NORM [amber_hound+druid_apprentice] HP:83→83 turns:2
+    fl1 d14 ELITE [wild_hunt_hound] HP:83→82 turns:4
+    fl1 d15 BOSS [cernunnos_shade] HP:83→45 turns:9
+    fl2 d0 NORM [bog_beast+druid_apprentice] HP:52→66 turns:4
+    fl2 d2 NORM [druid_apprentice+briar_beast+morrigan_wisp] HP:83→83 turns:5
+    fl2 d3 NORM [sidhe_raider+briar_beast+morrigan_wisp] HP:83→83 turns:6
+    fl2 d5 NORM [briar_beast+sidhe_raider+sidhe_raider+sidhe_raider] HP:83→59 turns:7
+    fl2 d7 NORM [sidhe_raider+bog_beast+druid_apprentice] HP:83→67 turns:6
+    fl2 d9 NORM [amber_hound+briar_beast] HP:74→79 turns:2
+    fl2 d10 NORM [amber_hound+sidhe_raider+briar_beast] HP:83→78 turns:4
+    fl2 d13 NORM [bog_beast+briar_beast] HP:83→83 turns:4
+    fl2 d14 ELITE [morrigan_chosen] HP:83→78 turns:4
+  * fl2 d15 BOSS [cernunnos_shade] HP:83→MORT turns:10 [DÉFAITE]
+  DÉFAITE fl1 | HP:83 | deck:25 | boss:1 | tours:80
+
+── Run 5 ─────────────────────────────────────
+    fl1 d0 NORM [morrigan_wisp+druid_apprentice] HP:83→81 turns:2
+    fl1 d2 NORM [sidhe_raider+druid_apprentice] HP:83→83 turns:3
+    fl1 d3 NORM [morrigan_wisp+druid_apprentice] HP:83→82 turns:3
+    fl1 d6 NORM [bog_beast] HP:83→83 turns:2
+    fl1 d7 ELITE [wild_hunt_hound] HP:83→81 turns:4
+    fl1 d9 NORM [briar_beast+sidhe_raider] HP:83→83 turns:3
+    fl1 d10 NORM [druid_apprentice+sidhe_raider+druid_apprentice] HP:83→69 turns:5
+    fl1 d11 NORM [briar_beast+sidhe_raider] HP:76→83 turns:4
+    fl1 d13 NORM [amber_hound+druid_apprentice] HP:83→82 turns:3
+    fl1 d14 ELITE [wild_hunt_hound] HP:83→79 turns:6
+    fl1 d15 BOSS [cernunnos_shade] HP:83→57 turns:9
+    fl2 d0 NORM [lamia+gorgon] HP:64→67 turns:4
+    fl2 d1 NORM [harpy+gorgon+satyr] HP:74→83 turns:4
+    fl2 d3 NORM [bronze_automaton+harpy] HP:83→83 turns:4
+    fl2 d5 NORM [gorgon+lamia+harpy] HP:83→43 turns:5
+    fl2 d7 NORM [bronze_automaton+lamia] HP:74→67 turns:5
+    fl2 d9 NORM [lamia+bronze_automaton] HP:74→82 turns:3
+    fl2 d11 NORM [bronze_automaton+gorgon] HP:83→68 turns:4
+    fl2 d13 NORM [gorgon+harpy+lamia] HP:75→71 turns:4
+    fl2 d14 ELITE [minotaur] HP:78→82 turns:4
+    fl2 d15 BOSS [hydra_aspect] HP:83→76 turns:8
+    fl3 d0 NORM [rune_berserker+draugr+rune_shaman+einherjar] HP:83→66 turns:5
+    fl3 d1 NORM [einherjar+frost_troll+draugr] HP:73→81 turns:5
+    fl3 d3 NORM [shield_maiden+frost_troll+rune_shaman] HP:83→70 turns:4
+    fl3 d5 ELITE [valkyrie] HP:77→82 turns:3
+    fl3 d6 NORM [einherjar+rune_shaman+shield_maiden+rune_berserker] HP:83→26 turns:9
+    fl3 d9 NORM [frost_troll+rune_berserker+shield_maiden] HP:58→65 turns:3
+    fl3 d10 ELITE [valkyrie] HP:72→83 turns:2
+    fl3 d11 NORM [shield_maiden+einherjar+frost_troll] HP:83→75 turns:4
+    fl3 d12 NORM [rune_shaman+einherjar+shield_maiden+rune_berserker] HP:82→40 turns:5
+    fl3 d14 ELITE [valkyrie] HP:47→57 turns:2
+    fl3 d15 BOSS [fenrir] HP:64→40 turns:6
+  VICTOIRE fl3 | HP:47 | deck:31 | boss:3 | tours:137
+
+── Run 6 ─────────────────────────────────────
+    fl1 d0 NORM [byakhee] HP:83→83 turns:0
+    fl1 d2 NORM [byakhee] HP:83→83 turns:1
+    fl1 d3 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d5 NORM [void_tendril+star_spawn] HP:83→83 turns:3
+    fl1 d6 NORM [cultist_scribe+cultist_scribe+star_spawn] HP:83→62 turns:4
+    fl1 d9 NORM [void_tendril+star_spawn] HP:69→72 turns:3
+    fl1 d10 NORM [shoggoth_spawn] HP:79→80 turns:1
+    fl1 d11 NORM [star_spawn+cultist_scribe+star_spawn] HP:83→54 turns:7
+    fl1 d12 NORM [void_tendril+star_spawn] HP:61→55 turns:3
+    fl1 d14 ELITE [elder_hybrid] HP:83→83 turns:4
+    fl1 d15 BOSS [shub_spawn] HP:83→53 turns:14
+    fl2 d0 NORM [bog_beast+druid_apprentice] HP:60→57 turns:3
+    fl2 d2 NORM [amber_hound+morrigan_wisp+druid_apprentice] HP:83→83 turns:4
+    fl2 d3 NORM [amber_hound+briar_beast] HP:83→78 turns:2
+    fl2 d6 NORM [amber_hound+morrigan_wisp+briar_beast] HP:83→77 turns:4
+    fl2 d7 ELITE [wild_hunt_hound] HP:83→75 turns:2
+    fl2 d10 NORM [bog_beast+briar_beast] HP:83→83 turns:3
+    fl2 d11 NORM [briar_beast+bog_beast] HP:83→83 turns:3
+    fl2 d12 NORM [briar_beast+bog_beast] HP:83→82 turns:2
+    fl2 d14 ELITE [morrigan_chosen] HP:83→83 turns:3
+    fl2 d15 BOSS [cernunnos_shade] HP:83→66 turns:7
+    fl3 d0 NORM [amber_hound+druid_apprentice+bog_beast] HP:73→56 turns:3
+    fl3 d1 NORM [bog_beast+druid_apprentice+briar_beast] HP:63→34 turns:5
+    fl3 d2 NORM [briar_beast+amber_hound+sidhe_raider+morrigan_wisp] HP:41→42 turns:4
+    fl3 d5 NORM [sidhe_raider+briar_beast+morrigan_wisp+bog_beast] HP:49→32 turns:5
+    fl3 d6 NORM [amber_hound+sidhe_raider+bog_beast+druid_apprentice] HP:39→44 turns:5
+    fl3 d7 ELITE [wild_hunt_hound] HP:51→42 turns:3
+    fl3 d9 NORM [bog_beast+briar_beast+druid_apprentice+druid_apprentice] HP:74→69 turns:4
+    fl3 d10 NORM [amber_hound+bog_beast+briar_beast] HP:76→60 turns:4
+    fl3 d11 NORM [bog_beast+amber_hound+briar_beast] HP:67→36 turns:3
+    fl3 d12 NORM [briar_beast+amber_hound+sidhe_raider+morrigan_wisp] HP:43→30 turns:4
+    fl3 d14 ELITE [wild_hunt_hound] HP:37→36 turns:2
+    fl3 d15 BOSS [dagda_shadow] HP:43→37 turns:4
+  VICTOIRE fl3 | HP:44 | deck:31 | boss:3 | tours:120
+
+── Run 7 ─────────────────────────────────────
+    fl1 d0 NORM [snow_maiden] HP:83→83 turns:2
+    fl1 d1 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d5 NORM [iron_cossack+winter_wolf] HP:83→82 turns:3
+    fl1 d6 NORM [iron_cossack+rusalka] HP:83→82 turns:4
+    fl1 d7 ELITE [koschei_herald] HP:83→69 turns:3
+    fl1 d10 NORM [rusalka+iron_cossack] HP:76→77 turns:1
+    fl1 d11 NORM [rusalka+iron_cossack] HP:83→83 turns:2
+    fl1 d12 NORM [iron_cossack+rusalka] HP:83→83 turns:1
+    fl1 d14 ELITE [koschei_herald] HP:83→82 turns:2
+    fl1 d15 BOSS [baba_yaga_hut] HP:83→67 turns:4
+    fl2 d0 NORM [amber_hound+sidhe_raider+druid_apprentice] HP:74→74 turns:0
+    fl2 d1 NORM [briar_beast+morrigan_wisp+sidhe_raider] HP:81→82 turns:1
+    fl2 d2 NORM [amber_hound+briar_beast] HP:83→83 turns:3
+    fl2 d5 NORM [briar_beast+bog_beast] HP:83→83 turns:1
+    fl2 d6 NORM [morrigan_wisp+briar_beast+druid_apprentice+morrigan_wisp] HP:83→78 turns:6
+    fl2 d7 ELITE [wild_hunt_hound] HP:83→83 turns:1
+    fl2 d9 NORM [amber_hound+briar_beast+morrigan_wisp] HP:83→83 turns:2
+    fl2 d10 NORM [briar_beast+amber_hound+sidhe_raider] HP:83→74 turns:2
+    fl2 d11 NORM [amber_hound+briar_beast] HP:81→82 turns:1
+    fl2 d13 NORM [bog_beast+briar_beast] HP:83→83 turns:1
+    fl2 d14 ELITE [morrigan_chosen] HP:83→83 turns:1
+    fl2 d15 BOSS [cernunnos_shade] HP:83→59 turns:7
+    fl3 d0 NORM [serpent_oracle+mask_hunter+impundulu] HP:66→68 turns:2
+    fl3 d1 NORM [serpent_oracle+mask_hunter+impundulu] HP:75→80 turns:4
+    fl3 d3 NORM [baobab_giant+serpent_oracle+tokoloshe] HP:83→83 turns:3
+    fl3 d5 ELITE [oya_harbinger] HP:83→80 turns:3
+    fl3 d6 NORM [serpent_oracle+baobab_giant+mask_hunter] HP:83→81 turns:4
+    fl3 d9 NORM [serpent_oracle+mask_hunter+baobab_giant] HP:83→76 turns:2
+    fl3 d11 NORM [mask_hunter+impundulu+baobab_giant] HP:83→83 turns:2
+    fl3 d12 NORM [impundulu+baobab_giant+serpent_oracle] HP:83→83 turns:2
+    fl3 d14 ELITE [legba_emissary] HP:83→83 turns:2
+    fl3 d15 BOSS [soundiata_spirit] HP:83→83 turns:3
+  VICTOIRE fl3 | HP:83 | deck:30 | boss:3 | tours:76
+
+── Run 8 ─────────────────────────────────────
+    fl1 d0 NORM [lamia] HP:83→83 turns:0
+    fl1 d1 NORM [harpy+satyr] HP:83→83 turns:1
+    fl1 d2 NORM [gorgon] HP:83→83 turns:0
+    fl1 d5 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d7 NORM [lamia+satyr] HP:83→83 turns:1
+    fl1 d9 NORM [cyclops] HP:83→83 turns:0
+    fl1 d10 NORM [bronze_automaton] HP:83→83 turns:1
+    fl1 d11 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d12 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d14 ELITE [minotaur] HP:83→71 turns:1
+  * fl1 d15 BOSS [medusa] HP:78→MORT turns:7 [DÉFAITE]
+  DÉFAITE fl0 | HP:78 | deck:19 | boss:0 | tours:14
+
+── Run 9 ─────────────────────────────────────
+    fl1 d0 NORM [einherjar] HP:83→83 turns:1
+    fl1 d2 NORM [shield_maiden] HP:83→83 turns:2
+    fl1 d3 NORM [draugr+draugr] HP:83→83 turns:2
+    fl1 d5 NORM [draugr+einherjar] HP:83→76 turns:4
+    fl1 d6 NORM [shield_maiden+rune_shaman] HP:83→83 turns:3
+    fl1 d10 NORM [shield_maiden+rune_shaman] HP:83→74 turns:7
+    fl1 d11 NORM [draugr+shield_maiden] HP:81→67 turns:6
+    fl1 d13 NORM [einherjar+draugr] HP:74→74 turns:4
+    fl1 d14 ELITE [jormungandr_spawn] HP:81→83 turns:6
+    fl1 d15 BOSS [fenrir] HP:83→8 turns:12
+    fl2 d0 NORM [druid_apprentice+sidhe_raider+amber_hound] HP:15→9 turns:5
+    fl2 d2 NORM [amber_hound+briar_beast] HP:40→44 turns:4
+    fl2 d3 NORM [druid_apprentice+amber_hound+druid_apprentice] HP:51→42 turns:4
+    fl2 d4 NORM [bog_beast+druid_apprentice] HP:49→48 turns:4
+    fl2 d6 NORM [amber_hound+briar_beast] HP:55→53 turns:2
+    fl2 d7 ELITE [morrigan_chosen] HP:60→25 turns:5
+    fl2 d9 NORM [sidhe_raider+morrigan_wisp+amber_hound+druid_apprentice] HP:57→61 turns:7
+    fl2 d10 NORM [briar_beast+bog_beast] HP:68→62 turns:4
+    fl2 d11 NORM [bog_beast+druid_apprentice] HP:69→71 turns:4
+    fl2 d12 NORM [bog_beast+briar_beast] HP:78→75 turns:4
+    fl2 d14 ELITE [morrigan_chosen] HP:82→83 turns:5
+    fl2 d15 BOSS [cernunnos_shade] HP:83→82 turns:5
+    fl3 d0 NORM [rune_berserker+einherjar+draugr+rune_shaman] HP:83→72 turns:2
+    fl3 d1 NORM [frost_troll+einherjar+rune_shaman] HP:79→79 turns:2
+    fl3 d3 NORM [rune_berserker+einherjar+draugr+rune_shaman] HP:83→77 turns:3
+    fl3 d5 NORM [rune_berserker+frost_troll+einherjar] HP:83→64 turns:3
+    fl3 d6 NORM [frost_troll+einherjar+rune_berserker] HP:71→74 turns:3
+    fl3 d7 ELITE [valkyrie] HP:81→76 turns:2
+    fl3 d9 NORM [einherjar+draugr+frost_troll+draugr] HP:83→70 turns:3
+    fl3 d11 NORM [shield_maiden+frost_troll+einherjar] HP:77→69 turns:3
+    fl3 d12 NORM [frost_troll+einherjar+rune_berserker] HP:76→78 turns:3
+    fl3 d14 ELITE [jormungandr_spawn] HP:83→83 turns:3
+    fl3 d15 BOSS [hel_queen] HP:83→71 turns:7
+  VICTOIRE fl3 | HP:78 | deck:30 | boss:3 | tours:134
+
+── Run 10 ─────────────────────────────────────
+    fl1 d0 NORM [satyr+harpy] HP:83→83 turns:2
+    fl1 d1 NORM [lamia] HP:83→83 turns:1
+    fl1 d2 NORM [lamia] HP:83→83 turns:0
+    fl1 d4 NORM [gorgon] HP:83→80 turns:2
+    fl1 d6 NORM [gorgon+satyr] HP:83→83 turns:2
+    fl1 d7 NORM [lamia+harpy] HP:83→83 turns:1
+    fl1 d9 NORM [lamia+harpy] HP:83→83 turns:1
+    fl1 d10 ELITE [minotaur] HP:83→71 turns:6
+    fl1 d12 NORM [lamia+harpy] HP:78→80 turns:2
+    fl1 d14 ELITE [minotaur] HP:83→83 turns:3
+    fl1 d15 BOSS [medusa] HP:83→47 turns:7
+    fl2 d0 NORM [shield_maiden+einherjar] HP:54→52 turns:3
+    fl2 d1 NORM [shield_maiden+einherjar] HP:59→53 turns:5
+    fl2 d2 NORM [frost_troll+rune_shaman] HP:60→64 turns:4
+    fl2 d5 NORM [rune_berserker+shield_maiden+draugr] HP:71→36 turns:6
+    fl2 d6 ELITE [valkyrie] HP:43→27 turns:4
+    fl2 d9 NORM [frost_troll+rune_berserker] HP:59→61 turns:2
+    fl2 d10 NORM [draugr+rune_berserker+shield_maiden] HP:68→53 turns:7
+    fl2 d12 NORM [rune_shaman+rune_berserker+einherjar] HP:60→63 turns:3
+    fl2 d14 ELITE [valkyrie] HP:70→72 turns:2
+    fl2 d15 BOSS [hel_queen] HP:79→45 turns:6
+    fl3 d0 NORM [tzitzimitl+stone_idol+obsidian_priest] HP:52→33 turns:8
+    fl3 d2 NORM [tzitzimitl+stone_idol+obsidian_priest] HP:64→38 turns:6
+    fl3 d3 NORM [stone_idol+flayed_cultist+obsidian_priest] HP:45→38 turns:6
+    fl3 d5 NORM [eagle_knight+obsidian_priest+tzitzimitl+obsidian_priest] HP:45→14 turns:9
+  * fl3 d7 NORM [stone_idol+obsidian_priest+jaguar_warrior+flayed_cultist] HP:21→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl2 | HP:21 | deck:26 | boss:2 | tours:100
+
+── Run 11 ─────────────────────────────────────
+    fl1 d0 NORM [tzitzimitl] HP:83→83 turns:1
+    fl1 d1 NORM [tzitzimitl] HP:83→83 turns:1
+    fl1 d2 NORM [eagle_knight] HP:83→83 turns:1
+    fl1 d4 NORM [tzitzimitl] HP:83→83 turns:1
+    fl1 d6 NORM [obsidian_priest+eagle_knight] HP:83→68 turns:6
+    fl1 d7 ELITE [huitzilopochtli_enforcer] HP:75→56 turns:7
+    fl1 d9 NORM [jaguar_warrior+tzitzimitl] HP:63→61 turns:2
+    fl1 d13 NORM [flayed_cultist+jaguar_warrior] HP:83→79 turns:2
+    fl1 d14 ELITE [quetzal_harbinger] HP:83→77 turns:4
+    fl1 d15 BOSS [quetzalcoatl_wrath] HP:83→44 turns:11
+    fl2 d0 NORM [lamia+harpy+harpy] HP:51→44 turns:3
+    fl2 d1 NORM [cyclops+satyr] HP:51→54 turns:1
+    fl2 d3 NORM [harpy+harpy+satyr] HP:61→63 turns:2
+    fl2 d6 NORM [bronze_automaton+gorgon] HP:70→62 turns:4
+    fl2 d9 NORM [gorgon+bronze_automaton] HP:69→74 turns:3
+    fl2 d10 NORM [bronze_automaton+harpy+satyr] HP:81→64 turns:3
+    fl2 d11 ELITE [lernaean_broodling] HP:71→74 turns:3
+    fl2 d12 NORM [cyclops+lamia] HP:81→75 turns:2
+    fl2 d14 ELITE [minotaur] HP:82→81 turns:1
+    fl2 d15 BOSS [medusa] HP:83→42 turns:4
+    fl3 d0 NORM [eagle_knight+stone_idol+obsidian_priest] HP:49→31 turns:3
+    fl3 d2 NORM [flayed_cultist+obsidian_priest+obsidian_priest+obsidian_priest] HP:62→30 turns:4
+    fl3 d3 NORM [stone_idol+obsidian_priest+eagle_knight] HP:37→42 turns:2
+    fl3 d4 NORM [tzitzimitl+stone_idol+obsidian_priest] HP:49→48 turns:3
+    fl3 d7 NORM [stone_idol+flayed_cultist+tzitzimitl] HP:79→64 turns:2
+  * fl3 d9 NORM [eagle_knight+jaguar_warrior+flayed_cultist+obsidian_priest] HP:71→MORT turns:4 [DÉFAITE]
+  DÉFAITE fl2 | HP:71 | deck:28 | boss:2 | tours:80
+
+── Run 12 ─────────────────────────────────────
+    fl1 d0 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d1 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d3 NORM [snow_maiden] HP:83→83 turns:1
+    fl1 d5 NORM [czar_guard] HP:83→83 turns:1
+    fl1 d6 NORM [snow_maiden+kikimora] HP:83→73 turns:4
+    fl1 d9 NORM [snow_maiden+rusalka] HP:80→78 turns:4
+    fl1 d13 NORM [iron_cossack+kikimora] HP:83→83 turns:3
+    fl1 d14 ELITE [koschei_herald] HP:83→83 turns:5
+    fl1 d15 BOSS [baba_yaga_hut] HP:83→53 turns:11
+    fl2 d0 NORM [bronze_automaton+harpy] HP:60→62 turns:3
+    fl2 d1 NORM [cyclops+satyr] HP:69→70 turns:2
+    fl2 d2 NORM [cyclops+satyr] HP:77→77 turns:2
+    fl2 d4 NORM [harpy+bronze_automaton] HP:83→83 turns:2
+    fl2 d6 NORM [bronze_automaton+gorgon] HP:83→83 turns:2
+    fl2 d7 ELITE [lernaean_broodling] HP:83→83 turns:0
+    fl2 d10 NORM [lamia+cyclops] HP:83→83 turns:2
+    fl2 d11 NORM [bronze_automaton+satyr+harpy] HP:83→83 turns:2
+    fl2 d13 NORM [bronze_automaton+harpy+satyr] HP:83→83 turns:3
+    fl2 d14 ELITE [lernaean_broodling] HP:83→83 turns:2
+    fl2 d15 BOSS [medusa] HP:83→83 turns:0
+    fl3 d0 NORM [shoggoth_spawn+void_tendril+star_spawn] HP:83→73 turns:3
+    fl3 d1 NORM [shoggoth_spawn+void_tendril+star_spawn] HP:80→64 turns:2
+    fl3 d3 NORM [shoggoth_spawn+cultist_scribe+void_tendril] HP:83→72 turns:2
+    fl3 d7 ELITE [elder_hybrid] HP:79→79 turns:0
+    fl3 d9 NORM [deep_one+shoggoth_spawn+cultist_scribe] HP:83→82 turns:2
+    fl3 d10 NORM [deep_one+byakhee+void_tendril] HP:83→80 turns:2
+    fl3 d11 ELITE [mi_go_surgeon] HP:83→81 turns:1
+    fl3 d13 NORM [deep_one+shoggoth_spawn+star_spawn] HP:83→69 turns:1
+    fl3 d14 ELITE [mi_go_surgeon] HP:76→73 turns:2
+    fl3 d15 BOSS [nyarlathotep_shard] HP:80→83 turns:4
+  VICTOIRE fl3 | HP:83 | deck:30 | boss:3 | tours:70
+
+── Run 13 ─────────────────────────────────────
+    fl1 d0 NORM [iron_cossack] HP:83→82 turns:2
+    fl1 d2 NORM [kikimora+kikimora] HP:83→83 turns:3
+    fl1 d3 NORM [snow_maiden] HP:83→83 turns:2
+    fl1 d6 ELITE [domovoi_titan] HP:83→67 turns:4
+    fl1 d9 NORM [iron_cossack+winter_wolf] HP:74→75 turns:2
+    fl1 d11 NORM [winter_wolf+snow_maiden] HP:82→83 turns:4
+    fl1 d12 NORM [rusalka+snow_maiden] HP:83→83 turns:3
+    fl1 d14 ELITE [domovoi_titan] HP:83→83 turns:2
+    fl1 d15 BOSS [baba_yaga_hut] HP:83→46 turns:9
+    fl2 d0 NORM [iron_cossack+kikimora+winter_wolf] HP:53→48 turns:4
+    fl2 d1 NORM [snow_maiden+iron_cossack] HP:55→56 turns:4
+    fl2 d3 NORM [iron_cossack+winter_wolf+rusalka] HP:63→58 turns:4
+    fl2 d7 NORM [czar_guard+kikimora+kikimora] HP:65→49 turns:7
+    fl2 d9 NORM [kikimora+snow_maiden+iron_cossack] HP:56→58 turns:4
+    fl2 d11 NORM [iron_cossack+czar_guard] HP:65→69 turns:3
+    fl2 d12 NORM [iron_cossack+czar_guard] HP:76→81 turns:3
+    fl2 d14 ELITE [domovoi_titan] HP:83→83 turns:4
+    fl2 d15 BOSS [baba_yaga_hut] HP:83→52 turns:9
+    fl3 d0 NORM [impundulu+serpent_oracle+mask_hunter] HP:59→41 turns:7
+    fl3 d1 NORM [serpent_oracle+impundulu+mask_hunter] HP:48→51 turns:3
+    fl3 d3 NORM [baobab_giant+serpent_oracle+tokoloshe] HP:82→78 turns:7
+  * fl3 d5 NORM [mask_hunter+hyena_pack+baobab_giant+hyena_pack] HP:83→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:83 | deck:23 | boss:2 | tours:93
+
+── Run 14 ─────────────────────────────────────
+    fl1 d0 NORM [einherjar] HP:83→83 turns:1
+    fl1 d1 NORM [draugr+rune_shaman] HP:83→83 turns:3
+    fl1 d3 NORM [rune_shaman+draugr] HP:83→82 turns:3
+    fl1 d5 NORM [rune_berserker+draugr] HP:83→83 turns:2
+    fl1 d6 NORM [draugr+shield_maiden] HP:83→82 turns:5
+    fl1 d7 ELITE [jormungandr_spawn] HP:83→82 turns:5
+    fl1 d10 NORM [shield_maiden+draugr] HP:83→76 turns:7
+    fl1 d11 NORM [rune_berserker+draugr] HP:83→83 turns:3
+    fl1 d12 NORM [draugr+rune_berserker] HP:83→83 turns:5
+    fl1 d14 ELITE [jormungandr_spawn] HP:83→60 turns:4
+  * fl1 d15 BOSS [hel_queen] HP:67→MORT turns:7 [DÉFAITE]
+  DÉFAITE fl0 | HP:67 | deck:19 | boss:0 | tours:45
+
+── Run 15 ─────────────────────────────────────
+    fl1 d0 NORM [gorgon] HP:83→83 turns:1
+    fl1 d2 NORM [gorgon] HP:83→83 turns:2
+    fl1 d3 NORM [lamia] HP:83→83 turns:1
+    fl1 d6 ELITE [lernaean_broodling] HP:83→69 turns:3
+    fl1 d9 NORM [cyclops] HP:76→78 turns:2
+    fl1 d10 ELITE [minotaur] HP:83→75 turns:2
+    fl1 d13 NORM [cyclops] HP:82→83 turns:2
+    fl1 d14 ELITE [minotaur] HP:83→70 turns:2
+  * fl1 d15 BOSS [hydra_aspect] HP:77→MORT turns:12 [DÉFAITE]
+  DÉFAITE fl0 | HP:77 | deck:19 | boss:0 | tours:27
+
+── Run 16 ─────────────────────────────────────
+    fl1 d0 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d2 NORM [impundulu] HP:83→83 turns:0
+    fl1 d3 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d5 NORM [serpent_oracle+hyena_pack] HP:83→83 turns:1
+    fl1 d6 NORM [impundulu+hyena_pack] HP:83→83 turns:1
+    fl1 d9 NORM [serpent_oracle+tokoloshe] HP:83→83 turns:1
+    fl1 d10 NORM [impundulu+hyena_pack] HP:83→83 turns:1
+    fl1 d11 NORM [hyena_pack+tokoloshe+hyena_pack] HP:83→81 turns:5
+    fl1 d13 NORM [tokoloshe+serpent_oracle] HP:83→83 turns:2
+    fl1 d14 ELITE [oya_harbinger] HP:83→73 turns:4
+    fl1 d15 BOSS [soundiata_spirit] HP:80→50 turns:12
+    fl2 d0 NORM [bronze_automaton+harpy] HP:57→54 turns:2
+    fl2 d1 NORM [cyclops+satyr] HP:61→53 turns:3
+    fl2 d3 NORM [satyr+cyclops] HP:60→62 turns:2
+    fl2 d5 NORM [lamia+cyclops] HP:69→69 turns:0
+    fl2 d6 NORM [cyclops+lamia] HP:76→78 turns:2
+    fl2 d7 ELITE [minotaur] HP:83→76 turns:2
+    fl2 d10 NORM [cyclops+harpy+satyr] HP:83→81 turns:3
+    fl2 d11 NORM [gorgon+lamia] HP:83→83 turns:1
+    fl2 d12 NORM [harpy+satyr+lamia+satyr] HP:83→83 turns:3
+    fl2 d14 ELITE [lernaean_broodling] HP:83→83 turns:2
+    fl2 d15 BOSS [hydra_aspect] HP:83→69 turns:11
+    fl3 d0 NORM [ushabti_servant+sand_guardian+scarab_swarm] HP:76→68 turns:1
+    fl3 d2 NORM [apep_scion+tomb_priest+mummy_knight+wadjet_guardian] HP:83→45 turns:3
+    fl3 d3 NORM [mummy_knight+ushabti_servant+wadjet_guardian] HP:52→59 turns:3
+    fl3 d5 NORM [tomb_priest+sand_guardian+ushabti_servant+apep_scion] HP:66→66 turns:0
+    fl3 d7 NORM [sand_guardian+wadjet_guardian+tomb_priest+tomb_priest] HP:83→81 turns:2
+    fl3 d9 NORM [sand_guardian+mummy_knight+wadjet_guardian] HP:83→83 turns:3
+    fl3 d10 NORM [ushabti_servant+sand_guardian+wadjet_guardian] HP:83→83 turns:2
+    fl3 d11 NORM [mummy_knight+sand_guardian+wadjet_guardian] HP:83→83 turns:2
+    fl3 d12 NORM [tomb_priest+mummy_knight+ushabti_servant+wadjet_guardian] HP:83→83 turns:0
+    fl3 d14 ELITE [sekhmet_chosen] HP:83→82 turns:1
+    fl3 d15 BOSS [osiris_judgment] HP:83→23 turns:4
+  VICTOIRE fl3 | HP:30 | deck:31 | boss:3 | tours:81
+
+── Run 17 ─────────────────────────────────────
+    fl1 d0 NORM [jaguar_warrior+obsidian_priest] HP:83→77 turns:6
+    fl1 d1 NORM [eagle_knight] HP:83→83 turns:1
+    fl1 d3 NORM [tzitzimitl] HP:83→83 turns:1
+    fl1 d6 NORM [tzitzimitl+jaguar_warrior] HP:83→55 turns:7
+    fl1 d7 ELITE [huitzilopochtli_enforcer] HP:62→44 turns:6
+    fl1 d9 NORM [eagle_knight+obsidian_priest] HP:51→52 turns:4
+    fl1 d10 NORM [jaguar_warrior+tzitzimitl] HP:59→53 turns:3
+    fl1 d11 NORM [obsidian_priest+jaguar_warrior+jaguar_warrior] HP:60→36 turns:8
+    fl1 d12 NORM [stone_idol] HP:43→44 turns:1
+    fl1 d14 ELITE [quetzal_harbinger] HP:51→48 turns:4
+  * fl1 d15 BOSS [tezcatlipoca_echo] HP:55→MORT turns:4 [DÉFAITE]
+  DÉFAITE fl0 | HP:55 | deck:19 | boss:0 | tours:45
+
+── Run 18 ─────────────────────────────────────
+    fl1 d0 NORM [iron_cossack] HP:83→83 turns:2
+    fl1 d1 NORM [rusalka+winter_wolf] HP:83→81 turns:2
+    fl1 d3 NORM [winter_wolf+winter_wolf] HP:83→83 turns:3
+    fl1 d5 NORM [winter_wolf+iron_cossack] HP:83→83 turns:6
+    fl1 d7 NORM [rusalka+iron_cossack] HP:83→83 turns:3
+    fl1 d9 NORM [rusalka+iron_cossack] HP:83→82 turns:3
+    fl1 d10 NORM [snow_maiden+winter_wolf] HP:83→78 turns:2
+    fl1 d11 NORM [czar_guard] HP:83→83 turns:1
+    fl1 d12 NORM [rusalka+winter_wolf+kikimora] HP:83→62 turns:3
+    fl1 d14 ELITE [koschei_herald] HP:69→66 turns:4
+  * fl1 d15 BOSS [koschei_deathless] HP:73→MORT turns:13 [DÉFAITE]
+  DÉFAITE fl0 | HP:73 | deck:19 | boss:0 | tours:42
+
+── Run 19 ─────────────────────────────────────
+    fl1 d0 NORM [lamia] HP:83→83 turns:0
+    fl1 d1 NORM [lamia] HP:83→83 turns:0
+    fl1 d3 NORM [harpy+satyr] HP:83→83 turns:2
+    fl1 d4 NORM [gorgon] HP:83→83 turns:0
+    fl1 d6 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d9 NORM [harpy+lamia] HP:83→83 turns:1
+    fl1 d10 NORM [cyclops] HP:83→83 turns:2
+    fl1 d11 NORM [harpy+lamia] HP:83→83 turns:1
+    fl1 d12 NORM [bronze_automaton] HP:83→83 turns:1
+    fl1 d14 ELITE [lernaean_broodling] HP:83→83 turns:1
+  * fl1 d15 BOSS [hydra_aspect] HP:83→MORT turns:8 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:19 | boss:0 | tours:17
+
+── Run 20 ─────────────────────────────────────
+    fl1 d0 NORM [satyr+harpy] HP:83→83 turns:2
+    fl1 d1 NORM [lamia] HP:83→83 turns:0
+    fl1 d2 NORM [harpy+satyr] HP:83→83 turns:2
+    fl1 d3 NORM [satyr+harpy] HP:83→83 turns:2
+    fl1 d5 NORM [cyclops] HP:83→70 turns:3
+    fl1 d6 NORM [gorgon+satyr] HP:77→75 turns:2
+    fl1 d7 ELITE [lernaean_broodling] HP:82→72 turns:6
+    fl1 d9 NORM [harpy+satyr] HP:79→81 turns:2
+    fl1 d10 NORM [gorgon+satyr] HP:83→83 turns:2
+    fl1 d11 NORM [harpy+lamia] HP:83→83 turns:1
+    fl1 d12 NORM [lamia+harpy] HP:83→83 turns:1
+    fl1 d14 ELITE [lernaean_broodling] HP:83→82 turns:3
+    fl1 d15 BOSS [medusa] HP:83→44 turns:6
+    fl2 d0 NORM [void_tendril+byakhee] HP:51→60 turns:3
+    fl2 d2 NORM [deep_one+star_spawn] HP:83→71 turns:4
+    fl2 d3 NORM [shoggoth_spawn+star_spawn] HP:78→79 turns:4
+    fl2 d5 NORM [star_spawn+byakhee+star_spawn+cultist_scribe] HP:83→34 turns:7
+    fl2 d6 NORM [void_tendril+byakhee+cultist_scribe] HP:41→34 turns:5
+    fl2 d9 NORM [deep_one+void_tendril] HP:70→83 turns:4
+    fl2 d10 NORM [shoggoth_spawn+byakhee] HP:83→83 turns:4
+    fl2 d11 NORM [void_tendril+cultist_scribe+byakhee] HP:83→83 turns:4
+    fl2 d12 NORM [shoggoth_spawn+cultist_scribe+star_spawn] HP:83→64 turns:4
+    fl2 d14 ELITE [mi_go_surgeon] HP:71→69 turns:4
+    fl2 d15 BOSS [shub_spawn] HP:76→9 turns:13
+  * fl3 d0 NORM [czar_guard+iron_cossack+kikimora] HP:16→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl2 | HP:16 | deck:25 | boss:2 | tours:90
+
+── Run 21 ─────────────────────────────────────
+    fl1 d0 NORM [mummy_knight] HP:83→83 turns:4
+    fl1 d2 NORM [ushabti_servant] HP:83→83 turns:1
+    fl1 d3 NORM [wadjet_guardian] HP:83→83 turns:2
+    fl1 d7 NORM [apep_scion+scarab_swarm+scarab_swarm] HP:83→83 turns:5
+    fl1 d9 NORM [mummy_knight+tomb_priest] HP:83→83 turns:3
+    fl1 d10 NORM [ushabti_servant+tomb_priest] HP:83→83 turns:3
+    fl1 d11 NORM [wadjet_guardian+scarab_swarm] HP:83→83 turns:2
+    fl1 d13 NORM [ushabti_servant+apep_scion] HP:83→81 turns:5
+    fl1 d14 ELITE [sekhmet_chosen] HP:83→56 turns:6
+    fl1 d15 BOSS [osiris_judgment] HP:63→22 turns:13
+    fl2 d0 NORM [wadjet_guardian+ushabti_servant] HP:29→32 turns:3
+    fl2 d2 NORM [sand_guardian+apep_scion] HP:63→66 turns:3
+    fl2 d3 NORM [mummy_knight+wadjet_guardian] HP:73→76 turns:3
+    fl2 d4 NORM [ushabti_servant+wadjet_guardian] HP:83→83 turns:3
+    fl2 d7 NORM [mummy_knight+ushabti_servant+tomb_priest] HP:83→76 turns:4
+    fl2 d9 NORM [mummy_knight+tomb_priest+wadjet_guardian] HP:83→83 turns:4
+    fl2 d10 NORM [wadjet_guardian+ushabti_servant+scarab_swarm] HP:83→83 turns:4
+    fl2 d11 NORM [tomb_priest+wadjet_guardian+ushabti_servant] HP:83→83 turns:4
+    fl2 d12 NORM [scarab_swarm+apep_scion+wadjet_guardian+apep_scion] HP:83→83 turns:3
+    fl2 d14 ELITE [anubis_champion] HP:83→75 turns:3
+    fl2 d15 BOSS [ra_avatar] HP:82→30 turns:8
+    fl3 d0 NORM [bog_beast+sidhe_raider+druid_apprentice+morrigan_wisp] HP:37→7 turns:6
+    fl3 d2 NORM [briar_beast+bog_beast+morrigan_wisp] HP:38→15 turns:4
+    fl3 d3 NORM [amber_hound+briar_beast+sidhe_raider+sidhe_raider] HP:22→13 turns:5
+    fl3 d5 NORM [bog_beast+amber_hound+briar_beast] HP:20→3 turns:7
+  * fl3 d6 NORM [druid_apprentice+amber_hound+briar_beast+druid_apprentice] HP:10→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:10 | deck:26 | boss:2 | tours:109
+
+── Run 22 ─────────────────────────────────────
+    fl1 d0 NORM [briar_beast] HP:83→79 turns:3
+    fl1 d1 NORM [sidhe_raider+druid_apprentice] HP:83→78 turns:3
+    fl1 d3 NORM [druid_apprentice+sidhe_raider] HP:83→83 turns:2
+    fl1 d5 NORM [briar_beast+druid_apprentice] HP:83→79 turns:2
+    fl1 d6 ELITE [morrigan_chosen] HP:83→81 turns:5
+    fl1 d9 NORM [druid_apprentice+amber_hound] HP:83→80 turns:2
+    fl1 d10 NORM [sidhe_raider+briar_beast] HP:83→78 turns:2
+    fl1 d11 ELITE [morrigan_chosen] HP:83→71 turns:6
+    fl1 d12 NORM [briar_beast+morrigan_wisp] HP:78→78 turns:2
+    fl1 d14 ELITE [wild_hunt_hound] HP:83→70 turns:3
+    fl1 d15 BOSS [dagda_shadow] HP:77→68 turns:13
+    fl2 d0 NORM [impundulu+serpent_oracle] HP:75→80 turns:2
+    fl2 d1 NORM [baobab_giant+tokoloshe] HP:83→79 turns:4
+    fl2 d3 NORM [hyena_pack+serpent_oracle+hyena_pack] HP:83→83 turns:3
+    fl2 d5 NORM [impundulu+serpent_oracle+tokoloshe] HP:83→66 turns:4
+    fl2 d7 NORM [serpent_oracle+mask_hunter+hyena_pack] HP:73→45 turns:5
+    fl2 d9 NORM [serpent_oracle+mask_hunter+tokoloshe] HP:52→35 turns:3
+    fl2 d10 NORM [serpent_oracle+impundulu+tokoloshe] HP:42→41 turns:2
+    fl2 d13 NORM [mask_hunter+baobab_giant] HP:72→83 turns:3
+    fl2 d14 ELITE [legba_emissary] HP:83→78 turns:4
+  * fl2 d15 BOSS [soundiata_spirit] HP:83→MORT turns:10 [DÉFAITE]
+  DÉFAITE fl1 | HP:83 | deck:24 | boss:1 | tours:83
+
+── Run 23 ─────────────────────────────────────
+    fl1 d0 NORM [briar_beast] HP:83→83 turns:1
+    fl1 d2 NORM [briar_beast] HP:83→83 turns:2
+    fl1 d3 NORM [druid_apprentice+morrigan_wisp] HP:83→83 turns:2
+    fl1 d5 NORM [sidhe_raider+briar_beast] HP:83→79 turns:3
+    fl1 d6 NORM [morrigan_wisp+morrigan_wisp+druid_apprentice] HP:83→76 turns:4
+    fl1 d9 NORM [briar_beast+sidhe_raider] HP:83→81 turns:2
+    fl1 d10 NORM [amber_hound+druid_apprentice] HP:83→79 turns:3
+    fl1 d11 NORM [bog_beast] HP:83→83 turns:2
+    fl1 d12 NORM [briar_beast+sidhe_raider] HP:83→83 turns:2
+    fl1 d14 ELITE [morrigan_chosen] HP:83→75 turns:2
+    fl1 d15 BOSS [cernunnos_shade] HP:82→21 turns:10
+    fl2 d0 NORM [stone_idol+jaguar_warrior] HP:28→27 turns:4
+    fl2 d1 NORM [stone_idol+jaguar_warrior] HP:34→25 turns:4
+    fl2 d3 NORM [stone_idol+jaguar_warrior] HP:56→57 turns:1
+    fl2 d5 NORM [stone_idol+tzitzimitl] HP:64→35 turns:4
+    fl2 d6 NORM [stone_idol+tzitzimitl] HP:42→27 turns:3
+    fl2 d7 NORM [eagle_knight+flayed_cultist+obsidian_priest] HP:34→27 turns:4
+    fl2 d9 NORM [tzitzimitl+stone_idol] HP:59→61 turns:2
+    fl2 d10 NORM [eagle_knight+stone_idol] HP:68→47 turns:6
+  * fl2 d11 NORM [eagle_knight+flayed_cultist+jaguar_warrior] HP:54→MORT turns:4 [DÉFAITE]
+  DÉFAITE fl1 | HP:54 | deck:22 | boss:1 | tours:65
+
+── Run 24 ─────────────────────────────────────
+    fl1 d0 NORM [cultist_scribe+star_spawn] HP:83→83 turns:4
+    fl1 d1 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d2 NORM [star_spawn+cultist_scribe] HP:83→82 turns:2
+    fl1 d3 NORM [byakhee] HP:83→83 turns:0
+    fl1 d5 NORM [deep_one] HP:83→83 turns:1
+    fl1 d7 NORM [cultist_scribe+cultist_scribe+star_spawn] HP:83→66 turns:3
+    fl1 d9 NORM [star_spawn+byakhee] HP:73→73 turns:1
+    fl1 d10 NORM [cultist_scribe+void_tendril] HP:80→81 turns:2
+    fl1 d13 NORM [byakhee+star_spawn] HP:83→83 turns:2
+    fl1 d14 ELITE [elder_hybrid] HP:83→78 turns:3
+    fl1 d15 BOSS [nyarlathotep_shard] HP:83→47 turns:8
+    fl2 d0 NORM [deep_one+cultist_scribe] HP:54→40 turns:4
+    fl2 d2 NORM [shoggoth_spawn+cultist_scribe] HP:71→64 turns:3
+    fl2 d3 NORM [shoggoth_spawn+cultist_scribe] HP:71→73 turns:2
+    fl2 d5 NORM [void_tendril+deep_one] HP:80→75 turns:2
+    fl2 d7 NORM [byakhee+star_spawn+void_tendril] HP:83→46 turns:5
+    fl2 d9 NORM [shoggoth_spawn+void_tendril] HP:53→48 turns:1
+    fl2 d10 NORM [void_tendril+shoggoth_spawn] HP:55→50 turns:3
+    fl2 d11 NORM [shoggoth_spawn+star_spawn+cultist_scribe] HP:57→26 turns:3
+    fl2 d13 NORM [deep_one+byakhee] HP:33→26 turns:2
+    fl2 d14 ELITE [elder_hybrid] HP:33→17 turns:3
+  * fl2 d15 BOSS [shub_spawn] HP:32→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl1 | HP:32 | deck:25 | boss:1 | tours:58
+
+── Run 25 ─────────────────────────────────────
+    fl1 d0 NORM [star_spawn+cultist_scribe] HP:83→83 turns:3
+    fl1 d1 NORM [cultist_scribe+star_spawn] HP:83→80 turns:3
+    fl1 d3 NORM [cultist_scribe+cultist_scribe] HP:83→83 turns:1
+    fl1 d5 NORM [void_tendril+cultist_scribe] HP:83→77 turns:4
+    fl1 d6 ELITE [mi_go_surgeon] HP:83→67 turns:4
+    fl1 d9 NORM [star_spawn+void_tendril] HP:74→76 turns:2
+    fl1 d10 ELITE [mi_go_surgeon] HP:83→83 turns:4
+    fl1 d11 NORM [void_tendril+star_spawn] HP:83→83 turns:2
+    fl1 d13 NORM [star_spawn+cultist_scribe+cultist_scribe] HP:83→61 turns:3
+    fl1 d14 ELITE [elder_hybrid] HP:68→59 turns:4
+  * fl1 d15 BOSS [nyarlathotep_shard] HP:66→MORT turns:7 [DÉFAITE]
+  DÉFAITE fl0 | HP:66 | deck:21 | boss:0 | tours:37
+
+── Run 26 ─────────────────────────────────────
+    fl1 d0 NORM [gorgon] HP:83→80 turns:2
+    fl1 d2 NORM [lamia] HP:83→83 turns:0
+    fl1 d3 NORM [lamia] HP:83→83 turns:0
+    fl1 d5 ELITE [lernaean_broodling] HP:83→83 turns:4
+    fl1 d6 NORM [satyr+gorgon] HP:83→83 turns:1
+    fl1 d9 NORM [cyclops] HP:83→83 turns:0
+    fl1 d10 NORM [lamia+satyr] HP:83→83 turns:0
+    fl1 d11 ELITE [lernaean_broodling] HP:83→83 turns:0
+    fl1 d12 NORM [bronze_automaton] HP:83→83 turns:0
+    fl1 d14 ELITE [minotaur] HP:83→83 turns:0
+    fl1 d15 BOSS [hydra_aspect] HP:83→83 turns:0
+    fl2 d0 NORM [shield_maiden+einherjar] HP:83→83 turns:0
+    fl2 d2 NORM [frost_troll+draugr] HP:83→83 turns:0
+    fl2 d4 NORM [shield_maiden+einherjar] HP:83→83 turns:0
+    fl2 d6 NORM [rune_shaman+frost_troll+draugr] HP:83→66 turns:1
+    fl2 d7 ELITE [valkyrie] HP:73→73 turns:0
+    fl2 d9 NORM [frost_troll+shield_maiden] HP:80→80 turns:0
+    fl2 d11 NORM [rune_shaman+draugr+einherjar+draugr] HP:83→83 turns:0
+    fl2 d12 NORM [shield_maiden+einherjar+draugr] HP:83→83 turns:0
+    fl2 d14 ELITE [valkyrie] HP:83→83 turns:0
+    fl2 d15 BOSS [hel_queen] HP:83→83 turns:0
+    fl3 d0 NORM [bog_beast+briar_beast+druid_apprentice] HP:83→62 turns:3
+    fl3 d1 NORM [morrigan_wisp+briar_beast+bog_beast] HP:69→69 turns:0
+    fl3 d3 NORM [bog_beast+briar_beast+druid_apprentice] HP:76→63 turns:1
+    fl3 d5 NORM [druid_apprentice+amber_hound+briar_beast+morrigan_wisp] HP:70→51 turns:1
+    fl3 d6 NORM [briar_beast+sidhe_raider+amber_hound+sidhe_raider] HP:58→52 turns:1
+    fl3 d7 ELITE [morrigan_chosen] HP:59→59 turns:0
+    fl3 d10 NORM [morrigan_wisp+bog_beast+morrigan_wisp+briar_beast] HP:83→58 turns:1
+    fl3 d11 NORM [briar_beast+amber_hound+druid_apprentice+druid_apprentice] HP:65→65 turns:0
+    fl3 d13 NORM [bog_beast+briar_beast+amber_hound] HP:72→49 turns:2
+    fl3 d14 ELITE [wild_hunt_hound] HP:56→50 turns:1
+    fl3 d15 BOSS [dagda_shadow] HP:57→42 turns:1
+  VICTOIRE fl3 | HP:49 | deck:28 | boss:3 | tours:19
+
+── Run 27 ─────────────────────────────────────
+    fl1 d0 NORM [morrigan_wisp+druid_apprentice] HP:83→83 turns:3
+    fl1 d1 NORM [amber_hound] HP:83→83 turns:0
+    fl1 d3 NORM [amber_hound] HP:83→83 turns:1
+    fl1 d4 NORM [morrigan_wisp+druid_apprentice] HP:83→83 turns:3
+    fl1 d6 NORM [bog_beast] HP:83→83 turns:2
+    fl1 d7 ELITE [wild_hunt_hound] HP:83→72 turns:4
+    fl1 d11 NORM [sidhe_raider+briar_beast] HP:79→79 turns:2
+    fl1 d12 NORM [morrigan_wisp+briar_beast] HP:83→75 turns:2
+    fl1 d14 ELITE [wild_hunt_hound] HP:82→75 turns:3
+    fl1 d15 BOSS [cernunnos_shade] HP:82→47 turns:8
+    fl2 d0 NORM [shoggoth_spawn+cultist_scribe] HP:54→72 turns:4
+    fl2 d1 NORM [byakhee+cultist_scribe+star_spawn] HP:79→81 turns:5
+    fl2 d3 NORM [deep_one+star_spawn] HP:83→83 turns:3
+    fl2 d5 NORM [deep_one+void_tendril] HP:83→69 turns:3
+    fl2 d6 ELITE [elder_hybrid] HP:76→83 turns:4
+    fl2 d9 NORM [deep_one+void_tendril] HP:83→83 turns:2
+    fl2 d10 ELITE [mi_go_surgeon] HP:83→83 turns:2
+    fl2 d11 NORM [star_spawn+deep_one+cultist_scribe] HP:83→73 turns:1
+    fl2 d13 NORM [byakhee+void_tendril+star_spawn] HP:80→77 turns:1
+    fl2 d14 ELITE [mi_go_surgeon] HP:83→83 turns:1
+    fl2 d15 BOSS [nyarlathotep_shard] HP:83→71 turns:6
+    fl3 d0 NORM [stone_idol+tzitzimitl+obsidian_priest] HP:78→19 turns:7
+    fl3 d1 NORM [stone_idol+tzitzimitl+obsidian_priest] HP:26→26 turns:0
+    fl3 d3 NORM [tzitzimitl+stone_idol+obsidian_priest] HP:57→53 turns:6
+    fl3 d6 NORM [stone_idol+flayed_cultist+jaguar_warrior+obsidian_priest] HP:60→26 turns:8
+  * fl3 d9 NORM [tzitzimitl+stone_idol+jaguar_warrior+jaguar_warrior] HP:58→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl2 | HP:58 | deck:26 | boss:2 | tours:83
+
+── Run 28 ─────────────────────────────────────
+    fl1 d0 NORM [obsidian_priest+jaguar_warrior] HP:83→83 turns:5
+    fl1 d1 NORM [eagle_knight] HP:83→83 turns:1
+    fl1 d3 NORM [eagle_knight] HP:83→83 turns:2
+    fl1 d4 NORM [flayed_cultist] HP:83→83 turns:1
+    fl1 d6 NORM [jaguar_warrior+obsidian_priest+obsidian_priest] HP:83→54 turns:7
+    fl1 d7 ELITE [quetzal_harbinger] HP:61→61 turns:5
+    fl1 d9 NORM [jaguar_warrior+obsidian_priest+obsidian_priest] HP:68→73 turns:5
+    fl1 d11 NORM [tzitzimitl+obsidian_priest] HP:80→81 turns:3
+    fl1 d13 NORM [eagle_knight+jaguar_warrior] HP:83→57 turns:4
+    fl1 d14 ELITE [quetzal_harbinger] HP:64→68 turns:4
+    fl1 d15 BOSS [tezcatlipoca_echo] HP:75→28 turns:10
+    fl2 d0 NORM [cyclops+satyr] HP:35→38 turns:3
+    fl2 d1 NORM [lamia+gorgon] HP:45→47 turns:2
+    fl2 d3 NORM [satyr+harpy+gorgon] HP:78→81 turns:3
+    fl2 d5 NORM [gorgon+lamia+satyr] HP:83→77 turns:2
+    fl2 d7 NORM [cyclops+lamia] HP:83→71 turns:4
+    fl2 d9 NORM [satyr+satyr+harpy+gorgon] HP:78→80 turns:2
+    fl2 d10 NORM [gorgon+bronze_automaton] HP:83→83 turns:4
+    fl2 d11 NORM [cyclops+lamia] HP:83→83 turns:3
+    fl2 d12 NORM [cyclops+lamia] HP:83→83 turns:3
+    fl2 d14 ELITE [lernaean_broodling] HP:83→83 turns:4
+    fl2 d15 BOSS [medusa] HP:83→75 turns:4
+    fl3 d0 NORM [iron_cossack+czar_guard+winter_wolf] HP:82→83 turns:4
+    fl3 d1 NORM [iron_cossack+snow_maiden+winter_wolf+kikimora] HP:83→65 turns:4
+    fl3 d3 NORM [kikimora+iron_cossack+snow_maiden+kikimora] HP:83→62 turns:3
+    fl3 d4 NORM [czar_guard+kikimora+winter_wolf+kikimora] HP:69→66 turns:3
+    fl3 d6 NORM [czar_guard+iron_cossack+winter_wolf+kikimora] HP:73→41 turns:5
+    fl3 d9 NORM [czar_guard+rusalka+snow_maiden+winter_wolf] HP:73→76 turns:3
+    fl3 d10 NORM [snow_maiden+iron_cossack+czar_guard] HP:83→83 turns:3
+    fl3 d12 NORM [czar_guard+snow_maiden+kikimora+winter_wolf] HP:83→76 turns:3
+    fl3 d14 ELITE [koschei_herald] HP:83→83 turns:3
+    fl3 d15 BOSS [koschei_deathless] HP:83→51 turns:9
+  VICTOIRE fl3 | HP:58 | deck:28 | boss:3 | tours:121
+
+── Run 29 ─────────────────────────────────────
+    fl1 d0 NORM [satyr+harpy] HP:83→83 turns:1
+    fl1 d1 NORM [lamia] HP:83→83 turns:1
+    fl1 d2 NORM [lamia] HP:83→83 turns:0
+    fl1 d3 NORM [lamia] HP:83→83 turns:1
+    fl1 d5 NORM [cyclops] HP:83→83 turns:2
+    fl1 d6 NORM [bronze_automaton] HP:83→74 turns:3
+    fl1 d9 NORM [lamia+harpy] HP:83→83 turns:1
+    fl1 d10 NORM [satyr+satyr+harpy] HP:83→83 turns:2
+    fl1 d11 NORM [harpy+satyr+harpy] HP:83→81 turns:2
+    fl1 d13 NORM [harpy+lamia] HP:83→83 turns:1
+    fl1 d14 ELITE [lernaean_broodling] HP:83→83 turns:2
+  * fl1 d15 BOSS [hydra_aspect] HP:83→MORT turns:10 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:21 | boss:0 | tours:26
+
+── Run 30 ─────────────────────────────────────
+    fl1 d0 NORM [rune_berserker] HP:83→83 turns:0
+    fl1 d1 NORM [einherjar] HP:83→83 turns:1
+    fl1 d2 NORM [rune_shaman+rune_shaman] HP:83→82 turns:3
+    fl1 d5 NORM [rune_shaman+einherjar] HP:83→80 turns:4
+    fl1 d6 NORM [rune_shaman+einherjar] HP:83→80 turns:2
+    fl1 d7 ELITE [jormungandr_spawn] HP:83→83 turns:5
+    fl1 d9 NORM [rune_shaman+einherjar] HP:83→83 turns:3
+    fl1 d12 NORM [einherjar+rune_shaman] HP:83→83 turns:2
+    fl1 d14 ELITE [valkyrie] HP:83→75 turns:4
+  * fl1 d15 BOSS [fenrir] HP:82→MORT turns:8 [DÉFAITE]
+  DÉFAITE fl0 | HP:82 | deck:19 | boss:0 | tours:32
+
+── Run 31 ─────────────────────────────────────
+    fl1 d0 NORM [tomb_priest+apep_scion] HP:83→83 turns:3
+    fl1 d1 NORM [wadjet_guardian] HP:83→83 turns:1
+    fl1 d3 NORM [tomb_priest+apep_scion] HP:83→83 turns:2
+    fl1 d5 NORM [scarab_swarm+apep_scion+tomb_priest] HP:83→78 turns:6
+    fl1 d6 ELITE [sekhmet_chosen] HP:83→83 turns:5
+    fl1 d9 NORM [sand_guardian] HP:83→83 turns:1
+    fl1 d11 NORM [wadjet_guardian+tomb_priest] HP:83→83 turns:2
+    fl1 d12 NORM [scarab_swarm+tomb_priest+tomb_priest] HP:83→83 turns:5
+    fl1 d14 ELITE [anubis_champion] HP:83→83 turns:2
+    fl1 d15 BOSS [osiris_judgment] HP:83→51 turns:6
+    fl2 d0 NORM [deep_one+star_spawn] HP:58→40 turns:2
+    fl2 d1 NORM [deep_one+star_spawn] HP:47→42 turns:3
+    fl2 d2 NORM [shoggoth_spawn+cultist_scribe] HP:49→45 turns:2
+    fl2 d5 NORM [byakhee+deep_one] HP:52→51 turns:2
+    fl2 d6 NORM [void_tendril+shoggoth_spawn] HP:58→54 turns:2
+    fl2 d7 ELITE [mi_go_surgeon] HP:61→64 turns:3
+    fl2 d9 NORM [void_tendril+star_spawn+cultist_scribe+cultist_scribe] HP:71→73 turns:3
+    fl2 d10 NORM [void_tendril+shoggoth_spawn] HP:80→79 turns:3
+    fl2 d11 ELITE [mi_go_surgeon] HP:83→82 turns:2
+    fl2 d14 ELITE [mi_go_surgeon] HP:83→83 turns:2
+    fl2 d15 BOSS [shub_spawn] HP:90→90 turns:6
+    fl3 d0 NORM [gorgon+bronze_automaton+harpy] HP:95→77 turns:3
+    fl3 d2 NORM [cyclops+lamia+harpy] HP:84→72 turns:2
+    fl3 d3 NORM [gorgon+cyclops+satyr] HP:79→59 turns:2
+    fl3 d5 ELITE [lernaean_broodling] HP:66→68 turns:3
+    fl3 d6 NORM [bronze_automaton+gorgon+harpy+harpy] HP:75→35 turns:4
+    fl3 d9 NORM [bronze_automaton+gorgon+lamia] HP:67→62 turns:3
+    fl3 d10 ELITE [minotaur] HP:69→57 turns:2
+    fl3 d12 NORM [cyclops+bronze_automaton+harpy] HP:64→55 turns:2
+    fl3 d14 ELITE [minotaur] HP:62→63 turns:1
+    fl3 d15 BOSS [hydra_aspect] HP:70→62 turns:4
+  VICTOIRE fl3 | HP:69 | deck:32 | boss:3 | tours:89
+
+── Run 32 ─────────────────────────────────────
+    fl1 d0 NORM [mummy_knight] HP:83→83 turns:1
+    fl1 d2 NORM [scarab_swarm+apep_scion] HP:83→83 turns:3
+    fl1 d4 NORM [ushabti_servant] HP:83→83 turns:1
+    fl1 d5 NORM [scarab_swarm+wadjet_guardian] HP:83→83 turns:5
+    fl1 d7 NORM [tomb_priest+tomb_priest+apep_scion] HP:83→80 turns:7
+    fl1 d9 NORM [sand_guardian] HP:83→83 turns:1
+    fl1 d10 NORM [apep_scion+wadjet_guardian] HP:83→83 turns:3
+    fl1 d11 NORM [wadjet_guardian+scarab_swarm] HP:83→83 turns:3
+    fl1 d12 NORM [tomb_priest+wadjet_guardian] HP:83→83 turns:4
+    fl1 d14 ELITE [sekhmet_chosen] HP:83→82 turns:3
+  * fl1 d15 BOSS [ra_avatar] HP:83→MORT turns:9 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:19 | boss:0 | tours:40
+
+── Run 33 ─────────────────────────────────────
+    fl1 d0 NORM [rusalka+winter_wolf] HP:83→83 turns:4
+    fl1 d1 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d3 NORM [snow_maiden] HP:83→83 turns:1
+    fl1 d4 NORM [winter_wolf+kikimora] HP:83→83 turns:1
+    fl1 d6 NORM [rusalka+snow_maiden] HP:83→79 turns:2
+    fl1 d9 NORM [iron_cossack+rusalka] HP:83→82 turns:3
+    fl1 d10 NORM [snow_maiden+winter_wolf] HP:83→83 turns:3
+    fl1 d11 NORM [snow_maiden+winter_wolf] HP:83→79 turns:3
+    fl1 d13 NORM [rusalka+kikimora+winter_wolf] HP:83→80 turns:4
+    fl1 d14 ELITE [domovoi_titan] HP:83→69 turns:6
+    fl1 d15 BOSS [baba_yaga_hut] HP:76→20 turns:6
+    fl2 d0 NORM [hyena_pack+baobab_giant] HP:27→17 turns:4
+    fl2 d2 NORM [impundulu+mask_hunter] HP:52→50 turns:3
+    fl2 d4 NORM [baobab_giant+hyena_pack] HP:57→49 turns:2
+    fl2 d6 NORM [mask_hunter+serpent_oracle+hyena_pack] HP:56→51 turns:4
+    fl2 d9 NORM [hyena_pack+mask_hunter+impundulu] HP:86→75 turns:3
+    fl2 d10 NORM [mask_hunter+serpent_oracle+hyena_pack] HP:82→66 turns:4
+    fl2 d11 NORM [baobab_giant+impundulu] HP:73→76 turns:4
+    fl2 d13 NORM [serpent_oracle+mask_hunter+hyena_pack] HP:83→67 turns:2
+    fl2 d14 ELITE [oya_harbinger] HP:74→72 turns:2
+  * fl2 d15 BOSS [anansi_weaver] HP:79→MORT turns:8 [DÉFAITE]
+  DÉFAITE fl1 | HP:79 | deck:24 | boss:1 | tours:70
+
+── Run 34 ─────────────────────────────────────
+    fl1 d0 NORM [druid_apprentice+morrigan_wisp] HP:83→81 turns:2
+    fl1 d1 NORM [morrigan_wisp+druid_apprentice] HP:83→82 turns:3
+    fl1 d3 NORM [sidhe_raider+druid_apprentice] HP:83→76 turns:3
+    fl1 d5 NORM [druid_apprentice+morrigan_wisp+sidhe_raider] HP:83→81 turns:4
+    fl1 d7 NORM [amber_hound+druid_apprentice] HP:83→83 turns:2
+    fl1 d9 NORM [morrigan_wisp+druid_apprentice] HP:83→77 turns:3
+    fl1 d10 NORM [briar_beast+druid_apprentice] HP:83→80 turns:3
+    fl1 d11 NORM [amber_hound+druid_apprentice] HP:83→83 turns:3
+    fl1 d13 NORM [amber_hound+druid_apprentice] HP:83→83 turns:2
+    fl1 d14 ELITE [morrigan_chosen] HP:83→78 turns:4
+    fl1 d15 BOSS [cernunnos_shade] HP:83→59 turns:6
+    fl2 d0 NORM [wadjet_guardian+apep_scion+scarab_swarm] HP:66→83 turns:5
+    fl2 d1 NORM [wadjet_guardian+ushabti_servant] HP:83→80 turns:3
+    fl2 d3 NORM [wadjet_guardian+ushabti_servant] HP:83→83 turns:3
+    fl2 d4 NORM [tomb_priest+wadjet_guardian] HP:83→83 turns:2
+    fl2 d6 NORM [wadjet_guardian+sand_guardian] HP:83→83 turns:3
+    fl2 d7 ELITE [sekhmet_chosen] HP:83→83 turns:3
+    fl2 d9 NORM [mummy_knight+scarab_swarm+wadjet_guardian] HP:83→83 turns:4
+    fl2 d10 NORM [mummy_knight+wadjet_guardian] HP:83→83 turns:3
+    fl2 d11 NORM [ushabti_servant+wadjet_guardian+scarab_swarm] HP:83→83 turns:5
+    fl2 d12 NORM [mummy_knight+wadjet_guardian] HP:83→83 turns:3
+    fl2 d14 ELITE [anubis_champion] HP:83→78 turns:3
+    fl2 d15 BOSS [osiris_judgment] HP:83→71 turns:9
+    fl3 d0 NORM [lamia+cyclops+harpy] HP:78→68 turns:6
+    fl3 d1 NORM [bronze_automaton+harpy+gorgon] HP:75→62 turns:6
+    fl3 d3 NORM [cyclops+harpy+lamia] HP:83→44 turns:5
+  * fl3 d4 NORM [harpy+lamia+cyclops] HP:51→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:51 | deck:26 | boss:2 | tours:101
+
+── Run 35 ─────────────────────────────────────
+    fl1 d0 NORM [morrigan_wisp+druid_apprentice] HP:83→83 turns:3
+    fl1 d1 NORM [druid_apprentice+morrigan_wisp] HP:83→81 turns:2
+    fl1 d3 NORM [amber_hound] HP:83→83 turns:1
+    fl1 d5 ELITE [wild_hunt_hound] HP:83→83 turns:4
+    fl1 d6 NORM [bog_beast] HP:83→83 turns:1
+    fl1 d9 NORM [briar_beast+morrigan_wisp] HP:83→80 turns:2
+    fl1 d10 ELITE [wild_hunt_hound] HP:83→83 turns:4
+    fl1 d12 NORM [amber_hound+druid_apprentice] HP:83→83 turns:1
+    fl1 d14 ELITE [wild_hunt_hound] HP:83→82 turns:4
+    fl1 d15 BOSS [cernunnos_shade] HP:83→40 turns:6
+    fl2 d0 NORM [sand_guardian+scarab_swarm] HP:47→49 turns:2
+    fl2 d1 NORM [wadjet_guardian+mummy_knight] HP:56→63 turns:3
+    fl2 d2 NORM [sand_guardian+scarab_swarm] HP:70→72 turns:2
+    fl2 d5 ELITE [anubis_champion] HP:79→79 turns:3
+    fl2 d7 NORM [scarab_swarm+wadjet_guardian+mummy_knight] HP:83→81 turns:5
+    fl2 d9 NORM [wadjet_guardian+apep_scion+ushabti_servant] HP:83→83 turns:4
+    fl2 d10 ELITE [anubis_champion] HP:83→60 turns:4
+    fl2 d11 NORM [scarab_swarm+apep_scion+ushabti_servant+scarab_swarm] HP:67→64 turns:5
+    fl2 d12 NORM [apep_scion+sand_guardian+tomb_priest] HP:71→75 turns:4
+    fl2 d14 ELITE [anubis_champion] HP:83→81 turns:2
+  * fl2 d15 BOSS [ra_avatar] HP:83→MORT turns:7 [DÉFAITE]
+  DÉFAITE fl1 | HP:83 | deck:25 | boss:1 | tours:69
+
+── Run 36 ─────────────────────────────────────
+    fl1 d0 NORM [impundulu] HP:83→83 turns:0
+    fl1 d1 NORM [hyena_pack+hyena_pack] HP:83→82 turns:2
+    fl1 d3 NORM [serpent_oracle] HP:83→83 turns:1
+    fl1 d4 NORM [tokoloshe+hyena_pack] HP:83→83 turns:2
+    fl1 d6 NORM [serpent_oracle+tokoloshe] HP:83→83 turns:2
+    fl1 d7 NORM [serpent_oracle+hyena_pack] HP:83→74 turns:3
+    fl1 d9 NORM [serpent_oracle+tokoloshe] HP:81→83 turns:2
+    fl1 d10 NORM [serpent_oracle+tokoloshe] HP:83→83 turns:4
+    fl1 d11 NORM [baobab_giant] HP:83→83 turns:2
+    fl1 d12 NORM [impundulu+hyena_pack] HP:83→83 turns:4
+    fl1 d14 ELITE [oya_harbinger] HP:83→68 turns:6
+    fl1 d15 BOSS [soundiata_spirit] HP:75→37 turns:14
+    fl2 d0 NORM [gorgon+lamia] HP:44→46 turns:2
+    fl2 d3 NORM [bronze_automaton+harpy] HP:77→68 turns:5
+    fl2 d6 NORM [satyr+gorgon+satyr+harpy] HP:75→50 turns:3
+    fl2 d9 NORM [cyclops+lamia] HP:57→55 turns:3
+    fl2 d10 ELITE [minotaur] HP:62→25 turns:6
+    fl2 d11 NORM [cyclops+satyr+satyr] HP:32→9 turns:5
+    fl2 d12 NORM [lamia+cyclops] HP:16→16 turns:2
+    fl2 d14 ELITE [lernaean_broodling] HP:23→17 turns:4
+  * fl2 d15 BOSS [hydra_aspect] HP:24→MORT turns:4 [DÉFAITE]
+  DÉFAITE fl1 | HP:24 | deck:25 | boss:1 | tours:76
+
+── Run 37 ─────────────────────────────────────
+    fl1 d0 NORM [serpent_oracle] HP:83→83 turns:1
+    fl1 d1 NORM [tokoloshe+tokoloshe] HP:83→83 turns:3
+    fl1 d2 NORM [mask_hunter] HP:83→83 turns:2
+    fl1 d4 NORM [hyena_pack+tokoloshe] HP:83→83 turns:2
+    fl1 d6 ELITE [legba_emissary] HP:83→81 turns:3
+    fl1 d9 NORM [serpent_oracle+hyena_pack] HP:83→83 turns:2
+    fl1 d11 ELITE [oya_harbinger] HP:83→68 turns:4
+    fl1 d13 NORM [serpent_oracle+hyena_pack] HP:75→76 turns:2
+    fl1 d14 ELITE [oya_harbinger] HP:83→83 turns:4
+    fl1 d15 BOSS [anansi_weaver] HP:83→27 turns:9
+    fl2 d0 NORM [briar_beast+druid_apprentice+sidhe_raider] HP:34→26 turns:3
+    fl2 d1 NORM [amber_hound+druid_apprentice+druid_apprentice] HP:33→37 turns:3
+    fl2 d2 NORM [briar_beast+amber_hound] HP:44→43 turns:2
+    fl2 d3 NORM [bog_beast+druid_apprentice] HP:50→53 turns:3
+    fl2 d5 ELITE [wild_hunt_hound] HP:60→59 turns:4
+    fl2 d6 NORM [bog_beast+briar_beast] HP:66→73 turns:4
+    fl2 d9 NORM [bog_beast+briar_beast] HP:80→83 turns:2
+    fl2 d10 ELITE [morrigan_chosen] HP:83→83 turns:3
+    fl2 d11 NORM [amber_hound+sidhe_raider+sidhe_raider+druid_apprentice] HP:83→79 turns:3
+    fl2 d12 NORM [briar_beast+druid_apprentice+amber_hound] HP:83→76 turns:3
+    fl2 d14 ELITE [morrigan_chosen] HP:82→83 turns:4
+    fl2 d15 BOSS [cernunnos_shade] HP:83→43 turns:6
+    fl3 d0 NORM [sand_guardian+ushabti_servant+tomb_priest] HP:49→57 turns:3
+    fl3 d1 NORM [wadjet_guardian+sand_guardian+tomb_priest] HP:63→70 turns:3
+    fl3 d2 NORM [wadjet_guardian+ushabti_servant+mummy_knight] HP:76→83 turns:4
+    fl3 d5 NORM [sand_guardian+mummy_knight+tomb_priest+apep_scion] HP:83→58 turns:3
+    fl3 d6 NORM [tomb_priest+tomb_priest+mummy_knight+wadjet_guardian] HP:64→26 turns:7
+    fl3 d7 ELITE [sekhmet_chosen] HP:32→19 turns:4
+    fl3 d9 NORM [wadjet_guardian+sand_guardian+ushabti_servant] HP:50→54 turns:3
+    fl3 d11 NORM [ushabti_servant+mummy_knight+wadjet_guardian+apep_scion] HP:83→57 turns:5
+    fl3 d12 NORM [ushabti_servant+apep_scion+mummy_knight+tomb_priest] HP:63→32 turns:6
+    fl3 d14 ELITE [anubis_champion] HP:38→42 turns:3
+  * fl3 d15 BOSS [ra_avatar] HP:48→MORT turns:5 [DÉFAITE]
+  DÉFAITE fl2 | HP:48 | deck:31 | boss:2 | tours:118
+
+── Run 38 ─────────────────────────────────────
+    fl1 d0 NORM [byakhee] HP:83→83 turns:0
+    fl1 d2 NORM [byakhee] HP:83→83 turns:0
+    fl1 d3 NORM [byakhee] HP:83→83 turns:1
+    fl1 d5 NORM [void_tendril+cultist_scribe] HP:83→83 turns:2
+    fl1 d6 NORM [cultist_scribe+void_tendril] HP:83→75 turns:2
+    fl1 d9 NORM [shoggoth_spawn] HP:82→83 turns:1
+    fl1 d11 NORM [void_tendril+cultist_scribe] HP:83→83 turns:3
+    fl1 d12 NORM [cultist_scribe+void_tendril] HP:83→83 turns:2
+    fl1 d14 ELITE [elder_hybrid] HP:83→83 turns:3
+    fl1 d15 BOSS [shub_spawn] HP:83→41 turns:8
+    fl2 d0 NORM [shield_maiden+einherjar] HP:48→40 turns:2
+    fl2 d2 NORM [shield_maiden+draugr+draugr] HP:47→18 turns:4
+    fl2 d3 NORM [frost_troll+rune_shaman] HP:25→26 turns:2
+    fl2 d5 ELITE [jormungandr_spawn] HP:33→33 turns:3
+  * fl2 d6 NORM [draugr+shield_maiden+rune_shaman+draugr] HP:40→MORT turns:4 [DÉFAITE]
+  DÉFAITE fl1 | HP:40 | deck:24 | boss:1 | tours:37
+
+── Run 39 ─────────────────────────────────────
+    fl1 d0 NORM [eagle_knight] HP:83→83 turns:1
+    fl1 d1 NORM [flayed_cultist] HP:83→83 turns:0
+    fl1 d4 NORM [tzitzimitl] HP:83→83 turns:2
+    fl1 d6 NORM [stone_idol] HP:83→76 turns:3
+    fl1 d7 ELITE [quetzal_harbinger] HP:83→55 turns:6
+    fl1 d9 NORM [tzitzimitl+obsidian_priest] HP:62→60 turns:4
+    fl1 d11 NORM [stone_idol] HP:67→69 turns:2
+    fl1 d12 NORM [obsidian_priest+jaguar_warrior+obsidian_priest] HP:76→60 turns:7
+    fl1 d14 ELITE [huitzilopochtli_enforcer] HP:67→68 turns:4
+  * fl1 d15 BOSS [quetzalcoatl_wrath] HP:75→MORT turns:7 [DÉFAITE]
+  DÉFAITE fl0 | HP:75 | deck:19 | boss:0 | tours:36
+
+── Run 40 ─────────────────────────────────────
+    fl1 d0 NORM [cultist_scribe+star_spawn] HP:83→81 turns:4
+    fl1 d1 NORM [void_tendril] HP:83→83 turns:2
+    fl1 d3 NORM [byakhee] HP:83→83 turns:0
+    fl1 d5 NORM [shoggoth_spawn] HP:83→83 turns:2
+    fl1 d6 NORM [cultist_scribe+cultist_scribe+star_spawn] HP:83→51 turns:6
+    fl1 d7 ELITE [mi_go_surgeon] HP:58→55 turns:9
+    fl1 d9 NORM [deep_one] HP:62→63 turns:1
+    fl1 d10 ELITE [mi_go_surgeon] HP:70→73 turns:6
+    fl1 d11 NORM [byakhee+star_spawn] HP:80→82 turns:2
+    fl1 d12 NORM [star_spawn+byakhee] HP:83→83 turns:2
+    fl1 d14 ELITE [mi_go_surgeon] HP:83→71 turns:4
+    fl1 d15 BOSS [shub_spawn] HP:78→47 turns:12
+    fl2 d0 NORM [harpy+lamia+harpy] HP:54→21 turns:5
+    fl2 d1 NORM [lamia+harpy+harpy] HP:28→8 turns:3
+  * fl2 d2 NORM [cyclops+satyr] HP:15→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl1 | HP:15 | deck:22 | boss:1 | tours:59
+
+── Run 41 ─────────────────────────────────────
+    fl1 d0 NORM [flayed_cultist] HP:83→83 turns:0
+    fl1 d2 NORM [flayed_cultist] HP:83→83 turns:0
+    fl1 d3 NORM [flayed_cultist] HP:83→83 turns:1
+    fl1 d5 ELITE [quetzal_harbinger] HP:83→77 turns:6
+    fl1 d6 NORM [tzitzimitl+jaguar_warrior] HP:83→79 turns:6
+    fl1 d9 NORM [stone_idol] HP:83→83 turns:1
+    fl1 d10 ELITE [quetzal_harbinger] HP:83→83 turns:3
+    fl1 d11 NORM [tzitzimitl+jaguar_warrior] HP:83→83 turns:3
+    fl1 d12 NORM [jaguar_warrior+tzitzimitl] HP:83→83 turns:4
+    fl1 d14 ELITE [huitzilopochtli_enforcer] HP:83→72 turns:4
+    fl1 d15 BOSS [tezcatlipoca_echo] HP:79→17 turns:7
+    fl2 d0 NORM [bog_beast+druid_apprentice] HP:24→21 turns:4
+    fl2 d1 NORM [briar_beast+amber_hound] HP:28→25 turns:2
+    fl2 d3 NORM [bog_beast+druid_apprentice] HP:56→40 turns:3
+    fl2 d5 NORM [bog_beast+sidhe_raider+druid_apprentice] HP:47→41 turns:5
+    fl2 d6 ELITE [morrigan_chosen] HP:48→42 turns:4
+    fl2 d11 ELITE [morrigan_chosen] HP:83→80 turns:3
+    fl2 d13 NORM [amber_hound+briar_beast+morrigan_wisp] HP:83→83 turns:3
+    fl2 d14 ELITE [morrigan_chosen] HP:83→81 turns:1
+    fl2 d15 BOSS [cernunnos_shade] HP:83→80 turns:7
+    fl3 d0 NORM [wadjet_guardian+ushabti_servant+mummy_knight] HP:83→83 turns:3
+    fl3 d1 NORM [sand_guardian+mummy_knight+tomb_priest] HP:83→30 turns:5
+    fl3 d2 NORM [sand_guardian+ushabti_servant+apep_scion] HP:37→29 turns:2
+    fl3 d6 NORM [sand_guardian+mummy_knight+wadjet_guardian] HP:36→22 turns:6
+    fl3 d9 NORM [ushabti_servant+wadjet_guardian+mummy_knight+scarab_swarm] HP:54→20 turns:6
+    fl3 d10 NORM [sand_guardian+ushabti_servant+wadjet_guardian] HP:27→29 turns:4
+    fl3 d11 NORM [ushabti_servant+sand_guardian+wadjet_guardian] HP:36→41 turns:3
+    fl3 d13 NORM [sand_guardian+wadjet_guardian+apep_scion+scarab_swarm] HP:48→49 turns:3
+    fl3 d14 ELITE [anubis_champion] HP:56→57 turns:2
+    fl3 d15 BOSS [ra_avatar] HP:64→31 turns:6
+  VICTOIRE fl3 | HP:38 | deck:31 | boss:3 | tours:107
+
+── Run 42 ─────────────────────────────────────
+    fl1 d0 NORM [rusalka+kikimora] HP:83→83 turns:4
+    fl1 d1 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d2 NORM [snow_maiden] HP:83→83 turns:0
+    fl1 d5 ELITE [koschei_herald] HP:83→74 turns:3
+    fl1 d7 ELITE [domovoi_titan] HP:81→81 turns:0
+    fl1 d9 NORM [iron_cossack+rusalka] HP:83→83 turns:2
+    fl1 d10 NORM [snow_maiden+winter_wolf] HP:83→83 turns:2
+    fl1 d11 NORM [iron_cossack+kikimora] HP:83→83 turns:0
+    fl1 d12 NORM [iron_cossack+winter_wolf] HP:83→83 turns:0
+    fl1 d14 ELITE [domovoi_titan] HP:83→83 turns:0
+    fl1 d15 BOSS [baba_yaga_hut] HP:83→83 turns:0
+    fl2 d0 NORM [shoggoth_spawn+star_spawn] HP:83→83 turns:0
+    fl2 d1 NORM [deep_one+cultist_scribe] HP:83→83 turns:2
+    fl2 d3 NORM [void_tendril+cultist_scribe+cultist_scribe] HP:83→83 turns:2
+    fl2 d5 NORM [byakhee+deep_one] HP:83→83 turns:1
+    fl2 d6 NORM [deep_one+void_tendril] HP:83→83 turns:1
+    fl2 d7 ELITE [mi_go_surgeon] HP:83→83 turns:1
+    fl2 d9 NORM [deep_one+byakhee] HP:83→83 turns:2
+    fl2 d10 NORM [deep_one+void_tendril] HP:83→83 turns:2
+    fl2 d11 NORM [shoggoth_spawn+byakhee] HP:83→83 turns:2
+    fl2 d12 NORM [byakhee+deep_one] HP:83→83 turns:2
+    fl2 d14 ELITE [mi_go_surgeon] HP:83→83 turns:1
+    fl2 d15 BOSS [nyarlathotep_shard] HP:83→57 turns:4
+    fl3 d0 NORM [scarab_swarm+mummy_knight+wadjet_guardian] HP:64→65 turns:1
+    fl3 d1 NORM [mummy_knight+ushabti_servant+wadjet_guardian] HP:72→72 turns:0
+    fl3 d3 NORM [ushabti_servant+mummy_knight+wadjet_guardian] HP:83→83 turns:6
+    fl3 d5 NORM [sand_guardian+mummy_knight+wadjet_guardian] HP:83→76 turns:1
+    fl3 d6 NORM [ushabti_servant+mummy_knight+wadjet_guardian] HP:83→79 turns:2
+    fl3 d7 NORM [ushabti_servant+mummy_knight+wadjet_guardian+scarab_swarm] HP:83→72 turns:2
+    fl3 d9 NORM [ushabti_servant+sand_guardian+wadjet_guardian] HP:79→75 turns:1
+    fl3 d10 NORM [ushabti_servant+wadjet_guardian+sand_guardian] HP:82→83 turns:1
+    fl3 d11 NORM [wadjet_guardian+scarab_swarm+ushabti_servant+scarab_swarm] HP:83→77 turns:2
+    fl3 d13 NORM [sand_guardian+mummy_knight+wadjet_guardian] HP:83→81 turns:2
+    fl3 d14 ELITE [anubis_champion] HP:83→78 turns:2
+    fl3 d15 BOSS [ra_avatar] HP:83→83 turns:1
+  VICTOIRE fl3 | HP:83 | deck:28 | boss:3 | tours:53
+
+── Run 43 ─────────────────────────────────────
+    fl1 d0 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d1 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d3 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d4 NORM [impundulu] HP:83→83 turns:0
+    fl1 d6 ELITE [oya_harbinger] HP:83→80 turns:7
+    fl1 d9 NORM [impundulu+hyena_pack] HP:83→77 turns:2
+    fl1 d11 NORM [tokoloshe+impundulu] HP:83→83 turns:4
+    fl1 d12 NORM [hyena_pack+serpent_oracle] HP:83→83 turns:4
+    fl1 d14 ELITE [oya_harbinger] HP:83→65 turns:6
+    fl1 d15 BOSS [anansi_weaver] HP:72→73 turns:11
+    fl2 d0 NORM [ushabti_servant+apep_scion+scarab_swarm] HP:80→78 turns:3
+    fl2 d2 NORM [mummy_knight+apep_scion+apep_scion] HP:83→83 turns:4
+    fl2 d4 NORM [ushabti_servant+tomb_priest+tomb_priest] HP:83→83 turns:6
+    fl2 d6 NORM [ushabti_servant+wadjet_guardian] HP:83→83 turns:2
+    fl2 d7 ELITE [anubis_champion] HP:83→71 turns:4
+    fl2 d9 NORM [wadjet_guardian+apep_scion+mummy_knight] HP:78→73 turns:4
+    fl2 d10 NORM [ushabti_servant+apep_scion+wadjet_guardian] HP:83→82 turns:3
+    fl2 d11 ELITE [sekhmet_chosen] HP:83→83 turns:4
+    fl2 d13 NORM [apep_scion+ushabti_servant+wadjet_guardian] HP:83→83 turns:5
+    fl2 d14 ELITE [sekhmet_chosen] HP:83→80 turns:4
+    fl2 d15 BOSS [osiris_judgment] HP:83→30 turns:8
+    fl3 d0 NORM [mask_hunter+tokoloshe+baobab_giant] HP:44→29 turns:5
+  * fl3 d1 NORM [mask_hunter+serpent_oracle+hyena_pack+hyena_pack] HP:39→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:39 | deck:27 | boss:2 | tours:92
+
+── Run 44 ─────────────────────────────────────
+    fl1 d0 NORM [amber_hound] HP:83→83 turns:0
+    fl1 d2 NORM [sidhe_raider+druid_apprentice] HP:83→83 turns:3
+    fl1 d3 NORM [druid_apprentice+druid_apprentice] HP:83→83 turns:2
+    fl1 d5 NORM [druid_apprentice+briar_beast] HP:83→82 turns:4
+    fl1 d6 NORM [amber_hound+druid_apprentice] HP:83→83 turns:3
+    fl1 d9 NORM [briar_beast+druid_apprentice] HP:83→80 turns:3
+    fl1 d10 NORM [briar_beast+sidhe_raider] HP:83→75 turns:3
+    fl1 d11 NORM [briar_beast+sidhe_raider] HP:83→80 turns:3
+    fl1 d12 NORM [amber_hound+druid_apprentice] HP:83→83 turns:3
+    fl1 d14 ELITE [morrigan_chosen] HP:83→83 turns:3
+  * fl1 d15 BOSS [cernunnos_shade] HP:83→MORT turns:9 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:19 | boss:0 | tours:36
+
+── Run 45 ─────────────────────────────────────
+    fl1 d0 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d1 NORM [star_spawn+star_spawn] HP:83→79 turns:5
+    fl1 d3 NORM [star_spawn+cultist_scribe] HP:83→83 turns:3
+    fl1 d5 NORM [cultist_scribe+cultist_scribe+star_spawn] HP:83→68 turns:6
+    fl1 d6 ELITE [elder_hybrid] HP:75→71 turns:5
+    fl1 d9 NORM [cultist_scribe+star_spawn+cultist_scribe] HP:78→55 turns:5
+    fl1 d11 NORM [byakhee+star_spawn] HP:62→64 turns:4
+    fl1 d12 NORM [byakhee+cultist_scribe] HP:71→70 turns:3
+    fl1 d14 ELITE [mi_go_surgeon] HP:83→74 turns:4
+  * fl1 d15 BOSS [shub_spawn] HP:81→MORT turns:8 [DÉFAITE]
+  DÉFAITE fl0 | HP:81 | deck:19 | boss:0 | tours:44
+
+── Run 46 ─────────────────────────────────────
+    fl1 d0 NORM [byakhee] HP:83→83 turns:0
+    fl1 d1 NORM [cultist_scribe+cultist_scribe] HP:83→83 turns:3
+    fl1 d3 NORM [byakhee] HP:83→83 turns:0
+    fl1 d4 NORM [void_tendril] HP:83→83 turns:0
+    fl1 d6 NORM [deep_one] HP:83→83 turns:1
+    fl1 d7 ELITE [mi_go_surgeon] HP:83→83 turns:3
+    fl1 d9 NORM [byakhee+cultist_scribe] HP:83→83 turns:1
+    fl1 d10 NORM [cultist_scribe+byakhee] HP:83→83 turns:3
+    fl1 d11 NORM [deep_one] HP:83→83 turns:0
+    fl1 d12 NORM [byakhee+cultist_scribe] HP:83→83 turns:2
+    fl1 d14 ELITE [mi_go_surgeon] HP:83→83 turns:2
+  * fl1 d15 BOSS [shub_spawn] HP:83→MORT turns:9 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:20 | boss:0 | tours:24
+
+── Run 47 ─────────────────────────────────────
+    fl1 d0 NORM [harpy+satyr] HP:83→83 turns:2
+    fl1 d1 NORM [lamia] HP:83→83 turns:2
+    fl1 d3 NORM [lamia] HP:83→83 turns:1
+    fl1 d5 NORM [bronze_automaton] HP:83→81 turns:1
+    fl1 d6 NORM [lamia+satyr] HP:83→83 turns:1
+    fl1 d7 ELITE [lernaean_broodling] HP:83→83 turns:2
+    fl1 d9 NORM [satyr+lamia] HP:83→83 turns:1
+    fl1 d10 NORM [lamia+satyr] HP:83→83 turns:1
+    fl1 d12 NORM [cyclops] HP:83→83 turns:1
+    fl1 d14 ELITE [minotaur] HP:83→83 turns:4
+  * fl1 d15 BOSS [hydra_aspect] HP:83→MORT turns:13 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:19 | boss:0 | tours:29
+
+── Run 48 ─────────────────────────────────────
+    fl1 d0 NORM [harpy+satyr] HP:83→83 turns:2
+    fl1 d2 NORM [gorgon] HP:83→83 turns:0
+    fl1 d3 NORM [gorgon] HP:83→83 turns:1
+    fl1 d5 NORM [satyr+lamia] HP:83→83 turns:2
+    fl1 d6 NORM [gorgon+satyr] HP:83→83 turns:3
+    fl1 d7 ELITE [lernaean_broodling] HP:83→83 turns:1
+    fl1 d9 NORM [bronze_automaton] HP:83→83 turns:1
+    fl1 d10 NORM [cyclops] HP:83→83 turns:2
+    fl1 d11 NORM [satyr+lamia] HP:83→83 turns:2
+    fl1 d12 NORM [gorgon+satyr] HP:83→83 turns:2
+    fl1 d14 ELITE [lernaean_broodling] HP:83→78 turns:3
+    fl1 d15 BOSS [medusa] HP:83→56 turns:2
+    fl2 d0 NORM [bronze_automaton+harpy] HP:63→56 turns:2
+    fl2 d1 NORM [cyclops+satyr] HP:63→63 turns:1
+    fl2 d3 NORM [lamia+harpy+harpy] HP:70→64 turns:1
+    fl2 d4 NORM [lamia+gorgon] HP:71→72 turns:1
+    fl2 d6 NORM [cyclops+harpy+satyr] HP:79→77 turns:2
+    fl2 d7 ELITE [minotaur] HP:83→72 turns:2
+    fl2 d10 NORM [gorgon+satyr+harpy+satyr] HP:83→83 turns:3
+    fl2 d11 ELITE [minotaur] HP:83→73 turns:2
+    fl2 d13 NORM [gorgon+bronze_automaton] HP:80→80 turns:0
+    fl2 d14 ELITE [minotaur] HP:83→81 turns:1
+    fl2 d15 BOSS [medusa] HP:83→83 turns:1
+    fl3 d0 NORM [byakhee+shoggoth_spawn+star_spawn] HP:83→75 turns:1
+    fl3 d1 NORM [shoggoth_spawn+star_spawn+void_tendril] HP:82→83 turns:1
+    fl3 d3 NORM [void_tendril+deep_one+star_spawn] HP:83→78 turns:1
+    fl3 d4 NORM [shoggoth_spawn+cultist_scribe+void_tendril] HP:83→79 turns:1
+    fl3 d6 ELITE [elder_hybrid] HP:83→80 turns:1
+    fl3 d9 NORM [shoggoth_spawn+void_tendril+byakhee] HP:83→83 turns:0
+    fl3 d11 NORM [deep_one+byakhee+void_tendril] HP:83→83 turns:2
+    fl3 d12 NORM [shoggoth_spawn+void_tendril+byakhee] HP:83→81 turns:4
+    fl3 d14 ELITE [mi_go_surgeon] HP:83→83 turns:2
+    fl3 d15 BOSS [shub_spawn] HP:83→74 turns:1
+  VICTOIRE fl3 | HP:81 | deck:32 | boss:3 | tours:51
+
+── Run 49 ─────────────────────────────────────
+    fl1 d0 NORM [mask_hunter] HP:83→83 turns:2
+    fl1 d1 NORM [serpent_oracle] HP:83→83 turns:1
+    fl1 d2 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d5 ELITE [legba_emissary] HP:83→72 turns:4
+    fl1 d6 NORM [impundulu+tokoloshe] HP:79→80 turns:1
+    fl1 d9 NORM [serpent_oracle+tokoloshe] HP:83→83 turns:1
+    fl1 d10 ELITE [oya_harbinger] HP:83→83 turns:3
+    fl1 d11 NORM [hyena_pack+mask_hunter] HP:83→83 turns:1
+    fl1 d13 NORM [baobab_giant] HP:83→83 turns:0
+    fl1 d14 ELITE [oya_harbinger] HP:83→83 turns:2
+    fl1 d15 BOSS [soundiata_spirit] HP:83→38 turns:13
+    fl2 d0 NORM [shoggoth_spawn+cultist_scribe] HP:45→46 turns:1
+    fl2 d1 NORM [cultist_scribe+void_tendril+cultist_scribe] HP:53→52 turns:3
+    fl2 d2 NORM [shoggoth_spawn+cultist_scribe] HP:59→60 turns:1
+    fl2 d3 NORM [shoggoth_spawn+cultist_scribe] HP:67→68 turns:1
+    fl2 d5 NORM [shoggoth_spawn+byakhee] HP:75→76 turns:1
+    fl2 d7 NORM [shoggoth_spawn+void_tendril] HP:83→83 turns:2
+    fl2 d9 NORM [void_tendril+shoggoth_spawn] HP:83→83 turns:1
+    fl2 d10 NORM [void_tendril+shoggoth_spawn] HP:83→83 turns:3
+    fl2 d11 NORM [byakhee+shoggoth_spawn] HP:83→83 turns:3
+    fl2 d12 NORM [byakhee+shoggoth_spawn] HP:83→83 turns:2
+    fl2 d14 ELITE [elder_hybrid] HP:83→83 turns:3
+    fl2 d15 BOSS [shub_spawn] HP:83→8 turns:11
+    fl3 d0 NORM [wadjet_guardian+sand_guardian+tomb_priest] HP:15→16 turns:3
+    fl3 d1 NORM [sand_guardian+tomb_priest+wadjet_guardian] HP:23→25 turns:3
+    fl3 d2 NORM [apep_scion+wadjet_guardian+tomb_priest+ushabti_servant] HP:32→34 turns:3
+    fl3 d3 NORM [ushabti_servant+sand_guardian+scarab_swarm] HP:41→31 turns:4
+    fl3 d5 ELITE [sekhmet_chosen] HP:38→32 turns:3
+    fl3 d7 NORM [mummy_knight+wadjet_guardian+sand_guardian] HP:47→44 turns:1
+    fl3 d9 NORM [mummy_knight+sand_guardian+wadjet_guardian] HP:51→53 turns:3
+    fl3 d11 NORM [ushabti_servant+tomb_priest+mummy_knight+wadjet_guardian] HP:60→62 turns:3
+    fl3 d13 NORM [wadjet_guardian+ushabti_servant+tomb_priest+tomb_priest] HP:69→45 turns:3
+    fl3 d14 ELITE [anubis_champion] HP:52→54 turns:2
+    fl3 d15 BOSS [osiris_judgment] HP:69→4 turns:7
+  VICTOIRE fl3 | HP:11 | deck:30 | boss:3 | tours:96
+
+── Run 50 ─────────────────────────────────────
+    fl1 d0 NORM [satyr+harpy] HP:83→83 turns:3
+    fl1 d1 NORM [satyr+harpy] HP:83→83 turns:1
+    fl1 d2 NORM [gorgon] HP:83→83 turns:0
+    fl1 d4 NORM [satyr+harpy] HP:83→83 turns:1
+    fl1 d6 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d7 NORM [gorgon+satyr] HP:83→83 turns:2
+    fl1 d9 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d10 NORM [lamia+satyr] HP:83→83 turns:0
+    fl1 d12 NORM [gorgon+satyr] HP:83→83 turns:0
+    fl1 d14 ELITE [lernaean_broodling] HP:83→83 turns:1
+    fl1 d15 BOSS [medusa] HP:83→67 turns:4
+    fl2 d0 NORM [bronze_automaton+harpy] HP:74→72 turns:1
+    fl2 d2 NORM [gorgon+satyr+harpy] HP:83→79 turns:1
+    fl2 d3 NORM [lamia+harpy+harpy] HP:83→78 turns:3
+    fl2 d6 ELITE [lernaean_broodling] HP:83→83 turns:0
+    fl2 d9 NORM [lamia+gorgon+harpy] HP:83→83 turns:1
+    fl2 d10 NORM [gorgon+lamia+satyr] HP:83→83 turns:1
+    fl2 d11 ELITE [minotaur] HP:83→80 turns:1
+    fl2 d12 NORM [bronze_automaton+harpy+harpy] HP:83→77 turns:1
+    fl2 d14 ELITE [lernaean_broodling] HP:83→83 turns:1
+    fl2 d15 BOSS [hydra_aspect] HP:83→83 turns:0
+    fl3 d0 NORM [kikimora+snow_maiden+iron_cossack+rusalka] HP:83→83 turns:0
+    fl3 d1 NORM [rusalka+czar_guard+iron_cossack] HP:83→72 turns:1
+    fl3 d3 NORM [iron_cossack+snow_maiden+winter_wolf+kikimora] HP:83→82 turns:1
+    fl3 d4 NORM [rusalka+snow_maiden+kikimora+iron_cossack] HP:83→72 turns:1
+    fl3 d6 NORM [iron_cossack+czar_guard+snow_maiden] HP:79→79 turns:1
+    fl3 d9 NORM [snow_maiden+czar_guard+iron_cossack] HP:83→83 turns:0
+    fl3 d10 NORM [iron_cossack+rusalka+czar_guard+kikimora] HP:83→74 turns:3
+    fl3 d11 NORM [iron_cossack+snow_maiden+kikimora+kikimora] HP:81→73 turns:1
+    fl3 d12 NORM [iron_cossack+winter_wolf+snow_maiden+kikimora] HP:80→74 turns:2
+    fl3 d14 ELITE [koschei_herald] HP:81→83 turns:2
+    fl3 d15 BOSS [baba_yaga_hut] HP:83→82 turns:2
+  VICTOIRE fl3 | HP:83 | deck:30 | boss:3 | tours:38
+
+── Run 51 ─────────────────────────────────────
+    fl1 d0 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d2 NORM [snow_maiden] HP:83→83 turns:1
+    fl1 d3 NORM [winter_wolf+kikimora] HP:83→83 turns:3
+    fl1 d5 NORM [snow_maiden+winter_wolf] HP:83→83 turns:5
+    fl1 d6 NORM [rusalka+snow_maiden] HP:83→83 turns:5
+    fl1 d9 NORM [winter_wolf+snow_maiden] HP:83→83 turns:3
+    fl1 d10 NORM [rusalka+rusalka+kikimora] HP:83→79 turns:4
+    fl1 d11 NORM [kikimora+rusalka+rusalka] HP:83→82 turns:4
+    fl1 d13 NORM [winter_wolf+winter_wolf+rusalka] HP:83→67 turns:4
+    fl1 d14 ELITE [koschei_herald] HP:74→78 turns:4
+  * fl1 d15 BOSS [koschei_deathless] HP:83→MORT turns:19 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:20 | boss:0 | tours:53
+
+── Run 52 ─────────────────────────────────────
+    fl1 d0 NORM [star_spawn+cultist_scribe] HP:83→83 turns:5
+    fl1 d1 NORM [byakhee] HP:83→83 turns:0
+    fl1 d2 NORM [star_spawn+star_spawn] HP:83→73 turns:4
+    fl1 d6 ELITE [elder_hybrid] HP:80→83 turns:3
+    fl1 d9 NORM [byakhee+cultist_scribe] HP:90→92 turns:3
+    fl1 d10 ELITE [elder_hybrid] HP:95→88 turns:3
+    fl1 d11 NORM [byakhee+star_spawn] HP:95→95 turns:1
+    fl1 d12 NORM [byakhee+cultist_scribe] HP:95→95 turns:3
+    fl1 d14 ELITE [mi_go_surgeon] HP:95→95 turns:2
+    fl1 d15 BOSS [shub_spawn] HP:95→16 turns:18
+    fl2 d0 NORM [gorgon+satyr+harpy] HP:23→24 turns:3
+    fl2 d1 NORM [cyclops+satyr] HP:31→15 turns:4
+    fl2 d3 NORM [cyclops+satyr] HP:50→51 turns:3
+    fl2 d5 NORM [cyclops+lamia] HP:58→60 turns:2
+    fl2 d7 NORM [bronze_automaton+gorgon] HP:67→68 turns:1
+    fl2 d9 NORM [cyclops+harpy+satyr] HP:75→79 turns:2
+    fl2 d10 NORM [gorgon+bronze_automaton] HP:86→91 turns:3
+    fl2 d11 NORM [gorgon+bronze_automaton] HP:95→86 turns:3
+    fl2 d12 NORM [cyclops+lamia] HP:93→90 turns:3
+    fl2 d14 ELITE [lernaean_broodling] HP:95→86 turns:3
+    fl2 d15 BOSS [medusa] HP:93→71 turns:5
+    fl3 d0 NORM [bog_beast+briar_beast+morrigan_wisp] HP:83→84 turns:3
+    fl3 d1 NORM [bog_beast+briar_beast+sidhe_raider] HP:95→86 turns:3
+    fl3 d3 NORM [bog_beast+briar_beast+druid_apprentice] HP:95→83 turns:3
+    fl3 d5 NORM [briar_beast+amber_hound+bog_beast] HP:95→71 turns:5
+    fl3 d6 NORM [bog_beast+briar_beast+amber_hound] HP:83→86 turns:3
+    fl3 d7 ELITE [morrigan_chosen] HP:95→95 turns:3
+    fl3 d10 NORM [briar_beast+bog_beast+druid_apprentice+druid_apprentice] HP:95→95 turns:3
+    fl3 d11 NORM [bog_beast+briar_beast+amber_hound] HP:95→95 turns:3
+    fl3 d12 NORM [morrigan_wisp+bog_beast+amber_hound+druid_apprentice] HP:95→95 turns:3
+    fl3 d14 ELITE [morrigan_chosen] HP:95→95 turns:2
+    fl3 d15 BOSS [dagda_shadow] HP:95→81 turns:4
+  VICTOIRE fl3 | HP:93 | deck:28 | boss:3 | tours:109
+
+── Run 53 ─────────────────────────────────────
+    fl1 d0 NORM [void_tendril] HP:83→83 turns:2
+    fl1 d1 NORM [byakhee] HP:83→83 turns:0
+    fl1 d3 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d5 NORM [star_spawn+byakhee] HP:83→74 turns:4
+    fl1 d6 NORM [star_spawn+byakhee] HP:81→83 turns:5
+    fl1 d9 NORM [star_spawn+byakhee] HP:83→83 turns:3
+    fl1 d11 NORM [cultist_scribe+byakhee] HP:83→83 turns:2
+    fl1 d12 NORM [byakhee+cultist_scribe] HP:83→82 turns:5
+    fl1 d14 ELITE [elder_hybrid] HP:83→66 turns:3
+    fl1 d15 BOSS [shub_spawn] HP:73→25 turns:14
+    fl2 d0 NORM [draugr+rune_berserker] HP:32→31 turns:2
+    fl2 d1 NORM [rune_berserker+einherjar] HP:38→31 turns:2
+    fl2 d2 NORM [shield_maiden+rune_shaman+rune_shaman] HP:38→24 turns:3
+    fl2 d3 NORM [einherjar+shield_maiden] HP:31→17 turns:3
+    fl2 d5 NORM [frost_troll+rune_berserker] HP:24→18 turns:3
+    fl2 d6 ELITE [valkyrie] HP:25→9 turns:2
+    fl2 d10 NORM [frost_troll+shield_maiden] HP:41→40 turns:3
+    fl2 d11 NORM [rune_shaman+rune_berserker+rune_shaman+rune_shaman] HP:47→31 turns:2
+    fl2 d12 NORM [frost_troll+einherjar] HP:38→35 turns:4
+    fl2 d14 ELITE [jormungandr_spawn] HP:66→48 turns:4
+  * fl2 d15 BOSS [fenrir] HP:55→MORT turns:4 [DÉFAITE]
+  DÉFAITE fl1 | HP:55 | deck:25 | boss:1 | tours:71
+
+── Run 54 ─────────────────────────────────────
+    fl1 d0 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d2 NORM [byakhee] HP:83→83 turns:0
+    fl1 d3 NORM [void_tendril] HP:83→83 turns:0
+    fl1 d4 NORM [byakhee] HP:83→83 turns:0
+    fl1 d6 NORM [shoggoth_spawn] HP:83→83 turns:2
+    fl1 d7 ELITE [mi_go_surgeon] HP:83→83 turns:4
+    fl1 d9 NORM [void_tendril+star_spawn] HP:83→83 turns:2
+    fl1 d11 NORM [void_tendril+star_spawn] HP:83→79 turns:2
+    fl1 d13 NORM [void_tendril+star_spawn] HP:83→80 turns:3
+    fl1 d14 ELITE [mi_go_surgeon] HP:83→80 turns:3
+    fl1 d15 BOSS [shub_spawn] HP:83→72 turns:8
+    fl2 d0 NORM [snow_maiden+iron_cossack] HP:79→78 turns:2
+    fl2 d1 NORM [iron_cossack+rusalka+rusalka] HP:83→76 turns:2
+    fl2 d3 NORM [winter_wolf+snow_maiden+kikimora] HP:83→63 turns:3
+    fl2 d4 NORM [winter_wolf+czar_guard] HP:70→70 turns:3
+    fl2 d7 NORM [kikimora+winter_wolf+snow_maiden+kikimora] HP:77→38 turns:3
+    fl2 d9 NORM [czar_guard+iron_cossack] HP:70→69 turns:3
+    fl2 d10 NORM [czar_guard+rusalka+rusalka] HP:76→56 turns:3
+    fl2 d11 NORM [winter_wolf+iron_cossack+rusalka+rusalka] HP:63→17 turns:4
+    fl2 d13 NORM [czar_guard+snow_maiden] HP:24→24 turns:3
+    fl2 d14 ELITE [koschei_herald] HP:31→23 turns:4
+  * fl2 d15 BOSS [koschei_deathless] HP:30→MORT turns:6 [DÉFAITE]
+  DÉFAITE fl1 | HP:30 | deck:25 | boss:1 | tours:61
+
+── Run 55 ─────────────────────────────────────
+    fl1 d0 NORM [lamia] HP:83→83 turns:0
+    fl1 d1 NORM [satyr+harpy] HP:83→83 turns:2
+    fl1 d2 NORM [gorgon] HP:83→83 turns:1
+    fl1 d5 NORM [harpy+lamia] HP:83→83 turns:1
+    fl1 d6 NORM [gorgon+satyr] HP:83→83 turns:2
+    fl1 d9 NORM [bronze_automaton] HP:83→83 turns:1
+    fl1 d10 NORM [cyclops] HP:83→83 turns:1
+    fl1 d11 NORM [satyr+gorgon] HP:83→78 turns:2
+    fl1 d13 NORM [bronze_automaton] HP:83→80 turns:1
+    fl1 d14 ELITE [lernaean_broodling] HP:83→65 turns:2
+  * fl1 d15 BOSS [hydra_aspect] HP:72→MORT turns:5 [DÉFAITE]
+  DÉFAITE fl0 | HP:72 | deck:20 | boss:0 | tours:18
+
+── Run 56 ─────────────────────────────────────
+    fl1 d0 NORM [lamia] HP:83→83 turns:0
+    fl1 d1 NORM [satyr+harpy] HP:83→83 turns:3
+    fl1 d3 NORM [gorgon] HP:83→83 turns:1
+    fl1 d4 NORM [satyr+harpy] HP:83→83 turns:1
+    fl1 d6 NORM [lamia+satyr] HP:83→83 turns:0
+    fl1 d9 NORM [gorgon+satyr] HP:83→83 turns:0
+    fl1 d10 NORM [cyclops] HP:83→83 turns:2
+    fl1 d11 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d13 NORM [satyr+gorgon] HP:83→83 turns:2
+    fl1 d14 ELITE [lernaean_broodling] HP:83→83 turns:3
+    fl1 d15 BOSS [medusa] HP:83→38 turns:6
+    fl2 d0 NORM [obsidian_priest+eagle_knight+obsidian_priest] HP:45→44 turns:1
+    fl2 d1 NORM [stone_idol+jaguar_warrior] HP:51→46 turns:3
+    fl2 d3 NORM [tzitzimitl+obsidian_priest+obsidian_priest] HP:53→53 turns:0
+    fl2 d4 NORM [eagle_knight+obsidian_priest+obsidian_priest] HP:60→63 turns:3
+    fl2 d6 NORM [eagle_knight+flayed_cultist+obsidian_priest] HP:70→23 turns:7
+    fl2 d7 ELITE [huitzilopochtli_enforcer] HP:30→27 turns:3
+    fl2 d10 NORM [jaguar_warrior+tzitzimitl+flayed_cultist] HP:83→83 turns:0
+    fl2 d11 NORM [eagle_knight+flayed_cultist+jaguar_warrior] HP:83→33 turns:5
+    fl2 d13 NORM [tzitzimitl+stone_idol] HP:40→40 turns:0
+    fl2 d14 ELITE [huitzilopochtli_enforcer] HP:47→42 turns:2
+    fl2 d15 BOSS [tezcatlipoca_echo] HP:49→13 turns:3
+  * fl3 d0 NORM [apep_scion+ushabti_servant+mummy_knight+apep_scion] HP:20→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl2 | HP:20 | deck:27 | boss:2 | tours:48
+
+── Run 57 ─────────────────────────────────────
+    fl1 d0 NORM [shield_maiden] HP:83→83 turns:2
+    fl1 d2 NORM [rune_shaman+rune_shaman] HP:83→83 turns:3
+    fl1 d3 NORM [shield_maiden] HP:83→83 turns:2
+    fl1 d5 NORM [shield_maiden+rune_shaman] HP:83→83 turns:5
+    fl1 d7 NORM [rune_shaman+einherjar] HP:83→79 turns:3
+    fl1 d9 NORM [rune_berserker+rune_shaman] HP:83→83 turns:2
+    fl1 d11 NORM [rune_shaman+shield_maiden] HP:83→63 turns:2
+    fl1 d12 NORM [rune_shaman+einherjar] HP:70→71 turns:2
+    fl1 d14 ELITE [jormungandr_spawn] HP:78→52 turns:8
+  * fl1 d15 BOSS [hel_queen] HP:64→MORT turns:9 [DÉFAITE]
+  DÉFAITE fl0 | HP:64 | deck:19 | boss:0 | tours:38
+
+── Run 58 ─────────────────────────────────────
+    fl1 d0 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d2 NORM [star_spawn+star_spawn] HP:83→81 turns:3
+    fl1 d3 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d5 NORM [cultist_scribe+byakhee] HP:83→83 turns:2
+    fl1 d7 NORM [star_spawn+void_tendril] HP:83→80 turns:3
+    fl1 d9 NORM [void_tendril+star_spawn] HP:83→78 turns:3
+    fl1 d10 NORM [deep_one] HP:83→83 turns:1
+    fl1 d11 NORM [void_tendril+cultist_scribe] HP:83→81 turns:3
+    fl1 d12 NORM [void_tendril+cultist_scribe] HP:83→83 turns:2
+    fl1 d14 ELITE [elder_hybrid] HP:83→83 turns:3
+    fl1 d15 BOSS [shub_spawn] HP:83→44 turns:11
+    fl2 d0 NORM [winter_wolf+czar_guard] HP:51→47 turns:4
+    fl2 d1 NORM [winter_wolf+rusalka+rusalka+kikimora] HP:54→12 turns:2
+    fl2 d3 NORM [kikimora+czar_guard] HP:19→2 turns:3
+  * fl2 d5 NORM [czar_guard+kikimora+winter_wolf] HP:9→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl1 | HP:9 | deck:21 | boss:1 | tours:43
+
+── Run 59 ─────────────────────────────────────
+    fl1 d0 NORM [tokoloshe+hyena_pack] HP:83→83 turns:4
+    fl1 d1 NORM [impundulu] HP:83→83 turns:0
+    fl1 d3 NORM [impundulu] HP:83→83 turns:0
+    fl1 d4 NORM [serpent_oracle] HP:83→80 turns:2
+    fl1 d6 ELITE [oya_harbinger] HP:83→70 turns:5
+    fl1 d9 NORM [impundulu+hyena_pack] HP:77→77 turns:3
+    fl1 d10 NORM [serpent_oracle+hyena_pack] HP:83→83 turns:2
+    fl1 d11 ELITE [legba_emissary] HP:83→79 turns:3
+    fl1 d13 NORM [mask_hunter+hyena_pack] HP:83→76 turns:3
+    fl1 d14 ELITE [legba_emissary] HP:83→82 turns:4
+    fl1 d15 BOSS [soundiata_spirit] HP:83→49 turns:11
+    fl2 d0 NORM [jaguar_warrior+stone_idol] HP:56→41 turns:4
+    fl2 d1 NORM [jaguar_warrior+stone_idol] HP:48→36 turns:4
+    fl2 d3 NORM [eagle_knight+obsidian_priest+obsidian_priest] HP:43→20 turns:5
+  * fl2 d6 NORM [tzitzimitl+eagle_knight+jaguar_warrior] HP:27→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl1 | HP:27 | deck:23 | boss:1 | tours:53
+
+── Run 60 ─────────────────────────────────────
+    fl1 d0 NORM [einherjar] HP:83→83 turns:1
+    fl1 d1 NORM [rune_shaman+draugr] HP:83→83 turns:5
+    fl1 d2 NORM [rune_berserker] HP:83→83 turns:0
+    fl1 d5 NORM [draugr+rune_berserker] HP:83→68 turns:3
+    fl1 d6 NORM [frost_troll] HP:75→76 turns:1
+    fl1 d7 ELITE [jormungandr_spawn] HP:83→83 turns:5
+    fl1 d9 NORM [shield_maiden+draugr] HP:83→83 turns:4
+    fl1 d10 NORM [rune_shaman+einherjar] HP:83→83 turns:3
+    fl1 d11 NORM [rune_berserker+draugr] HP:83→83 turns:4
+    fl1 d13 NORM [rune_berserker+rune_shaman] HP:83→83 turns:2
+    fl1 d14 ELITE [jormungandr_spawn] HP:83→83 turns:6
+    fl1 d15 BOSS [hel_queen] HP:83→37 turns:10
+    fl2 d0 NORM [scarab_swarm+ushabti_servant+tomb_priest] HP:44→42 turns:5
+    fl2 d2 NORM [wadjet_guardian+ushabti_servant] HP:73→75 turns:2
+    fl2 d5 ELITE [sekhmet_chosen] HP:82→83 turns:5
+    fl2 d6 NORM [tomb_priest+scarab_swarm+wadjet_guardian+scarab_swarm] HP:83→83 turns:4
+    fl2 d10 NORM [tomb_priest+ushabti_servant+wadjet_guardian] HP:83→79 turns:5
+    fl2 d12 NORM [wadjet_guardian+mummy_knight+tomb_priest] HP:83→83 turns:4
+    fl2 d14 ELITE [sekhmet_chosen] HP:83→78 turns:4
+    fl2 d15 BOSS [osiris_judgment] HP:83→28 turns:11
+    fl3 d0 NORM [stone_idol+tzitzimitl+obsidian_priest] HP:35→19 turns:5
+    fl3 d2 NORM [tzitzimitl+stone_idol+obsidian_priest] HP:50→36 turns:4
+    fl3 d3 NORM [tzitzimitl+stone_idol+obsidian_priest] HP:43→8 turns:5
+    fl3 d5 NORM [stone_idol+flayed_cultist+eagle_knight] HP:15→9 turns:6
+  * fl3 d7 NORM [flayed_cultist+stone_idol+jaguar_warrior+jaguar_warrior] HP:40→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:40 | deck:26 | boss:2 | tours:107
+
+── Run 61 ─────────────────────────────────────
+    fl1 d0 NORM [amber_hound] HP:83→83 turns:1
+    fl1 d2 NORM [briar_beast] HP:83→83 turns:1
+    fl1 d3 NORM [druid_apprentice+druid_apprentice] HP:83→83 turns:3
+    fl1 d5 NORM [morrigan_wisp+sidhe_raider+druid_apprentice] HP:83→76 turns:5
+    fl1 d6 NORM [druid_apprentice+amber_hound] HP:83→83 turns:2
+    fl1 d7 NORM [briar_beast+morrigan_wisp] HP:83→75 turns:3
+    fl1 d9 NORM [sidhe_raider+sidhe_raider+druid_apprentice] HP:82→81 turns:2
+    fl1 d11 NORM [bog_beast] HP:83→83 turns:1
+    fl1 d12 NORM [bog_beast] HP:83→83 turns:1
+    fl1 d14 ELITE [wild_hunt_hound] HP:83→83 turns:2
+    fl1 d15 BOSS [cernunnos_shade] HP:83→39 turns:5
+    fl2 d0 NORM [amber_hound+druid_apprentice+morrigan_wisp] HP:46→48 turns:2
+    fl2 d2 NORM [bog_beast+druid_apprentice] HP:79→83 turns:4
+    fl2 d3 NORM [sidhe_raider+amber_hound+druid_apprentice] HP:83→77 turns:5
+    fl2 d5 ELITE [morrigan_chosen] HP:83→83 turns:4
+    fl2 d6 NORM [briar_beast+amber_hound+druid_apprentice] HP:83→71 turns:7
+    fl2 d9 NORM [briar_beast+amber_hound+druid_apprentice] HP:78→69 turns:4
+    fl2 d10 NORM [bog_beast+druid_apprentice] HP:76→83 turns:2
+    fl2 d11 ELITE [morrigan_chosen] HP:83→74 turns:4
+    fl2 d13 NORM [bog_beast+briar_beast] HP:81→78 turns:3
+    fl2 d14 ELITE [morrigan_chosen] HP:83→64 turns:5
+    fl2 d15 BOSS [cernunnos_shade] HP:71→56 turns:8
+  * fl3 d0 NORM [morrigan_wisp+briar_beast+bog_beast] HP:63→MORT turns:6 [DÉFAITE]
+  DÉFAITE fl2 | HP:63 | deck:28 | boss:2 | tours:80
+
+── Run 62 ─────────────────────────────────────
+    fl1 d0 NORM [hyena_pack+tokoloshe] HP:83→83 turns:5
+    fl1 d1 NORM [hyena_pack+hyena_pack] HP:83→83 turns:4
+    fl1 d2 NORM [hyena_pack+hyena_pack] HP:83→79 turns:4
+    fl1 d5 NORM [impundulu+tokoloshe] HP:83→83 turns:3
+    fl1 d6 NORM [mask_hunter+hyena_pack] HP:83→83 turns:3
+    fl1 d7 ELITE [legba_emissary] HP:83→83 turns:5
+    fl1 d9 NORM [hyena_pack+mask_hunter] HP:83→83 turns:3
+    fl1 d10 NORM [mask_hunter+hyena_pack] HP:83→83 turns:2
+    fl1 d11 NORM [serpent_oracle+tokoloshe] HP:83→83 turns:3
+    fl1 d13 NORM [hyena_pack+mask_hunter] HP:83→83 turns:4
+    fl1 d14 ELITE [legba_emissary] HP:83→75 turns:5
+    fl1 d15 BOSS [anansi_weaver] HP:82→83 turns:1
+    fl2 d0 NORM [draugr+rune_berserker] HP:83→83 turns:3
+    fl2 d2 NORM [einherjar+rune_berserker] HP:83→83 turns:1
+    fl2 d3 NORM [shield_maiden+rune_shaman+draugr] HP:83→83 turns:1
+    fl2 d5 ELITE [jormungandr_spawn] HP:83→70 turns:6
+    fl2 d7 NORM [rune_shaman+einherjar+shield_maiden] HP:77→49 turns:8
+    fl2 d9 NORM [draugr+shield_maiden+einherjar] HP:56→50 turns:2
+    fl2 d10 NORM [frost_troll+shield_maiden] HP:57→58 turns:3
+    fl2 d11 ELITE [jormungandr_spawn] HP:65→67 turns:4
+    fl2 d12 NORM [frost_troll+shield_maiden] HP:74→68 turns:6
+    fl2 d14 ELITE [valkyrie] HP:75→70 turns:3
+    fl2 d15 BOSS [fenrir] HP:77→53 turns:2
+    fl3 d0 NORM [baobab_giant+serpent_oracle+tokoloshe] HP:60→60 turns:1
+    fl3 d1 NORM [baobab_giant+mask_hunter+tokoloshe] HP:67→56 turns:3
+    fl3 d3 NORM [serpent_oracle+impundulu+mask_hunter] HP:63→64 turns:2
+    fl3 d5 NORM [mask_hunter+serpent_oracle+baobab_giant] HP:71→58 turns:3
+    fl3 d6 NORM [mask_hunter+baobab_giant+serpent_oracle] HP:65→67 turns:3
+    fl3 d7 ELITE [legba_emissary] HP:74→76 turns:3
+    fl3 d9 NORM [mask_hunter+baobab_giant+hyena_pack+tokoloshe] HP:83→73 turns:3
+    fl3 d10 NORM [impundulu+baobab_giant+mask_hunter] HP:80→77 turns:2
+    fl3 d11 NORM [impundulu+hyena_pack+mask_hunter+serpent_oracle] HP:83→62 turns:2
+    fl3 d12 NORM [serpent_oracle+impundulu+baobab_giant] HP:69→65 turns:2
+    fl3 d14 ELITE [legba_emissary] HP:72→74 turns:2
+    fl3 d15 BOSS [anansi_weaver] HP:81→67 turns:7
+  VICTOIRE fl3 | HP:74 | deck:31 | boss:3 | tours:114
+
+── Run 63 ─────────────────────────────────────
+    fl1 d0 NORM [mummy_knight] HP:83→83 turns:1
+    fl1 d1 NORM [ushabti_servant] HP:83→83 turns:1
+    fl1 d3 NORM [mummy_knight] HP:83→83 turns:1
+    fl1 d4 NORM [mummy_knight] HP:83→83 turns:1
+    fl1 d6 ELITE [anubis_champion] HP:83→81 turns:3
+    fl1 d9 NORM [ushabti_servant+tomb_priest] HP:83→83 turns:4
+    fl1 d10 NORM [wadjet_guardian+apep_scion] HP:83→83 turns:2
+    fl1 d13 NORM [wadjet_guardian+apep_scion] HP:83→83 turns:3
+    fl1 d14 ELITE [anubis_champion] HP:83→72 turns:4
+    fl1 d15 BOSS [ra_avatar] HP:79→61 turns:8
+    fl2 d0 NORM [ushabti_servant+wadjet_guardian] HP:68→68 turns:3
+    fl2 d1 NORM [sand_guardian+tomb_priest] HP:75→72 turns:2
+    fl2 d5 NORM [mummy_knight+scarab_swarm+wadjet_guardian] HP:83→83 turns:4
+    fl2 d6 NORM [wadjet_guardian+ushabti_servant+apep_scion] HP:83→57 turns:6
+    fl2 d9 NORM [ushabti_servant+mummy_knight+tomb_priest] HP:64→49 turns:5
+    fl2 d10 NORM [wadjet_guardian+sand_guardian] HP:56→59 turns:3
+    fl2 d11 NORM [wadjet_guardian+apep_scion+mummy_knight] HP:66→64 turns:5
+    fl2 d13 NORM [tomb_priest+wadjet_guardian+mummy_knight] HP:71→73 turns:3
+    fl2 d14 ELITE [sekhmet_chosen] HP:80→61 turns:5
+    fl2 d15 BOSS [osiris_judgment] HP:68→21 turns:6
+    fl3 d0 NORM [shoggoth_spawn+void_tendril+cultist_scribe] HP:28→15 turns:4
+    fl3 d1 NORM [void_tendril+byakhee+star_spawn+star_spawn] HP:22→10 turns:4
+    fl3 d3 NORM [deep_one+byakhee+cultist_scribe] HP:17→15 turns:3
+    fl3 d4 NORM [shoggoth_spawn+cultist_scribe+void_tendril] HP:22→23 turns:4
+    fl3 d6 ELITE [mi_go_surgeon] HP:30→29 turns:3
+  * fl3 d7 NORM [star_spawn+shoggoth_spawn+star_spawn+void_tendril] HP:36→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:36 | deck:26 | boss:2 | tours:91
+
+── Run 64 ─────────────────────────────────────
+    fl1 d0 NORM [tokoloshe+tokoloshe] HP:83→82 turns:4
+    fl1 d1 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d3 NORM [hyena_pack+tokoloshe] HP:83→83 turns:3
+    fl1 d4 NORM [serpent_oracle] HP:83→83 turns:2
+    fl1 d6 NORM [mask_hunter+tokoloshe] HP:83→83 turns:3
+    fl1 d9 NORM [baobab_giant] HP:83→83 turns:1
+    fl1 d10 NORM [hyena_pack+mask_hunter] HP:83→83 turns:2
+    fl1 d11 NORM [tokoloshe+serpent_oracle] HP:83→81 turns:3
+    fl1 d13 NORM [impundulu+hyena_pack] HP:83→83 turns:3
+    fl1 d14 ELITE [legba_emissary] HP:83→67 turns:4
+  * fl1 d15 BOSS [soundiata_spirit] HP:74→MORT turns:10 [DÉFAITE]
+  DÉFAITE fl0 | HP:74 | deck:20 | boss:0 | tours:36
+
+── Run 65 ─────────────────────────────────────
+    fl1 d0 NORM [wadjet_guardian] HP:83→83 turns:1
+    fl1 d1 NORM [scarab_swarm+tomb_priest] HP:83→83 turns:2
+    fl1 d3 NORM [ushabti_servant] HP:83→83 turns:1
+    fl1 d4 NORM [ushabti_servant] HP:83→83 turns:1
+    fl1 d6 NORM [wadjet_guardian+tomb_priest] HP:83→83 turns:3
+    fl1 d7 ELITE [anubis_champion] HP:83→77 turns:5
+    fl1 d10 NORM [sand_guardian] HP:83→83 turns:1
+    fl1 d11 NORM [apep_scion+wadjet_guardian] HP:83→83 turns:2
+    fl1 d13 NORM [apep_scion+wadjet_guardian] HP:83→83 turns:2
+    fl1 d14 ELITE [sekhmet_chosen] HP:83→81 turns:4
+    fl1 d15 BOSS [osiris_judgment] HP:83→47 turns:8
+    fl2 d0 NORM [baobab_giant+hyena_pack] HP:54→56 turns:3
+    fl2 d1 NORM [hyena_pack+baobab_giant] HP:63→59 turns:3
+    fl2 d3 NORM [tokoloshe+serpent_oracle+tokoloshe] HP:83→83 turns:5
+    fl2 d4 NORM [impundulu+serpent_oracle] HP:83→83 turns:3
+    fl2 d7 ELITE [legba_emissary] HP:83→82 turns:3
+    fl2 d10 NORM [serpent_oracle+mask_hunter+tokoloshe] HP:83→83 turns:3
+    fl2 d11 NORM [baobab_giant+impundulu] HP:83→83 turns:2
+    fl2 d12 NORM [baobab_giant+impundulu] HP:83→78 turns:2
+    fl2 d14 ELITE [legba_emissary] HP:83→82 turns:3
+    fl2 d15 BOSS [anansi_weaver] HP:83→74 turns:5
+    fl3 d0 NORM [ushabti_servant+wadjet_guardian+mummy_knight] HP:81→73 turns:5
+    fl3 d1 NORM [sand_guardian+wadjet_guardian+tomb_priest] HP:80→70 turns:5
+    fl3 d3 NORM [wadjet_guardian+tomb_priest+sand_guardian] HP:83→83 turns:4
+    fl3 d5 NORM [wadjet_guardian+scarab_swarm+tomb_priest+sand_guardian] HP:83→80 turns:5
+    fl3 d7 NORM [tomb_priest+mummy_knight+sand_guardian+tomb_priest] HP:83→46 turns:6
+    fl3 d9 NORM [sand_guardian+wadjet_guardian+apep_scion+tomb_priest] HP:53→52 turns:4
+    fl3 d10 NORM [mummy_knight+sand_guardian+apep_scion+scarab_swarm] HP:59→56 turns:3
+    fl3 d11 NORM [wadjet_guardian+sand_guardian+ushabti_servant] HP:63→64 turns:5
+    fl3 d12 NORM [wadjet_guardian+ushabti_servant+mummy_knight+tomb_priest] HP:71→68 turns:3
+    fl3 d14 ELITE [anubis_champion] HP:83→82 turns:2
+    fl3 d15 BOSS [ra_avatar] HP:83→68 turns:5
+  VICTOIRE fl3 | HP:75 | deck:30 | boss:3 | tours:109
+
+── Run 66 ─────────────────────────────────────
+    fl1 d0 NORM [tzitzimitl] HP:83→83 turns:1
+    fl1 d1 NORM [eagle_knight] HP:83→83 turns:2
+    fl1 d2 NORM [tzitzimitl] HP:83→83 turns:1
+    fl1 d5 NORM [flayed_cultist+obsidian_priest] HP:83→83 turns:4
+    fl1 d7 NORM [obsidian_priest+obsidian_priest+jaguar_warrior] HP:83→36 turns:8
+    fl1 d9 NORM [eagle_knight+jaguar_warrior] HP:68→66 turns:2
+    fl1 d10 NORM [flayed_cultist+obsidian_priest] HP:73→58 turns:4
+    fl1 d11 NORM [tzitzimitl+jaguar_warrior] HP:65→67 turns:2
+    fl1 d13 NORM [jaguar_warrior+obsidian_priest+jaguar_warrior] HP:74→70 turns:8
+    fl1 d14 ELITE [huitzilopochtli_enforcer] HP:77→52 turns:5
+  * fl1 d15 BOSS [tezcatlipoca_echo] HP:59→MORT turns:7 [DÉFAITE]
+  DÉFAITE fl0 | HP:59 | deck:20 | boss:0 | tours:44
+
+── Run 67 ─────────────────────────────────────
+    fl1 d0 NORM [satyr+harpy] HP:83→83 turns:2
+    fl1 d1 NORM [lamia] HP:83→83 turns:0
+    fl1 d3 NORM [lamia] HP:83→83 turns:0
+    fl1 d4 NORM [lamia] HP:83→83 turns:0
+    fl1 d6 ELITE [minotaur] HP:83→31 turns:5
+    fl1 d9 NORM [gorgon+satyr] HP:63→65 turns:2
+    fl1 d10 NORM [gorgon+satyr] HP:72→73 turns:1
+    fl1 d11 ELITE [minotaur] HP:80→77 turns:2
+    fl1 d12 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d14 ELITE [lernaean_broodling] HP:83→83 turns:2
+  * fl1 d15 BOSS [hydra_aspect] HP:83→MORT turns:14 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:19 | boss:0 | tours:29
+
+── Run 68 ─────────────────────────────────────
+    fl1 d0 NORM [void_tendril] HP:83→83 turns:2
+    fl1 d2 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d3 NORM [byakhee] HP:83→83 turns:0
+    fl1 d5 NORM [byakhee+cultist_scribe] HP:83→78 turns:2
+    fl1 d6 ELITE [elder_hybrid] HP:83→78 turns:5
+    fl1 d9 NORM [byakhee+star_spawn] HP:83→83 turns:2
+    fl1 d10 NORM [void_tendril+star_spawn] HP:83→83 turns:2
+    fl1 d11 ELITE [mi_go_surgeon] HP:83→83 turns:4
+    fl1 d13 NORM [byakhee+cultist_scribe] HP:83→83 turns:2
+    fl1 d14 ELITE [mi_go_surgeon] HP:83→83 turns:2
+    fl1 d15 BOSS [shub_spawn] HP:83→73 turns:7
+    fl2 d0 NORM [bronze_automaton+harpy] HP:80→81 turns:2
+    fl2 d2 NORM [cyclops+satyr] HP:83→75 turns:3
+    fl2 d3 NORM [cyclops+satyr] HP:82→83 turns:2
+    fl2 d4 NORM [satyr+gorgon+harpy] HP:83→83 turns:1
+    fl2 d6 NORM [gorgon+lamia+satyr] HP:83→83 turns:1
+    fl2 d7 NORM [cyclops+lamia] HP:83→79 turns:2
+    fl2 d10 NORM [bronze_automaton+gorgon] HP:83→83 turns:1
+    fl2 d11 NORM [gorgon+bronze_automaton] HP:83→83 turns:1
+    fl2 d12 NORM [bronze_automaton+lamia] HP:83→83 turns:2
+    fl2 d14 ELITE [lernaean_broodling] HP:83→75 turns:2
+    fl2 d15 BOSS [hydra_aspect] HP:82→83 turns:4
+    fl3 d0 NORM [iron_cossack+czar_guard+rusalka] HP:83→77 turns:2
+    fl3 d1 NORM [iron_cossack+czar_guard+kikimora] HP:83→78 turns:2
+    fl3 d4 NORM [kikimora+iron_cossack+kikimora+rusalka] HP:83→69 turns:3
+    fl3 d6 ELITE [koschei_herald] HP:76→73 turns:2
+    fl3 d9 NORM [iron_cossack+czar_guard+kikimora+winter_wolf] HP:80→73 turns:2
+    fl3 d11 NORM [snow_maiden+czar_guard+winter_wolf+kikimora] HP:80→66 turns:2
+    fl3 d12 NORM [iron_cossack+czar_guard+snow_maiden] HP:73→63 turns:2
+    fl3 d14 ELITE [koschei_herald] HP:70→72 turns:2
+    fl3 d15 BOSS [baba_yaga_hut] HP:79→59 turns:3
+  VICTOIRE fl3 | HP:66 | deck:29 | boss:3 | tours:70
+
+── Run 69 ─────────────────────────────────────
+    fl1 d0 NORM [hyena_pack+hyena_pack] HP:83→83 turns:4
+    fl1 d1 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d3 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d5 NORM [serpent_oracle+tokoloshe] HP:83→83 turns:2
+    fl1 d6 NORM [tokoloshe+mask_hunter] HP:83→83 turns:2
+    fl1 d7 ELITE [oya_harbinger] HP:83→81 turns:2
+    fl1 d9 NORM [serpent_oracle+tokoloshe] HP:83→83 turns:3
+    fl1 d11 NORM [hyena_pack+mask_hunter] HP:83→83 turns:3
+    fl1 d12 NORM [hyena_pack+mask_hunter] HP:83→83 turns:4
+    fl1 d14 ELITE [oya_harbinger] HP:83→73 turns:6
+    fl1 d15 BOSS [soundiata_spirit] HP:83→63 turns:12
+    fl2 d0 NORM [mask_hunter+impundulu] HP:75→78 turns:3
+    fl2 d2 NORM [baobab_giant+hyena_pack] HP:83→67 turns:6
+    fl2 d3 NORM [serpent_oracle+tokoloshe+hyena_pack] HP:79→48 turns:6
+    fl2 d7 NORM [mask_hunter+serpent_oracle+hyena_pack] HP:83→70 turns:5
+    fl2 d9 NORM [serpent_oracle+hyena_pack+impundulu] HP:82→83 turns:3
+    fl2 d10 NORM [tokoloshe+mask_hunter+impundulu] HP:83→83 turns:7
+    fl2 d11 NORM [impundulu+baobab_giant] HP:83→83 turns:4
+    fl2 d12 NORM [serpent_oracle+tokoloshe+mask_hunter] HP:83→75 turns:7
+    fl2 d14 ELITE [legba_emissary] HP:83→62 turns:6
+    fl2 d15 BOSS [soundiata_spirit] HP:74→25 turns:15
+    fl3 d0 NORM [impundulu+mask_hunter+serpent_oracle] HP:37→28 turns:5
+  * fl3 d1 NORM [baobab_giant+serpent_oracle+hyena_pack] HP:40→MORT turns:5 [DÉFAITE]
+  DÉFAITE fl2 | HP:40 | deck:25 | boss:2 | tours:112
+
+── Run 70 ─────────────────────────────────────
+    fl1 d0 NORM [tzitzimitl] HP:83→83 turns:1
+    fl1 d2 NORM [tzitzimitl] HP:83→83 turns:1
+    fl1 d3 NORM [eagle_knight] HP:83→83 turns:1
+    fl1 d4 NORM [jaguar_warrior+obsidian_priest] HP:83→82 turns:5
+    fl1 d7 NORM [tzitzimitl+obsidian_priest] HP:83→83 turns:3
+  * fl1 d9 NORM [obsidian_priest+jaguar_warrior+jaguar_warrior] HP:83→MORT turns:9 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:16 | boss:0 | tours:20
+
+── Run 71 ─────────────────────────────────────
+    fl1 d0 NORM [winter_wolf+winter_wolf] HP:83→83 turns:4
+    fl1 d1 NORM [winter_wolf+rusalka] HP:83→83 turns:4
+    fl1 d2 NORM [rusalka+winter_wolf] HP:83→77 turns:3
+    fl1 d5 NORM [winter_wolf+rusalka+winter_wolf] HP:83→72 turns:4
+    fl1 d6 NORM [snow_maiden+winter_wolf] HP:79→77 turns:5
+    fl1 d7 ELITE [koschei_herald] HP:83→83 turns:3
+    fl1 d10 NORM [iron_cossack+winter_wolf] HP:83→81 turns:2
+    fl1 d11 NORM [snow_maiden+kikimora] HP:83→83 turns:4
+    fl1 d13 NORM [winter_wolf+snow_maiden] HP:83→83 turns:2
+    fl1 d14 ELITE [domovoi_titan] HP:83→67 turns:4
+    fl1 d15 BOSS [baba_yaga_hut] HP:74→18 turns:9
+    fl2 d0 NORM [deep_one+star_spawn] HP:25→23 turns:3
+    fl2 d1 NORM [shoggoth_spawn+star_spawn] HP:30→29 turns:3
+    fl2 d3 NORM [void_tendril+cultist_scribe+cultist_scribe] HP:36→23 turns:4
+    fl2 d5 NORM [deep_one+cultist_scribe+cultist_scribe] HP:30→7 turns:3
+  * fl2 d6 NORM [void_tendril+byakhee+star_spawn] HP:14→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl1 | HP:14 | deck:23 | boss:1 | tours:59
+
+── Run 72 ─────────────────────────────────────
+    fl1 d0 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d2 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d3 NORM [winter_wolf+winter_wolf] HP:83→83 turns:3
+    fl1 d5 NORM [snow_maiden+winter_wolf] HP:83→78 turns:3
+    fl1 d6 ELITE [koschei_herald] HP:83→83 turns:3
+    fl1 d9 NORM [snow_maiden+winter_wolf] HP:83→83 turns:2
+    fl1 d10 ELITE [koschei_herald] HP:83→80 turns:3
+    fl1 d11 NORM [kikimora+snow_maiden] HP:83→83 turns:3
+    fl1 d13 NORM [czar_guard] HP:83→83 turns:1
+    fl1 d14 ELITE [domovoi_titan] HP:83→83 turns:4
+    fl1 d15 BOSS [baba_yaga_hut] HP:83→69 turns:9
+    fl2 d0 NORM [shield_maiden+einherjar] HP:76→76 turns:3
+    fl2 d1 NORM [draugr+draugr+rune_berserker] HP:83→81 turns:4
+    fl2 d2 NORM [frost_troll+draugr] HP:83→75 turns:3
+    fl2 d3 NORM [draugr+shield_maiden+rune_shaman] HP:82→81 turns:4
+    fl2 d5 ELITE [jormungandr_spawn] HP:83→83 turns:3
+    fl2 d6 NORM [frost_troll+rune_berserker] HP:83→83 turns:2
+    fl2 d7 NORM [rune_berserker+frost_troll] HP:83→83 turns:2
+    fl2 d9 NORM [rune_shaman+rune_shaman+einherjar+draugr] HP:83→83 turns:6
+    fl2 d11 NORM [shield_maiden+rune_shaman+rune_berserker] HP:83→83 turns:3
+    fl2 d12 NORM [frost_troll+shield_maiden] HP:83→83 turns:1
+    fl2 d14 ELITE [valkyrie] HP:83→83 turns:1
+    fl2 d15 BOSS [fenrir] HP:83→10 turns:6
+    fl3 d0 NORM [mummy_knight+ushabti_servant+wadjet_guardian] HP:17→26 turns:3
+    fl3 d1 NORM [ushabti_servant+sand_guardian+tomb_priest] HP:33→36 turns:1
+    fl3 d3 NORM [ushabti_servant+wadjet_guardian+mummy_knight] HP:67→68 turns:2
+    fl3 d4 NORM [sand_guardian+ushabti_servant+tomb_priest] HP:75→78 turns:3
+    fl3 d6 ELITE [anubis_champion] HP:83→81 turns:3
+    fl3 d7 NORM [ushabti_servant+wadjet_guardian+mummy_knight+scarab_swarm] HP:83→83 turns:3
+    fl3 d9 NORM [wadjet_guardian+sand_guardian+ushabti_servant] HP:83→83 turns:3
+    fl3 d10 NORM [sand_guardian+tomb_priest+wadjet_guardian+scarab_swarm] HP:83→83 turns:4
+    fl3 d11 ELITE [sekhmet_chosen] HP:83→80 turns:2
+    fl3 d13 NORM [ushabti_servant+wadjet_guardian+mummy_knight+scarab_swarm] HP:83→83 turns:3
+    fl3 d14 ELITE [sekhmet_chosen] HP:83→83 turns:2
+    fl3 d15 BOSS [ra_avatar] HP:83→48 turns:4
+  VICTOIRE fl3 | HP:55 | deck:31 | boss:3 | tours:104
+
+── Run 73 ─────────────────────────────────────
+    fl1 d0 NORM [lamia] HP:83→83 turns:0
+    fl1 d2 NORM [satyr+harpy] HP:83→83 turns:2
+    fl1 d3 NORM [harpy+satyr] HP:83→83 turns:1
+    fl1 d6 NORM [harpy+lamia] HP:83→83 turns:1
+    fl1 d7 ELITE [lernaean_broodling] HP:83→74 turns:3
+    fl1 d10 NORM [cyclops] HP:83→83 turns:2
+    fl1 d11 NORM [cyclops] HP:83→83 turns:1
+    fl1 d12 NORM [gorgon+satyr] HP:83→83 turns:3
+    fl1 d14 ELITE [lernaean_broodling] HP:83→83 turns:2
+    fl1 d15 BOSS [medusa] HP:83→58 turns:4
+    fl2 d0 NORM [rune_berserker+einherjar] HP:65→67 turns:2
+    fl2 d1 NORM [shield_maiden+draugr+rune_shaman] HP:74→73 turns:1
+    fl2 d2 NORM [einherjar+rune_berserker] HP:80→83 turns:3
+    fl2 d3 NORM [einherjar+rune_shaman+rune_shaman] HP:83→80 turns:3
+    fl2 d5 NORM [frost_troll+rune_berserker] HP:83→79 turns:5
+    fl2 d6 NORM [shield_maiden+frost_troll] HP:83→83 turns:1
+    fl2 d7 ELITE [jormungandr_spawn] HP:83→81 turns:3
+    fl2 d9 NORM [shield_maiden+frost_troll] HP:83→83 turns:4
+    fl2 d11 NORM [draugr+draugr+shield_maiden+rune_shaman] HP:83→33 turns:6
+    fl2 d12 NORM [einherjar+rune_berserker+rune_shaman] HP:40→41 turns:0
+    fl2 d14 ELITE [valkyrie] HP:48→53 turns:3
+    fl2 d15 BOSS [hel_queen] HP:60→41 turns:9
+    fl3 d0 NORM [void_tendril+shoggoth_spawn+cultist_scribe] HP:48→49 turns:0
+    fl3 d1 NORM [deep_one+void_tendril+star_spawn] HP:56→28 turns:5
+    fl3 d3 NORM [shoggoth_spawn+void_tendril+cultist_scribe] HP:35→34 turns:4
+    fl3 d4 NORM [byakhee+shoggoth_spawn+star_spawn] HP:41→22 turns:2
+    fl3 d5 ELITE [elder_hybrid] HP:29→40 turns:3
+    fl3 d6 NORM [deep_one+void_tendril+byakhee] HP:55→39 turns:3
+    fl3 d9 NORM [void_tendril+deep_one+star_spawn+cultist_scribe] HP:83→74 turns:5
+    fl3 d10 ELITE [mi_go_surgeon] HP:81→85 turns:3
+    fl3 d11 NORM [void_tendril+deep_one+byakhee] HP:95→91 turns:4
+    fl3 d12 NORM [shoggoth_spawn+deep_one+star_spawn] HP:95→64 turns:1
+    fl3 d14 ELITE [elder_hybrid] HP:71→66 turns:2
+    fl3 d15 BOSS [nyarlathotep_shard] HP:81→84 turns:7
+  VICTOIRE fl3 | HP:91 | deck:31 | boss:3 | tours:98
+
+── Run 74 ─────────────────────────────────────
+    fl1 d0 NORM [rusalka+kikimora] HP:83→83 turns:3
+    fl1 d1 NORM [rusalka+kikimora] HP:83→83 turns:3
+    fl1 d3 NORM [snow_maiden] HP:83→83 turns:0
+    fl1 d5 NORM [snow_maiden+winter_wolf] HP:83→83 turns:1
+    fl1 d6 NORM [czar_guard] HP:83→83 turns:1
+    fl1 d7 ELITE [domovoi_titan] HP:83→59 turns:4
+    fl1 d9 NORM [rusalka+rusalka+kikimora] HP:66→69 turns:3
+    fl1 d10 NORM [winter_wolf+kikimora+kikimora] HP:76→78 turns:5
+    fl1 d11 ELITE [domovoi_titan] HP:83→80 turns:4
+    fl1 d12 NORM [winter_wolf+snow_maiden] HP:83→83 turns:3
+    fl1 d14 ELITE [domovoi_titan] HP:83→78 turns:3
+  * fl1 d15 BOSS [koschei_deathless] HP:83→MORT turns:15 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:20 | boss:0 | tours:45
+
+── Run 75 ─────────────────────────────────────
+    fl1 d0 NORM [lamia] HP:83→83 turns:1
+    fl1 d1 NORM [satyr+harpy] HP:83→83 turns:1
+    fl1 d3 NORM [lamia] HP:83→83 turns:0
+    fl1 d4 NORM [harpy+satyr] HP:83→83 turns:2
+    fl1 d6 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d7 ELITE [minotaur] HP:83→73 turns:6
+    fl1 d9 NORM [harpy+lamia] HP:80→82 turns:2
+    fl1 d12 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d14 ELITE [minotaur] HP:83→83 turns:1
+    fl1 d15 BOSS [hydra_aspect] HP:83→64 turns:11
+    fl2 d0 NORM [bog_beast+druid_apprentice] HP:71→71 turns:0
+    fl2 d1 NORM [bog_beast+druid_apprentice] HP:78→78 turns:0
+    fl2 d4 NORM [briar_beast+amber_hound] HP:83→83 turns:0
+    fl2 d6 NORM [bog_beast+sidhe_raider+druid_apprentice] HP:83→76 turns:1
+    fl2 d9 NORM [amber_hound+druid_apprentice+briar_beast] HP:83→68 turns:2
+    fl2 d10 NORM [morrigan_wisp+briar_beast+amber_hound] HP:75→75 turns:0
+    fl2 d11 NORM [bog_beast+druid_apprentice] HP:82→77 turns:2
+    fl2 d12 NORM [briar_beast+amber_hound+morrigan_wisp] HP:83→83 turns:0
+    fl2 d14 ELITE [morrigan_chosen] HP:83→82 turns:1
+    fl2 d15 BOSS [cernunnos_shade] HP:83→83 turns:0
+    fl3 d0 NORM [hyena_pack+impundulu+mask_hunter+tokoloshe] HP:83→83 turns:0
+    fl3 d1 NORM [impundulu+mask_hunter+serpent_oracle] HP:83→83 turns:1
+    fl3 d2 NORM [baobab_giant+serpent_oracle+tokoloshe] HP:83→72 turns:2
+    fl3 d5 ELITE [legba_emissary] HP:79→79 turns:3
+    fl3 d6 NORM [mask_hunter+hyena_pack+baobab_giant+hyena_pack] HP:83→67 turns:1
+    fl3 d9 NORM [serpent_oracle+impundulu+mask_hunter+hyena_pack] HP:74→69 turns:2
+    fl3 d10 ELITE [legba_emissary] HP:76→81 turns:1
+    fl3 d11 NORM [impundulu+serpent_oracle+hyena_pack+mask_hunter] HP:83→58 turns:2
+    fl3 d12 NORM [mask_hunter+impundulu+baobab_giant] HP:65→58 turns:2
+    fl3 d14 ELITE [oya_harbinger] HP:65→81 turns:2
+    fl3 d15 BOSS [soundiata_spirit] HP:83→75 turns:2
+  VICTOIRE fl3 | HP:82 | deck:30 | boss:3 | tours:50
+
+── Run 76 ─────────────────────────────────────
+    fl1 d0 NORM [winter_wolf+rusalka] HP:83→75 turns:4
+    fl1 d2 NORM [snow_maiden] HP:82→83 turns:2
+    fl1 d3 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d6 NORM [winter_wolf+snow_maiden] HP:83→82 turns:2
+    fl1 d7 ELITE [koschei_herald] HP:83→83 turns:4
+    fl1 d9 NORM [winter_wolf+rusalka+winter_wolf] HP:83→77 turns:4
+    fl1 d10 NORM [czar_guard] HP:83→83 turns:1
+    fl1 d11 NORM [winter_wolf+winter_wolf+rusalka] HP:83→77 turns:5
+    fl1 d13 NORM [kikimora+kikimora+rusalka] HP:83→83 turns:3
+    fl1 d14 ELITE [koschei_herald] HP:83→82 turns:2
+  * fl1 d15 BOSS [koschei_deathless] HP:83→MORT turns:9 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:20 | boss:0 | tours:37
+
+── Run 77 ─────────────────────────────────────
+    fl1 d0 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d1 NORM [star_spawn+star_spawn] HP:83→83 turns:4
+    fl1 d3 NORM [cultist_scribe+cultist_scribe] HP:83→83 turns:2
+    fl1 d5 NORM [deep_one] HP:83→83 turns:1
+    fl1 d6 NORM [void_tendril+star_spawn] HP:83→73 turns:4
+    fl1 d7 ELITE [mi_go_surgeon] HP:80→82 turns:2
+    fl1 d9 NORM [byakhee+star_spawn] HP:83→83 turns:1
+    fl1 d10 ELITE [mi_go_surgeon] HP:83→83 turns:3
+    fl1 d11 NORM [byakhee+cultist_scribe] HP:83→83 turns:2
+    fl1 d12 NORM [shoggoth_spawn] HP:83→83 turns:1
+    fl1 d14 ELITE [elder_hybrid] HP:83→81 turns:4
+    fl1 d15 BOSS [nyarlathotep_shard] HP:83→70 turns:9
+    fl2 d0 NORM [impundulu+tokoloshe+tokoloshe] HP:77→69 turns:4
+    fl2 d2 NORM [baobab_giant+hyena_pack] HP:83→83 turns:4
+    fl2 d3 NORM [serpent_oracle+mask_hunter] HP:83→83 turns:4
+    fl2 d7 NORM [serpent_oracle+baobab_giant] HP:83→83 turns:3
+    fl2 d9 NORM [impundulu+serpent_oracle+hyena_pack] HP:83→83 turns:2
+    fl2 d10 NORM [serpent_oracle+baobab_giant] HP:83→83 turns:2
+    fl2 d13 NORM [serpent_oracle+tokoloshe+mask_hunter] HP:83→83 turns:3
+    fl2 d14 ELITE [legba_emissary] HP:83→83 turns:3
+    fl2 d15 BOSS [soundiata_spirit] HP:83→79 turns:5
+    fl3 d0 NORM [shield_maiden+frost_troll+draugr] HP:83→83 turns:5
+    fl3 d2 NORM [frost_troll+shield_maiden+rune_shaman] HP:83→83 turns:3
+    fl3 d3 NORM [shield_maiden+frost_troll+draugr] HP:83→83 turns:6
+    fl3 d5 ELITE [valkyrie] HP:83→83 turns:2
+    fl3 d6 NORM [frost_troll+draugr+einherjar+draugr] HP:83→69 turns:3
+    fl3 d9 NORM [rune_berserker+frost_troll+draugr+rune_shaman] HP:76→83 turns:3
+    fl3 d10 ELITE [valkyrie] HP:83→80 turns:3
+    fl3 d11 NORM [frost_troll+rune_berserker+draugr+draugr] HP:83→73 turns:5
+    fl3 d13 NORM [shield_maiden+rune_shaman+frost_troll+rune_shaman] HP:80→81 turns:4
+    fl3 d14 ELITE [valkyrie] HP:83→83 turns:2
+    fl3 d15 BOSS [hel_queen] HP:83→34 turns:6
+  VICTOIRE fl3 | HP:41 | deck:31 | boss:3 | tours:106
+
+── Run 78 ─────────────────────────────────────
+    fl1 d0 NORM [lamia] HP:83→83 turns:0
+    fl1 d1 NORM [lamia] HP:83→83 turns:1
+    fl1 d2 NORM [gorgon] HP:83→83 turns:1
+    fl1 d3 NORM [gorgon] HP:83→83 turns:1
+    fl1 d5 NORM [lamia+harpy] HP:83→83 turns:1
+    fl1 d6 ELITE [minotaur] HP:83→53 turns:4
+    fl1 d9 NORM [harpy+satyr+harpy] HP:60→54 turns:5
+    fl1 d10 NORM [lamia+harpy] HP:61→62 turns:1
+    fl1 d13 NORM [lamia+satyr] HP:83→83 turns:1
+    fl1 d14 ELITE [minotaur] HP:83→47 turns:3
+    fl1 d15 BOSS [medusa] HP:54→18 turns:4
+    fl2 d0 NORM [obsidian_priest+eagle_knight+obsidian_priest] HP:25→15 turns:3
+    fl2 d1 NORM [jaguar_warrior+stone_idol] HP:22→8 turns:4
+    fl2 d3 NORM [eagle_knight+obsidian_priest+obsidian_priest] HP:15→8 turns:5
+  * fl2 d4 NORM [tzitzimitl+obsidian_priest+obsidian_priest] HP:15→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl1 | HP:15 | deck:23 | boss:1 | tours:36
+
+── Run 79 ─────────────────────────────────────
+    fl1 d0 NORM [star_spawn+cultist_scribe] HP:83→83 turns:4
+    fl1 d2 NORM [void_tendril] HP:83→83 turns:1
+    fl1 d5 NORM [byakhee+star_spawn] HP:83→79 turns:4
+    fl1 d6 NORM [byakhee+cultist_scribe] HP:83→83 turns:2
+    fl1 d7 ELITE [elder_hybrid] HP:83→70 turns:4
+    fl1 d9 NORM [cultist_scribe+void_tendril] HP:77→77 turns:3
+    fl1 d11 NORM [byakhee+cultist_scribe] HP:83→83 turns:2
+    fl1 d12 NORM [void_tendril+cultist_scribe] HP:83→83 turns:2
+    fl1 d14 ELITE [elder_hybrid] HP:83→80 turns:3
+  * fl1 d15 BOSS [shub_spawn] HP:83→MORT turns:6 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:19 | boss:0 | tours:31
+
+── Run 80 ─────────────────────────────────────
+    fl1 d0 NORM [winter_wolf+rusalka] HP:83→78 turns:5
+    fl1 d1 NORM [iron_cossack] HP:83→83 turns:3
+    fl1 d2 NORM [rusalka+winter_wolf] HP:83→81 turns:2
+    fl1 d6 NORM [snow_maiden+kikimora] HP:83→83 turns:4
+    fl1 d7 ELITE [domovoi_titan] HP:83→71 turns:6
+    fl1 d9 NORM [winter_wolf+kikimora+rusalka] HP:78→75 turns:6
+    fl1 d10 NORM [winter_wolf+kikimora+rusalka] HP:82→83 turns:5
+    fl1 d11 NORM [rusalka+snow_maiden] HP:83→74 turns:3
+    fl1 d13 NORM [rusalka+winter_wolf+kikimora] HP:83→82 turns:4
+    fl1 d14 ELITE [koschei_herald] HP:83→83 turns:4
+    fl1 d15 BOSS [baba_yaga_hut] HP:83→59 turns:15
+    fl2 d0 NORM [wadjet_guardian+apep_scion+apep_scion] HP:66→64 turns:4
+    fl2 d1 NORM [sand_guardian+apep_scion] HP:71→71 turns:3
+    fl2 d4 NORM [sand_guardian+tomb_priest] HP:83→73 turns:4
+    fl2 d6 NORM [apep_scion+ushabti_servant+wadjet_guardian] HP:80→71 turns:3
+    fl2 d7 ELITE [anubis_champion] HP:78→82 turns:4
+    fl2 d10 NORM [sand_guardian+wadjet_guardian] HP:83→83 turns:3
+    fl2 d11 NORM [sand_guardian+wadjet_guardian] HP:83→83 turns:2
+    fl2 d12 NORM [ushabti_servant+mummy_knight+apep_scion] HP:83→81 turns:4
+    fl2 d14 ELITE [sekhmet_chosen] HP:83→78 turns:2
+    fl2 d15 BOSS [osiris_judgment] HP:83→19 turns:8
+  * fl3 d0 NORM [cyclops+gorgon+satyr] HP:26→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:26 | deck:25 | boss:2 | tours:97
+
+── Run 81 ─────────────────────────────────────
+    fl1 d0 NORM [impundulu] HP:83→83 turns:0
+    fl1 d2 NORM [mask_hunter] HP:83→83 turns:1
+    fl1 d3 NORM [serpent_oracle] HP:83→80 turns:2
+    fl1 d5 ELITE [oya_harbinger] HP:83→70 turns:3
+    fl1 d7 NORM [serpent_oracle+tokoloshe] HP:77→79 turns:2
+    fl1 d9 NORM [tokoloshe+tokoloshe+hyena_pack] HP:83→83 turns:2
+    fl1 d10 ELITE [oya_harbinger] HP:83→83 turns:3
+    fl1 d11 NORM [serpent_oracle+hyena_pack] HP:83→83 turns:3
+    fl1 d13 NORM [impundulu+tokoloshe] HP:83→83 turns:3
+    fl1 d14 ELITE [oya_harbinger] HP:83→83 turns:4
+    fl1 d15 BOSS [soundiata_spirit] HP:83→42 turns:7
+    fl2 d0 NORM [impundulu+tokoloshe+hyena_pack] HP:49→53 turns:4
+    fl2 d1 NORM [serpent_oracle+mask_hunter] HP:60→61 turns:1
+    fl2 d3 NORM [baobab_giant+hyena_pack] HP:83→83 turns:2
+    fl2 d5 NORM [impundulu+hyena_pack+serpent_oracle] HP:83→69 turns:2
+    fl2 d7 NORM [impundulu+tokoloshe+tokoloshe+hyena_pack] HP:83→42 turns:5
+    fl2 d9 NORM [baobab_giant+impundulu] HP:74→71 turns:2
+    fl2 d11 NORM [impundulu+hyena_pack+tokoloshe+tokoloshe] HP:78→33 turns:5
+    fl2 d12 NORM [serpent_oracle+impundulu+hyena_pack] HP:40→22 turns:4
+    fl2 d14 ELITE [oya_harbinger] HP:53→55 turns:3
+    fl2 d15 BOSS [soundiata_spirit] HP:62→30 turns:7
+    fl3 d0 NORM [sand_guardian+ushabti_servant+scarab_swarm] HP:37→21 turns:4
+    fl3 d2 NORM [ushabti_servant+mummy_knight+wadjet_guardian] HP:52→48 turns:3
+    fl3 d3 NORM [scarab_swarm+scarab_swarm+wadjet_guardian+tomb_priest] HP:55→38 turns:4
+  * fl3 d5 NORM [ushabti_servant+mummy_knight+wadjet_guardian+tomb_priest] HP:45→MORT turns:5 [DÉFAITE]
+  DÉFAITE fl2 | HP:45 | deck:26 | boss:2 | tours:81
+
+── Run 82 ─────────────────────────────────────
+    fl1 d0 NORM [byakhee] HP:83→83 turns:0
+    fl1 d1 NORM [cultist_scribe+cultist_scribe] HP:83→83 turns:2
+    fl1 d3 NORM [byakhee] HP:83→83 turns:1
+    fl1 d5 NORM [shoggoth_spawn] HP:83→83 turns:2
+    fl1 d7 NORM [shoggoth_spawn] HP:83→83 turns:1
+    fl1 d9 NORM [byakhee+star_spawn] HP:83→78 turns:4
+    fl1 d11 NORM [void_tendril+cultist_scribe] HP:83→83 turns:2
+    fl1 d13 NORM [deep_one] HP:83→83 turns:1
+    fl1 d14 ELITE [elder_hybrid] HP:83→70 turns:7
+    fl1 d15 BOSS [nyarlathotep_shard] HP:82→63 turns:11
+    fl2 d0 NORM [einherjar+shield_maiden] HP:75→74 turns:4
+    fl2 d1 NORM [rune_berserker+einherjar] HP:83→47 turns:6
+    fl2 d3 NORM [shield_maiden+einherjar] HP:59→18 turns:4
+    fl2 d4 NORM [rune_berserker+einherjar] HP:30→29 turns:2
+    fl2 d6 NORM [draugr+einherjar+shield_maiden] HP:41→3 turns:4
+    fl2 d7 ELITE [jormungandr_spawn] HP:15→5 turns:3
+    fl2 d10 NORM [frost_troll+einherjar] HP:74→79 turns:5
+    fl2 d11 NORM [rune_shaman+shield_maiden+einherjar] HP:83→79 turns:11
+    fl2 d14 ELITE [valkyrie] HP:83→82 turns:4
+  * fl2 d15 BOSS [fenrir] HP:83→MORT turns:7 [DÉFAITE]
+  DÉFAITE fl1 | HP:83 | deck:25 | boss:1 | tours:81
+
+── Run 83 ─────────────────────────────────────
+    fl1 d0 NORM [rune_berserker] HP:83→83 turns:0
+    fl1 d1 NORM [rune_shaman+draugr] HP:83→81 turns:4
+    fl1 d3 NORM [shield_maiden] HP:83→83 turns:3
+    fl1 d4 NORM [einherjar] HP:83→72 turns:2
+    fl1 d6 NORM [rune_shaman+einherjar] HP:79→78 turns:3
+    fl1 d7 ELITE [valkyrie] HP:83→83 turns:3
+    fl1 d9 NORM [rune_berserker+draugr] HP:83→83 turns:2
+    fl1 d10 NORM [einherjar+rune_shaman] HP:83→83 turns:4
+    fl1 d11 NORM [einherjar+rune_shaman] HP:83→83 turns:4
+    fl1 d12 NORM [rune_shaman+shield_maiden] HP:83→81 turns:5
+    fl1 d14 ELITE [jormungandr_spawn] HP:83→69 turns:8
+    fl1 d15 BOSS [hel_queen] HP:81→20 turns:10
+    fl2 d0 NORM [sand_guardian+apep_scion] HP:32→27 turns:3
+    fl2 d2 NORM [sand_guardian+apep_scion] HP:63→61 turns:4
+    fl2 d3 NORM [mummy_knight+wadjet_guardian] HP:73→69 turns:3
+    fl2 d4 NORM [wadjet_guardian+ushabti_servant] HP:81→83 turns:4
+    fl2 d6 NORM [tomb_priest+ushabti_servant+tomb_priest+scarab_swarm] HP:83→25 turns:11
+    fl2 d9 NORM [ushabti_servant+wadjet_guardian] HP:61→49 turns:3
+    fl2 d10 NORM [apep_scion+sand_guardian+tomb_priest] HP:61→57 turns:4
+    fl2 d11 NORM [wadjet_guardian+ushabti_servant+scarab_swarm] HP:69→52 turns:6
+    fl2 d13 NORM [scarab_swarm+mummy_knight+scarab_swarm+apep_scion] HP:64→24 turns:6
+    fl2 d14 ELITE [sekhmet_chosen] HP:36→30 turns:4
+  * fl2 d15 BOSS [ra_avatar] HP:42→MORT turns:5 [DÉFAITE]
+  DÉFAITE fl1 | HP:42 | deck:25 | boss:1 | tours:101
+
+── Run 84 ─────────────────────────────────────
+    fl1 d0 NORM [byakhee] HP:83→83 turns:0
+    fl1 d2 NORM [star_spawn+star_spawn] HP:83→83 turns:3
+    fl1 d4 NORM [byakhee] HP:83→83 turns:1
+    fl1 d6 NORM [byakhee+star_spawn] HP:83→78 turns:3
+    fl1 d9 NORM [cultist_scribe+star_spawn+cultist_scribe] HP:83→65 turns:3
+    fl1 d11 NORM [byakhee+cultist_scribe] HP:83→82 turns:3
+    fl1 d13 NORM [shoggoth_spawn] HP:83→83 turns:1
+    fl1 d14 ELITE [elder_hybrid] HP:83→80 turns:5
+    fl1 d15 BOSS [nyarlathotep_shard] HP:83→1 turns:13
+    fl2 d0 NORM [iron_cossack+snow_maiden] HP:8→1 turns:3
+  * fl2 d2 NORM [kikimora+iron_cossack+winter_wolf] HP:8→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl1 | HP:8 | deck:21 | boss:1 | tours:37
+
+── Run 85 ─────────────────────────────────────
+    fl1 d0 NORM [rune_berserker] HP:83→83 turns:0
+    fl1 d1 NORM [rune_shaman+draugr] HP:83→83 turns:4
+    fl1 d3 NORM [shield_maiden] HP:83→83 turns:2
+    fl1 d4 NORM [einherjar] HP:83→83 turns:1
+    fl1 d6 ELITE [jormungandr_spawn] HP:83→77 turns:6
+    fl1 d10 NORM [rune_shaman+rune_berserker] HP:83→83 turns:2
+    fl1 d11 NORM [rune_shaman+shield_maiden] HP:83→83 turns:6
+    fl1 d13 NORM [frost_troll] HP:83→83 turns:1
+    fl1 d14 ELITE [valkyrie] HP:83→80 turns:5
+  * fl1 d15 BOSS [fenrir] HP:83→MORT turns:6 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:20 | boss:0 | tours:33
+
+── Run 86 ─────────────────────────────────────
+    fl1 d0 NORM [scarab_swarm+apep_scion] HP:83→83 turns:3
+    fl1 d1 NORM [tomb_priest+tomb_priest] HP:83→78 turns:3
+    fl1 d3 NORM [apep_scion+tomb_priest] HP:83→83 turns:3
+    fl1 d4 NORM [mummy_knight] HP:83→83 turns:1
+    fl1 d6 NORM [wadjet_guardian+scarab_swarm] HP:83→83 turns:2
+    fl1 d9 NORM [apep_scion+wadjet_guardian] HP:83→83 turns:2
+    fl1 d10 NORM [wadjet_guardian+apep_scion] HP:83→83 turns:2
+    fl1 d11 NORM [tomb_priest+tomb_priest+scarab_swarm] HP:83→83 turns:6
+    fl1 d12 NORM [scarab_swarm+wadjet_guardian] HP:83→83 turns:2
+    fl1 d14 ELITE [anubis_champion] HP:83→80 turns:4
+    fl1 d15 BOSS [ra_avatar] HP:83→18 turns:8
+    fl2 d0 NORM [shield_maiden+draugr+rune_shaman] HP:25→27 turns:4
+    fl2 d1 NORM [einherjar+rune_berserker] HP:34→36 turns:2
+    fl2 d3 NORM [rune_berserker+einherjar] HP:43→45 turns:2
+    fl2 d5 NORM [einherjar+shield_maiden+draugr] HP:52→36 turns:8
+    fl2 d6 NORM [frost_troll+rune_berserker] HP:43→36 turns:4
+    fl2 d7 NORM [einherjar+rune_berserker+rune_shaman] HP:43→43 turns:6
+    fl2 d9 NORM [shield_maiden+einherjar+rune_shaman] HP:50→57 turns:5
+    fl2 d11 NORM [rune_berserker+shield_maiden+rune_shaman] HP:64→46 turns:6
+    fl2 d13 NORM [frost_troll+einherjar] HP:53→54 turns:3
+    fl2 d14 ELITE [jormungandr_spawn] HP:61→64 turns:3
+  * fl2 d15 BOSS [hel_queen] HP:71→MORT turns:9 [DÉFAITE]
+  DÉFAITE fl1 | HP:71 | deck:24 | boss:1 | tours:88
+
+── Run 87 ─────────────────────────────────────
+    fl1 d0 NORM [ushabti_servant] HP:83→83 turns:1
+    fl1 d1 NORM [mummy_knight] HP:83→79 turns:4
+    fl1 d2 NORM [scarab_swarm+apep_scion] HP:83→83 turns:3
+    fl1 d5 NORM [scarab_swarm+wadjet_guardian] HP:83→83 turns:3
+    fl1 d6 NORM [apep_scion+wadjet_guardian] HP:83→83 turns:2
+    fl1 d9 NORM [tomb_priest+tomb_priest+apep_scion] HP:83→83 turns:4
+    fl1 d10 NORM [apep_scion+wadjet_guardian] HP:83→83 turns:3
+    fl1 d11 ELITE [anubis_champion] HP:83→78 turns:3
+    fl1 d13 NORM [apep_scion+wadjet_guardian] HP:83→83 turns:2
+    fl1 d14 ELITE [sekhmet_chosen] HP:83→69 turns:5
+    fl1 d15 BOSS [osiris_judgment] HP:76→32 turns:9
+    fl2 d0 NORM [bronze_automaton+harpy] HP:39→28 turns:5
+    fl2 d2 NORM [bronze_automaton+harpy] HP:59→56 turns:3
+    fl2 d4 NORM [bronze_automaton+harpy] HP:63→60 turns:4
+    fl2 d6 NORM [cyclops+lamia] HP:67→70 turns:5
+    fl2 d7 NORM [lamia+satyr+gorgon] HP:77→59 turns:4
+    fl2 d9 NORM [harpy+gorgon+harpy+satyr] HP:66→47 turns:7
+    fl2 d11 NORM [lamia+cyclops] HP:54→58 turns:5
+    fl2 d12 NORM [lamia+harpy+gorgon] HP:65→63 turns:6
+    fl2 d14 ELITE [lernaean_broodling] HP:70→72 turns:2
+    fl2 d15 BOSS [hydra_aspect] HP:79→14 turns:13
+    fl3 d0 NORM [briar_beast+bog_beast+druid_apprentice] HP:21→19 turns:4
+    fl3 d2 NORM [briar_beast+amber_hound+morrigan_wisp+sidhe_raider] HP:26→20 turns:7
+    fl3 d3 NORM [morrigan_wisp+briar_beast+bog_beast] HP:27→29 turns:5
+    fl3 d6 NORM [bog_beast+briar_beast+amber_hound] HP:36→27 turns:5
+    fl3 d9 NORM [bog_beast+morrigan_wisp+morrigan_wisp+druid_apprentice] HP:59→51 turns:5
+    fl3 d11 NORM [bog_beast+briar_beast+amber_hound] HP:82→75 turns:4
+    fl3 d12 NORM [amber_hound+bog_beast+druid_apprentice+druid_apprentice] HP:82→56 turns:7
+    fl3 d14 ELITE [morrigan_chosen] HP:63→68 turns:4
+    fl3 d15 BOSS [dagda_shadow] HP:75→72 turns:7
+  VICTOIRE fl3 | HP:79 | deck:28 | boss:3 | tours:141
+
+── Run 88 ─────────────────────────────────────
+    fl1 d0 NORM [lamia] HP:83→83 turns:0
+    fl1 d1 NORM [lamia] HP:83→83 turns:0
+    fl1 d2 NORM [harpy+satyr] HP:83→83 turns:2
+    fl1 d5 NORM [harpy+lamia] HP:83→83 turns:2
+    fl1 d6 NORM [cyclops] HP:83→83 turns:1
+    fl1 d7 NORM [cyclops] HP:83→83 turns:2
+    fl1 d9 NORM [cyclops] HP:83→83 turns:2
+    fl1 d10 NORM [cyclops] HP:83→83 turns:1
+    fl1 d11 NORM [bronze_automaton] HP:83→83 turns:1
+    fl1 d13 NORM [cyclops] HP:83→78 turns:1
+    fl1 d14 ELITE [lernaean_broodling] HP:83→83 turns:1
+  * fl1 d15 BOSS [medusa] HP:83→MORT turns:6 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:21 | boss:0 | tours:19
+
+── Run 89 ─────────────────────────────────────
+    fl1 d0 NORM [lamia] HP:83→83 turns:0
+    fl1 d1 NORM [lamia] HP:83→83 turns:0
+    fl1 d2 NORM [lamia] HP:83→83 turns:1
+    fl1 d4 NORM [lamia] HP:83→83 turns:0
+    fl1 d5 NORM [cyclops] HP:83→83 turns:1
+    fl1 d6 NORM [satyr+gorgon] HP:83→83 turns:1
+    fl1 d7 ELITE [lernaean_broodling] HP:83→81 turns:3
+    fl1 d9 NORM [bronze_automaton] HP:83→83 turns:1
+    fl1 d11 NORM [bronze_automaton] HP:83→83 turns:0
+    fl1 d12 NORM [bronze_automaton] HP:83→83 turns:0
+    fl1 d14 ELITE [minotaur] HP:83→61 turns:3
+    fl1 d15 BOSS [hydra_aspect] HP:68→42 turns:16
+    fl2 d0 NORM [amber_hound+druid_apprentice+morrigan_wisp] HP:49→37 turns:3
+    fl2 d2 NORM [bog_beast+druid_apprentice] HP:44→46 turns:2
+    fl2 d3 NORM [amber_hound+briar_beast] HP:53→49 turns:1
+    fl2 d5 ELITE [wild_hunt_hound] HP:56→39 turns:1
+    fl2 d6 NORM [amber_hound+briar_beast+morrigan_wisp] HP:46→35 turns:2
+    fl2 d7 NORM [bog_beast+sidhe_raider+druid_apprentice] HP:42→34 turns:4
+    fl2 d9 NORM [bog_beast+briar_beast] HP:66→60 turns:2
+    fl2 d10 ELITE [morrigan_chosen] HP:67→61 turns:2
+    fl2 d11 NORM [amber_hound+briar_beast+sidhe_raider] HP:68→59 turns:3
+    fl2 d13 NORM [briar_beast+bog_beast] HP:66→66 turns:2
+    fl2 d14 ELITE [wild_hunt_hound] HP:73→63 turns:3
+    fl2 d15 BOSS [dagda_shadow] HP:70→41 turns:7
+    fl3 d0 NORM [mask_hunter+serpent_oracle+impundulu] HP:53→2 turns:4
+  * fl3 d2 NORM [mask_hunter+baobab_giant+tokoloshe] HP:14→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:14 | deck:28 | boss:2 | tours:63
+
+── Run 90 ─────────────────────────────────────
+    fl1 d0 NORM [mummy_knight] HP:83→83 turns:1
+    fl1 d2 NORM [scarab_swarm+scarab_swarm] HP:83→83 turns:3
+    fl1 d3 NORM [mummy_knight] HP:83→83 turns:3
+    fl1 d5 NORM [ushabti_servant+apep_scion] HP:83→83 turns:4
+    fl1 d6 NORM [sand_guardian] HP:83→83 turns:1
+    fl1 d7 ELITE [sekhmet_chosen] HP:83→79 turns:5
+    fl1 d10 NORM [wadjet_guardian+tomb_priest] HP:83→83 turns:3
+    fl1 d11 NORM [mummy_knight+apep_scion] HP:83→83 turns:3
+    fl1 d13 NORM [wadjet_guardian+apep_scion] HP:83→83 turns:2
+    fl1 d14 ELITE [anubis_champion] HP:83→76 turns:4
+  * fl1 d15 BOSS [osiris_judgment] HP:83→MORT turns:13 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:20 | boss:0 | tours:42
+
+── Run 91 ─────────────────────────────────────
+    fl1 d0 NORM [morrigan_wisp+druid_apprentice] HP:83→83 turns:3
+    fl1 d1 NORM [briar_beast] HP:83→83 turns:3
+    fl1 d3 NORM [morrigan_wisp+druid_apprentice] HP:83→83 turns:2
+    fl1 d4 NORM [druid_apprentice+sidhe_raider] HP:83→78 turns:3
+    fl1 d6 NORM [briar_beast+sidhe_raider] HP:83→83 turns:3
+    fl1 d7 NORM [sidhe_raider+morrigan_wisp+druid_apprentice] HP:83→82 turns:4
+    fl1 d9 NORM [morrigan_wisp+briar_beast] HP:83→83 turns:3
+    fl1 d10 NORM [amber_hound+druid_apprentice] HP:83→83 turns:2
+    fl1 d12 NORM [briar_beast+morrigan_wisp] HP:83→83 turns:3
+    fl1 d14 ELITE [morrigan_chosen] HP:83→83 turns:3
+    fl1 d15 BOSS [dagda_shadow] HP:83→83 turns:9
+    fl2 d0 NORM [lamia+harpy+harpy] HP:83→83 turns:4
+    fl2 d1 NORM [gorgon+lamia] HP:83→83 turns:2
+    fl2 d3 NORM [cyclops+satyr] HP:83→75 turns:3
+    fl2 d5 ELITE [lernaean_broodling] HP:82→83 turns:4
+    fl2 d7 NORM [bronze_automaton+lamia] HP:83→83 turns:3
+    fl2 d9 NORM [cyclops+lamia] HP:83→83 turns:3
+    fl2 d10 ELITE [minotaur] HP:83→83 turns:4
+    fl2 d11 NORM [bronze_automaton+lamia] HP:83→83 turns:3
+    fl2 d12 NORM [lamia+harpy+satyr+harpy] HP:83→83 turns:3
+    fl2 d14 ELITE [lernaean_broodling] HP:83→76 turns:3
+    fl2 d15 BOSS [medusa] HP:83→83 turns:4
+    fl3 d0 NORM [deep_one+void_tendril+star_spawn] HP:83→83 turns:4
+    fl3 d2 NORM [void_tendril+star_spawn+shoggoth_spawn] HP:83→81 turns:4
+    fl3 d3 NORM [shoggoth_spawn+void_tendril+cultist_scribe] HP:83→83 turns:4
+    fl3 d5 NORM [deep_one+void_tendril+byakhee] HP:83→83 turns:4
+    fl3 d6 ELITE [elder_hybrid] HP:83→83 turns:2
+    fl3 d9 NORM [shoggoth_spawn+deep_one+star_spawn] HP:83→83 turns:2
+    fl3 d10 ELITE [mi_go_surgeon] HP:83→83 turns:2
+    fl3 d11 NORM [void_tendril+byakhee+deep_one] HP:83→83 turns:2
+    fl3 d13 NORM [void_tendril+deep_one+byakhee] HP:83→83 turns:2
+    fl3 d14 ELITE [mi_go_surgeon] HP:83→83 turns:2
+    fl3 d15 BOSS [shub_spawn] HP:83→83 turns:7
+  VICTOIRE fl3 | HP:83 | deck:30 | boss:3 | tours:109
+
+── Run 92 ─────────────────────────────────────
+    fl1 d0 NORM [snow_maiden] HP:83→83 turns:2
+    fl1 d2 NORM [iron_cossack] HP:83→83 turns:2
+    fl1 d3 NORM [iron_cossack] HP:83→83 turns:1
+    fl1 d5 ELITE [koschei_herald] HP:83→77 turns:6
+    fl1 d7 NORM [kikimora+snow_maiden] HP:83→83 turns:3
+    fl1 d9 NORM [czar_guard] HP:83→83 turns:2
+    fl1 d10 ELITE [domovoi_titan] HP:83→70 turns:5
+    fl1 d11 NORM [rusalka+iron_cossack] HP:77→69 turns:3
+    fl1 d12 NORM [snow_maiden+rusalka] HP:76→80 turns:4
+    fl1 d14 ELITE [koschei_herald] HP:83→83 turns:6
+  * fl1 d15 BOSS [koschei_deathless] HP:83→MORT turns:11 [DÉFAITE]
+  DÉFAITE fl0 | HP:83 | deck:20 | boss:0 | tours:45
+
+── Run 93 ─────────────────────────────────────
+    fl1 d0 NORM [morrigan_wisp+druid_apprentice] HP:83→83 turns:2
+    fl1 d1 NORM [morrigan_wisp+druid_apprentice] HP:83→82 turns:4
+    fl1 d3 NORM [druid_apprentice+morrigan_wisp] HP:83→83 turns:1
+    fl1 d6 NORM [briar_beast+morrigan_wisp] HP:83→75 turns:2
+    fl1 d7 NORM [bog_beast] HP:82→83 turns:2
+    fl1 d10 NORM [druid_apprentice+briar_beast] HP:83→72 turns:2
+    fl1 d11 NORM [bog_beast] HP:79→80 turns:1
+    fl1 d13 NORM [sidhe_raider+druid_apprentice+druid_apprentice] HP:83→78 turns:3
+    fl1 d14 ELITE [wild_hunt_hound] HP:83→77 turns:3
+    fl1 d15 BOSS [dagda_shadow] HP:83→73 turns:8
+    fl2 d0 NORM [snow_maiden+kikimora+kikimora] HP:80→63 turns:4
+    fl2 d1 NORM [iron_cossack+kikimora+rusalka] HP:70→69 turns:4
+    fl2 d3 NORM [iron_cossack+snow_maiden] HP:83→77 turns:3
+    fl2 d5 NORM [winter_wolf+snow_maiden+iron_cossack] HP:83→30 turns:4
+    fl2 d6 NORM [czar_guard+winter_wolf+winter_wolf] HP:37→18 turns:4
+    fl2 d7 ELITE [domovoi_titan] HP:25→15 turns:5
+    fl2 d10 NORM [iron_cossack+snow_maiden+winter_wolf] HP:71→68 turns:3
+    fl2 d11 NORM [iron_cossack+winter_wolf+snow_maiden] HP:75→46 turns:3
+    fl2 d13 NORM [snow_maiden+czar_guard] HP:77→65 turns:3
+    fl2 d14 ELITE [domovoi_titan] HP:72→75 turns:4
+    fl2 d15 BOSS [baba_yaga_hut] HP:82→51 turns:5
+    fl3 d0 NORM [shoggoth_spawn+byakhee+cultist_scribe] HP:58→59 turns:3
+    fl3 d1 NORM [void_tendril+byakhee+star_spawn+cultist_scribe] HP:66→18 turns:5
+  * fl3 d3 NORM [deep_one+void_tendril+star_spawn] HP:25→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:25 | deck:27 | boss:2 | tours:81
+
+── Run 94 ─────────────────────────────────────
+    fl1 d0 NORM [gorgon] HP:83→83 turns:1
+    fl1 d1 NORM [satyr+harpy] HP:83→83 turns:3
+    fl1 d3 NORM [lamia] HP:83→83 turns:0
+    fl1 d4 NORM [gorgon] HP:83→83 turns:1
+    fl1 d6 NORM [lamia+harpy] HP:83→83 turns:1
+    fl1 d9 NORM [gorgon+satyr] HP:83→83 turns:1
+    fl1 d10 NORM [lamia+harpy] HP:83→83 turns:1
+    fl1 d11 NORM [lamia+harpy] HP:83→83 turns:0
+    fl1 d13 NORM [harpy+satyr+harpy] HP:83→83 turns:1
+    fl1 d14 ELITE [minotaur] HP:83→78 turns:1
+    fl1 d15 BOSS [hydra_aspect] HP:83→83 turns:0
+    fl2 d0 NORM [impundulu+tokoloshe+hyena_pack] HP:83→80 turns:2
+    fl2 d1 NORM [mask_hunter+serpent_oracle] HP:83→83 turns:2
+    fl2 d3 NORM [impundulu+serpent_oracle] HP:83→83 turns:1
+    fl2 d5 NORM [impundulu+mask_hunter+hyena_pack] HP:83→76 turns:1
+    fl2 d7 NORM [mask_hunter+impundulu+hyena_pack] HP:83→82 turns:1
+    fl2 d9 NORM [baobab_giant+impundulu] HP:83→83 turns:2
+    fl2 d10 NORM [baobab_giant+mask_hunter] HP:83→83 turns:2
+    fl2 d11 NORM [serpent_oracle+mask_hunter+tokoloshe] HP:83→83 turns:1
+    fl2 d13 NORM [baobab_giant+impundulu] HP:83→83 turns:2
+    fl2 d14 ELITE [legba_emissary] HP:83→83 turns:1
+    fl2 d15 BOSS [anansi_weaver] HP:83→64 turns:2
+    fl3 d0 NORM [czar_guard+winter_wolf+iron_cossack] HP:71→76 turns:3
+    fl3 d1 NORM [czar_guard+snow_maiden+winter_wolf] HP:83→80 turns:1
+    fl3 d2 NORM [iron_cossack+czar_guard+winter_wolf] HP:83→79 turns:2
+    fl3 d4 NORM [czar_guard+iron_cossack+kikimora] HP:83→83 turns:3
+    fl3 d6 ELITE [domovoi_titan] HP:83→78 turns:3
+    fl3 d9 NORM [iron_cossack+snow_maiden+czar_guard] HP:83→83 turns:2
+    fl3 d10 ELITE [domovoi_titan] HP:83→83 turns:2
+    fl3 d11 NORM [snow_maiden+iron_cossack+rusalka+winter_wolf] HP:83→59 turns:2
+    fl3 d13 NORM [rusalka+czar_guard+iron_cossack+winter_wolf] HP:66→68 turns:3
+    fl3 d14 ELITE [domovoi_titan] HP:75→80 turns:2
+    fl3 d15 BOSS [koschei_deathless] HP:83→83 turns:2
+  VICTOIRE fl3 | HP:83 | deck:31 | boss:3 | tours:52
+
+── Run 95 ─────────────────────────────────────
+    fl1 d0 NORM [harpy+satyr] HP:83→83 turns:3
+    fl1 d2 NORM [harpy+satyr] HP:83→83 turns:2
+    fl1 d3 NORM [gorgon] HP:83→83 turns:1
+    fl1 d5 NORM [gorgon+satyr] HP:83→83 turns:2
+    fl1 d7 NORM [bronze_automaton] HP:83→79 turns:2
+    fl1 d9 NORM [cyclops] HP:83→74 turns:4
+    fl1 d11 NORM [lamia+satyr] HP:81→82 turns:1
+    fl1 d12 NORM [harpy+lamia] HP:83→83 turns:0
+    fl1 d14 ELITE [minotaur] HP:83→83 turns:1
+    fl1 d15 BOSS [hydra_aspect] HP:83→78 turns:1
+    fl2 d0 NORM [briar_beast+sidhe_raider+sidhe_raider] HP:83→77 turns:2
+    fl2 d1 NORM [briar_beast+amber_hound] HP:83→83 turns:0
+    fl2 d3 NORM [amber_hound+briar_beast] HP:83→83 turns:0
+    fl2 d5 NORM [bog_beast+briar_beast] HP:83→83 turns:3
+    fl2 d7 NORM [amber_hound+briar_beast] HP:83→83 turns:2
+    fl2 d9 NORM [bog_beast+briar_beast] HP:83→70 turns:2
+    fl2 d10 NORM [briar_beast+bog_beast] HP:77→77 turns:0
+    fl2 d11 NORM [amber_hound+druid_apprentice] HP:83→81 turns:3
+    fl2 d13 NORM [sidhe_raider+bog_beast+druid_apprentice] HP:83→57 turns:5
+    fl2 d14 ELITE [morrigan_chosen] HP:64→64 turns:0
+    fl2 d15 BOSS [dagda_shadow] HP:71→15 turns:5
+  * fl3 d0 NORM [lamia+cyclops+harpy] HP:22→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:22 | deck:25 | boss:2 | tours:42
+
+── Run 96 ─────────────────────────────────────
+    fl1 d0 NORM [morrigan_wisp+druid_apprentice] HP:83→83 turns:2
+    fl1 d1 NORM [sidhe_raider+druid_apprentice] HP:83→83 turns:2
+    fl1 d3 NORM [amber_hound] HP:83→83 turns:1
+    fl1 d5 NORM [briar_beast+druid_apprentice] HP:83→71 turns:4
+    fl1 d6 NORM [druid_apprentice+druid_apprentice+sidhe_raider] HP:78→83 turns:3
+    fl1 d7 ELITE [morrigan_chosen] HP:83→71 turns:3
+    fl1 d9 NORM [druid_apprentice+amber_hound] HP:78→78 turns:2
+    fl1 d10 NORM [bog_beast] HP:83→83 turns:2
+    fl1 d11 NORM [druid_apprentice+amber_hound] HP:83→83 turns:2
+    fl1 d12 NORM [bog_beast] HP:83→83 turns:1
+    fl1 d14 ELITE [morrigan_chosen] HP:83→76 turns:4
+    fl1 d15 BOSS [cernunnos_shade] HP:83→77 turns:7
+    fl2 d0 NORM [einherjar+rune_berserker] HP:83→83 turns:3
+    fl2 d2 NORM [rune_berserker+rune_shaman+rune_shaman] HP:83→83 turns:3
+    fl2 d3 NORM [draugr+einherjar+draugr] HP:83→82 turns:5
+    fl2 d6 NORM [rune_berserker+frost_troll] HP:83→83 turns:6
+    fl2 d10 NORM [einherjar+rune_berserker+rune_shaman] HP:83→83 turns:3
+    fl2 d11 NORM [draugr+rune_berserker+shield_maiden] HP:83→78 turns:5
+    fl2 d12 NORM [rune_shaman+draugr+einherjar] HP:83→83 turns:3
+    fl2 d14 ELITE [valkyrie] HP:83→83 turns:3
+    fl2 d15 BOSS [hel_queen] HP:83→27 turns:6
+    fl3 d0 NORM [shoggoth_spawn+void_tendril+star_spawn] HP:34→24 turns:5
+  * fl3 d1 NORM [byakhee+void_tendril+star_spawn+cultist_scribe] HP:31→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl2 | HP:31 | deck:25 | boss:2 | tours:77
+
+── Run 97 ─────────────────────────────────────
+    fl1 d0 NORM [rune_berserker] HP:83→83 turns:0
+    fl1 d1 NORM [shield_maiden] HP:83→83 turns:1
+    fl1 d3 NORM [rune_berserker] HP:83→83 turns:1
+    fl1 d5 NORM [einherjar+draugr] HP:83→76 turns:4
+    fl1 d6 NORM [shield_maiden+rune_shaman] HP:83→71 turns:6
+    fl1 d7 ELITE [jormungandr_spawn] HP:78→71 turns:6
+    fl1 d9 NORM [einherjar+draugr] HP:78→77 turns:3
+    fl1 d10 NORM [shield_maiden+draugr] HP:83→83 turns:5
+    fl1 d11 NORM [einherjar+draugr] HP:83→83 turns:4
+    fl1 d12 NORM [draugr+rune_shaman+draugr] HP:83→74 turns:3
+    fl1 d14 ELITE [valkyrie] HP:83→75 turns:3
+    fl1 d15 BOSS [hel_queen] HP:82→29 turns:8
+    fl2 d0 NORM [tzitzimitl+obsidian_priest+obsidian_priest] HP:36→29 turns:6
+    fl2 d2 NORM [flayed_cultist+obsidian_priest+obsidian_priest] HP:36→41 turns:5
+    fl2 d3 NORM [tzitzimitl+obsidian_priest+obsidian_priest] HP:48→34 turns:6
+    fl2 d5 NORM [tzitzimitl+stone_idol] HP:41→31 turns:4
+    fl2 d6 NORM [eagle_knight+stone_idol] HP:38→31 turns:4
+    fl2 d7 ELITE [huitzilopochtli_enforcer] HP:38→12 turns:5
+    fl2 d9 NORM [eagle_knight+stone_idol] HP:44→39 turns:3
+    fl2 d11 ELITE [quetzal_harbinger] HP:70→75 turns:4
+    fl2 d12 NORM [tzitzimitl+stone_idol] HP:82→79 turns:3
+    fl2 d14 ELITE [quetzal_harbinger] HP:83→83 turns:4
+    fl2 d15 BOSS [quetzalcoatl_wrath] HP:83→51 turns:8
+    fl3 d0 NORM [eagle_knight+obsidian_priest+obsidian_priest+obsidian_priest] HP:58→54 turns:6
+    fl3 d1 NORM [eagle_knight+stone_idol+obsidian_priest] HP:61→54 turns:7
+    fl3 d3 NORM [flayed_cultist+stone_idol+obsidian_priest] HP:61→43 turns:6
+    fl3 d5 NORM [stone_idol+eagle_knight+tzitzimitl] HP:50→24 turns:6
+  * fl3 d6 NORM [obsidian_priest+tzitzimitl+flayed_cultist+eagle_knight] HP:31→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl2 | HP:31 | deck:27 | boss:2 | tours:123
+
+── Run 98 ─────────────────────────────────────
+    fl1 d0 NORM [draugr+rune_shaman] HP:83→83 turns:2
+    fl1 d1 NORM [rune_berserker] HP:83→83 turns:0
+    fl1 d2 NORM [rune_shaman+rune_shaman] HP:83→83 turns:3
+    fl1 d5 NORM [frost_troll] HP:83→83 turns:1
+    fl1 d6 NORM [rune_shaman+einherjar] HP:83→83 turns:4
+    fl1 d7 ELITE [jormungandr_spawn] HP:83→69 turns:6
+    fl1 d9 NORM [einherjar+rune_shaman] HP:76→77 turns:2
+    fl1 d13 NORM [rune_berserker+draugr] HP:83→83 turns:3
+    fl1 d14 ELITE [jormungandr_spawn] HP:83→73 turns:3
+    fl1 d15 BOSS [hel_queen] HP:80→38 turns:8
+    fl2 d0 NORM [morrigan_wisp+briar_beast+morrigan_wisp] HP:45→24 turns:4
+    fl2 d1 NORM [amber_hound+morrigan_wisp+druid_apprentice] HP:31→7 turns:4
+    fl2 d3 NORM [briar_beast+morrigan_wisp+morrigan_wisp] HP:14→8 turns:4
+    fl2 d5 NORM [bog_beast+briar_beast] HP:15→12 turns:3
+    fl2 d6 ELITE [wild_hunt_hound] HP:19→12 turns:2
+    fl2 d9 NORM [druid_apprentice+briar_beast+amber_hound] HP:44→36 turns:3
+    fl2 d10 ELITE [morrigan_chosen] HP:43→48 turns:4
+    fl2 d11 NORM [briar_beast+sidhe_raider+druid_apprentice+druid_apprentice] HP:55→64 turns:6
+    fl2 d12 NORM [briar_beast+bog_beast] HP:71→78 turns:2
+    fl2 d14 ELITE [wild_hunt_hound] HP:83→83 turns:3
+    fl2 d15 BOSS [cernunnos_shade] HP:83→77 turns:5
+    fl3 d0 NORM [gorgon+bronze_automaton+harpy] HP:83→69 turns:5
+    fl3 d1 NORM [cyclops+gorgon+satyr] HP:76→54 turns:5
+    fl3 d3 NORM [bronze_automaton+gorgon+harpy] HP:61→38 turns:6
+  * fl3 d5 NORM [gorgon+cyclops+lamia] HP:45→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:45 | deck:27 | boss:2 | tours:91
+
+── Run 99 ─────────────────────────────────────
+    fl1 d0 NORM [wadjet_guardian] HP:83→83 turns:2
+    fl1 d1 NORM [apep_scion+scarab_swarm] HP:83→83 turns:4
+    fl1 d2 NORM [scarab_swarm+scarab_swarm] HP:83→83 turns:2
+    fl1 d5 NORM [apep_scion+wadjet_guardian] HP:83→83 turns:3
+    fl1 d6 NORM [mummy_knight+scarab_swarm] HP:83→83 turns:3
+    fl1 d7 ELITE [sekhmet_chosen] HP:83→83 turns:4
+    fl1 d10 NORM [ushabti_servant+apep_scion] HP:83→83 turns:3
+    fl1 d11 NORM [wadjet_guardian+apep_scion] HP:83→83 turns:3
+    fl1 d12 NORM [sand_guardian] HP:83→83 turns:2
+    fl1 d14 ELITE [anubis_champion] HP:83→82 turns:4
+    fl1 d15 BOSS [osiris_judgment] HP:83→31 turns:7
+  * fl2 d0 NORM [tzitzimitl+obsidian_priest+obsidian_priest] HP:38→MORT turns:4 [DÉFAITE]
+  DÉFAITE fl1 | HP:38 | deck:20 | boss:1 | tours:41
+
+── Run 100 ─────────────────────────────────────
+    fl1 d0 NORM [mummy_knight] HP:83→83 turns:1
+    fl1 d1 NORM [wadjet_guardian] HP:83→83 turns:2
+    fl1 d3 NORM [apep_scion+scarab_swarm] HP:83→83 turns:2
+    fl1 d4 NORM [tomb_priest+apep_scion] HP:83→80 turns:2
+    fl1 d7 NORM [scarab_swarm+tomb_priest+tomb_priest] HP:83→69 turns:4
+    fl1 d9 NORM [sand_guardian] HP:76→77 turns:1
+    fl1 d10 NORM [wadjet_guardian+tomb_priest] HP:83→83 turns:2
+    fl1 d11 NORM [wadjet_guardian+tomb_priest] HP:83→83 turns:3
+    fl1 d13 NORM [apep_scion+apep_scion+scarab_swarm] HP:83→83 turns:3
+    fl1 d14 ELITE [sekhmet_chosen] HP:83→77 turns:4
+    fl1 d15 BOSS [ra_avatar] HP:83→48 turns:10
+    fl2 d0 NORM [rune_berserker+einherjar] HP:55→64 turns:3
+    fl2 d1 NORM [frost_troll+rune_shaman] HP:71→82 turns:4
+    fl2 d2 NORM [rune_berserker+einherjar] HP:83→83 turns:2
+    fl2 d4 NORM [frost_troll+draugr] HP:83→83 turns:4
+    fl2 d6 NORM [frost_troll+rune_berserker] HP:83→83 turns:6
+    fl2 d7 ELITE [jormungandr_spawn] HP:83→83 turns:4
+    fl2 d9 NORM [einherjar+shield_maiden+rune_shaman] HP:83→80 turns:4
+    fl2 d10 NORM [rune_berserker+einherjar+draugr] HP:83→83 turns:5
+    fl2 d11 ELITE [jormungandr_spawn] HP:83→83 turns:2
+    fl2 d12 NORM [shield_maiden+einherjar+draugr] HP:83→74 turns:4
+    fl2 d14 ELITE [valkyrie] HP:81→73 turns:3
+    fl2 d15 BOSS [fenrir] HP:80→75 turns:4
+    fl3 d0 NORM [shoggoth_spawn+byakhee+cultist_scribe] HP:82→83 turns:6
+    fl3 d1 NORM [shoggoth_spawn+byakhee+star_spawn] HP:83→83 turns:4
+    fl3 d3 NORM [void_tendril+byakhee+cultist_scribe+star_spawn] HP:83→39 turns:6
+  * fl3 d5 NORM [byakhee+deep_one+cultist_scribe+star_spawn] HP:46→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:46 | deck:26 | boss:2 | tours:98
+
+── Total: 8.1s ───────────────────────────────
+
+══════════════════════════════════════════════════
+  RÉSULTATS  (100 runs, diff: 2, méta: strong, build: mixed)
+══════════════════════════════════════════════════
+
+  ── Victoires ────────────────────────────────────
+  Taux de victoire       : 26.0%  (26/100)
+  Moy. étages complétés  : 1.5 / 3
+  Moy. boss tués         : 1.5
+
+  ── Combat ───────────────────────────────────────
+  Moy. combats/run       : 21.4
+  Moy. tours/run         : 67.7
+  Moy. dégâts subis/run  : 164
+  Moy. HP restants (win) : 67
+  Moy. HP restants (def) : 56
+
+  ── Deck / Progression ───────────────────────────
+  Moy. cartes ajoutées   : 13.7
+  Moy. reliques gagnées  : 6.7
+  Moy. taille deck final : 24.7
+  Moy. or final          : 273
+
+  ── Défaites par étage ───────────────────────────
+  Étage 1  :   30   40.5%  ████████
+  Étage 2  :   20   27.0%  █████
+  Étage 3  :   24   32.4%  ██████
+
+  ── Répartition étages atteints ──────────────────
+  3 étage(s)  :   26   26.0%  █████
+  2 étage(s)  :   24   24.0%  █████
+  1 étage(s)  :   20   20.0%  ████
+  0 étage(s)  :   30   30.0%  ██████
+
+══════════════════════════════════════════════════
+

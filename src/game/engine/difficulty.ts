@@ -10,7 +10,7 @@ import {
 
 export const MAX_RUN_DIFFICULTY_LEVEL = 5;
 export const FIRST_CLEAR_RESOURCE_MULTIPLIER = 1.25;
-export const REPEATED_DIFFICULTY_RESOURCE_MULTIPLIER = 0.2;
+export const REPEATED_DIFFICULTY_RESOURCE_MULTIPLIER = 1;
 const DIFFICULTY_UNLOCK_KEY = "__RUN_DIFFICULTY_UNLOCKED_MAX";
 const BEST_GOLD_SINGLE_RUN_KEY = "__RUN_BEST_GOLD_SINGLE";
 const BEST_INFINITE_FLOOR_KEY = "__RUN_INFINITE_BEST_FLOOR";
@@ -381,19 +381,26 @@ export function unlockNextDifficultyOnVictory(
   };
 }
 
-/**
- * Diff 0 only: graduated floor ramp so early floors feel approachable to new
- * players while the floor-3 boss remains at full strength.
- * Floor 1 → strong reduction, floor 2 → light reduction, floor 3+ → none.
- */
+/** Introductory D0 multipliers, retained progressively through D1-D4. */
 export function getDiff0FloorRamp(floor: number): {
   enemyHpMultiplier: number;
   enemyDamageMultiplier: number;
 } {
-  if (floor <= 1) return { enemyHpMultiplier: 0.7, enemyDamageMultiplier: 0.8 };
+  if (floor <= 1)
+    return { enemyHpMultiplier: 0.56, enemyDamageMultiplier: 0.65 };
   if (floor <= 2)
-    return { enemyHpMultiplier: 0.88, enemyDamageMultiplier: 0.9 };
-  return { enemyHpMultiplier: 1.0, enemyDamageMultiplier: 1.0 };
+    return { enemyHpMultiplier: 0.68, enemyDamageMultiplier: 0.72 };
+  return { enemyHpMultiplier: 0.8, enemyDamageMultiplier: 0.82 };
+}
+
+/** Spread the introductory ramp across levels instead of removing it at D1. */
+export function getDifficultyFloorRamp(level: number, floor: number) {
+  const base = getDiff0FloorRamp(floor);
+  const l = clampDifficulty(level);
+  return {
+    enemyHpMultiplier: Math.min(1, base.enemyHpMultiplier + [0, 0.1, 0.16, 0.18, 0.2, 0.22][l]!),
+    enemyDamageMultiplier: Math.min(1, base.enemyDamageMultiplier + [0, 0.09, 0.12, 0.13, 0.14, 0.15][l]!),
+  };
 }
 
 export function getDifficultyModifiers(level: number): {
@@ -407,21 +414,21 @@ export function getDifficultyModifiers(level: number): {
   blockPenetrationFraction: number;
 } {
   const l = clampDifficulty(level);
-  const enemyHpMultiplier = ([1, 1.12, 1.24, 1.56, 1.62, 1.7] as const)[l] ?? 1;
+  const enemyHpMultiplier = ([1, 1.12, 1.16, 1.18, 1.2, 1.23] as const)[l] ?? 1;
   const enemyDamageMultiplier =
-    ([1, 1.1, 1.2, 1.3, 1.36, 1.44] as const)[l] ?? 1;
-  const eliteChanceBonus = l >= 5 ? 0.15 : l >= 4 ? 0.1 : l >= 3 ? 0.05 : 0;
+    ([1, 1.1, 1.12, 1.13, 1.14, 1.15] as const)[l] ?? 1;
+  const eliteChanceBonus = l >= 5 ? 0.09 : l >= 4 ? 0.06 : l >= 3 ? 0.03 : 0;
   const specialRoomHealWeightMultiplier =
-    l >= 5 ? 0.55 : l >= 4 ? 0.7 : l >= 3 ? 0.88 : 1;
-  const specialRoomEventWeightBonus = l >= 5 ? 0.2 : l >= 4 ? 0.12 : 0;
+    l >= 5 ? 0.95 : l >= 4 ? 0.98 : 1;
+  const specialRoomEventWeightBonus = l >= 5 ? 0.1 : l >= 4 ? 0.05 : 0;
   const enemyPackSizeBonus = 0;
   // Boost the weight of enemy disruption abilities by difficulty
   // Diff 0: none, Diff 1-2: light, Diff 3: moderate, Diff 4-5: heavy
   const disruptionWeightBonus =
-    ([0, 0.2, 0.4, 0.48, 0.58, 0.72] as const)[l] ?? 0;
+    ([0, 0.2, 0.3, 0.34, 0.38, 0.42] as const)[l] ?? 0;
   // At diff 4+, a fraction of all enemy attacks bypass the player's block entirely.
-  // This specifically targets block-heavy (armor) builds without penalizing DOT builds.
-  const blockPenetrationFraction = l >= 4 && l < 5 ? 0.05 : 0;
+  // This also affects defensive cards in DOT decks; keep penetration limited.
+  const blockPenetrationFraction = l >= 4 ? 0.03 : 0;
   return {
     enemyHpMultiplier,
     enemyDamageMultiplier,
@@ -480,13 +487,13 @@ export function getEnemyStartingBlock(
 
 export function getBossDebuffBonus(level: number): number {
   const l = clampDifficulty(level);
-  return l >= 4 ? 1 : 0;
+  return l >= 5 ? 1 : 0;
 }
 
 export function eliteCanDropRelic(level: number, rngRoll: number): boolean {
   const l = clampDifficulty(level);
   if (l < 5) return true;
-  return rngRoll >= 0.5;
+  return rngRoll >= 0.25;
 }
 
 export function hasClearedDifficultyBefore(

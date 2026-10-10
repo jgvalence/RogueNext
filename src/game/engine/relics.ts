@@ -65,20 +65,38 @@ export function applyRelicsOnInkSpent(
   amount: number
 ): CombatState {
   const inkSpent = Math.max(0, Math.floor(amount));
-  if (inkSpent <= 0 || !state.relicFlags?.[MENDERS_INKWELL_FLAG]) {
+  if (inkSpent <= 0) {
     return state;
   }
 
-  return {
-    ...state,
-    player: {
-      ...state.player,
-      currentHp: Math.min(
-        state.player.maxHp,
-        state.player.currentHp + inkSpent
-      ),
-    },
-  };
+  let current = state;
+  if (current.relicFlags?.[MENDERS_INKWELL_FLAG]) {
+    current = {
+      ...current,
+      player: {
+        ...current.player,
+        currentHp: Math.min(
+          current.player.maxHp,
+          current.player.currentHp + inkSpent
+        ),
+      },
+    };
+  }
+  if (
+    current.relicFlags?.guardians_seal_owned &&
+    current.relicFlags?.guardians_seal_ready &&
+    current.player.inkCurrent <= 0
+  ) {
+    current = {
+      ...current,
+      player: {
+        ...current.player,
+        energyCurrent: current.player.energyCurrent + 1,
+      },
+    };
+    current = setFlag(current, "guardians_seal_ready", false);
+  }
+  return current;
 }
 
 export function amplifyEffectsForInkRelic(
@@ -228,13 +246,13 @@ export function applyRelicsOnCombatStart(
         break;
 
       case "energy_crystal":
-        // +1 energy max
         current = {
           ...current,
           player: {
             ...current.player,
             energyMax: current.player.energyMax + 1,
             energyCurrent: current.player.energyCurrent + 1,
+            drawCount: Math.max(1, current.player.drawCount - 1),
           },
         };
         break;
@@ -273,15 +291,15 @@ export function applyRelicsOnCombatStart(
         break;
 
       case "blighted_compass":
-        // +1 draw, but apply Weak at combat start
+        // Powerful consistency paid for with a genuinely weak opening.
         current = {
           ...current,
           player: {
             ...current.player,
-            drawCount: current.player.drawCount + 1,
+            drawCount: current.player.drawCount + 2,
             buffs: [
               ...current.player.buffs,
-              { type: "WEAK", stacks: 1, duration: 2 },
+              { type: "WEAK", stacks: 2, duration: 2 },
             ],
           },
         };
@@ -370,7 +388,24 @@ export function applyRelicsOnCombatStart(
           ...current,
           player: {
             ...current.player,
-            block: current.player.block + 6,
+            block: current.player.block + 4,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + 2
+            ),
+          },
+        };
+        break;
+
+      case "russian_domovoi_hearth":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + 3
+            ),
           },
         };
         break;
@@ -611,128 +646,80 @@ export function applyRelicsOnCombatStart(
         break;
 
       case "guardians_seal":
-        // +2 max ink, start with 2 ink
         current = {
           ...current,
           player: {
             ...current.player,
             inkMax: current.player.inkMax + 2,
-            inkCurrent: Math.min(
-              current.player.inkMax + 2,
-              current.player.inkCurrent + 2
-            ),
           },
         };
+        current = setFlag(current, "guardians_seal_owned", true);
+        current = setFlag(current, "guardians_seal_ready", true);
         break;
 
       case "archivists_lens":
-        // +2 max ink, start with 2 Focus
         current = {
           ...current,
           player: {
             ...current.player,
             inkMax: current.player.inkMax + 2,
-            focus: current.player.focus + 2,
           },
         };
-        break;
-
-      case "wolf_fang":
-        // Start with 2 Strength and a small opening buffer
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            strength: current.player.strength + 2,
-            block: current.player.block + 4,
-          },
-        };
+        current = setFlag(current, "archivists_lens_ready", true);
         break;
 
       case "hels_crown":
-        // Start with 2 Strength and 4 Thorns
         current = {
           ...current,
           player: {
             ...current.player,
-            strength: current.player.strength + 2,
-            buffs: [
-              ...current.player.buffs,
-              { type: "THORNS" as const, stacks: 4 },
-            ],
+            strength: current.player.strength + 1,
           },
         };
         break;
 
       case "stone_pendant":
-        // Start with 1 Strength and 1 Focus
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            strength: current.player.strength + 1,
-            focus: current.player.focus + 1,
-          },
-        };
         break;
 
       case "hydra_scale":
-        // Start with 1 Strength and 5 Thorns
         current = {
           ...current,
           player: {
             ...current.player,
-            strength: current.player.strength + 1,
             buffs: [
               ...current.player.buffs,
-              { type: "THORNS" as const, stacks: 5 },
+              { type: "THORNS" as const, stacks: 2 },
             ],
           },
         };
         break;
 
       case "solar_disc":
-        // +1 max energy, start with 2 ink
         current = {
           ...current,
           player: {
             ...current.player,
             energyMax: current.player.energyMax + 1,
             energyCurrent: current.player.energyCurrent + 1,
-            inkCurrent: Math.min(
-              current.player.inkMax,
-              current.player.inkCurrent + 2
-            ),
           },
         };
         break;
 
       case "eye_of_maat":
-        // +1 max energy, start with 1 Focus
         current = {
           ...current,
           player: {
             ...current.player,
             energyMax: current.player.energyMax + 1,
             energyCurrent: current.player.energyCurrent + 1,
-            focus: current.player.focus + 1,
           },
         };
         break;
 
       case "void_shard":
-        // Start with 2 Focus
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            focus: current.player.focus + 2,
-          },
-        };
         break;
 
       case "shub_idol":
-        // Start with 2 Strength and 3 ink
         current = {
           ...current,
           player: {
@@ -744,69 +731,42 @@ export function applyRelicsOnCombatStart(
             ),
           },
         };
-        break;
-
-      case "obsidian_mirror":
-        // Start with 3 Strength
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            strength: current.player.strength + 3,
-          },
-        };
+        if (rng) {
+          current = {
+            ...current,
+            discardPile: [
+              ...current.discardPile,
+              ...Array.from({ length: 2 }, () => ({
+                instanceId: nanoid(),
+                definitionId: pickRandomStatusCardDefinitionId(rng),
+                upgraded: false,
+              })),
+            ],
+          };
+        }
         break;
 
       case "quetzal_feather":
-        // Start with 1 Strength, 1 Focus, and 1 energy
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            strength: current.player.strength + 1,
-            focus: current.player.focus + 1,
-            energyMax: current.player.energyMax + 1,
-            energyCurrent: current.player.energyCurrent + 1,
-          },
-        };
         break;
 
       case "dagdas_club":
-        // Start with 6 Thorns
         current = {
           ...current,
           player: {
             ...current.player,
             buffs: [
               ...current.player.buffs,
-              { type: "THORNS" as const, stacks: 6 },
+              { type: "THORNS" as const, stacks: 2 },
             ],
           },
         };
         break;
 
       case "cernunnos_horn":
-        // Start with 6 Thorns and 1 extra draw
         current = {
           ...current,
           player: {
             ...current.player,
-            drawCount: current.player.drawCount + 1,
-            buffs: [
-              ...current.player.buffs,
-              { type: "THORNS" as const, stacks: 6 },
-            ],
-          },
-        };
-        break;
-
-      case "yaga_skull":
-        // Start with 1 extra draw and 3 Thorns
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            drawCount: current.player.drawCount + 1,
             buffs: [
               ...current.player.buffs,
               { type: "THORNS" as const, stacks: 3 },
@@ -815,41 +775,38 @@ export function applyRelicsOnCombatStart(
         };
         break;
 
+      case "yaga_skull":
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            drawCount: current.player.drawCount + 1,
+          },
+        };
+        break;
+
       case "deathless_bone":
-        // +1 max energy, start with 10 Block
         current = {
           ...current,
           player: {
             ...current.player,
             energyMax: current.player.energyMax + 1,
             energyCurrent: current.player.energyCurrent + 1,
-            block: current.player.block + 10,
           },
+        };
+        current = {
+          ...current,
+          discardPile: [
+            ...current.discardPile,
+            { instanceId: nanoid(), definitionId: "dazed", upgraded: false },
+          ],
         };
         break;
 
       case "griot_drum":
-        // Start with 6 Block and 1 Strength
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            block: current.player.block + 6,
-            strength: current.player.strength + 1,
-          },
-        };
         break;
 
       case "weavers_thread":
-        // Start with 1 extra draw and 2 Focus
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            drawCount: current.player.drawCount + 1,
-            focus: current.player.focus + 2,
-          },
-        };
         break;
 
       // Planned relics: status and damage rule overrides
@@ -980,13 +937,6 @@ export function applyRelicsOnCombatStart(
                   ],
                 }
           ),
-          player: {
-            ...current.player,
-            buffs: [
-              ...current.player.buffs,
-              { type: "THORNS" as const, stacks: 2 },
-            ],
-          },
         };
         break;
       case "egypt_anubis_scale":
@@ -1090,10 +1040,9 @@ export function applyRelicsOnCombatStart(
           ...current,
           player: {
             ...current.player,
-            regenPerTurn: current.player.regenPerTurn + 1,
             buffs: [
               ...current.player.buffs,
-              { type: "THORNS" as const, stacks: 4 },
+              { type: "THORNS" as const, stacks: 3 },
             ],
           },
         };
@@ -1152,8 +1101,12 @@ export function applyRelicsOnCombatStart(
           ...current,
           player: {
             ...current.player,
-            drawCount: current.player.drawCount + 2,
+            drawCount: current.player.drawCount + 1,
           },
+          discardPile: [
+            ...current.discardPile,
+            { instanceId: nanoid(), definitionId: "dazed", upgraded: false },
+          ],
         };
         break;
       case "venom_grimoire":
@@ -1192,6 +1145,20 @@ export function applyRelicsOnCombatStart(
                 }
           ),
         };
+        if (
+          current.enemies.filter((enemy) => enemy.currentHp > 0).length >= 3
+        ) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              inkCurrent: Math.min(
+                current.player.inkMax,
+                current.player.inkCurrent + 1
+              ),
+            },
+          };
+        }
         break;
       case "crimson_covenant":
         current = {
@@ -1214,13 +1181,18 @@ export function applyRelicsOnCombatStart(
           ...current,
           player: {
             ...current.player,
-            strength: current.player.strength + 6,
-            regenPerTurn: current.player.regenPerTurn + 5,
-            inkCurrent: Math.min(
-              current.player.inkMax,
-              current.player.inkCurrent + 5
-            ),
+            strength: current.player.strength + 2,
+            energyMax: current.player.energyMax + 1,
+            energyCurrent: current.player.energyCurrent + 1,
           },
+          discardPile: [
+            ...current.discardPile,
+            {
+              instanceId: nanoid(),
+              definitionId: "haunting_regret",
+              upgraded: false,
+            },
+          ],
         };
         break;
     }
@@ -1281,6 +1253,9 @@ export function applyRelicsOnTurnStart(
       turn_rusalka_focus_granted: 0,
     },
   };
+  if (relicIds.includes("guardians_seal")) {
+    current = setFlag(current, "guardians_seal_ready", true);
+  }
 
   const pendingNextTurnEnergy = getCounter(current, "next_turn_energy_bonus");
   if (pendingNextTurnEnergy > 0) {
@@ -1296,6 +1271,18 @@ export function applyRelicsOnTurnStart(
 
   for (const relicId of relicIds) {
     switch (relicId) {
+      case "yaga_skull":
+        if (current.turnNumber % 3 === 0) {
+          current = {
+            ...current,
+            discardPile: [
+              ...current.discardPile,
+              { instanceId: nanoid(), definitionId: "dazed", upgraded: false },
+            ],
+          };
+        }
+        break;
+
       case "thorn_mantle": {
         const existingThorns = current.player.buffs.find(
           (b) => b.type === "THORNS"
@@ -1325,20 +1312,30 @@ export function applyRelicsOnTurnStart(
         break;
       }
 
-      case "spectral_inkwell":
+      case "dagdas_club": {
+        const existingThorns = current.player.buffs.find(
+          (buff) => buff.type === "THORNS"
+        );
         current = {
           ...current,
           player: {
             ...current.player,
-            inkCurrent: Math.min(
-              current.player.inkMax,
-              current.player.inkCurrent + 2
-            ),
+            buffs: existingThorns
+              ? current.player.buffs.map((buff) =>
+                  buff.type === "THORNS"
+                    ? { ...buff, stacks: buff.stacks + 1 }
+                    : buff
+                )
+              : [
+                  ...current.player.buffs,
+                  { type: "THORNS" as const, stacks: 1 },
+                ],
           },
         };
         break;
+      }
 
-      case "russian_domovoi_hearth":
+      case "spectral_inkwell":
         current = {
           ...current,
           player: {
@@ -1362,29 +1359,33 @@ export function applyRelicsOnTurnStart(
         break;
 
       case "phoenix_ash":
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            currentHp: Math.min(
-              current.player.maxHp,
-              current.player.currentHp + 2
-            ),
-          },
-        };
+        if (current.turnNumber % 2 === 0) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              currentHp: Math.min(
+                current.player.maxHp,
+                current.player.currentHp + 4
+              ),
+            },
+          };
+        }
         break;
 
       case "guardian_dune_amulet":
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            currentHp: Math.min(
-              current.player.maxHp,
-              current.player.currentHp + 1
-            ),
-          },
-        };
+        if (current.player.currentHp * 2 < current.player.maxHp) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              currentHp: Math.min(
+                current.player.maxHp,
+                current.player.currentHp + 2
+              ),
+            },
+          };
+        }
         break;
 
       case "tendril_star_knot":
@@ -1421,7 +1422,7 @@ export function applyRelicsOnTurnStart(
             ...current.player,
             currentHp: Math.min(
               current.player.maxHp,
-              current.player.currentHp + 3
+              current.player.currentHp + 2
             ),
           },
         };
@@ -1548,18 +1549,19 @@ export function applyRelicsOnTurnStart(
         current = setFlag(current, "turn_first_skill_relic_active", true);
         break;
       case "arcane_reservoir":
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            inkCurrent: Math.min(
-              current.player.inkMax,
-              current.player.inkCurrent + 3
-            ),
-          },
-        };
+        if (current.turnNumber % 2 === 1) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              inkCurrent: Math.min(
+                current.player.inkMax,
+                current.player.inkCurrent + 2
+              ),
+            },
+          };
+        }
         break;
-      case "bleeding_thistle":
       case "crimson_covenant":
         current = {
           ...current,
@@ -1595,18 +1597,34 @@ export function applyRelicsOnTurnStart(
         };
         break;
       case "eternal_flow":
-        current = {
-          ...current,
-          player: {
-            ...current.player,
-            inkCurrent: Math.min(
-              current.player.inkMax,
-              current.player.inkCurrent + 3
-            ),
-            block: current.player.block + 2,
-            strength: current.player.strength + 1,
-          },
-        };
+        if ((current.turnNumber - 1) % 3 === 0) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              inkCurrent: Math.min(
+                current.player.inkMax,
+                current.player.inkCurrent + 3
+              ),
+            },
+          };
+        } else if ((current.turnNumber - 1) % 3 === 1) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              block: current.player.block + 6,
+            },
+          };
+        } else {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              strength: current.player.strength + 2,
+            },
+          };
+        }
         break;
     }
   }
@@ -1625,6 +1643,46 @@ export function applyRelicsOnTurnEnd(
 
   for (const relicId of relicIds) {
     switch (relicId) {
+      case "solar_disc": {
+        const converted = Math.min(2, current.player.energyCurrent);
+        current = {
+          ...current,
+          player: {
+            ...current.player,
+            energyCurrent: current.player.energyCurrent - converted,
+            inkCurrent: Math.min(
+              current.player.inkMax,
+              current.player.inkCurrent + converted
+            ),
+          },
+        };
+        break;
+      }
+
+      case "cernunnos_horn":
+        if (current.player.block <= 0) {
+          const existing = current.player.buffs.find(
+            (buff) => buff.type === "THORNS"
+          );
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              buffs: existing
+                ? current.player.buffs.map((buff) =>
+                    buff.type === "THORNS"
+                      ? { ...buff, stacks: buff.stacks + 2 }
+                      : buff
+                  )
+                : [
+                    ...current.player.buffs,
+                    { type: "THORNS" as const, stacks: 2 },
+                  ],
+            },
+          };
+        }
+        break;
+
       case "iron_codex":
         current = {
           ...current,
@@ -1871,6 +1929,26 @@ export function applyRelicsOnCardPlayed(
     };
   };
 
+  const applyDotToAllEnemies = (type: "POISON" | "BLEED", stacks: number) => {
+    current = {
+      ...current,
+      enemies: current.enemies.map((enemy) => {
+        if (enemy.currentHp <= 0) return enemy;
+        const existing = enemy.buffs.find((buff) => buff.type === type);
+        return {
+          ...enemy,
+          buffs: existing
+            ? enemy.buffs.map((buff) =>
+                buff.type === type
+                  ? { ...buff, stacks: buff.stacks + stacks }
+                  : buff
+              )
+            : [...enemy.buffs, { type, stacks }],
+        };
+      }),
+    };
+  };
+
   current = incrementCounter(current, "turn_cards_played", 1);
   current = incrementCounter(current, "combat_cards_played", 1);
   if (cardType === "ATTACK") {
@@ -1974,6 +2052,203 @@ export function applyRelicsOnCardPlayed(
 
   for (const relicId of relicIds) {
     switch (relicId) {
+      case "archivists_lens":
+        if (cardType === "POWER" && current.relicFlags?.archivists_lens_ready) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              focus: current.player.focus + 2,
+            },
+          };
+          if (rng) {
+            current = drawCards(
+              current,
+              2,
+              rng,
+              "SYSTEM",
+              "RELIC_ARCHIVISTS_LENS"
+            );
+          }
+          current = setFlag(current, "archivists_lens_ready", false);
+        }
+        break;
+
+      case "eye_of_maat":
+        if (getCounter(current, "turn_cards_played") === 1) {
+          if (cardType === "ATTACK") applyDebuffToAllEnemies("WEAK");
+          if (cardType === "SKILL") {
+            current = {
+              ...current,
+              player: { ...current.player, block: current.player.block + 5 },
+            };
+          }
+          if (cardType === "POWER") {
+            current = {
+              ...current,
+              player: { ...current.player, focus: current.player.focus + 1 },
+            };
+          }
+        }
+        break;
+
+      case "quetzal_feather":
+        if (getCounter(current, "turn_cards_played") === 1) {
+          if (cardType === "ATTACK") {
+            current = {
+              ...current,
+              player: { ...current.player, block: current.player.block + 5 },
+            };
+          }
+          if (cardType === "SKILL") {
+            current = {
+              ...current,
+              player: {
+                ...current.player,
+                inkCurrent: Math.min(
+                  current.player.inkMax,
+                  current.player.inkCurrent + 2
+                ),
+              },
+            };
+          }
+          if (cardType === "POWER") {
+            current = {
+              ...current,
+              player: {
+                ...current.player,
+                energyCurrent: current.player.energyCurrent + 1,
+              },
+            };
+          }
+        }
+        break;
+
+      case "griot_drum":
+        if (getCounter(current, "turn_cards_played") % 3 === 0) {
+          if (cardType === "ATTACK") {
+            current = {
+              ...current,
+              player: {
+                ...current.player,
+                strength: current.player.strength + 1,
+              },
+            };
+          } else if (cardType === "SKILL") {
+            current = {
+              ...current,
+              player: { ...current.player, block: current.player.block + 6 },
+            };
+          } else {
+            current = {
+              ...current,
+              player: {
+                ...current.player,
+                inkCurrent: Math.min(
+                  current.player.inkMax,
+                  current.player.inkCurrent + 2
+                ),
+              },
+            };
+          }
+        }
+        break;
+
+      case "void_shard":
+        if (getCounter(current, "combat_cards_played") % 5 === 0) {
+          current = {
+            ...current,
+            player: { ...current.player, focus: current.player.focus + 2 },
+            discardPile: [
+              ...current.discardPile,
+              { instanceId: nanoid(), definitionId: "dazed", upgraded: false },
+            ],
+          };
+        }
+        break;
+
+      case "weavers_thread":
+        if (
+          cardType === "SKILL" &&
+          getCounter(current, "turn_skill_count") % 3 === 0
+        ) {
+          current = {
+            ...current,
+            player: { ...current.player, block: current.player.block + 2 },
+          };
+          if (rng) {
+            current = drawCards(
+              current,
+              1,
+              rng,
+              "SYSTEM",
+              "RELIC_WEAVERS_THREAD"
+            );
+          }
+        }
+        break;
+
+      case "stone_pendant":
+        if (firstAttackThisTurn && targetId) {
+          const target = beforeState.enemies.find(
+            (enemy) => enemy.instanceId === targetId
+          );
+          if (target && target.currentHp >= target.maxHp) {
+            current = {
+              ...current,
+              player: { ...current.player, block: current.player.block + 8 },
+            };
+          }
+        }
+        break;
+
+      case "viking_hel_signet":
+        if (firstAttackThisTurn && targetId) {
+          const target = beforeState.enemies.find(
+            (enemy) => enemy.instanceId === targetId
+          );
+          if (target && getBuffStacks(target.buffs, "VULNERABLE") > 0) {
+            const existing = current.player.buffs.find(
+              (buff) => buff.type === "THORNS"
+            );
+            current = {
+              ...current,
+              player: {
+                ...current.player,
+                buffs: existing
+                  ? current.player.buffs.map((buff) =>
+                      buff.type === "THORNS"
+                        ? { ...buff, stacks: buff.stacks + 2 }
+                        : buff
+                    )
+                  : [
+                      ...current.player.buffs,
+                      { type: "THORNS" as const, stacks: 2 },
+                    ],
+              },
+            };
+          }
+        }
+        break;
+
+      case "celtic_cernunnos_antler":
+        if (
+          firstSkillThisTurn &&
+          getBuffStacks(current.player.buffs, "THORNS") > 0
+        ) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              currentHp: Math.min(
+                current.player.maxHp,
+                current.player.currentHp + 1
+              ),
+            },
+          };
+        }
+        break;
+
       case "scholars_stone":
         if (cardType === "ATTACK") {
           current = {
@@ -2016,6 +2291,196 @@ export function applyRelicsOnCardPlayed(
               block: current.player.block + 2,
             },
           };
+        }
+        break;
+
+      case "library_midnight_press":
+        if (getCounter(current, "combat_cards_played") % 10 === 0) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              inkCurrent: Math.min(
+                current.player.inkMax,
+                current.player.inkCurrent + 1
+              ),
+            },
+          };
+          if (rng) {
+            current = drawCards(
+              current,
+              2,
+              rng,
+              "SYSTEM",
+              "RELIC_LIBRARY_MIDNIGHT_PRESS"
+            );
+          }
+        }
+        break;
+
+      case "greek_harpy_pinion": {
+        const progress = getCounter(current, "harpy_sequence_progress");
+        if (cardType === "SKILL") {
+          current = setCounter(
+            current,
+            "harpy_sequence_progress",
+            Math.min(2, progress + 1)
+          );
+        } else if (cardType === "ATTACK" && progress >= 2) {
+          if (rng) {
+            current = drawCards(
+              current,
+              1,
+              rng,
+              "SYSTEM",
+              "RELIC_GREEK_HARPY_PINION"
+            );
+          }
+          current = setCounter(current, "harpy_sequence_progress", 0);
+        } else {
+          current = setCounter(current, "harpy_sequence_progress", 0);
+        }
+        break;
+      }
+
+      case "celtic_grove_compass":
+        if (
+          firstSkillThisTurn &&
+          current.player.buffs.some(
+            (buff) => buff.type === "THORNS" && buff.stacks > 0
+          )
+        ) {
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              block: current.player.block + 3,
+            },
+          };
+        }
+        break;
+
+      case "hels_crown":
+        if (firstSkillThisTurn) {
+          const thorns = current.player.buffs.find(
+            (buff) => buff.type === "THORNS"
+          );
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              block: current.player.block + 3,
+              buffs: thorns
+                ? current.player.buffs.map((buff) =>
+                    buff.type === "THORNS"
+                      ? { ...buff, stacks: buff.stacks + 1 }
+                      : buff
+                  )
+                : [
+                    ...current.player.buffs,
+                    { type: "THORNS" as const, stacks: 1 },
+                  ],
+            },
+          };
+        }
+        break;
+
+      case "hydra_scale":
+        if (
+          cardType === "ATTACK" &&
+          getCounter(current, "turn_attack_count") % 3 === 0
+        ) {
+          const thorns = current.player.buffs.find(
+            (buff) => buff.type === "THORNS"
+          );
+          current = {
+            ...current,
+            player: {
+              ...current.player,
+              buffs: thorns
+                ? current.player.buffs.map((buff) =>
+                    buff.type === "THORNS"
+                      ? { ...buff, stacks: buff.stacks + 2 }
+                      : buff
+                  )
+                : [
+                    ...current.player.buffs,
+                    { type: "THORNS" as const, stacks: 2 },
+                  ],
+            },
+          };
+        }
+        break;
+
+      case "obsidian_mirror":
+        if (firstAttackThisTurn && targetId) {
+          current = {
+            ...current,
+            enemies: current.enemies.map((enemy) =>
+              enemy.instanceId === targetId && enemy.currentHp > 0
+                ? {
+                    ...enemy,
+                    buffs: [
+                      ...enemy.buffs,
+                      {
+                        type: "VULNERABLE" as const,
+                        stacks: 1,
+                        duration: 2,
+                      },
+                    ],
+                  }
+                : enemy
+            ),
+          };
+        }
+        break;
+
+      case "wolf_fang":
+        if (firstAttackThisTurn && targetId) {
+          const beforeTarget = beforeState.enemies.find(
+            (enemy) => enemy.instanceId === targetId
+          );
+          if (
+            beforeTarget &&
+            beforeTarget.currentHp > 0 &&
+            beforeTarget.currentHp * 2 < beforeTarget.maxHp
+          ) {
+            current = {
+              ...current,
+              enemies: current.enemies.map((enemy) => {
+                if (enemy.instanceId !== targetId || enemy.currentHp <= 0) {
+                  return enemy;
+                }
+                const result = applyDamage(enemy, 8);
+                return {
+                  ...enemy,
+                  currentHp: result.currentHp,
+                  block: result.block,
+                };
+              }),
+            };
+          }
+        }
+        break;
+
+      case "bleeding_thistle":
+        if (cardType === "ATTACK" && getCounter(current, "turn_attack_count") === 1) {
+          current = { ...current, player: { ...current.player, block: current.player.block + 3 } };
+        }
+        if (
+          cardType === "ATTACK" &&
+          getCounter(current, "turn_attack_count") % 3 === 0
+        ) {
+          applyDotToAllEnemies("BLEED", 2);
+        }
+        break;
+
+      case "venom_pouch":
+        if (
+          cardType === "SKILL" &&
+          getCounter(current, "turn_skill_count") % 3 === 0
+        ) {
+          applyDotToAllEnemies("POISON", 2);
         }
         break;
 

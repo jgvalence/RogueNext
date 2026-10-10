@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import type { CardRedactionType } from "@/game/schemas/combat-state";
-import type { CardDefinition } from "@/game/schemas/cards";
+import type { CardDefinition, CardUpgradeBranch } from "@/game/schemas/cards";
 import type { BiomeType, CardType, Rarity } from "@/game/schemas/enums";
-import { CARD_IMAGES } from "@/lib/assets";
+import { CardArtwork } from "../shared/CardArtwork";
 import { Tooltip } from "../shared/Tooltip";
 import { parseDescriptionWithTooltips } from "../shared/parse-description";
 import { buildUpgradedCardDefinition } from "@/game/engine/card-upgrades";
@@ -27,9 +27,11 @@ interface GameCardProps {
   isSelected?: boolean;
   isPendingInked?: boolean;
   isFrozen?: boolean;
+  isRetained?: boolean;
   isPetrified?: boolean;
   isWebbed?: boolean;
   upgraded?: boolean;
+  upgradeBranch?: CardUpgradeBranch;
   costModifier?: number;
   attackBonus?: number;
   onClick?: () => void;
@@ -311,9 +313,11 @@ export function GameCard({
   isSelected = false,
   isPendingInked = false,
   isFrozen = false,
+  isRetained = false,
   isPetrified = false,
   isWebbed = false,
   upgraded = false,
+  upgradeBranch = "A",
   costModifier = 0,
   attackBonus = 0,
   onClick,
@@ -330,7 +334,7 @@ export function GameCard({
     (left, right) => redactionBadgeOrder[left] - redactionBadgeOrder[right]
   );
   const displayDefinition = upgraded
-    ? buildUpgradedCardDefinition(definition)
+    ? buildUpgradedCardDefinition(definition, upgradeBranch)
     : definition;
   const rawAttackBonus =
     displayDefinition.type === "ATTACK" ? Math.max(0, attackBonus) : 0;
@@ -348,8 +352,6 @@ export function GameCard({
   const typeStyle = typeStyles[displayDefinition.type];
   const rarityStyle = rarityStyles[displayDefinition.rarity];
   const biomeStyle = biomeStyles[displayDefinition.biome];
-  const [artFailed, setArtFailed] = useState(false);
-  const artImageSrc = CARD_IMAGES[displayDefinition.id];
   const localizedName = localizeCardName(displayDefinitionWithAttackBonus, t);
   const localizedDescription = localizeCardDescription(
     displayDefinitionWithAttackBonus,
@@ -449,6 +451,11 @@ export function GameCard({
   return (
     <div
       data-keep-selection="true"
+      data-game-card={size}
+      data-card-type={displayDefinition.type}
+      data-card-rarity={displayDefinition.rarity}
+      data-card-selected={isSelected}
+      data-card-inked={isPendingInked}
       className={cn(
         "group relative isolate z-0 flex touch-manipulation select-none flex-col overflow-hidden rounded-[18px] border bg-slate-950/95 shadow-[0_10px_24px_rgba(2,6,23,0.45)] transition-all duration-200 [-webkit-touch-callout:none]",
         typeStyle.border,
@@ -474,12 +481,23 @@ export function GameCard({
             : "ring-amber-100"),
         className
       )}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-disabled={onClick ? !canPlay : undefined}
+      aria-label={`${localizedName}. ${activeDescription}`}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if ((event.key === "Enter" || event.key === " ") && canPlay) {
+          event.preventDefault();
+          onClick?.();
+        }
+      }}
       onClick={canPlay ? onClick : undefined}
       onDoubleClick={canPlay ? onDoubleClick : undefined}
     >
       <div
         className={cn(
-          "absolute inset-0 bg-gradient-to-b opacity-95",
+          "card-binding absolute inset-0 bg-gradient-to-b opacity-95",
           typeStyle.shell
         )}
       />
@@ -494,7 +512,7 @@ export function GameCard({
       />
       <div
         className={cn(
-          "pointer-events-none absolute inset-[3px] rounded-[14px] border",
+          "card-inner-frame pointer-events-none absolute inset-[3px] rounded-[14px] border",
           rarityStyle.frame
         )}
       />
@@ -507,7 +525,7 @@ export function GameCard({
 
       <div
         className={cn(
-          "absolute left-2 top-2 z-20 flex items-center justify-center rounded-full border font-black shadow-[0_8px_18px_rgba(0,0,0,0.35)] backdrop-blur-sm",
+          "card-cost absolute left-2 top-2 z-20 flex items-center justify-center rounded-full border font-black shadow-[0_8px_18px_rgba(0,0,0,0.35)] backdrop-blur-sm",
           sizeStyle.costBubble,
           hasModifiedCost
             ? "border-amber-200/50 bg-gradient-to-br from-amber-200 via-orange-300 to-orange-500 text-slate-950"
@@ -528,7 +546,7 @@ export function GameCard({
       >
         <div
           className={cn(
-            "flex items-start justify-between gap-1.5",
+            "card-header flex items-start justify-between gap-1.5",
             sizeStyle.headerLeftPad
           )}
         >
@@ -553,6 +571,16 @@ export function GameCard({
           </div>
 
           <div className="flex flex-col items-end gap-1">
+            {isRetained && (
+              <span
+                className={cn(
+                  "rounded-full border border-emerald-300/60 bg-emerald-950 px-1.5 py-0.5 font-bold text-emerald-100",
+                  sizeStyle.badge
+                )}
+              >
+                {t("gameCard.retained")}
+              </span>
+            )}
             {upgraded && (
               <span
                 className={cn(
@@ -570,7 +598,7 @@ export function GameCard({
                   sizeStyle.badge
                 )}
               >
-                Frozen
+                {t("gameCard.labels.frozen")}
               </span>
             )}
             {isPetrified && (
@@ -668,7 +696,7 @@ export function GameCard({
           >
             <div
               className={cn(
-                "relative overflow-hidden rounded-[14px] border border-white/10 bg-black/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]",
+                "card-art-window relative overflow-hidden rounded-[14px] border border-white/10 bg-black/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]",
                 isScrollablePreview && "shrink-0",
                 sizeStyle.artH
               )}
@@ -681,51 +709,12 @@ export function GameCard({
               />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.16),transparent_44%)]" />
 
-              {artImageSrc && !artFailed && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={artImageSrc}
-                  alt={localizedName}
-                  className={cn(
-                    "absolute inset-0 h-full w-full",
-                    size === "lg"
-                      ? "object-contain object-center p-1.5"
-                      : "object-cover object-center"
-                  )}
-                  onError={() => setArtFailed(true)}
-                />
-              )}
-
-              {(!artImageSrc || artFailed) && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center px-2 text-center">
-                  <span
-                    className={cn(
-                      "font-black uppercase tracking-[0.38em] text-white/30",
-                      sizeStyle.placeholderType
-                    )}
-                  >
-                    {localizedType}
-                  </span>
-                  <span
-                    className={cn(
-                      "mt-1 font-black leading-none text-white/10",
-                      sizeStyle.iconMark
-                    )}
-                  >
-                    {typeStyle.fallbackMark}
-                  </span>
-                  <span
-                    className={cn(
-                      "mt-1 uppercase tracking-[0.24em] text-white/25",
-                      sizeStyle.footer
-                    )}
-                    role="img"
-                    aria-label={localizedBiome}
-                  >
-                    {biomeSymbol}
-                  </span>
-                </div>
-              )}
+              <CardArtwork
+                definition={displayDefinition}
+                thumbnail={size !== "lg"}
+                allowZoom={size !== "sm" && !isCondensed}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+              />
 
               <div
                 className={cn(
@@ -790,7 +779,7 @@ export function GameCard({
             >
               <div
                 className={cn(
-                  "border-white/8 relative rounded-[14px] border bg-black/20 px-2 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
+                  "card-rules border-white/8 relative rounded-[14px] border bg-black/20 px-2 py-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]",
                   isScrollablePreview
                     ? "flex-none overflow-visible"
                     : "min-h-0 flex-1 overflow-hidden",
@@ -843,7 +832,7 @@ export function GameCard({
                   {canPlayInked ? (
                     <button
                       className={cn(
-                        "mt-1.5 w-full shrink-0 rounded-[14px] border px-2 py-1.5 text-left transition-all duration-150",
+                        "card-ink-panel mt-1.5 w-full shrink-0 rounded-[14px] border px-2 py-1.5 text-left transition-all duration-150",
                         sizeStyle.inkMeta,
                         isCondensed && "py-1",
                         isPendingInked && "ring-1 ring-cyan-200/55",
@@ -890,7 +879,7 @@ export function GameCard({
                   ) : (
                     <div
                       className={cn(
-                        "mt-1.5 w-full shrink-0 rounded-[14px] border px-2 py-1.5 opacity-60",
+                        "card-ink-panel mt-1.5 w-full shrink-0 rounded-[14px] border px-2 py-1.5 opacity-60",
                         sizeStyle.inkMeta,
                         isCondensed && "py-1",
                         typeStyle.inkPanel

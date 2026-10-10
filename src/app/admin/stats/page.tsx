@@ -1,6 +1,9 @@
+import { CohortTable } from "./CohortTable";
 import { requireAdmin } from "@/lib/auth/helpers";
 import { prisma } from "@/lib/db/prisma";
 import { buildEnemyDefsMap } from "@/game/data";
+import { summarizeAnalyticsCohorts } from "@/game/engine/analytics-cohorts";
+import { RunAnalyticsSchema } from "@/game/schemas/analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -11,8 +14,11 @@ async function getStats() {
     byDifficulty,
     byBuild,
     byBiome,
+    byCharacter,
+    byCondition,
     defeatEnemies,
     defeatFloors,
+    telemetryRows,
   ] = await Promise.all([
     prisma.runSummary.count(),
 
@@ -39,6 +45,18 @@ async function getStats() {
       orderBy: { biome: "asc" },
     }),
 
+    prisma.runSummary.groupBy({
+      by: ["characterId", "status"],
+      _count: { id: true },
+      orderBy: { characterId: "asc" },
+    }),
+
+    prisma.runSummary.groupBy({
+      by: ["runConditionId", "status"],
+      _count: { id: true },
+      orderBy: { runConditionId: "asc" },
+    }),
+
     // Top 10 ennemis qui ont causé le plus de défaites
     prisma.runSummary.groupBy({
       by: ["defeatEnemyId"],
@@ -55,7 +73,70 @@ async function getStats() {
       _count: { id: true },
       orderBy: { floorReached: "asc" },
     }),
+
+    prisma.runSummary.findMany({
+      select: {
+        analytics: true,
+        characterId: true,
+        difficultyLevel: true,
+        status: true,
+        unlockedStoryCount: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 2000,
+    }),
   ]);
+
+  const telemetry = telemetryRows.flatMap((row) => {
+    const parsed = RunAnalyticsSchema.safeParse(row.analytics);
+    return parsed.success ? [parsed.data] : [];
+  });
+  const cohorts = summarizeAnalyticsCohorts(telemetryRows);
+  const telemetryTotals = telemetry.reduce(
+    (totals, run) => ({
+      inkGenerated: totals.inkGenerated + run.inkGenerated,
+      inkSpent: totals.inkSpent + run.inkSpent,
+      inkedCardsPlayed: totals.inkedCardsPlayed + run.inkedCardsPlayed,
+      combats: totals.combats + run.combatsStarted,
+      turns: totals.turns + run.totalTurns,
+      damageTaken: totals.damageTaken + run.damageTaken,
+    }),
+    {
+      inkGenerated: 0,
+      inkSpent: 0,
+      inkedCardsPlayed: 0,
+      combats: 0,
+      turns: 0,
+      damageTaken: 0,
+    }
+  );
+  const inkPowerUses: Record<string, number> = {};
+  const cardPlays: Record<string, number> = {};
+  const cardModePlays: Record<string, number> = {};
+  const upgradeBranchChoices: Record<string, number> = {};
+  const cardsAdded: Record<string, number> = {};
+  const cardsRemovedById: Record<string, number> = {};
+  for (const run of telemetry) {
+    for (const [power, count] of Object.entries(run.inkPowerUses)) {
+      inkPowerUses[power] = (inkPowerUses[power] ?? 0) + count;
+    }
+    for (const [cardId, count] of Object.entries(run.cardPlays)) {
+      cardPlays[cardId] = (cardPlays[cardId] ?? 0) + count;
+    }
+    for (const [mode, count] of Object.entries(run.cardModePlays)) {
+      cardModePlays[mode] = (cardModePlays[mode] ?? 0) + count;
+    }
+    for (const [branch, count] of Object.entries(run.upgradeBranchChoices)) {
+      upgradeBranchChoices[branch] =
+        (upgradeBranchChoices[branch] ?? 0) + count;
+    }
+    for (const [cardId, count] of Object.entries(run.cardsAdded)) {
+      cardsAdded[cardId] = (cardsAdded[cardId] ?? 0) + count;
+    }
+    for (const [cardId, count] of Object.entries(run.cardsRemovedById)) {
+      cardsRemovedById[cardId] = (cardsRemovedById[cardId] ?? 0) + count;
+    }
+  }
 
   return {
     total,
@@ -63,8 +144,30 @@ async function getStats() {
     byDifficulty,
     byBuild,
     byBiome,
+    byCharacter,
+    byCondition,
     defeatEnemies,
     defeatFloors,
+    telemetryTotals,
+    cohorts,
+    inkPowerUses: Object.entries(inkPowerUses).sort((a, b) => b[1] - a[1]),
+    topCardPlays: Object.entries(cardPlays)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15),
+    cardModePlays: Object.entries(cardModePlays).sort((a, b) => b[1] - a[1]),
+    upgradeBranchChoices: Object.entries(upgradeBranchChoices).sort(
+      (a, b) => b[1] - a[1]
+    ),
+    cardAcquisitionStats: Array.from(
+      new Set([...Object.keys(cardsAdded), ...Object.keys(cardsRemovedById)])
+    )
+      .map((cardId) => ({
+        cardId,
+        added: cardsAdded[cardId] ?? 0,
+        removed: cardsRemovedById[cardId] ?? 0,
+        played: cardPlays[cardId] ?? 0,
+      }))
+      .sort((left, right) => right.added - left.added),
   };
 }
 
@@ -77,8 +180,17 @@ export default async function AdminStatsPage() {
     byDifficulty,
     byBuild,
     byBiome,
+    byCharacter,
+    byCondition,
     defeatEnemies,
     defeatFloors,
+    telemetryTotals,
+    cohorts,
+    inkPowerUses,
+    topCardPlays,
+    cardModePlays,
+    upgradeBranchChoices,
+    cardAcquisitionStats,
   } = await getStats();
 
   const enemyDefs = buildEnemyDefsMap();
@@ -102,6 +214,18 @@ export default async function AdminStatsPage() {
       <h1 className="mb-2 text-2xl font-bold">Stats Alpha</h1>
       <p className="mb-8 text-sm text-gray-400">{total} runs enregistrés</p>
 
+      <section className="mb-10 overflow-x-auto">
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">
+          Cohortes comparables
+        </h2>
+        <p className="mb-3 text-sm text-gray-400">
+          Derniers 2 000 historiques. Victoires / (victoires + défaites),
+          abandons séparés. Les anciennes versions restent isolées. Les tours
+          sans carte jouable peuvent encore permettre un pouvoir ou un objet.
+        </p>
+        <CohortTable cohorts={cohorts} />
+      </section>
+
       {/* Vue globale */}
       <section className="mb-10">
         <h2 className="mb-3 text-lg font-semibold text-amber-400">
@@ -117,6 +241,180 @@ export default async function AdminStatsPage() {
             <div key={label} className="rounded bg-gray-800 p-4">
               <div className="mb-1 text-xs text-gray-400">{label}</div>
               <div className="text-xl font-bold">{value}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">
+          Acquisition, jeu et suppression
+        </h2>
+        <div className="grid gap-2 md:grid-cols-2">
+          {cardAcquisitionStats.slice(0, 30).map((card) => (
+            <div
+              key={card.cardId}
+              className="rounded bg-gray-800 px-3 py-2 text-sm"
+            >
+              <span className="font-mono">{card.cardId}</span>
+              <span className="float-right text-gray-300">
+                +{card.added} / joue {card.played} / retire {card.removed}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">
+          Choix de cartes et d&apos;evolutions
+        </h2>
+        <div className="mb-4 flex flex-wrap gap-2">
+          {upgradeBranchChoices.map(([branch, count]) => (
+            <span
+              key={branch}
+              className="rounded bg-gray-800 px-3 py-2 text-sm"
+            >
+              Branche {branch}: <strong>{count}</strong>
+            </span>
+          ))}
+        </div>
+        <div className="grid gap-2 md:grid-cols-3">
+          {cardModePlays.slice(0, 30).map(([mode, count]) => (
+            <div
+              key={mode}
+              className="flex justify-between rounded bg-gray-800 px-3 py-2 text-sm"
+            >
+              <span className="font-mono">{mode}</span>
+              <strong>{count}</strong>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">
+          Winrate par personnage
+        </h2>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-gray-700 text-left text-gray-400">
+              <th className="pb-2 pr-6">Personnage</th>
+              <th className="pb-2 pr-6">Runs</th>
+              <th className="pb-2 pr-6">Victoires</th>
+              <th className="pb-2">Winrate</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...new Set(byCharacter.map((row) => row.characterId))].map(
+              (characterId) => {
+                const rows = byCharacter.filter(
+                  (row) => row.characterId === characterId
+                );
+                const runCount = rows.reduce(
+                  (sum, row) => sum + row._count.id,
+                  0
+                );
+                const victories =
+                  rows.find((row) => row.status === "VICTORY")?._count.id ?? 0;
+                return (
+                  <tr key={characterId} className="border-b border-gray-800">
+                    <td className="py-2 pr-6 capitalize">{characterId}</td>
+                    <td className="py-2 pr-6">{runCount}</td>
+                    <td className="py-2 pr-6 text-green-400">{victories}</td>
+                    <td className="py-2">
+                      {runCount > 0
+                        ? `${((victories / runCount) * 100).toFixed(1)}%`
+                        : "—"}
+                    </td>
+                  </tr>
+                );
+              }
+            )}
+          </tbody>
+        </table>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">
+          Conditions de départ
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {[...new Set(byCondition.map((row) => row.runConditionId))].map(
+            (conditionId) => {
+              const rows = byCondition.filter(
+                (row) => row.runConditionId === conditionId
+              );
+              const runCount = rows.reduce(
+                (sum, row) => sum + row._count.id,
+                0
+              );
+              const victories =
+                rows.find((row) => row.status === "VICTORY")?._count.id ?? 0;
+              return (
+                <span
+                  key={conditionId ?? "none"}
+                  className="rounded bg-gray-800 px-3 py-2 text-sm"
+                >
+                  {conditionId ?? "Aucune"}: {runCount} runs,{" "}
+                  {runCount > 0 ? Math.round((victories / runCount) * 100) : 0}%
+                </span>
+              );
+            }
+          )}
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">
+          Utilisation de l&apos;Encre
+        </h2>
+        <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+          {[
+            { label: "Encre générée", value: telemetryTotals.inkGenerated },
+            { label: "Encre dépensée", value: telemetryTotals.inkSpent },
+            {
+              label: "Taux d'utilisation",
+              value:
+                telemetryTotals.inkGenerated > 0
+                  ? `${Math.round((telemetryTotals.inkSpent / telemetryTotals.inkGenerated) * 100)}%`
+                  : "—",
+            },
+            {
+              label: "Cartes encrées",
+              value: telemetryTotals.inkedCardsPlayed,
+            },
+          ].map(({ label, value }) => (
+            <div key={label} className="rounded bg-gray-800 p-4">
+              <div className="mb-1 text-xs text-gray-400">{label}</div>
+              <div className="text-xl font-bold">{value}</div>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {inkPowerUses.map(([power, count]) => (
+            <span key={power} className="rounded bg-gray-800 px-3 py-2 text-sm">
+              {power}: <strong>{count}</strong>
+            </span>
+          ))}
+          {inkPowerUses.length === 0 && (
+            <span className="text-sm text-gray-500">Pas encore de données</span>
+          )}
+        </div>
+      </section>
+
+      <section className="mb-10">
+        <h2 className="mb-3 text-lg font-semibold text-amber-400">
+          Cartes les plus jouées
+        </h2>
+        <div className="grid gap-2 md:grid-cols-3">
+          {topCardPlays.map(([cardId, count]) => (
+            <div
+              key={cardId}
+              className="flex justify-between rounded bg-gray-800 px-3 py-2 text-sm"
+            >
+              <span className="font-mono">{cardId}</span>
+              <strong>{count}</strong>
             </div>
           ))}
         </div>
@@ -197,6 +495,12 @@ export default async function AdminStatsPage() {
         </table>
       </section>
 
+      <p className="text-sm text-slate-400">
+        Télémétrie détaillée : les 2 000 derniers résumés au maximum. Les
+        compteurs de dégâts mesurent les PV nets perdus ; les causes fatales
+        historiques ne sont pas fiables. Les agrégats de victoire portent sur
+        toutes les runs.
+      </p>
       {/* Winrate par biome */}
       <section className="mb-10">
         <h2 className="mb-3 text-lg font-semibold text-amber-400">

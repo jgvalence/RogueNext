@@ -7,5 +7,5 @@ import { cn } from "@/lib/utils/cn";
 export type RogueButtonProps = ButtonProps;
 
 export function RogueButton({ className, ...props }: RogueButtonProps) {
-  return <Button className={cn(className)} {...props} />;
+  return <Button className={cn("rogue-button", className)} {...props} />;
 }

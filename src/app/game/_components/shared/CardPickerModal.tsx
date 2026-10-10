@@ -95,6 +95,7 @@ export function CardPickerModal({
                       definition={def}
                       instanceId={card.instanceId}
                       upgraded={card.upgraded}
+                      upgradeBranch={card.upgradeBranch ?? "A"}
                       canPlay={false}
                       className="!cursor-pointer !opacity-100 !saturate-100"
                       size="sm"
@@ -114,6 +115,7 @@ export function CardPickerModal({
                         definition={def}
                         instanceId={card.instanceId}
                         upgraded={card.upgraded}
+                        upgradeBranch={card.upgradeBranch ?? "A"}
                         canPlay={false}
                         className="!cursor-default !opacity-100 !saturate-100"
                         size="md"

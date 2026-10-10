@@ -207,8 +207,8 @@ describe("chapter guardian", () => {
       enemyDefs
     );
 
-    expect(rebound.player.currentHp).toBe(80);
-    expect(rebound.enemies[0]?.block).toBe(12);
+    expect(rebound.player.currentHp).toBe(71);
+    expect(rebound.enemies[0]?.block).toBe(0);
     expect(
       rebound.enemies[0]?.mechanicFlags?.chapter_guardian_binding_martial_active
     ).toBe(1);

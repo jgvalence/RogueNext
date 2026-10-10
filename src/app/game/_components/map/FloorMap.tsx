@@ -13,6 +13,8 @@ import { GAME_CONSTANTS } from "@/game/constants";
 import { BIOME_RESOURCE } from "@/game/engine/meta";
 import { cn } from "@/lib/utils/cn";
 import { RogueButton, RogueTag } from "@/components/ui/rogue";
+import { RoomArtwork } from "../shared/RoomArtwork";
+import { EnemyArtwork } from "../shared/EnemyArtwork";
 
 interface FloorMapProps {
   map: RoomNode[][];
@@ -620,7 +622,9 @@ export function FloorMap({
   }, [currentRoom, currentDepthAnchor?.x, currentDepthAnchor?.y]);
 
   return (
-    <div className="flex min-h-[80vh] flex-col items-center gap-8 px-4 py-10 sm:px-6">
+    <div className="expedition-map relative isolate flex min-h-[80vh] flex-col items-center gap-8 px-4 py-10 sm:px-6">
+      <RoomArtwork scene="atlas" background className="pointer-events-none absolute inset-x-0 top-0 -z-20 block h-[85vh] opacity-55" />
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-slate-950/25 via-slate-950/80 to-slate-950" />
       <div className="flex w-full max-w-5xl flex-col items-center gap-4">
         <div className="inline-flex items-center rounded border border-amber-200/20 bg-amber-200/10 px-4 py-1.5">
           <span className="font-[family-name:var(--font-cinzel)] text-xs font-semibold uppercase tracking-[0.55em] text-amber-400/70">
@@ -704,6 +708,7 @@ export function FloorMap({
           className="border-amber-100/14 relative mx-auto overflow-hidden rounded-[36px] border bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.96),_rgba(2,6,23,0.97)_58%,_rgba(1,3,10,1)_100%)] px-6 py-6 shadow-[0_30px_90px_rgba(0,0,0,0.42)]"
           style={{ width: `${mapWidth + 48}px` }}
         >
+          <RoomArtwork scene="atlas" background className="pointer-events-none absolute inset-0 block opacity-25" />
           <div className="pointer-events-none absolute inset-6 rounded-[28px] border border-white/5 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.05),_transparent_34%),radial-gradient(circle_at_bottom,_rgba(251,191,36,0.06),_transparent_40%)]" />
           <div className="pointer-events-none absolute inset-6">
             {Array.from({ length: GAME_CONSTANTS.MAP_LANES }).map((_, lane) => {
@@ -904,6 +909,11 @@ export function FloorMap({
                 )}
                 onClick={() => onSelectRoom(choiceIndex)}
               >
+                {room.type === "COMBAT" && room.enemyIds?.[0] ? (
+                  <EnemyArtwork enemyId={room.enemyIds[0]} alt="" className="h-28 w-full rounded-lg object-cover object-center" />
+                ) : (
+                  <RoomArtwork scene={room.type === "MERCHANT" ? "merchant" : room.specialType === "HEAL" ? "rest" : room.specialType === "UPGRADE" ? "forge" : room.type === "PRE_BOSS" ? "atlas" : "mysterious_tome"} className="block h-28 w-full overflow-hidden rounded-lg" />
+                )}
                 <div className="h-1 w-10 rounded-full bg-gradient-to-r from-amber-300/80 to-transparent" />
 
                 <div className="flex w-full items-start justify-between gap-4">

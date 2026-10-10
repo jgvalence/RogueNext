@@ -148,7 +148,7 @@ describe("celtic bosses", () => {
 
     state = resolveDagdaPostAbility(state, dagdaId, "Famine Curse", enemyDefs);
 
-    expect(getEnemy(state, "dagda_shadow").currentHp).toBe(154);
+    expect(getEnemy(state, "dagda_shadow").currentHp).toBe(132);
     expect(
       getEnemy(state, "dagda_shadow").buffs.find(
         (buff) => buff.type === "STRENGTH"
@@ -243,7 +243,7 @@ describe("celtic bosses", () => {
       );
     }
 
-    expect(getEnemy(state, "cernunnos_shade").currentHp).toBe(144);
+    expect(getEnemy(state, "cernunnos_shade").currentHp).toBe(111);
     expect(
       getCernunnosUiState(getEnemy(state, "cernunnos_shade"))?.exposed
     ).toBe(true);
@@ -258,7 +258,7 @@ describe("celtic bosses", () => {
       rng
     );
 
-    expect(getEnemy(state, "cernunnos_shade").currentHp).toBe(129);
+    expect(getEnemy(state, "cernunnos_shade").currentHp).toBe(96);
   });
 
   it("cernunnos regrows antlers faster in phase 2", () => {

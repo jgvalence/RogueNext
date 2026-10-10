@@ -14,6 +14,7 @@ export const InkedVariantSchema = z.object({
   inkMarkCost: z.number().int().min(1),
   upgradedDescription: z.string().optional(),
   upgradedEffects: z.array(EffectSchema).optional(),
+  targeting: Targeting.optional(),
 });
 export type InkedVariant = z.infer<typeof InkedVariantSchema>;
 
@@ -25,6 +26,8 @@ export const CardUpgradeSchema = z.object({
   onRandomDiscardEffects: z.array(EffectSchema).optional(),
 });
 export type CardUpgrade = z.infer<typeof CardUpgradeSchema>;
+export const CardUpgradeBranchSchema = z.enum(["A", "B"]);
+export type CardUpgradeBranch = z.infer<typeof CardUpgradeBranchSchema>;
 
 export const CardDefinitionSchema = z.object({
   id: z.string(),
@@ -39,6 +42,9 @@ export const CardDefinitionSchema = z.object({
   onRandomDiscardEffects: z.array(EffectSchema).default([]),
   inkedVariant: InkedVariantSchema.nullable().default(null),
   upgrade: CardUpgradeSchema.nullable().default(null),
+  upgradeBranches: z
+    .tuple([CardUpgradeSchema, CardUpgradeSchema])
+    .optional(),
   isStarterCard: z.boolean().default(false),
   isCollectible: z.boolean().default(true),
   isStatusCard: z.boolean().default(false),
@@ -62,11 +68,16 @@ export type CardDefinition = Omit<
   onRandomDiscardEffects?: Effect[];
   archetypeTags?: Array<z.infer<typeof CardArchetypeTag>>;
   upgrade?: CardUpgrade | null;
+  upgradeBranches?: [CardUpgrade, CardUpgrade];
 };
 
 export const CardInstanceSchema = z.object({
   instanceId: z.string(),
   definitionId: z.string(),
   upgraded: z.boolean().default(false),
+  upgradeBranch: CardUpgradeBranchSchema.nullable().optional(),
 });
-export type CardInstance = z.infer<typeof CardInstanceSchema>;
+export type CardInstance = Omit<
+  z.infer<typeof CardInstanceSchema>,
+  "upgradeBranch"
+> & { upgradeBranch?: CardUpgradeBranch | null };

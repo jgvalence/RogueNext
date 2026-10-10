@@ -2,13 +2,16 @@
 
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import type { CardDefinition } from "@/game/schemas/cards";
+import type {
+  CardDefinition,
+  CardUpgradeBranch,
+} from "@/game/schemas/cards";
 import { CardUpgradePreview } from "./CardUpgradePreview";
 
 interface CardActionModalProps {
   card: CardDefinition;
   actionLabel: string;
-  onAction: () => void;
+  onAction: (branch: CardUpgradeBranch) => void;
   onCancel: () => void;
 }
 
@@ -34,25 +37,28 @@ export function CardActionModal({
       onClick={onCancel}
     >
       <div
-        className="w-full max-w-sm overflow-y-auto rounded-t-2xl border border-slate-700/80 bg-slate-900 p-5 pb-10 shadow-2xl sm:rounded-2xl sm:pb-5"
+        className="w-full max-w-4xl overflow-y-auto rounded-t-2xl border border-slate-700/80 bg-slate-900 p-5 pb-10 shadow-2xl sm:rounded-2xl sm:pb-5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-center overflow-x-auto">
           <CardUpgradePreview definition={card} size="sm" />
         </div>
-        <div className="mt-5 flex gap-3">
+        <div className="mt-5 grid grid-cols-2 gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 rounded-xl border border-slate-600 bg-slate-800/50 py-3 text-sm font-semibold text-slate-300 active:bg-slate-700/70"
+            className="col-span-2 rounded-xl border border-slate-600 bg-slate-800/50 py-3 text-sm font-semibold text-slate-300 active:bg-slate-700/70"
           >
             {t("reward.skip")}
           </button>
-          <button
-            onClick={onAction}
-            className="flex-[2] rounded-xl border border-amber-500/60 bg-amber-900/40 py-3 text-sm font-bold text-amber-100 active:bg-amber-900/70"
-          >
-            {actionLabel}
-          </button>
+          {(["A", "B"] as const).map((branch) => (
+            <button
+              key={branch}
+              onClick={() => onAction(branch)}
+              className="rounded-xl border border-amber-500/60 bg-amber-900/40 py-3 text-sm font-bold text-amber-100 active:bg-amber-900/70"
+            >
+              {actionLabel} {branch}
+            </button>
+          ))}
         </div>
       </div>
     </div>

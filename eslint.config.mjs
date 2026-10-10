@@ -29,6 +29,16 @@ const eslintConfig = [
       ],
     },
   },
+  {
+    files: ["scripts/**/*.{ts,tsx,js,mjs}"],
+    // Command-line reports intentionally write their results to standard output.
+    rules: { "no-console": "off" },
+  },
+  {
+    files: ["scripts/**/*.{ts,tsx,js,mjs}"],
+    // Command-line reports intentionally write their results to standard output.
+    rules: { "no-console": "off" },
+  },
 ];
 
 export default eslintConfig;

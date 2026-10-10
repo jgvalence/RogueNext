@@ -24,15 +24,18 @@ export function CardUpgradePreview({
         <GameCard definition={definition} size={size} />
       </div>
 
-      <div className="flex items-center self-center text-lg text-amber-400">
-        {"->"}
+      <div className="flex flex-col items-center gap-1.5">
+        <p className="text-[9px] font-semibold uppercase tracking-wide text-yellow-400">
+          {t("gameCard.labels.upgraded")} A
+        </p>
+        <GameCard definition={definition} upgraded upgradeBranch="A" size={size} />
       </div>
 
       <div className="flex flex-col items-center gap-1.5">
-        <p className="text-[9px] font-semibold uppercase tracking-wide text-yellow-400">
-          {t("gameCard.labels.upgraded")}
+        <p className="text-[9px] font-semibold uppercase tracking-wide text-cyan-300">
+          {t("gameCard.labels.upgraded")} B
         </p>
-        <GameCard definition={definition} upgraded size={size} />
+        <GameCard definition={definition} upgraded upgradeBranch="B" size={size} />
       </div>
     </div>
   );

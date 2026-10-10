@@ -156,7 +156,7 @@ function createArchetypeChoice(
   };
 }
 
-const EVENTS: GameEvent[] = [
+export const EVENTS: GameEvent[] = [
   {
     id: "scriptorium_catalog",
     title: "events.scriptorium_catalog.title",
@@ -1958,7 +1958,10 @@ export function pickEvent(
   const pool = eligible.length > 0 ? eligible : EVENTS;
   const riskyPool = pool.filter((event) => RISKY_EVENT_IDS.has(event.id));
   const safePool = pool.filter((event) => !RISKY_EVENT_IDS.has(event.id));
-  if (difficultyLevel >= 4 && riskyPool.length > 0 && rng.next() < 0.7) {
+  const riskWeight =
+    [0.2, 0.3, 0.4, 0.5, 0.6, 0.7][Math.max(0, Math.min(5, difficultyLevel))] ??
+    0.2;
+  if (riskyPool.length > 0 && rng.next() < riskWeight) {
     return rng.pick(riskyPool);
   }
   return rng.pick(safePool.length > 0 ? safePool : pool);

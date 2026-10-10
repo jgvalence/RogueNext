@@ -42,7 +42,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "slime_ink_vial",
     name: "Fiole d'Encre Visqueuse",
-    description: "Start each combat with 6 Block.",
+    description: "Start each combat with 4 Block and 2 Ink.",
     rarity: "COMMON",
     archetypeTags: ["BLOCK"],
   },
@@ -82,13 +82,13 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "battle_lexicon",
     name: "Battle Lexicon",
     description: "Start each combat with +1 Strength.",
-    rarity: "UNCOMMON",
+    rarity: "COMMON",
     archetypeTags: ["STRENGTH"],
   },
   {
     id: "blighted_compass",
     name: "Blighted Compass",
-    description: "+1 draw per turn, but start combat with 1 Weak.",
+    description: "+2 draw per turn, but start combat with 2 Weak.",
     rarity: "UNCOMMON",
     archetypeTags: ["DRAW"],
   },
@@ -103,26 +103,26 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "briar_codex",
     name: "Briar Codex",
     description: "Start each combat with 2 Thorns.",
-    rarity: "UNCOMMON",
+    rarity: "COMMON",
   },
   {
     id: "cossack_iron_spur",
     name: "Aperon de Cosaque de Fer",
     description: "At end of turn, gain 1 Ink.",
-    rarity: "UNCOMMON",
+    rarity: "COMMON",
     archetypeTags: ["INK"],
   },
   {
     id: "guard_czar_medal",
     name: "MAdaille du Garde du Tsar",
     description: "At end of turn, gain 4 Block.",
-    rarity: "UNCOMMON",
+    rarity: "COMMON",
     archetypeTags: ["BLOCK"],
   },
   {
     id: "guardian_dune_amulet",
     name: "Amulette des Dunes Gardiennes",
-    description: "Recover 1 HP at the start of each turn.",
+    description: "At the start of each turn, recover 2 HP if below half health.",
     rarity: "UNCOMMON",
     archetypeTags: ["HEAL"],
   },
@@ -136,14 +136,14 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "hound_amber_fang",
     name: "Croc d'Ambre",
     description: "Gain 2 Block at the start of each turn.",
-    rarity: "UNCOMMON",
+    rarity: "COMMON",
     archetypeTags: ["BLOCK"],
   },
   {
     id: "idol_sun_fragment",
     name: "Fragment Solaire de l'Idole",
     description: "Start each combat with 1 Strength and 1 Ink.",
-    rarity: "UNCOMMON",
+    rarity: "COMMON",
     archetypeTags: ["STRENGTH", "INK"],
   },
   {
@@ -163,7 +163,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "ink_stamp",
     name: "Ink Stamp",
     description: "Start each combat with 4 ink.",
-    rarity: "UNCOMMON",
+    rarity: "COMMON",
     archetypeTags: ["INK"],
   },
   {
@@ -230,7 +230,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "spectral_inkwell",
     name: "Spectral Inkwell",
-    description: "Gain 2 Ink at the start of each turn.",
+    description: "Gain 1 Ink at the start of each turn.",
     rarity: "UNCOMMON",
     archetypeTags: ["INK"],
   },
@@ -246,7 +246,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "thorn_mantle",
     name: "Thorn Mantle",
     description: "Gain 1 Thorn at the start of each turn.",
-    rarity: "UNCOMMON",
+    rarity: "COMMON",
   },
   {
     id: "vital_flask",
@@ -266,7 +266,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "wraith_torn_folio",
     name: "Folio DAchirA du Spectre",
     description: "Start each combat with 1 Strength.",
-    rarity: "UNCOMMON",
+    rarity: "COMMON",
     archetypeTags: ["STRENGTH"],
   },
   {
@@ -278,8 +278,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "apprentice_oak_scroll",
     name: "Parchemin du ChAne Initiatique",
-    description: "Recover 3 HP at the start of each turn.",
-    rarity: "RARE",
+    description: "Recover 2 HP at the start of each turn.",
+    rarity: "UNCOMMON",
     archetypeTags: ["HEAL"],
   },
   {
@@ -292,7 +292,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "berserker_rune_axehead",
     name: "Tranchant Runique du Berserker",
     description: "Start each combat with 2 Strength.",
-    rarity: "RARE",
+    rarity: "UNCOMMON",
     archetypeTags: ["STRENGTH"],
   },
   {
@@ -306,7 +306,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "cultist_flayed_mask",
     name: "Masque de l'AcorchA",
     description: "Apply 3 Poison to all enemies at combat start.",
-    rarity: "RARE",
+    rarity: "UNCOMMON",
     archetypeTags: ["POISON"],
   },
   {
@@ -331,7 +331,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "energy_crystal",
     name: "Energy Crystal",
-    description: "+1 energy per turn.",
+    description: "+1 Energy per turn, but draw 1 fewer card each turn.",
     rarity: "RARE",
   },
   {
@@ -357,14 +357,14 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "golem_pulp_core",
     name: "Noyau de PAte Golem",
     description: "Draw 1 extra card each turn.",
-    rarity: "RARE",
+    rarity: "UNCOMMON",
     archetypeTags: ["DRAW"],
   },
   {
     id: "harbinger_storm_bell",
     name: "Cloche de TempAte d'Oya",
     description: "Start each combat with 1 Energy and 4 Block.",
-    rarity: "RARE",
+    rarity: "UNCOMMON",
     archetypeTags: ["BLOCK"],
   },
   {
@@ -425,7 +425,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "phoenix_ash",
     name: "Phoenix Ash",
-    description: "Recover 2 HP at the start of each turn.",
+    description: "At the start of every even-numbered turn, recover 4 HP.",
     rarity: "RARE",
     archetypeTags: ["HEAL"],
   },
@@ -439,14 +439,14 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "priest_obsidian_censer",
     name: "Encensoir d'Obsidienne",
     description: "Start each combat with 1 Focus and 1 extra draw.",
-    rarity: "RARE",
+    rarity: "UNCOMMON",
     archetypeTags: ["DRAW"],
   },
   {
     id: "runic_bulwark",
     name: "Runic Bulwark",
     description: "Start each combat with 1 Focus and 2 Thorns.",
-    rarity: "RARE",
+    rarity: "UNCOMMON",
   },
   {
     id: "spawn_void_ichor",
@@ -465,7 +465,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "sprite_quill_charm",
     name: "Talisman de Plume Folle",
     description: "Start each combat with 1 extra Energy.",
-    rarity: "RARE",
+    rarity: "UNCOMMON",
   },
   {
     id: "surgeon_mi_go_tools",
@@ -483,7 +483,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "archivists_lens",
     name: "Archivist's Lens",
-    description: "+2 max ink. Start each combat with 2 Focus.",
+    description: "+2 max Ink. The first Power played each combat grants 2 Focus and draws 2 cards.",
     rarity: "BOSS",
     archetypeTags: ["INK"],
     sourceBossId: "the_archivist",
@@ -499,7 +499,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "cernunnos_horn",
     name: "Cernunnos's Horn",
-    description: "Start each combat with 6 Thorns and 1 extra draw.",
+    description: "Start each combat with 3 Thorns. End a turn without Block to gain 2 Thorns.",
     rarity: "BOSS",
     archetypeTags: ["DRAW"],
     sourceBossId: "cernunnos_shade",
@@ -507,14 +507,14 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "dagdas_club",
     name: "Dagda's Club",
-    description: "Start each combat with 6 Thorns.",
+    description: "Start each combat with 2 Thorns. Gain 1 Thorn each turn.",
     rarity: "BOSS",
     sourceBossId: "dagda_shadow",
   },
   {
     id: "deathless_bone",
     name: "Deathless Bone",
-    description: "+1 max energy. Start each combat with 10 Block.",
+    description: "+1 max Energy, but add 1 Dazed to your discard pile at combat start.",
     rarity: "BOSS",
     archetypeTags: ["BLOCK"],
     sourceBossId: "koschei_deathless",
@@ -522,14 +522,14 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "eye_of_maat",
     name: "Eye of Maat",
-    description: "+1 max energy. Start each combat with 1 Focus.",
+    description: "+1 max Energy. Your first card each turn grants a boon based on its type.",
     rarity: "BOSS",
     sourceBossId: "osiris_judgment",
   },
   {
     id: "griot_drum",
     name: "Griot's Drum",
-    description: "Start each combat with 6 Block and 1 Strength.",
+    description: "Every third card each turn grants a reward based on its type.",
     rarity: "BOSS",
     archetypeTags: ["BLOCK", "STRENGTH"],
     sourceBossId: "soundiata_spirit",
@@ -537,7 +537,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "guardians_seal",
     name: "Guardian's Seal",
-    description: "+2 max ink. Start each combat with 2 ink.",
+    description: "+2 max Ink. Once per turn, spending your last Ink grants 1 Energy.",
     rarity: "BOSS",
     archetypeTags: ["INK"],
     sourceBossId: "chapter_guardian",
@@ -545,7 +545,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "hels_crown",
     name: "Hel's Crown",
-    description: "Start each combat with 2 Strength and 4 Thorns.",
+    description:
+      "Start each combat with 1 Strength. Your first Skill each turn grants 3 Block and 1 Thorn.",
     rarity: "BOSS",
     archetypeTags: ["STRENGTH"],
     sourceBossId: "hel_queen",
@@ -553,7 +554,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "hydra_scale",
     name: "Hydra Scale",
-    description: "Start each combat with 1 Strength and 5 Thorns.",
+    description:
+      "Start each combat with 2 Thorns. Every third Attack played grants 2 Thorns.",
     rarity: "BOSS",
     archetypeTags: ["STRENGTH"],
     sourceBossId: "hydra_aspect",
@@ -568,7 +570,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "obsidian_mirror",
     name: "Obsidian Mirror",
-    description: "Start each combat with 3 Strength.",
+    description:
+      "The first Attack played each turn applies 1 Vulnerable to its target.",
     rarity: "BOSS",
     archetypeTags: ["STRENGTH"],
     sourceBossId: "tezcatlipoca_echo",
@@ -576,7 +579,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "quetzal_feather",
     name: "Quetzal Feather",
-    description: "Start each combat with 1 Strength, 1 Focus, and 1 energy.",
+    description: "The first card each turn grants 5 Block, 2 Ink, or 1 Energy based on its type.",
     rarity: "BOSS",
     archetypeTags: ["STRENGTH"],
     sourceBossId: "quetzalcoatl_wrath",
@@ -584,7 +587,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "shub_idol",
     name: "Shub Idol",
-    description: "Start each combat with 2 Strength and 3 ink.",
+    description:
+      "Start each combat with 2 Strength and 3 Ink, but add 2 random Status cards to your discard pile.",
     rarity: "BOSS",
     archetypeTags: ["STRENGTH", "INK"],
     sourceBossId: "shub_spawn",
@@ -592,7 +596,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "solar_disc",
     name: "Solar Disc",
-    description: "+1 max energy. Start each combat with 2 ink.",
+    description: "+1 max Energy. At turn end, convert up to 2 unspent Energy into Ink.",
     rarity: "BOSS",
     archetypeTags: ["INK"],
     sourceBossId: "ra_avatar",
@@ -600,7 +604,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "stone_pendant",
     name: "Stone Pendant",
-    description: "Start each combat with 1 Strength and 1 Focus.",
+    description: "Your first Attack each turn against an undamaged enemy grants 8 Block.",
     rarity: "BOSS",
     archetypeTags: ["STRENGTH"],
     sourceBossId: "medusa",
@@ -608,14 +612,14 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "void_shard",
     name: "Void Shard",
-    description: "Start each combat with 2 Focus.",
+    description: "Every fifth card played grants 2 Focus, but adds 1 Dazed to your discard pile.",
     rarity: "BOSS",
     sourceBossId: "nyarlathotep_shard",
   },
   {
     id: "weavers_thread",
     name: "Weaver's Thread",
-    description: "Start each combat with 1 extra draw and 2 Focus.",
+    description: "Every third Skill played each turn draws 1 card and grants 2 Block.",
     rarity: "BOSS",
     archetypeTags: ["DRAW"],
     sourceBossId: "anansi_weaver",
@@ -623,7 +627,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "wolf_fang",
     name: "Wolf Fang",
-    description: "Start each combat with 2 Strength and 4 Block.",
+    description:
+      "The first Attack played each turn against an enemy below half HP deals 8 additional damage.",
     rarity: "BOSS",
     archetypeTags: ["STRENGTH", "BLOCK"],
     sourceBossId: "fenrir",
@@ -631,7 +636,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "yaga_skull",
     name: "Yaga's Skull",
-    description: "Start each combat with 1 extra draw and 3 Thorns.",
+    description: "Draw 1 extra card each turn, but add 1 Dazed to your discard pile every third turn.",
     rarity: "BOSS",
     archetypeTags: ["DRAW"],
     sourceBossId: "baba_yaga_hut",
@@ -698,7 +703,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "library_midnight_press",
     name: "Presse de Minuit",
     description:
-      "Toutes les 10 cartes jouees en combat: ajoute 1 SKILL amelioree aleatoire dans la defausse.",
+      "Toutes les 10 cartes jouees en combat: piochez 2 cartes et gagnez 1 Encre.",
     rarity: "RARE",
     archetypeTags: ["DRAW"],
   },
@@ -748,7 +753,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "viking_hel_signet",
     name: "Sceau de Hel",
     description:
-      "Debut de combat: applique 1 VULNERABLE a tous les ennemis et gagne 2 THORNS.",
+      "Debut de combat: applique 1 VULNERABLE a tous les ennemis. La premiere Attaque de chaque tour contre une cible Vulnerable donne 2 Epines.",
     rarity: "BOSS",
     sourceBossId: "hel_queen",
   },
@@ -775,7 +780,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
   },
   {
     id: "greek_harpy_pinion",
-    name: "R?mige de Harpie",
+    name: "Remige de Harpie",
     description: "Sequence SKILL, SKILL, ATTACK: pioche 1.",
     rarity: "UNCOMMON",
     archetypeTags: ["DRAW"],
@@ -1061,7 +1066,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "celtic_cernunnos_antler",
     name: "Ramure de Cernunnos",
-    description: "Debut de combat: +4 THORNS et regenere 1 HP par tour.",
+    description:
+      "Debut de combat: +3 Epines. La premiere Competence de chaque tour vous soigne de 1 PV si vous avez des Epines.",
     rarity: "BOSS",
     archetypeTags: ["HEAL"],
     sourceBossId: "cernunnos_shade",
@@ -1069,7 +1075,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "celtic_grove_compass",
     name: "Compas du Bosquet",
-    description: "Salles SPECIAL: +1 option positive potentielle.",
+    description:
+      "Votre premiere Competence de chaque tour gagne 3 Blocage si vous avez des Epines.",
     rarity: "UNCOMMON",
   },
   {
@@ -1110,8 +1117,8 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "russian_domovoi_hearth",
     name: "Foyer Domovoi",
-    description: "Debut de tour: gagnez 1 Ink.",
-    rarity: "RARE",
+    description: "Start each combat with 3 Ink.",
+    rarity: "UNCOMMON",
     archetypeTags: ["INK"],
   },
   {
@@ -1185,7 +1192,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "african_soundiata_standard",
     name: "Etendard de Soundiata",
     description: "Debut de combat: +1 Strength, +1 Focus, +1 draw.",
-    rarity: "RARE",
+    rarity: "UNCOMMON",
     archetypeTags: ["STRENGTH", "DRAW"],
   },
   {
@@ -1301,36 +1308,38 @@ export const relicDefinitions: RelicDefinitionData[] = [
   {
     id: "scroll_of_marginalia",
     name: "Scroll of Marginalia",
-    description: "Start each combat with +2 draw.",
-    rarity: "RARE",
+    description:
+      "Draw 1 extra card per turn, but add a Dazed to your discard pile at combat start.",
+    rarity: "COMMON",
     archetypeTags: ["DRAW"],
   },
   {
     id: "bleeding_thistle",
     name: "Bleeding Thistle",
-    description: "At the start of each turn, apply 1 Bleed to all enemies.",
-    rarity: "RARE",
+    description: "Your first Attack each turn grants 3 Block. Every third Attack each turn applies 2 Bleed to all enemies.",
+    rarity: "COMMON",
     archetypeTags: ["BLEED"],
   },
   {
     id: "venom_pouch",
     name: "Venom Pouch",
-    description: "At the start of each turn, apply 1 Poison to all enemies.",
-    rarity: "RARE",
+    description: "Every third Skill each turn applies 2 Poison to all enemies.",
+    rarity: "COMMON",
     archetypeTags: ["POISON"],
   },
   {
     id: "arcane_reservoir",
     name: "Arcane Reservoir",
-    description: "Gain 3 Ink at the start of each turn.",
-    rarity: "RARE",
+    description: "On odd-numbered turns, gain 2 Ink.",
+    rarity: "COMMON",
     archetypeTags: ["INK"],
   },
   {
     id: "plague_vial",
     name: "Plague Vial",
-    description: "Apply 10 Poison to all enemies at combat start.",
-    rarity: "RARE",
+    description:
+      "Apply 6 Poison to all enemies at combat start. If there are at least 3 enemies, gain 1 Ink.",
+    rarity: "UNCOMMON",
     archetypeTags: ["POISON"],
   },
   {
@@ -1338,7 +1347,7 @@ export const relicDefinitions: RelicDefinitionData[] = [
     name: "Endless Codex",
     description:
       "At end of turn, deal 2 damage per card drawn this turn to all enemies.",
-    rarity: "RARE",
+    rarity: "UNCOMMON",
     archetypeTags: ["DRAW"],
   },
   {
@@ -1353,15 +1362,14 @@ export const relicDefinitions: RelicDefinitionData[] = [
     id: "philosophers_tome",
     name: "Philosopher's Tome",
     description:
-      "Start each combat with +6 Strength, +5 HP regen per turn, and +5 Ink.",
+      "Gain 1 Energy per turn and start combat with 2 Strength, but add a Curse to your discard pile.",
     rarity: "RARE",
     archetypeTags: ["STRENGTH", "INK", "HEAL"],
   },
   {
     id: "eternal_flow",
     name: "Eternal Flow",
-    description:
-      "At the start of each turn, gain +3 Ink, +2 Block, and +1 Strength.",
+    description: "Cycle each turn: gain 3 Ink, then 6 Block, then 2 Strength.",
     rarity: "RARE",
     archetypeTags: ["INK", "BLOCK", "STRENGTH"],
   },

@@ -9,6 +9,7 @@ import {
   getBestInfiniteFloor,
   getBestGoldInSingleRun,
   getDifficultyModifiers,
+  getDifficultyFloorRamp,
   getEarnedResourceMultiplierForRun,
   getEnemyStartingBlock,
   getPostFloorCapEscalation,
@@ -58,14 +59,16 @@ describe("Run difficulty progression", () => {
         }
       )
     ).toBe(true);
-    expect(getEnemyStartingBlock(3, 2, { isBoss: true })).toBe(12);
-    expect(getEnemyStartingBlock(4, 2, { isElite: true })).toBe(10);
-    expect(getBossDebuffBonus(4)).toBe(1);
+    expect(getEnemyStartingBlock(3, 2, { isBoss: true })).toBe(0);
+    expect(getEnemyStartingBlock(4, 2, { isElite: true })).toBe(0);
+    expect(getBossDebuffBonus(4)).toBe(0);
     expect(eliteCanDropRelic(5, 0.2)).toBe(false);
+    expect(getBossDebuffBonus(5)).toBe(1);
+    expect(eliteCanDropRelic(5, 0.25)).toBe(true);
     expect(eliteCanDropRelic(5, 0.8)).toBe(true);
   });
 
-  it("reduces resource gains when the selected difficulty was already cleared", () => {
+  it("preserves normal resources after clearing a difficulty", () => {
     let resources = unlockNextDifficultyOnVictory({}, 0, "scribe");
     resources = recordCharacterDifficultyVictory(resources, "scribe", 0);
 
@@ -74,27 +77,41 @@ describe("Run difficulty progression", () => {
     expect(hasClearedDifficultyGloballyBefore({ "0": 1 }, 1)).toBe(false);
     expect(hasClearedDifficultyBefore(resources, "scribe", 1)).toBe(false);
     expect(getEarnedResourceMultiplierForRun({ "0": 1 }, 0, "VICTORY")).toBe(
-      0.2
+      1
     );
     expect(getEarnedResourceMultiplierForRun({}, 0, "VICTORY")).toBe(1.25);
     expect(getEarnedResourceMultiplierForRun({ "0": 1 }, 0, "DEFEAT")).toBe(
-      0.2
+      1
     );
   });
 
   it("hardens high-end difficulties 4 and 5", () => {
     expect(getDifficultyModifiers(3)).toMatchObject({
-      enemyDamageMultiplier: 1.35,
-      disruptionWeightBonus: 2.2,
+      enemyDamageMultiplier: 1.13,
+      disruptionWeightBonus: 0.34,
     });
     expect(getDifficultyModifiers(4)).toMatchObject({
-      enemyHpMultiplier: 1.6,
-      enemyDamageMultiplier: 1.55,
-      eliteChanceBonus: 0.16,
-      specialRoomHealWeightMultiplier: 0.35,
-      disruptionWeightBonus: 3.2,
+      enemyHpMultiplier: 1.2,
+      enemyDamageMultiplier: 1.14,
+      eliteChanceBonus: 0.06,
+      specialRoomHealWeightMultiplier: 0.98,
+      disruptionWeightBonus: 0.38,
     });
-    expect(getDifficultyModifiers(5).eliteChanceBonus).toBe(0.24);
+    expect(getDifficultyModifiers(5).eliteChanceBonus).toBe(0.09);
+  });
+
+  it("keeps combined enemy scaling progressive without a D2 stat cliff", () => {
+    for (const floor of [1, 2, 3]) {
+      for (const stat of ["enemyHpMultiplier", "enemyDamageMultiplier"] as const) {
+        let previous = getDifficultyFloorRamp(0, floor)[stat];
+        for (let difficulty = 1; difficulty <= 5; difficulty++) {
+          const current = getDifficultyFloorRamp(difficulty, floor)[stat] * getDifficultyModifiers(difficulty)[stat];
+          expect(current).toBeGreaterThan(previous);
+          if (difficulty >= 2) expect(current / previous).toBeLessThan(1.14);
+          previous = current;
+        }
+      }
+    }
   });
 
   it("supports run-win gated relic unlocks from relic.md", () => {
@@ -175,7 +192,7 @@ describe("Run difficulty progression", () => {
       readCharacterWinsByDifficultyFromResources(resources);
 
     expect(
-      isRelicUnlocked("scribe_opening_glyph", {
+      isRelicUnlocked("ink_stamp", {
         totalRuns: 0,
         wonRuns: 0,
         unlockedDifficultyMax: 5,
@@ -184,13 +201,62 @@ describe("Run difficulty progression", () => {
     ).toBe(true);
 
     expect(
-      isRelicUnlocked("bibliothecaire_margin_tabs", {
+      isRelicUnlocked("bookmark", {
         totalRuns: 0,
         wonRuns: 0,
         unlockedDifficultyMax: 5,
         characterWinsByDifficulty,
       })
     ).toBe(false);
+  });
+
+  it("gives all four characters a five-step mastery relic track", () => {
+    const tracks = {
+      scribe: [
+        "ink_stamp",
+        "scribe_last_word",
+        "scribe_warfolio",
+        "scribe_sealed_edition",
+        "scribe_black_index",
+      ],
+      bibliothecaire: [
+        "bookmark",
+        "bibliothecaire_quiet_lens",
+        "bibliothecaire_cross_reference",
+        "bibliothecaire_restricted_index",
+        "bibliothecaire_grand_catalogue",
+      ],
+      griot: [
+        "venom_grimoire",
+        "venom_pouch",
+        "plague_vial",
+        "crimson_covenant",
+        "hemorrhage_codex",
+      ],
+      fou: [
+        "cursed_diacrit",
+        "arcane_reservoir",
+        "endless_codex",
+        "philosophers_tome",
+        "eternal_flow",
+      ],
+    } as const;
+
+    for (const [characterId, relicIds] of Object.entries(tracks)) {
+      const characterWinsByDifficulty = {
+        [characterId]: { "1": 1, "2": 1, "3": 1, "4": 1, "5": 1 },
+      };
+      expect(
+        relicIds.every((relicId) =>
+          isRelicUnlocked(relicId, {
+            totalRuns: 0,
+            wonRuns: 0,
+            unlockedDifficultyMax: 5,
+            characterWinsByDifficulty,
+          })
+        )
+      ).toBe(true);
+    }
   });
 
   it("soft-backfills character clears from unlocked difficulty max for prior wins", () => {
@@ -259,16 +325,16 @@ describe("Run difficulty progression", () => {
   it("brings pure progression relics into early-mid runs instead of late collection cleanup", () => {
     expect(
       isRelicUnlocked("library_catalog_discount", {
-        totalRuns: 4,
-        wonRuns: 0,
+        totalRuns: 20,
+        wonRuns: 1,
         unlockedDifficultyMax: 0,
       })
     ).toBe(false);
 
     expect(
       isRelicUnlocked("library_catalog_discount", {
-        totalRuns: 5,
-        wonRuns: 0,
+        totalRuns: 2,
+        wonRuns: 2,
         unlockedDifficultyMax: 0,
       })
     ).toBe(true);

@@ -18,7 +18,10 @@ import {
 import { pickRandomUsableItemDefinitionId } from "./items";
 import { getTotalLootLuck, weightedSampleByRarity } from "./loot";
 import { getRunConditionCardLootUnlockResourceKey } from "./run-conditions";
-import { getDeckArchetypeCounts } from "./card-archetypes";
+import {
+  getCardArchetypeTags,
+  getDeckArchetypeCounts,
+} from "./card-archetypes";
 
 export interface CombatRewards {
   gold: number;
@@ -139,6 +142,24 @@ function drawBiomeFocusedCardChoices(
   };
 
   addPicks(sameBiomePool, Math.min(1, count));
+  if (picks.length === 1 && count >= 2) {
+    const anchor = picks[0]!;
+    const candidates = offBiomePool.filter((card) => !pickedIds.has(card.id));
+    const fallbackCandidates = cards.filter((card) => !pickedIds.has(card.id));
+    const contrastPool =
+      candidates.length > 0 ? candidates : fallbackCandidates;
+    if (contrastPool.length > 0) {
+      const bestScore = Math.max(
+        ...contrastPool.map((card) => getCardOfferContrastScore(anchor, card))
+      );
+      addPicks(
+        contrastPool.filter(
+          (card) => getCardOfferContrastScore(anchor, card) === bestScore
+        ),
+        1
+      );
+    }
+  }
   addPicks(
     offBiomePool.filter((card) => !pickedIds.has(card.id)),
     count - picks.length
@@ -151,12 +172,42 @@ function drawBiomeFocusedCardChoices(
   return picks;
 }
 
+/** Higher means the cards ask the player to make more different plans. */
+export function getCardOfferContrastScore(
+  first: CardDefinition,
+  second: CardDefinition
+): number {
+  const firstTags = new Set(getCardArchetypeTags(first));
+  const secondTags = getCardArchetypeTags(second);
+  const sharedTagCount = secondTags.filter((tag) => firstTags.has(tag)).length;
+  const hasMeaningfulTags = firstTags.size > 0 || secondTags.length > 0;
+
+  let score = 0;
+  if (hasMeaningfulTags && sharedTagCount === 0) score += 4;
+  score -= sharedTagCount * 2;
+  if (first.type !== second.type) score += 2;
+  if (first.targeting !== second.targeting) score += 1;
+  if (first.energyCost !== second.energyCost) score += 1;
+  if (first.biome !== second.biome) score += 1;
+  return score;
+}
+
+/** Every normal victory offers a draft; the player may skip it. */
+export function shouldOfferNormalCardReward(
+  _floor: number,
+  _room: number,
+  _deckSize: number
+): boolean {
+  // The player chooses whether to grow the deck by accepting or skipping a draft.
+  return true;
+}
+
 /**
  * Generate rewards after winning a combat.
- * - Normal: gold + card choices (3 cards)
+ * - Normal: gold + 2 focused card choices, with an explicit skip option
  * - Elite:  gold + 1 rare card + 1 relic (player picks one)
  *           fallback: if no relic remains, grant a 2nd rare card choice
- * - Boss:   gold + 3 relic choices (player picks one; no card choice)
+ * - Boss:   gold + 2 rare card choices + 3 relic choices (player picks one of each)
  */
 export function generateCombatRewards(
   floor: number,
@@ -282,14 +333,16 @@ export function generateCombatRewards(
       offerContext
     );
   } else {
-    cardChoices = drawBiomeFocusedCardChoices(
-      rewardEligibleCards,
-      biome,
-      GAME_CONSTANTS.CARD_REWARD_CHOICES + extraChoices,
-      rng,
-      lootLuck,
-      offerContext
-    );
+    cardChoices = shouldOfferNormalCardReward(floor, room, currentDeck.length)
+      ? drawBiomeFocusedCardChoices(
+          rewardEligibleCards,
+          biome,
+          GAME_CONSTANTS.CARD_REWARD_CHOICES + extraChoices,
+          rng,
+          lootLuck,
+          offerContext
+        )
+      : [];
   }
 
   // Biome resources (25% cross-biome chance via rng)

@@ -24,7 +24,9 @@ import {
 } from "./combat-view-helpers";
 import { resolveEnemyAbilityTarget } from "@/game/engine/enemies";
 import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
-import { getEnemyImageSrc, PLAYER_AVATAR } from "@/lib/assets";
+import { getEnemyImageSrc } from "@/lib/assets";
+import { EnemyArtwork } from "../shared/EnemyArtwork";
+import { CharacterPortrait, AllyPortrait } from "../shared/CharacterPortrait";
 import {
   localizeAllyAbilityName,
   localizeAllyName,
@@ -32,6 +34,8 @@ import {
 } from "@/lib/i18n/entity-text";
 
 interface CombatDesktopGridProps {
+  characterId?: string;
+  contactShadowClass: string;
   combat: CombatState;
   allySlots: Array<CombatState["allies"][number] | null>;
   enemySlots: Array<CombatState["enemies"][number] | null>;
@@ -74,6 +78,8 @@ interface CombatDesktopGridProps {
 }
 
 export function CombatDesktopGrid({
+  characterId = "scribe",
+  contactShadowClass,
   combat,
   allySlots,
   enemySlots,
@@ -92,8 +98,6 @@ export function CombatDesktopGrid({
   incomingDamageByEnemyId,
   attackBonus,
   playerHit,
-  avatarFailed,
-  onAvatarError,
   markEnemyArtFailure,
   getEnemyDisplayName,
   onAllyClick,
@@ -111,15 +115,10 @@ export function CombatDesktopGrid({
   );
 
   return (
-    <div className="hidden w-full max-w-[1500px] grid-cols-4 gap-1.5 lg:grid lg:grid-cols-8 lg:gap-3">
-      {allySlots.map((ally, index) => {
+    <div className="combat-desktop-grid hidden w-full max-w-[1500px] items-end justify-center gap-5 px-4 lg:flex xl:gap-8">
+      {allySlots.map((ally) => {
         if (!ally) {
-          return (
-            <div
-              key={`ally-empty-${index}`}
-              className="h-28 rounded-xl border border-cyan-900/50 bg-cyan-950/20 sm:h-32 lg:h-56"
-            />
-          );
+          return null;
         }
 
         const def = allyDefs.get(ally.definitionId);
@@ -179,7 +178,8 @@ export function CombatDesktopGrid({
                 canTarget ? () => onAllyClick(ally.instanceId) : undefined
               }
               className={cn(
-                "relative h-28 w-full rounded-xl border bg-cyan-950/40 p-1.5 text-left sm:h-32 sm:p-2 lg:h-56 lg:p-2.5",
+                "to-slate-950/92 relative h-72 min-w-0 max-w-[220px] flex-1 rounded-[2rem_2rem_1rem_1rem] border bg-gradient-to-b from-cyan-950/5 via-cyan-950/20 p-2 text-left shadow-[0_22px_45px_rgba(2,6,23,0.34)] transition-all before:pointer-events-none before:absolute before:-bottom-4 before:left-[8%] before:h-5 before:w-[84%] before:rounded-[50%] before:opacity-80 before:blur-md xl:h-80",
+                contactShadowClass,
                 isDead
                   ? "border-slate-800 opacity-45 grayscale"
                   : "border-cyan-700/80",
@@ -205,10 +205,13 @@ export function CombatDesktopGrid({
                     highlight={isIncomingDamageTutorialStep}
                   />
                 )}
-              <div className="mb-1 flex h-14 items-center justify-center rounded-lg border border-cyan-900/60 bg-cyan-950/70 text-2xl sm:h-16 lg:h-28">
-                *
+              <div className="mb-2 flex h-40 items-center justify-center rounded-[1.75rem_1.75rem_0.65rem_0.65rem] border border-cyan-700/20 bg-[radial-gradient(ellipse_at_bottom,rgba(8,145,178,0.24),transparent_68%)] text-5xl text-cyan-200/70 xl:h-44">
+                <AllyPortrait
+                  identity={ally.definitionId}
+                  className="h-full w-full object-contain"
+                />
               </div>
-              <p className="truncate text-[11px] font-bold text-cyan-100 lg:text-xs">
+              <p className="truncate px-1 text-sm font-bold text-cyan-100">
                 {localizedAllyName}
               </p>
               <HpBar
@@ -216,9 +219,9 @@ export function CombatDesktopGrid({
                 max={ally.maxHp}
                 showText={false}
                 color="green"
-                className="mt-1 h-2 bg-slate-700"
+                className="mx-1 mt-2 h-2.5 bg-slate-800"
               />
-              <p className="mt-1 pr-10 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
+              <p className="mt-1 px-1 pr-10 text-xs font-semibold text-slate-200">
                 {Math.max(0, ally.currentHp)}/{ally.maxHp}
                 {ally.block > 0 ? ` | ${t("combat.block")} ${ally.block}` : ""}
               </p>
@@ -252,7 +255,8 @@ export function CombatDesktopGrid({
       >
         <div
           className={cn(
-            "relative h-28 rounded-xl border bg-indigo-950/35 p-1.5 sm:h-32 sm:p-2 lg:h-56 lg:p-2.5",
+            "to-slate-950/92 relative h-72 min-w-0 max-w-[230px] flex-1 rounded-[2rem_2rem_1rem_1rem] border bg-gradient-to-b from-indigo-950/5 via-indigo-950/20 p-2 shadow-[0_22px_48px_rgba(30,27,75,0.28)] before:pointer-events-none before:absolute before:-bottom-4 before:left-[8%] before:h-5 before:w-[84%] before:rounded-[50%] before:opacity-80 before:blur-md xl:h-80",
+            contactShadowClass,
             isArmorTutorialStep &&
               "ring-2 ring-cyan-300/80 ring-offset-2 ring-offset-slate-950",
             isIncomingDamageTutorialStep &&
@@ -271,29 +275,22 @@ export function CombatDesktopGrid({
               highlight={isIncomingDamageTutorialStep}
             />
           )}
-          <div className="mb-1 flex h-14 items-center justify-center overflow-hidden rounded-lg border border-indigo-800/70 bg-indigo-950/75 sm:h-16 lg:h-28">
-            {!avatarFailed ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={PLAYER_AVATAR}
-                alt={t("combat.player")}
-                className="h-full w-full object-cover"
-                onError={onAvatarError}
-              />
-            ) : (
-              <span className="text-2xl">*</span>
-            )}
+          <div className="mb-2 flex h-40 items-end justify-center overflow-hidden rounded-[1.75rem_1.75rem_0.65rem_0.65rem] border border-indigo-500/20 bg-[radial-gradient(ellipse_at_bottom,rgba(79,70,229,0.3),transparent_70%)] xl:h-44">
+            <CharacterPortrait
+              identity={characterId}
+              className="h-full w-full drop-shadow-[0_16px_14px_rgba(0,0,0,0.5)]"
+            />
           </div>
-          <p className="truncate text-[11px] font-bold text-indigo-100 lg:text-xs">
+          <p className="truncate px-1 text-sm font-bold text-indigo-100">
             {t("combat.player")}
           </p>
           <HpBar
             current={Math.max(0, combat.player.currentHp)}
             max={combat.player.maxHp}
             showText={false}
-            className="mt-1 h-2 bg-slate-700"
+            className="mx-1 mt-2 h-2.5 bg-slate-800"
           />
-          <p className="mt-1 pr-10 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
+          <p className="mt-1 px-1 pr-10 text-xs font-semibold text-slate-200">
             {Math.max(0, combat.player.currentHp)}/{combat.player.maxHp}
             {combat.player.block > 0
               ? ` | ${t("combat.block")} ${combat.player.block}`
@@ -306,14 +303,9 @@ export function CombatDesktopGrid({
         </div>
       </Tooltip>
 
-      {enemySlots.map((enemy, index) => {
+      {enemySlots.map((enemy) => {
         if (!enemy) {
-          return (
-            <div
-              key={`enemy-empty-${index}`}
-              className="h-28 rounded-xl border border-rose-900/50 bg-rose-950/20 sm:h-32 lg:h-56"
-            />
-          );
+          return null;
         }
 
         const def = enemyDefs.get(enemy.definitionId);
@@ -411,7 +403,8 @@ export function CombatDesktopGrid({
                 if (!isDead) onEnemyClick(enemy.instanceId);
               }}
               className={cn(
-                "relative h-28 w-full rounded-xl border bg-rose-950/35 p-1.5 text-left transition-all sm:h-32 sm:p-2 lg:h-56 lg:p-2.5",
+                "via-rose-950/18 to-slate-950/94 relative h-72 min-w-0 max-w-[230px] flex-1 rounded-[2rem_2rem_1rem_1rem] border bg-gradient-to-b from-rose-950/5 p-2 text-left shadow-[0_22px_48px_rgba(76,5,25,0.25)] transition-all before:pointer-events-none before:absolute before:-bottom-4 before:left-[8%] before:h-5 before:w-[84%] before:rounded-[50%] before:opacity-80 before:blur-md xl:h-80",
+                contactShadowClass,
                 isIncomingDamageTutorialStep &&
                   "ring-2 ring-rose-300/80 ring-offset-2 ring-offset-slate-950",
                 isDead
@@ -434,14 +427,14 @@ export function CombatDesktopGrid({
               <div className="absolute -top-2 left-2 flex max-w-[90%] items-center gap-1 overflow-hidden">
                 {renderCompactEnemyStatusMarkers(enemyStatusMarkers)}
               </div>
-              <div className="mb-1 flex h-14 items-center justify-center overflow-hidden rounded-lg border border-rose-900/60 bg-slate-900 sm:h-16 lg:h-28">
+              <div className="relative mb-2 flex h-40 items-end justify-center overflow-hidden rounded-[1.75rem_1.75rem_0.65rem_0.65rem] border border-rose-700/20 bg-[radial-gradient(ellipse_at_bottom,rgba(190,24,93,0.25),transparent_70%)] xl:h-44">
                 {!enemyArtFailed ? (
                   <>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <EnemyArtwork
+                      enemyId={enemy.definitionId}
                       src={enemyArtSrc}
                       alt={getEnemyDisplayName(enemy)}
-                      className="h-full w-full object-cover object-top"
+                      className="h-full w-full object-cover object-center"
                       onError={() => markEnemyArtFailure(enemy.definitionId)}
                     />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-900/15 to-transparent" />
@@ -460,15 +453,15 @@ export function CombatDesktopGrid({
                       : "-"}
                 </span>
               </div>
-              <p className="truncate text-[11px] font-bold text-rose-100 lg:text-xs">
+              <p className="truncate px-1 text-sm font-bold text-rose-100">
                 {getEnemyDisplayName(enemy)}
               </p>
-              <div className="mt-1 flex max-h-[3.4rem] min-h-[2.25rem] flex-wrap content-start gap-0.5 overflow-hidden">
+              <div className="mt-1 flex max-h-[3.2rem] min-h-[2.4rem] flex-wrap content-start gap-1 overflow-hidden px-1">
                 {visibleLabels.map((chip, chipIndex) => (
                   <span
                     key={`${enemy.instanceId}-desktop-intent-${chipIndex}`}
                     className={cn(
-                      "block max-w-full rounded border border-rose-800/70 bg-rose-950/70 px-1 py-0.5 text-[8px] font-semibold leading-tight text-rose-100",
+                      "block max-w-full rounded border border-rose-700/60 bg-rose-950/65 px-1.5 py-0.5 text-[9px] font-semibold leading-tight text-rose-100",
                       isIncomingDamageTutorialStep &&
                         "border-rose-300/80 bg-rose-800/70 text-rose-50"
                     )}
@@ -492,9 +485,9 @@ export function CombatDesktopGrid({
                 current={Math.max(0, enemy.currentHp)}
                 max={enemy.maxHp}
                 showText={false}
-                className="mt-1 h-2 bg-slate-700"
+                className="mx-1 mt-1 h-2.5 bg-slate-800"
               />
-              <p className="mt-1 pr-10 text-[10px] font-semibold text-slate-200 lg:text-[11px]">
+              <p className="mt-1 px-1 pr-10 text-xs font-semibold text-slate-200">
                 {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
                 {enemy.block > 0
                   ? ` | ${t("combat.block")} ${enemy.block}`

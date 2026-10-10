@@ -1,3 +1,4 @@
+import { readAudioPreferences } from "./audio-preferences";
 /**
  * SOUND SYNTHESIS — Web Audio API
  *
@@ -16,11 +17,12 @@ let _ctx: AudioContext | null = null;
 function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
   if (!_ctx) {
-    _ctx = new (
+    const AudioContextConstructor =
       window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext
-    )();
+      (window as unknown as { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+    if (!AudioContextConstructor) return null;
+    _ctx = new AudioContextConstructor();
   }
   // Resume after browser autoplay policy suspends it
   if (_ctx.state === "suspended") {
@@ -102,6 +104,8 @@ export type SoundKey =
   | "ENEMY_DEATH"
   | "VICTORY"
   | "DEFEAT"
+  | "SHOP_BUY"
+  | "SHOP_REROLL"
   | "BUTTON_CLICK";
 
 const SOUND_SYNTHS: Record<SoundKey, (c: AudioContext, vol: number) => void> = {
@@ -166,6 +170,18 @@ const SOUND_SYNTHS: Record<SoundKey, (c: AudioContext, vol: number) => void> = {
     });
   },
 
+  SHOP_BUY: (c, vol) => {
+    const t = c.currentTime;
+    tone(c, 1320, "sine", t, 0.16, vol * 0.28, 980);
+    tone(c, 1760, "sine", t + 0.08, 0.2, vol * 0.22, 1180);
+  },
+
+  SHOP_REROLL: (c, vol) => {
+    const t = c.currentTime;
+    noiseBlip(c, t, 0.18, vol * 0.16, 3200);
+    tone(c, 280, "triangle", t + 0.12, 0.12, vol * 0.22, 150);
+  },
+
   // UI tick
   BUTTON_CLICK: (c, vol) => {
     const t = c.currentTime;
@@ -179,9 +195,16 @@ export function setSoundsEnabled(enabled: boolean): void {
   SOUNDS_ENABLED = enabled;
 }
 
+const lastPlayedAt = new Map<SoundKey, number>();
 export function playSound(key: SoundKey, volume = 0.7): void {
+  const now = Date.now();
+  if (now - (lastPlayedAt.get(key) ?? 0) < 45) return;
+  lastPlayedAt.set(key, now);
   if (!SOUNDS_ENABLED) return;
   const c = getCtx();
   if (!c) return;
-  SOUND_SYNTHS[key]?.(c, volume);
+  SOUND_SYNTHS[key]?.(
+    c,
+    Math.max(0, Math.min(1, volume)) * readAudioPreferences().effects
+  );
 }

@@ -8,7 +8,20 @@
 
 // â”€â”€â”€ Enemy art â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-export const ENEMY_IMAGES: Record<string, string> = {
+import { PAINTED_ENEMY_IMAGES } from "./enemy-art.generated";
+
+export const ENEMY_IMAGE_FALLBACKS: Record<string, string> = {
+  archivist_black_inkwell: "/images/enemies/archivist_black_inkwell.svg",
+  archivist_pale_inkwell: "/images/enemies/archivist_pale_inkwell.svg",
+  hydra_head_left: "/images/enemies/hydra_head_left.svg",
+  hydra_head_right: "/images/enemies/hydra_head_right.svg",
+  hydra_head_center: "/images/enemies/hydra_head_center.svg",
+  shub_brood_nest: "/images/enemies/shub_brood_nest.svg",
+  dagda_cauldron: "/images/enemies/dagda_cauldron.svg",
+  koschei_bone_chest: "/images/enemies/koschei_bone_chest.svg",
+  koschei_black_egg: "/images/enemies/koschei_black_egg.svg",
+  koschei_hidden_needle: "/images/enemies/koschei_hidden_needle.svg",
+
   ink_slime: "/images/enemies/ink_slime.svg",
   paper_golem: "/images/enemies/paper_golem.svg",
   page_knight: "/images/enemies/page_knight.svg",
@@ -105,6 +118,11 @@ export const ENEMY_IMAGES: Record<string, string> = {
   anansi_weaver: "/images/enemies/anansi_weaver.svg",
 };
 
+export const ENEMY_IMAGES: Record<string, string> = {
+  ...ENEMY_IMAGE_FALLBACKS,
+  ...PAINTED_ENEMY_IMAGES,
+};
+
 const ENEMY_IMAGE_ALIASES: Record<string, string> = {
   apep_scion: "desert_cobra",
   wadjet_guardian: "sand_guardian",
@@ -113,20 +131,52 @@ const ENEMY_IMAGE_ALIASES: Record<string, string> = {
   snow_maiden: "frost_witch",
 };
 
-export function getEnemyImageSrc(enemyId: string): string {
+export function getEnemyFallbackSrc(enemyId: string): string {
   if (ENEMY_IMAGE_ALIASES[enemyId]) {
     return `/images/enemies/${ENEMY_IMAGE_ALIASES[enemyId]}.svg`;
   }
-  if (ENEMY_IMAGES[enemyId]) return ENEMY_IMAGES[enemyId];
+  if (ENEMY_IMAGE_FALLBACKS[enemyId]) return ENEMY_IMAGE_FALLBACKS[enemyId];
   return `/images/enemies/${enemyId}.svg`;
+}
+
+export function getEnemyImageSrc(
+  enemyId: string,
+  size: "card" | "thumb" | "full" = "card"
+): string {
+  const painted = PAINTED_ENEMY_IMAGES[enemyId];
+  if (!painted) return getEnemyFallbackSrc(enemyId);
+  return size === "card"
+    ? painted
+    : painted.replace(/\.webp$/, `-${size}.webp`);
 }
 
 // â”€â”€â”€ Card art â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-export const CARD_IMAGES: Record<string, string> = {
+import { PAINTED_CARD_IMAGES } from "./card-art.generated";
+
+export const CARD_IMAGE_FALLBACKS: Record<string, string> = {
+  trace_tranchant: "/images/cards/trace_tranchant.svg",
+  parchemin_de_soin: "/images/cards/parchemin_de_soin.svg",
+  annotation: "/images/cards/annotation.svg",
+  catalogue: "/images/cards/catalogue.svg",
+  chuchotement: "/images/cards/chuchotement.svg",
+  marque_page: "/images/cards/marque_page.svg",
+  piqure: "/images/cards/piqure.svg",
+  rythme_mortel: "/images/cards/rythme_mortel.svg",
+  masque_de_bois: "/images/cards/masque_de_bois.svg",
+  frappe_folle: "/images/cards/frappe_folle.svg",
+  soif_de_puissance: "/images/cards/soif_de_puissance.svg",
+  rage_aveugle: "/images/cards/rage_aveugle.svg",
+  coup_de_grace_starter: "/images/cards/coup_de_grace_starter.svg",
+
   strike: "/images/cards/strike.svg",
   defend: "/images/cards/defend.svg",
   ink_surge: "/images/cards/ink_surge.svg",
+};
+
+export const CARD_IMAGES: Record<string, string> = {
+  ...CARD_IMAGE_FALLBACKS,
+  ...PAINTED_CARD_IMAGES,
 };
 
 // â”€â”€â”€ Backgrounds â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -138,7 +188,7 @@ export const BACKGROUNDS = {
 
 import type { BiomeType } from "@/game/schemas/enums";
 
-export const COMBAT_BACKGROUNDS: Record<BiomeType, string> = {
+export const COMBAT_BACKGROUND_FALLBACKS: Record<BiomeType, string> = {
   LIBRARY: "/images/backgrounds/combat.svg",
   VIKING: "/images/backgrounds/combat_viking.svg",
   GREEK: "/images/backgrounds/combat_greek.svg",
@@ -148,6 +198,18 @@ export const COMBAT_BACKGROUNDS: Record<BiomeType, string> = {
   CELTIC: "/images/backgrounds/combat_celtic.svg",
   RUSSIAN: "/images/backgrounds/combat_russian.svg",
   AFRICAN: "/images/backgrounds/combat_african.svg",
+};
+
+export const COMBAT_BACKGROUNDS: Record<BiomeType, string> = {
+  LIBRARY: "/images/scenes/panlibrarium-v2.webp",
+  VIKING: "/images/scenes/viking-v2.webp",
+  GREEK: "/images/scenes/greek-v2.webp",
+  EGYPTIAN: "/images/scenes/egyptian-v2.webp",
+  LOVECRAFTIAN: "/images/scenes/lovecraftian-v2.webp",
+  AZTEC: "/images/scenes/aztec-v2.webp",
+  CELTIC: "/images/scenes/celtic-v2.webp",
+  RUSSIAN: "/images/scenes/russian-v2.webp",
+  AFRICAN: "/images/scenes/african-v2.webp",
 };
 
 // â”€â”€â”€ Player â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

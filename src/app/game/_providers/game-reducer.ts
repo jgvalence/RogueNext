@@ -8,7 +8,7 @@ import type {
 } from "@/game/schemas/enums";
 import { GAME_CONSTANTS } from "@/game/constants";
 import { createRNG, type RNG } from "@/game/engine/rng";
-import { playCard } from "@/game/engine/cards";
+import { playCard, canPlayCard } from "@/game/engine/cards";
 import {
   initCombat,
   startPlayerTurn,
@@ -44,6 +44,7 @@ import {
 } from "@/game/engine/relics";
 import { drawCards, exhaustCardFromHandForOverflow } from "@/game/engine/deck";
 import {
+  addInitialCharacterCardUnlocks,
   computeUnlockedCardIds,
   onEnterBiome,
 } from "@/game/engine/card-unlocks";
@@ -74,10 +75,28 @@ import {
 } from "@/game/engine/merchant";
 import { applyUsableItem } from "@/game/engine/items";
 import { matchesCardCharacter } from "@/game/engine/card-filters";
-import { getCharacterById } from "@/game/data/characters";
+import { characterDefinitions, getCharacterById } from "@/game/data/characters";
 import { ensureFirstCombatTutorialInkedCardInHand } from "@/game/engine/first-combat-tutorial";
 import { applyFirstRunOpeningCombatAdvantage } from "@/game/engine/first-run-script";
 import { nanoid } from "nanoid";
+
+function mergeCounts(
+  left: Record<string, number>,
+  right: Record<string, number>
+): Record<string, number> {
+  const result = { ...left };
+  for (const [key, value] of Object.entries(right)) {
+    result[key] = (result[key] ?? 0) + value;
+  }
+  return result;
+}
+
+function incrementCount(
+  counts: Record<string, number>,
+  key: string
+): Record<string, number> {
+  return { ...counts, [key]: (counts[key] ?? 0) + 1 };
+}
 
 // ============================
 // Types
@@ -129,7 +148,14 @@ export type GameAction =
   | { type: "APPLY_DIFFICULTY"; payload: { difficultyLevel: number } }
   | { type: "APPLY_RUN_CONDITION"; payload: { conditionId: string } }
   | { type: "ADD_STARTING_BONUS_CARD"; payload: { definitionId: string } }
-  | { type: "PICK_CARD_REWARD"; payload: { definitionId: string } }
+  | {
+      type: "RECORD_REWARD_OFFER";
+      payload: { key: string; cards: string[]; relics: string[] };
+    }
+  | {
+      type: "PICK_CARD_REWARD";
+      payload: { definitionId: string; combatReward?: boolean };
+    }
   | { type: "SKIP_CARD_REWARD" }
   | {
       type: "COMPLETE_COMBAT";
@@ -139,7 +165,10 @@ export type GameAction =
         usableItemDropDefinitionId?: string | null;
       };
     }
-  | { type: "PICK_RELIC_REWARD"; payload: { relicId: string } }
+  | {
+      type: "PICK_RELIC_REWARD";
+      payload: { relicId: string; combatReward?: boolean };
+    }
   | { type: "PICK_ALLY_REWARD"; payload: { allyId: string } }
   | { type: "GAIN_MAX_HP"; payload: { amount: number } }
   | { type: "APPLY_HEAL_ROOM" }
@@ -154,7 +183,13 @@ export type GameAction =
   | { type: "COMPLETE_START_MERCHANT" }
   | { type: "DEV_SKIP_TO_BOSS_ROOM" }
   | { type: "CHEAT_KILL_ENEMY"; payload: { enemyInstanceId: string } }
-  | { type: "UPGRADE_CARD"; payload: { cardInstanceId: string } }
+  | {
+      type: "UPGRADE_CARD";
+      payload: {
+        cardInstanceId: string;
+        upgradeBranch?: import("@/game/schemas/cards").CardUpgradeBranch;
+      };
+    }
   | { type: "APPLY_FREE_UPGRADE"; payload: { cardInstanceId: string } }
   | { type: "MARK_FREE_UPGRADE_USED" }
   | { type: "SET_RELIC_RUN_FLAG"; payload: { flag: string; value?: boolean } }
@@ -277,7 +312,24 @@ export function createGameReducer(deps: ReducerDeps) {
           };
         }
 
-        return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
+        return applySurvivalOnceIfNeeded(
+          {
+            ...state,
+            analytics: {
+              ...state.analytics,
+              combatsStarted: state.analytics.combatsStarted + 1,
+              cardlessTurnStarts:
+                (state.analytics.cardlessTurnStarts ?? 0) +
+                (combat.hand.some((card) =>
+                  canPlayCard(combat, card.instanceId, cardDefs)
+                )
+                  ? 0
+                  : 1),
+            },
+            combat,
+          },
+          rng
+        );
       }
 
       case "PLAY_CARD": {
@@ -353,16 +405,25 @@ export function createGameReducer(deps: ReducerDeps) {
         return { ...state, combat };
       }
 
-      case "USE_USABLE_ITEM":
-        return applySurvivalOnceIfNeeded(
-          applyUsableItem(
-            state,
-            action.payload.itemInstanceId,
-            action.payload.targetId,
-            rng
-          ),
+      case "USE_USABLE_ITEM": {
+        const next = applyUsableItem(
+          state,
+          action.payload.itemInstanceId,
+          action.payload.targetId,
           rng
         );
+        if (next === state) return state;
+        return applySurvivalOnceIfNeeded(
+          {
+            ...next,
+            analytics: {
+              ...next.analytics,
+              usableItemsUsed: next.analytics.usableItemsUsed + 1,
+            },
+          },
+          rng
+        );
+      }
 
       case "END_TURN": {
         if (!state.combat || state.combat.phase !== "PLAYER_TURN") return state;
@@ -436,6 +497,22 @@ export function createGameReducer(deps: ReducerDeps) {
         combat = checkCombatEnd(combat);
         if (combat.phase !== "COMBAT_WON" && combat.phase !== "COMBAT_LOST") {
           combat = startPlayerTurn(combat, rng, state.relicIds);
+          const cardless = !combat.hand.some((card) =>
+            canPlayCard(combat!, card.instanceId, cardDefs)
+          );
+          return applySurvivalOnceIfNeeded(
+            {
+              ...state,
+              combat,
+              analytics: {
+                ...state.analytics,
+                cardlessTurnStarts:
+                  (state.analytics.cardlessTurnStarts ?? 0) +
+                  (cardless ? 1 : 0),
+              },
+            },
+            rng
+          );
         }
         return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
@@ -488,9 +565,10 @@ export function createGameReducer(deps: ReducerDeps) {
 
       case "COMPLETE_COMBAT": {
         if (!state.combat) return state;
+        const combat = state.combat;
         const nextState = completeCombat(
           state,
-          state.combat,
+          combat,
           action.payload.goldReward,
           rng,
           action.payload.biomeResources,
@@ -499,6 +577,73 @@ export function createGameReducer(deps: ReducerDeps) {
           action.payload.usableItemDropDefinitionId
         );
 
+        const completedRoom = state.map[state.currentRoom]?.find(
+          (room) => room.completed
+        );
+        const encounterType: "NORMAL" | "ELITE" | "BOSS" =
+          state.currentRoom === state.map.length - 1
+            ? "BOSS"
+            : completedRoom?.isElite
+              ? "ELITE"
+              : "NORMAL";
+        const won = combat.phase === "COMBAT_WON";
+        const damageTaken = Math.max(
+          0,
+          (combat.analyticsStartHp ?? state.playerCurrentHp) -
+            combat.player.currentHp
+        );
+        const analytics = {
+          ...nextState.analytics,
+          combatsWon: nextState.analytics.combatsWon + (won ? 1 : 0),
+          totalTurns:
+            nextState.analytics.totalTurns + Math.max(0, combat.turnNumber),
+          alliesLost:
+            (nextState.analytics.alliesLost ?? 0) +
+            combat.allies.filter((ally) => ally.currentHp <= 0).length,
+          damageTaken: nextState.analytics.damageTaken + damageTaken,
+          inkGenerated:
+            nextState.analytics.inkGenerated +
+            (combat.analyticsInkGenerated ?? 0),
+          inkSpent:
+            nextState.analytics.inkSpent + (combat.analyticsInkSpent ?? 0),
+          inkedCardsPlayed:
+            nextState.analytics.inkedCardsPlayed +
+            (combat.analyticsInkedCardsPlayed ?? 0),
+          cardPlays: mergeCounts(
+            nextState.analytics.cardPlays,
+            combat.analyticsCardPlays ?? {}
+          ),
+          cardModePlays: mergeCounts(
+            nextState.analytics.cardModePlays,
+            combat.analyticsCardModePlays ?? {}
+          ),
+          inkPowerUses: mergeCounts(
+            nextState.analytics.inkPowerUses,
+            combat.analyticsInkPowerUses ?? {}
+          ),
+          combats: [
+            ...nextState.analytics.combats,
+            {
+              biome: combat.encounterContext?.biome ?? state.currentBiome,
+              floor: state.floor,
+              room: state.currentRoom,
+              encounterType,
+              enemyIds: combat.enemies.map((enemy) => enemy.definitionId),
+              won,
+              turns: Math.max(0, combat.turnNumber),
+              hpBefore: combat.analyticsStartHp ?? state.playerCurrentHp,
+              hpAfter: combat.player.currentHp,
+              damageTaken,
+              inkGenerated: combat.analyticsInkGenerated ?? 0,
+              inkSpent: combat.analyticsInkSpent ?? 0,
+              inkedCardsPlayed: combat.analyticsInkedCardsPlayed ?? 0,
+              inkPowerUses: combat.analyticsInkPowerUses ?? {},
+              cardModePlays: combat.analyticsCardModePlays ?? {},
+            },
+          ],
+        };
+        const nextStateWithAnalytics = { ...nextState, analytics };
+
         if (
           state.firstRunScript?.enabled &&
           state.firstRunScript.step === "FIRST_COMBAT" &&
@@ -506,7 +651,7 @@ export function createGameReducer(deps: ReducerDeps) {
           state.currentRoom === 0
         ) {
           return {
-            ...nextState,
+            ...nextStateWithAnalytics,
             firstRunScript: {
               ...state.firstRunScript,
               step: "MAP_INTRO",
@@ -514,31 +659,12 @@ export function createGameReducer(deps: ReducerDeps) {
           };
         }
 
-        return nextState;
+        return nextStateWithAnalytics;
       }
 
-      case "FORCE_TUTORIAL_COMBAT_DEFEAT": {
-        if (!state.combat) return state;
-        if (
-          !state.firstRunScript?.enabled ||
-          state.firstRunScript.step !== "FORCED_ELITE"
-        ) {
-          return state;
-        }
-
-        return {
-          ...state,
-          combat: {
-            ...state.combat,
-            phase: "COMBAT_LOST",
-            player: {
-              ...state.combat.player,
-              currentHp: 0,
-              block: 0,
-            },
-          },
-        };
-      }
+      // Legacy action retained for old clients; the tutorial is now playable.
+      case "FORCE_TUTORIAL_COMBAT_DEFEAT":
+        return state;
 
       case "CHOOSE_CHARACTER": {
         const char = getCharacterById(action.payload.characterId);
@@ -553,11 +679,14 @@ export function createGameReducer(deps: ReducerDeps) {
           state.currentBiome ?? "LIBRARY",
           char.id
         );
-        const unlockedCardIds = computeUnlockedCardIds(
-          [...cardDefs.values()],
-          nextUnlockProgress,
-          state.unlockedStoryIdsSnapshot ?? [],
-          state.enemyKillCounts ?? {}
+        const unlockedCardIds = addInitialCharacterCardUnlocks(
+          computeUnlockedCardIds(
+            [...cardDefs.values()],
+            nextUnlockProgress,
+            state.unlockedStoryIdsSnapshot ?? [],
+            state.enemyKillCounts ?? {}
+          ),
+          char.id
         );
         const newDeck = char.starterDeckIds
           .map((id) => cardDefs.get(id))
@@ -596,6 +725,15 @@ export function createGameReducer(deps: ReducerDeps) {
         return {
           ...state,
           characterId: char.id,
+          relicIds: [
+            ...state.relicIds.filter(
+              (relicId) =>
+                !characterDefinitions.some(
+                  (definition) => definition.starterRelicId === relicId
+                )
+            ),
+            char.starterRelicId,
+          ],
           deck: newDeck,
           unlockedCardIds,
           cardUnlockProgress: nextUnlockProgress,
@@ -653,11 +791,60 @@ export function createGameReducer(deps: ReducerDeps) {
         };
       }
 
-      case "PICK_CARD_REWARD":
-        return addCardToRunDeck(state, action.payload.definitionId);
+      case "RECORD_REWARD_OFFER": {
+        const offers = state.analytics.rewardOffers ?? [];
+        if (offers.some((offer) => offer.key === action.payload.key))
+          return state;
+        return {
+          ...state,
+          analytics: {
+            ...state.analytics,
+            rewardOffers: [
+              ...offers,
+              {
+                ...action.payload,
+                floor: state.floor,
+                room: state.currentRoom,
+                chosen: [],
+                skipped: false,
+              },
+            ].slice(-500),
+          },
+        };
+      }
+
+      case "PICK_CARD_REWARD": {
+        const next = addCardToRunDeck(state, action.payload.definitionId);
+        return {
+          ...next,
+          analytics: {
+            ...next.analytics,
+            rewardOffers: action.payload.combatReward
+              ? selectOfferedReward(
+                  next.analytics.rewardOffers,
+                  action.payload.definitionId
+                )
+              : next.analytics.rewardOffers,
+            cardsAdded: incrementCount(
+              next.analytics.cardsAdded,
+              action.payload.definitionId
+            ),
+          },
+        };
+      }
 
       case "SKIP_CARD_REWARD":
-        return state;
+        return {
+          ...state,
+          analytics: {
+            ...state.analytics,
+            rewardOffers: selectOfferedReward(
+              state.analytics.rewardOffers,
+              null
+            ),
+            cardRewardsSkipped: state.analytics.cardRewardsSkipped + 1,
+          },
+        };
 
       case "APPLY_HEAL_ROOM":
         return applyHealRoom(state);
@@ -671,12 +858,28 @@ export function createGameReducer(deps: ReducerDeps) {
 
       case "BUY_SHOP_ITEM": {
         const result = buyShopItem(state, action.payload.item);
-        return result ?? state;
+        return result
+          ? {
+              ...result,
+              analytics: {
+                ...result.analytics,
+                shopPurchases: result.analytics.shopPurchases + 1,
+              },
+            }
+          : state;
       }
 
       case "REROLL_SHOP": {
         const result = buyShopReroll(state);
-        return result ?? state;
+        return result
+          ? {
+              ...result,
+              analytics: {
+                ...result.analytics,
+                shopRerolls: result.analytics.shopRerolls + 1,
+              },
+            }
+          : state;
       }
 
       case "BUY_START_MERCHANT_OFFER":
@@ -747,8 +950,29 @@ export function createGameReducer(deps: ReducerDeps) {
         return applySurvivalOnceIfNeeded({ ...state, combat }, rng);
       }
 
-      case "UPGRADE_CARD":
-        return upgradeCardInDeck(state, action.payload.cardInstanceId);
+      case "UPGRADE_CARD": {
+        const next = upgradeCardInDeck(
+          state,
+          action.payload.cardInstanceId,
+          action.payload.upgradeBranch ?? "A"
+        );
+        return next === state
+          ? state
+          : {
+              ...next,
+              analytics: {
+                ...next.analytics,
+                cardsUpgraded: next.analytics.cardsUpgraded + 1,
+                upgradeBranchChoices: {
+                  ...next.analytics.upgradeBranchChoices,
+                  [action.payload.upgradeBranch ?? "A"]:
+                    (next.analytics.upgradeBranchChoices[
+                      action.payload.upgradeBranch ?? "A"
+                    ] ?? 0) + 1,
+                },
+              },
+            };
+      }
 
       case "APPLY_FREE_UPGRADE":
         return applyFreeUpgradeInDeck(state, action.payload.cardInstanceId);
@@ -763,8 +987,32 @@ export function createGameReducer(deps: ReducerDeps) {
           action.payload.value ?? true
         );
 
-      case "REMOVE_CARD_FROM_DECK":
-        return removeCardFromRunDeck(state, action.payload.cardInstanceId);
+      case "REMOVE_CARD_FROM_DECK": {
+        const removedDefinitionId = state.deck.find(
+          (card) => card.instanceId === action.payload.cardInstanceId
+        )?.definitionId;
+        const next = removeCardFromRunDeck(
+          state,
+          action.payload.cardInstanceId
+        );
+        return next === state
+          ? state
+          : {
+              ...next,
+              analytics: {
+                ...next.analytics,
+                cardsRemoved: next.analytics.cardsRemoved + 1,
+                cardsRemovedById: removedDefinitionId
+                  ? {
+                      ...next.analytics.cardsRemovedById,
+                      [removedDefinitionId]:
+                        (next.analytics.cardsRemovedById[removedDefinitionId] ??
+                          0) + 1,
+                    }
+                  : next.analytics.cardsRemovedById,
+              },
+            };
+      }
 
       case "APPLY_HEAL_ROOM_BLOOD_PURGE":
         return applyHealRoomBloodPurge(state, action.payload.cardInstanceId);
@@ -776,8 +1024,21 @@ export function createGameReducer(deps: ReducerDeps) {
           action.payload.choiceIndex
         );
 
-      case "PICK_RELIC_REWARD":
-        return addRelicToRunState(state, action.payload.relicId);
+      case "PICK_RELIC_REWARD": {
+        const next = addRelicToRunState(state, action.payload.relicId);
+        return {
+          ...next,
+          analytics: {
+            ...next.analytics,
+            rewardOffers: action.payload.combatReward
+              ? selectOfferedReward(
+                  next.analytics.rewardOffers,
+                  action.payload.relicId
+                )
+              : next.analytics.rewardOffers,
+          },
+        };
+      }
 
       case "EXCHANGE_RELIC": {
         const { giveRelicId, takeRelicId } = action.payload;
@@ -814,4 +1075,24 @@ export function createGameReducer(deps: ReducerDeps) {
         return state;
     }
   };
+}
+
+function selectOfferedReward(
+  offers: RunState["analytics"]["rewardOffers"],
+  choice: string | null
+) {
+  return offers?.map((offer, index) =>
+    index === offers.length - 1 &&
+    (choice === null ||
+      offer.cards.includes(choice) ||
+      offer.relics.includes(choice))
+      ? {
+          ...offer,
+          chosen: choice
+            ? [...new Set([...offer.chosen, choice])]
+            : offer.chosen,
+          skipped: choice === null,
+        }
+      : offer
+  );
 }

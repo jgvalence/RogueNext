@@ -7,6 +7,11 @@ import {
 } from "react";
 import type { RunState } from "@/game/schemas/run-state";
 import type { GameAction } from "../_providers/game-reducer";
+import {
+  COMBAT_SPEED_EVENT,
+  readCombatSpeed,
+  type CombatSpeed,
+} from "@/lib/combat-speed";
 
 interface UseCombatTurnFlowParams {
   dispatch: (action: GameAction) => void;
@@ -21,9 +26,20 @@ export function useCombatTurnFlow({
   const [attackingEnemyId, setAttackingEnemyId] = useState<string | null>(null);
   const [isDiscarding, setIsDiscarding] = useState(false);
   const [isResolvingEndTurn, setIsResolvingEndTurn] = useState(false);
+  const [combatSpeed, setCombatSpeed] = useState<CombatSpeed>(1);
 
   const enemyTurnCancelledRef = useRef(false);
   const endTurnInFlightRef = useRef(false);
+
+  useEffect(() => {
+    setCombatSpeed(readCombatSpeed());
+    const onSpeedChange = (event: Event) => {
+      const speed = (event as CustomEvent<{ speed: CombatSpeed }>).detail.speed;
+      setCombatSpeed(speed);
+    };
+    window.addEventListener(COMBAT_SPEED_EVENT, onSpeedChange);
+    return () => window.removeEventListener(COMBAT_SPEED_EVENT, onSpeedChange);
+  }, []);
 
   const cancelEnemyTurnFlow = useCallback(() => {
     enemyTurnCancelledRef.current = true;
@@ -38,7 +54,7 @@ export function useCombatTurnFlow({
     if (endTurnInFlightRef.current) return;
 
     const sleep = (ms: number) =>
-      new Promise<void>((resolve) => setTimeout(resolve, ms));
+      new Promise<void>((resolve) => setTimeout(resolve, ms / combatSpeed));
 
     endTurnInFlightRef.current = true;
     setIsResolvingEndTurn(true);
@@ -87,7 +103,7 @@ export function useCombatTurnFlow({
       setIsResolvingEndTurn(false);
       setIsDiscarding(false);
     }
-  }, [dispatch, stateRef]);
+  }, [combatSpeed, dispatch, stateRef]);
 
   useEffect(() => {
     const onTopMenuEndTurn = () => {

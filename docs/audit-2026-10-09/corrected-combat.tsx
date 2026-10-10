@@ -1,0 +1,25 @@
+﻿// @ts-nocheck -- standalone rendering probe, outside the application.
+import fs from 'node:fs';
+import React from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {I18nextProvider} from 'react-i18next';
+import {i18n} from '../../src/lib/i18n';
+import {GameProvider} from '../../src/app/game/_providers/game-provider';
+import {CombatView} from '../../src/app/game/_components/combat/CombatView';
+import {allCardDefinitions,buildCardDefsMap,buildEnemyDefsMap,buildAllyDefsMap} from '../../src/game/data';
+import {characterDefinitions} from '../../src/game/data/characters';
+import {createNewRun} from '../../src/game/engine/run';
+import {initCombat} from '../../src/game/engine/combat';
+import {createRNG} from '../../src/game/engine/rng';
+(globalThis as any).React=React;
+const cardDefs=buildCardDefsMap(),enemyDefs=buildEnemyDefsMap(),allyDefs=buildAllyDefsMap();
+const rng=createRNG('audit-visual');
+let run=createNewRun('audit','audit',characterDefinitions[0].starterDeckIds.map(id=>cardDefs.get(id)),rng,undefined,[],undefined,allCardDefinitions);
+run={...run,currentBiome:'VIKING',pendingBiomeChoices:null,allyIds:[...allyDefs.keys()].slice(0,3)};
+let combat=initCombat(run,['fenrir','draugr','shield_maiden','draugr'],enemyDefs,allyDefs,cardDefs,rng);
+combat={...combat,allies:[...allyDefs.values()].slice(0,3).map((def,i)=>({instanceId:`ally-${i}`,definitionId:def.id,name:def.name,currentHp:def.maxHp,maxHp:def.maxHp,block:0,speed:def.speed,buffs:[],intentIndex:0}))};
+run={...run,combat};
+const noop=()=>{};
+let markup=renderToStaticMarkup(<I18nextProvider i18n={i18n}><GameProvider initialState={run} cardDefs={cardDefs} enemyDefs={enemyDefs} allyDefs={allyDefs}><CombatView combat={combat} cardDefs={cardDefs} enemyDefs={enemyDefs} allyDefs={allyDefs} onPlayCard={noop} onEndTurn={noop} onUseItem={noop} onUseInkPower={noop} onResolveHandOverflowExhaust={noop} usableItems={[]} usableItemDefs={new Map()} biome="VIKING" unlockedInkPowers={['CALLIGRAPHIE']}/></GameProvider></I18nextProvider>);
+markup=markup.replaceAll('src="/images/','src="../../public/images/').replaceAll('url(/images/','url(../../public/images/');
+fs.writeFileSync('docs/audit-2026-10-09/corrected-combat.html',`<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="corrected-visual.css"><style>body{margin:0;background:#0a0b10;color:#f5f5f5;font-family:Arial}#root{height:100vh;display:flex;flex-direction:column}</style><body><div id="root">${markup}</div></body></html>`);

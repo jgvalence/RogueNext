@@ -34,13 +34,10 @@ export const allCardDefinitions: CardDefinition[] = [
   ...lootableCardDefinitions,
 ];
 
-const allCardDefinitionsMap = new Map(
-  allCardDefinitions.map((card) => [card.id, card])
-);
+const allCardDefinitionsMap = buildCardDefsMap();
 
-export const statusCardDefinitions: CardDefinition[] = allCardDefinitions.filter(
-  (card) => card.type === "STATUS"
-);
+export const statusCardDefinitions: CardDefinition[] =
+  allCardDefinitions.filter((card) => card.type === "STATUS");
 
 export const curseCardDefinitions: CardDefinition[] = allCardDefinitions.filter(
   (card) => card.type === "CURSE"
@@ -64,7 +61,13 @@ export function getCardDefinitionById(
 export function buildCardDefsMap(
   cards: CardDefinition[] = allCardDefinitions
 ): Map<string, CardDefinition> {
-  return new Map(cards.map((c) => [c.id, c]));
+  const definitions = new Map<string, CardDefinition>();
+  for (const card of cards) {
+    if (definitions.has(card.id))
+      throw new Error(`Duplicate card definition: ${card.id}`);
+    definitions.set(card.id, card);
+  }
+  return definitions;
 }
 
 /** Enemy definitions as a Map for O(1) lookup */

@@ -229,7 +229,7 @@ export function BestiaryClient({ enemies }: BestiaryClientProps) {
                           isLocked ? t("bestiary.lockedName") : localizedName
                         }
                         fill
-                        className={`object-contain p-3 ${
+                        className={`object-cover object-center ${
                           isLocked ? "opacity-70 brightness-0 saturate-0" : ""
                         }`}
                         sizes="(max-width: 768px) 100vw, 33vw"

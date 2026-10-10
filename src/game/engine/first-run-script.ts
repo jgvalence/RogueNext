@@ -89,9 +89,8 @@ export function shouldShowFirstRunMapTutorial(runState: RunState): boolean {
 export function getFirstRunForcedMapChoiceIndex(
   runState: RunState
 ): number | null {
-  return shouldShowFirstRunMapTutorial(runState)
-    ? FIRST_RUN_SCRIPT_FORCED_CHOICE_INDEX
-    : null;
+  void runState;
+  return null;
 }
 
 export function isFirstRunScriptedEliteRoom(runState: RunState): boolean {

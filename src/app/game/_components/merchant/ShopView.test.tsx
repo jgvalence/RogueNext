@@ -66,6 +66,25 @@ function buildInventory(cardItem: ShopItem): ShopItem[] {
 }
 
 describe("ShopView", () => {
+  it("restores a paid purge without charging again or regenerating inventory", () => {
+    const onBuy = vi.fn(), onRemoveCard = vi.fn(), onCheckpointChange = vi.fn();
+    render(<ShopView floor={1} gold={40} playerCurrentHp={60} relicIds={[]}
+      unlockedCardIds={[]} unlockedRelicIds={[]} unlockedDifficultyLevelSnapshot={0}
+      selectedDifficultyLevel={0} relicDiscount={0} characterId="scribe" cardDefs={cardDefs}
+      rng={createRNG("resume-shop")} deck={[{instanceId:"strike-1",definitionId:"strike",upgraded:false},{instanceId:"defend-1",definitionId:"defend",upgraded:false}]}
+      usableItems={[]} usableItemCapacity={3} rerollCount={1} allyIds={[]} allySlots={0}
+      onBuy={onBuy} onReroll={vi.fn()} onRemoveCard={onRemoveCard} onLeave={vi.fn()}
+      onCheckpointChange={onCheckpointChange}
+      initialCheckpoint={{inventory:buildInventory({id:"card-a",type:"card",cardDef:strike!,price:20}),soldIds:["card-a"],autoRestockChargesLeft:0,pendingPurgeItemId:"purge-gold-1"}}
+    />);
+    expect(generateShopInventory).not.toHaveBeenCalled();
+    expect(screen.getByTestId("card-picker-modal")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("strike"));
+    expect(onRemoveCard).toHaveBeenCalledWith("strike-1");
+    expect(onRemoveCard).toHaveBeenCalledTimes(1);
+    expect(onBuy).not.toHaveBeenCalled();
+    expect(onCheckpointChange).toHaveBeenLastCalledWith(expect.objectContaining({soldIds:["card-a","purge-gold-1"],pendingPurgeItemId:null,autoRestockChargesLeft:0}));
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(getMerchantAutoRestockCharges).mockReturnValue(0);
@@ -130,8 +149,9 @@ describe("ShopView", () => {
     );
 
     const purgeButton = screen
-      .getByText("shop.itemName.purge")
-      .closest("button");
+      .getAllByText("shop.itemName.purge")
+      .map((element) => element.closest("button"))
+      .find((button) => button !== null);
     expect(purgeButton).not.toBeNull();
     fireEvent.click(purgeButton!);
 

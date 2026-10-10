@@ -1,0 +1,532 @@
+/* Shared visual language: engraved paper, quiet frames and warm readable type.
+   Kept outside Tailwind layers so component utilities have explicit overrides. */
+.game-shell {
+  color: var(--rogue-text-primary);
+}
+.game-topbar {
+  border-color: color-mix(in srgb, var(--rogue-accent-amber) 25%, transparent);
+  background: linear-gradient(100deg, #111923, var(--rogue-bg-base));
+  padding-top: max(6px, env(safe-area-inset-top));
+}
+.game-topbar > div {
+  min-width: 0;
+}
+.game-topbar button {
+  min-height: 36px;
+}
+.game-topbar > div:nth-child(2) > span:first-child {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  color: var(--rogue-accent-amber);
+  letter-spacing: 0.14em;
+}
+.game-topbar > div:nth-child(2) > span:nth-child(2) {
+  color: var(--rogue-text-muted);
+}
+.home-menu-link:focus-visible,
+.game-shell button:focus-visible {
+  outline: 2px solid var(--rogue-accent-amber) !important;
+  outline-offset: 4px;
+}
+.panlibrarium-home {
+  background-image: url("/images/scenes/panlibrarium-mobile-v2.webp");
+  background-size: cover;
+}
+.panlibrarium-intro,
+.expedition-setup {
+  background-image:
+    linear-gradient(180deg, #05090f55, #05090ff5 950px),
+    url("/images/scenes/panlibrarium-v2.webp");
+  background-size:
+    100% 100%,
+    100% auto;
+  background-repeat: no-repeat;
+  background-position: center top;
+}
+.panlibrarium-intro > section {
+  background-color: #080e17dc;
+}
+.expedition-setup h2,
+.panlibrarium-intro h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.01em;
+}
+.expedition-setup header {
+  background-color: #080e17c9;
+}
+.character-choice.ant-btn {
+  min-height: 174px;
+  padding-right: 126px !important;
+  overflow: hidden;
+}
+.character-choice-art {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 126px;
+  height: 172px;
+  pointer-events: none;
+  opacity: 0.95;
+}
+.character-choice.ant-btn:disabled .character-choice-art {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+.character-choice.ant-btn > span {
+  white-space: normal;
+}
+.merchant-room h2 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  text-transform: none;
+}
+.merchant-room > div:first-child {
+  background-size: 80px 80px;
+  opacity: 0.025;
+}
+.merchant-room > div:nth-child(2) > aside {
+  border-radius: 12px;
+}
+.merchant-room > div:nth-child(2) > section {
+  border-radius: 12px;
+}
+
+[data-battlefield] {
+  isolation: isolate;
+}
+[data-battlefield]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 -45px 70px #03081070;
+}
+.combat-scene-art {
+  filter: saturate(0.8) brightness(0.7);
+}
+.combat-scene-atmosphere {
+  opacity: 0.25;
+}
+[data-testid="combat-ground"] {
+  opacity: 0.35;
+}
+[data-testid="combat-horizon"] {
+  opacity: 0.3;
+}
+.combat-view .combat-desktop-grid {
+  gap: clamp(8px, 1.5vw, 26px);
+  padding: 0;
+}
+.combat-view .combat-desktop-grid > div {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 220px;
+}
+.combat-view .combat-desktop-grid > div > button,
+.combat-view .combat-desktop-grid > div > div {
+  width: 100%;
+  border-radius: 10px;
+  background-image: linear-gradient(180deg, #07101a30 25%, #07101aeb 72%);
+  box-shadow: 0 14px 24px #0003;
+}
+.combat-view .combat-desktop-grid > div > button > div.mb-2,
+.combat-view .combat-desktop-grid > div > div > div.mb-2 {
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  overflow: visible;
+}
+.combat-view .combat-desktop-grid img {
+  transform: none;
+  padding-top: 18px;
+}
+.combat-view .combat-desktop-grid > div > button > p:first-of-type,
+.combat-view .combat-desktop-grid > div > div > p:first-of-type {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14px;
+}
+.combat-view .combat-desktop-grid [class*="left-2"][class*="top-1"] {
+  background: #09101ee6;
+  padding: 3px 5px;
+  border-radius: 4px;
+  max-width: calc(100% - 12px);
+  font-size: 10px;
+}
+[data-player-zone] {
+  background: linear-gradient(180deg, #0b1621f5, #060b12);
+}
+[data-player-zone] > div {
+  border-top-color: #c8ae743f;
+}
+[data-player-zone] button {
+  touch-action: manipulation;
+}
+[data-game-card] {
+  border-radius: 12px;
+}
+[data-game-card] h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  line-height: 1.12;
+}
+[data-game-card="lg"] h3 {
+  font-size: 17px;
+}
+[data-game-card="lg"] [class*="leading-[1.24]"] {
+  font-size: 13px;
+  line-height: 1.45;
+}
+[data-game-card="lg"] [class*="rounded-[14px]"] {
+  border-radius: 7px;
+}
+.mobile-card-inspect.ant-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 25;
+  height: 30px;
+  min-width: 44px;
+  padding: 0 7px;
+  color: var(--rogue-text-primary);
+  background: #0a1527ed;
+  border: 1px solid #c8ae7466;
+  border-radius: 5px;
+  font-size: 11px;
+}
+[data-has-ink="true"] .mobile-card-inspect {
+  bottom: 39px;
+}
+.combat-view .mobile-card-preview {
+  bottom: max(8px, env(safe-area-inset-bottom));
+  max-height: calc(100dvh - 16px);
+  overflow-y: auto;
+  border-radius: 14px;
+  background: var(--rogue-bg-base);
+  padding: 6px;
+  box-shadow: 0 0 0 100vmax #0207107a;
+}
+.mobile-preview-close.ant-btn {
+  display: block;
+  margin: 0 0 5px auto;
+  height: 36px;
+  color: var(--rogue-text-primary);
+  border-color: var(--rogue-border-subtle);
+}
+.combat-view .mobile-card-preview > [data-game-card] {
+  width: min(290px, calc(100vw - 32px)) !important;
+  height: min(450px, calc(100dvh - 96px)) !important;
+}
+.combat-view .mobile-card-preview > p {
+  max-width: 280px;
+  padding: 4px;
+}
+.combat-view .mobile-hand-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #b99b6180 transparent;
+}
+.combat-view .mobile-enemy-portrait {
+  border-radius: 12px;
+}
+.combat-view .combat-mobile-allies button {
+  min-height: 38px;
+}
+.combat-view .combat-mobile-grid {
+  min-height: 0;
+  height: auto;
+  flex: 1;
+}
+.combat-view .mobile-powers-panel {
+  background: var(--rogue-bg-panel);
+}
+.mobile-powers-panel button {
+  min-height: 44px;
+}
+.mobile-powers-panel button > span > span:first-child {
+  font-size: 13px;
+  color: var(--rogue-text-primary);
+}
+.combat-view .combat-enemy-overview button {
+  border-color: #c6a66d50 !important;
+}
+
+@media (min-width: 1024px) and (max-height: 760px) {
+  .combat-view .combat-desktop-grid > div > button,
+  .combat-view .combat-desktop-grid > div > div {
+    height: 236px;
+  }
+  .combat-view .combat-desktop-grid .mb-2 {
+    height: 112px;
+  }
+  [data-player-zone] [data-game-card="md"] {
+    height: 242px;
+  }
+}
+@media (min-width: 1024px) and (max-height: 650px) {
+  .combat-view [data-battlefield] { padding: 8px 16px; }
+  .combat-view .combat-resources { width: 128px; gap: 6px; }
+  .combat-view .combat-tools { width: 156px; }
+  .combat-view .combat-energy-panel > div { height: 32px; width: 32px; }
+  .combat-view .combat-resources > button { height: 40px; }
+  .combat-view .combat-resources button { padding: 4px !important; }
+  .combat-view .combat-resources [class*="overflow-wrap:anywhere"] { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+  .combat-view .combat-desktop-grid > div > button,
+  .combat-view .combat-desktop-grid > div > div { height: 180px; }
+  .combat-view .combat-desktop-grid .mb-2 { height: 64px; margin-bottom: 4px; }
+  .combat-view .combat-desktop-grid img { padding-top: 10px; }
+  .combat-view .combat-desktop-grid [class*="left-2"][class*="top-1"] { font-size: 8px; padding: 2px; }
+  .combat-view [data-player-zone] [data-game-card="md"] { height: 226px; }
+}
+@media (max-width: 1023px) {
+  .game-topbar button {
+    min-height: 36px;
+  }
+  .game-topbar > div:last-child {
+    gap: 6px;
+  }
+  .combat-view .combat-action-bar {
+    gap: 6px;
+  }
+  .combat-view .combat-action-bar > button {
+    min-height: 44px;
+  }
+  .combat-view .combat-enemy-overview button {
+    min-height: 48px;
+  }
+  .combat-view .combat-mobile-allies {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .combat-view .combat-mobile-allies p {
+    color: #d3dce5;
+    font-size: 10px;
+  }
+  .combat-view .combat-mobile-allies button:last-child {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+}
+@media (max-width: 639px) {
+  .merchant-room > div:nth-child(2) > aside {
+    min-height: 140px;
+    padding: 16px 112px 16px 16px;
+  }
+  .merchant-room .merchant-portrait {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    width: 108px;
+    height: 150px;
+  }
+  .merchant-room aside > div:last-child {
+    padding: 8px;
+  }
+  .merchant-room aside h2 {
+    font-size: 22px;
+  }
+  .merchant-room aside p {
+    font-size: 12px;
+  }
+  .character-choice.ant-btn {
+    padding-right: 104px !important;
+  }
+  .character-choice-art {
+    width: 106px;
+  }
+  .panlibrarium-intro,
+  .expedition-setup {
+    background-image:
+      linear-gradient(180deg, #05090f55, #05090ff5 700px),
+      url("/images/scenes/panlibrarium-mobile-v2.webp");
+    background-size:
+      100% 100%,
+      auto 700px;
+  }
+  .game-topbar > div:first-child {
+    gap: 4px;
+  }
+  .game-topbar > div:first-child .ant-tag {
+    margin: 0;
+    padding: 4px;
+    font-size: 10px;
+    letter-spacing: 0.03em;
+  }
+  .game-topbar > div:nth-child(2) {
+    display: none;
+  }
+}
+@media (max-width: 1023px) and (orientation: portrait) and (min-height: 541px) {
+  .combat-mobile-enemies > div {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .combat-mobile-enemies[data-mobile-row="1"] > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .combat-view .mobile-enemy-portrait {
+    min-width: 0;
+    min-height: 112px;
+  }
+  .combat-mobile-enemies {
+    overflow-y: auto;
+  }
+  .combat-view .combat-enemy-overview {
+    display: none;
+  }
+  .combat-view .mobile-hand-scroll {
+    height: 216px;
+    padding-top: 10px;
+    padding-bottom: 8px;
+    scroll-snap-type: x proximity;
+  }
+  .combat-view .mobile-hand-scroll > div {
+    justify-content: flex-start;
+    gap: 9px;
+  }
+  .combat-view .mobile-hand-slot {
+    margin-left: 0 !important;
+  }
+  .combat-view .mobile-hand-slot[data-resting="true"] {
+    transform: none !important;
+  }
+  .combat-view [data-mobile-hand-card] {
+    width: 132px;
+    height: 196px;
+    border-radius: 10px;
+  }
+  .combat-view [data-mobile-hand-card] .mobile-card-art {
+    top: 52px;
+    height: 76px;
+    opacity: 0.9;
+  }
+  .combat-view [data-mobile-hand-card] p:first-child {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+  .combat-view [data-mobile-hand-card] .mobile-card-inspect {
+    left: 0;
+    right: 0;
+    min-height: 36px;
+  }
+  .combat-view [data-mobile-hand-card] > div:last-child > button:last-child {
+    min-height: 36px;
+  }
+  .combat-view .combat-action-bar > div:first-child {
+    padding: 8px 6px;
+  }
+  .combat-view .combat-action-bar > div:first-child span {
+    font-size: 11px;
+  }
+}
+@media (max-width: 1023px) and (orientation: portrait) and (max-height: 680px) {
+  .combat-view .combat-enemy-overview {
+    display: grid;
+  }
+  .combat-view .combat-enemy-overview + .combat-mobile-enemies {
+    display: none;
+  }
+  .combat-view .combat-mobile-grid {
+    overflow-y: auto;
+  }
+  .combat-view .combat-mobile-allies {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .combat-view .combat-mobile-allies > button {
+    padding: 4px;
+    gap: 3px;
+  }
+  .combat-view .combat-enemy-overview {
+    min-height: 0;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .combat-view .mobile-hand-scroll {
+    height: 180px;
+  }
+  .combat-view [data-mobile-hand-card] {
+    height: 162px;
+  }
+  .combat-view [data-mobile-hand-card] .mobile-card-art {
+    top: 39px;
+    height: 64px;
+  }
+}
+@media (max-height: 540px) and (max-width: 1023px) {
+  .combat-view .mobile-hand-scroll {
+    height: 108px !important;
+  }
+  .combat-view .mobile-hand-scroll > div {
+    gap: 7px;
+  }
+  .combat-view .mobile-hand-slot {
+    margin-left: 0 !important;
+  }
+  .combat-view .mobile-hand-slot[data-resting="true"] {
+    transform: none !important;
+  }
+  .combat-view [data-mobile-hand-card] {
+    height: 98px !important;
+    width: 94px !important;
+    padding: 5px;
+    border-radius: 8px;
+  }
+  .combat-view [data-mobile-hand-card] p:first-child {
+    font-size: 10px;
+    line-height: 1.1;
+  }
+  .combat-view [data-mobile-hand-card] .mobile-card-art {
+    top: 27px;
+    height: 43px;
+  }
+  .combat-view [data-mobile-hand-card] > div:last-child > button:last-child {
+    min-height: 24px;
+    height: 24px;
+  }
+  .combat-view [data-has-ink="true"] .mobile-card-inspect {
+    bottom: 25px;
+  }
+  .combat-view .combat-mobile-allies {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .combat-view .combat-mobile-allies button:last-child {
+    grid-column: auto;
+  }
+  .combat-view .combat-mobile-allies button:last-child {
+    order: 0;
+  }
+  .combat-view .combat-mobile-allies:has(> :only-child) {
+    grid-template-columns: 1fr;
+  }
+  .combat-view .combat-mobile-allies button {
+    min-height: 34px;
+  }
+  .combat-view .combat-action-bar > button {
+    min-height: 36px;
+  }
+  .mobile-card-inspect.ant-btn {
+    height: 24px;
+    min-height: 24px;
+    font-size: 10px;
+  }
+  [data-has-ink="true"] .mobile-card-inspect {
+    bottom: 36px;
+  }
+}
+@media (max-height: 420px) {
+  .home-menu {
+    padding-top: 24px;
+    padding-bottom: 40px;
+  }
+  .home-menu h1 {
+    margin-bottom: 10px;
+  }
+  .home-menu > p,
+  .home-menu > div {
+    margin-bottom: 12px;
+  }
+}

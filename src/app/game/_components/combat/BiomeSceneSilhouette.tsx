@@ -1,0 +1,89 @@
+import type { BiomeType } from "@/game/schemas/enums";
+
+// Architecture stays at the edges: the center is reserved for readable targets.
+const silhouettes: Record<
+  BiomeType,
+  { color: string; path: string; ground: string }
+> = {
+  LIBRARY: {
+    color: "#b99157",
+    path: "M0 340V40H145V340H120V68H25V340ZM25 125H120M25 195H120M25 265H120M42 68V125M72 68V125M96 68V125M40 140V195M62 136V195M85 146V195M104 140V195",
+    ground: "M0 380H800M0 415H800M180 340L80 450M620 340L720 450",
+  },
+  VIKING: {
+    color: "#87b6c6",
+    path: "M0 335L28 268L64 315L92 239L142 337ZM24 262V80L35 80V252M32 90L140 172L32 180ZM100 250V30L112 30V272M110 50L185 150L110 146Z",
+    ground: "M0 390L100 370L190 392L300 385L380 397M800 400L690 380L550 395",
+  },
+  GREEK: {
+    color: "#d2c09b",
+    path: "M0 95L105 35L205 95ZM18 110H52V320H18ZM91 110H125V320H91ZM163 110H197V320H163ZM0 328H208V344H0M0 101H205",
+    ground:
+      "M0 370H800M0 410H800M160 344L45 450M300 344L265 450M640 344L755 450",
+  },
+  EGYPTIAN: {
+    color: "#d3a455",
+    path: "M0 337L102 120L215 337ZM40 335L104 188L161 335M20 235V42L33 15L46 42V280M30 68H39M30 110H39M30 152H39",
+    ground:
+      "M0 380Q150 337 300 380T600 380T850 375M0 430Q150 387 300 430T600 430",
+  },
+  LOVECRAFTIAN: {
+    color: "#71a697",
+    path: "M0 330Q100 225 17 75Q105 70 119 185Q134 289 187 322M28 333Q166 275 150 98L169 67L179 114L172 230Q204 292 205 333M0 170L120 20L213 215L169 229L125 65L17 191Z",
+    ground:
+      "M0 370Q100 415 205 365T425 377T650 370T850 388M0 430Q150 395 310 430T700 420",
+  },
+  AZTEC: {
+    color: "#c98c60",
+    path: "M0 340V310H25V275H50V235H75V195H100V155H130V120H178V155H208V195H233V235H258V275H283V340M128 340V174H180V340M136 120V90H172V120",
+    ground:
+      "M0 375H800M0 415H800M80 340V450M240 340V450M560 340V450M720 340V450",
+  },
+  CELTIC: {
+    color: "#90ad70",
+    path: "M10 340L25 143L60 130L77 339M107 340L118 122L153 130L170 340M20 150L17 113L157 100L169 140ZM60 110Q100 46 160 42M0 336Q60 300 122 326T240 340",
+    ground:
+      "M0 380Q80 358 170 385T340 380M800 390Q710 365 620 390M40 430L60 408M86 421L100 398M700 436L719 411",
+  },
+  RUSSIAN: {
+    color: "#abb9ce",
+    path: "M0 340V206L65 151L133 206V340M32 180V140Q0 110 40 81L65 44L90 81Q130 113 98 140V180M59 49V19M48 30H76M25 340V252H53V340M94 338V258H115V338M138 340L180 143L224 340",
+    ground:
+      "M0 385Q100 354 200 387T420 389T640 390T840 376M0 425Q160 399 310 432",
+  },
+  AFRICAN: {
+    color: "#cca16a",
+    path: "M90 340L103 166Q45 189 11 152Q0 120 45 102Q58 60 109 83Q149 40 188 87Q240 81 231 132Q219 174 163 165L176 340ZM114 160L124 123M146 163L161 123M0 340L0 302L58 279L102 302",
+    ground:
+      "M0 387Q120 355 240 390T520 387T800 390M0 430L140 409L250 432M610 426L710 400L800 418",
+  },
+};
+
+export function BiomeSceneSilhouette({ biome }: { biome: BiomeType }) {
+  const scene = silhouettes[biome];
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 800 450"
+      preserveAspectRatio="xMidYMid slice"
+      className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.18]"
+    >
+      <g
+        stroke={scene.color}
+        strokeWidth="0.8"
+        fill="none"
+        strokeLinejoin="round"
+      >
+        <path d={scene.path} fill={scene.color} fillOpacity="0.28" />
+        <path
+          d={scene.path}
+          transform="translate(800 0) scale(-1 1)"
+          fill={scene.color}
+          fillOpacity="0.28"
+        />
+        <path d={scene.ground} opacity="0.6" />
+      </g>
+    </svg>
+  );
+}

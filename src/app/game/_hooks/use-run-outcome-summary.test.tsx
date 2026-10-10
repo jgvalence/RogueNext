@@ -55,7 +55,7 @@ describe("useRunOutcomeSummary", () => {
     expect(result.current.newlyUnlockedRelics).toEqual([]);
   });
 
-  it("applies repeated-difficulty reward reduction to the displayed summary", () => {
+  it("displays full normal resources for repeated difficulty", () => {
     const state = makeTestRunState({
       status: "VICTORY",
       selectedDifficultyLevel: 2,
@@ -74,7 +74,7 @@ describe("useRunOutcomeSummary", () => {
       })
     );
 
-    expect(result.current.earnedResourceMultiplier).toBe(0.2);
-    expect(result.current.earnedResourcesSummary).toEqual([["PAGES", 1]]);
+    expect(result.current.earnedResourceMultiplier).toBe(1);
+    expect(result.current.earnedResourcesSummary).toEqual([["PAGES", 6], ["RUNES", 1]]);
   });
 });

@@ -1,0 +1,1 @@
+﻿import fs from 'node:fs';import {connect,stateScript} from './cdp.mjs';const b=await connect();await b.cdp('Network.setBlockedURLs',{urls:['*webpack-hmr*']});fs.writeFileSync('.local-e2e/before-server-restart.json',JSON.stringify(await b.js(stateScript)));console.log(await b.js('document.body.innerText.slice(-1800)'));b.close();

@@ -9,7 +9,10 @@ import type {
 } from "@/game/schemas/entities";
 import type { Effect } from "@/game/schemas/effects";
 import { buffMeta } from "../shared/buff-meta";
-import { boostEffectsForUpgrade } from "@/game/engine/card-upgrades";
+import {
+  boostEffectsForUpgrade,
+  getCardUpgrade,
+} from "@/game/engine/card-upgrades";
 import {
   calculateDamage,
   computeDamageFromTargetBlock,
@@ -2354,7 +2357,8 @@ export function getPreviewEffectsForSelectedCard(
   definition: CardDefinition,
   upgraded: boolean,
   useInked: boolean,
-  attackBonus: number
+  attackBonus: number,
+  upgradeBranch: import("@/game/schemas/cards").CardUpgradeBranch = "A"
 ): Effect[] {
   const isUsingInkedVariant = Boolean(useInked && definition.inkedVariant);
   let effects = isUsingInkedVariant
@@ -2364,10 +2368,8 @@ export function getPreviewEffectsForSelectedCard(
   if (upgraded) {
     if (isUsingInkedVariant) {
       effects = boostEffectsForUpgrade(effects);
-    } else if (definition.upgrade) {
-      effects = definition.upgrade.effects;
     } else {
-      effects = boostEffectsForUpgrade(effects);
+      effects = getCardUpgrade(definition, upgradeBranch).effects;
     }
   }
 

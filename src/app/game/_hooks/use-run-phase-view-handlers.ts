@@ -6,8 +6,9 @@ import {
   type MutableRefObject,
   type SetStateAction,
 } from "react";
-import { endRunAction } from "@/server/actions/run";
+import { endRunAction } from "../_services/run-save-client";
 import type { RunState } from "@/game/schemas/run-state";
+import type { CardUpgradeBranch } from "@/game/schemas/cards";
 import type { GameAction } from "../_providers/game-reducer";
 import type { GamePhase } from "../_services/run-phase";
 
@@ -44,13 +45,15 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
 }: UseRunPhaseViewHandlersParams<TEndPayload>) {
   const handleEndRun = useCallback(
     async (status: RunEndStatus, redirectTo: string = "/library") => {
-      if (!runEndedRef.current) {
-        runEndedRef.current = true;
-        await endRunAction({
-          runId: stateRef.current.runId,
-          status,
-          ...buildEndRunPayload(),
-        });
+      runEndedRef.current = true;
+      const result = await endRunAction({
+        runId: stateRef.current.runId,
+        status,
+        ...buildEndRunPayload(),
+      });
+      if (!result.success) {
+        runEndedRef.current = false;
+        return;
       }
       pushToRoute(redirectTo);
     },
@@ -59,13 +62,15 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
 
   const handleAbandonRun = useCallback(async () => {
     cancelEnemyTurnFlow();
-    if (!runEndedRef.current) {
-      runEndedRef.current = true;
-      await endRunAction({
-        runId: stateRef.current.runId,
-        status: "ABANDONED",
-        ...buildEndRunPayload(),
-      });
+    runEndedRef.current = true;
+    const result = await endRunAction({
+      runId: stateRef.current.runId,
+      status: "ABANDONED",
+      ...buildEndRunPayload(),
+    });
+    if (!result.success) {
+      runEndedRef.current = false;
+      return;
     }
     setPhase("ABANDONED");
   }, [
@@ -103,8 +108,11 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
   }, [dispatch, setPhase]);
 
   const handleSpecialUpgrade = useCallback(
-    (cardInstanceId: string) => {
-      dispatch({ type: "UPGRADE_CARD", payload: { cardInstanceId } });
+    (cardInstanceId: string, upgradeBranch: CardUpgradeBranch) => {
+      dispatch({
+        type: "UPGRADE_CARD",
+        payload: { cardInstanceId, upgradeBranch },
+      });
       setPhase("MAP");
     },
     [dispatch, setPhase]
@@ -182,8 +190,11 @@ export function useRunPhaseViewHandlers<TEndPayload extends object>({
   }, [dispatch, setPhase]);
 
   const handlePreBossUpgrade = useCallback(
-    (cardInstanceId: string) => {
-      dispatch({ type: "UPGRADE_CARD", payload: { cardInstanceId } });
+    (cardInstanceId: string, upgradeBranch: CardUpgradeBranch) => {
+      dispatch({
+        type: "UPGRADE_CARD",
+        payload: { cardInstanceId, upgradeBranch },
+      });
       setPhase("MAP");
     },
     [dispatch, setPhase]

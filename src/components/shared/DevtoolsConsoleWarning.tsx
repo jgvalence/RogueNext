@@ -20,11 +20,11 @@ const BODY_STYLE = [
 ].join(";");
 
 function logWarning(): void {
-  console.log(
+  console.warn(
     "%cAttention: la console n'est pas un menu de triche",
     TITLE_STYLE
   );
-  console.log(
+  console.warn(
     "%cModifier l'etat du jeu ici peut casser les combats, corrompre la sauvegarde et produire des bugs difficiles a diagnostiquer. Continuez a vos risques et perils.",
     BODY_STYLE
   );

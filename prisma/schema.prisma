@@ -229,6 +229,10 @@ model RunSummary {
   deckSize         Int      @default(0)
   unlockedStoryCount Int    @default(0)
   durationMs       Int      @default(0)
+  runConditionId   String?
+  metaBonuses      Json     @default("{}")
+  analytics        Json     @default("{}")
+  finalDeck        Json     @default("[]")
 
   createdAt        DateTime @default(now())
 

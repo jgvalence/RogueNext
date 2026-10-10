@@ -1,0 +1,196 @@
+/* Component hooks keep the card frame consistent in hand, rewards and previews. */
+[data-card-type] {
+  --card-thread: #97a7b2;
+  --card-leather: #17222c;
+  --card-metal: #aa9270;
+}
+[data-card-type="ATTACK"] { --card-thread: #d8997f; --card-leather: #392026; }
+[data-card-type="SKILL"] { --card-thread: #89bccb; --card-leather: #162d38; }
+[data-card-type="POWER"] { --card-thread: #c3a3d8; --card-leather: #30233b; }
+[data-card-type="CURSE"] { --card-thread: #d68d9b; --card-leather: #351d30; }
+[data-card-rarity="UNCOMMON"] { --card-metal: #a4bcc0; }
+[data-card-rarity="RARE"] { --card-metal: #e5bd73; }
+[data-game-card][data-card-type],
+[data-mobile-hand-card][data-card-type] {
+  border: 1px solid var(--card-metal);
+  border-radius: 9px 14px 9px 9px;
+  background: #10161c;
+}
+[data-card-type] > .card-binding {
+  background: linear-gradient(105deg, #0007, transparent 12%, #ffffff04 50%, #0004),
+    linear-gradient(180deg, var(--card-leather), #10161c 80%);
+  opacity: 1;
+}
+[data-game-card] .card-inner-frame {
+  border-color: color-mix(in srgb, var(--card-metal) 45%, transparent);
+  border-radius: 5px 10px 5px 5px;
+  border-left-width: 3px;
+}
+[data-card-type] .card-cost {
+  color: #f9ebc9;
+  border: 2px solid var(--card-metal);
+  background: radial-gradient(circle at 35% 25%, #526878, #132431 70%);
+  box-shadow: 0 0 0 2px #0c131c, 0 3px 7px #0008, inset 0 0 0 2px #ffffff14;
+  font-family: Georgia, "Times New Roman", serif;
+  font-variant-numeric: tabular-nums;
+}
+[data-game-card] .card-header h3 { color: #faefd7; text-shadow: 0 2px 3px #0008; }
+[data-game-card] .card-header p { color: var(--card-thread); letter-spacing: .16em; }
+[data-game-card="lg"] .card-header { display: block; }
+[data-game-card="lg"] .card-header > div:last-child {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-top: 5px;
+}
+[data-game-card] .card-art-window {
+  border: 1px solid var(--card-metal);
+  border-radius: 3px 12px 3px 3px;
+  box-shadow: 0 3px 8px #0005;
+}
+[data-game-card] .card-rules {
+  min-height: 0;
+  border: 1px solid #cbb58d;
+  border-radius: 2px 2px 8px 2px;
+  background: radial-gradient(ellipse at top, #f4e7cb, #d6c19a);
+  box-shadow: inset 3px 0 #9b795738, inset 0 0 12px #91714c26;
+}
+[data-game-card] .card-rules > div:first-child { color: #302821; }
+[data-game-card] .card-rules .cursor-help {
+  color: #49371f;
+  background: transparent;
+  text-decoration: underline dotted #7a5c34;
+  text-underline-offset: 2px;
+}
+[data-game-card] .card-rules > .pointer-events-none { display: none; }
+[data-game-card] .card-scrollbar ~ .pointer-events-none { height: 8px; }
+[data-game-card] .card-ink-panel {
+  border-radius: 3px 3px 9px 3px;
+  border-color: #609fa66b;
+  border-left: 3px solid #79c2ca;
+  background: linear-gradient(110deg, #11313c, #14212d);
+}
+[data-game-card] div.card-ink-panel { opacity: .85; }
+[data-game-card] button.card-ink-panel:hover { background: #1b414e; }
+[data-game-card][data-card-selected="true"],
+[data-mobile-hand-card][data-card-selected="true"] { border-color: #ffe3a0; }
+[data-card-type][data-card-inked="true"] .card-cost { border-color: #9be5ed; }
+[data-mobile-hand-card] .mobile-card-art { opacity: .8; }
+[data-mobile-hand-card] p { font-family: Georgia, "Times New Roman", serif; }
+.combat-view .mobile-card-preview .card-art-window { height: clamp(110px, 22dvh, 186px); }
+.card-art-zoom.rogue-button.ant-btn {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  z-index: 25;
+  height: 32px;
+  padding: 0 8px;
+  color: #fff0d2;
+  background: #0a1423ed;
+  border: 1px solid #b59a66;
+  font-size: 11px;
+}
+.card-art-zoom.rogue-button.ant-btn:hover { color: #fff; background: #25374b; }
+@media (max-width: 640px) {
+  [data-game-card="md"] .card-art-zoom-label { display: none; }
+}
+.card-art-viewer .card-art-full {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(100dvh - 180px);
+  object-fit: contain;
+  background: #05090f;
+}
+
+/* Ant Design still owns semantics, loading and disabled behavior. */
+.rogue-button.ant-btn {
+  border-radius: 5px;
+  letter-spacing: .025em;
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+.rogue-button.ant-btn-default:not(.ant-btn-dangerous):not(:disabled) {
+  color: #f6e9cf;
+  border-color: #847353;
+  background: linear-gradient(180deg, #263442, #15212c);
+  box-shadow: inset 0 1px #ffffff12, inset 0 -2px #0004, 0 3px 8px #0003;
+}
+.rogue-button.ant-btn-primary:not(.ant-btn-dangerous):not(:disabled) {
+  color: #281b0e;
+  border-color: #efd49a;
+  background: linear-gradient(180deg, #edd6a1, #c49a54);
+  box-shadow: inset 0 1px #fff6, inset 0 -2px #78502055, 0 3px 10px #0004;
+  text-shadow: 0 1px #ffffff30;
+}
+.rogue-button.ant-btn-dangerous:not(:disabled) {
+  color: #ffded4;
+  border-color: #aa6960;
+  background: linear-gradient(180deg, #622f34, #392027);
+}
+.rogue-button.ant-btn:disabled {
+  color: #a79e8d;
+  border-color: #4b4c4b;
+  background: #1b2229;
+  box-shadow: none;
+  text-shadow: none;
+}
+.rogue-button.ant-btn:focus-visible {
+  outline: 2px solid #f0d293;
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  .rogue-button.ant-btn-default:not(:disabled):hover {
+    border-color: #d6b67b;
+    background: linear-gradient(180deg, #344554, #1a2b38);
+  }
+  .rogue-button.ant-btn-primary:not(.ant-btn-dangerous):not(:disabled):hover {
+    border-color: #ffe9b8;
+    background: linear-gradient(180deg, #fae9c1, #d9af68);
+  }
+  .rogue-button.ant-btn-dangerous:not(:disabled):hover { background: #713a40; }
+}
+.rogue-button.ant-btn:not(:disabled):active { box-shadow: inset 0 2px 5px #0005; }
+/* Combat themes supply important utility colors; retain geometry and tutorial rings. */
+.combat-view .combat-end-turn.ant-btn:not(:disabled) {
+  color: #281b0e !important;
+  border: 1px solid #efd49a !important;
+  background: linear-gradient(180deg, #edd6a1, #c49a54) !important;
+  text-shadow: 0 1px #ffffff30;
+}
+.combat-view .combat-end-turn.ant-btn:disabled {
+  color: #a79e8d !important;
+  border-color: #4b4c4b !important;
+  background: #1b2229 !important;
+}
+.combat-view .combat-resources > button,
+.combat-view .combat-tools > button:not(.combat-end-turn) {
+  border-color: #847353;
+  background: linear-gradient(180deg, #263442, #15212c);
+  border-radius: 5px;
+  box-shadow: inset 0 1px #ffffff12, inset 0 -2px #0004;
+}
+.combat-view .combat-energy-panel,
+.combat-view .combat-tools > div:first-child { border-color: #9c845855; border-radius: 6px; }
+.rogue-panel.ant-card,
+.rogue-modal.ant-modal .ant-modal-content {
+  border: 1px solid #8b78554f;
+  border-radius: 8px;
+  background: linear-gradient(130deg, #1a2632, #0d1721 65%);
+  box-shadow: inset 0 1px #ead2a112, 0 12px 32px #0005;
+}
+.rogue-panel.ant-card .ant-card-head {
+  border-bottom: 1px solid #bfa27640;
+  background: linear-gradient(90deg, #bfa2760d, transparent);
+}
+.rogue-panel .ant-card-head-title,
+.rogue-modal.ant-modal .ant-modal-title {
+  color: #f3dfb8;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  font-weight: 400;
+}
+.rogue-modal.ant-modal .ant-modal-header { background: transparent; padding-bottom: 12px; border-bottom: 1px solid #bfa27640; }
+.rogue-modal.ant-modal .ant-modal-footer { padding-top: 12px; border-top: 1px solid #bfa27640; }
+@media (prefers-reduced-motion: reduce) {
+  .rogue-button.ant-btn { transition: none; }
+}

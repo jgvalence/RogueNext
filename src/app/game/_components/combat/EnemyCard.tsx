@@ -17,6 +17,7 @@ const DEBUFF_TYPES = new Set([
   "STONEBOUND",
 ]);
 import { cn } from "@/lib/utils/cn";
+import { scaleCombatDelay } from "@/lib/combat-speed";
 import type {
   EnemyState,
   EnemyDefinition,
@@ -31,6 +32,7 @@ import { Tooltip } from "../shared/Tooltip";
 import { buffMeta } from "../shared/buff-meta";
 // TEMPORARY: centralized asset registry - swap paths in src/lib/assets.ts when real art is ready
 import { getEnemyImageSrc } from "@/lib/assets";
+import { EnemyArtwork } from "../shared/EnemyArtwork";
 import { playSound } from "@/lib/sound";
 import { useTranslation } from "react-i18next";
 import {
@@ -121,7 +123,7 @@ export function EnemyCard({
     if (!wasDead.current && nowDead) {
       setIsDying(true);
       wasDead.current = true;
-      const timer = setTimeout(() => setIsDying(false), 500);
+      const timer = setTimeout(() => setIsDying(false), scaleCombatDelay(500));
       return () => clearTimeout(timer);
     }
     wasDead.current = nowDead;
@@ -139,9 +141,9 @@ export function EnemyCard({
     if (!lastBuff) return;
     const flashType = DEBUFF_TYPES.has(lastBuff.type) ? "debuff" : "buff";
     setBuffFlash(flashType);
-    const timer = setTimeout(() => setBuffFlash(null), 600);
+    const timer = setTimeout(() => setBuffFlash(null), scaleCombatDelay(600));
     return () => clearTimeout(timer);
-  }, [enemy.buffs.length, enemy.currentHp]);
+  }, [enemy.buffs, enemy.currentHp]);
 
   // Flash on boss phase 2 trigger
   useEffect(() => {
@@ -150,7 +152,10 @@ export function EnemyCard({
     if (!prevPhase2Ref.current && isPhase2) {
       setBossPhaseFlash(true);
       prevPhase2Ref.current = true;
-      const timer = setTimeout(() => setBossPhaseFlash(false), 1100);
+      const timer = setTimeout(
+        () => setBossPhaseFlash(false),
+        scaleCombatDelay(1100)
+      );
       return () => clearTimeout(timer);
     }
     prevPhase2Ref.current = isPhase2;
@@ -207,6 +212,21 @@ export function EnemyCard({
         borderClass,
         interactClass
       )}
+      role={onClick ? "button" : undefined}
+      tabIndex={!isDead && onClick ? 0 : undefined}
+      aria-disabled={isDead || isActing}
+      aria-label={`${definition.name}, ${enemy.currentHp}/${enemy.maxHp} PV`}
+      onKeyDown={(event) => {
+        if (
+          event.target === event.currentTarget &&
+          (event.key === "Enter" || event.key === " ") &&
+          !isDead &&
+          !isActing
+        ) {
+          event.preventDefault();
+          onClick?.();
+        }
+      }}
       onClick={!isDead && !isActing ? onClick : undefined}
     >
       {/* Damage popups */}
@@ -256,11 +276,11 @@ export function EnemyCard({
       >
         {/* Real art (hidden on error -> falls back to emoji below) */}
         {artImageSrc && !artFailed && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <EnemyArtwork
+            enemyId={definition.id}
             src={artImageSrc}
             alt={localizedEnemyName}
-            className="absolute inset-0 h-full w-full object-cover object-top"
+            className="absolute inset-0 h-full w-full object-cover object-center"
             onError={() => setArtFailed(true)}
           />
         )}

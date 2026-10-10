@@ -8,5 +8,5 @@ export type RogueCardProps = CardProps;
 export const RogueCardMeta = Card.Meta;
 
 export function RogueCard({ className, ...props }: RogueCardProps) {
-  return <Card className={cn(className)} {...props} />;
+  return <Card className={cn("rogue-panel", className)} {...props} />;
 }

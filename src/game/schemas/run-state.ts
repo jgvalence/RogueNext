@@ -1,9 +1,12 @@
 ﻿import { z } from "zod";
+import { MerchantCheckpointSchema } from "./merchant-checkpoint";
+import { PendingRewardsSchema } from "./pending-rewards";
 import { RoomType, RunStatus, BiomeType } from "./enums";
 import { CombatStateSchema } from "./combat-state";
 import { CardInstanceSchema } from "./cards";
 import { ComputedMetaBonusesSchema } from "./meta";
 import { UsableItemInstanceSchema } from "./items";
+import { RunAnalyticsSchema } from "./analytics";
 
 const CharacterCardUnlockProgressSchema = z.object({
   enteredBiomes: z.record(z.string(), z.number().int()).default({}),
@@ -56,6 +59,10 @@ export type RoomNode = Omit<
 
 export const RunStateSchema = z.object({
   runId: z.string(),
+  // Optimistic save revision. Legacy snapshots start at zero.
+  saveRevision: z.number().int().nonnegative().optional(),
+  pendingRewards: PendingRewardsSchema.optional(),
+  merchantCheckpoint: MerchantCheckpointSchema.optional(),
   seed: z.string(),
   status: RunStatus,
   runStartedAtMs: z.number().int().nonnegative().default(0),
@@ -65,6 +72,7 @@ export const RunStateSchema = z.object({
   gold: z.number().int().default(0),
   maxGoldReached: z.number().int().default(0),
   merchantRerollCount: z.number().int().min(0).default(0),
+  analytics: RunAnalyticsSchema.default({}),
   playerMaxHp: z.number().int(),
   playerCurrentHp: z.number().int(),
   deck: z.array(CardInstanceSchema),
@@ -154,8 +162,9 @@ export const RunStateSchema = z.object({
 });
 export type RunState = Omit<
   z.infer<typeof RunStateSchema>,
-  "map" | "relicRunFlags"
+  "map" | "relicRunFlags" | "combat"
 > & {
   map: RoomNode[][];
   relicRunFlags?: Record<string, boolean>;
+  combat: import("./combat-state").CombatState | null;
 };

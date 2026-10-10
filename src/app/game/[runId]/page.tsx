@@ -11,6 +11,7 @@ import {
   useEnemyDefinitions,
 } from "@/lib/query/hooks/use-game-data";
 import { GameProvider, useGame } from "../_providers/game-provider";
+import { getPendingRewards, restoreCombatRewards, checkpointRewards } from "../_services/reward-checkpoint";
 import { useAutoSave } from "../_hooks/use-auto-save";
 import { useActiveRunDuration } from "../_hooks/use-active-run-duration";
 import { useCombatTurnFlow } from "../_hooks/use-combat-turn-flow";
@@ -44,7 +45,8 @@ import { GAME_CONSTANTS } from "@/game/constants";
 import { getCharacterById } from "@/game/data/characters";
 import { RogueButton } from "@/components/ui/rogue";
 import { cn } from "@/lib/utils/cn";
-import { endRunAction } from "@/server/actions/run";
+import { endRunAction } from "../_services/run-save-client";
+import type { MerchantVisit } from "@/game/schemas/merchant-checkpoint";
 import type { CombatRewards } from "@/game/engine/rewards";
 import {
   ATLAS_OF_REALMS_RELIC_ID,
@@ -150,16 +152,17 @@ function GameContent({
   const [forceEventWithRelicStable, setForceEventWithRelicStable] = useState(
     () => state.floor === 1 && state.currentRoom === 2
   );
-  const [rewards, setRewards] = useState<CombatRewards | null>(null);
-  const [isBossRewards, setIsBossRewards] = useState(false);
-  const [isEliteRewards, setIsEliteRewards] = useState(false);
+  const initialRewardCheckpoint = useRef(getPendingRewards(state)).current;
+  const [rewards, setRewards] = useState<CombatRewards | null>(() => restoreCombatRewards(initialRewardCheckpoint, cardDefs));
+  const [isBossRewards, setIsBossRewards] = useState(initialRewardCheckpoint?.isBoss ?? false);
+  const [isEliteRewards, setIsEliteRewards] = useState(initialRewardCheckpoint?.isElite ?? false);
   const rerollsTotal = (state.metaBonuses?.rewardRerolls ?? 0) + 1;
-  const [rerollsRemaining, setRerollsRemaining] = useState(rerollsTotal);
-  const [rerollCounter, setRerollCounter] = useState(0);
+  const [rerollsRemaining, setRerollsRemaining] = useState(initialRewardCheckpoint?.rerollsRemaining ?? rerollsTotal);
+  const [rerollCounter, setRerollCounter] = useState(initialRewardCheckpoint?.rerollCounter ?? 0);
   const [rerollGenerator, setRerollGenerator] = useState<
     | ((rerollIndex: number) => import("@/game/schemas/cards").CardDefinition[])
     | null
-  >(null);
+  >(() => initialRewardCheckpoint ? (index: number) => (initialRewardCheckpoint.rerollCardIds[index] ?? []).flatMap(id => cardDefs.has(id) ? [cardDefs.get(id)!] : []) : null);
   const [firstCombatTutorialDismissed, setFirstCombatTutorialDismissed] =
     useState(false);
   const [firstRewardTutorialDismissed, setFirstRewardTutorialDismissed] =
@@ -193,6 +196,11 @@ function GameContent({
     useActiveRunDuration(state.activePlayMs);
   const buildEndRunPayload = useCallback(
     () => ({
+      finalState: buildStateSnapshot({
+        ...stateRef.current,
+        pendingRewards: undefined,
+        merchantCheckpoint: undefined,
+      }),
       runDurationMs: getCurrentDurationMs(),
       earnedResources: isInfiniteMode ? {} : stateRef.current.earnedResources,
       startMerchantSpentResources:
@@ -211,7 +219,7 @@ function GameContent({
         gold: stateRef.current.gold,
       },
     }),
-    [getCurrentDurationMs, isInfiniteMode]
+    [buildStateSnapshot, getCurrentDurationMs, isInfiniteMode]
   );
 
   const newBestiaryEntryNames = useMemo(
@@ -222,7 +230,19 @@ function GameContent({
     [newBestiaryEntries, enemyDefs]
   );
 
-  useAutoSave(state, buildStateSnapshot);
+  const initialMerchantCheckpoint = useRef(state.merchantCheckpoint).current;
+  const [merchantCheckpoint, setMerchantCheckpoint] = useState(state.merchantCheckpoint);
+  const handleMerchantCheckpoint = useCallback((snapshot: MerchantVisit) => {
+    setMerchantCheckpoint({...snapshot, floor: state.floor, room: state.currentRoom});
+  }, [state.floor, state.currentRoom]);
+  const autosaveState = useMemo(() => ({
+    ...state,
+    merchantCheckpoint: phase === "MERCHANT" && merchantCheckpoint?.floor === state.floor && merchantCheckpoint.room === state.currentRoom ? merchantCheckpoint : undefined,
+    pendingRewards: phase === "REWARDS" && rewards
+      ? checkpointRewards(state, rewards, isBossRewards, isEliteRewards, rerollsRemaining, rerollCounter, rerollGenerator)
+      : undefined,
+  }), [state, phase, rewards, isBossRewards, isEliteRewards, rerollsRemaining, rerollCounter, rerollGenerator, merchantCheckpoint]);
+  const { saveError, retrySave } = useAutoSave(autosaveState, buildStateSnapshot);
 
   // Music — start/stop based on phase, clean up on unmount
   useEffect(() => {
@@ -442,18 +462,23 @@ function GameContent({
     setNewBestiaryEntries,
     setRerollGenerator,
     onCombatLost: cancelEnemyTurnFlow,
-    onScriptedFirstRunDefeat: () => router.push("/library"),
+    onScriptedFirstRunDefeat: () => setPhase("DEFEAT"),
   });
 
-  const queueVictoryRunEnd = useCallback(() => {
-    if (runEndedRef.current) return;
+  const [victoryEndPending, setVictoryEndPending] = useState(false);
+  const queueVictoryRunEnd = useCallback(() => setVictoryEndPending(true), []);
+  useEffect(() => {
+    if (!victoryEndPending || runEndedRef.current) return;
     runEndedRef.current = true;
     void endRunAction({
-      runId: stateRef.current.runId,
+      runId: state.runId,
       status: "VICTORY",
       ...buildEndRunPayload(),
+    }).then((result) => {
+      if (!result.success) runEndedRef.current = false;
+      setVictoryEndPending(false);
     });
-  }, [buildEndRunPayload]);
+  }, [victoryEndPending, state, buildEndRunPayload]);
 
   // After rewards, go back to map — or biome select — or victory
   const {
@@ -465,6 +490,7 @@ function GameContent({
     bossCardPicked,
   } = useRewardPhaseHandlers({
     dispatch,
+    rewards,
     isBossRewards,
     hasPendingBiomeChoices: state.pendingBiomeChoices !== null,
     queueVictoryRunEnd,
@@ -473,7 +499,7 @@ function GameContent({
   });
 
   // Reset reroll state each time a new reward screen opens
-  const prevRewardsRef = useRef<CombatRewards | null>(null);
+  const prevRewardsRef = useRef<CombatRewards | null>(rewards);
   if (rewards !== null && prevRewardsRef.current === null) {
     setRerollsRemaining(rerollsTotal);
     setRerollCounter(0);
@@ -484,10 +510,26 @@ function GameContent({
     if (!rerollGenerator || rerollsRemaining <= 0) return;
     const newIndex = rerollCounter + 1;
     const newChoices = rerollGenerator(newIndex);
+    dispatch({
+      type: "RECORD_REWARD_OFFER",
+      payload: {
+        key: `${state.floor}:${state.currentRoom}:reroll-${newIndex}`,
+        cards: newChoices.map((card) => card.id),
+        relics: rewards?.relicChoices.map((relic) => relic.id) ?? [],
+      },
+    });
     setRewards((prev) => (prev ? { ...prev, cardChoices: newChoices } : null));
     setRerollCounter(newIndex);
     setRerollsRemaining((r) => r - 1);
-  }, [rerollGenerator, rerollsRemaining, rerollCounter]);
+  }, [
+    rerollGenerator,
+    rerollsRemaining,
+    rerollCounter,
+    dispatch,
+    state.floor,
+    state.currentRoom,
+    rewards,
+  ]);
 
   const {
     handleEndRun,
@@ -537,6 +579,25 @@ function GameContent({
 
   return (
     <GameLayout elapsedMs={elapsedMs} onAbandonRun={handleAbandonRun}>
+      {saveError && (
+        <div
+          role="alert"
+          className="relative z-50 flex flex-wrap items-center gap-3 border border-amber-500 bg-amber-950 p-3 text-sm text-amber-50"
+        >
+          <span>{t(`run.saveErrors.${saveError}`)}</span>
+          <RogueButton
+            htmlType="button"
+            className="rounded border px-3 py-2 focus-visible:outline focus-visible:outline-2"
+            onClick={() =>
+              saveError === "conflict"
+                ? window.location.reload()
+                : void retrySave()
+            }
+          >
+            {t(saveError === "conflict" ? "run.reloadSave" : "run.retrySave")}
+          </RogueButton>
+        </div>
+      )}
       <div
         key={phase}
         className={cn(
@@ -772,6 +833,8 @@ function GameContent({
 
         {phase === "MERCHANT" && (
           <ShopView
+            initialCheckpoint={initialMerchantCheckpoint?.floor === state.floor && initialMerchantCheckpoint.room === state.currentRoom ? initialMerchantCheckpoint : undefined}
+            onCheckpointChange={handleMerchantCheckpoint}
             floor={state.floor}
             gold={state.gold}
             playerCurrentHp={state.playerCurrentHp}
@@ -884,6 +947,15 @@ function GameContent({
             earnedResourceMultiplier={earnedResourceMultiplier}
             newlyUnlockedCards={newlyUnlockedCards}
             newlyUnlockedRelics={newlyUnlockedRelics}
+            defeatEncounterType={
+              state.currentRoom === state.map.length - 1
+                ? "BOSS"
+                : state.map[state.currentRoom]?.some(
+                      (room) => room.completed && room.isElite
+                    ) || isFirstRunScriptedEliteRoom(state)
+                  ? "ELITE"
+                  : "NORMAL"
+            }
             onBackToLibrary={() => handleEndRun("DEFEAT")}
           />
         )}

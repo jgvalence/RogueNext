@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { computeMetaBonuses } from "@/game/engine/meta";
 
 describe("meta progression bonuses", () => {
-  it("caps permanent extra energy at +1 total", () => {
+  it("turns the early energy story into a smaller starting-ink advantage", () => {
     expect(
       computeMetaBonuses(["traite_de_lenergie", "traite_de_lenergie"])
-        .extraEnergyMax
-    ).toBe(1);
+        .startingInk
+    ).toBe(4);
   });
 
   it("grants only +1 opening hand card from grimoire_des_index", () => {
@@ -22,15 +22,16 @@ describe("meta progression bonuses", () => {
     ]);
 
     expect(bonuses.extraDraw).toBe(1);
-    expect(bonuses.extraEnergyMax).toBe(1);
+    expect(bonuses.extraEnergyMax).toBe(0);
+    expect(bonuses.startingInk).toBe(2);
     expect(bonuses.extraHandAtStart).toBe(1);
     expect(bonuses.lootLuck).toBe(1);
   });
 
-  it("uses the updated Celtic branch bonuses", () => {
+  it("uses the current Celtic branch sustain bonuses", () => {
     const bonuses = computeMetaBonuses(["mabinogion", "taliesin"]);
 
-    expect(bonuses.startingBlock).toBe(3);
+    expect(bonuses.healAfterCombatFlat).toBe(3);
     expect(bonuses.startingRegen).toBe(1);
   });
 
@@ -71,15 +72,16 @@ describe("meta progression bonuses", () => {
     expect(bonuses.extraCardRewardChoices).toBe(0);
   });
 
-  it("gives Lovecraftian a focus node instead of triple exhaust stacking", () => {
+  it("gives Lovecraftian resilience, focus, and loot quality", () => {
     const bonuses = computeMetaBonuses([
       "necronomicon_fragment",
       "cultes_innommables",
       "le_signe_des_anciens",
     ]);
 
-    expect(bonuses.exhaustKeepChance).toBe(50);
+    expect(bonuses.extraHp).toBe(10);
     expect(bonuses.startingFocus).toBe(1);
+    expect(bonuses.lootLuck).toBe(1);
   });
 
   it("turns the Aztec capstone into a power spike instead of more max HP", () => {

@@ -18,6 +18,71 @@ type RelicTextOverrides = Partial<
 const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
   en: {},
   fr: {
+    archivists_lens: {
+      name: "Lentille de l'Archiviste",
+      description:
+        "+2 Encre maximale. Le premier Pouvoir joue de chaque combat donne 2 Concentration et pioche 2 cartes.",
+    },
+    cernunnos_horn: {
+      name: "Cor de Cernunnos",
+      description:
+        "Commencez chaque combat avec 3 Epines. Terminez un tour sans Armure pour gagner 2 Epines.",
+    },
+    deathless_bone: {
+      name: "Os de l'Immortel",
+      description:
+        "+1 Energie maximale, mais ajoutez 1 Hebete a votre defausse au debut du combat.",
+    },
+    eye_of_maat: {
+      name: "Oeil de Maat",
+      description:
+        "+1 Energie maximale. Votre premiere carte de chaque tour accorde un bienfait selon son type.",
+    },
+    griot_drum: {
+      name: "Tambour du Griot",
+      description:
+        "Toutes les 3 cartes jouees dans un tour, gagnez une recompense selon le type de la troisieme.",
+    },
+    guardians_seal: {
+      name: "Sceau du Gardien",
+      description:
+        "+2 Encre maximale. Une fois par tour, depenser votre derniere Encre donne 1 Energie.",
+    },
+    quetzal_feather: {
+      name: "Plume de Quetzal",
+      description:
+        "La premiere carte de chaque tour donne 5 Armure, 2 Encres ou 1 Energie selon son type.",
+    },
+    solar_disc: {
+      name: "Disque solaire",
+      description:
+        "+1 Energie maximale. En fin de tour, convertissez jusqu'a 2 Energies non depensees en Encre.",
+    },
+    stone_pendant: {
+      name: "Pendentif de pierre",
+      description:
+        "Votre premiere Attaque de chaque tour contre un ennemi indemne donne 8 Armure.",
+    },
+    void_shard: {
+      name: "Eclat du Vide",
+      description:
+        "Toutes les 5 cartes jouees, gagnez 2 Concentration, mais ajoutez 1 Hebete a votre defausse.",
+    },
+    weavers_thread: {
+      name: "Fil de la Tisseuse",
+      description:
+        "Toutes les 3 Competences jouees dans un tour, piochez 1 carte et gagnez 2 Armure.",
+    },
+    yaga_skull: {
+      name: "Crane de Yaga",
+      description:
+        "Piochez 1 carte supplementaire par tour, mais ajoutez 1 Hebete a votre defausse tous les 3 tours.",
+    },
+    viking_hel_signet: {
+      name: "Sceau de Hel",
+      description:
+        "Au debut du combat, appliquez 1 Vulnerable a tous les ennemis. La premiere Attaque de chaque tour contre une cible Vulnerable donne 2 Epines.",
+    },
     // Older relic pool: explicit editorial cleanup for entries that still
     // came from mixed French/English source text.
     atlas_of_realms: {
@@ -41,7 +106,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     slime_ink_vial: {
       name: "Fiole d'encre visqueuse",
-      description: "Commencez chaque combat avec 6 Armure.",
+      description: "Commencez chaque combat avec 4 Armure et 2 Encres.",
     },
     apep_shadow_scale: {
       name: "Ecaille d'ombre d'Apep",
@@ -71,7 +136,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     spectral_inkwell: {
       name: "Encrier Spectral",
-      description: "Au debut du tour, gagnez 2 Encres.",
+      description: "Au debut de chaque tour, gagnez 1 Encre.",
     },
     ink_stamp: {
       name: "Cachet d'Encre",
@@ -87,7 +152,8 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     guardian_dune_amulet: {
       name: "Amulette des dunes gardiennes",
-      description: "Recuperez 1 PV au debut de chaque tour.",
+      description:
+        "Au debut de chaque tour, recuperez 2 PV si vous avez moins de la moitie de vos PV.",
     },
     hound_amber_fang: {
       name: "Croc d'ambre",
@@ -124,7 +190,12 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     apprentice_oak_scroll: {
       name: "Parchemin du chene initiatique",
-      description: "Recuperez 3 PV au debut de chaque tour.",
+      description: "Recuperez 2 PV au debut de chaque tour.",
+    },
+    phoenix_ash: {
+      name: "Cendre de phenix",
+      description:
+        "Au debut de chaque tour pair, recuperez 4 PV.",
     },
     beast_bog_heart: {
       name: "Coeur de la bete des marais",
@@ -304,11 +375,11 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     },
     celtic_cernunnos_antler: {
       description:
-        "Au debut du combat, gagnez 4 Epines et regenerez 1 PV par tour.",
+        "Commencez chaque combat avec 3 Epines. Votre premiere Competence de chaque tour vous soigne de 1 PV si vous avez des Epines.",
     },
     celtic_grove_compass: {
       description:
-        "Les salles Speciales offrent 1 option positive supplementaire.",
+        "Votre premiere carte Competence de chaque tour vous donne 3 Armure si vous avez des Epines.",
     },
     celtic_oak_geas: {
       description:
@@ -323,7 +394,7 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
         "Quand vous piochez au moins 3 cartes dans un tour, gagnez 1 Concentration.",
     },
     russian_domovoi_hearth: {
-      description: "Au debut de chaque tour, gagnez 1 Encre.",
+      description: "Commencez chaque combat avec 3 Encres.",
     },
     russian_midwinter_star: {
       description: "Tous les 3 tours, gagnez 1 Energie et piochez 1 carte.",
@@ -363,28 +434,74 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
       description:
         "A la 3e carte Competence d'un tour, gagnez 1 Energie et 6 Armure.",
     },
+    blighted_compass: {
+      name: "Compas Fletri",
+      description:
+        "Piochez 2 cartes supplementaires par tour, mais commencez chaque combat avec 2 Faiblesse.",
+    },
+    energy_crystal: {
+      name: "Cristal d'Energie",
+      description:
+        "Gagnez 1 Energie par tour, mais piochez 1 carte de moins par tour.",
+    },
+    dagdas_club: {
+      name: "Massue du Dagda",
+      description:
+        "Commencez chaque combat avec 2 Epines. Gagnez 1 Epine par tour.",
+    },
+    hels_crown: {
+      name: "Couronne de Hel",
+      description:
+        "Commencez chaque combat avec 1 Force. Votre premiere carte Competence de chaque tour vous donne 3 Armure et 1 Epine.",
+    },
+    hydra_scale: {
+      name: "Ecaille de l'Hydre",
+      description:
+        "Commencez chaque combat avec 2 Epines. Toutes les 3 cartes Attaque jouees dans un tour, gagnez 2 Epines.",
+    },
+    obsidian_mirror: {
+      name: "Miroir d'obsidienne",
+      description:
+        "La premiere carte Attaque de chaque tour applique 1 Vulnerable a sa cible.",
+    },
+    shub_idol: {
+      name: "Idole de Shub",
+      description:
+        "Commencez chaque combat avec 2 Force et 3 Encre, mais ajoutez 2 cartes Statut aleatoires a votre defausse.",
+    },
+    wolf_fang: {
+      name: "Croc du loup",
+      description:
+        "La premiere carte Attaque de chaque tour contre un ennemi sous la moitie de ses PV inflige 8 degats supplementaires.",
+    },
+    library_midnight_press: {
+      name: "Presse de Minuit",
+      description:
+        "Toutes les 10 cartes jouees en combat, piochez 2 cartes et gagnez 1 Encre.",
+    },
     scroll_of_marginalia: {
       name: "Parchemin de Marginalia",
-      description: "Commencez chaque combat avec +2 pioche.",
+      description:
+        "Piochez 1 carte supplementaire par tour, mais ajoutez 1 Hebete a votre defausse au debut du combat.",
     },
     bleeding_thistle: {
       name: "Chardon Sanglant",
       description:
-        "Au debut de chaque tour, appliquez 1 Saignement a tous les ennemis.",
+        "Votre première Attaque de chaque tour donne 3 Bouclier. Toutes les 3 Attaques du tour, appliquez 2 Saignement à tous les ennemis.",
     },
     venom_pouch: {
       name: "Bourse de Venin",
       description:
-        "Au debut de chaque tour, appliquez 1 Poison a tous les ennemis.",
+        "Toutes les 3 cartes Competence jouees dans un tour, appliquez 2 Poison a tous les ennemis.",
     },
     arcane_reservoir: {
       name: "Reservoir Arcanique",
-      description: "Gagnez 3 Encre au debut de chaque tour.",
+      description: "Pendant les tours impairs, gagnez 2 Encre.",
     },
     plague_vial: {
       name: "Fiole de Peste",
       description:
-        "Au debut du combat, appliquez 10 Poison a tous les ennemis.",
+        "Au debut du combat, appliquez 6 Poison a tous les ennemis. S'ils sont au moins 3, gagnez 1 Encre.",
     },
     endless_codex: {
       name: "Codex Infini",
@@ -399,12 +516,12 @@ const RELIC_TEXT_OVERRIDES: Record<RelicTextLocale, RelicTextOverrides> = {
     philosophers_tome: {
       name: "Tome du Philosophe",
       description:
-        "Commencez chaque combat avec +6 Force, +5 regeneration de PV par tour et +5 Encre.",
+        "Gagnez 1 Energie par tour et commencez le combat avec 2 Force, mais ajoutez une Malediction a votre defausse.",
     },
     eternal_flow: {
       name: "Flux Eternel",
       description:
-        "Au debut de chaque tour, gagnez +3 Encre, +2 Armure et +1 Force.",
+        "Cycle par tour : gagnez 3 Encre, puis 6 Armure, puis 2 Force.",
     },
     venom_grimoire: {
       name: "Grimoire Venimeux",

@@ -139,7 +139,7 @@ describe("aztec bosses", () => {
     ).toEqual([
       {
         family: "ATTACK",
-        value: 6,
+        value: 8,
       },
     ]);
 
@@ -155,7 +155,7 @@ describe("aztec bosses", () => {
       enemyDefs
     );
 
-    expect(state.player.currentHp).toBe(60);
+    expect(state.player.currentHp).toBe(59);
     expect(
       getTezcatlipocaUiState(getBoss(state, "tezcatlipoca_echo"))?.slots
     ).toHaveLength(0);
@@ -182,12 +182,12 @@ describe("aztec bosses", () => {
       getTezcatlipocaUiState(getBoss(state, "tezcatlipoca_echo"))?.slots
     ).toEqual([
       {
-        family: "INK",
-        value: 7,
+        family: "ATTACK",
+        value: 8,
       },
       {
-        family: "ATTACK",
-        value: 6,
+        family: "INK",
+        value: 7,
       },
     ]);
   });

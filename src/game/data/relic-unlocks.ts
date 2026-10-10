@@ -79,20 +79,14 @@ export const RELIC_UNLOCK_REQUIREMENTS_FROM_DOC: Record<
   weavers_thread: { enemyKills: { count: 3, enemyId: "anansi_weaver" } },
   wolf_fang: { enemyKills: { count: 3, enemyId: "fenrir" } },
   yaga_skull: { enemyKills: { count: 3, enemyId: "baba_yaga_hut" } },
-  library_margin_inkpot: { enemyKills: { count: 15, enemyId: "ink_slime" } },
-  library_prep_satchel: { enemyKills: { count: 15, enemyId: "paper_golem" } },
-  library_redaction_quill: {
-    enemyKills: { count: 15, enemyId: "quill_sprite" },
-  },
-  library_archon_stamp: { enemyKills: { count: 5, enemyId: "ink_archon" } },
-  library_colossus_plate: {
-    enemyKills: { count: 5, enemyId: "tome_colossus" },
-  },
-  library_guardian_chain: {
-    enemyKills: { count: 3, enemyId: "chapter_guardian" },
-  },
-  library_archivist_eye: { enemyKills: { count: 3, enemyId: "the_archivist" } },
-  library_catalog_discount: { totalRuns: 5 },
+  library_margin_inkpot: { wonRuns: 1 },
+  library_prep_satchel: { winsByDifficulty: { "1": 1 } },
+  library_redaction_quill: { wonRuns: 3 },
+  library_archon_stamp: { winsByDifficulty: { "2": 1 } },
+  library_colossus_plate: { winsByDifficulty: { "3": 1 } },
+  library_guardian_chain: { winsByDifficulty: { "4": 1 } },
+  library_archivist_eye: { winsByDifficulty: { "5": 1 } },
+  library_catalog_discount: { wonRuns: 2 },
   library_midnight_press: { wonRuns: 3 },
   viking_raider_horn: { enemyKills: { count: 15, enemyId: "draugr" } },
   viking_frost_torc: { enemyKills: { count: 15, enemyId: "frost_troll" } },
@@ -114,7 +108,7 @@ export const RELIC_UNLOCK_REQUIREMENTS_FROM_DOC: Record<
   },
   greek_medusa_eye: { enemyKills: { count: 3, enemyId: "medusa" } },
   greek_hydra_heart: { enemyKills: { count: 3, enemyId: "hydra_aspect" } },
-  greek_oracle_drachma: { totalRuns: 7 },
+  greek_oracle_drachma: { winsByDifficulty: { "1": 1 } },
   greek_stoa_treatise: { wonRuns: 4 },
   egypt_scarab_idol: { enemyKills: { count: 15, enemyId: "scarab_swarm" } },
   egypt_tomb_censer: { enemyKills: { count: 15, enemyId: "tomb_priest" } },
@@ -196,23 +190,44 @@ export const RELIC_UNLOCK_REQUIREMENTS_FROM_DOC: Record<
     enemyKills: { count: 3, enemyId: "soundiata_spirit" },
   },
   african_anansi_weave: { enemyKills: { count: 3, enemyId: "anansi_weaver" } },
-  african_griot_archive: { totalRuns: 7 },
+  african_griot_archive: { wonRuns: 3 },
   african_sunbird_refrain: { wonRuns: 4 },
   global_codex_prime: { wonRuns: 10, winsByDifficulty: { "4": 1 } },
   global_labyrinth_spiral: {
     bestGoldInSingleRun: 400,
     winsByDifficulty: { "5": 1 },
   },
-  scroll_of_marginalia: { winsByDifficulty: { "2": 1 } },
-  bleeding_thistle: { winsByDifficulty: { "2": 1 } },
-  venom_pouch: { winsByDifficulty: { "2": 1 } },
-  arcane_reservoir: { winsByDifficulty: { "3": 1 } },
-  plague_vial: { winsByDifficulty: { "3": 1 } },
-  endless_codex: { winsByDifficulty: { "4": 1 } },
-  crimson_covenant: { winsByDifficulty: { "4": 1 } },
-  philosophers_tome: { winsByDifficulty: { "5": 1 } },
-  eternal_flow: { winsByDifficulty: { "5": 1 } },
-  scribe_opening_glyph: {
+  venom_grimoire: {
+    characterWinsByDifficulty: { characterId: "griot", difficulty: 1 },
+  },
+  venom_pouch: {
+    characterWinsByDifficulty: { characterId: "griot", difficulty: 2 },
+  },
+  plague_vial: {
+    characterWinsByDifficulty: { characterId: "griot", difficulty: 3 },
+  },
+  crimson_covenant: {
+    characterWinsByDifficulty: { characterId: "griot", difficulty: 4 },
+  },
+  hemorrhage_codex: {
+    characterWinsByDifficulty: { characterId: "griot", difficulty: 5 },
+  },
+  cursed_diacrit: {
+    characterWinsByDifficulty: { characterId: "fou", difficulty: 1 },
+  },
+  arcane_reservoir: {
+    characterWinsByDifficulty: { characterId: "fou", difficulty: 2 },
+  },
+  endless_codex: {
+    characterWinsByDifficulty: { characterId: "fou", difficulty: 3 },
+  },
+  philosophers_tome: {
+    characterWinsByDifficulty: { characterId: "fou", difficulty: 4 },
+  },
+  eternal_flow: {
+    characterWinsByDifficulty: { characterId: "fou", difficulty: 5 },
+  },
+  ink_stamp: {
     characterWinsByDifficulty: { characterId: "scribe", difficulty: 1 },
   },
   scribe_last_word: {
@@ -227,7 +242,7 @@ export const RELIC_UNLOCK_REQUIREMENTS_FROM_DOC: Record<
   scribe_black_index: {
     characterWinsByDifficulty: { characterId: "scribe", difficulty: 5 },
   },
-  bibliothecaire_margin_tabs: {
+  bookmark: {
     characterWinsByDifficulty: {
       characterId: "bibliothecaire",
       difficulty: 1,

@@ -6,13 +6,19 @@ import { cn } from "@/lib/utils/cn";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
 import type { BiomeType } from "@/game/schemas/enums";
-import { COMBAT_BACKGROUNDS } from "@/lib/assets";
+import { COMBAT_BACKGROUNDS, COMBAT_BACKGROUND_FALLBACKS } from "@/lib/assets";
 import { FirstCombatTutorialOverlay } from "./first-combat-tutorial";
+import { BossMechanicsPanel } from "./BossMechanicsPanel";
+import { BiomeSceneSilhouette } from "./BiomeSceneSilhouette";
 import { CombatMobileGrid } from "./combat-mobile-grid";
 import { CombatDesktopGrid } from "./combat-desktop-grid";
-import { getCombatBiomeTheme } from "./combat-biome-theme";
+import {
+  getCombatBiomeTheme,
+  getCombatSceneDepthTheme,
+} from "./combat-biome-theme";
 
 interface CombatBattlefieldProps {
+  characterId?: string;
   biome: BiomeType;
   bgFailed: boolean;
   onBackgroundError: () => void;
@@ -76,6 +82,7 @@ interface CombatBattlefieldProps {
 }
 
 export function CombatBattlefield({
+  characterId,
   biome,
   bgFailed,
   onBackgroundError,
@@ -127,30 +134,97 @@ export function CombatBattlefield({
 }: CombatBattlefieldProps) {
   const { t } = useTranslation();
   const theme = getCombatBiomeTheme(biome);
+  const depthTheme = getCombatSceneDepthTheme(biome);
 
   return (
     <div
+      data-battlefield={biome}
       className={cn(
         "[@media(max-height:540px)]:py-0.75 relative flex min-h-0 flex-1 flex-col items-center justify-between overflow-hidden px-1.5 py-2 lg:px-6 lg:py-4 [@media(max-height:540px)]:px-1",
         theme.sceneBase
       )}
     >
-      {!bgFailed && (
-        // eslint-disable-next-line @next/next/no-img-element
+      <picture>
+        {!bgFailed && (
+          <source
+            media="(max-width: 1023px)"
+            srcSet={COMBAT_BACKGROUNDS[biome].replace(
+              "-v2.webp",
+              "-mobile-v2.webp"
+            )}
+          />
+        )}
         <img
-          src={COMBAT_BACKGROUNDS[biome]}
+          src={
+            bgFailed
+              ? COMBAT_BACKGROUND_FALLBACKS[biome]
+              : COMBAT_BACKGROUNDS[biome]
+          }
           alt=""
           aria-hidden
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-screen"
+          className="combat-scene-art pointer-events-none absolute inset-0 h-full w-full object-cover"
           onError={onBackgroundError}
         />
-      )}
+      </picture>
       <div
         className={cn(
-          "pointer-events-none absolute inset-0",
+          "combat-scene-atmosphere pointer-events-none absolute inset-0",
           theme.sceneAtmosphere
         )}
       />
+      {bgFailed && <BiomeSceneSilhouette biome={biome} />}
+      <div
+        aria-hidden="true"
+        data-testid="combat-horizon"
+        className={cn(
+          "pointer-events-none absolute inset-x-0 top-[38%] h-24 bg-gradient-to-b",
+          depthTheme.horizon
+        )}
+      />
+      <div
+        aria-hidden="true"
+        data-testid="combat-ground"
+        className={cn(
+          "pointer-events-none absolute inset-x-0 bottom-0 h-[48%] bg-gradient-to-b",
+          depthTheme.ground
+        )}
+      >
+        <div
+          className={cn(
+            "absolute inset-x-[8%] top-0 h-px bg-gradient-to-r",
+            depthTheme.groundLight
+          )}
+        />
+        <div className="absolute inset-x-[5%] top-[18%] h-[70%] rounded-[50%] border-t border-white/[0.035] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.035),transparent_68%)] [transform:perspective(420px)_rotateX(58deg)]" />
+      </div>
+      <div
+        aria-hidden="true"
+        data-testid="combat-atmosphere-motes"
+        className="pointer-events-none absolute inset-0 overflow-hidden motion-reduce:hidden"
+      >
+        {[
+          ["18%", "23%", "2px", "0s"],
+          ["34%", "14%", "1px", "1.7s"],
+          ["57%", "26%", "2px", "3.1s"],
+          ["76%", "17%", "1px", "0.8s"],
+          ["86%", "34%", "2px", "2.4s"],
+        ].map(([left, top, size, delay]) => (
+          <span
+            key={`${left}-${top}`}
+            className={cn(
+              "absolute animate-pulse rounded-full opacity-30 blur-[0.5px]",
+              depthTheme.motes
+            )}
+            style={{
+              left,
+              top,
+              width: size,
+              height: size,
+              animationDelay: delay,
+            }}
+          />
+        ))}
+      </div>
       <div
         className={cn(
           "pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b",
@@ -185,6 +259,8 @@ export function CombatBattlefield({
           {turnLabel}
         </span>
       </div>
+
+      <BossMechanicsPanel combat={combat} />
 
       <FirstCombatTutorialOverlay
         isVisible={isFirstCombatTutorialVisible}
@@ -241,6 +317,8 @@ export function CombatBattlefield({
         />
 
         <CombatDesktopGrid
+          characterId={characterId}
+          contactShadowClass={depthTheme.contactShadow}
           combat={combat}
           allySlots={allySlots}
           enemySlots={enemySlots}

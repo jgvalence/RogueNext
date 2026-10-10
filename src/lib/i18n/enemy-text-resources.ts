@@ -1,3 +1,5 @@
+import { priorityFrenchLore } from "./bestiary-priority-lore";
+import { bossGuides } from "@/game/data/boss-guides";
 import { enemyDefinitions } from "@/game/data/enemies";
 import type { EnemyDefinition } from "@/game/schemas/entities";
 import type { BiomeType, EnemyRole } from "@/game/schemas/enums";
@@ -222,6 +224,8 @@ function buildFrenchLoreEntries(
   definition: EnemyDefinition,
   localizedName: string
 ): string[] {
+  const bespoke = priorityFrenchLore[definition.id];
+  if (bespoke) return [bespoke[0], bossGuides[definition.id]?.fr ?? FR_ROLE_BEHAVIOR[definition.role], bespoke[1]];
   const intro = `${localizedName} est un ${getFrenchEncounterRank(definition)} issu ${FR_BIOME_CONTEXT[definition.biome]}. ${FR_ROLE_HINTS[definition.role]}`;
 
   const combatRead = definition.isBoss

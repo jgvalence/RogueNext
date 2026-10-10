@@ -16,8 +16,8 @@ Scaling actuel:
 - Multiplicateur biome:
   - `LIBRARY`: x1.5
   - autres biomes: x0.7
-- Bonus run gagne: x1.25 sur les ressources gagnees
-- Re-clear d'une difficulte deja validee: multiplicateur final x0.7
+- Premiere victoire globale a une difficulte: x1.25 sur les ressources gagnees
+- Re-clear d'une difficulte deja validee: multiplicateur final x1, sans penalite de repetition (correction du 9 octobre 2026)
 - Bonus cross-biome: 25% de chance de gagner +1 ressource d'un autre biome
 
 ## Histoires et bonus
@@ -117,6 +117,18 @@ Cadence de design actuelle:
 - seules quelques cartes Library / meta restent volontairement plus composees via `ALL_OF`
 
 Ce principe a ete renforce dans le pass du `2026-03-15` pour eviter qu'un build reste injouable faute d'une seule carte marquee trop tardive.
+
+Audit de cadence du `2026-08-04`:
+
+- le Scribe et la Bibliothecaire sont disponibles des la premiere run, avec deux styles d'apprentissage differents;
+- le Griot se debloque apres `3 runs` terminees;
+- le Fou se debloque apres `6 runs` terminees;
+- chaque personnage commence avec `11 cartes` dans son deck et `20 cartes` dans son pool de recompenses;
+- les premiers passages dans les biomes ouvrent les cartes d'introduction;
+- les victoires contre les elites ouvrent progressivement les cartes de liaison et de moteur;
+- le premier boss ouvre l'essentiel des cartes signatures;
+- les seconds boss, histoires et maitrises d'ennemis entretiennent la progression de long terme;
+- `npm run audit:unlocks` affiche la taille du pool a chaque jalon pour detecter les deserts ou les vagues excessives.
 
 ## Progression reliques
 

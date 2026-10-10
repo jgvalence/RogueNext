@@ -1,8 +1,12 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Cinzel } from "next/font/google";
-import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
+
+import type {
+  CardInstance,
+  CardDefinition,
+  CardUpgradeBranch,
+} from "@/game/schemas/cards";
 import { cn } from "@/lib/utils/cn";
 import {
   UpgradePreviewPortal,
@@ -15,8 +19,9 @@ import {
   localizeCardType,
 } from "@/lib/i18n/card-text";
 import { RogueButton } from "@/components/ui/rogue";
+import { CardActionModal } from "../shared/CardActionModal";
 
-const cinzel = Cinzel({ subsets: ["latin"], weight: ["400", "600", "700"] });
+const cinzel = { className: "font-serif" };
 
 interface PreBossRoomViewProps {
   playerCurrentHp: number;
@@ -24,7 +29,7 @@ interface PreBossRoomViewProps {
   deck: CardInstance[];
   cardDefs: Map<string, CardDefinition>;
   onHeal: () => void;
-  onUpgrade: (cardInstanceId: string) => void;
+  onUpgrade: (cardInstanceId: string, branch: CardUpgradeBranch) => void;
   onFight: () => void;
 }
 
@@ -65,26 +70,43 @@ export function PreBossRoomView({
   const choices = [
     {
       key: "heal",
+      icon: "♥",
       title: t("preBoss.healTitle"),
       desc: t("preBoss.healDesc"),
+      signal: t("preBoss.healSignal", {
+        amount: Math.max(0, playerMaxHp - playerCurrentHp),
+      }),
+      tone: "border-emerald-400/25 from-emerald-950/45 hover:!border-emerald-300/55",
+      iconTone: "text-emerald-200 border-emerald-300/25 bg-emerald-500/10",
       onClick: onHeal,
     },
     {
       key: "upgrade",
+      icon: "✒",
       title: t("preBoss.upgradeTitle"),
       desc: t("preBoss.upgradeDesc"),
+      signal: t("preBoss.upgradeSignal"),
+      tone: "border-sky-400/25 from-sky-950/45 hover:!border-sky-300/55",
+      iconTone: "text-sky-200 border-sky-300/25 bg-sky-500/10",
       onClick: () => setMode("UPGRADE"),
     },
     {
       key: "hunt",
+      icon: "⚔",
       title: t("preBoss.huntTitle"),
       desc: t("preBoss.huntDesc"),
+      signal: t("preBoss.huntSignal"),
+      tone: "border-rose-400/30 from-rose-950/50 hover:!border-rose-300/60",
+      iconTone: "text-rose-200 border-rose-300/30 bg-rose-500/12",
       onClick: onFight,
     },
   ];
 
   return (
-    <div className="flex flex-col items-center gap-5 px-4 py-10">
+    <div className="relative isolate flex min-h-full flex-col items-center gap-5 overflow-hidden px-4 py-10">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_18%,rgba(244,63,94,0.13),transparent_38%),linear-gradient(180deg,#080910,#12090d_68%,#050609)]" />
+      <div className="from-rose-950/24 pointer-events-none absolute left-1/2 top-10 -z-10 h-[27rem] w-72 -translate-x-1/2 rounded-t-[9rem] border border-rose-300/10 bg-gradient-to-b to-black/60 shadow-[0_0_90px_rgba(136,19,55,0.16)]" />
+      <div className="pointer-events-none absolute left-1/2 top-24 -z-10 h-72 w-px -translate-x-1/2 bg-rose-200/10" />
       <Divider />
 
       <p
@@ -105,6 +127,10 @@ export function PreBossRoomView({
         {t("preBoss.title")}
       </h2>
 
+      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-rose-300/25 bg-rose-950/45 text-3xl text-rose-200 shadow-[0_0_35px_rgba(244,63,94,0.14)]">
+        ⚔
+      </div>
+
       <div className="h-px w-10 bg-gradient-to-r from-amber-500/60 to-transparent" />
 
       <p className="max-w-lg text-center text-sm italic leading-relaxed text-amber-200/60">
@@ -124,21 +150,28 @@ export function PreBossRoomView({
         {t("preBoss.hp", { current: playerCurrentHp, max: playerMaxHp })}
       </div>
 
-      <div className="flex w-full max-w-md flex-col gap-3">
+      <div className="grid w-full max-w-4xl gap-3 md:grid-cols-3">
         {choices.map((choice) => (
           <RogueButton
             key={choice.key}
             onClick={choice.onClick}
             type="text"
             className={cn(
-              "!group !flex !h-auto !flex-col !items-start !gap-1.5 !whitespace-normal !rounded !border !border-amber-500/15",
-              "!bg-amber-950/10 !px-6 !py-3 !text-left",
-              "!transition-all !duration-150",
-              "hover:!border-amber-500/35 hover:!bg-amber-950/30"
+              "!group !flex !h-auto !min-h-48 !flex-col !items-start !gap-3 !whitespace-normal !rounded-2xl !border",
+              "!to-slate-950/92 !bg-gradient-to-b !px-5 !py-5 !text-left !shadow-[0_18px_45px_rgba(0,0,0,0.28)]",
+              "!transition-all !duration-200 hover:!-translate-y-1",
+              choice.tone
             )}
           >
+            <span
+              className={cn(
+                "flex h-11 w-11 items-center justify-center rounded-xl border text-xl",
+                choice.iconTone
+              )}
+            >
+              {choice.icon}
+            </span>
             <div className="flex items-center gap-3">
-              <span className="inline-block h-[1.5px] w-0 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-0 transition-all duration-200 group-hover:w-4 group-hover:opacity-70" />
               <span
                 className={cn(
                   cinzel.className,
@@ -151,6 +184,14 @@ export function PreBossRoomView({
             <p className="break-words pl-0 text-xs italic leading-relaxed text-amber-200/45 [overflow-wrap:anywhere]">
               {choice.desc}
             </p>
+            <span
+              className={cn(
+                "mt-auto rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em]",
+                choice.iconTone
+              )}
+            >
+              {choice.signal}
+            </span>
           </RogueButton>
         ))}
       </div>
@@ -168,11 +209,15 @@ function UpgradeSubView({
 }: {
   deck: CardInstance[];
   cardDefs: Map<string, CardDefinition>;
-  onUpgrade: (cardInstanceId: string) => void;
+  onUpgrade: (cardInstanceId: string, branch: CardUpgradeBranch) => void;
   onBack: () => void;
 }) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<string | null>(null);
+  const [pendingUpgrade, setPendingUpgrade] = useState<{
+    instanceId: string;
+    def: CardDefinition;
+  } | null>(null);
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
   );
@@ -195,7 +240,8 @@ function UpgradeSubView({
   });
 
   return (
-    <div className="flex flex-col items-center gap-5 px-4 py-10">
+    <div className="relative isolate flex min-h-full flex-col items-center gap-5 overflow-hidden px-4 py-10">
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_18%,rgba(56,189,248,0.13),transparent_38%),linear-gradient(180deg,#070b12,#08111b_68%,#050609)]" />
       <Divider />
 
       <p
@@ -261,7 +307,12 @@ function UpgradeSubView({
       <div className="mt-2 flex gap-4">
         <RogueButton
           disabled={!selected}
-          onClick={() => selected && onUpgrade(selected)}
+          onClick={() => {
+            if (!selected) return;
+            const card = deck.find((entry) => entry.instanceId === selected);
+            const def = card ? cardDefs.get(card.definitionId) : undefined;
+            if (def) setPendingUpgrade({ instanceId: selected, def });
+          }}
           type="text"
           className={cn(
             cinzel.className,
@@ -292,6 +343,17 @@ function UpgradeSubView({
 
       <Divider dim />
       <UpgradePreviewPortal info={hoverInfo} />
+      {pendingUpgrade && (
+        <CardActionModal
+          card={pendingUpgrade.def}
+          actionLabel={t("preBoss.upgradeAction")}
+          onAction={(branch) => {
+            onUpgrade(pendingUpgrade.instanceId, branch);
+            setPendingUpgrade(null);
+          }}
+          onCancel={() => setPendingUpgrade(null)}
+        />
+      )}
     </div>
   );
 }

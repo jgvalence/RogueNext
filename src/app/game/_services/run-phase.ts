@@ -1,3 +1,4 @@
+import { getPendingRewards } from "./reward-checkpoint";
 import type { RunState } from "@/game/schemas/run-state";
 
 export type GamePhase =
@@ -28,6 +29,7 @@ export function canOfferFreeUpgradeAtRunStart(state: RunState): boolean {
 }
 
 export function deriveInitialPhase(state: RunState): GamePhase {
+  if (getPendingRewards(state)) return "REWARDS";
   if (state.status === "VICTORY") return "VICTORY";
   if (state.status === "DEFEAT") return "DEFEAT";
   if (state.status === "ABANDONED") return "ABANDONED";

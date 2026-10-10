@@ -178,7 +178,7 @@ describe("CombatMobileGrid mobile slot layout", () => {
       container.querySelectorAll("[data-mobile-row]")
     ).map((row) => row.getAttribute("data-mobile-row"));
 
-    expect(rows).toEqual(["2", "3"]);
+    expect(rows).toEqual(["3", "2"]);
     expect(container.querySelectorAll('[data-mobile-row="1"]')).toHaveLength(0);
   });
 
@@ -201,7 +201,7 @@ describe("CombatMobileGrid mobile slot layout", () => {
       container.querySelectorAll("[data-mobile-row]")
     ).map((row) => row.getAttribute("data-mobile-row"));
 
-    expect(rows).toEqual(["3", "4"]);
+    expect(rows).toEqual(["4", "3"]);
     expect(container.querySelectorAll('[data-mobile-row="1"]')).toHaveLength(0);
   });
 });

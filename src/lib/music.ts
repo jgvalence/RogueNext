@@ -1,3 +1,4 @@
+import { readAudioPreferences } from "./audio-preferences";
 export let MUSIC_ENABLED = true;
 export type MusicTheme = "menu" | "combat" | "elite" | "boss" | "map";
 
@@ -128,7 +129,7 @@ function createTrack(theme: MusicTheme): ActiveTrack {
   return {
     audio,
     fadeTimer: null,
-    targetVolume: config.volume,
+    targetVolume: config.volume * readAudioPreferences().music,
   };
 }
 
@@ -163,7 +164,7 @@ export function startMusic(theme: MusicTheme): void {
   if (_currentTrack && currentTrackSrc === getTrackSrc(theme)) {
     _currentTheme = theme;
     _currentTrack.audio.loop = config.loop;
-    fadeTrack(_currentTrack, config.volume, 500);
+    fadeTrack(_currentTrack, config.volume * readAudioPreferences().music, 500);
     return;
   }
 
@@ -193,7 +194,11 @@ export function startMusic(theme: MusicTheme): void {
         return;
       }
 
-      fadeTrack(track, config.volume, DEFAULT_FADE_MS);
+      fadeTrack(
+        track,
+        config.volume * readAudioPreferences().music,
+        DEFAULT_FADE_MS
+      );
     })
     .catch(() => {
       handlePlaybackFailure();
@@ -210,4 +215,13 @@ export function stopMusic(fadeOutSec = 1.5): void {
   if (!track) return;
 
   stopTrack(track, Math.max(0, fadeOutSec * 1000));
+}
+
+export function refreshMusicVolume(): void {
+  if (_currentTrack && _currentTheme)
+    fadeTrack(
+      _currentTrack,
+      THEME_TRACKS[_currentTheme].volume * readAudioPreferences().music,
+      150
+    );
 }

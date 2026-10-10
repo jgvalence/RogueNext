@@ -1,0 +1,989 @@
+{
+  "config": {
+    "numRuns": 40,
+    "difficulty": 1,
+    "biome": null,
+    "character": "griot",
+    "metaPreset": "average",
+    "seed": "build-balance-20261009",
+    "buildType": "poison",
+    "maxTurnsPerCombat": 60,
+    "writeCsv": false,
+    "verbose": false,
+    "extraStartCards": []
+  },
+  "runs": [
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 99,
+      "finalGold": 427,
+      "totalTurns": 71,
+      "damageTaken": 86,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 26,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 107,
+      "finalGold": 357,
+      "totalTurns": 90,
+      "damageTaken": 228,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 26,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 185,
+      "totalTurns": 110,
+      "damageTaken": 299,
+      "combats": 33,
+      "bossesDefeated": 2,
+      "cardsAdded": 24,
+      "relicsGained": 13,
+      "deckSizeAtEnd": 35,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 15,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 44,
+      "finalGold": 319,
+      "totalTurns": 87,
+      "damageTaken": 410,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 430,
+      "totalTurns": 62,
+      "damageTaken": 160,
+      "combats": 25,
+      "bossesDefeated": 2,
+      "cardsAdded": 19,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 30,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 4,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 623,
+      "totalTurns": 50,
+      "damageTaken": 174,
+      "combats": 22,
+      "bossesDefeated": 2,
+      "cardsAdded": 16,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 27,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 0,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 270,
+      "totalTurns": 34,
+      "damageTaken": 159,
+      "combats": 10,
+      "bossesDefeated": 1,
+      "cardsAdded": 8,
+      "relicsGained": 3,
+      "deckSizeAtEnd": 21,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 2,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 486,
+      "totalTurns": 68,
+      "damageTaken": 178,
+      "combats": 26,
+      "bossesDefeated": 2,
+      "cardsAdded": 22,
+      "relicsGained": 7,
+      "deckSizeAtEnd": 33,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 5,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 356,
+      "totalTurns": 74,
+      "damageTaken": 235,
+      "combats": 24,
+      "bossesDefeated": 2,
+      "cardsAdded": 17,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 28,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 1,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 478,
+      "totalTurns": 81,
+      "damageTaken": 258,
+      "combats": 27,
+      "bossesDefeated": 2,
+      "cardsAdded": 20,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 31,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 6,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 140,
+      "totalTurns": 67,
+      "damageTaken": 289,
+      "combats": 28,
+      "bossesDefeated": 2,
+      "cardsAdded": 22,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 33,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 10,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 81,
+      "finalGold": 339,
+      "totalTurns": 77,
+      "damageTaken": 127,
+      "combats": 29,
+      "bossesDefeated": 3,
+      "cardsAdded": 22,
+      "relicsGained": 13,
+      "deckSizeAtEnd": 33,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 586,
+      "totalTurns": 56,
+      "damageTaken": 250,
+      "combats": 22,
+      "bossesDefeated": 2,
+      "cardsAdded": 16,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 27,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 0,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 159,
+      "totalTurns": 57,
+      "damageTaken": 161,
+      "combats": 20,
+      "bossesDefeated": 1,
+      "cardsAdded": 18,
+      "relicsGained": 4,
+      "deckSizeAtEnd": 29,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 12,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 145,
+      "totalTurns": 51,
+      "damageTaken": 179,
+      "combats": 20,
+      "bossesDefeated": 1,
+      "cardsAdded": 15,
+      "relicsGained": 7,
+      "deckSizeAtEnd": 26,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 12,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 441,
+      "totalTurns": 74,
+      "damageTaken": 188,
+      "combats": 26,
+      "bossesDefeated": 2,
+      "cardsAdded": 20,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 31,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 6,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 69,
+      "finalGold": 300,
+      "totalTurns": 112,
+      "damageTaken": 115,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 26,
+      "relicsGained": 13,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 368,
+      "totalTurns": 53,
+      "damageTaken": 199,
+      "combats": 23,
+      "bossesDefeated": 2,
+      "cardsAdded": 18,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 30,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 0,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 157,
+      "totalTurns": 75,
+      "damageTaken": 349,
+      "combats": 29,
+      "bossesDefeated": 2,
+      "cardsAdded": 23,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 34,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 12,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 712,
+      "totalTurns": 79,
+      "damageTaken": 284,
+      "combats": 27,
+      "bossesDefeated": 2,
+      "cardsAdded": 20,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 31,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 4,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 260,
+      "totalTurns": 54,
+      "damageTaken": 206,
+      "combats": 22,
+      "bossesDefeated": 1,
+      "cardsAdded": 19,
+      "relicsGained": 5,
+      "deckSizeAtEnd": 30,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 15,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 76,
+      "finalGold": 339,
+      "totalTurns": 93,
+      "damageTaken": 393,
+      "combats": 34,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 13,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 56,
+      "finalGold": 1225,
+      "totalTurns": 97,
+      "damageTaken": 134,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 25,
+      "relicsGained": 14,
+      "deckSizeAtEnd": 36,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 435,
+      "totalTurns": 63,
+      "damageTaken": 227,
+      "combats": 25,
+      "bossesDefeated": 2,
+      "cardsAdded": 20,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 32,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 5,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 92,
+      "finalGold": 353,
+      "totalTurns": 100,
+      "damageTaken": 239,
+      "combats": 35,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 14,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 507,
+      "totalTurns": 85,
+      "damageTaken": 195,
+      "combats": 34,
+      "bossesDefeated": 2,
+      "cardsAdded": 26,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 15,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 0,
+      "finalHp": 0,
+      "finalGold": 167,
+      "totalTurns": 28,
+      "damageTaken": 87,
+      "combats": 11,
+      "bossesDefeated": 0,
+      "cardsAdded": 9,
+      "relicsGained": 2,
+      "deckSizeAtEnd": 20,
+      "defeatedAtFloor": 1,
+      "defeatedAtRoom": 15,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 424,
+      "totalTurns": 51,
+      "damageTaken": 199,
+      "combats": 24,
+      "bossesDefeated": 2,
+      "cardsAdded": 19,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 30,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 1,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 109,
+      "totalTurns": 86,
+      "damageTaken": 368,
+      "combats": 27,
+      "bossesDefeated": 2,
+      "cardsAdded": 22,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 33,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 10,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 64,
+      "finalGold": 401,
+      "totalTurns": 85,
+      "damageTaken": 149,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 26,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 403,
+      "totalTurns": 66,
+      "damageTaken": 190,
+      "combats": 26,
+      "bossesDefeated": 2,
+      "cardsAdded": 21,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 32,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 7,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 0,
+      "finalHp": 0,
+      "finalGold": 109,
+      "totalTurns": 36,
+      "damageTaken": 112,
+      "combats": 10,
+      "bossesDefeated": 0,
+      "cardsAdded": 8,
+      "relicsGained": 2,
+      "deckSizeAtEnd": 19,
+      "defeatedAtFloor": 1,
+      "defeatedAtRoom": 15,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 592,
+      "totalTurns": 54,
+      "damageTaken": 193,
+      "combats": 22,
+      "bossesDefeated": 2,
+      "cardsAdded": 19,
+      "relicsGained": 6,
+      "deckSizeAtEnd": 30,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 0,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 783,
+      "totalTurns": 74,
+      "damageTaken": 162,
+      "combats": 26,
+      "bossesDefeated": 2,
+      "cardsAdded": 23,
+      "relicsGained": 6,
+      "deckSizeAtEnd": 34,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 6,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 208,
+      "totalTurns": 51,
+      "damageTaken": 239,
+      "combats": 22,
+      "bossesDefeated": 1,
+      "cardsAdded": 17,
+      "relicsGained": 7,
+      "deckSizeAtEnd": 28,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 15,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 99,
+      "finalGold": 412,
+      "totalTurns": 87,
+      "damageTaken": 170,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 379,
+      "totalTurns": 43,
+      "damageTaken": 259,
+      "combats": 23,
+      "bossesDefeated": 2,
+      "cardsAdded": 19,
+      "relicsGained": 7,
+      "deckSizeAtEnd": 31,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 1,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 324,
+      "totalTurns": 69,
+      "damageTaken": 261,
+      "combats": 25,
+      "bossesDefeated": 2,
+      "cardsAdded": 20,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 31,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 4,
+      "error": null
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 118,
+      "finalGold": 308,
+      "totalTurns": 86,
+      "damageTaken": 368,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 280,
+      "totalTurns": 105,
+      "damageTaken": 296,
+      "combats": 35,
+      "bossesDefeated": 2,
+      "cardsAdded": 28,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 15,
+      "error": null
+    }
+  ],
+  "wins": 11,
+  "errors": [],
+  "draftStats": {
+    "byliny_verse": {
+      "offered": 26,
+      "picked": 3
+    },
+    "venin_du_serpent": {
+      "offered": 155,
+      "picked": 95
+    },
+    "codex_strike": {
+      "offered": 66,
+      "picked": 21
+    },
+    "folk_curse": {
+      "offered": 40,
+      "picked": 4
+    },
+    "frappe_maudite": {
+      "offered": 50,
+      "picked": 27
+    },
+    "frost_nail": {
+      "offered": 34,
+      "picked": 3
+    },
+    "rituel_interdit": {
+      "offered": 54,
+      "picked": 49
+    },
+    "star_chart": {
+      "offered": 66,
+      "picked": 7
+    },
+    "iron_verse": {
+      "offered": 68,
+      "picked": 1
+    },
+    "drum_strike": {
+      "offered": 92,
+      "picked": 11
+    },
+    "ancient_grove": {
+      "offered": 111,
+      "picked": 7
+    },
+    "sacred_papyrus": {
+      "offered": 69,
+      "picked": 44
+    },
+    "kells_strike": {
+      "offered": 91,
+      "picked": 68
+    },
+    "invocation_ancestrale": {
+      "offered": 42,
+      "picked": 22
+    },
+    "starborn_omen": {
+      "offered": 146,
+      "picked": 6
+    },
+    "anubis_strike": {
+      "offered": 41,
+      "picked": 6
+    },
+    "frost_rune_shield": {
+      "offered": 85,
+      "picked": 0
+    },
+    "iron_samovar": {
+      "offered": 34,
+      "picked": 18
+    },
+    "death_scroll": {
+      "offered": 20,
+      "picked": 16
+    },
+    "coup_de_tambour": {
+      "offered": 53,
+      "picked": 24
+    },
+    "canopic_ward": {
+      "offered": 33,
+      "picked": 0
+    },
+    "koschei_strike": {
+      "offered": 4,
+      "picked": 1
+    },
+    "labyrinth": {
+      "offered": 214,
+      "picked": 15
+    },
+    "philosophers_quill": {
+      "offered": 78,
+      "picked": 57
+    },
+    "thorn_slash": {
+      "offered": 47,
+      "picked": 38
+    },
+    "bardic_verse": {
+      "offered": 69,
+      "picked": 45
+    },
+    "cursed_inscription": {
+      "offered": 92,
+      "picked": 40
+    },
+    "transe_vaudou": {
+      "offered": 37,
+      "picked": 4
+    },
+    "bear_claw": {
+      "offered": 7,
+      "picked": 0
+    },
+    "danse_des_esprits": {
+      "offered": 60,
+      "picked": 55
+    },
+    "scald_cry": {
+      "offered": 83,
+      "picked": 26
+    },
+    "ink_surge": {
+      "offered": 41,
+      "picked": 7
+    },
+    "scarification": {
+      "offered": 53,
+      "picked": 4
+    },
+    "rune_strike": {
+      "offered": 19,
+      "picked": 2
+    },
+    "berserker_charge": {
+      "offered": 25,
+      "picked": 0
+    },
+    "rune_curse": {
+      "offered": 37,
+      "picked": 18
+    },
+    "mjolnir_echo": {
+      "offered": 17,
+      "picked": 3
+    },
+    "bestiary_normal_briar_beast": {
+      "offered": 1,
+      "picked": 1
+    },
+    "bestiary_normal_morrigan_wisp": {
+      "offered": 2,
+      "picked": 0
+    },
+    "oracle_scroll": {
+      "offered": 51,
+      "picked": 5
+    },
+    "olympian_guard": {
+      "offered": 47,
+      "picked": 4
+    },
+    "epic_simile": {
+      "offered": 18,
+      "picked": 0
+    },
+    "shield_wall": {
+      "offered": 33,
+      "picked": 0
+    },
+    "gorgons_gaze": {
+      "offered": 16,
+      "picked": 2
+    },
+    "olympian_cleave": {
+      "offered": 9,
+      "picked": 1
+    },
+    "pharaohs_curse": {
+      "offered": 11,
+      "picked": 7
+    },
+    "plague_of_words": {
+      "offered": 6,
+      "picked": 4
+    },
+    "sand_whip": {
+      "offered": 8,
+      "picked": 0
+    },
+    "heros_challenge": {
+      "offered": 8,
+      "picked": 0
+    },
+    "forbidden_whisper": {
+      "offered": 17,
+      "picked": 3
+    },
+    "library_horror": {
+      "offered": 33,
+      "picked": 6
+    },
+    "void_shield": {
+      "offered": 4,
+      "picked": 0
+    },
+    "spider_web": {
+      "offered": 40,
+      "picked": 17
+    },
+    "ancestral_drum": {
+      "offered": 68,
+      "picked": 0
+    },
+    "trickster_snare": {
+      "offered": 6,
+      "picked": 4
+    },
+    "blizzard_verse": {
+      "offered": 9,
+      "picked": 1
+    },
+    "wild_gale": {
+      "offered": 4,
+      "picked": 0
+    },
+    "iron_bard": {
+      "offered": 8,
+      "picked": 4
+    },
+    "druids_breath": {
+      "offered": 6,
+      "picked": 0
+    },
+    "obsidian_jab": {
+      "offered": 14,
+      "picked": 2
+    },
+    "sun_ritual": {
+      "offered": 13,
+      "picked": 0
+    },
+    "poison_herb": {
+      "offered": 17,
+      "picked": 13
+    },
+    "blood_offering": {
+      "offered": 31,
+      "picked": 4
+    },
+    "jaguar_pounce": {
+      "offered": 5,
+      "picked": 0
+    },
+    "embalmed_tome": {
+      "offered": 2,
+      "picked": 2
+    },
+    "anansi_tale": {
+      "offered": 6,
+      "picked": 0
+    },
+    "spirit_drum": {
+      "offered": 2,
+      "picked": 0
+    },
+    "labyrinth_trap": {
+      "offered": 5,
+      "picked": 3
+    },
+    "black_page": {
+      "offered": 10,
+      "picked": 0
+    },
+    "madness_spike": {
+      "offered": 4,
+      "picked": 2
+    },
+    "void_touch": {
+      "offered": 3,
+      "picked": 0
+    },
+    "forbidden_verse": {
+      "offered": 5,
+      "picked": 0
+    },
+    "recursive_scratch": {
+      "offered": 8,
+      "picked": 0
+    },
+    "bestiary_normal_scarab_swarm": {
+      "offered": 1,
+      "picked": 0
+    },
+    "bestiary_normal_satyr": {
+      "offered": 1,
+      "picked": 1
+    },
+    "faerie_fire": {
+      "offered": 2,
+      "picked": 1
+    },
+    "bestiary_normal_jaguar_warrior": {
+      "offered": 2,
+      "picked": 0
+    },
+    "eclipse_vow": {
+      "offered": 3,
+      "picked": 0
+    },
+    "jaguars_blood": {
+      "offered": 1,
+      "picked": 0
+    },
+    "permafrost_ward": {
+      "offered": 3,
+      "picked": 0
+    },
+    "cauldron_lore": {
+      "offered": 1,
+      "picked": 1
+    }
+  },
+  "upgradeStats": {
+    "A": 160,
+    "B": 28
+  }
+}

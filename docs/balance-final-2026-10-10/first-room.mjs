@@ -1,0 +1,1 @@
+﻿import {connect,wait} from './cdp.mjs';const b=await connect();await b.js("localStorage.setItem('panlibrarium:combat-speed','2')");await b.click("[...document.querySelectorAll('button')].find(e=>!e.disabled&&e.title==='Affrontement')");await wait(1000);console.log(await b.js('document.body.innerText'));b.close();
