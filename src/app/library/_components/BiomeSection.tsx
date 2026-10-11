@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
+import { COMBAT_BACKGROUNDS } from "@/lib/assets";
 import { BIOME_THEMES } from "./constants";
 import type { SlotState } from "./constants";
 import { HistoireSlot } from "./HistoireSlot";
@@ -41,87 +42,53 @@ export function BiomeSection({
   const { t } = useTranslation();
   const theme = BIOME_THEMES[biome];
 
-  const t1s = histoires.filter((h) => h.tier === 1);
-  const t2s = histoires.filter((h) => h.tier === 2);
-  const t3 = histoires.find((h) => h.tier === 3);
-
-  const t2A = t2s.find((h) => h.prerequis.includes(t1s[0]?.id ?? "")) ?? t2s[0];
-  const t2B = t2s.find((h) => h !== t2A) ?? t2s[1];
-
   const unlockedCount = histoires.filter((h) =>
     progression.unlockedStoryIds.includes(h.id)
   ).length;
-
   return (
-    <div
-      className={`flex flex-col gap-2 rounded-xl border p-3 ${theme.bg} ${theme.border}`}
-    >
-      <div className="flex items-center justify-between">
-        <div>
-          <p
-            className={`text-[10px] font-semibold uppercase tracking-widest ${theme.accent}`}
-          >
-            {t(`biome.${biome}`)}
-          </p>
-          <p className="text-[9px] text-slate-500">
-            {theme.icon} {t(`reward.resources.${theme.resource}`)}
-          </p>
-        </div>
-        <span className="text-[10px] text-slate-500">
-          {unlockedCount}/{histoires.length}
+    <section className="library-chapter" aria-label={t("biome." + biome)}>
+      <header
+        className="library-chapter-header"
+        style={{
+          backgroundImage: `linear-gradient(90deg, #07101aed, #07101a40), url("${COMBAT_BACKGROUNDS[biome]}")`,
+        }}
+      >
+        <span className="library-eyebrow">
+          {theme.icon} {t("reward.resources." + theme.resource)}
         </span>
+        <h2>{t("biome." + biome)}</h2>
+        <p>
+          {t("menu.chapterProgress", {
+            count: unlockedCount,
+            total: histoires.length,
+          })}
+        </p>
+        <progress
+          value={unlockedCount}
+          max={Math.max(1, histoires.length)}
+          aria-label={t("menu.restored")}
+        />
+      </header>
+      <div className="library-tree">
+        {[1, 2, 3].map((tier) => (
+          <div
+            key={tier}
+            className="library-tier"
+            aria-label={t("library.tier") + " " + tier}
+          >
+            {histoires
+              .filter((h) => h.tier === tier)
+              .map((histoire) => (
+                <HistoireSlot
+                  key={histoire.id}
+                  histoire={histoire}
+                  state={getSlotState(histoire, progression)}
+                  onClick={onSelect}
+                />
+              ))}
+          </div>
+        ))}
       </div>
-
-      <div className="flex flex-col items-center gap-0.5">
-        <div className="flex gap-2">
-          {t1s[0] && (
-            <HistoireSlot
-              histoire={t1s[0]}
-              state={getSlotState(t1s[0], progression)}
-              onClick={onSelect}
-            />
-          )}
-          {t1s[1] && (
-            <HistoireSlot
-              histoire={t1s[1]}
-              state={getSlotState(t1s[1], progression)}
-              onClick={onSelect}
-            />
-          )}
-        </div>
-
-        <div className="flex w-full justify-around px-7">
-          <div className={`h-3 w-px border-l border-dashed ${theme.border}`} />
-          <div className={`h-3 w-px border-l border-dashed ${theme.border}`} />
-        </div>
-
-        <div className="flex gap-2">
-          {t2A && (
-            <HistoireSlot
-              histoire={t2A}
-              state={getSlotState(t2A, progression)}
-              onClick={onSelect}
-            />
-          )}
-          {t2B && (
-            <HistoireSlot
-              histoire={t2B}
-              state={getSlotState(t2B, progression)}
-              onClick={onSelect}
-            />
-          )}
-        </div>
-
-        <div className={`h-3 w-px border-l border-dashed ${theme.border}`} />
-
-        {t3 && (
-          <HistoireSlot
-            histoire={t3}
-            state={getSlotState(t3, progression)}
-            onClick={onSelect}
-          />
-        )}
-      </div>
-    </div>
+    </section>
   );
 }

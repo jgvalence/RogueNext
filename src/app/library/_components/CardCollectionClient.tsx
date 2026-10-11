@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useMenuPreference } from "@/components/shared/use-menu-preference";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
@@ -11,14 +12,13 @@ import {
   RogueSelect,
   RogueTabs,
   RogueTag,
+  RogueModal,
 } from "@/components/ui/rogue";
+import { CardArtwork } from "@/app/game/_components/shared/CardArtwork";
+import { CardUpgradePreview } from "@/app/game/_components/shared/CardUpgradePreview";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { BiomeType, Rarity, RelicRarity } from "@/game/schemas/enums";
 import type { RunConditionCollectionRow } from "@/game/engine/run-conditions";
-import {
-  UpgradePreviewPortal,
-  type UpgradePreviewHoverInfo,
-} from "@/app/game/_components/shared/UpgradePreviewPortal";
 import {
   localizeCardDescription,
   localizeCardName,
@@ -112,17 +112,44 @@ export function CardCollectionClient({
 }: CardCollectionClientProps) {
   const { t } = useTranslation();
   const router = useRouter();
-  const [tab, setTab] = useState<CollectionTab>("CARDS");
-  const [biome, setBiome] = useState<BiomeType | "ALL">("ALL");
-  const [type, setType] = useState<CollectionTypeFilter>("ALL");
-  const [ownership, setOwnership] = useState<CardOwnershipFilter>("ALL");
-  const [rarity, setRarity] = useState<Rarity | "ALL">("ALL");
-  const [lock, setLock] = useState<LockFilter>("ALL");
-  const [query, setQuery] = useState("");
-  const [relicRarity, setRelicRarity] = useState<RelicRarityFilter>("ALL");
-  const [relicLock, setRelicLock] = useState<LockFilter>("ALL");
-  const [relicQuery, setRelicQuery] = useState("");
-  const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
+  const [tab, setTab] = useMenuPreference<CollectionTab>(
+    "collection-tab",
+    "CARDS"
+  );
+  const [biome, setBiome] = useMenuPreference<BiomeType | "ALL">(
+    "collection-biome",
+    "ALL"
+  );
+  const [type, setType] = useMenuPreference<CollectionTypeFilter>(
+    "collection-type",
+    "ALL"
+  );
+  const [ownership, setOwnership] = useMenuPreference<CardOwnershipFilter>(
+    "collection-ownership",
+    "ALL"
+  );
+  const [rarity, setRarity] = useMenuPreference<Rarity | "ALL">(
+    "collection-rarity",
+    "ALL"
+  );
+  const [lock, setLock] = useMenuPreference<LockFilter>(
+    "collection-lock",
+    "ALL"
+  );
+  const [query, setQuery] = useMenuPreference<string>("collection-query", "");
+  const [relicRarity, setRelicRarity] = useMenuPreference<RelicRarityFilter>(
+    "collection-relicRarity",
+    "ALL"
+  );
+  const [relicLock, setRelicLock] = useMenuPreference<LockFilter>(
+    "collection-relicLock",
+    "ALL"
+  );
+  const [relicQuery, setRelicQuery] = useMenuPreference<string>(
+    "collection-relic-query",
+    ""
+  );
+  const [inspectedCard, setInspectedCard] = useState<CardDefinition | null>(
     null
   );
   const cardDefinitionById = new Map(
@@ -200,23 +227,6 @@ export function CardCollectionClient({
     ],
     [t]
   );
-
-  useEffect(() => {
-    if (tab !== "CARDS") {
-      setHoverInfo(null);
-    }
-  }, [tab]);
-
-  const handleCardMouseEnter = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>, definition: CardDefinition) => {
-      setHoverInfo({ definition, anchorEl: e.currentTarget });
-    },
-    []
-  );
-
-  const handleCardMouseLeave = useCallback(() => {
-    setHoverInfo(null);
-  }, []);
 
   const filtered = useMemo(() => {
     return cards
@@ -297,9 +307,9 @@ export function CardCollectionClient({
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-950 px-6 py-6 text-white">
+    <div className="menu-page px-6 py-6 text-white">
       <div className="mx-auto max-w-7xl space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="menu-page-heading">
           <div>
             <h1 className="text-2xl font-black">{t("collection.title")}</h1>
             <p className="text-sm text-gray-400">{summaryText}</p>
@@ -386,7 +396,9 @@ export function CardCollectionClient({
                       <p className="font-semibold">
                         {t("collection.runConditions.unlockCondition")}
                       </p>
-                      <p>{formatRunConditionUnlock(row, t, cardDefinitionById)}</p>
+                      <p>
+                        {formatRunConditionUnlock(row, t, cardDefinitionById)}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -400,6 +412,7 @@ export function CardCollectionClient({
             <div className="grid grid-cols-1 gap-2 rounded-lg border border-gray-800 bg-gray-900/60 p-3 md:grid-cols-7">
               <RogueSelect
                 value={biome}
+                aria-label={t("collection.allBiomes")}
                 onChange={(value) => setBiome(value as BiomeType | "ALL")}
                 options={biomeOptions}
                 className="w-full"
@@ -407,6 +420,7 @@ export function CardCollectionClient({
 
               <RogueSelect
                 value={type}
+                aria-label={t("collection.allTypes")}
                 onChange={(value) => setType(value as CollectionTypeFilter)}
                 options={cardTypeOptions}
                 className="w-full"
@@ -414,6 +428,7 @@ export function CardCollectionClient({
 
               <RogueSelect
                 value={ownership}
+                aria-label={t("collection.allOwnerships")}
                 onChange={(value) => setOwnership(value as CardOwnershipFilter)}
                 options={ownershipOptions}
                 className="w-full"
@@ -421,6 +436,7 @@ export function CardCollectionClient({
 
               <RogueSelect
                 value={rarity}
+                aria-label={t("collection.allRarities")}
                 onChange={(value) => setRarity(value as Rarity | "ALL")}
                 options={rarityOptions}
                 className="w-full"
@@ -428,6 +444,7 @@ export function CardCollectionClient({
 
               <RogueSelect
                 value={lock}
+                aria-label={t("collection.allStates")}
                 onChange={(value) => setLock(value as LockFilter)}
                 options={lockOptions}
                 className="w-full"
@@ -470,16 +487,20 @@ export function CardCollectionClient({
                 return (
                   <div
                     key={card.id}
-                    onMouseEnter={(e) =>
-                      handleCardMouseEnter(e, card.definition)
-                    }
-                    onMouseLeave={handleCardMouseLeave}
                     className={`relative rounded-lg border p-3 ${
                       card.unlocked
                         ? "border-emerald-700/50 bg-emerald-950/20"
                         : "border-rose-800/50 bg-rose-950/20"
                     }`}
                   >
+                    <div className="collection-art relative mb-3 overflow-hidden rounded-md">
+                      <CardArtwork
+                        definition={card.definition}
+                        thumbnail
+                        allowZoom
+                        className="aspect-[3/2] w-full object-cover"
+                      />
+                    </div>
                     <div className="mb-1 flex items-center justify-between gap-2">
                       <p className="font-bold">{localizedName}</p>
                       <RogueTag
@@ -504,6 +525,12 @@ export function CardCollectionClient({
                     <p className="mt-2 text-sm text-gray-300">
                       {localizedDescription}
                     </p>
+                    <RogueButton
+                      className="mt-3"
+                      onClick={() => setInspectedCard(card.definition)}
+                    >
+                      {t("menu.cardDetails")}
+                    </RogueButton>
 
                     {!card.unlocked && (
                       <div className="mt-3 rounded border border-rose-900 bg-rose-950/30 p-2 text-xs text-rose-200">
@@ -528,7 +555,19 @@ export function CardCollectionClient({
                 );
               })}
             </div>
-            <UpgradePreviewPortal info={hoverInfo} />
+            {inspectedCard && (
+              <RogueModal
+                open
+                centered
+                className="story-modal collection-preview"
+                width={820}
+                title={localizeCardName(inspectedCard, t)}
+                footer={null}
+                onCancel={() => setInspectedCard(null)}
+              >
+                <CardUpgradePreview definition={inspectedCard} size="lg" />
+              </RogueModal>
+            )}
           </>
         )}
 
@@ -537,6 +576,7 @@ export function CardCollectionClient({
             <div className="grid grid-cols-1 gap-2 rounded-lg border border-gray-800 bg-gray-900/60 p-3 md:grid-cols-4">
               <RogueSelect
                 value={relicRarity}
+                aria-label={t("collection.allRarities")}
                 onChange={(value) => setRelicRarity(value as RelicRarityFilter)}
                 options={relicRarityOptions}
                 className="w-full"
@@ -544,6 +584,7 @@ export function CardCollectionClient({
 
               <RogueSelect
                 value={relicLock}
+                aria-label={t("collection.allStates")}
                 onChange={(value) => setRelicLock(value as LockFilter)}
                 options={lockOptions}
                 className="w-full"

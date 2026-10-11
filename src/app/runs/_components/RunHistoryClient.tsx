@@ -1,8 +1,10 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
 import {
   RogueAlert,
+  RogueButton,
   RogueCard,
   RogueEmpty,
   RoguePageHeader,
@@ -15,8 +17,8 @@ interface RunHistoryClientProps {
   loadError: string | null;
 }
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("fr-FR", {
+function formatDate(date: Date, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -47,6 +49,7 @@ export function RunHistoryClient({
   loadError,
 }: RunHistoryClientProps) {
   const { t } = useTranslation();
+  const router = useRouter();
 
   return (
     <div className="space-y-5">
@@ -74,11 +77,16 @@ export function RunHistoryClient({
           type="error"
           showIcon
           message={t("runs.loadError", { message: loadError })}
+          action={
+            <RogueButton onClick={() => router.refresh()}>
+              {t("menu.retry")}
+            </RogueButton>
+          }
           className="!rounded-xl !border !border-rose-400/35 !bg-rose-950/35 !text-rose-100"
         />
       )}
 
-      {entries.length === 0 ? (
+      {!loadError && entries.length === 0 ? (
         <RogueCard
           className="rounded-2xl border border-amber-100/15 bg-[#0A1118]/80"
           styles={{ body: { padding: 32 } }}
@@ -87,6 +95,11 @@ export function RunHistoryClient({
             description={t("runs.empty")}
             className="[&_.ant-empty-description]:!text-sm [&_.ant-empty-description]:!text-amber-100/65"
           />
+          <div className="mt-4 text-center">
+            <RogueButton href="/game" type="primary">
+              {t("menu.expedition")}
+            </RogueButton>
+          </div>
         </RogueCard>
       ) : (
         <section className="space-y-3">
@@ -100,12 +113,12 @@ export function RunHistoryClient({
 }
 
 function RunCard({ entry }: { entry: RunHistoryEntry }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const characterName = t(`characters.${entry.characterId}.name`, {
     defaultValue: entry.characterId,
   });
-  const biomeName = t(`biomeSelection.biomes.${entry.biome}.name`, {
+  const biomeName = t(`biome.${entry.biome}`, {
     defaultValue: entry.biome,
   });
 
@@ -129,7 +142,7 @@ function RunCard({ entry }: { entry: RunHistoryEntry }) {
               <span className="font-normal text-amber-100/70">{biomeName}</span>
             </p>
             <p className="mt-0.5 text-[0.68rem] text-amber-100/45">
-              {formatDate(entry.createdAt)}
+              {formatDate(entry.createdAt, i18n.resolvedLanguage ?? "fr")}
             </p>
           </div>
         </div>
@@ -156,6 +169,47 @@ function RunCard({ entry }: { entry: RunHistoryEntry }) {
           />
         </div>
       </div>
+      <details className="mt-3 border-t border-amber-100/10 pt-2">
+        <summary>{t("menu.details")}</summary>
+        <dl className="mt-3 flex flex-wrap gap-6 text-sm text-amber-100/80">
+          <div>
+            <dt>{t("menu.remainingHp")}</dt>
+            <dd className="font-semibold">
+              {entry.hp} / {entry.maxHp}
+            </dd>
+          </div>
+          <div>
+            <dt>{t("menu.remainingGold")}</dt>
+            <dd className="font-semibold">{entry.gold}</dd>
+          </div>
+          <div>
+            <dt>{t("menu.playTime")}</dt>
+            <dd className="font-semibold">
+              {entry.activePlayMs
+                ? `${Math.floor(entry.activePlayMs / 60000)} min ${Math.floor(entry.activePlayMs / 1000) % 60} s`
+                : t("menu.notRecorded")}
+            </dd>
+          </div>
+        </dl>
+        <h3 className="mb-2 mt-4 text-sm font-semibold text-amber-100">
+          {t("menu.finalDeck")}
+        </h3>
+        {entry.deck.length ? (
+          <ul className="grid gap-2 text-sm text-amber-100/80 sm:grid-cols-2">
+            {entry.deck.map((card) => (
+              <li key={`${card.definitionId}:${card.upgraded}:${card.branch}`}>
+                <span className="text-amber-300">{card.count} × </span>
+                {t(`cards.${card.definitionId}.name`, {
+                  defaultValue: card.name,
+                })}
+                {card.upgraded && ` +${card.branch ?? ""}`}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-amber-100/60">{t("menu.notRecorded")}</p>
+        )}
+      </details>
     </RogueCard>
   );
 }

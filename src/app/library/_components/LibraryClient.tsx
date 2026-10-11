@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import { RogueButton, RogueCard, RogueTag } from "@/components/ui/rogue";
 import { BIOME_ORDER } from "./constants";
 import type { SlotState } from "./constants";
 import { ResourceBar } from "./ResourceBar";
@@ -17,7 +15,8 @@ import {
   markLibraryIntroTutorialSeen,
 } from "@/game/engine/library-tutorial";
 import { dismissLibraryIntroTutorialAction } from "@/server/actions/progression";
-import { cn } from "@/lib/utils/cn";
+import type { BiomeType } from "@/game/schemas/enums";
+import { localizeStoryTitle } from "@/lib/i18n/stories";
 import { FIRST_RUN_GUIDED_STORY_ID } from "@/game/engine/first-run-script";
 
 interface LibraryClientProps {
@@ -46,7 +45,11 @@ export function LibraryClient({
   histoires,
 }: LibraryClientProps) {
   const { t } = useTranslation();
-  const router = useRouter();
+  const [activeBiome, setActiveBiome] = useState<BiomeType>("LIBRARY");
+  const [restoredTitle, setRestoredTitle] = useState("");
+  const [libraryIntroError, setLibraryIntroError] = useState<string | null>(
+    null
+  );
   const [progression, setProgression] =
     useState<MetaProgress>(initialProgression);
   const [selected, setSelected] = useState<Histoire | null>(null);
@@ -91,122 +94,103 @@ export function LibraryClient({
   async function handleDismissLibraryIntro() {
     if (isDismissingLibraryIntro) return;
     setIsDismissingLibraryIntro(true);
-    setIsLibraryIntroVisible(false);
-    setProgression((current) => ({
-      ...current,
-      resources: markLibraryIntroTutorialSeen(current.resources),
-    }));
-
+    setLibraryIntroError(null);
     try {
-      await dismissLibraryIntroTutorialAction();
+      const result = await dismissLibraryIntroTutorialAction();
+      if (!result.success) {
+        setLibraryIntroError(result.error.message);
+        return;
+      }
+      setProgression((current) => ({
+        ...current,
+        resources: markLibraryIntroTutorialSeen(current.resources),
+      }));
+      setIsLibraryIntroVisible(false);
+    } catch {
+      setLibraryIntroError(t("library.genericError"));
     } finally {
       setIsDismissingLibraryIntro(false);
     }
   }
 
+  const availableCount = histoires.filter(
+    (h) => getSlotState(h, progression) === "AVAILABLE"
+  ).length;
+  function closeStory() {
+    const id = selected?.id;
+    setSelected(null);
+    requestAnimationFrame(() =>
+      document.getElementById("story-" + id)?.focus()
+    );
+  }
   return (
-    <div className="relative flex min-h-screen flex-col bg-gray-950 text-white">
-      <div className="pointer-events-none fixed inset-0">
-        <div className="absolute left-1/4 top-1/4 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-900/10 blur-[128px]" />
-        <div className="absolute bottom-1/4 right-1/4 h-[400px] w-[400px] rounded-full bg-purple-900/10 blur-[128px]" />
-      </div>
-
-      <header className="relative z-10 border-b border-slate-800 bg-gray-950/80 px-6 py-4 backdrop-blur-sm">
-        <div className="mx-auto max-w-6xl">
-          <RogueCard
-            className="rounded-2xl border border-slate-800 bg-slate-950/70"
-            styles={{ body: { padding: 16 } }}
-          >
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <RogueButton
-                  onClick={() => router.push("/")}
-                  className="!flex !items-center !gap-1.5 !rounded-lg !border !border-slate-700 !bg-transparent !px-3 !py-1.5 !text-xs !font-semibold !text-slate-400 hover:!border-slate-500 hover:!text-white"
-                >
-                  {"<-"} {t("library.backHome")}
-                </RogueButton>
-                <div>
-                  <h1 className="text-lg font-black tracking-tight text-white">
-                    {t("library.title")}
-                  </h1>
-                  <RogueTag
-                    bordered={false}
-                    className="rounded bg-slate-800 px-2 py-0.5 text-[11px] text-slate-300"
-                  >
-                    {t("library.collectedStories", {
-                      unlocked: totalUnlocked,
-                      total: totalHistoires,
-                    })}
-                  </RogueTag>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <RogueButton
-                  onClick={() => router.push("/library/collection")}
-                  className="!rounded-lg !border !border-slate-700 !bg-transparent !px-4 !py-2.5 !text-sm !font-semibold !text-slate-200 hover:!border-slate-500 hover:!text-white"
-                >
-                  {t("library.collection")}
-                </RogueButton>
-                <RogueButton
-                  onClick={() => router.push("/library/bestiary")}
-                  className="!rounded-lg !border !border-slate-700 !bg-transparent !px-4 !py-2.5 !text-sm !font-semibold !text-slate-200 hover:!border-slate-500 hover:!text-white"
-                >
-                  {t("library.bestiary")}
-                </RogueButton>
-                <RogueButton
-                  type="primary"
-                  onClick={() => router.push("/game")}
-                  className="!flex !items-center !gap-2 !rounded-lg !bg-purple-600 !px-5 !py-2.5 !text-sm !font-bold hover:!bg-purple-500"
-                >
-                  {t("library.startRun")}
-                </RogueButton>
-              </div>
-            </div>
-          </RogueCard>
-        </div>
-      </header>
-
-      <div className="relative z-10 border-b border-slate-800/50 px-6 py-3">
-        <div
-          className={cn(
-            "mx-auto max-w-6xl transition-all duration-300",
-            isLibraryIntroVisible &&
-              "rounded-2xl shadow-[0_0_0_1px_rgba(251,191,36,0.05)] ring-1 ring-amber-400/25"
-          )}
-        >
-          <ResourceBar resources={progression.resources} />
-        </div>
-      </div>
-
-      <main className="relative z-10 flex-1 px-6 py-6">
-        <div
-          className={cn(
-            "mx-auto max-w-6xl transition-all duration-300",
-            isLibraryIntroVisible &&
-              "rounded-2xl shadow-[0_0_0_1px_rgba(34,211,238,0.04)] ring-1 ring-cyan-400/20"
-          )}
-        >
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {BIOME_ORDER.map((biome) => {
-              const biomHistoires = histoiresByBiome[biome] ?? [];
-              if (biomHistoires.length === 0) return null;
-              return (
-                <BiomeSection
-                  key={biome}
-                  biome={biome}
-                  histoires={biomHistoires}
-                  progression={progression}
-                  onSelect={setSelected}
-                />
-              );
-            })}
+    <main className="menu-page">
+      <div className="library-atrium">
+        <header className="library-hero">
+          <span className="library-eyebrow">{t("menu.libraryKicker")}</span>
+          <h1>{t("library.title")}</h1>
+          <p>{t("menu.libraryIntro")}</p>
+          <div className="library-summary">
+            <span>
+              <strong>
+                {totalUnlocked}/{totalHistoires}
+              </strong>
+              {t("menu.restored")}
+            </span>
+            <span>
+              <strong>{availableCount}</strong>
+              {t("menu.available")}
+            </span>
+            <span>
+              <strong>{BIOME_ORDER.length}</strong>
+              {t("menu.chapters")}
+            </span>
           </div>
+        </header>
+        <div role="status" aria-live="polite">
+          {restoredTitle && (
+            <p className="library-restored">
+              {t("menu.storyRestored", { title: restoredTitle })}
+            </p>
+          )}
         </div>
-      </main>
-
+        <section aria-label={t("menu.resources")}>
+          <ResourceBar resources={progression.resources} />
+        </section>
+        <h2 className="library-eyebrow">{t("menu.chooseChapter")}</h2>
+        <nav className="library-index" aria-label={t("menu.chooseChapter")}>
+          {BIOME_ORDER.map((biome) => {
+            const available = (histoiresByBiome[biome] ?? []).filter(
+              (h) => getSlotState(h, progression) === "AVAILABLE"
+            ).length;
+            return (
+              <button
+                key={biome}
+                aria-pressed={activeBiome === biome}
+                onClick={() => setActiveBiome(biome)}
+              >
+                {t("biome." + biome)}
+                {available > 0 && (
+                  <small
+                    aria-label={t("menu.availableCount", { count: available })}
+                  >
+                    +{available}
+                  </small>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+        <BiomeSection
+          biome={activeBiome}
+          histoires={histoiresByBiome[activeBiome] ?? []}
+          progression={progression}
+          onSelect={setSelected}
+        />
+      </div>
       {selected && (
         <HistoireModal
+          key={selected.id}
           histoire={selected}
           histoires={histoires}
           progression={progression}
@@ -215,20 +199,25 @@ export function LibraryClient({
             isFirstRunGuidedStoryTutorialVisible &&
             selected.id === FIRST_RUN_GUIDED_STORY_ID
           }
-          onClose={() => setSelected(null)}
+          onClose={closeStory}
+          onSelectStory={(story) => {
+            setActiveBiome(story.biome);
+            setSelected(story);
+          }}
           onUnlocked={(updated) => {
+            setRestoredTitle(localizeStoryTitle(selected, t));
             setProgression(updated);
-            setSelected(null);
+            closeStory();
           }}
         />
       )}
-
       {isLibraryIntroVisible && (
         <LibraryIntroTutorial
+          error={libraryIntroError}
           isPending={isDismissingLibraryIntro}
           onDismiss={handleDismissLibraryIntro}
         />
       )}
-    </div>
+    </main>
   );
 }

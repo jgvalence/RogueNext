@@ -1,5 +1,7 @@
 # Audit des cartes et plan de diversification
 
+> Suivi du 11 octobre 2026 : les nouvelles différenciations de cartes et branches sont livrées dans la [passe finale](PASSE_FINALE_EQUILIBRAGE_ET_RECETTE_2026-10-10.md). Les [275 illustrations](ILLUSTRATIONS_CARTES_2026-10-10.md) sont intégrées. Restent l’observation des choix humains et la lisibilité, ainsi que l’harmonisation de la page Collection ; voir BAL-02 et UI-04 dans la [TODO active](TODO.md). Les chiffres et anciens problèmes d’accès à la base ci-dessous sont datés, pas un état actuel de la production.
+
 Date de l'audit : 4 août 2026
 
 Mise à jour du 9 octobre 2026 : le catalogue global contient 275 IDs uniques ; la collision `ink_surge` est supprimée et contrôlée par test. Chaque combat normal gagné propose désormais un draft, quelle que soit la taille du deck. Les mesures historiques de cadence et de taille finale ne décrivent donc plus la version actuelle. Voir le [suivi des corrections](CORRECTIONS_AUDIT_2026-10-09.md).

@@ -1,5 +1,6 @@
 @import "./visual-polish.css";
 @import "./interface-craft.css";
+@import "./menu-craft.css";
 
 @tailwind base;
 @tailwind components;
@@ -133,10 +134,16 @@
 }
 
 /* Keyboard focus must remain visible on custom combat cards and targets. */
-[role="button"]:focus-visible { outline: 3px solid #fbbf24; outline-offset: 3px; }
+[role="button"]:focus-visible {
+  outline: 3px solid #fbbf24;
+  outline-offset: 3px;
+}
 
 [data-large-text="true"] [class*="text-[6px]"],
 [data-large-text="true"] [class*="text-[7px]"],
 [data-large-text="true"] [class*="text-[8px]"],
 [data-large-text="true"] [class*="text-[9px]"],
-[data-large-text="true"] [class*="text-[10px]"] { font-size: 12px !important; line-height: 1.35 !important; }
+[data-large-text="true"] [class*="text-[10px]"] {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}

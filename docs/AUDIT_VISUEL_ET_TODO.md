@@ -1,5 +1,74 @@
 # Audit visuel et TODO
 
+## Suivi actuel — 11 octobre 2026
+
+La [TODO centrale](TODO.md) fait foi pour les priorités ouvertes. Le diagnostic et les cases de l’audit initial sont conservés plus bas comme historique : ils ne décrivent pas tous la version livrée.
+
+| Lot | État confirmé | Suite |
+| --- | --- | --- |
+| Cartes et ouverture en grand | [275 illustrations intégrées](ILLUSTRATIONS_CARTES_2026-10-10.md), formats adaptés et lecture de l’image entière | Lisibilité des textes, gestes et contrastes sur téléphone réel |
+| Ennemis et boss | [101 portraits, dont 18 boss](ILLUSTRATIONS_ENNEMIS_BOSS_2026-10-10.md), y compris les entités secondaires | Lisibilité des rencontres chargées et coût sur téléphone modeste |
+| Carte, marchand, repos, atelier et événements | [45 scènes couvrant les 50 événements](ILLUSTRATIONS_LIEUX_2026-10-10.md), déjà intégrées | États particuliers des choix et achats, compréhension sans hover |
+| Combat et parcours | [Recette navigateur bureau/mobile émulé](PASSE_FINALE_EQUILIBRAGE_ET_RECETTE_2026-10-10.md), réglages de vitesse et mouvement réduit présents | Appareils physiques, accessibilité et finition des feedbacks |
+| Bibliothèque, méta-progression et pages du menu | [Refonte implémentée le 11 octobre](REFONTE_MENUS_2026-10-11.md) : UI-01 à UI-05 | Compléments de recette UI-06, appareils physiques et performances |
+
+### Bibliothèque, méta-progression et pages du menu
+
+**Périmètre réalisé à la demande du joueur.** La [passe du 11 octobre](REFONTE_MENUS_2026-10-11.md) reprend l’identité de bibliothèque fantastique entre l’accueil, les investissements permanents et les expéditions. Les critères de conception ci-dessous sont conservés ; les preuves et limites de recette sont dans le rapport.
+
+L’accueil et le cadre commun réutilisent `panlibrarium-v2.webp`. La Bibliothèque possède désormais des rayonnages illustrés, neuf ressources nommées et des tomes lisibles par biome. Les règles des prérequis et du plafonnement sont conservées ; leur présentation et leur consultation ont été reprises.
+
+#### UI-01 — Cadre commun
+
+- [x] Définir une composition commune : titre et repère de lieu, navigation/retour, action principale, contenu et informations secondaires.
+- [x] Harmoniser typographie, matières, cadres, espacements, icônes et boutons avec les cartes et les lieux existants ; garder des surfaces calmes derrière les textes longs.
+- [x] Prévoir les états normal, survol, focus, pressé, indisponible et en attente, avec une raison lisible lorsqu’une action est bloquée.
+- [x] Harmoniser chargement, erreur et réessai, liste vide et retour à la page précédente ; conserver les filtres utiles lors du retour d’une fiche.
+- [x] Réutiliser les décors et composants existants lorsque leur composition convient. Lister les illustrations réellement manquantes après le prototype, avant toute nouvelle génération.
+
+#### UI-02 — Bibliothèque et progression permanente
+
+Route : `/library`. Composants : [LibraryClient](../src/app/library/_components/LibraryClient.tsx), [ResourceBar](../src/app/library/_components/ResourceBar.tsx), [BiomeSection](../src/app/library/_components/BiomeSection.tsx), [HistoireSlot](../src/app/library/_components/HistoireSlot.tsx), [HistoireModal](../src/app/library/_components/HistoireModal.tsx).
+
+- [x] Composer la Bibliothèque comme un lieu : rayonnages ou tomes par biome, ambiance peinte et éclairage cohérent, sans masquer les informations de progression.
+- [x] Rendre les ressources possédées, les dépenses possibles et la progression par biome faciles à comparer ; proposer une présentation compacte accessible sur mobile.
+- [x] Distinguer clairement les histoires acquises, achetables, bloquées par leurs prérequis et bloquées par le coût, avec symbole et texte en plus de la couleur.
+- [x] Montrer les liens entre histoires et permettre de retrouver le prérequis manquant ; éviter un arbre miniature illisible sur téléphone.
+- [x] Recomposer la fiche d’histoire : illustration/identité du tome, récit, coût possédé/requis, prérequis et conséquence concrète du déblocage.
+- [x] Mettre en évidence le **gain réellement appliqué** après plafonnement des bonus, en réutilisant le calcul existant. Distinguer bonus de combat, carte/relique débloquée et progression narrative.
+- [x] Donner un feedback de déblocage bref : ressources mises à jour, histoire restaurée, branche disponible ; prévoir mouvement réduit, échec réseau et achat en attente.
+- [x] Réintégrer le guidage du premier achat dans la nouvelle composition, puis vérifier reprise et persistance après rechargement.
+
+Critère de clôture : sur bureau et téléphone, un joueur peut identifier ce qu’il possède, ce qu’il peut acheter, ce qui lui manque et ce que l’achat apporte. Un achat n’est enregistré qu’une fois et reste visible après rechargement. La refonte graphique ne change pas à elle seule les coûts ou bonus d’équilibrage.
+
+#### UI-03 à UI-05 — Pages accessibles depuis le menu
+
+| Lot | Page | Travail prévu | Vérification attendue |
+| --- | --- | --- | --- |
+| UI-03 | Accueil `/` | Intégrer le décor existant au cadre commun ; hiérarchie Jouer/reprendre, Bibliothèque et liens secondaires ; cohérence des commandes | États connecté/déconnecté et partie en cours compréhensibles ; bandeaux d’installation/mise à jour sans masquer les actions |
+| UI-03 | Connexion et inscription `/auth/signin`, `/auth/signup` | Portail visuel cohérent, formulaires et erreurs lisibles, retour clair | Clavier mobile, saisie, erreur, attente et redirection vers le jeu fonctionnent |
+| UI-04 | Collection `/library/collection` | Codex cohérent avec la Bibliothèque : filtres, cartes découvertes/verrouillées, fiche et illustration agrandie | Filtres et informations accessibles au toucher et au clavier ; image ouverte sans action involontaire |
+| UI-04 | Bestiaire `/library/bestiary` | Réutiliser les portraits peints ; hiérarchiser créature, maîtrise, paliers de lore et récompenses | Comprendre ce qui est découvert, ce qui reste à débloquer et comment progresser |
+| UI-05 | Historique `/runs` | Journal d’expéditions : résultat, personnage, difficulté, durée, deck et détails | Liste vide, longue liste, erreur et détail de partie lisibles sur petit écran |
+| UI-05 | Classement `/leaderboard` | Présentation cohérente, filtres et détails lisibles | Règles de classement et statut non certifié compréhensibles ; aucune apparence de certification nouvelle |
+| UI-05 | Règles `/rules` | Manuel illustré avec navigation par sujet et exemples réutilisant les cartes/icônes | Trouver une règle sans parcourir toute la page ; textes français/anglais et petits écrans lisibles |
+
+Les réglages accessibles depuis les menus de partie doivent conserver la même présentation des contrôles. La page d’administration `/admin/stats` reste un outil interne, hors du lot artistique destiné aux joueurs.
+
+#### UI-06 — Recette commune et ordre
+
+- [ ] Captures avant/après pour chaque route et ses états importants, en bureau, 320 px, 390 px et paysage.
+- [x] Navigation au clavier et focus visible/restauré vérifiés ; noms des filtres et contraste sur décor revus visuellement. Cela ne constitue pas un audit WCAG complet.
+- [ ] Navigation tactile sans hover obligatoire ; boutons accessibles, textes longs FR/EN, défilement des fenêtres et safe areas.
+- [x] Compte neuf, progression intermédiaire et progression avancée ; ressources insuffisantes, prérequis manquants et bonus déjà plafonné.
+- [ ] Chargement lent, image indisponible, erreur serveur, réessai et rechargement après déblocage.
+- [ ] Mesure de fluidité et mémoire sur téléphone modeste ; respect du mouvement réduit et coexistence avec les bandeaux PWA.
+- [ ] Essais sur Android et iPhone physiques. Les captures en émulation ne clôturent pas ce point.
+
+Ordre : **cadre commun → Bibliothèque et fiche d’histoire → accueil/authentification → collection/bestiaire → historique/classement/règles**, avec recette à chaque étape. Réutiliser les identifiants UI-01 à UI-06 de [TODO.md](TODO.md) pour éviter deux listes de statuts contradictoires.
+
+## Audit initial — historique conservé
+
 La [passe graphique appliquée le 9 octobre 2026](PASSE_GRAPHIQUE_2026-10-09.md) ajoute neuf décors illustrés, des gravures pour les cartes sans image, des portraits et une présentation en portrait sur téléphone. Ce rapport contient les captures et les contrôles ; l’audit ci-dessous conserve sa liste historique.
 
 Mise à jour du 9 octobre 2026 : les dix entités secondaires de boss manquantes et les cartes de départ disposent maintenant d’illustrations. Les scènes de biome, la vue d’ensemble mobile, la taille du texte, les volumes séparés et l’épilogue ont été ajoutés. Voir le [suivi des corrections](CORRECTIONS_AUDIT_2026-10-09.md) pour les preuves et les validations encore ouvertes. La défaite automatique du tutoriel est supprimée ; les remarques historiques ci-dessous ne constituent pas un état actuel de cette mécanique.

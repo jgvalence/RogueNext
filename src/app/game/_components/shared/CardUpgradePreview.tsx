@@ -6,7 +6,7 @@ import { GameCard } from "../combat/GameCard";
 
 interface CardUpgradePreviewProps {
   definition: CardDefinition;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
 }
 
 export function CardUpgradePreview({
@@ -28,14 +28,24 @@ export function CardUpgradePreview({
         <p className="text-[9px] font-semibold uppercase tracking-wide text-yellow-400">
           {t("gameCard.labels.upgraded")} A
         </p>
-        <GameCard definition={definition} upgraded upgradeBranch="A" size={size} />
+        <GameCard
+          definition={definition}
+          upgraded
+          upgradeBranch="A"
+          size={size}
+        />
       </div>
 
       <div className="flex flex-col items-center gap-1.5">
         <p className="text-[9px] font-semibold uppercase tracking-wide text-cyan-300">
           {t("gameCard.labels.upgraded")} B
         </p>
-        <GameCard definition={definition} upgraded upgradeBranch="B" size={size} />
+        <GameCard
+          definition={definition}
+          upgraded
+          upgradeBranch="B"
+          size={size}
+        />
       </div>
     </div>
   );

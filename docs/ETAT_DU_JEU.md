@@ -1,4 +1,18 @@
-# État du jeu — 3 août 2026
+# État du jeu — actualisé le 11 octobre 2026
+
+## État actuel et priorités
+
+La liste active est [TODO.md](TODO.md). La [passe finale du 10 octobre](PASSE_FINALE_EQUILIBRAGE_ET_RECETTE_2026-10-10.md) remplace les anciens chiffres d’équilibrage ci-dessous : 3 540 simulations finales, des victoires observées pour les 13 orientations D0–D5, et des parcours navigateur complets avec contrôles de persistance. Cela ne prouve pas des taux de victoire humains ni une validation sur téléphone physique.
+
+Les peintures des [cartes](ILLUSTRATIONS_CARTES_2026-10-10.md), [ennemis/boss](ILLUSTRATIONS_ENNEMIS_BOSS_2026-10-10.md) et [lieux/événements](ILLUSTRATIONS_LIEUX_2026-10-10.md) sont intégrées et publiées. L’historique, les tutoriels et les vitesses de combat existent déjà.
+
+Le jeu a été publié sur GitHub/Vercel, avec installation et mise à jour PWA vérifiées dans Chromium. Le correctif `e0e0d3e` du 11 octobre complète les statistiques absentes des anciennes sauvegardes côté serveur et client : l’erreur `combatsStarted` a été reproduite puis corrigée sur une copie de sauvegarde en production, sans annulation de partie réelle. Six tests de non-régression ont été ajoutés ; les 26 tests ciblés moteur/persistance, le lint et le build ont passé pour ce correctif. Les décomptes de tests des sections historiques ne sont pas ceux de cette version.
+
+La [refonte de la Bibliothèque et des menus du 11 octobre](REFONTE_MENUS_2026-10-11.md) est implémentée : rayonnages illustrés, tomes consultables, navigation commune, collection tactile, recherche du bestiaire, détails des chroniques et sommaire du manuel. Prochains travaux : essais humains et Android/iPhone réels, puis écarts entre builds, lisibilité, performances et finitions audio/visuelles. Les limites et preuves de cette passe sont conservées dans son rapport.
+
+## Historique des constats
+
+Les sections suivantes conservent les bilans de leurs dates respectives. Pour décider du prochain travail, utiliser la TODO actuelle ci-dessus.
 
 ## Actualisation du 9 octobre 2026
 

@@ -10,7 +10,7 @@ export default async function RunsPage() {
   const loadError = result.success ? null : result.error.message;
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#03060A] text-amber-50">
+    <main className="menu-page relative text-amber-50">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-24 top-16 h-72 w-72 rounded-full bg-amber-700/15 blur-[90px]" />
         <div className="absolute right-0 top-0 h-80 w-80 rounded-full bg-sky-700/10 blur-[120px]" />

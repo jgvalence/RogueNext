@@ -1,6 +1,8 @@
 "use server";
 
 import type { RunState } from "@/game/schemas/run-state";
+import { CardInstanceSchema } from "@/game/schemas/cards";
+import { buildCardDefsMap } from "@/game/data";
 import { requireAuth } from "@/lib/auth/helpers";
 import { handleServerActionError, success } from "@/lib/errors/handlers";
 import { prisma } from "@/lib/db/prisma";
@@ -19,9 +21,40 @@ export interface RunHistoryEntry {
   unlockedStoryCount: number;
   relicCount: number;
   createdAt: Date;
+  activePlayMs: number | null;
+  deck: Array<{
+    definitionId: string;
+    name: string;
+    upgraded: boolean;
+    branch: string | null;
+    count: number;
+  }>;
 }
 
 const RUN_HISTORY_LIMIT = 50;
+const cardDefinitions = buildCardDefsMap();
+
+function describeDeck(raw: unknown): RunHistoryEntry["deck"] {
+  const cards = new Map<string, RunHistoryEntry["deck"][number]>();
+  for (const value of Array.isArray(raw) ? raw : []) {
+    const parsed = CardInstanceSchema.safeParse(value);
+    if (!parsed.success) continue;
+    const card = parsed.data;
+    const branch = card.upgraded ? (card.upgradeBranch ?? null) : null;
+    const key = `${card.definitionId}:${card.upgraded}:${branch}`;
+    const existing = cards.get(key);
+    if (existing) existing.count++;
+    else
+      cards.set(key, {
+        definitionId: card.definitionId,
+        name: cardDefinitions.get(card.definitionId)?.name ?? card.definitionId,
+        upgraded: card.upgraded,
+        branch,
+        count: 1,
+      });
+  }
+  return [...cards.values()];
+}
 
 export async function getRunHistoryAction() {
   try {
@@ -56,6 +89,8 @@ export async function getRunHistoryAction() {
         unlockedStoryCount: stories,
         relicCount: state.relicIds.length,
         createdAt: run.endedAt ?? run.createdAt,
+        activePlayMs: state.activePlayMs > 0 ? state.activePlayMs : null,
+        deck: describeDeck(state.deck),
       };
     });
     // Preserve older history whose canonical snapshots were deleted by the former lifecycle.
@@ -72,6 +107,8 @@ export async function getRunHistoryAction() {
       for (const snapshot of legacy)
         entries.push({
           ...snapshot,
+          activePlayMs: null,
+          deck: describeDeck(snapshot.deck),
           relicCount: Array.isArray(snapshot.relicIds)
             ? snapshot.relicIds.length
             : 0,

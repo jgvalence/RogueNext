@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useMenuPreference } from "@/components/shared/use-menu-preference";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -10,6 +11,7 @@ import {
   RogueEmpty,
   RogueSelect,
   RogueTag,
+  RogueInput,
 } from "@/components/ui/rogue";
 import type { BiomeType } from "@/game/schemas/enums";
 import type { EncounteredEnemyType } from "@/game/engine/bestiary";
@@ -53,8 +55,15 @@ interface BestiaryClientProps {
 export function BestiaryClient({ enemies }: BestiaryClientProps) {
   const { t, i18n } = useTranslation();
   const router = useRouter();
-  const [biomeFilter, setBiomeFilter] = useState<BestiaryFilterBiome>("ALL");
-  const [typeFilter, setTypeFilter] = useState<BestiaryFilterType>("ALL");
+  const [biomeFilter, setBiomeFilter] = useMenuPreference<BestiaryFilterBiome>(
+    "bestiary-biome",
+    "ALL"
+  );
+  const [typeFilter, setTypeFilter] = useMenuPreference<BestiaryFilterType>(
+    "bestiary-type",
+    "ALL"
+  );
+  const [query, setQuery] = useMenuPreference<string>("bestiary-query", "");
   const locale = i18n.resolvedLanguage ?? i18n.language;
 
   const biomeOptions = useMemo(
@@ -80,6 +89,13 @@ export function BestiaryClient({ enemies }: BestiaryClientProps) {
   const filteredEnemies = useMemo(
     () =>
       enemies
+        .filter(
+          (enemy) =>
+            !query.trim() ||
+            localizeEnemyName(enemy.id, enemy.name)
+              .toLocaleLowerCase(locale)
+              .includes(query.trim().toLocaleLowerCase(locale))
+        )
         .filter((enemy) =>
           biomeFilter === "ALL" ? true : enemy.biome === biomeFilter
         )
@@ -100,7 +116,7 @@ export function BestiaryClient({ enemies }: BestiaryClientProps) {
             locale
           );
         }),
-    [enemies, biomeFilter, typeFilter, locale]
+    [enemies, biomeFilter, typeFilter, locale, query]
   );
 
   const discoveredCount = useMemo(
@@ -109,9 +125,9 @@ export function BestiaryClient({ enemies }: BestiaryClientProps) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-950 px-6 py-6 text-white">
+    <div className="menu-page px-6 py-6 text-white">
       <div className="mx-auto max-w-7xl space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="menu-page-heading">
           <div>
             <h1 className="text-2xl font-black">{t("bestiary.title")}</h1>
             <p className="text-sm text-gray-400">
@@ -139,8 +155,17 @@ export function BestiaryClient({ enemies }: BestiaryClientProps) {
         </div>
 
         <div className="grid grid-cols-1 gap-2 rounded-lg border border-gray-800 bg-gray-900/60 p-3 md:grid-cols-2">
+          <RogueInput
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t("menu.searchEnemy")}
+            aria-label={t("menu.searchEnemy")}
+            allowClear
+            className="md:col-span-2"
+          />
           <RogueSelect
             value={biomeFilter}
+            aria-label={t("bestiary.allBiomes")}
             onChange={(value) => setBiomeFilter(value as BestiaryFilterBiome)}
             options={biomeOptions}
             className="w-full"
@@ -148,6 +173,7 @@ export function BestiaryClient({ enemies }: BestiaryClientProps) {
 
           <RogueSelect
             value={typeFilter}
+            aria-label={t("bestiary.allTypes")}
             onChange={(value) => setTypeFilter(value as BestiaryFilterType)}
             options={typeOptions}
             className="w-full"

@@ -1,28 +1,42 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { RogueButton } from "@/components/ui/rogue";
+import { useEffect, useState } from "react";
+import { RogueAlert, RogueButton, RogueModal } from "@/components/ui/rogue";
 
 interface LibraryIntroTutorialProps {
+  error?: string | null;
   isPending?: boolean;
   onDismiss: () => void;
 }
 
 export function LibraryIntroTutorial({
+  error,
   isPending = false,
   onDismiss,
 }: LibraryIntroTutorialProps) {
   const { t } = useTranslation();
+  const [mounted, setMounted] = useState(false);
+  // Ant Design's portal must open after hydration, including the first visit.
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-3xl rounded-3xl border border-amber-500/25 bg-slate-950/95 p-5 shadow-[0_28px_90px_rgba(2,6,23,0.72)] sm:p-6">
+    <RogueModal
+      open
+      centered
+      width={720}
+      footer={null}
+      closable={false}
+      maskClosable={false}
+      keyboard={false}
+      className="story-modal"
+      title={t("library.firstVisitTutorial.title")}
+    >
+      <div>
         <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-300/85">
           {t("library.firstVisitTutorial.kicker")}
         </p>
-        <h2 className="mt-2 text-xl font-black tracking-tight text-white sm:text-2xl">
-          {t("library.firstVisitTutorial.title")}
-        </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-200/90">
           {t("library.firstVisitTutorial.description")}
         </p>
@@ -51,6 +65,9 @@ export function LibraryIntroTutorial({
           {t("library.firstVisitTutorial.tip")}
         </p>
 
+        {error && (
+          <RogueAlert type="error" showIcon message={error} className="mt-4" />
+        )}
         <div className="mt-5 flex justify-end">
           <RogueButton
             type="primary"
@@ -62,6 +79,6 @@ export function LibraryIntroTutorial({
           </RogueButton>
         </div>
       </div>
-    </div>
+    </RogueModal>
   );
 }

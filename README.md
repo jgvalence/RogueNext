@@ -8,6 +8,8 @@ Le jeu dispose d'une boucle de run jouable, de 9 biomes, de quatre personnages, 
 
 L'état détaillé, les limites connues et les priorités sont documentés dans [docs/ETAT_DU_JEU.md](docs/ETAT_DU_JEU.md). Les tâches encore ouvertes sont dans [docs/TODO.md](docs/TODO.md).
 
+Le [suivi consolidé du 11 octobre](docs/TODO.md) distingue les cinq passes d’équilibrage/recette livrées des validations restantes. Le prochain chantier graphique couvre la [Bibliothèque, la méta-progression et les pages du menu](docs/AUDIT_VISUEL_ET_TODO.md#bibliothèque-méta-progression-et-pages-du-menu).
+
 ## Lancer le projet
 
 Prérequis : Node.js 18+, npm 9+ et une base PostgreSQL.

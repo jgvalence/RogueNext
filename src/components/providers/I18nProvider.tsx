@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { I18nextProvider, initReactI18next } from "react-i18next";
-import { getCurrentLocale, i18n } from "@/lib/i18n";
+import { getCurrentLocale, i18n, restorePreferredLocale } from "@/lib/i18n";
 
 type ReactReadyI18n = typeof i18n & {
   __reactI18nextInitialized?: boolean;
@@ -22,6 +22,7 @@ interface I18nProviderProps {
 
 export function I18nProvider({ children }: I18nProviderProps) {
   useEffect(() => {
+    restorePreferredLocale();
     const syncHtmlLang = () => {
       document.documentElement.lang = getCurrentLocale();
     };

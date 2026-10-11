@@ -1,7 +1,7 @@
 "use client";
 
 import { computeMetaBonuses } from "@/game/engine/meta";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   RogueAlert,
@@ -26,6 +26,7 @@ interface HistoireModalProps {
   slotState: SlotState;
   showFirstRunGuidedStoryTutorial?: boolean;
   onClose: () => void;
+  onSelectStory: (story: Histoire) => void;
   onUnlocked: (updatedProgression: MetaProgress) => void;
 }
 
@@ -100,10 +101,12 @@ export function HistoireModal({
   slotState,
   showFirstRunGuidedStoryTutorial = false,
   onClose,
+  onSelectStory,
   onUnlocked,
 }: HistoireModalProps) {
   const { t } = useTranslation();
   const [isPending, setIsPending] = useState(false);
+  const unlocking = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const theme = BIOME_THEMES[histoire.biome];
   const storyById = new Map(histoires.map((h) => [h.id, h]));
@@ -136,6 +139,8 @@ export function HistoireModal({
       : ({ ...histoire.bonus, value: marginalValue } as MetaBonus);
 
   async function handleUnlock() {
+    if (unlocking.current || slotState !== "AVAILABLE") return;
+    unlocking.current = true;
     setIsPending(true);
     setError(null);
     try {
@@ -149,10 +154,10 @@ export function HistoireModal({
         resources: result.data.resources,
         unlockedStoryIds: result.data.unlockedStoryIds,
       });
-      onClose();
     } catch {
       setError(t("library.genericError"));
     } finally {
+      unlocking.current = false;
       setIsPending(false);
     }
   }
@@ -160,7 +165,12 @@ export function HistoireModal({
   return (
     <RogueModal
       open
-      onCancel={onClose}
+      onCancel={() => {
+        if (!isPending) onClose();
+      }}
+      closable={!isPending}
+      maskClosable={!isPending}
+      keyboard={!isPending}
       footer={null}
       centered
       destroyOnClose
@@ -187,7 +197,7 @@ export function HistoireModal({
           )}
         </div>
       }
-      className="[&_.ant-modal-content]:!rounded-2xl [&_.ant-modal-content]:!border [&_.ant-modal-content]:!border-slate-800 [&_.ant-modal-content]:!bg-slate-950 [&_.ant-modal-header]:!bg-transparent [&_.ant-modal-title]:!text-white"
+      className="story-modal"
     >
       <div className="space-y-4">
         {showFirstRunGuidedStoryTutorial && (
@@ -207,7 +217,7 @@ export function HistoireModal({
 
         <div className={`rounded-lg border p-3 ${theme.border} ${theme.bg}`}>
           <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
-            {t("library.permanentBonus")}
+            {t("menu.effectiveBonus")}
           </p>
           <p className={`text-sm font-semibold ${theme.accent}`}>
             {formatBonus(effectiveBonus, t)}
@@ -241,7 +251,10 @@ export function HistoireModal({
                       : "border-red-800 text-red-400"
                   }`}
                 >
-                  <span>{resTheme?.icon ?? resource}</span>
+                  <span>
+                    {resTheme?.icon}{" "}
+                    {t(`reward.resources.${resource}`, resource)}
+                  </span>
                   <span>
                     {cost as number}{" "}
                     <span
@@ -270,15 +283,19 @@ export function HistoireModal({
                   ? localizeStoryTitle(prereqStory, t)
                   : prereqId.replace(/_/g, " ");
                 return (
-                  <div
+                  <button
                     key={prereqId}
-                    className={`flex items-center gap-2 text-xs ${
-                      unlocked ? "text-slate-400" : "text-red-400"
-                    }`}
+                    className="story-prerequisite"
+                    disabled={!prereqStory || isPending}
+                    onClick={() => {
+                      if (prereqStory) onSelectStory(prereqStory);
+                    }}
+                    aria-label={`${prereqLabel} — ${t("menu.viewPrerequisite")}`}
                   >
-                    <span>{unlocked ? "\u2713" : "x"}</span>
+                    <span aria-hidden="true">{unlocked ? "\u2713" : "⊡"}</span>
                     <span>{prereqLabel}</span>
-                  </div>
+                    <span aria-hidden="true">↗</span>
+                  </button>
                 );
               })}
             </div>

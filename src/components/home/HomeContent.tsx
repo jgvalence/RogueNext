@@ -11,9 +11,13 @@ const cinzel = { className: "font-serif" };
 
 interface HomeContentProps {
   isSignedIn: boolean;
+  hasActiveRun?: boolean;
 }
 
-export function HomeContent({ isSignedIn }: HomeContentProps) {
+export function HomeContent({
+  isSignedIn,
+  hasActiveRun = false,
+}: HomeContentProps) {
   const { t } = useTranslation();
 
   return (
@@ -80,18 +84,23 @@ export function HomeContent({ isSignedIn }: HomeContentProps) {
         >
           Panlibrarium
         </h1>
-        <p className="mb-8 max-w-md text-sm leading-relaxed text-amber-50/75 sm:text-base">{t("home.subtitle")}</p>
+        <p className="mb-8 max-w-md text-sm leading-relaxed text-amber-50/75 sm:text-base">
+          {t("home.subtitle")}
+        </p>
 
         {/* Séparateur */}
         <div className="mb-8 h-px w-24 bg-gradient-to-r from-amber-500/60 to-transparent" />
 
         {/* Items de menu */}
-        <nav className="flex flex-col">
+        <nav
+          className="home-navigation flex flex-col"
+          aria-label={t("menu.navigation")}
+        >
           {isSignedIn ? (
             <>
               <MenuItem
                 href="/game"
-                label={t("home.play")}
+                label={t(hasActiveRun ? "menu.resume" : "home.play")}
                 primary
                 font={cinzel.className}
               />

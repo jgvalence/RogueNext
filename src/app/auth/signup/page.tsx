@@ -62,7 +62,7 @@ function SignUpForm() {
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center bg-gray-950 px-4">
+    <main className="menu-page menu-auth relative flex items-center justify-center">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-900/20 blur-[128px]" />
       </div>

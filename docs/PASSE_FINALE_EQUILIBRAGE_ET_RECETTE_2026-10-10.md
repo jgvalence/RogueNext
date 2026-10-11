@@ -177,4 +177,8 @@ node --import tsx scripts/simulate.ts 30 2 null griot strong final-pass-strict-i
 
 ## Suivi
 
+Actualisation du 11 octobre : la [TODO centrale](TODO.md) distingue maintenant les cinq passes livrées des essais humains et sur téléphones physiques encore ouverts. Elle ajoute l’harmonisation de la Bibliothèque/méta-progression et de toutes les pages du menu, détaillée dans [l’audit visuel](AUDIT_VISUEL_ET_TODO.md#bibliothèque-méta-progression-et-pages-du-menu).
+
+Après cette recette locale, la publication et les contrôles de PWA/combat/reprise ont également été réalisés en production avec des comptes jetables. Le correctif `e0e0d3e` complète les statistiques des anciennes sauvegardes au chargement ; le crash `combatsStarted` a été reproduit puis corrigé sur une copie de sauvegarde en ligne. Les comptes de test ont été supprimés ; aucune partie réelle n’a été annulée. La mention de base locale dans la section 5 décrit uniquement la recette initiale du 10 octobre.
+
 Les ajustements ne remplacent pas les retours de joueurs. Observer de vraies premières parties Griot, la satisfaction en D2, puis Griot Rythme/Saignement et Scribe Encre en D5. Les cartes à installation complexe demandent des essais humains avant un buff fondé uniquement sur le pilote.

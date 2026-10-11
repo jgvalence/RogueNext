@@ -110,7 +110,9 @@ Le pilote reste une heuristique à un coup : trajet aléatoire parmi les salles 
 
 Trente parties par orientation donnent des indications, pas des probabilités humaines précises. La série sans cartes armure utilise des graines différentes : ses écarts avec la série normale ne mesurent pas isolément la valeur de l’armure.
 
-## Priorités restantes
+## Priorités à l’issue de cette passe — historique
+
+Les ajustements et la correction des intentions cachées ont depuis été livrés dans la [passe finale](PASSE_FINALE_EQUILIBRAGE_ET_RECETTE_2026-10-10.md). Pour distinguer ces travaux effectués des essais humains encore ouverts, utiliser le [suivi consolidé du 11 octobre](TODO.md).
 
 | Priorité | Travail | Critère de validation |
 |---|---|---|

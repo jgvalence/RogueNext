@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import {
   RogueAlert,
+  RogueButton,
   RogueCard,
   RogueEmpty,
   RoguePageHeader,
@@ -179,7 +180,12 @@ export function LeaderboardClient({
     const nextSortMode =
       value === "victory_time" ? "victory_time" : "progression";
     router.replace(
-      buildLeaderboardHref(pathname, searchParams, nextSortMode, timeDifficulty),
+      buildLeaderboardHref(
+        pathname,
+        searchParams,
+        nextSortMode,
+        timeDifficulty
+      ),
       { scroll: false }
     );
   };
@@ -197,103 +203,100 @@ export function LeaderboardClient({
     );
   };
 
-  const columns = useMemo(
-    () => {
-      const rankColumn = {
-        title: t("leaderboard.columns.rank"),
-        key: "rank",
-        width: 110,
-        render: (_: unknown, entry: LeaderboardEntry) => (
-          <RogueTag
-            bordered
-            className={`inline-flex min-w-12 items-center justify-center rounded-full border px-2 py-0.5 text-xs font-semibold ${getRankTagClass(entry.rank)}`}
-          >
-            #{entry.rank}
-          </RogueTag>
-        ),
-      };
+  const columns = useMemo(() => {
+    const rankColumn = {
+      title: t("leaderboard.columns.rank"),
+      key: "rank",
+      width: 110,
+      render: (_: unknown, entry: LeaderboardEntry) => (
+        <RogueTag
+          bordered
+          className={`inline-flex min-w-12 items-center justify-center rounded-full border px-2 py-0.5 text-xs font-semibold ${getRankTagClass(entry.rank)}`}
+        >
+          #{entry.rank}
+        </RogueTag>
+      ),
+    };
 
-      const playerColumn = {
-        title: t("leaderboard.columns.player"),
-        key: "player",
-        render: (_: unknown, entry: LeaderboardEntry) => {
-          const isCurrentUser = entry.userId === currentUserId;
-          const displayName =
-            entry.playerName ??
-            t("leaderboard.playerFallback", { id: entry.playerTag });
+    const playerColumn = {
+      title: t("leaderboard.columns.player"),
+      key: "player",
+      render: (_: unknown, entry: LeaderboardEntry) => {
+        const isCurrentUser = entry.userId === currentUserId;
+        const displayName =
+          entry.playerName ??
+          t("leaderboard.playerFallback", { id: entry.playerTag });
 
-          return (
-            <div className="font-semibold text-amber-50">
-              {displayName}
-              {isCurrentUser && (
-                <RogueTag
-                  bordered
-                  className="ml-2 rounded border border-amber-200/45 bg-amber-200/20 px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-amber-100"
-                >
-                  {t("leaderboard.you")}
-                </RogueTag>
-              )}
-            </div>
-          );
-        },
-      };
+        return (
+          <div className="font-semibold text-amber-50">
+            {displayName}
+            {isCurrentUser && (
+              <RogueTag
+                bordered
+                className="ml-2 rounded border border-amber-200/45 bg-amber-200/20 px-2 py-0.5 text-[0.62rem] font-bold uppercase tracking-[0.16em] text-amber-100"
+              >
+                {t("leaderboard.you")}
+              </RogueTag>
+            )}
+          </div>
+        );
+      },
+    };
 
-      const winsColumn = {
-        title: t("leaderboard.columns.wins"),
-        key: "wins",
-        dataIndex: "wonRuns" as const,
-        render: (value: number) => value.toLocaleString(),
-      };
+    const winsColumn = {
+      title: t("leaderboard.columns.wins"),
+      key: "wins",
+      dataIndex: "wonRuns" as const,
+      render: (value: number) => value.toLocaleString(),
+    };
 
-      const bestInfiniteFloorColumn = {
-        title: t("leaderboard.columns.bestInfiniteFloor"),
-        key: "bestInfiniteFloor",
-        dataIndex: "bestInfiniteFloor" as const,
-        render: (value: number) => (value > 0 ? value : t("leaderboard.none")),
-      };
+    const bestInfiniteFloorColumn = {
+      title: t("leaderboard.columns.bestInfiniteFloor"),
+      key: "bestInfiniteFloor",
+      dataIndex: "bestInfiniteFloor" as const,
+      render: (value: number) => (value > 0 ? value : t("leaderboard.none")),
+    };
 
-      const bestDifficultyColumn = {
-        title: t("leaderboard.columns.bestDifficulty"),
-        key: "highestDifficulty",
-        dataIndex: "highestDifficulty" as const,
-        render: (value: number | null) =>
-          value == null ? t("leaderboard.none") : value,
-      };
+    const bestDifficultyColumn = {
+      title: t("leaderboard.columns.bestDifficulty"),
+      key: "highestDifficulty",
+      dataIndex: "highestDifficulty" as const,
+      render: (value: number | null) =>
+        value == null ? t("leaderboard.none") : value,
+    };
 
-      const bestTimeColumn = {
-        title: bestTimeLabel,
-        key: "bestTime",
-        render: (_: unknown, entry: LeaderboardEntry) => (
-          <DifficultyTimes
-            items={entry.bestTimesByDifficulty}
-            emptyLabel={t("leaderboard.noTime")}
-            highlightDifficulty={
-              sortMode === "victory_time" ? timeDifficulty : null
-            }
-          />
-        ),
-      };
+    const bestTimeColumn = {
+      title: bestTimeLabel,
+      key: "bestTime",
+      render: (_: unknown, entry: LeaderboardEntry) => (
+        <DifficultyTimes
+          items={entry.bestTimesByDifficulty}
+          emptyLabel={t("leaderboard.noTime")}
+          highlightDifficulty={
+            sortMode === "victory_time" ? timeDifficulty : null
+          }
+        />
+      ),
+    };
 
-      return sortMode === "victory_time"
-        ? [
-            rankColumn,
-            playerColumn,
-            bestTimeColumn,
-            bestDifficultyColumn,
-            bestInfiniteFloorColumn,
-            winsColumn,
-          ]
-        : [
-            rankColumn,
-            playerColumn,
-            winsColumn,
-            bestInfiniteFloorColumn,
-            bestDifficultyColumn,
-            bestTimeColumn,
-          ];
-    },
-    [bestTimeLabel, currentUserId, sortMode, t, timeDifficulty]
-  );
+    return sortMode === "victory_time"
+      ? [
+          rankColumn,
+          playerColumn,
+          bestTimeColumn,
+          bestDifficultyColumn,
+          bestInfiniteFloorColumn,
+          winsColumn,
+        ]
+      : [
+          rankColumn,
+          playerColumn,
+          winsColumn,
+          bestInfiniteFloorColumn,
+          bestDifficultyColumn,
+          bestTimeColumn,
+        ];
+  }, [bestTimeLabel, currentUserId, sortMode, t, timeDifficulty]);
 
   return (
     <div className="space-y-5">
@@ -316,12 +319,19 @@ export function LeaderboardClient({
         }
       />
 
-      <p className="my-3 rounded border border-amber-700 bg-amber-950/40 p-3 text-sm text-amber-100">{t("leaderboard.unverified")}</p>
+      <p className="my-3 rounded border border-amber-700 bg-amber-950/40 p-3 text-sm text-amber-100">
+        {t("leaderboard.unverified")}
+      </p>
       {loadError && (
         <RogueAlert
           type="error"
           showIcon
           message={t("leaderboard.loadError", { message: loadError })}
+          action={
+            <RogueButton onClick={() => router.refresh()}>
+              {t("menu.retry")}
+            </RogueButton>
+          }
           className="!rounded-xl !border !border-rose-400/35 !bg-rose-950/35 !text-rose-100"
         />
       )}
@@ -348,6 +358,7 @@ export function LeaderboardClient({
               </p>
               <RogueSelect
                 value={sortMode}
+                aria-label={t("leaderboard.filters.sortLabel")}
                 onChange={(value) => handleSortChange(String(value))}
                 options={sortOptions}
                 className="w-full"
@@ -360,7 +371,10 @@ export function LeaderboardClient({
                   {t("leaderboard.filters.difficultyLabel")}
                 </p>
                 <RogueSelect
-                  value={timeDifficulty == null ? "all" : String(timeDifficulty)}
+                  value={
+                    timeDifficulty == null ? "all" : String(timeDifficulty)
+                  }
+                  aria-label={t("leaderboard.filters.difficultyLabel")}
                   onChange={(value) => handleDifficultyChange(String(value))}
                   options={difficultyOptions}
                   className="w-full"

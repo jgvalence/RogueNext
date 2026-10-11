@@ -2,6 +2,8 @@
 
 ## Etat actuel (mis a jour)
 
+Suivi du 11 octobre 2026 : la **refonte visuelle de la Bibliothèque et de la méta-progression** est implémentée ; voir [le rapport et les vérifications](REFONTE_MENUS_2026-10-11.md), lot UI-02 de la [TODO centrale](TODO.md). Rayonnages illustrés, ressources nommées, tomes consultables, prérequis navigables, gains effectifs après plafonnement et feedback de déblocage sont intégrés. Les coûts et règles décrits ici sont conservés.
+
 Ce document decrit l'etat reel implemente dans le code.
 
 ## Ressources

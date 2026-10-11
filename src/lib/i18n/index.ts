@@ -17,14 +17,16 @@ function isSupportedLocale(value: string): value is SupportedLocale {
   return supportedLocales.includes(value as SupportedLocale);
 }
 
-function detectInitialLocale(): SupportedLocale {
+function detectPreferredLocale(): SupportedLocale {
   if (typeof window === "undefined") {
     return fallbackLocale;
   }
 
-  const savedLocale = window.localStorage.getItem(localeStorageKey);
-  if (savedLocale && isSupportedLocale(savedLocale)) {
-    return savedLocale;
+  try {
+    const savedLocale = window.localStorage.getItem(localeStorageKey);
+    if (savedLocale && isSupportedLocale(savedLocale)) return savedLocale;
+  } catch {
+    /* Storage can be disabled; the browser language still works. */
   }
 
   const browserLocale = window.navigator.language.split("-")[0]?.toLowerCase();
@@ -38,7 +40,8 @@ function detectInitialLocale(): SupportedLocale {
 if (!i18n.isInitialized) {
   i18n.init({
     resources,
-    lng: detectInitialLocale(),
+    // Server HTML and the first client render must use the same language.
+    lng: fallbackLocale,
     fallbackLng: fallbackLocale,
     supportedLngs: supportedLocales,
     interpolation: { escapeValue: false },
@@ -49,9 +52,18 @@ if (!i18n.isInitialized) {
 export function setLocale(locale: SupportedLocale): void {
   i18n.changeLanguage(locale);
   if (typeof window !== "undefined") {
-    window.localStorage.setItem(localeStorageKey, locale);
+    try {
+      window.localStorage.setItem(localeStorageKey, locale);
+    } catch {
+      /* Keep language switching usable. */
+    }
     document.documentElement.lang = locale;
   }
+}
+
+export function restorePreferredLocale(): void {
+  if (typeof window !== "undefined")
+    i18n.changeLanguage(detectPreferredLocale());
 }
 
 export function getCurrentLocale(): SupportedLocale {

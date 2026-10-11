@@ -1,5 +1,7 @@
 # Audit des reliques et plan de diversification
 
+> Suivi du 11 octobre 2026 : utiliser la [TODO centrale](TODO.md) pour les priorités et la [passe finale](PASSE_FINALE_EQUILIBRAGE_ET_RECETTE_2026-10-10.md) pour les mesures récentes du simulateur corrigé. Les résultats ci-dessous restent datés ; le choix et le plaisir d’utilisation des reliques nécessitent encore des parties humaines.
+
 Date de l'audit : 4 aout 2026
 
 Actualisation du 9 octobre 2026 : le simulateur applique désormais un pool de reliques explicitement débloquées et l’exclusivité carte/relique des récompenses d’élite. Les résultats de l’ancien simulateur ne valident pas les valeurs actuelles. Voir le [suivi global et ses limites](CORRECTIONS_AUDIT_2026-10-09.md).

@@ -151,7 +151,9 @@ Les journaux se trouvent dans `docs/audit-2026-10-09/corrections-{tests,typechec
 
 Le contrôle supplémentaire `npm run antd:first:check` **échoue encore** sur dix couples fichier/type de composant déjà présents dans les modifications préparées avant cette passe : tableaux d’administration, boutons de combat et sélecteurs existants. La [comparaison avec l’index initial](audit-2026-10-09/corrections-antd-first.json) montre zéro primitive supplémentaire pour ces écarts. Les nouveaux contrôles utilisent AntD/Rogue ; le référentiel du contrôle n’a pas été assoupli. Cette dette de convention reste à résorber.
 
-## Priorités restant réellement ouvertes
+## Priorités à l’issue du 9 octobre — historique
+
+La recette, la publication, les illustrations et l’équilibrage ont depuis avancé. Voir la [passe finale](PASSE_FINALE_EQUILIBRAGE_ET_RECETTE_2026-10-10.md) et la [TODO consolidée du 11 octobre](TODO.md) pour l’état actuel ; les essais humains et sur téléphones physiques restent distincts des scénarios automatisés.
 
 1. **Avant une compétition :** exécuter ou rejouer les actions côté serveur et n’admettre que ces résultats dans un classement certifié. Le schéma actuel ne suffit pas.
 2. **Avant une diffusion de cette passe :** tester création, reprise, échec transactionnel, double onglet, fin de partie et changement de version PWA sur une base et un compte de test isolés.

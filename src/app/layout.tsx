@@ -11,7 +11,7 @@ import { GlobalLanguageDock } from "@/components/shared/GlobalLanguageDock";
 import { RouteMusicGuard } from "@/components/shared/RouteMusicGuard";
 import { DevServiceWorkerReset } from "@/components/shared/DevServiceWorkerReset";
 import { PwaManager } from "@/components/shared/PwaManager";
-
+import { MenuShell } from "@/components/shared/MenuShell";
 
 export const metadata: Metadata = {
   title: {
@@ -26,12 +26,14 @@ export const metadata: Metadata = {
     url: env.NEXT_PUBLIC_APP_URL,
     siteName: env.NEXT_PUBLIC_APP_NAME,
     title: env.NEXT_PUBLIC_APP_NAME,
-    description: "Explorez les mythologies, composez votre deck et maîtrisez l’Encre.",
+    description:
+      "Explorez les mythologies, composez votre deck et maîtrisez l’Encre.",
   },
   twitter: {
     card: "summary_large_image",
     title: env.NEXT_PUBLIC_APP_NAME,
-    description: "Explorez les mythologies, composez votre deck et maîtrisez l’Encre.",
+    description:
+      "Explorez les mythologies, composez votre deck et maîtrisez l’Encre.",
   },
   robots: {
     index: true,
@@ -66,7 +68,7 @@ export default function RootLayout({
             <RouteMusicGuard />
             <GlobalLanguageDock />
             <QueryProvider>
-              {children}
+              <MenuShell>{children}</MenuShell>
               <Toaster position="top-right" richColors />
             </QueryProvider>
           </AntdProvider>

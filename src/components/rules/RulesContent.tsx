@@ -207,6 +207,24 @@ export function RulesContent({ mode = "page", onClose }: RulesContentProps) {
         </h1>
       </header>
 
+      {!isModal && (
+        <nav className="rules-index" aria-label={t("menu.rulesIndex")}>
+          {[
+            "overview",
+            "runStructure",
+            "combat",
+            "cardTypes",
+            "ink",
+            "rooms",
+            "buffs",
+            "tips",
+          ].map((topic, index) => (
+            <a key={topic} href={`#rule-${index + 1}`}>
+              {index + 1}. {t(`rules.sections.${topic}.title`)}
+            </a>
+          ))}
+        </nav>
+      )}
       <section className="space-y-3">
         <RuleBlock
           number="1"
@@ -375,24 +393,26 @@ function RuleBlock({
   defaultOpen = false,
 }: RuleBlockProps) {
   return (
-    <RogueCollapse
-      bordered={false}
-      defaultActiveKey={defaultOpen ? [number] : []}
-      items={[
-        {
-          key: number,
-          label: (
-            <div className="flex items-center gap-3">
-              <span className="text-lg">{emoji}</span>
-              <h2 className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-lg font-bold text-transparent sm:text-xl">
-                {number}. {title}
-              </h2>
-            </div>
-          ),
-          children: <div className="mt-2">{children}</div>,
-        },
-      ]}
-      className="rounded-2xl border border-gray-800 bg-gray-900/60 backdrop-blur-sm [&_.ant-collapse-content-box]:!px-4 [&_.ant-collapse-content-box]:!pb-4 [&_.ant-collapse-content-box]:!pt-0 [&_.ant-collapse-header]:!px-4 [&_.ant-collapse-header]:!py-4"
-    />
+    <div id={`rule-${number}`} className="scroll-mt-4">
+      <RogueCollapse
+        bordered={false}
+        defaultActiveKey={defaultOpen ? [number] : []}
+        items={[
+          {
+            key: number,
+            label: (
+              <div className="flex items-center gap-3">
+                <span className="text-lg">{emoji}</span>
+                <h2 className="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-lg font-bold text-transparent sm:text-xl">
+                  {number}. {title}
+                </h2>
+              </div>
+            ),
+            children: <div className="mt-2">{children}</div>,
+          },
+        ]}
+        className="rounded-2xl border border-gray-800 bg-gray-900/60 backdrop-blur-sm [&_.ant-collapse-content-box]:!px-4 [&_.ant-collapse-content-box]:!pb-4 [&_.ant-collapse-content-box]:!pt-0 [&_.ant-collapse-header]:!px-4 [&_.ant-collapse-header]:!py-4"
+      />
+    </div>
   );
 }

@@ -2,9 +2,11 @@
 
 import { usePathname } from "next/navigation";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { isMenuRoute } from "./MenuShell";
 
 export function GlobalLanguageDock() {
   const pathname = usePathname();
+  if (isMenuRoute(pathname)) return null;
   const isGameRoute = pathname?.startsWith("/game");
   const routeVisibilityClass = isGameRoute ? "hidden" : "";
 

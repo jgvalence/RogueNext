@@ -17,6 +17,7 @@ export function PwaManager() {
     null
   );
   const [updateReady, setUpdateReady] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     const install = (event: Event) => {
@@ -30,7 +31,10 @@ export function PwaManager() {
     const worker = navigator.serviceWorker;
     let alreadyControlled = Boolean(worker?.controller);
     const changed = () => {
-      if (alreadyControlled) setUpdateReady(true);
+      if (alreadyControlled) {
+        setUpdateReady(true);
+        setDismissed(false);
+      }
       alreadyControlled = true;
     };
     const check = () => {
@@ -61,7 +65,8 @@ export function PwaManager() {
   if (
     pathname === "/game" ||
     pathname.startsWith("/game/") ||
-    (!installPrompt && !updateReady)
+    (!installPrompt && !updateReady) ||
+    dismissed
   )
     return null;
 
@@ -87,6 +92,9 @@ export function PwaManager() {
         }}
       >
         {t(updateReady ? "pwa.update" : "pwa.install")}
+      </RogueButton>
+      <RogueButton onClick={() => setDismissed(true)}>
+        {t("pwa.later")}
       </RogueButton>
     </aside>
   );
