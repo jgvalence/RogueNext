@@ -65,6 +65,13 @@ export const RunAnalyticsSchema = z.object({
 });
 export type RunAnalytics = z.infer<typeof RunAnalyticsSchema>;
 
+// Saved runs predate some or all counters. Fill missing fields on load without
+// resetting existing statistics or labelling an older run with today's rules.
+export function normalizeRunAnalytics(value: unknown): RunAnalytics {
+  const analytics = RunAnalyticsSchema.parse(value ?? {});
+  return { ...analytics, rulesVersion: analytics.rulesVersion ?? "legacy" };
+}
+
 export const DEFAULT_RUN_ANALYTICS: RunAnalytics = RunAnalyticsSchema.parse({
   rulesVersion: "2026-10-10.2",
   damageMetric: "NET_HP_LOSS",

@@ -1,5 +1,6 @@
 ﻿import type { RunState } from "@/game/schemas/run-state";
 import type { CardDefinition } from "@/game/schemas/cards";
+import { normalizeRunAnalytics } from "@/game/schemas/analytics";
 import type { EnemyDefinition, AllyDefinition } from "@/game/schemas/entities";
 import type {
   InkPowerType,
@@ -264,7 +265,10 @@ export function createGameReducer(deps: ReducerDeps) {
 
     switch (action.type) {
       case "LOAD_RUN":
-        return action.payload;
+        return {
+          ...action.payload,
+          analytics: normalizeRunAnalytics(action.payload.analytics),
+        };
 
       case "START_COMBAT": {
         let combat = initCombat(

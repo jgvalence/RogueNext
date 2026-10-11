@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import type { RunState } from "@/game/schemas/run-state";
+import { normalizeRunAnalytics } from "@/game/schemas/analytics";
 import type { CardDefinition } from "@/game/schemas/cards";
 import type { EnemyDefinition, AllyDefinition } from "@/game/schemas/entities";
 import { createRNG, type RNG } from "@/game/engine/rng";
@@ -49,7 +50,11 @@ export function GameProvider({
     [cardDefs, enemyDefs, allyDefs, rng]
   );
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState, (savedState) => ({
+    ...savedState,
+    // Also cover snapshots retained in the query cache before a deployment.
+    analytics: normalizeRunAnalytics(savedState.analytics),
+  }));
 
   const contextValue = useMemo(
     () => ({

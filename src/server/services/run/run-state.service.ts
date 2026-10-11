@@ -33,6 +33,7 @@ import {
 } from "@/game/engine/run-conditions";
 import { createNewRun, drawRandomBiomeChoices } from "@/game/engine/run";
 import type { RunState } from "@/game/schemas/run-state";
+import { normalizeRunAnalytics } from "@/game/schemas/analytics";
 import { findLatestActiveRunForUser } from "./run-persistence.service";
 import {
   normalizeRunHpFromMetaBonuses,
@@ -245,6 +246,7 @@ export async function getActiveRunSnapshotForUser(
   );
   const stateWithFreshBonuses: RunState = {
     ...state,
+    analytics: normalizeRunAnalytics(state.analytics),
     currentRoom: normalizedCurrentRoom,
     activePlayMs: Math.max(0, state.activePlayMs ?? 0),
     playerMaxHp: normalizedHp.playerMaxHp,
