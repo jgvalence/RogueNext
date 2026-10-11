@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { RogueButton } from "@/components/ui/rogue";
+import { CharacterPortrait, AllyPortrait } from "../shared/CharacterPortrait";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import { scaleCombatDelay } from "@/lib/combat-speed";
@@ -23,6 +23,7 @@ import { playSound } from "@/lib/sound";
 import { vibrate } from "@/lib/haptics";
 
 interface CombatMobileGridProps {
+  characterId?: string;
   combat: CombatState;
   allyDefs: Map<string, AllyDefinition>;
   enemyDefs: Map<string, EnemyDefinition>;
@@ -144,6 +145,7 @@ function MobileEnemyPortrait({
   markEnemyArtFailure,
   onClick,
 }: MobileEnemyPortraitProps) {
+  const { t } = useTranslation();
   const prevHp = useRef(enemy.currentHp);
   const popupId = useRef(0);
   const [dmgPopups, setDmgPopups] = useState<{ id: number; value: number }[]>(
@@ -225,13 +227,18 @@ function MobileEnemyPortrait({
   const visibleBuffs = (enemy.buffs ?? []).filter((b: BuffInstance) =>
     VISIBLE_BUFF_TYPES.has(b.type)
   );
-  const hasArmor = enemy.block > 0;
-  const armBadgeTop =
-    (firstIntent && !isDead) || incomingDamage > 0 ? "top-8" : "top-1.5";
 
   return (
     <button
       key={`mobile-enemy-${enemy.instanceId}`}
+      data-enemy-id={enemy.instanceId}
+      data-boss={def.isBoss || undefined}
+      data-targetable={isTargetable || isCheatSelectable || undefined}
+      data-acting={
+        isActing || attackingEnemyId === enemy.instanceId || undefined
+      }
+      disabled={isDead}
+      aria-label={`${name} · ${Math.max(0, enemy.currentHp)}/${enemy.maxHp} ${t("combat.hp")} · ${firstIntent ?? ""}`}
       type="button"
       data-keep-selection="true"
       onClick={onClick}
@@ -269,137 +276,68 @@ function MobileEnemyPortrait({
         />
       ))}
 
-      {/* Art — fills the card (overflow-hidden here so art is clipped, not the damage popups) */}
-      <div className="absolute inset-0 overflow-hidden rounded-[inherit]">
+      <div className="mobile-enemy-art">
         {!enemyArtFailed ? (
           <EnemyArtwork
             enemyId={enemy.definitionId}
             src={enemyArtSrc}
-            alt={name}
-            className="h-full w-full object-cover object-center"
+            alt=""
+            aria-hidden="true"
             onError={() => markEnemyArtFailure(enemy.definitionId)}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <span className="select-none text-5xl font-black uppercase tracking-widest text-rose-50/10">
-              {getMonogram(name, "EN")}
-            </span>
-          </div>
+          <span className="mobile-enemy-monogram">
+            {getMonogram(name, "EN")}
+          </span>
+        )}
+        {roleLabel && <span className="mobile-enemy-role">{roleLabel}</span>}
+        {incomingDamage > 0 && !isDead && (
+          <span className="mobile-enemy-preview">−{incomingDamage}</span>
+        )}
+        {(isTargetable || isCheatSelectable) && (
+          <span className="mobile-target-mark" aria-hidden="true">
+            ⌖
+          </span>
         )}
       </div>
-
-      {/* Atmospheric overlays */}
-      <div
-        className={cn(
-          "pointer-events-none absolute inset-0 rounded-[inherit]",
-          def.isBoss
-            ? "bg-[radial-gradient(ellipse_at_50%_0%,rgba(120,53,15,0.35),transparent_55%)]"
-            : "bg-[radial-gradient(ellipse_at_50%_0%,rgba(159,18,57,0.30),transparent_55%)]"
-        )}
-      />
-      {/* Bottom fade so info strip is readable */}
-      <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-t from-slate-950/95 via-slate-950/20 to-transparent" />
-
-      {/* Intent badge — top, full width */}
-      {firstIntent && !isDead && (
-        <div className="absolute left-1.5 top-1.5 max-w-[calc(100%-12px)] [@media(max-height:400px)]:left-auto [@media(max-height:400px)]:right-1.5">
-          <span
-            className={cn(
-              "mobile-enemy-intent inline-block max-w-full truncate rounded-xl border px-2 py-0.5 text-[9px] font-bold leading-tight backdrop-blur-sm",
-              def.isBoss
-                ? "border-amber-400/40 bg-black/40 text-amber-100"
-                : "border-rose-400/35 bg-black/40 text-rose-100"
-            )}
-          >
-            {firstIntent}
+      <div className="mobile-enemy-details">
+        <p className="mobile-enemy-name">{name}</p>
+        <div className="mobile-vitals">
+          <span>
+            {Math.max(0, enemy.currentHp)}/{enemy.maxHp} {t("combat.hp")}
           </span>
-        </div>
-      )}
-
-      {/* ARM badge */}
-      {hasArmor && (
-        <div
-          className={cn(
-            "absolute",
-            "right-1.5 [@media(max-height:400px)]:left-1.5 [@media(max-height:400px)]:right-auto",
-            "[@media(max-height:400px)]:top-1.5",
-            armBadgeTop
-          )}
-        >
-          <span
-            className={cn(
-              "rounded-full border px-1.5 py-0.5 text-[9px] font-black backdrop-blur-sm",
-              isArmorTutorialStep
-                ? "border-cyan-300 bg-cyan-950/80 text-cyan-100 ring-1 ring-cyan-300"
-                : "border-cyan-400/40 bg-slate-950/70 text-cyan-200"
-            )}
-          >
-            ARM {enemy.block}
-          </span>
-        </div>
-      )}
-
-      {/* Incoming damage preview badge */}
-      {incomingDamage > 0 && !isDead && (
-        <div
-          className={cn(
-            "absolute right-1.5 top-1.5",
-            firstIntent && !isDead && "[@media(max-height:400px)]:top-8"
-          )}
-        >
-          <span className="animate-pulse rounded-full border border-red-400/70 bg-red-950/80 px-1.5 py-0.5 text-[9px] font-black text-red-300 backdrop-blur-sm">
-            -{incomingDamage}
-          </span>
-        </div>
-      )}
-
-      {/* Bottom info strip */}
-      <div className="absolute bottom-0 left-0 right-0 px-2 pb-2 pt-8 [@media(max-height:400px)]:pt-2">
-        {/* Buff/debuff chips */}
-        {visibleBuffs.length > 0 && (
-          <div className="mb-1 flex flex-wrap gap-0.5">
-            {visibleBuffs.slice(0, 4).map((b: BuffInstance) => {
-              const meta = buffMeta[b.type];
-              if (!meta) return null;
-              return (
-                <span
-                  key={b.type}
-                  className={cn(
-                    "rounded px-1 py-px text-[7px] font-bold leading-tight",
-                    meta.color
-                  )}
-                >
-                  {meta.label()}
-                  {b.stacks > 1 ? ` ${b.stacks}` : ""}
-                </span>
-              );
-            })}
-          </div>
-        )}
-
-        <div className="flex items-end justify-between gap-1">
-          <p className="min-w-0 truncate text-[11px] font-black leading-tight text-white">
-            {name}
-          </p>
-          {roleLabel && (
+          {enemy.block > 0 && (
             <span
               className={cn(
-                "shrink-0 text-[8px] font-black uppercase tracking-wide",
-                def.isBoss ? "text-amber-300" : "text-purple-300"
+                "mobile-armor",
+                isArmorTutorialStep && "ring-1 ring-cyan-300"
               )}
             >
-              {roleLabel}
+              {t("combat.block")} {enemy.block}
             </span>
           )}
         </div>
         <MiniHpBar
           current={Math.max(0, enemy.currentHp)}
           max={enemy.maxHp}
-          className="mt-1 h-[3px] [@media(max-height:400px)]:h-[5px]"
+          className="mobile-hp-track"
         />
-        <p className="mt-0.5 text-[9px] font-semibold tabular-nums text-white/55">
-          {Math.max(0, enemy.currentHp)}/{enemy.maxHp}
-        </p>
+        {firstIntent && !isDead && (
+          <span className="mobile-enemy-intent">{firstIntent}</span>
+        )}
+        {visibleBuffs.length > 0 && (
+          <div className="mobile-status-chips">
+            {visibleBuffs.slice(0, 2).map((b: BuffInstance) => {
+              const meta = buffMeta[b.type];
+              return meta ? (
+                <span key={b.type} className={meta.color}>
+                  {meta.label()} {b.stacks}
+                </span>
+              ) : null;
+            })}
+            {visibleBuffs.length > 2 && <span>+{visibleBuffs.length - 2}</span>}
+          </div>
+        )}
       </div>
 
       {/* Targeting pulse overlay */}
@@ -438,6 +376,7 @@ function MobileEnemyPortrait({
 }
 
 interface MobilePlayerBarProps {
+  characterId: string;
   player: CombatState["player"];
   playerHit: boolean;
   isArmorTutorialStep: boolean;
@@ -445,6 +384,7 @@ interface MobilePlayerBarProps {
 }
 
 function MobilePlayerBar({
+  characterId,
   player,
   playerHit,
   isArmorTutorialStep,
@@ -476,6 +416,7 @@ function MobilePlayerBar({
       type="button"
       data-keep-selection="true"
       onClick={onOpenPlayerInfo}
+      data-hit={playerHit || undefined}
       className={cn(
         "mobile-player-summary relative flex w-full items-center gap-2 overflow-visible rounded-xl border px-2 py-1.5 text-left transition-all duration-200",
         playerHit
@@ -492,33 +433,38 @@ function MobilePlayerBar({
           onDone={() => removePopup(p.id)}
         />
       ))}
-      <div className="h-2 w-2 shrink-0 rounded-full bg-indigo-400/70" />
-      <div className="min-w-0 flex-1">
+      <div className="mobile-hero-portrait">
+        <CharacterPortrait identity={characterId} />
+      </div>
+      <div className="mobile-hero-details">
+        <p className="mobile-hero-name">
+          {t(`characters.${characterId}.name`)}
+        </p>
+        <div className="mobile-vitals">
+          <span>
+            {Math.max(0, player.currentHp)}/{player.maxHp} {t("combat.hp")}
+          </span>
+          <span className="mobile-armor">
+            {t("combat.block")} {player.block}
+          </span>
+        </div>
         <MiniHpBar
           current={Math.max(0, player.currentHp)}
           max={player.maxHp}
-          className="h-[3px]"
+          className="mobile-hp-track"
         />
-        <p className="mt-0.5 text-[8px] tabular-nums text-white/45">
-          {Math.max(0, player.currentHp)}/{player.maxHp} {t("combat.hp")}
-        </p>
-      </div>
-      <div className="flex shrink-0 items-center gap-1.5">
-        <span className="text-[9px] font-black text-amber-200">
-          {t("combat.energyShort")} {player.energyCurrent}
-        </span>
-        <span className="text-[9px] font-black text-cyan-200">
-          {t("combat.ink")} {player.inkCurrent}
-        </span>
-        {player.block > 0 && (
-          <span
-            className={cn(
-              "text-[9px] font-black",
-              isArmorTutorialStep ? "text-cyan-100" : "text-slate-300/70"
-            )}
-          >
-            ARM {player.block}
-          </span>
+        {player.buffs.length > 0 && (
+          <div className="mobile-status-chips">
+            {player.buffs.slice(0, 2).map((buff) => {
+              const meta = buffMeta[buff.type];
+              return meta ? (
+                <span key={buff.type} className={meta.color}>
+                  {meta.label()} {buff.stacks}
+                </span>
+              ) : null;
+            })}
+            {player.buffs.length > 2 && <span>+{player.buffs.length - 2}</span>}
+          </div>
         )}
       </div>
     </button>
@@ -526,6 +472,7 @@ function MobilePlayerBar({
 }
 
 export function CombatMobileGrid({
+  characterId = "scribe",
   combat,
   enemyDefs,
   selectingEnemyTarget,
@@ -553,162 +500,105 @@ export function CombatMobileGrid({
 
   return (
     <div className="combat-mobile-grid flex h-full w-full min-w-0 flex-col gap-1 px-1 pb-1 pt-1 lg:hidden">
-      {combat.enemies.filter((enemy) => enemy.currentHp > 0).length > 2 && (
+      <div className="mobile-enemy-rail">
+        <div className="mobile-encounter-caption">
+          <span>
+            {selectingEnemyTarget || isSelectingCheatKillTarget
+              ? t("combat.chooseTargetCta")
+              : t("combat.mobileEnemies")}
+          </span>
+          <span>
+            {combat.enemies.filter((enemy) => enemy.currentHp > 0).length}
+            {enemyCount > 2 && ` · ${t("combat.mobileBrowseEnemies")}`}
+          </span>
+        </div>
         <div
-          aria-label={t("combat.enemyOverview")}
-          className="combat-enemy-overview grid w-full shrink-0 grid-cols-2 gap-1 rounded-lg bg-slate-950/90 p-1 sm:grid-cols-4 [@media(max-height:540px)]:flex-1"
+          data-mobile-row={combat.enemies.length}
+          data-crowded={enemyCount > 2 || undefined}
+          className="combat-mobile-enemies"
         >
-          {combat.enemies
-            .filter((enemy) => enemy.currentHp > 0)
-            .map((enemy) => {
-              const hidden = shouldHideEnemyIntent(
+          <div className="mobile-enemy-roster">
+            {combat.enemies.map((enemy) => {
+              const def = enemyDefs.get(enemy.definitionId);
+              if (!def) return null;
+
+              const ability = def.abilities[enemy.intentIndex];
+              const resolvedTarget = ability
+                ? resolveEnemyAbilityTarget(combat, enemy, ability)
+                : "player";
+              const hideIntent = shouldHideEnemyIntent(
                 combat.difficultyLevel ?? 0,
                 combat.turnNumber,
                 enemy,
                 { playerHand: combat.hand }
               );
-              const ability = enemyDefs.get(enemy.definitionId)?.abilities[
-                enemy.intentIndex
-              ];
-              const target = ability
-                ? resolveEnemyAbilityTarget(combat, enemy, ability)
-                : "player";
-              const intent = buildMobileEnemyIntentChips(
+              const intentLabels = buildMobileEnemyIntentChips(
                 combat,
                 enemy,
-                target,
+                resolvedTarget,
                 ability,
-                hidden,
+                hideIntent,
                 t
-              ).join(" · ");
+              );
+              const firstIntent =
+                enemy.currentHp > 0 ? intentLabels.join(" · ") || null : null;
+
+              const isDead = enemy.currentHp <= 0;
+              const isTargetable =
+                selectingEnemyTarget &&
+                selectedCardId !== null &&
+                enemy.currentHp > 0 &&
+                !actingEnemyId;
+              const isCheatSelectable =
+                isSelectingCheatKillTarget && enemy.currentHp > 0;
+              const isActing = actingEnemyId === enemy.instanceId;
+              const enemyArtSrc = getEnemyImageSrc(enemy.definitionId);
+              const enemyArtFailed = enemyArtFailures.has(enemy.definitionId);
+              const name = getEnemyDisplayName(enemy);
+              const roleLabel = def.isBoss
+                ? t("enemyCard.boss")
+                : def.isElite
+                  ? t("enemyCard.elite")
+                  : null;
+
+              const cardRounding =
+                enemyCount === 1
+                  ? "rounded-[24px]"
+                  : def.isBoss
+                    ? "rounded-[22px]"
+                    : "rounded-[20px]";
+
+              const incomingDmg =
+                incomingDamageByEnemyId.get(enemy.instanceId) ?? 0;
+
               return (
-                <RogueButton
-                  htmlType="button"
-                  type="text"
-                  style={{
-                    height: "100%",
-                    display: "block",
-                    whiteSpace: "normal",
-                    color: "#f1f5f9",
+                <MobileEnemyPortrait
+                  key={`mobile-enemy-${enemy.instanceId}`}
+                  enemy={enemy}
+                  def={def}
+                  name={name}
+                  roleLabel={roleLabel}
+                  firstIntent={firstIntent}
+                  isDead={isDead}
+                  isTargetable={isTargetable}
+                  isCheatSelectable={isCheatSelectable}
+                  isActing={isActing}
+                  attackingEnemyId={attackingEnemyId}
+                  newlySummonedIds={newlySummonedIds}
+                  enemyArtSrc={enemyArtSrc}
+                  enemyArtFailed={enemyArtFailed}
+                  cardRounding={cardRounding}
+                  aoeFlashMap={aoeFlashMap}
+                  incomingDamage={incomingDmg}
+                  isArmorTutorialStep={isArmorTutorialStep}
+                  markEnemyArtFailure={markEnemyArtFailure}
+                  onClick={() => {
+                    if (!isDead) onMobileEnemyPress(enemy.instanceId);
                   }}
-                  key={enemy.instanceId}
-                  data-keep-selection="true"
-                  className="relative min-h-8 min-w-0 overflow-hidden rounded border border-slate-600 px-2 py-1 text-left text-xs text-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-amber-300"
-                  onClick={() => onMobileEnemyPress(enemy.instanceId)}
-                >
-                  <EnemyArtwork
-                    enemyId={enemy.definitionId}
-                    src={getEnemyImageSrc(enemy.definitionId, "thumb")}
-                    alt=""
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-25"
-                  />
-                  <span className="relative block truncate font-semibold">
-                    {getEnemyDisplayName(enemy)} ·{" "}
-                    {Math.max(0, enemy.currentHp)} {t("combat.hp")}
-                  </span>
-                  <span className="relative block break-words text-amber-200">
-                    {hidden ? t("combat.intentHidden") : intent}
-                  </span>
-                </RogueButton>
+                />
               );
             })}
-        </div>
-      )}
-      {/* ── ENEMY PORTRAIT ZONE ─────────────────────────────
-          Horizontal snap-scroll when 3+ enemies so each
-          portrait stays readable (min ~46% of viewport).      */}
-      <div
-        data-mobile-row={combat.enemies.length}
-        className={cn(
-          "combat-mobile-enemies min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto pt-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-          combat.enemies.filter((enemy) => enemy.currentHp > 0).length > 2 &&
-            "[@media(max-height:540px)]:hidden"
-        )}
-      >
-        <div className="flex h-full gap-1.5" style={{ minWidth: "100%" }}>
-          {combat.enemies.map((enemy) => {
-            const def = enemyDefs.get(enemy.definitionId);
-            if (!def) return null;
-
-            const ability = def.abilities[enemy.intentIndex];
-            const resolvedTarget = ability
-              ? resolveEnemyAbilityTarget(combat, enemy, ability)
-              : "player";
-            const hideIntent = shouldHideEnemyIntent(
-              combat.difficultyLevel ?? 0,
-              combat.turnNumber,
-              enemy,
-              { playerHand: combat.hand }
-            );
-            const intentLabels = buildMobileEnemyIntentChips(
-              combat,
-              enemy,
-              resolvedTarget,
-              ability,
-              hideIntent,
-              t
-            );
-            const firstIntent =
-              !hideIntent && enemy.currentHp > 0
-                ? intentLabels.join(" · ") || null
-                : null;
-
-            const isDead = enemy.currentHp <= 0;
-            const isTargetable =
-              selectingEnemyTarget &&
-              selectedCardId !== null &&
-              enemy.currentHp > 0 &&
-              !actingEnemyId;
-            const isCheatSelectable =
-              isSelectingCheatKillTarget && enemy.currentHp > 0;
-            const isActing = actingEnemyId === enemy.instanceId;
-            const enemyArtSrc = getEnemyImageSrc(enemy.definitionId, "thumb");
-            const enemyArtFailed = enemyArtFailures.has(enemy.definitionId);
-            const name = getEnemyDisplayName(enemy);
-            const roleLabel = def.isBoss
-              ? t("enemyCard.boss")
-              : def.isElite
-                ? t("enemyCard.elite")
-                : null;
-
-            const cardRounding =
-              enemyCount === 1
-                ? "rounded-[24px]"
-                : def.isBoss
-                  ? "rounded-[22px]"
-                  : "rounded-[20px]";
-
-            const incomingDmg =
-              incomingDamageByEnemyId.get(enemy.instanceId) ?? 0;
-
-            return (
-              <MobileEnemyPortrait
-                key={`mobile-enemy-${enemy.instanceId}`}
-                enemy={enemy}
-                def={def}
-                name={name}
-                roleLabel={roleLabel}
-                firstIntent={firstIntent}
-                isDead={isDead}
-                isTargetable={isTargetable}
-                isCheatSelectable={isCheatSelectable}
-                isActing={isActing}
-                attackingEnemyId={attackingEnemyId}
-                newlySummonedIds={newlySummonedIds}
-                enemyArtSrc={enemyArtSrc}
-                enemyArtFailed={enemyArtFailed}
-                cardRounding={cardRounding}
-                aoeFlashMap={aoeFlashMap}
-                incomingDamage={incomingDmg}
-                isArmorTutorialStep={isArmorTutorialStep}
-                markEnemyArtFailure={markEnemyArtFailure}
-                onClick={() => {
-                  if (!isDead) onMobileEnemyPress(enemy.instanceId);
-                }}
-              />
-            );
-          })}
+          </div>
         </div>
       </div>
 
@@ -745,7 +635,10 @@ export function CombatMobileGrid({
                   "border-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.28)] ring-1 ring-cyan-300/70"
               )}
             >
-              <div className="h-2 w-2 shrink-0 rounded-full bg-cyan-400/70" />
+              <AllyPortrait
+                identity={ally.definitionId}
+                className="mobile-ally-portrait"
+              />
               <span className="min-w-0 flex-1 truncate text-[10px] font-black leading-tight text-cyan-50">
                 {localizedAllyName}
               </span>
@@ -773,8 +666,9 @@ export function CombatMobileGrid({
           );
         })}
 
-        {/* Player compact bar */}
+        {/* Hero remains visible beside the allied team. */}
         <MobilePlayerBar
+          characterId={characterId}
           player={combat.player}
           playerHit={playerHit}
           isArmorTutorialStep={isArmorTutorialStep}

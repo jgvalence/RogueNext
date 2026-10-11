@@ -1,0 +1,103 @@
+{
+  "fixture": "Isolated local QA account; five foes and two allies",
+  "checks": [
+    {
+      "width": 393,
+      "height": 873,
+      "enemyCount": 5,
+      "allEnemyDetailsReachable": true,
+      "heroDetailsReachable": true,
+      "inspectionDoesNotPlay": true,
+      "artLoaded": true,
+      "endTurnReachable": true
+    },
+    {
+      "width": 873,
+      "height": 393,
+      "enemyCount": 5,
+      "allEnemyDetailsReachable": true,
+      "heroDetailsReachable": true,
+      "inspectionDoesNotPlay": true,
+      "artLoaded": true,
+      "endTurnReachable": true
+    },
+    {
+      "width": 393,
+      "height": 740,
+      "enemyCount": 5,
+      "allEnemyDetailsReachable": true,
+      "heroDetailsReachable": true,
+      "inspectionDoesNotPlay": true,
+      "artLoaded": true,
+      "endTurnReachable": true
+    },
+    {
+      "width": 873,
+      "height": 340,
+      "enemyCount": 5,
+      "allEnemyDetailsReachable": true,
+      "heroDetailsReachable": true,
+      "inspectionDoesNotPlay": true,
+      "artLoaded": true,
+      "endTurnReachable": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "enemyCount": 5,
+      "allEnemyDetailsReachable": true,
+      "heroDetailsReachable": true,
+      "inspectionDoesNotPlay": true,
+      "artLoaded": true,
+      "endTurnReachable": true
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "enemyCount": 5,
+      "allEnemyDetailsReachable": true,
+      "heroDetailsReachable": true,
+      "inspectionDoesNotPlay": true,
+      "artLoaded": true,
+      "endTurnReachable": true
+    },
+    {
+      "width": 667,
+      "height": 375,
+      "enemyCount": 5,
+      "allEnemyDetailsReachable": true,
+      "heroDetailsReachable": true,
+      "inspectionDoesNotPlay": true,
+      "artLoaded": true,
+      "endTurnReachable": true
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "enemyCount": 5,
+      "allEnemyDetailsReachable": true,
+      "heroDetailsReachable": true,
+      "inspectionDoesNotPlay": true,
+      "artLoaded": true,
+      "endTurnReachable": true
+    },
+    {
+      "width": 568,
+      "height": 320,
+      "enemyCount": 5,
+      "allEnemyDetailsReachable": true,
+      "heroDetailsReachable": true,
+      "inspectionDoesNotPlay": true,
+      "artLoaded": true,
+      "endTurnReachable": true
+    },
+    {
+      "swipeWithSelectedCardDoesNotPlay": true,
+      "lastEnemyTargeted": true,
+      "hpBefore": 18,
+      "hpAfter": 10
+    }
+  ],
+  "persistsAfterReload": true,
+  "errors": []
+}

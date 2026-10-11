@@ -290,6 +290,7 @@ export function CombatBattlefield({
         className="relative z-10 flex min-h-0 w-full flex-1 overflow-hidden lg:items-center lg:justify-center lg:overflow-visible lg:py-4"
       >
         <CombatMobileGrid
+          characterId={characterId}
           combat={combat}
           allyDefs={allyDefs}
           enemyDefs={enemyDefs}

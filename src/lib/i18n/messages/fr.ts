@@ -1852,6 +1852,8 @@ export const fr = {
   },
   combat: {
     enemyOverview: "Tous les ennemis et leurs menaces",
+    mobileEnemies: "Ennemis · intentions",
+    mobileBrowseEnemies: "faire défiler",
     noCardsInHand: "Aucune carte en main",
     enemy: "Ennemi",
     summonOne: "{{summoner}} invoque {{target}} !",

@@ -77,13 +77,13 @@ export function CombatMobileInfoPanel({
   return (
     <div
       data-keep-selection="true"
-      className="fixed inset-0 z-[90] flex items-end lg:hidden"
+      className="combat-mobile-info fixed inset-0 z-[90] flex items-end lg:hidden"
       style={{ background: "rgba(0,0,0,0.6)" }}
       onClick={onClose}
     >
       <div
         data-keep-selection="true"
-        className="w-full overflow-hidden rounded-t-3xl bg-slate-950 shadow-2xl"
+        className="combat-mobile-info-sheet w-full overflow-hidden rounded-t-3xl bg-slate-950 shadow-2xl"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex justify-center pb-1 pt-2.5">

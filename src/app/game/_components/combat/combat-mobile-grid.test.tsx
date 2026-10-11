@@ -1,4 +1,5 @@
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
+import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { buildAllyDefsMap, buildEnemyDefsMap } from "@/game/data";
 import type { CombatState, TurnDisruption } from "@/game/schemas/combat-state";
@@ -129,7 +130,10 @@ function buildCombatState(overrides: Partial<CombatState> = {}): CombatState {
   };
 }
 
-function renderGrid(combat: CombatState) {
+function renderGrid(
+  combat: CombatState,
+  props: Partial<ComponentProps<typeof CombatMobileGrid>> = {}
+) {
   return render(
     <CombatMobileGrid
       combat={combat}
@@ -158,11 +162,54 @@ function renderGrid(combat: CombatState) {
       isArmorTutorialStep={false}
       aoeFlashMap={new Map()}
       incomingDamageByEnemyId={new Map()}
+      {...props}
     />
   );
 }
 
 describe("CombatMobileGrid mobile slot layout", () => {
+  it("keeps hero inspection and every living enemy reachable without duplicate targets", () => {
+    const onOpenPlayerInfo = vi.fn();
+    const onMobileEnemyPress = vi.fn();
+    const combat = buildCombatState({
+      enemies: Array.from({ length: 5 }, (_, i) =>
+        buildEnemyState("ink_slime", `enemy-${i}`, {
+          currentHp: i === 0 ? 0 : 10,
+        })
+      ),
+    });
+    const { container } = renderGrid(combat, {
+      characterId: "griot",
+      onOpenPlayerInfo,
+      onMobileEnemyPress,
+    });
+    expect(container.querySelector(".mobile-hero-name")).toHaveTextContent(
+      "characters.griot.name"
+    );
+    fireEvent.click(container.querySelector(".mobile-player-summary")!);
+    expect(onOpenPlayerInfo).toHaveBeenCalledOnce();
+    expect(container.querySelectorAll("[data-enemy-id]")).toHaveLength(5);
+    fireEvent.click(container.querySelector('[data-enemy-id="enemy-0"]')!);
+    expect(onMobileEnemyPress).not.toHaveBeenCalled();
+    fireEvent.click(container.querySelector('[data-enemy-id="enemy-4"]')!);
+    expect(onMobileEnemyPress).toHaveBeenCalledWith("enemy-4");
+  });
+
+  it("shows the hidden-intent label without exposing an elite's attack on D3", () => {
+    const combat = buildCombatState({
+      difficultyLevel: 3,
+      turnNumber: 3,
+      enemies: [buildEnemyState("ink_slime", "elite", { isElite: true })],
+    });
+    const { container } = renderGrid(combat);
+    expect(container.querySelector(".mobile-enemy-intent")).toHaveTextContent(
+      "enemyCard.intentHidden"
+    );
+    expect(
+      container.querySelector('[data-enemy-id="elite"]')
+    ).toHaveAccessibleName(expect.stringContaining("enemyCard.intentHidden"));
+  });
+
   it("keeps allies and enemies on separate readable rails for five occupied slots", () => {
     const combat = buildCombatState({
       allies: [buildAllyState("ink_familiar", "ally-1")],

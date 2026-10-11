@@ -2,6 +2,8 @@
 
 ## Suivi actuel — 11 octobre 2026
 
+Passe complémentaire : [champ de bataille mobile](PASSE_COMBAT_MOBILE_2026-10-11.md), avec portrait du héros, illustrations ennemies bornées et plus nettes, regroupement des intentions et défilement tactile des rencontres chargées. Redmi Note 11 Pro 5G identifié comme appareil du joueur ; recette physique encore ouverte.
+
 Retour mobile traité : voir le [correctif de lisibilité du combat et des récompenses](CORRECTIF_MOBILE_2026-10-11.md), avec essais en portrait et paysage de faible hauteur. La recette sur téléphone physique reste ouverte.
 
 La [TODO centrale](TODO.md) fait foi pour les priorités ouvertes. Le diagnostic et les cases de l’audit initial sont conservés plus bas comme historique : ils ne décrivent pas tous la version livrée.

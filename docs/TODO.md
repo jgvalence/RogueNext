@@ -6,6 +6,10 @@ La référence de production avant la refonte des menus est `e0e0d3e` : reprise 
 
 ## Où trouver le détail
 
+Passe complémentaire : [présentation du combat mobile](PASSE_COMBAT_MOBILE_2026-10-11.md) — héros visible, portraits ennemis bornés et plus nets, intentions regroupées et ciblage tactile. Le téléphone communiqué par le joueur est un Redmi Note 11 Pro 5G ; la validation sur cet appareil physique reste à faire.
+
+Passe complémentaire : [présentation du combat mobile](PASSE_COMBAT_MOBILE_2026-10-11.md) — héros visible, portraits ennemis bornés et plus nets, intentions regroupées et ciblage tactile. Le téléphone communiqué par le joueur est un Redmi Note 11 Pro 5G ; la validation sur cet appareil physique reste à faire.
+
 Correctif après retours mobiles : [combat, lecture des cartes et récompenses](CORRECTIF_MOBILE_2026-10-11.md). Les cartes minuscules en paysage et les faux choix A/B des récompenses sont corrigés ; la validation physique QA-01 reste ouverte.
 
 | Document | Usage |

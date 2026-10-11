@@ -16,7 +16,7 @@ export function BossMechanicsPanel({ combat }: { combat: CombatState }) {
   );
   if (!bosses.length) return null;
   return (
-    <div className="relative z-20 w-full shrink-0 space-y-1 text-xs">
+    <div className="combat-boss-mechanics relative z-20 w-full shrink-0 space-y-1 text-xs">
       {bosses.map((enemy) => (
         <details
           key={enemy.instanceId}

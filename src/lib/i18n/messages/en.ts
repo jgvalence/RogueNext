@@ -1853,6 +1853,8 @@ export const en = {
   },
   combat: {
     enemyOverview: "All enemies and their threats",
+    mobileEnemies: "Enemies · intents",
+    mobileBrowseEnemies: "scroll to see all",
     noCardsInHand: "No cards in hand",
     enemy: "Enemy",
     summonOne: "{{summoner}} summons {{target}}!",

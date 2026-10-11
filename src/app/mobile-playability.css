@@ -116,3 +116,103 @@
   .card-action-footer { flex-wrap: wrap; }
   .card-action-footer button { flex: 1; }
 }
+
+/* Mobile battlefield: bounded portraits and a persistent, identifiable hero. */
+@media (max-width: 1023px) {
+  .combat-view .combat-scene-art { filter: brightness(.55) saturate(.7); }
+  .combat-view .combat-mobile-grid { display: flex; flex-direction: column; gap: 10px; overflow: hidden; padding: 6px 2px; }
+  .mobile-enemy-rail { display: flex; flex-direction: column; flex: 1; min-height: 0; min-width: 0; }
+  .mobile-encounter-caption { display: flex; justify-content: space-between; gap: 8px; flex-shrink: 0; padding: 0 4px 6px; color: #f1dfb9; font-size: 11px; line-height: 1.2; text-shadow: 0 1px 3px #000; }
+  .combat-view .combat-mobile-enemies { display: block; flex: 1; min-height: 0; overflow: auto; padding: 4px; scrollbar-width: thin; scrollbar-color: #b4a078 #101722; scroll-padding: 4px; }
+  .combat-view .combat-mobile-enemies > .mobile-enemy-roster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: 10px; min-height: 100%; height: auto; }
+  .combat-view .combat-mobile-enemies[data-mobile-row="1"] > .mobile-enemy-roster { grid-template-columns: minmax(0, 240px); justify-content: center; }
+  .combat-view .mobile-enemy-portrait {
+    display: flex; flex-direction: column; width: 100%; min-width: 0; max-width: none; min-height: 0; flex: none;
+    border-radius: 12px; background: #0a1420; border-color: #a99e8970; box-shadow: 0 6px 18px #0008;
+    animation: none;
+  }
+  .combat-view .mobile-enemy-portrait[data-boss] { border-color: #e4b758; box-shadow: 0 0 18px #c3923733; }
+  .mobile-enemy-art { position: relative; width: 100%; height: clamp(72px, 15dvh, 134px); flex-shrink: 0; border-radius: 11px 11px 0 0; overflow: hidden; background: radial-gradient(ellipse, #334756, #111a29); }
+  .mobile-enemy-art > img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
+  .mobile-enemy-monogram { display: grid; height: 100%; place-items: center; font-size: 32px; color: #dcccb2; }
+  .mobile-enemy-role, .mobile-enemy-preview, .mobile-target-mark { position: absolute; top: 5px; padding: 3px 6px; border-radius: 5px; background: #1c140bea; color: #ffe2a0; font-size: 11px; font-weight: 800; }
+  .mobile-enemy-role { left: 5px; border: 1px solid #c49948; }
+  .mobile-enemy-preview { right: 5px; color: #fff; background: #922d24; font-size: 15px; }
+  .mobile-target-mark { bottom: 5px; top: auto; right: 5px; color: #fff; background: #922d24; font-size: 20px; line-height: 1; }
+  .mobile-enemy-details { display: flex; flex-direction: column; gap: 5px; min-width: 0; width: 100%; padding: 8px; }
+  .combat-view .mobile-enemy-name { margin: 0; color: #fff4dc; font-size: 13px; line-height: 1.2; font-weight: 700; overflow-wrap: anywhere; }
+  .mobile-vitals { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 3px 8px; font-size: 11px; line-height: 1.2; font-variant-numeric: tabular-nums; color: #f1f5f9; }
+  .mobile-armor { color: #a3e4fc; font-weight: 700; }
+  .mobile-hp-track { height: 5px; flex-shrink: 0; }
+  .combat-view .mobile-enemy-intent { display: block; border-radius: 5px; padding: 4px 6px; font-size: 12px; line-height: 1.25; color: #ffd4bb; background: #361b20; white-space: normal; overflow-wrap: anywhere; }
+  .mobile-status-chips { display: flex; flex-wrap: wrap; gap: 3px; font-size: 10px; line-height: 1.3; }
+  .mobile-status-chips > span { padding: 2px 4px; border-radius: 3px; background-color: #172838; }
+  .combat-view .mobile-enemy-portrait[data-targetable] { border-color: #ffb790; outline: 2px solid #ffb790; outline-offset: 1px; box-shadow: 0 0 18px #e68a594d; }
+  .combat-view .mobile-enemy-portrait[data-acting] { border-color: #ff775e; box-shadow: 0 0 22px #ff583377; animation: mobile-enemy-action .45s ease-out; }
+  .combat-view .mobile-enemy-portrait:focus-visible, .combat-view .mobile-player-summary:focus-visible { outline: 2px solid #f1d493; outline-offset: 2px; }
+  .combat-view .combat-mobile-allies { display: flex; flex-direction: row; flex-wrap: wrap; flex: none; gap: 6px; overflow: auto; max-height: 155px; }
+  .combat-view .combat-mobile-allies > button { min-width: 0; min-height: 44px; flex: 1 1 45%; padding: 5px; }
+  .combat-view .combat-mobile-allies > .mobile-player-summary { order: -1; display: flex; flex: 1 0 100%; gap: 10px; padding: 6px 10px; min-height: 80px; border: 1px solid #80a6c278; background: linear-gradient(105deg, #263c51f5, #101b2bf5); border-radius: 12px; }
+  .mobile-hero-portrait { width: 58px; height: 70px; flex-shrink: 0; border-radius: 8px; background: radial-gradient(ellipse, #496b82, #1c2c3d); }
+  .mobile-hero-portrait > svg { width: 100%; height: 100%; }
+  .mobile-hero-details { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+  .combat-view .combat-mobile-allies .mobile-hero-name { margin: 0; font-family: Georgia, serif; font-size: 16px; line-height: 1.1; color: #ffe5aa; }
+  .mobile-ally-portrait { width: 26px; height: 34px; flex-shrink: 0; }
+  .combat-view .combat-mobile-allies > button:not(.mobile-player-summary) { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 2px 5px; }
+  .combat-mobile-allies .mobile-ally-portrait { grid-row: 1 / 3; }
+  .combat-mobile-allies > button:not(.mobile-player-summary) > span:first-of-type { grid-column: 2 / -1; font-size: 11px; }
+  .combat-mobile-allies > button:not(.mobile-player-summary) > div { grid-column: 3; width: 52px; }
+  .combat-mobile-info-sheet { max-height: calc(100dvh - 12px); overflow-y: auto; overscroll-behavior: contain; }
+  .combat-mobile-info-sheet button { min-height: 44px; }
+  .combat-view .mobile-enemy-portrait.animate-enemy-death { animation: enemy-death .5s ease-out forwards; }
+  .combat-view .mobile-enemy-portrait.animate-enemy-summon-enter { animation: enemy-summon-enter .55s ease-out forwards; }
+}
+@media (max-width: 1023px) and (max-height: 540px) {
+  .combat-view [data-battlefield] { min-height: 124px; }
+  .combat-view { overflow-y: auto; }
+  .combat-view [data-battlefield]:has(.combat-boss-mechanics) { min-height: 160px; flex-shrink: 0; }
+  .combat-view [data-battlefield]:has(.combat-boss-mechanics details[open]) { min-height: 330px; }
+  .combat-view .mobile-hand-scroll { height: 164px !important; }
+  .combat-view [data-mobile-hand-card] { height: 154px !important; }
+  .combat-view .combat-mobile-grid { display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 10px; padding: 0; }
+  .mobile-enemy-rail { grid-column: 1; min-height: 0; }
+  .mobile-encounter-caption { padding-bottom: 2px; font-size: 10px; }
+  .combat-view .combat-mobile-enemies { overflow-x: auto; overflow-y: auto; }
+  .combat-view .combat-mobile-enemies > .mobile-enemy-roster,
+  .combat-view .combat-mobile-enemies[data-mobile-row="1"] > .mobile-enemy-roster { display: flex; justify-content: flex-start; align-items: center; gap: 10px; width: max-content; min-width: 100%; }
+  .combat-view .combat-mobile-enemies[data-mobile-row="1"] > .mobile-enemy-roster { justify-content: center; }
+  .combat-view .mobile-enemy-portrait { flex-direction: row; width: 238px; min-width: 238px; min-height: 92px; align-items: stretch; }
+  .mobile-enemy-art { width: 86px; height: auto; min-height: 92px; border-radius: 11px 0 0 11px; align-self: stretch; }
+  .mobile-enemy-art > img { position: absolute; inset: 0; }
+  .mobile-enemy-details { flex: 1; padding: 6px; gap: 4px; }
+  .combat-view .mobile-enemy-name { font-size: 12px; }
+  .combat-view .mobile-enemy-intent { font-size: 11px; padding: 3px 4px; }
+  .combat-view .combat-mobile-allies { grid-column: 2; grid-row: 1; max-height: none; flex-wrap: nowrap; flex-direction: column; }
+  .combat-view .combat-mobile-allies > button { flex: none; min-width: 0; }
+  .combat-view .combat-mobile-allies > .mobile-player-summary { flex: 1 0 auto; flex-wrap: nowrap; gap: 6px; padding: 6px; }
+  .mobile-hero-portrait { width: 46px; height: 64px; }
+  .combat-view .combat-mobile-allies .mobile-hero-name { font-size: 13px; }
+  .mobile-hero-details { gap: 4px; }
+  .mobile-hero-details .mobile-vitals { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 1023px) and (orientation: portrait) and (max-height: 680px) {
+  .combat-view [data-battlefield] { min-height: 200px; }
+  .combat-view .combat-mobile-grid { gap: 4px; }
+  .combat-view .combat-mobile-enemies > .mobile-enemy-roster { display: flex; width: max-content; min-width: 100%; align-items: center; }
+  .combat-view .mobile-enemy-portrait { flex-direction: row; width: 252px; min-width: 252px; }
+  .mobile-enemy-art { width: 86px; min-height: 100px; height: auto; align-self: stretch; border-radius: 11px 0 0 11px; }
+  .mobile-enemy-art > img { position: absolute; inset: 0; }
+  .combat-view .combat-mobile-allies { max-height: 94px; }
+  .combat-view .combat-mobile-allies > .mobile-player-summary { min-height: 62px; }
+  .mobile-hero-portrait { width: 42px; height: 50px; }
+}
+@keyframes mobile-enemy-action { 50% { transform: translateY(3px); filter: brightness(1.3); } }
+@media (max-width: 1023px) and (orientation: portrait) and (min-height: 681px) {
+  .combat-mobile-enemies[data-crowded] .mobile-enemy-art { height: 72px; }
+}
+@media (max-width: 1023px) {
+  .combat-view .mobile-player-summary[data-hit] { border-color: #ff9c83; box-shadow: inset 0 0 26px #f76d5140; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .combat-view .mobile-enemy-portrait, .combat-view .mobile-enemy-portrait * { animation: none !important; transition: none !important; }
+}
