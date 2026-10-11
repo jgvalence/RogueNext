@@ -506,6 +506,7 @@ function UpgradeRoom({
 
       {pendingUpgrade && (
         <CardActionModal
+          mode="upgrade"
           card={pendingUpgrade.def}
           actionLabel={t("special.upgradeAction")}
           onAction={(branch) => {

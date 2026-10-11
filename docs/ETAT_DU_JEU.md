@@ -2,6 +2,8 @@
 
 ## État actuel et priorités
 
+Le [correctif mobile du 11 octobre](CORRECTIF_MOBILE_2026-10-11.md) complète la refonte : effets de la main visibles, lecture sans texte tronqué, combat adapté au paysage et confirmation des récompenses sans faux choix d’amélioration A/B. Le moteur donnait déjà la carte de base. Les essais tactiles émulés ne remplacent pas la recette sur appareils physiques.
+
 La liste active est [TODO.md](TODO.md). La [passe finale du 10 octobre](PASSE_FINALE_EQUILIBRAGE_ET_RECETTE_2026-10-10.md) remplace les anciens chiffres d’équilibrage ci-dessous : 3 540 simulations finales, des victoires observées pour les 13 orientations D0–D5, et des parcours navigateur complets avec contrôles de persistance. Cela ne prouve pas des taux de victoire humains ni une validation sur téléphone physique.
 
 Les peintures des [cartes](ILLUSTRATIONS_CARTES_2026-10-10.md), [ennemis/boss](ILLUSTRATIONS_ENNEMIS_BOSS_2026-10-10.md) et [lieux/événements](ILLUSTRATIONS_LIEUX_2026-10-10.md) sont intégrées et publiées. L’historique, les tutoriels et les vitesses de combat existent déjà.

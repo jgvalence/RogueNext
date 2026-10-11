@@ -35,6 +35,32 @@ function getStarterCards(
 }
 
 describe("gameReducer", () => {
+  it("adds a combat reward as a base card, without a free upgrade", () => {
+    const cardDefs = buildCardDefsMap();
+    const state = createNewRun(
+      "reward-base",
+      "reward-base",
+      getStarterCards(cardDefs, "bibliothecaire"),
+      createRNG("reward-base")
+    );
+    const reducer = createGameReducer({
+      cardDefs,
+      enemyDefs: buildEnemyDefsMap(),
+      allyDefs: buildAllyDefsMap(),
+      rng: createRNG("reward-base"),
+    });
+    const next = reducer(state, {
+      type: "PICK_CARD_REWARD",
+      payload: { definitionId: "sphinx_riddle", combatReward: true },
+    });
+    expect(next.deck).toHaveLength(state.deck.length + 1);
+    expect(next.deck.at(-1)).toMatchObject({
+      definitionId: "sphinx_riddle",
+      upgraded: false,
+    });
+    expect(next.deck.at(-1)?.upgradeBranch).toBeUndefined();
+  });
+
   it("adds the selected starting uncommon card only when it matches the current character choice", () => {
     const allCards = buildCardDefsMap();
     const bibliStarterCards = getStarterCards(allCards, "bibliothecaire");

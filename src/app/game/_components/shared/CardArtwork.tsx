@@ -71,6 +71,7 @@ export function CardArtwork({
             <RogueModal
               open
               className="card-art-viewer"
+              zIndex={1300}
               title={localizeCardName(definition, t)}
               width="min(1200px, calc(100vw - 24px))"
               centered

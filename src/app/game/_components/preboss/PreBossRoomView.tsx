@@ -345,6 +345,7 @@ function UpgradeSubView({
       <UpgradePreviewPortal info={hoverInfo} />
       {pendingUpgrade && (
         <CardActionModal
+          mode="upgrade"
           card={pendingUpgrade.def}
           actionLabel={t("preBoss.upgradeAction")}
           onAction={(branch) => {

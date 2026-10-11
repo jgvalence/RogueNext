@@ -2,6 +2,8 @@
 
 ## Suivi actuel — 11 octobre 2026
 
+Retour mobile traité : voir le [correctif de lisibilité du combat et des récompenses](CORRECTIF_MOBILE_2026-10-11.md), avec essais en portrait et paysage de faible hauteur. La recette sur téléphone physique reste ouverte.
+
 La [TODO centrale](TODO.md) fait foi pour les priorités ouvertes. Le diagnostic et les cases de l’audit initial sont conservés plus bas comme historique : ils ne décrivent pas tous la version livrée.
 
 | Lot | État confirmé | Suite |

@@ -6,6 +6,8 @@ La référence de production avant la refonte des menus est `e0e0d3e` : reprise 
 
 ## Où trouver le détail
 
+Correctif après retours mobiles : [combat, lecture des cartes et récompenses](CORRECTIF_MOBILE_2026-10-11.md). Les cartes minuscules en paysage et les faux choix A/B des récompenses sont corrigés ; la validation physique QA-01 reste ouverte.
+
 | Document | Usage |
 | --- | --- |
 | [État du jeu](ETAT_DU_JEU.md) | Bilan actuel et limites de validation |

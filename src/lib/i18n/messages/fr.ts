@@ -1878,6 +1878,7 @@ export const fr = {
       "Retapez la carte pour l'auto-cast, ou cliquez un allie pour le cibler",
     tapToPlay: "Retapez la carte selectionnee pour la jouer",
     playCardCta: "Jouer",
+    selectCardCta: "Sélectionner",
     chooseTargetCta: "Choisir une cible",
     chooseEnemyFor: "Choisissez un ennemi pour ",
     hp: "PV",

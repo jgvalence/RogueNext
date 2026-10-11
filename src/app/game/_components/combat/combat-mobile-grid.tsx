@@ -305,7 +305,7 @@ function MobileEnemyPortrait({
         <div className="absolute left-1.5 top-1.5 max-w-[calc(100%-12px)] [@media(max-height:400px)]:left-auto [@media(max-height:400px)]:right-1.5">
           <span
             className={cn(
-              "inline-block max-w-full truncate rounded-xl border px-2 py-0.5 text-[9px] font-bold leading-tight backdrop-blur-sm",
+              "mobile-enemy-intent inline-block max-w-full truncate rounded-xl border px-2 py-0.5 text-[9px] font-bold leading-tight backdrop-blur-sm",
               def.isBoss
                 ? "border-amber-400/40 bg-black/40 text-amber-100"
                 : "border-rose-400/35 bg-black/40 text-rose-100"
@@ -477,7 +477,7 @@ function MobilePlayerBar({
       data-keep-selection="true"
       onClick={onOpenPlayerInfo}
       className={cn(
-        "relative flex w-full items-center gap-2 overflow-visible rounded-xl border px-2 py-1.5 text-left transition-all duration-200",
+        "mobile-player-summary relative flex w-full items-center gap-2 overflow-visible rounded-xl border px-2 py-1.5 text-left transition-all duration-200",
         playerHit
           ? "border-red-400/40 bg-[linear-gradient(90deg,rgba(127,29,29,0.28),rgba(2,6,23,0.85))] shadow-[0_0_14px_rgba(248,113,113,0.18)]"
           : "border-indigo-400/30 bg-[linear-gradient(90deg,rgba(79,70,229,0.18),rgba(2,6,23,0.85))]",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import type { CardDefinition } from "@/game/schemas/cards";
@@ -18,10 +18,6 @@ import {
 } from "@/lib/i18n/entity-text";
 import { GameCard } from "../combat/GameCard";
 import { CardActionModal } from "../shared/CardActionModal";
-import {
-  UpgradePreviewPortal,
-  type UpgradePreviewHoverInfo,
-} from "../shared/UpgradePreviewPortal";
 
 interface RewardScreenProps {
   gold: number;
@@ -65,28 +61,9 @@ export function RewardScreen({
   onDismissFirstRewardTutorial,
 }: RewardScreenProps) {
   const { t } = useTranslation();
-  const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
-    null
-  );
   const [pendingPickCard, setPendingPickCard] = useState<CardDefinition | null>(
     null
   );
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-
-  useEffect(() => {
-    setIsTouchDevice(window.matchMedia("(hover: none)").matches);
-  }, []);
-
-  const handleCardMouseEnter = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>, card: CardDefinition) => {
-      setHoverInfo({ definition: card, anchorEl: e.currentTarget });
-    },
-    []
-  );
-  const handleCardMouseLeave = useCallback(() => {
-    setHoverInfo(null);
-  }, []);
-
   const resourceEntries = Object.entries(biomeResources).filter(
     ([, v]) => (v ?? 0) > 0
   );
@@ -96,42 +73,43 @@ export function RewardScreen({
   const hasAnyEliteChoice = hasCardChoices || hasRelicChoices || hasAllyChoices;
 
   return (
-    <div className="relative flex flex-col items-center gap-6 py-4 sm:py-8">
+    <div className="reward-screen relative flex flex-col items-center gap-6 py-4 sm:py-8">
       {/* Atmospheric background glow */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_40%_at_50%_0%,rgba(34,197,94,0.08),transparent)]" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_30%_at_50%_15%,rgba(250,204,21,0.05),transparent)]" />
 
-      <h2
-        className="animate-reward-enter text-2xl font-bold text-green-400"
-        style={{ animationDelay: "0ms" }}
-      >
-        {t("reward.victory")}
-      </h2>
-
-      <div
-        className="animate-reward-enter text-lg text-yellow-400"
-        style={{ animationDelay: "60ms" }}
-      >
-        +{gold} {t("reward.gold")}
-      </div>
-
-      {resourceEntries.length > 0 && (
-        <div
-          className="flex animate-reward-enter flex-wrap justify-center gap-2"
-          style={{ animationDelay: "110ms" }}
+      <div className="reward-summary">
+        <h2
+          className="animate-reward-enter text-2xl font-bold text-green-400"
+          style={{ animationDelay: "0ms" }}
         >
-          {resourceEntries.map(([key, val]) => (
-            <RogueTag
-              key={key}
-              bordered
-              className="rounded border-amber-700/50 bg-amber-950/60 px-2.5 py-1 text-xs font-semibold text-amber-300"
-            >
-              +{val} {t(`reward.resources.${key}`, key)}
-            </RogueTag>
-          ))}
-        </div>
-      )}
+          {t("reward.victory")}
+        </h2>
 
+        <div
+          className="animate-reward-enter text-lg text-yellow-400"
+          style={{ animationDelay: "60ms" }}
+        >
+          +{gold} {t("reward.gold")}
+        </div>
+
+        {resourceEntries.length > 0 && (
+          <div
+            className="flex animate-reward-enter flex-wrap justify-center gap-2"
+            style={{ animationDelay: "110ms" }}
+          >
+            {resourceEntries.map(([key, val]) => (
+              <RogueTag
+                key={key}
+                bordered
+                className="rounded border-amber-700/50 bg-amber-950/60 px-2.5 py-1 text-xs font-semibold text-amber-300"
+              >
+                +{val} {t(`reward.resources.${key}`, key)}
+              </RogueTag>
+            ))}
+          </div>
+        )}
+      </div>
       {showFirstRewardTutorial && (
         <div className="w-full max-w-3xl rounded-xl border border-cyan-400/45 bg-slate-950/90 p-4 shadow-[0_16px_50px_rgba(8,145,178,0.2)]">
           <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-cyan-300/85">
@@ -168,24 +146,19 @@ export function RewardScreen({
               >
                 {t("reward.chooseRareCard")}
               </p>
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="reward-card-choices">
                 {cardChoices.map((card, i) => (
                   <div
                     key={card.id}
                     className="animate-reward-enter"
                     style={{ animationDelay: `${200 + i * 55}ms` }}
-                    onMouseEnter={(e) => handleCardMouseEnter(e, card)}
-                    onMouseLeave={handleCardMouseLeave}
                   >
                     <GameCard
                       definition={card}
                       canPlay={true}
-                      onClick={
-                        isTouchDevice
-                          ? () => setPendingPickCard(card)
-                          : () => onPickCard(card.id)
-                      }
-                      size="md"
+                      onClick={() => setPendingPickCard(card)}
+                      size="lg"
+                      reading
                     />
                   </div>
                 ))}
@@ -270,24 +243,19 @@ export function RewardScreen({
                     ? t("reward.chooseRewardAlly")
                     : t("reward.noRewardChoices")}
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="reward-card-choices">
             {cardChoices.map((card, i) => (
               <div
                 key={card.id}
                 className="animate-reward-enter"
                 style={{ animationDelay: `${200 + i * 55}ms` }}
-                onMouseEnter={(e) => handleCardMouseEnter(e, card)}
-                onMouseLeave={handleCardMouseLeave}
               >
                 <GameCard
                   definition={card}
                   canPlay={true}
-                  onClick={
-                    isTouchDevice
-                      ? () => setPendingPickCard(card)
-                      : () => onPickCard(card.id)
-                  }
-                  size="md"
+                  onClick={() => setPendingPickCard(card)}
+                  size="lg"
+                  reading
                 />
               </div>
             ))}
@@ -334,30 +302,25 @@ export function RewardScreen({
           >
             {t("reward.chooseCardToAdd")}
           </p>
-          <div className="flex gap-4">
+          <div className="reward-card-choices">
             {cardChoices.map((card, i) => (
               <div
                 key={card.id}
                 className="animate-reward-enter"
                 style={{ animationDelay: `${200 + i * 55}ms` }}
-                onMouseEnter={(e) => handleCardMouseEnter(e, card)}
-                onMouseLeave={handleCardMouseLeave}
               >
                 <GameCard
                   definition={card}
                   canPlay={true}
-                  onClick={
-                    isTouchDevice
-                      ? () => setPendingPickCard(card)
-                      : () => onPickCard(card.id)
-                  }
-                  size="md"
+                  onClick={() => setPendingPickCard(card)}
+                  size="lg"
+                  reading
                 />
               </div>
             ))}
           </div>
           <div
-            className="flex animate-reward-enter items-center gap-3"
+            className="reward-actions flex animate-reward-enter items-center gap-3"
             style={{ animationDelay: `${200 + cardChoices.length * 55}ms` }}
           >
             {rerollsRemaining !== undefined &&
@@ -381,9 +344,9 @@ export function RewardScreen({
           </div>
         </>
       )}
-      <UpgradePreviewPortal info={hoverInfo} />
       {pendingPickCard && (
         <CardActionModal
+          mode="pick"
           card={pendingPickCard}
           actionLabel={t("reward.pickThisCard")}
           onAction={() => {

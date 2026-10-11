@@ -1879,6 +1879,7 @@ export const en = {
       "Tap card again to self-cast, or click an ally to target them",
     tapToPlay: "Tap the selected card again to play it",
     playCardCta: "Play",
+    selectCardCta: "Select",
     chooseTargetCta: "Choose target",
     chooseEnemyFor: "Choose an enemy for ",
     hp: "HP",

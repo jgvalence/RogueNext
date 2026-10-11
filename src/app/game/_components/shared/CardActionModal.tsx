@@ -1,66 +1,78 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import type {
-  CardDefinition,
-  CardUpgradeBranch,
-} from "@/game/schemas/cards";
-import { CardUpgradePreview } from "./CardUpgradePreview";
+import type { CardDefinition, CardUpgradeBranch } from "@/game/schemas/cards";
+import { RogueButton, RogueModal } from "@/components/ui/rogue";
+import { GameCard } from "../combat/GameCard";
 
-interface CardActionModalProps {
+type CardActionModalProps = {
   card: CardDefinition;
   actionLabel: string;
-  onAction: (branch: CardUpgradeBranch) => void;
   onCancel: () => void;
-}
+} & (
+  | { mode: "pick"; onAction: () => void }
+  | { mode: "upgrade"; onAction: (branch: CardUpgradeBranch) => void }
+);
 
-export function CardActionModal({
-  card,
-  actionLabel,
-  onAction,
-  onCancel,
-}: CardActionModalProps) {
+export function CardActionModal(props: CardActionModalProps) {
+  const { card, actionLabel, onCancel } = props;
   const { t } = useTranslation();
-
-  useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, []);
+  const [branch, setBranch] = useState<CardUpgradeBranch | null>("A");
+  const isUpgrade = props.mode === "upgrade";
 
   return (
-    <div
-      className="fixed inset-0 z-[200] flex items-end justify-center bg-black/80 backdrop-blur-sm sm:items-center"
-      onClick={onCancel}
-    >
-      <div
-        className="w-full max-w-4xl overflow-y-auto rounded-t-2xl border border-slate-700/80 bg-slate-900 p-5 pb-10 shadow-2xl sm:rounded-2xl sm:pb-5"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-center overflow-x-auto">
-          <CardUpgradePreview definition={card} size="sm" />
-        </div>
-        <div className="mt-5 grid grid-cols-2 gap-3">
-          <button
-            onClick={onCancel}
-            className="col-span-2 rounded-xl border border-slate-600 bg-slate-800/50 py-3 text-sm font-semibold text-slate-300 active:bg-slate-700/70"
+    <RogueModal
+      open
+      centered
+      zIndex={1200}
+      className="card-action-modal"
+      title={actionLabel}
+      width={560}
+      onCancel={onCancel}
+      footer={
+        <div className="card-action-footer">
+          <RogueButton onClick={onCancel}>{t("common.back")}</RogueButton>
+          <RogueButton
+            type="primary"
+            disabled={isUpgrade && branch === null}
+            onClick={() => {
+              if (props.mode === "pick") props.onAction();
+              else if (branch) props.onAction(branch);
+            }}
           >
-            {t("reward.skip")}
-          </button>
-          {(["A", "B"] as const).map((branch) => (
-            <button
-              key={branch}
-              onClick={() => onAction(branch)}
-              className="rounded-xl border border-amber-500/60 bg-amber-900/40 py-3 text-sm font-bold text-amber-100 active:bg-amber-900/70"
+            {actionLabel}
+            {isUpgrade && branch ? ` ${branch}` : ""}
+          </RogueButton>
+        </div>
+      }
+    >
+      {isUpgrade && (
+        <div
+          className="card-variant-options"
+          role="group"
+          aria-label={actionLabel}
+        >
+          {([null, "A", "B"] as const).map((variant) => (
+            <RogueButton
+              key={variant ?? "current"}
+              aria-pressed={branch === variant}
+              onClick={() => setBranch(variant)}
             >
-              {actionLabel} {branch}
-            </button>
+              {variant
+                ? `${t("gameCard.labels.upgraded")} ${variant}`
+                : t("gameCard.labels.current")}
+            </RogueButton>
           ))}
         </div>
-      </div>
-    </div>
+      )}
+      <GameCard
+        definition={card}
+        size="lg"
+        reading
+        upgraded={isUpgrade && branch !== null}
+        upgradeBranch={branch ?? "A"}
+      />
+    </RogueModal>
   );
 }

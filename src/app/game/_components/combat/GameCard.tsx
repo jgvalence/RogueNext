@@ -41,6 +41,8 @@ interface GameCardProps {
   size?: "sm" | "md" | "lg";
   detailMode?: "full" | "condensed";
   scrollable?: boolean;
+  /** Grow to show every effect; the containing page handles scrolling. */
+  reading?: boolean;
   className?: string;
 }
 
@@ -327,6 +329,7 @@ export function GameCard({
   size = "md",
   detailMode = "full",
   scrollable = false,
+  reading = false,
   className,
 }: GameCardProps) {
   const { t } = useTranslation();
@@ -452,6 +455,7 @@ export function GameCard({
     <div
       data-keep-selection="true"
       data-game-card={size}
+      data-card-reading={reading || undefined}
       data-card-type={displayDefinition.type}
       data-card-rarity={displayDefinition.rarity}
       data-card-selected={isSelected}
@@ -685,11 +689,11 @@ export function GameCard({
           </div>
         </div>
 
-        <div className="relative mt-2 min-h-0 flex-1">
+        <div className="card-body relative mt-2 min-h-0 flex-1">
           <div
             ref={scrollAreaRef}
             className={cn(
-              "flex h-full min-h-0 flex-col gap-2",
+              "card-content flex h-full min-h-0 flex-col gap-2",
               isScrollablePreview &&
                 "card-scrollbar touch-pan-y overflow-y-auto overscroll-contain pr-2"
             )}
@@ -941,10 +945,10 @@ export function GameCard({
               )}
             </div>
           </div>
-          {isScrollablePreview && showScrollTopFade ? (
+          {!reading && isScrollablePreview && showScrollTopFade ? (
             <div className="pointer-events-none absolute left-0 right-3 top-0 h-5 rounded-t-[14px] bg-gradient-to-b from-slate-950 via-slate-950/65 to-transparent" />
           ) : null}
-          {isScrollablePreview && showScrollBottomFade ? (
+          {!reading && isScrollablePreview && showScrollBottomFade ? (
             <div className="pointer-events-none absolute bottom-0 left-0 right-3 h-6 rounded-b-[14px] bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
           ) : null}
         </div>

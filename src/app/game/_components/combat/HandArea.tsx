@@ -20,12 +20,13 @@ import {
 } from "@/game/engine/archivist";
 import { isCardWebbed } from "@/game/engine/anansi-weaver";
 import { getCardPetrifiedCostBonus } from "@/game/engine/medusa";
-import { RogueButton } from "@/components/ui/rogue";
+import { RogueButton, RogueModal } from "@/components/ui/rogue";
 import { CardArtwork } from "../shared/CardArtwork";
 import { GameCard } from "./GameCard";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
 import {
+  applyAttackBonusToCardDefinition,
   localizeCardName,
   localizeCardDescription,
 } from "@/lib/i18n/card-text";
@@ -100,6 +101,7 @@ interface MobileHandCardProps {
   upgraded: boolean;
   upgradeBranch?: CardUpgradeBranch | null;
   costModifier: number;
+  attackBonus: number;
   isSelected: boolean;
   isPendingInked: boolean;
   isFrozen: boolean;
@@ -149,6 +151,7 @@ function MobileHandCard({
   upgraded,
   upgradeBranch,
   costModifier,
+  attackBonus,
   isSelected,
   isPendingInked,
   isFrozen,
@@ -163,9 +166,12 @@ function MobileHandCard({
   onPlayInked,
 }: MobileHandCardProps) {
   const { t } = useTranslation();
-  const displayDefinition = upgraded
-    ? buildUpgradedCardDefinition(definition, upgradeBranch ?? "A")
-    : definition;
+  const displayDefinition = applyAttackBonusToCardDefinition(
+    upgraded
+      ? buildUpgradedCardDefinition(definition, upgradeBranch ?? "A")
+      : definition,
+    attackBonus
+  );
   const style = MOBILE_HAND_STYLES[displayDefinition.type];
   const localizedName = localizeCardName(displayDefinition, t);
   const displayedEnergyCost = Math.max(
@@ -310,7 +316,7 @@ function MobileHandCard({
           </span>
         )}
 
-        <div className="flex-1 px-0.5 pt-0.5">
+        <div className="mobile-card-heading px-0.5 pt-0.5">
           <p
             className={cn(
               "pl-8 pr-2 font-bold leading-[1.06] text-slate-50 [text-wrap:balance]",
@@ -369,40 +375,43 @@ function MobileHandCard({
             redactionTypes.length === 0 && <div className="mt-1.5 h-1.5" />}
         </div>
 
-        <RogueButton
-          type="text"
-          className="mobile-card-inspect"
-          aria-label={`${t("visual.inspectCard")}: ${localizedName}`}
-          onClick={(event) => {
-            event.stopPropagation();
-            onOpenPreview();
-          }}
-        >
-          {t("visual.inspectCard")}
-        </RogueButton>
-        {hasInkedVariant ? (
-          <button
-            type="button"
-            data-keep-selection="true"
-            className={cn(
-              "relative z-20 mt-1 flex h-9 touch-manipulation items-center justify-center gap-1.5 rounded-[11px] border px-2.5 text-[10px] font-black uppercase tracking-[0.08em] shadow-[0_10px_18px_rgba(2,6,23,0.24)]",
-              canPlayInked ? style.inkButton : style.inkButtonDisabled,
-              isPendingInked && "ring-1 ring-cyan-200/70"
-            )}
-            disabled={!canPlayInked}
+        <p className="mobile-card-effect">
+          {localizeCardDescription(displayDefinition, t)}
+        </p>
+        <div className="mobile-card-actions">
+          <RogueButton
+            type="text"
+            className="mobile-card-inspect"
+            aria-label={`${t("visual.inspectCard")}: ${localizedName}`}
             onClick={(event) => {
               event.stopPropagation();
-              triggerInkedPlay();
+              onOpenPreview();
             }}
           >
-            <span>{t("gameCard.labels.ink")}</span>
-            <span className="inline-flex min-w-[22px] items-center justify-center rounded-full border border-cyan-100/20 bg-black/20 px-1.5 py-0.5 text-[10px] leading-none text-cyan-50">
-              {inkMarkCost}
-            </span>
-          </button>
-        ) : (
-          <div className="mt-2 h-9" />
-        )}
+            {t("visual.inspectCard")}
+          </RogueButton>
+          {hasInkedVariant ? (
+            <button
+              type="button"
+              data-keep-selection="true"
+              className={cn(
+                "relative z-20 mt-1 flex h-9 touch-manipulation items-center justify-center gap-1.5 rounded-[11px] border px-2.5 text-[10px] font-black uppercase tracking-[0.08em] shadow-[0_10px_18px_rgba(2,6,23,0.24)]",
+                canPlayInked ? style.inkButton : style.inkButtonDisabled,
+                isPendingInked && "ring-1 ring-cyan-200/70"
+              )}
+              disabled={!canPlayInked}
+              onClick={(event) => {
+                event.stopPropagation();
+                triggerInkedPlay();
+              }}
+            >
+              <span>{t("gameCard.labels.ink")}</span>
+              <span className="inline-flex min-w-[22px] items-center justify-center rounded-full border border-cyan-100/20 bg-black/20 px-1.5 py-0.5 text-[10px] leading-none text-cyan-50">
+                {inkMarkCost}
+              </span>
+            </button>
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -456,7 +465,6 @@ export function HandArea({
 
   const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mobileWrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const mobilePreviewRef = useRef<HTMLDivElement | null>(null);
   const mobilePreviewCard = useMemo(
     () => hand.find((card) => card.instanceId === mobilePreviewCardId) ?? null,
     [hand, mobilePreviewCardId]
@@ -480,31 +488,6 @@ export function HandArea({
       setMobilePreviewCardId(null);
     }
   }, [hand, mobilePreviewCardId]);
-
-  useEffect(() => {
-    if (!mobilePreviewCardId) return;
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null;
-      if (!target) return;
-      if (mobilePreviewRef.current?.contains(target)) return;
-      // Artwork lives in a portal outside the card-reading panel.
-      if (document.querySelector(".card-art-viewer")) return;
-      setMobilePreviewCardId(null);
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown, true);
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !document.querySelector(".card-art-viewer")) {
-        setMobilePreviewCardId(null);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", handlePointerDown, true);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [mobilePreviewCardId]);
 
   useLayoutEffect(() => {
     if (!isDiscarding || !discardBtnRef?.current) return;
@@ -583,18 +566,59 @@ export function HandArea({
         className="relative z-30 w-full lg:hidden"
       >
         {mobilePreviewCard && mobilePreviewDef && (
-          <div
-            data-keep-selection="true"
-            ref={mobilePreviewRef}
-            className="mobile-card-preview fixed bottom-[3.75rem] left-1/2 z-[140] -translate-x-1/2 [@media(max-height:540px)]:bottom-[3.15rem]"
+          <RogueModal
+            open
+            centered
+            zIndex={1200}
+            className="card-action-modal mobile-card-preview"
+            title={localizeCardName(
+              mobilePreviewDisplay?.definition ?? mobilePreviewDef,
+              t
+            )}
+            width={440}
+            onCancel={() => setMobilePreviewCardId(null)}
+            modalRender={(node) => (
+              <div
+                data-keep-selection="true"
+                onClick={(event) => event.stopPropagation()}
+              >
+                {node}
+              </div>
+            )}
+            footer={
+              <div className="card-action-footer">
+                <RogueButton onClick={() => setMobilePreviewCardId(null)}>
+                  {t("common.close")}
+                </RogueButton>
+                <RogueButton
+                  type="primary"
+                  disabled={
+                    disableCardInteractions ||
+                    tutorialPlayableInkedCardId !== null ||
+                    !canPlayCard(
+                      combatState,
+                      mobilePreviewCard.instanceId,
+                      cardDefs
+                    )
+                  }
+                  onClick={() => {
+                    onPlayCard(mobilePreviewCard.instanceId, false);
+                    setMobilePreviewCardId(null);
+                  }}
+                >
+                  {t(
+                    mobilePreviewDef.targeting === "SINGLE_ENEMY" ||
+                      mobilePreviewDef.targeting === "SINGLE_ALLY"
+                      ? "combat.chooseTargetCta"
+                      : selectedCardId === mobilePreviewCard.instanceId &&
+                          !pendingInked
+                        ? "combat.playCardCta"
+                        : "combat.selectCardCta"
+                  )}
+                </RogueButton>
+              </div>
+            }
           >
-            <RogueButton
-              type="text"
-              className="mobile-preview-close"
-              onClick={() => setMobilePreviewCardId(null)}
-            >
-              {t("common.close")}
-            </RogueButton>
             <GameCard
               definition={mobilePreviewDisplay?.definition ?? mobilePreviewDef}
               upgraded={
@@ -612,7 +636,12 @@ export function HandArea({
               redactionTypes={mobilePreviewDisplay?.redactionTypes ?? []}
               attackBonus={attackBonus}
               canPlay
-              canPlayInked={mobilePreviewCanInked}
+              canPlayInked={
+                mobilePreviewCanInked &&
+                !disableCardInteractions &&
+                (tutorialPlayableInkedCardId === null ||
+                  tutorialPlayableInkedCardId === mobilePreviewCard.instanceId)
+              }
               isPetrified={
                 getCardPetrifiedCostBonus(
                   combatState,
@@ -624,11 +653,12 @@ export function HandArea({
               isPendingInked={
                 selectedCardId === mobilePreviewCard.instanceId && pendingInked
               }
-              onInkedClick={() =>
-                onPlayCard(mobilePreviewCard.instanceId, true)
-              }
+              onInkedClick={() => {
+                onPlayCard(mobilePreviewCard.instanceId, true);
+                setMobilePreviewCardId(null);
+              }}
               size="lg"
-              scrollable
+              reading
               className="!h-[288px] !w-[176px] !cursor-default !opacity-100 shadow-[0_26px_54px_rgba(2,6,23,0.82)] !saturate-100"
             />
             {(mobilePreviewDef.targeting === "SINGLE_ENEMY" ||
@@ -637,7 +667,7 @@ export function HandArea({
                 {t("visual.previewHint")}
               </p>
             )}
-          </div>
+          </RogueModal>
         )}
         <div className="mobile-hand-scroll flex h-[182px] w-full min-w-0 touch-pan-x items-end gap-0 overflow-x-auto overflow-y-hidden overscroll-x-contain px-1.5 pb-1 pr-1.5 [-webkit-overflow-scrolling:touch] [@media(max-height:400px)]:!h-[124px] [@media(max-height:540px)]:h-[164px]">
           <div className="mx-auto flex h-full w-max min-w-full items-end justify-center">
@@ -713,6 +743,7 @@ export function HandArea({
                   }}
                 >
                   <MobileHandCard
+                    attackBonus={attackBonus}
                     definition={display.definition}
                     upgraded={display.upgraded}
                     upgradeBranch={display.upgradeBranch}
