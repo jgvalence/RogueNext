@@ -305,6 +305,7 @@ export function initCombat(
     floor: runState.floor,
     difficultyLevel,
     enemyDamageScale,
+    feedback: { sequence: 0, events: [] },
     turnNumber: 1,
     analyticsStartHp: runState.playerCurrentHp,
     analyticsInkGenerated: 0,

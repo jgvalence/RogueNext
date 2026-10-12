@@ -1,3 +1,4 @@
+import { CombatFeedbackSchema } from "./combat-feedback";
 import { z } from "zod";
 import { CardInstanceSchema } from "./cards";
 import {
@@ -61,6 +62,7 @@ export type CombatEncounterContext = z.infer<
 >;
 
 export const CombatStateSchema = z.object({
+  feedback: CombatFeedbackSchema.optional(),
   floor: z.number().int().default(1),
   difficultyLevel: z.number().int().min(0).optional(),
   enemyDamageScale: z.number().default(1),

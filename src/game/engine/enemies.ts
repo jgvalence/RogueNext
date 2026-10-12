@@ -1,3 +1,5 @@
+import { appendCombatFeedback, statusTickFeedback } from "./combat-feedback";
+import type { CombatFeedbackInput } from "../schemas/combat-feedback";
 import type { CombatState } from "../schemas/combat-state";
 import type {
   EnemyDefinition,
@@ -358,76 +360,7 @@ export function executeEnemiesTurn(
     current = executeOneEnemyTurn(current, freshEnemy, def, rng, enemyDefs);
   }
 
-  // End of round: apply poison, bleed and tick buffs for all enemies
-  current = {
-    ...current,
-    enemies: current.enemies.map((e) => {
-      if (e.currentHp <= 0) return e;
-      const enemyPoisonMultiplier =
-        current.relicModifiers?.enemyPoisonDamageMultiplier ?? 1.5;
-      const enemyBleedMultiplier =
-        current.relicModifiers?.enemyBleedDamageMultiplier ?? 1.5;
-      const afterPoison = applyPoison(e, enemyPoisonMultiplier);
-      const afterBleed = applyBleed(afterPoison, enemyBleedMultiplier);
-      return {
-        ...e,
-        currentHp: afterBleed.currentHp,
-        buffs: tickBuffs(afterBleed.buffs),
-      };
-    }),
-  };
-
-  // Apply poison, bleed and tick buffs for player and allies
-  const playerPoisonMultiplier =
-    current.relicModifiers?.playerPoisonDamageMultiplier ?? 1;
-  const playerBleedMultiplier =
-    current.relicModifiers?.playerBleedDamageMultiplier ?? 1;
-  const playerAfterPoison = applyPoison(current.player, playerPoisonMultiplier);
-  const playerAfterBleed = applyBleed(playerAfterPoison, playerBleedMultiplier);
-  current = {
-    ...current,
-    player: {
-      ...current.player,
-      currentHp: playerAfterBleed.currentHp,
-      buffs: tickBuffs(playerAfterBleed.buffs),
-    },
-    allies: current.allies.map((a) => {
-      if (a.currentHp <= 0) return a;
-      const afterPoison = applyPoison(a);
-      const afterBleed = applyBleed(afterPoison);
-      return {
-        ...a,
-        currentHp: afterBleed.currentHp,
-        buffs: tickBuffs(afterBleed.buffs),
-      };
-    }),
-  };
-
-  return synchronizeKoscheiCombatState(
-    synchronizeHydraCombatState(
-      synchronizeMedusaCombatState(
-        synchronizeQuetzalcoatlCombatState(
-          synchronizeTezcatlipocaCombatState(
-            synchronizeOsirisCombatState(
-              synchronizeShubCombatState(
-                synchronizeNyarlathotepCombatState(
-                  synchronizeSoundiataCombatState(
-                    synchronizeAnansiCombatState(
-                      synchronizeCernunnosCombatState(
-                        synchronizeDagdaCombatState(
-                          synchronizeRaCombatState(current)
-                        )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-      )
-    )
-  );
+  return finalizeEnemyRound(current);
 }
 
 /**
@@ -436,6 +369,7 @@ export function executeEnemiesTurn(
  */
 export function finalizeEnemyRound(state: CombatState): CombatState {
   let current = state;
+  const feedback: CombatFeedbackInput[] = [];
 
   // Apply poison, bleed and tick buffs for all enemies
   current = {
@@ -448,6 +382,7 @@ export function finalizeEnemyRound(state: CombatState): CombatState {
         current.relicModifiers?.enemyBleedDamageMultiplier ?? 1.5;
       const afterPoison = applyPoison(e, enemyPoisonMultiplier);
       const afterBleed = applyBleed(afterPoison, enemyBleedMultiplier);
+      feedback.push(...statusTickFeedback(e.instanceId, e.currentHp, afterPoison.currentHp, afterBleed.currentHp));
       return {
         ...e,
         currentHp: afterBleed.currentHp,
@@ -463,6 +398,7 @@ export function finalizeEnemyRound(state: CombatState): CombatState {
     current.relicModifiers?.playerBleedDamageMultiplier ?? 1;
   const playerAfterPoison = applyPoison(current.player, playerPoisonMultiplier);
   const playerAfterBleed = applyBleed(playerAfterPoison, playerBleedMultiplier);
+  feedback.push(...statusTickFeedback("player", current.player.currentHp, playerAfterPoison.currentHp, playerAfterBleed.currentHp));
   current = {
     ...current,
     player: {
@@ -474,6 +410,7 @@ export function finalizeEnemyRound(state: CombatState): CombatState {
       if (a.currentHp <= 0) return a;
       const afterPoison = applyPoison(a);
       const afterBleed = applyBleed(afterPoison);
+      feedback.push(...statusTickFeedback(a.instanceId, a.currentHp, afterPoison.currentHp, afterBleed.currentHp));
       return {
         ...a,
         currentHp: afterBleed.currentHp,
@@ -481,6 +418,8 @@ export function finalizeEnemyRound(state: CombatState): CombatState {
       };
     }),
   };
+
+  current = appendCombatFeedback(current, feedback);
 
   return synchronizeKoscheiCombatState(
     synchronizeHydraCombatState(

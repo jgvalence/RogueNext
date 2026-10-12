@@ -8,7 +8,6 @@ import {
   type RefObject,
 } from "react";
 import { useTranslation } from "react-i18next";
-import { playSound } from "@/lib/sound";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { ReshuffleCardFx } from "./combat-view-types";
 import { scaleCombatDelay } from "@/lib/combat-speed";
@@ -69,7 +68,6 @@ export function useCombatVisualEffects({
     prevPlayerHp.current = combat.player.currentHp;
     if (combat.player.currentHp >= prev) return undefined;
     setPlayerHit(true);
-    playSound("PLAYER_HIT", 0.7);
     const timer = setTimeout(
       () => setPlayerHit(false),
       scaleCombatDelay(500)

@@ -5,6 +5,7 @@ import {
   type SetStateAction,
 } from "react";
 import { endRunAction } from "../_services/run-save-client";
+import { useCombatFeedbackSettled } from "./use-combat-feedback-settled";
 import {
   generateCombatRewards,
   type CombatRewards,
@@ -74,9 +75,10 @@ export function useCombatOutcome({
   onCombatLost,
   onScriptedFirstRunDefeat,
 }: UseCombatOutcomeParams) {
+  const feedbackSettled = useCombatFeedbackSettled(state.combat, `${state.runId}:${state.floor}:${state.currentRoom}`);
   useEffect(() => {
     const combat = state.combat;
-    if (!combat) return;
+    if (!combat || !feedbackSettled) return;
 
     if (combat.phase === "COMBAT_WON") {
       const knownEnemyIds = new Set(
@@ -276,6 +278,7 @@ export function useCombatOutcome({
       setPhase("DEFEAT");
     }
   }, [
+    feedbackSettled,
     state,
     dispatch,
     setIsBossRewards,

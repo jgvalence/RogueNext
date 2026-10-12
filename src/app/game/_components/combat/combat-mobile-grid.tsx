@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CharacterPortrait, AllyPortrait } from "../shared/CharacterPortrait";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils/cn";
@@ -17,9 +17,7 @@ import { shouldHideEnemyIntent } from "@/game/engine/difficulty";
 import { getEnemyImageSrc } from "@/lib/assets";
 import { EnemyArtwork } from "../shared/EnemyArtwork";
 import { localizeAllyName } from "@/lib/i18n/entity-text";
-import { DamageNumber } from "./DamageNumber";
 import { buffMeta } from "../shared/buff-meta";
-import { playSound } from "@/lib/sound";
 import { vibrate } from "@/lib/haptics";
 
 interface CombatMobileGridProps {
@@ -147,10 +145,6 @@ function MobileEnemyPortrait({
 }: MobileEnemyPortraitProps) {
   const { t } = useTranslation();
   const prevHp = useRef(enemy.currentHp);
-  const popupId = useRef(0);
-  const [dmgPopups, setDmgPopups] = useState<{ id: number; value: number }[]>(
-    []
-  );
   const wasDead = useRef(enemy.currentHp <= 0);
   const [isDying, setIsDying] = useState(false);
   const prevBuffCount = useRef((enemy.buffs ?? []).length);
@@ -166,13 +160,9 @@ function MobileEnemyPortrait({
     const diff = prevHp.current - enemy.currentHp;
     prevHp.current = enemy.currentHp;
     if (diff > 0) {
-      const id = popupId.current++;
-      setDmgPopups((prev) => [...prev, { id, value: diff }]);
       if (enemy.currentHp <= 0) {
-        playSound("ENEMY_DEATH", 0.8);
         vibrate(25);
       } else {
-        playSound("ENEMY_HIT", 0.6);
         vibrate(8);
       }
     }
@@ -220,9 +210,6 @@ function MobileEnemyPortrait({
     return undefined;
   }, [phase2Flag, phase2Key]);
 
-  const removePopup = useCallback((id: number) => {
-    setDmgPopups((prev) => prev.filter((p) => p.id !== id));
-  }, []);
 
   const visibleBuffs = (enemy.buffs ?? []).filter((b: BuffInstance) =>
     VISIBLE_BUFF_TYPES.has(b.type)
@@ -232,6 +219,7 @@ function MobileEnemyPortrait({
     <button
       key={`mobile-enemy-${enemy.instanceId}`}
       data-enemy-id={enemy.instanceId}
+      data-fx-target={enemy.instanceId}
       data-boss={def.isBoss || undefined}
       data-targetable={isTargetable || isCheatSelectable || undefined}
       data-acting={
@@ -266,15 +254,6 @@ function MobileEnemyPortrait({
         newlySummonedIds.has(enemy.instanceId) && "animate-enemy-summon-enter"
       )}
     >
-      {/* Floating damage numbers */}
-      {dmgPopups.map((p) => (
-        <DamageNumber
-          key={p.id}
-          value={p.value}
-          type="damage"
-          onDone={() => removePopup(p.id)}
-        />
-      ))}
 
       <div className="mobile-enemy-art">
         {!enemyArtFailed ? (
@@ -392,24 +371,15 @@ function MobilePlayerBar({
 }: MobilePlayerBarProps) {
   const { t } = useTranslation();
   const prevHp = useRef(player.currentHp);
-  const popupId = useRef(0);
-  const [dmgPopups, setDmgPopups] = useState<{ id: number; value: number }[]>(
-    []
-  );
 
   useEffect(() => {
     const diff = prevHp.current - player.currentHp;
     prevHp.current = player.currentHp;
     if (diff > 0) {
-      const id = popupId.current++;
-      setDmgPopups((prev) => [...prev, { id, value: diff }]);
       vibrate([12, 40, 18]);
     }
   }, [player.currentHp]);
 
-  const removePopup = useCallback((id: number) => {
-    setDmgPopups((prev) => prev.filter((p) => p.id !== id));
-  }, []);
 
   return (
     <button
@@ -417,6 +387,7 @@ function MobilePlayerBar({
       data-keep-selection="true"
       onClick={onOpenPlayerInfo}
       data-hit={playerHit || undefined}
+      data-fx-target="player"
       className={cn(
         "mobile-player-summary relative flex w-full items-center gap-2 overflow-visible rounded-xl border px-2 py-1.5 text-left transition-all duration-200",
         playerHit
@@ -425,14 +396,6 @@ function MobilePlayerBar({
         isArmorTutorialStep && "ring-1 ring-cyan-300/60"
       )}
     >
-      {dmgPopups.map((p) => (
-        <DamageNumber
-          key={p.id}
-          value={p.value}
-          type="damage"
-          onDone={() => removePopup(p.id)}
-        />
-      ))}
       <div className="mobile-hero-portrait">
         <CharacterPortrait identity={characterId} />
       </div>
@@ -623,6 +586,7 @@ export function CombatMobileGrid({
           return (
             <button
               key={`mobile-ally-${ally.instanceId}`}
+              data-fx-target={ally.instanceId}
               type="button"
               data-keep-selection="true"
               onClick={() => onMobileAllyPress(ally.instanceId)}

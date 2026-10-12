@@ -1852,6 +1852,14 @@ export const en = {
     },
   },
   combat: {
+    feedback: {
+      hit: "Hit", poison: "Poison applied", poisonTick: "Poison",
+      bleed: "Bleed applied", bleedTick: "Bleed", armor: "Armor",
+      heal: "Heal", draw: "Draw", upgrade: "Upgrade", buff: "Buff",
+      debuff: "Debuff", skill: "Skill", ink: "Ink",
+      absorbed: "{{count}} absorbed",
+    },
+
     enemyOverview: "All enemies and their threats",
     mobileEnemies: "Enemies · intents",
     mobileBrowseEnemies: "scroll to see all",

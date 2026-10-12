@@ -1,3 +1,4 @@
+import { appendCombatFeedback, collectCombatFeedback } from "./combat-feedback";
 import type { CombatState } from "../schemas/combat-state";
 import type { InkPowerType } from "../schemas/enums";
 import type { CardDefinition } from "../schemas/cards";
@@ -193,6 +194,20 @@ export function canUseInkPower(
  * - REWRITE/LOST_CHAPTER : legacy, comportement conservé
  */
 export function applyInkPower(
+  state: CombatState,
+  power: InkPowerType,
+  targetInstanceId: string | null,
+  cardDefs: Map<string, CardDefinition>,
+  rng: RNG
+): CombatState {
+  const next = applyInkPowerInternal(state, power, targetInstanceId, cardDefs, rng);
+  if (next === state) return state;
+  const target = state.enemies.some(e => e.instanceId === targetInstanceId) ? targetInstanceId! : "player";
+  const marked = appendCombatFeedback(next, [{ kind: "ink", target, source: "player" }]);
+  return collectCombatFeedback(state, marked, "player", "hit", true);
+}
+
+function applyInkPowerInternal(
   state: CombatState,
   power: InkPowerType,
   targetInstanceId: string | null,

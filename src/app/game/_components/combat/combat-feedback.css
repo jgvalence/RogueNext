@@ -1,0 +1,276 @@
+.combat-feedback-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 75;
+  overflow: hidden;
+  pointer-events: none;
+}
+.combat-fx {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  color: var(--fx-color);
+  pointer-events: none;
+}
+.combat-fx-glyph {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 2px 2px #020617) drop-shadow(0 0 6px currentColor);
+}
+.combat-fx-caption {
+  position: absolute;
+  left: 50%;
+  top: 82%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(250px, 80vw);
+  padding: 3px 8px;
+  border: 1px solid currentColor;
+  border-radius: 7px;
+  background: #07101ff2;
+  color: var(--fx-color);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
+  box-shadow: 0 2px 6px #000a;
+  animation: fx-caption var(--fx-duration) ease-out both;
+}
+.fx-slash-glow {
+  fill: currentColor;
+  stroke-width: 8;
+  opacity: 0.8;
+  transform-origin: center;
+  animation: fx-slash var(--fx-duration) ease-out both;
+}
+.fx-slash-core {
+  stroke: #fff;
+  stroke-width: 4;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: fx-cut var(--fx-duration) ease-out both;
+}
+.fx-impact {
+  fill: #fff;
+  stroke: currentColor;
+  stroke-width: 2;
+  transform-origin: center;
+  animation: fx-impact var(--fx-duration) ease-out both;
+}
+.fx-wave {
+  fill: currentColor;
+  fill-opacity: 0.13;
+  transform-origin: center;
+  animation: fx-wave var(--fx-duration) ease-out both;
+}
+.fx-droplet {
+  fill: currentColor;
+  stroke: #102612;
+  stroke-width: 1.5;
+  animation: fx-drip var(--fx-duration) ease-in both;
+}
+.fx-bubble {
+  fill: currentColor;
+  stroke-width: 1;
+  animation: fx-rise var(--fx-duration) ease-out both;
+}
+.fx-shield {
+  fill: #164a87b0;
+  stroke-width: 6;
+  transform-origin: center;
+  animation: fx-shield var(--fx-duration) ease-out both;
+}
+.fx-mark {
+  stroke: #fff;
+  stroke-width: 4;
+  animation: fx-caption var(--fx-duration) ease-out both;
+}
+.fx-rise {
+  fill: currentColor;
+  fill-opacity: 0.25;
+  animation: fx-rise var(--fx-duration) ease-out both;
+}
+.fx-sparks {
+  stroke: #fff;
+  animation: fx-rise var(--fx-duration) ease-out both;
+}
+.fx-card-back {
+  fill: #091b30;
+  animation: fx-caption var(--fx-duration) ease-out both;
+}
+.fx-star {
+  fill: #ffd45c66;
+  transform-origin: center;
+  animation: fx-shield var(--fx-duration) ease-out both;
+}
+.fx-rune {
+  transform-origin: center;
+  animation: fx-rune var(--fx-duration) ease-out both;
+}
+.combat-fx-poisonTick .fx-wave,
+.combat-fx-bleedTick .fx-droplet {
+  stroke-width: 8;
+}
+.combat-fx-trail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: #b9f7ff;
+  stroke-width: 3;
+  filter: drop-shadow(0 0 4px #5de9ff);
+  opacity: 0.7;
+  animation: fx-caption var(--fx-duration) ease-out both;
+}
+@keyframes fx-slash {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(var(--fx-angle));
+  }
+  16%,
+  45% {
+    opacity: 1;
+    transform: scale(1) rotate(var(--fx-angle));
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.15) rotate(var(--fx-angle));
+  }
+}
+@keyframes fx-cut {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 1;
+  }
+  16% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes fx-impact {
+  0%,
+  10% {
+    opacity: 0;
+    transform: scale(0.1);
+  }
+  22% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  65%,
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+@keyframes fx-caption {
+  0% {
+    opacity: 0;
+  }
+  15%,
+  78% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes fx-wave {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  25% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.45);
+  }
+}
+@keyframes fx-drip {
+  0% {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  20%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+@keyframes fx-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  20%,
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+@keyframes fx-shield {
+  0% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  25%,
+  65% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+@keyframes fx-rune {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) rotate(-25deg);
+  }
+  25%,
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1) rotate(25deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .combat-fx *,
+  .combat-fx-trail {
+    animation: none !important;
+  }
+  .combat-fx-glyph {
+    filter: none;
+  }
+  .fx-slash-core {
+    stroke-dashoffset: 0;
+  }
+  .combat-fx-trail {
+    display: none;
+  }
+}

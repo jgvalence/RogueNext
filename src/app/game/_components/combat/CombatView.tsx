@@ -1,5 +1,7 @@
 "use client";
 
+import { CombatFeedbackLayer } from "./combat-feedback-layer";
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CombatState } from "@/game/schemas/combat-state";
 import type { CardDefinition } from "@/game/schemas/cards";
@@ -608,6 +610,7 @@ export function CombatView({
         onPrevious={handleFirstCombatTutorialPrevious}
         onNext={handleFirstCombatTutorialNext}
       />
+      <CombatFeedbackLayer combat={combat} />
       <CombatBattlefield
         characterId={runState.characterId}
         biome={biome}

@@ -1,0 +1,469 @@
+{
+  "checks": [
+    {
+      "label": "portrait-double-frappe",
+      "effects": [
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "text": "Coup −4"
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "text": "Coup −4"
+        }
+      ],
+      "overflow": false,
+      "pointerEvents": "none",
+      "reduced": false,
+      "animations": [
+        "fx-slash",
+        "fx-cut",
+        "fx-impact",
+        "fx-slash",
+        "fx-cut",
+        "fx-impact"
+      ],
+      "journal": [
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 1
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 2
+        }
+      ]
+    },
+    {
+      "label": "paysage-poison",
+      "effects": [
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "text": "Coup −6"
+        },
+        {
+          "kind": "poison",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "text": "Poison appliqué +5"
+        }
+      ],
+      "overflow": false,
+      "pointerEvents": "none",
+      "reduced": false,
+      "animations": [
+        "fx-slash",
+        "fx-cut",
+        "fx-impact",
+        "fx-wave",
+        "fx-drip",
+        "fx-drip",
+        "fx-drip",
+        "fx-rise",
+        "fx-rise"
+      ],
+      "journal": [
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 1
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 2
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 6,
+          "blocked": 0,
+          "source": "player",
+          "id": 3
+        },
+        {
+          "kind": "poison",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 5,
+          "source": "player",
+          "id": 4
+        }
+      ]
+    },
+    {
+      "label": "portrait-armure-mouvement-reduit",
+      "effects": [
+        {
+          "kind": "armor",
+          "target": "player",
+          "text": "Armure +6"
+        }
+      ],
+      "overflow": false,
+      "pointerEvents": "none",
+      "reduced": true,
+      "animations": [
+        "none",
+        "none"
+      ],
+      "journal": [
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 1
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 2
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 6,
+          "blocked": 0,
+          "source": "player",
+          "id": 3
+        },
+        {
+          "kind": "poison",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 5,
+          "source": "player",
+          "id": 4
+        },
+        {
+          "kind": "skill",
+          "target": "player",
+          "source": "player",
+          "id": 5
+        },
+        {
+          "kind": "armor",
+          "target": "player",
+          "amount": 6,
+          "source": "player",
+          "id": 6
+        }
+      ]
+    },
+    {
+      "label": "bureau-soin",
+      "effects": [
+        {
+          "kind": "heal",
+          "target": "player",
+          "text": "Soin +6"
+        }
+      ],
+      "overflow": false,
+      "pointerEvents": "none",
+      "reduced": false,
+      "animations": [
+        "fx-rise",
+        "fx-rise"
+      ],
+      "journal": [
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 1
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 2
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 6,
+          "blocked": 0,
+          "source": "player",
+          "id": 3
+        },
+        {
+          "kind": "poison",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 5,
+          "source": "player",
+          "id": 4
+        },
+        {
+          "kind": "skill",
+          "target": "player",
+          "source": "player",
+          "id": 5
+        },
+        {
+          "kind": "armor",
+          "target": "player",
+          "amount": 6,
+          "source": "player",
+          "id": 6
+        },
+        {
+          "kind": "skill",
+          "target": "player",
+          "source": "player",
+          "id": 7
+        },
+        {
+          "kind": "heal",
+          "target": "player",
+          "amount": 6,
+          "source": "player",
+          "id": 8
+        }
+      ]
+    },
+    {
+      "label": "portrait-attaque-zone",
+      "effects": [
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "text": "Coup −4"
+        },
+        {
+          "kind": "hit",
+          "target": "soIKC8fQ177ieZ1I-vsFF",
+          "text": "Coup −4"
+        }
+      ],
+      "overflow": false,
+      "pointerEvents": "none",
+      "reduced": false,
+      "animations": [
+        "fx-slash",
+        "fx-cut",
+        "fx-impact",
+        "fx-slash",
+        "fx-cut",
+        "fx-impact"
+      ],
+      "journal": [
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 1
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 2
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 6,
+          "blocked": 0,
+          "source": "player",
+          "id": 3
+        },
+        {
+          "kind": "poison",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 5,
+          "source": "player",
+          "id": 4
+        },
+        {
+          "kind": "skill",
+          "target": "player",
+          "source": "player",
+          "id": 5
+        },
+        {
+          "kind": "armor",
+          "target": "player",
+          "amount": 6,
+          "source": "player",
+          "id": 6
+        },
+        {
+          "kind": "skill",
+          "target": "player",
+          "source": "player",
+          "id": 7
+        },
+        {
+          "kind": "heal",
+          "target": "player",
+          "amount": 6,
+          "source": "player",
+          "id": 8
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 9
+        },
+        {
+          "kind": "hit",
+          "target": "soIKC8fQ177ieZ1I-vsFF",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 10
+        }
+      ]
+    },
+    {
+      "label": "portrait-poison-fin-tour",
+      "effects": [
+        {
+          "kind": "poisonTick",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "text": "Poison −5"
+        }
+      ],
+      "overflow": false,
+      "pointerEvents": "none",
+      "reduced": false,
+      "animations": [
+        "fx-wave",
+        "fx-drip",
+        "fx-drip",
+        "fx-drip",
+        "fx-rise",
+        "fx-rise"
+      ],
+      "journal": [
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 1
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 2
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 6,
+          "blocked": 0,
+          "source": "player",
+          "id": 3
+        },
+        {
+          "kind": "poison",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 5,
+          "source": "player",
+          "id": 4
+        },
+        {
+          "kind": "skill",
+          "target": "player",
+          "source": "player",
+          "id": 5
+        },
+        {
+          "kind": "armor",
+          "target": "player",
+          "amount": 6,
+          "source": "player",
+          "id": 6
+        },
+        {
+          "kind": "skill",
+          "target": "player",
+          "source": "player",
+          "id": 7
+        },
+        {
+          "kind": "heal",
+          "target": "player",
+          "amount": 6,
+          "source": "player",
+          "id": 8
+        },
+        {
+          "kind": "hit",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 9
+        },
+        {
+          "kind": "hit",
+          "target": "soIKC8fQ177ieZ1I-vsFF",
+          "amount": 4,
+          "blocked": 0,
+          "source": "player",
+          "id": 10
+        },
+        {
+          "kind": "hit",
+          "target": "player",
+          "amount": 0,
+          "blocked": 4,
+          "source": "ao3Xvnng0g7eXyQsjII6m",
+          "id": 11
+        },
+        {
+          "kind": "hit",
+          "target": "player",
+          "amount": 0,
+          "blocked": 2,
+          "source": "soIKC8fQ177ieZ1I-vsFF",
+          "id": 12
+        },
+        {
+          "kind": "poisonTick",
+          "target": "ao3Xvnng0g7eXyQsjII6m",
+          "amount": 5,
+          "id": 13
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

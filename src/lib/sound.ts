@@ -96,6 +96,12 @@ function noiseBlip(
 // ── Sound definitions ──────────────────────────────────────────────────────────
 
 export type SoundKey =
+  | "POISON_FX"
+  | "BLEED_FX"
+  | "ARMOR_FX"
+  | "HEAL_FX"
+  | "SKILL_FX"
+  | "INK_FX"
   | "CARD_PLAY"
   | "CARD_DRAW"
   | "PLAYER_HIT"
@@ -109,6 +115,30 @@ export type SoundKey =
   | "BUTTON_CLICK";
 
 const SOUND_SYNTHS: Record<SoundKey, (c: AudioContext, vol: number) => void> = {
+  POISON_FX: (c, vol) => {
+    tone(c, 190, "sine", c.currentTime, 0.15, vol * 0.22, 95);
+    tone(c, 270, "sine", c.currentTime + 0.06, 0.12, vol * 0.15, 135);
+  },
+  BLEED_FX: (c, vol) => {
+    noiseBlip(c, c.currentTime, 0.11, vol * 0.18, 1600);
+    tone(c, 130, "triangle", c.currentTime, 0.12, vol * 0.18, 60);
+  },
+  ARMOR_FX: (c, vol) => {
+    tone(c, 740, "triangle", c.currentTime, 0.18, vol * 0.2, 980);
+    tone(c, 1110, "sine", c.currentTime, 0.2, vol * 0.12);
+  },
+  HEAL_FX: (c, vol) => {
+    [440, 660, 880].forEach((f, i) =>
+      tone(c, f, "sine", c.currentTime + i * 0.05, 0.16, vol * 0.16)
+    );
+  },
+  SKILL_FX: (c, vol) => {
+    tone(c, 330, "sine", c.currentTime, 0.2, vol * 0.18, 660);
+  },
+  INK_FX: (c, vol) => {
+    noiseBlip(c, c.currentTime, 0.14, vol * 0.1, 2800);
+    tone(c, 520, "sine", c.currentTime, 0.2, vol * 0.18, 1040);
+  },
   // Soft "fwip" — quick triangle sweep + noise transient
   CARD_PLAY: (c, vol) => {
     const t = c.currentTime;
@@ -206,8 +236,5 @@ export function playSound(key: SoundKey, volume = 0.7): void {
   lastPlayedAt.set(key, now);
   const c = getCtx();
   if (!c) return;
-  SOUND_SYNTHS[key]?.(
-    c,
-    effectiveVolume
-  );
+  SOUND_SYNTHS[key]?.(c, effectiveVolume);
 }

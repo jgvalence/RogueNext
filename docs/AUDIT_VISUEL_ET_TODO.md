@@ -2,6 +2,8 @@
 
 ## Suivi actuel — 11 octobre 2026
 
+Complément du 12 octobre : [animations de combat distinctes](ANIMATIONS_COMBAT_2026-10-12.md), impacts par frappe/cible, poison et saignement, armure, soin, pioche, améliorations et pouvoirs d’encre. Les retours perceptifs sur appareil physique restent à recueillir.
+
 Passe complémentaire : [champ de bataille mobile](PASSE_COMBAT_MOBILE_2026-10-11.md), avec portrait du héros, illustrations ennemies bornées et plus nettes, regroupement des intentions et défilement tactile des rencontres chargées. Redmi Note 11 Pro 5G identifié comme appareil du joueur ; recette physique encore ouverte.
 
 Retour mobile traité : voir le [correctif de lisibilité du combat et des récompenses](CORRECTIF_MOBILE_2026-10-11.md), avec essais en portrait et paysage de faible hauteur. La recette sur téléphone physique reste ouverte.

@@ -1,3 +1,4 @@
+import { appendCombatFeedback } from "./combat-feedback";
 import type { CombatState } from "../schemas/combat-state";
 import type { CardDefinition, CardUpgradeBranch } from "../schemas/cards";
 import type { Targeting } from "../schemas/enums";
@@ -295,6 +296,10 @@ export function playCard(
     current = registerBabaYagaInkSpent(current, inkCost);
   }
 
+  // Presentation cues are emitted only after a play is accepted and paid.
+  if (isUsingInkedVariant || inkCost > 0 || effectiveDefinition.type !== "ATTACK") {
+    current = appendCombatFeedback(current, [{ kind: isUsingInkedVariant || inkCost > 0 ? "ink" : "skill", target: targetId ?? "player", source: "player" }]);
+  }
   // Resolve effects
   const target = targetingToEffectTarget(effectiveTargeting, targetId);
   current = resolveEffects(

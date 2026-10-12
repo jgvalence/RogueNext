@@ -172,6 +172,7 @@ export function CombatDesktopGrid({
             }
           >
             <button
+              data-fx-target={ally.instanceId}
               type="button"
               data-keep-selection="true"
               onClick={
@@ -254,6 +255,7 @@ export function CombatDesktopGrid({
         }
       >
         <div
+          data-fx-target="player"
           className={cn(
             "to-slate-950/92 relative h-72 min-w-0 max-w-[230px] flex-1 rounded-[2rem_2rem_1rem_1rem] border bg-gradient-to-b from-indigo-950/5 via-indigo-950/20 p-2 shadow-[0_22px_48px_rgba(30,27,75,0.28)] before:pointer-events-none before:absolute before:-bottom-4 before:left-[8%] before:h-5 before:w-[84%] before:rounded-[50%] before:opacity-80 before:blur-md xl:h-80",
             contactShadowClass,
@@ -397,6 +399,7 @@ export function CombatDesktopGrid({
             }
           >
             <button
+              data-fx-target={enemy.instanceId}
               type="button"
               data-keep-selection="true"
               onClick={() => {

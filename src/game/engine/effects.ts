@@ -1,3 +1,4 @@
+import { collectCombatFeedback } from "./combat-feedback";
 import type { CombatState } from "../schemas/combat-state";
 import type { CardDefinition } from "../schemas/cards";
 import type { Effect } from "../schemas/effects";
@@ -322,7 +323,12 @@ function advancePlayerPoisonBurst(
   return current;
 }
 
-function applyDamageToTarget(
+function applyDamageToTarget(state: CombatState, target: EffectTarget, baseDamage: number, source: EffectSource): CombatState {
+  const next = applyDamageToTargetInternal(state, target, baseDamage, source);
+  return collectCombatFeedback(state, next, source === "player" ? source : source.instanceId, "hit", true);
+}
+
+function applyDamageToTargetInternal(
   state: CombatState,
   target: EffectTarget,
   baseDamage: number,
@@ -1655,7 +1661,12 @@ function forceDiscardRandom(
   return current;
 }
 
-export function resolveEffect(
+export function resolveEffect(state: CombatState, effect: Effect, ctx: EffectContext, rng: RNG): CombatState {
+  const next = resolveEffectInternal(state, effect, ctx, rng);
+  return collectCombatFeedback(state, next, ctx.source === "player" ? "player" : ctx.source.instanceId);
+}
+
+function resolveEffectInternal(
   state: CombatState,
   effect: Effect,
   ctx: EffectContext,

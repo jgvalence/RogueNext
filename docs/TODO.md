@@ -10,7 +10,6 @@ La [passe autonome du 12 octobre](PASSE_AUTONOME_2026-10-12.md) traite les douze
 
 Assouplissement ciblé : [courbe progressive du premier étage D0](d0-progressive-2026-10-12/RESULTATS.md), de −12,5 % en première salle à −5 % au boss. Remplace la baisse uniforme de 3,08 %. 120 simulations supplémentaires et 367 tests réussis ; la validation humaine du départ sans méta reste ouverte.
 
-Assouplissement ciblé : [premier étage D0, 12 octobre](d0-opening-2026-10-12/RESULTATS.md). Coefficient de dégâts réduit de 3,08 % avant arrondi, 240 simulations comparées et 365 tests réussis. La validation humaine du départ sans méta reste ouverte.
 
 Retour de compréhension traité : [tutoriel mobile du 12 octobre](TUTORIEL_MOBILE_2026-10-12.md), sept étapes, actions guidées et reprise corrigée. QA-02 et TXT-01 restent ouverts jusqu’à un nouvel essai avec une personne découvrant le jeu.
 
@@ -65,7 +64,7 @@ Réalisation et preuves : [refonte des menus du 11 octobre](REFONTE_MENUS_2026-1
 
 - [x] **VIS-01 — Combat, recette technique.** Neuf formats, cinq ennemis et deux alliés, main de dix cartes, gestes sans jeu accidentel, inspection et ciblage vérifiés. Les effets sont couverts par les contrats moteur ; la cohérence artistique et le confort restent dans QA-01.
 - [x] **VIS-02 — Marchands et événements.** Disponibilités moteur/UI unifiées, motifs et coûts visibles, purges persistantes et sans double paiement. Recette tactile et tests : [rapport du 12 octobre](PASSE_AUTONOME_2026-10-12.md).
-- [ ] **VIS-03 — Audio et mouvement.** Audio muet, reprise du thème, nettoyage et mouvement réduit contrôlés le 12 octobre. Restent la comparaison humaine des volumes et la qualité perceptive des transitions/feedbacks.
+- [ ] **VIS-03 — Audio et mouvement.** [Effets de combat distincts](ANIMATIONS_COMBAT_2026-10-12.md) implémentés : frappes multiples, poison/saignement, armure, soin et encre ; durées liées à la vitesse, sons et mouvement réduit. Audio muet, reprise du thème et nettoyage contrôlés le 12 octobre. Restent la comparaison humaine des volumes et la qualité perceptive des transitions/feedbacks.
 - [ ] **PERF-01 — Téléphones modestes.** Chargement CPU ×4/réseau ralenti et douze cycles de fenêtres mesurés le 12 octobre ; musiques sorties du précache et écrans secondaires différés. Restent fluidité/mémoire sur longues sessions et mises à jour PWA sur appareils physiques, notamment iOS.
 - [ ] **TXT-01 — Compréhension et textes.** Parité de 2 699 clés FR/EN et variables contrôlée, Bazar traduit. Reste la lecture humaine du tutoriel/prologue, de l’anglais, des cartes complexes et du lore du bestiaire.
 - [x] **TECH-01 — Contrats d’effets et persistance.** Contrats transversaux des cartes normales/encrées A/B ajoutés, sérialisation après chaque salle, conflits/requêtes incertaines et purge d’événement reprise sans second coût. Les six tests des anciennes statistiques sont conservés.
