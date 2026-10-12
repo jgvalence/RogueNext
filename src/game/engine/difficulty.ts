@@ -397,6 +397,11 @@ export function getDiff0FloorRamp(floor: number): {
 export function getDifficultyFloorRamp(level: number, floor: number) {
   const base = getDiff0FloorRamp(floor);
   const l = clampDifficulty(level);
+  // Small opening allowance for discovery mistakes. Keep the shared base
+  // unchanged so this does not also weaken D1-D5 or later floors.
+  if (l === 0 && floor === 1) {
+    return { ...base, enemyDamageMultiplier: 0.63 };
+  }
   return {
     enemyHpMultiplier: Math.min(1, base.enemyHpMultiplier + [0, 0.1, 0.16, 0.18, 0.2, 0.22][l]!),
     enemyDamageMultiplier: Math.min(1, base.enemyDamageMultiplier + [0, 0.09, 0.12, 0.13, 0.14, 0.15][l]!),

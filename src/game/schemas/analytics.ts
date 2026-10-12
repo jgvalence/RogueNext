@@ -73,6 +73,6 @@ export function normalizeRunAnalytics(value: unknown): RunAnalytics {
 }
 
 export const DEFAULT_RUN_ANALYTICS: RunAnalytics = RunAnalyticsSchema.parse({
-  rulesVersion: "2026-10-10.2",
+  rulesVersion: "2026-10-12.1",
   damageMetric: "NET_HP_LOSS",
 });

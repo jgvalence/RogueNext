@@ -2,6 +2,8 @@
 
 ## État actuel et priorités
 
+Le [premier étage en D0](d0-opening-2026-10-12/RESULTATS.md) bénéficie d’une baisse très légère du coefficient de dégâts ennemis (0,65 → 0,63), sans modifier les PV, D1–D5 ni les étages suivants. Les comparaisons sans méta mesurent environ un PV supplémentaire après le premier boss ; elles ne démontrent pas une hausse du taux de victoire final. Version des règles des nouvelles parties : `2026-10-12.1`.
+
 Le [tutoriel mobile du 12 octobre](TUTORIEL_MOBILE_2026-10-12.md) a été simplifié après un retour de compréhension : sept étapes, gestes tactiles explicites, commandes directes et reprise sans redemander les actions déjà accomplies. Huit tests ciblés et 28 contrôles mobiles passent ; la compréhension par une nouvelle personne reste à retester sur téléphone physique.
 
 La [passe autonome du 12 octobre](PASSE_AUTONOME_2026-10-12.md) complète les marchands/événements, la persistance, les cas mobiles encombrés, l’accessibilité, le chargement PWA/audio et les contrats de contenu. **685 tests passent**. Les 108 parcours couvrent les quatre personnages et neuf biomes ; 2 040 simulations de confirmation et 90 vérifications supplémentaires documentent l’équilibre. Tous les builds testés gagnent en D0–D2, y compris les séries sans cartes offensives Armure/Épines. Griot Rythme reste irrégulier en D5 : 0/20 puis 5/60 nouvelles graines ; le rejeu historique retrouve 4/30. [Mesures complètes](validation-2026-10-12/RESULTATS.md).

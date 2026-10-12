@@ -8,6 +8,10 @@ La [passe autonome du 12 octobre](PASSE_AUTONOME_2026-10-12.md) traite les douze
 
 ## Où trouver le détail
 
+Assouplissement ciblé : [premier étage D0, 12 octobre](d0-opening-2026-10-12/RESULTATS.md). Coefficient de dégâts réduit de 3,08 % avant arrondi, 240 simulations comparées et 365 tests réussis. La validation humaine du départ sans méta reste ouverte.
+
+Assouplissement ciblé : [premier étage D0, 12 octobre](d0-opening-2026-10-12/RESULTATS.md). Coefficient de dégâts réduit de 3,08 % avant arrondi, 240 simulations comparées et 365 tests réussis. La validation humaine du départ sans méta reste ouverte.
+
 Retour de compréhension traité : [tutoriel mobile du 12 octobre](TUTORIEL_MOBILE_2026-10-12.md), sept étapes, actions guidées et reprise corrigée. QA-02 et TXT-01 restent ouverts jusqu’à un nouvel essai avec une personne découvrant le jeu.
 
 Passe complémentaire : [présentation du combat mobile](PASSE_COMBAT_MOBILE_2026-10-11.md) — héros visible, portraits ennemis bornés et plus nets, intentions regroupées et ciblage tactile. Le téléphone communiqué par le joueur est un Redmi Note 11 Pro 5G ; la validation sur cet appareil physique reste à faire.
