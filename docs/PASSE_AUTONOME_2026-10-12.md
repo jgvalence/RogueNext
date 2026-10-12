@@ -46,4 +46,11 @@ Un disque plein a interrompu l’écriture de résultats. Après nettoyage des c
 
 ## Publication
 
-Recette GitHub/Vercel et installation/mise à jour PWA en cours. Les preuves live seront ajoutées après vérification du déploiement.
+Correctifs publiés sur `main` : **`e008657b1c96380010cb8f57b2360e3a0963ba9f`**. Vercel confirme une compilation/déploiement réussis ; `/api/version` sert cette révision sur [le jeu](https://rogue-next.vercel.app). Le commit documentaire qui ajoute ces preuves ne modifie pas le code testé.
+
+- [Menus en production](validation-2026-10-12/live-menus.json) : inscription, Bibliothèque, Collection, Bestiaire, historique, règles, classement, création et reprise de la même expédition.
+- [Combat tactile](validation-2026-10-12/live-combat.json) : quatre formats, héros/ennemis visibles, peintures chargées et inspection sans jouer de carte. Un combat normal gagné via les commandes de l’interface.
+- [Récompenses](validation-2026-10-12/live-rewards.json) : quatre formats, cartes sans défilement interne, confirmation unique sans faux choix A/B, illustration consultable. Ajout d’une carte de base puis [rechargement frais](validation-2026-10-12/live-persistence.json) : même expédition, deck de douze cartes identique.
+- [PWA](validation-2026-10-12/live-pwa.json) : manifeste valide, zéro erreur d’installabilité Chromium, nouveau service worker et en-tête `no-store`. Avis observé puis [bouton « Mettre à jour » utilisé](validation-2026-10-12/live-pwa-update.json). Service worker activé, page contrôlée et aucune musique dans le précache.
+
+Aucune exception JavaScript dans ces scénarios. Le compte QA jetable et sa partie ont été supprimés après les essais. L’installation et l’usage sur Redmi/iPhone physiques restent dans QA-01.

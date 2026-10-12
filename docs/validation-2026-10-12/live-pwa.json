@@ -1,0 +1,78 @@
+{
+  "url": "https://rogue-next.vercel.app/",
+  "workerHash": "e386083633884b8e4d08a185cb6b528b9b4ee8e730b4a8a1a5aac70648721bb1",
+  "installability": {
+    "installabilityErrors": []
+  },
+  "manifest": {
+    "url": "https://rogue-next.vercel.app/manifest.webmanifest",
+    "errors": [],
+    "data": "{\"id\":\"/\",\"scope\":\"/\",\"name\":\"Panlibrarium\",\"short_name\":\"Panlibrarium\",\"description\":\"Deckbuilder roguelike — forge ton deck, affronte les biomes, bats les boss.\",\"start_url\":\"/\",\"display\":\"standalone\",\"orientation\":\"any\",\"background_color\":\"#020617\",\"theme_color\":\"#020617\",\"icons\":[{\"src\":\"/icon-192.png\",\"sizes\":\"192x192\",\"type\":\"image/png\",\"purpose\":\"any\"},{\"src\":\"/icon-192.png\",\"sizes\":\"192x192\",\"type\":\"image/png\",\"purpose\":\"maskable\"},{\"src\":\"/icon-512.png\",\"sizes\":\"512x512\",\"type\":\"image/png\",\"purpose\":\"any\"},{\"src\":\"/icon-512.png\",\"sizes\":\"512x512\",\"type\":\"image/png\",\"purpose\":\"maskable\"}]}",
+    "parsed": {
+      "scope": "https://rogue-next.vercel.app/"
+    },
+    "manifest": {
+      "backgroundColor": "rgba(2,6,23,1)",
+      "description": "Deckbuilder roguelike — forge ton deck, affronte les biomes, bats les boss.",
+      "display": "kStandalone",
+      "icons": [
+        {
+          "url": "https://rogue-next.vercel.app/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "url": "https://rogue-next.vercel.app/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "url": "https://rogue-next.vercel.app/icon-512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        },
+        {
+          "url": "https://rogue-next.vercel.app/icon-512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ],
+      "id": "https://rogue-next.vercel.app/",
+      "name": "Panlibrarium",
+      "orientation": "ANY",
+      "preferRelatedApplications": false,
+      "scope": "https://rogue-next.vercel.app/",
+      "startUrl": "https://rogue-next.vercel.app/",
+      "themeColor": "rgba(2,6,23,1)"
+    }
+  },
+  "errors": [],
+  "version": {
+    "revision": "e008657b1c96380010cb8f57b2360e3a0963ba9f",
+    "rulesVersion": "2026-10-10.2"
+  },
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "19",
+    "cache-control": "no-store, max-age=0",
+    "content-disposition": "inline; filename=\"sw.js\"",
+    "content-encoding": "br",
+    "content-type": "application/javascript; charset=utf-8",
+    "date": "Mon, 12 Oct 2026 11:17:55 GMT",
+    "etag": "W/\"f619e6f9253d735d0329aa9893d6aa13\"",
+    "last-modified": "Mon, 12 Oct 2026 11:17:35 GMT",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "origin-when-cross-origin",
+    "server": "Vercel",
+    "service-worker-allowed": "/",
+    "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+    "x-content-type-options": "nosniff",
+    "x-dns-prefetch-control": "on",
+    "x-frame-options": "SAMEORIGIN",
+    "x-matched-path": "/sw.js",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "cdg1::4t2sv-1791803875281-ad49fc7b4976",
+    "x-xss-protection": "1; mode=block"
+  },
+  "previousWorkerUpgraded": true
+}
