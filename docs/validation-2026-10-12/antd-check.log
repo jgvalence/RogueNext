@@ -1,0 +1,23 @@
+
+> base-nextjs@0.2.0 antd:first:check
+> node scripts/check-antd-first.mjs
+
+node.exe : AntD-first check failed. New raw primitives detected:
+Au caractère Ligne:1 : 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (AntD-first chec...tives detected::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+- src/app/admin/stats/page.tsx <table>: baseline=0, current=5, delta=+5
+- src/app/game/_components/combat/combat-desktop-grid.tsx <button>: baseline=0, current=2, delta=+2
+- src/app/game/_components/combat/combat-mobile-grid.tsx <button>: baseline=0, current=3, delta=+3
+- src/app/game/_components/combat/combat-overlays.tsx <button>: baseline=0, current=2, delta=+2
+- src/app/game/_components/combat/combat-player-zone.tsx <button>: baseline=0, current=2, delta=+2
+- src/app/game/_components/combat/first-combat-tutorial.tsx <button>: baseline=0, current=3, delta=+3
+- src/app/game/_components/map/BossRoomSelector.tsx <select>: baseline=0, current=2, delta=+2
+- src/app/game/_components/merchant/ShopView.test.tsx <button>: baseline=0, current=1, delta=+1
+- src/app/game/_providers/game-provider.test.tsx <button>: baseline=0, current=2, delta=+2
+- src/app/library/_components/LibraryClient.tsx <button>: baseline=0, current=1, delta=+1
+- src/components/shared/IOSInstallBanner.tsx <button>: baseline=0, current=1, delta=+1
+- src/components/shared/PwaManager.test.tsx <button>: baseline=0, current=1, delta=+1

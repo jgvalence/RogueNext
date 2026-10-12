@@ -1,0 +1,64 @@
+   ▲ Next.js 15.5.12
+   - Environments: .env
+   - Experiments (use with caution):
+     · serverActions
+
+   Creating an optimized production build ...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for client (static)...
+ ○ (pwa) Service worker: C:\Projects\RogueNext\public\sw.js
+ ○ (pwa)   URL: /sw.js
+ ○ (pwa)   Scope: /
+ ○ (pwa) Custom runtimeCaching array found, using it instead of the default one.
+node : Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+Au caractère Ligne:2 : 1
++ node docs/balance-final-2026-10-10/local-app.mjs build > docs/validat ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Browserslist: b...ld. Please run::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled successfully in 2.3min
+   Linting and checking validity of types ...
+   Collecting page data ...
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+   Generating static pages (0/15) ...
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+   Generating static pages (3/15)
+   Generating static pages (7/15)
+   Generating static pages (11/15)
+ ✓ Generating static pages (15/15)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ƒ /                                     2.6 kB         135 kB
+├ ○ /_not-found                             1 kB         105 kB
+├ ƒ /admin/stats                         1.53 kB         373 kB
+├ ƒ /api/auth/[...nextauth]                145 B         104 kB
+├ ƒ /api/example                           145 B         104 kB
+├ ƒ /api/run/save                          145 B         104 kB
+├ ƒ /api/version                           145 B         104 kB
+├ ○ /auth/signin                         2.37 kB         394 kB
+├ ○ /auth/signup                         2.65 kB         394 kB
+├ ○ /game                                3.26 kB         133 kB
+├ ƒ /game/[runId]                         197 kB         779 kB
+├ ƒ /leaderboard                         3.63 kB         392 kB
+├ ƒ /library                             6.85 kB         422 kB
+├ ƒ /library/bestiary                    3.63 kB         525 kB
+├ ƒ /library/collection                  3.91 kB         557 kB
+├ ○ /manifest.webmanifest                  145 B         104 kB
+├ ○ /rules                               1.29 kB         392 kB
+└ ƒ /runs                                2.78 kB         392 kB
++ First Load JS shared by all             104 kB
+  ├ chunks/4696-be0bcebe063c7d28.js        48 kB
+  ├ chunks/4bd1b696-100b9d70ed4e49c1.js  54.2 kB
+  └ other shared chunks (total)          2.05 kB
+
+
+ƒ Middleware                             85.7 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

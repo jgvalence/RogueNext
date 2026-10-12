@@ -1,14 +1,15 @@
 # Panlibrarium — suivi des travaux
 
-Dernière consolidation : **11 octobre 2026**. Ce fichier est la liste de référence des travaux ouverts. Les audits datés conservent leurs mesures historiques ; une ancienne case ouverte ne doit pas relancer un chantier déjà livré.
+Dernière consolidation : **12 octobre 2026**. Ce fichier est la liste de référence des travaux ouverts. Les audits datés conservent leurs mesures historiques ; une ancienne case ouverte ne doit pas relancer un chantier déjà livré.
 
 La référence de production avant la refonte des menus est `e0e0d3e` : reprise des anciennes sauvegardes corrigée, sans annulation des parties. La nouvelle passe est détaillée dans [son rapport](REFONTE_MENUS_2026-10-11.md). Les cases non cochées ci-dessous sont le travail restant.
+
+La [passe autonome du 12 octobre](PASSE_AUTONOME_2026-10-12.md) traite les douze lots techniques : 685 tests, 108 parcours et 2 130 simulations d’équilibrage (dont 30 rejeux historiques). Les chiffres détaillés sont dans [les résultats](validation-2026-10-12/RESULTATS.md). Griot Rythme reste faible en D5 : 0/20 puis 5/60 nouvelles graines ; les anciennes graines reproduisent 4/30. Aucun équilibrage parfait n’est revendiqué.
 
 ## Où trouver le détail
 
 Passe complémentaire : [présentation du combat mobile](PASSE_COMBAT_MOBILE_2026-10-11.md) — héros visible, portraits ennemis bornés et plus nets, intentions regroupées et ciblage tactile. Le téléphone communiqué par le joueur est un Redmi Note 11 Pro 5G ; la validation sur cet appareil physique reste à faire.
 
-Passe complémentaire : [présentation du combat mobile](PASSE_COMBAT_MOBILE_2026-10-11.md) — héros visible, portraits ennemis bornés et plus nets, intentions regroupées et ciblage tactile. Le téléphone communiqué par le joueur est un Redmi Note 11 Pro 5G ; la validation sur cet appareil physique reste à faire.
 
 Correctif après retours mobiles : [combat, lecture des cartes et récompenses](CORRECTIF_MOBILE_2026-10-11.md). Les cartes minuscules en paysage et les faux choix A/B des récompenses sont corrigés ; la validation physique QA-01 reste ouverte.
 
@@ -56,12 +57,13 @@ Réalisation et preuves : [refonte des menus du 11 octobre](REFONTE_MENUS_2026-1
 
 ## P2 — Finition, lisibilité et performances
 
-- [ ] **VIS-01 — Combat.** Harmoniser les icônes d’états, réduire le poids des commandes secondaires et vérifier les effets de zone, les cibles nombreuses et les faibles hauteurs d’écran.
-- [ ] **VIS-02 — Marchands et événements.** Vérifier systématiquement prix inabordable, inventaire plein, vendu, indisponible, risque/coût et sortie accessible sur écran tactile. Les illustrations sont déjà intégrées.
-- [ ] **VIS-03 — Audio et mouvement.** Finaliser transitions et feedbacks, comparer les volumes et vérifier les alternatives statiques. Les réglages de vitesse et de mouvement réduit existent déjà.
-- [ ] **PERF-01 — Téléphones modestes.** Mesurer chargement, mémoire et fluidité avec les peintures et de longues sessions ; vérifier les mises à jour PWA sur appareils physiques. Ne pas assimiler l’installabilité Chromium à une recette iOS complète.
-- [ ] **TXT-01 — Compréhension et textes.** Vérifier tutoriel/prologue, traductions anglaises, textes complexes des cartes et lore du bestiaire. Prioriser les ennemis Library les plus rencontrés ; voir [le plan mythologique](monster-background.md).
-- [ ] **TECH-01 — Contrats d’effets.** Compléter progressivement les contrôles transversaux des interactions et des sauvegardes anciennes ; les six tests de restauration des statistiques sont maintenant en place.
+- [x] **VIS-01 — Combat, recette technique.** Neuf formats, cinq ennemis et deux alliés, main de dix cartes, gestes sans jeu accidentel, inspection et ciblage vérifiés. Les effets sont couverts par les contrats moteur ; la cohérence artistique et le confort restent dans QA-01.
+- [x] **VIS-02 — Marchands et événements.** Disponibilités moteur/UI unifiées, motifs et coûts visibles, purges persistantes et sans double paiement. Recette tactile et tests : [rapport du 12 octobre](PASSE_AUTONOME_2026-10-12.md).
+- [ ] **VIS-03 — Audio et mouvement.** Audio muet, reprise du thème, nettoyage et mouvement réduit contrôlés le 12 octobre. Restent la comparaison humaine des volumes et la qualité perceptive des transitions/feedbacks.
+- [ ] **PERF-01 — Téléphones modestes.** Chargement CPU ×4/réseau ralenti et douze cycles de fenêtres mesurés le 12 octobre ; musiques sorties du précache et écrans secondaires différés. Restent fluidité/mémoire sur longues sessions et mises à jour PWA sur appareils physiques, notamment iOS.
+- [ ] **TXT-01 — Compréhension et textes.** Parité de 2 699 clés FR/EN et variables contrôlée, Bazar traduit. Reste la lecture humaine du tutoriel/prologue, de l’anglais, des cartes complexes et du lore du bestiaire.
+- [x] **TECH-01 — Contrats d’effets et persistance.** Contrats transversaux des cartes normales/encrées A/B ajoutés, sérialisation après chaque salle, conflits/requêtes incertaines et purge d’événement reprise sans second coût. Les six tests des anciennes statistiques sont conservés.
+- [ ] **TECH-02 — Convention AntD historique.** Le contrôle `antd:first:check` signale encore 25 primitives dans 12 fichiers préexistants non modifiés par cette passe. Refactoriser séparément les composants concernés ; baseline inchangée.
 
 ## P3 — Évolutions à arbitrer après validation
 

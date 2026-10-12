@@ -1,0 +1,2344 @@
+{
+  "config": {
+    "numRuns": 10,
+    "difficulty": 2,
+    "biome": null,
+    "character": "griot",
+    "metaPreset": "strong",
+    "seed": "confirmation-1012-D2-strong-strict",
+    "buildType": "bleed",
+    "noArmorPayoffs": true,
+    "maxTurnsPerCombat": 60,
+    "writeCsv": false,
+    "verbose": false,
+    "extraStartCards": []
+  },
+  "runs": [
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 990,
+      "totalTurns": 52,
+      "damageTaken": 258,
+      "combats": 25,
+      "bossesDefeated": 2,
+      "cardsAdded": 18,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 32,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 6,
+      "error": null,
+      "validatedCheckpoints": 41,
+      "defeatedBy": [
+        "winter_wolf",
+        "snow_maiden",
+        "czar_guard",
+        "winter_wolf"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scarification",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "starborn_omen",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 757,
+      "totalTurns": 32,
+      "damageTaken": 108,
+      "combats": 16,
+      "bossesDefeated": 1,
+      "cardsAdded": 13,
+      "relicsGained": 4,
+      "deckSizeAtEnd": 25,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 6,
+      "error": null,
+      "validatedCheckpoints": 24,
+      "defeatedBy": [
+        "kikimora",
+        "snow_maiden",
+        "winter_wolf",
+        "kikimora"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 93,
+      "finalGold": 594,
+      "totalTurns": 69,
+      "damageTaken": 308,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "star_chart",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rune_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scarification",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oracle_scroll",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "epic_simile",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "philosophers_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "library_horror",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "shield_wall",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "philosophers_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 52,
+      "finalGold": 455,
+      "totalTurns": 67,
+      "damageTaken": 281,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 26,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "poison_herb",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blood_offering",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "jaguar_pounce",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "jaguar_pounce",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "anansi_tale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 75,
+      "finalGold": 521,
+      "totalTurns": 71,
+      "damageTaken": 277,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blizzard_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "blizzard_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "folk_curse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bear_claw",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "philosophers_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scarification",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "koschei_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bear_claw",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scarification",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "jaguar_pounce",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scarification",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "koschei_strike",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 83,
+      "finalGold": 479,
+      "totalTurns": 66,
+      "damageTaken": 177,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "philosophers_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scarification",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "philosophers_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 139,
+      "finalGold": 420,
+      "totalTurns": 66,
+      "damageTaken": 216,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "scarification",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "venin_du_serpent",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_papyrus",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rune_curse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "death_scroll",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "venin_du_serpent",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_papyrus",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_papyrus",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth_trap",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "gorgons_gaze",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 107,
+      "finalGold": 788,
+      "totalTurns": 68,
+      "damageTaken": 262,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scarification",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "philosophers_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scarification",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "coup_de_tambour",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_papyrus",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 57,
+      "finalGold": 717,
+      "totalTurns": 68,
+      "damageTaken": 243,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 29,
+      "relicsGained": 8,
+      "deckSizeAtEnd": 40,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "sacred_papyrus",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_papyrus",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "philosophers_quill",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "byliny_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "kells_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "jaguar_pounce",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "folk_curse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_grove",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 173,
+      "finalGold": 627,
+      "totalTurns": 69,
+      "damageTaken": 232,
+      "combats": 35,
+      "bossesDefeated": 3,
+      "cardsAdded": 29,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 41,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "piqure",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rythme_mortel",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "masque_de_bois",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_papyrus",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "frost_rune_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blood_offering",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "rituel_interdit",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scald_cry",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "codex_strike",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sacred_papyrus",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "scarification",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "invocation_ancestrale",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "danse_des_esprits",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "iron_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bardic_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blizzard_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blizzard_verse",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "drum_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "blood_offering",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "starborn_omen",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    }
+  ],
+  "wins": 8,
+  "errors": [],
+  "draftStats": {
+    "frost_nail": {
+      "offered": 11,
+      "picked": 0
+    },
+    "ancient_grove": {
+      "offered": 37,
+      "picked": 2
+    },
+    "star_chart": {
+      "offered": 30,
+      "picked": 1
+    },
+    "iron_verse": {
+      "offered": 28,
+      "picked": 23
+    },
+    "scald_cry": {
+      "offered": 31,
+      "picked": 28
+    },
+    "frost_rune_shield": {
+      "offered": 35,
+      "picked": 16
+    },
+    "iron_samovar": {
+      "offered": 16,
+      "picked": 0
+    },
+    "drum_strike": {
+      "offered": 32,
+      "picked": 23
+    },
+    "bardic_verse": {
+      "offered": 26,
+      "picked": 11
+    },
+    "venin_du_serpent": {
+      "offered": 70,
+      "picked": 2
+    },
+    "folk_curse": {
+      "offered": 13,
+      "picked": 2
+    },
+    "labyrinth": {
+      "offered": 73,
+      "picked": 2
+    },
+    "kells_strike": {
+      "offered": 33,
+      "picked": 16
+    },
+    "byliny_verse": {
+      "offered": 16,
+      "picked": 1
+    },
+    "frappe_maudite": {
+      "offered": 20,
+      "picked": 0
+    },
+    "blizzard_verse": {
+      "offered": 8,
+      "picked": 4
+    },
+    "philosophers_quill": {
+      "offered": 24,
+      "picked": 7
+    },
+    "scarification": {
+      "offered": 21,
+      "picked": 10
+    },
+    "ink_surge": {
+      "offered": 15,
+      "picked": 0
+    },
+    "cursed_inscription": {
+      "offered": 50,
+      "picked": 0
+    },
+    "rituel_interdit": {
+      "offered": 16,
+      "picked": 10
+    },
+    "library_horror": {
+      "offered": 16,
+      "picked": 1
+    },
+    "forbidden_whisper": {
+      "offered": 8,
+      "picked": 0
+    },
+    "danse_des_esprits": {
+      "offered": 31,
+      "picked": 23
+    },
+    "coup_de_tambour": {
+      "offered": 35,
+      "picked": 1
+    },
+    "black_page": {
+      "offered": 6,
+      "picked": 0
+    },
+    "sacred_papyrus": {
+      "offered": 35,
+      "picked": 8
+    },
+    "permafrost_ward": {
+      "offered": 3,
+      "picked": 0
+    },
+    "starborn_omen": {
+      "offered": 25,
+      "picked": 2
+    },
+    "bear_claw": {
+      "offered": 4,
+      "picked": 2
+    },
+    "codex_strike": {
+      "offered": 34,
+      "picked": 24
+    },
+    "transe_vaudou": {
+      "offered": 22,
+      "picked": 0
+    },
+    "forbidden_verse": {
+      "offered": 1,
+      "picked": 1
+    },
+    "madness_spike": {
+      "offered": 5,
+      "picked": 1
+    },
+    "invocation_ancestrale": {
+      "offered": 18,
+      "picked": 12
+    },
+    "void_shield": {
+      "offered": 4,
+      "picked": 0
+    },
+    "void_touch": {
+      "offered": 3,
+      "picked": 0
+    },
+    "shield_wall": {
+      "offered": 13,
+      "picked": 1
+    },
+    "rune_curse": {
+      "offered": 6,
+      "picked": 1
+    },
+    "rune_strike": {
+      "offered": 4,
+      "picked": 1
+    },
+    "olympian_guard": {
+      "offered": 8,
+      "picked": 1
+    },
+    "oracle_scroll": {
+      "offered": 8,
+      "picked": 1
+    },
+    "mjolnir_echo": {
+      "offered": 4,
+      "picked": 0
+    },
+    "epic_simile": {
+      "offered": 5,
+      "picked": 1
+    },
+    "gorgons_gaze": {
+      "offered": 3,
+      "picked": 1
+    },
+    "olympian_cleave": {
+      "offered": 1,
+      "picked": 0
+    },
+    "heros_challenge": {
+      "offered": 4,
+      "picked": 0
+    },
+    "berserker_charge": {
+      "offered": 8,
+      "picked": 0
+    },
+    "poison_herb": {
+      "offered": 16,
+      "picked": 1
+    },
+    "obsidian_jab": {
+      "offered": 10,
+      "picked": 0
+    },
+    "blood_offering": {
+      "offered": 17,
+      "picked": 3
+    },
+    "ancestral_drum": {
+      "offered": 28,
+      "picked": 0
+    },
+    "spider_web": {
+      "offered": 12,
+      "picked": 0
+    },
+    "sun_ritual": {
+      "offered": 8,
+      "picked": 0
+    },
+    "jaguar_pounce": {
+      "offered": 8,
+      "picked": 4
+    },
+    "anansi_tale": {
+      "offered": 3,
+      "picked": 1
+    },
+    "thorn_slash": {
+      "offered": 2,
+      "picked": 0
+    },
+    "druids_breath": {
+      "offered": 1,
+      "picked": 0
+    },
+    "faerie_fire": {
+      "offered": 1,
+      "picked": 0
+    },
+    "cauldron_lore": {
+      "offered": 1,
+      "picked": 0
+    },
+    "koschei_strike": {
+      "offered": 2,
+      "picked": 2
+    },
+    "recursive_scratch": {
+      "offered": 1,
+      "picked": 0
+    },
+    "labyrinth_trap": {
+      "offered": 2,
+      "picked": 1
+    },
+    "death_scroll": {
+      "offered": 2,
+      "picked": 1
+    },
+    "canopic_ward": {
+      "offered": 1,
+      "picked": 0
+    },
+    "anubis_strike": {
+      "offered": 3,
+      "picked": 0
+    },
+    "bestiary_normal_serpent_oracle": {
+      "offered": 1,
+      "picked": 0
+    },
+    "trickster_snare": {
+      "offered": 3,
+      "picked": 0
+    },
+    "bestiary_normal_jaguar_warrior": {
+      "offered": 1,
+      "picked": 0
+    }
+  },
+  "upgradeStats": {
+    "A": 13,
+    "B": 21
+  }
+}

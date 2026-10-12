@@ -1,6 +1,8 @@
-# État du jeu — actualisé le 11 octobre 2026
+# État du jeu — actualisé le 12 octobre 2026
 
 ## État actuel et priorités
+
+La [passe autonome du 12 octobre](PASSE_AUTONOME_2026-10-12.md) complète les marchands/événements, la persistance, les cas mobiles encombrés, l’accessibilité, le chargement PWA/audio et les contrats de contenu. **685 tests passent**. Les 108 parcours couvrent les quatre personnages et neuf biomes ; 2 040 simulations de confirmation et 90 vérifications supplémentaires documentent l’équilibre. Tous les builds testés gagnent en D0–D2, y compris les séries sans cartes offensives Armure/Épines. Griot Rythme reste irrégulier en D5 : 0/20 puis 5/60 nouvelles graines ; le rejeu historique retrouve 4/30. [Mesures complètes](validation-2026-10-12/RESULTATS.md).
 
 La [passe visuelle du combat mobile](PASSE_COMBAT_MOBILE_2026-10-11.md) ajoute la présence du héros, stabilise les portraits ennemis et regroupe leurs intentions. Neuf formats tactiles émulés couvrent notamment des proportions proches du Redmi Note 11 Pro 5G du joueur ; la validation physique reste ouverte.
 

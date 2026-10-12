@@ -26,7 +26,7 @@ function getCtx(): AudioContext | null {
   }
   // Resume after browser autoplay policy suspends it
   if (_ctx.state === "suspended") {
-    void _ctx.resume();
+    void _ctx.resume().catch(() => {});
   }
   return _ctx;
 }
@@ -197,14 +197,17 @@ export function setSoundsEnabled(enabled: boolean): void {
 
 const lastPlayedAt = new Map<SoundKey, number>();
 export function playSound(key: SoundKey, volume = 0.7): void {
+  const effectiveVolume = Number.isFinite(volume)
+    ? Math.max(0, Math.min(1, volume)) * readAudioPreferences().effects
+    : 0;
+  if (!SOUNDS_ENABLED || effectiveVolume === 0) return;
   const now = Date.now();
   if (now - (lastPlayedAt.get(key) ?? 0) < 45) return;
   lastPlayedAt.set(key, now);
-  if (!SOUNDS_ENABLED) return;
   const c = getCtx();
   if (!c) return;
   SOUND_SYNTHS[key]?.(
     c,
-    Math.max(0, Math.min(1, volume)) * readAudioPreferences().effects
+    effectiveVolume
   );
 }

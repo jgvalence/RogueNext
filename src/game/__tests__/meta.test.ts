@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { computeMetaBonuses } from "@/game/engine/meta";
 
 describe("meta progression bonuses", () => {
-  it("turns the early energy story into a smaller starting-ink advantage", () => {
+  it("grants each story once even if a legacy unlock list contains duplicates", () => {
     expect(
       computeMetaBonuses(["traite_de_lenergie", "traite_de_lenergie"])
         .startingInk
-    ).toBe(4);
+    ).toBe(2);
   });
 
   it("grants only +1 opening hand card from grimoire_des_index", () => {

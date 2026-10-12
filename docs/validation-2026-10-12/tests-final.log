@@ -1,0 +1,192 @@
+node.exe : The CJS build of Vite's Node API is deprecated. See
+https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+Au caractère Ligne:1 : 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (The CJS bu...e details.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+
+ RUN  v2.1.9 C:/Projects/RogueNext
+
+stdout | src/app/game/_components/combat/combat-view-helpers.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_components/combat/combat-view-helpers.test.ts (32 tests) 118ms
+stdout | src/game/__tests__/engine.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/game/__tests__/engine.test.ts (335 tests) 1315ms
+ ✓ src/game/__tests__/difficulty.test.ts (18 tests) 40ms
+stdout | src/game/__tests__/build-balance.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/game/__tests__/african-bosses.test.ts (11 tests) 65ms
+ ✓ src/game/__tests__/build-balance.test.ts (17 tests) 55ms
+ ✓ src/game/__tests__/russian-bosses.test.ts (6 tests) 22ms
+stdout | src/app/game/_hooks/use-combat-outcome.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_hooks/use-combat-outcome.test.tsx (4 tests) 145ms
+stdout | src/game/__tests__/archivist.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/game/__tests__/archivist.test.ts (6 tests) 45ms
+ ✓ src/game/__tests__/card-identity-mechanics.test.ts (12 tests) 29ms
+ ✓ src/game/__tests__/viking-bosses.test.ts (4 tests) 18ms
+ ✓ src/game/__tests__/lovecraftian-bosses.test.ts (8 tests) 19ms
+ ✓ src/game/__tests__/chapter-guardian.test.ts (5 tests) 31ms
+ ✓ src/game/__tests__/greek-bosses.test.ts (6 tests) 18ms
+ ✓ src/game/__tests__/aztec-bosses.test.ts (5 tests) 26ms
+ ✓ src/game/__tests__/celtic-bosses.test.ts (6 tests) 15ms
+stdout | src/app/game/_providers/game-reducer.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_providers/game-reducer.test.ts (5 tests) 72ms
+ ✓ src/game/__tests__/egyptian-bosses.test.ts (6 tests) 15ms
+ ✓ src/game/__tests__/schemas.test.ts (19 tests) 46ms
+stdout | src/app/game/_components/combat/combat-mobile-grid.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_components/combat/combat-mobile-grid.test.tsx (4 tests) 591ms
+   ✓ CombatMobileGrid mobile slot layout > shows the hidden-intent label without exposing an elite's attack on D3 370ms
+stdout | src/lib/i18n/entity-text.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/lib/i18n/entity-text.test.ts (10 tests) 40ms
+ ✓ src/game/__tests__/archetypes.test.ts (6 tests) 18ms
+stdout | src/app/game/_hooks/use-auto-save.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_hooks/use-auto-save.test.tsx (8 tests) 298ms
+stdout | src/app/game/_components/merchant/ShopView.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/app/game/_services/run-save-client.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_services/run-save-client.test.ts (6 tests) 157ms
+ ✓ src/app/game/_components/merchant/ShopView.test.tsx (2 tests) 1431ms
+   ✓ ShopView > restores a paid purge without charging again or regenerating inventory 1263ms
+stdout | src/game/__tests__/simulation-combat-policy.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/game/__tests__/simulation-combat-policy.test.ts (6 tests) 42ms
+ ✓ src/game/__tests__/incoming-damage.test.ts (3 tests) 9ms
+ ✓ src/game/__tests__/first-combat-tutorial.test.ts (3 tests) 11ms
+stdout | src/game/__tests__/run-events.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/game/__tests__/run-events.test.ts (4 tests) 69ms
+ ✓ src/game/__tests__/first-run-script.test.ts (3 tests) 6ms
+ ✓ src/game/__tests__/run-conditions.test.ts (9 tests) 18ms
+ ✓ src/game/__tests__/cards-data.test.ts (3 tests) 29ms
+stdout | src/app/game/_hooks/use-run-room-actions.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_hooks/use-run-room-actions.test.tsx (2 tests) 63ms
+ ✓ src/game/__tests__/meta.test.ts (12 tests) 8ms
+stdout | src/lib/i18n/card-text.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/lib/i18n/card-text.test.ts (3 tests) 19ms
+ ✓ src/components/shared/PwaManager.test.tsx (3 tests) 397ms
+stdout | src/app/game/_components/map/FloorMap.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_components/shared/CardActionModal.test.tsx (3 tests) 2687ms
+   ✓ card confirmation semantics > shows only the base reward and confirms without an upgrade branch 1333ms
+   ✓ card confirmation semantics > keeps both real upgrade branches and disables claiming the current card 1115ms
+stdout | src/app/game/_services/reward-checkpoint.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_services/reward-checkpoint.test.ts (2 tests) 58ms
+ ✓ src/app/game/_components/map/FloorMap.test.tsx (3 tests) 1240ms
+   ✓ FloorMap connections > keeps the full route structure visible without projecting active highlights from current choices 1074ms
+stdout | src/game/__tests__/map-balance.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/game/__tests__/map-balance.test.ts (1 test) 309ms
+   ✓ map balance > keeps 16-room runs meaningfully richer in support rooms instead of mostly adding combats 306ms
+stdout | src/app/game/_hooks/use-run-outcome-summary.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_hooks/use-run-outcome-summary.test.tsx (3 tests) 63ms
+stdout | src/app/game/_components/shared/CardArtwork.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/app/game/_hooks/use-stable-special-room-type.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_hooks/use-stable-special-room-type.test.tsx (1 test) 55ms
+stderr | src/app/game/_components/shared/CardArtwork.test.tsx > CardArtwork > opens the full artwork without playing
+the surrounding card
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+stderr | src/app/game/_components/shared/CardArtwork.test.tsx > CardArtwork > keeps artwork open when the desktop card
+stops being hovered
+Not implemented: Window's getComputedStyle() method: with pseudo-elements
+
+ ✓ src/app/game/_components/shared/CardArtwork.test.tsx (3 tests) 2809ms
+   ✓ CardArtwork > opens the full artwork without playing the surrounding card 2087ms
+   ✓ CardArtwork > keeps artwork open when the desktop card stops being hovered 652ms
+ ✓ src/game/__tests__/card-upgrades.test.ts (4 tests) 76ms
+stdout | src/app/game/_providers/game-provider.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_providers/game-provider.test.tsx (2 tests) 215ms
+stdout | src/lib/i18n/enemy-text-resources.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/lib/i18n/enemy-text-resources.test.ts (4 tests) 46ms
+ ✓ src/lib/audio.test.ts (2 tests) 61ms
+stdout | src/components/providers/I18nProvider.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/components/providers/I18nProvider.test.tsx (2 tests) 90ms
+ ✓ src/app/game/_components/combat/first-combat-tutorial.test.tsx (2 tests) 648ms
+   ✓ FirstCombatTutorialOverlay > shows progress and an explicit action when the player must interact 637ms
+stdout | src/app/game/_components/combat/GameCard.test.tsx
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/app/game/_components/combat/GameCard.test.tsx (2 tests) 193ms
+ ✓ src/app/game/_components/shared/EnemyArtwork.test.tsx (2 tests) 84ms
+ ✓ src/middleware.test.ts (3 tests) 35ms
+ ✓ src/game/__tests__/characters.test.ts (1 test) 4ms
+ ✓ src/app/game/_components/biome/BiomeSelectScreen.test.tsx (1 test) 1912ms
+   ✓ BiomeSelectScreen > renders the full biome list in a readable responsive grid 1909ms
+ ✓ src/lib/combat-speed.test.ts (2 tests) 10ms
+ ✓ src/app/game/_components/combat/combat-biome-theme.test.ts (9 tests) 8ms
+ ✓ src/game/__tests__/story-description-audit.test.ts (1 test) 13ms
+stdout | src/server/services/run/run-lifecycle.service.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/game/__tests__/audit-regressions.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/server/services/run/run-lifecycle.service.test.ts (8 tests) 149ms
+ ✓ src/game/__tests__/audit-regressions.test.ts (4 tests) 912ms
+   ✓ audit correction contracts > generates valid graphs across every map-changing condition 863ms
+stdout | src/server/services/run/run-persistence.service.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/server/services/run/run-state.service.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/server/services/run/run-persistence.service.test.ts (8 tests) 111ms
+ ✓ src/server/services/run/run-state.service.test.ts (4 tests) 73ms
+stdout | src/game/__tests__/card-catalog-contract.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+stdout | src/game/__tests__/shop-availability.test.ts
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+ ✓ src/game/__tests__/shop-availability.test.ts (9 tests) 122ms
+ ✓ src/game/__tests__/card-catalog-contract.test.ts (6 tests) 1059ms
+   ✓ catalogue resolution contracts > resolves base, inked=false without corrupting combat or its input 347ms
+ ✓ src/game/__tests__/analytics-cohorts.test.ts (1 test) 7ms
+
+ Test Files  63 passed (63)
+      Tests  685 passed (685)
+   Start at  12:55:06
+   Duration  122.49s (transform 7.21s, setup 24.50s, collect 77.42s, tests 18.35s, environment 94.44s, prepare 10.91s)

@@ -2573,6 +2573,7 @@ export function removeCardFromRunDeck(
   return {
     ...runState,
     deck: [...runState.deck.slice(0, index), ...runState.deck.slice(index + 1)],
+    ...(runState.pendingEventPurge ? { pendingEventPurge: false } : {}),
   };
 }
 

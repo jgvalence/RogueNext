@@ -19,6 +19,7 @@
  *   --json PATH         Export per-run results, draft exposures/picks and upgrade branches
  *   --no-armor-payoffs   Decline base armor payoff rewards and never play armor damage/thorns card forms
  *   --cards id1,id2     Pre-add card IDs to starting deck (build testing)
+ *   --validate-checkpoints Round-trip every room through the persisted state schema
  *
  * Examples:
  *   npx tsx scripts/simulate.ts 500 2
@@ -84,6 +85,7 @@ import {
 import { getCharacterById } from "../src/game/data/characters";
 import { GAME_CONSTANTS } from "../src/game/constants";
 import type { RunState } from "../src/game/schemas/run-state";
+import { RunStateSchema } from "../src/game/schemas/run-state";
 import type { CombatState } from "../src/game/schemas/combat-state";
 import type { BiomeType } from "../src/game/schemas/enums";
 import {
@@ -505,6 +507,7 @@ function simulateCombat(
 // ─── Run simulation ───────────────────────────────────────────────────────────
 
 interface SimRunResult {
+  validatedCheckpoints?: number;
   won: boolean;
   floorsCompleted: number;
   finalHp: number;
@@ -605,6 +608,13 @@ function simulateRun(runIndex: number): SimRunResult {
     let safetyLimit = 600;
 
     while (run.status === "IN_PROGRESS" && safetyLimit-- > 0) {
+      if (process.argv.includes("--validate-checkpoints")) {
+        run = RunStateSchema.parse(JSON.parse(JSON.stringify(run)));
+        if (run.gold < 0 || run.playerCurrentHp > run.playerMaxHp || new Set(run.deck.map(card => card.instanceId)).size !== run.deck.length) {
+          throw new Error(`Invalid checkpoint at ${run.floor}/${run.currentRoom}`);
+        }
+        result.validatedCheckpoints = (result.validatedCheckpoints ?? 0) + 1;
+      }
       const reachable = getReachableRoomChoiceIndexes(run.map, run.currentRoom);
 
       if (reachable.length === 0) {
@@ -935,6 +945,7 @@ function simulateRun(runIndex: number): SimRunResult {
       }
     }
 
+    if (safetyLimit <= 0) throw new Error("Run exceeded room safety limit");
     result.won = run.status === "VICTORY";
     if (result.won) result.floorsCompleted = GAME_CONSTANTS.MAX_FLOORS;
     result.finalHp = run.playerCurrentHp;

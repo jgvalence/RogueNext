@@ -1,12 +1,13 @@
 ﻿"use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { RogueButton } from "@/components/ui/rogue";
 import type { ShopItem } from "@/game/engine/merchant";
 import {
   generateShopInventory,
   getMerchantAutoRestockCharges,
   getShopRerollPrice,
+  getShopUnavailableReason,
 } from "@/game/engine/merchant";
 import type { CardDefinition, CardInstance } from "@/game/schemas/cards";
 import type { UsableItemInstance } from "@/game/schemas/items";
@@ -35,6 +36,7 @@ interface ShopViewProps {
   floor: number;
   gold: number;
   playerCurrentHp: number;
+  playerMaxHp?: number;
   relicIds: string[];
   unlockedCardIds: string[];
   unlockedRelicIds: string[];
@@ -77,6 +79,7 @@ export function ShopView({
   floor,
   gold,
   playerCurrentHp,
+  playerMaxHp,
   relicIds,
   unlockedCardIds,
   unlockedRelicIds,
@@ -98,6 +101,8 @@ export function ShopView({
   onLeave,
 }: ShopViewProps) {
   const { t } = useTranslation();
+  const submittedPurchases = useRef(new Set<string>());
+  const availability = { gold, playerCurrentHp, playerMaxHp, deck, relicIds, allyIds, allySlots, usableItems, usableItemCapacity };
   const [soldIds, setSoldIds] = useState<Set<string>>(new Set(initialCheckpoint?.soldIds ?? []));
   const [autoRestockChargesLeft, setAutoRestockChargesLeft] = useState(
     initialCheckpoint?.autoRestockChargesLeft ?? getMerchantAutoRestockCharges(relicIds)
@@ -159,8 +164,8 @@ export function ShopView({
 
   const handleBuy = (item: ShopItem) => {
     const isPurge = isPurgeItem(item);
-    if (isPurge && deck.length <= 1) return;
-    if (gold < item.price || soldIds.has(item.id)) return;
+    if (pendingPurgeItemId || getShopUnavailableReason(availability, item) || soldIds.has(item.id) || submittedPurchases.current.has(item.id)) return;
+    submittedPurchases.current.add(item.id);
     onBuy(item);
     setMerchantLineKey("purchase");
     setRecentlyPurchasedId(item.id);
@@ -205,7 +210,7 @@ export function ShopView({
   };
 
   const handleReroll = () => {
-    if (!canReroll) return;
+    if (!canReroll || pendingPurgeItemId) return;
     onReroll();
     setMerchantLineKey("reroll");
     playSound("SHOP_REROLL", 0.55);
@@ -272,11 +277,7 @@ export function ShopView({
           <div className="relative mt-5 flex min-h-64 flex-wrap items-stretch justify-center gap-4 rounded-2xl border border-amber-950/70 bg-[linear-gradient(180deg,rgba(69,26,3,0.15),rgba(15,8,5,0.72))] px-4 pb-10 pt-5 shadow-[inset_0_-18px_35px_rgba(0,0,0,0.35)]">
             {inventory.map((item) => {
               const isSold = soldIds.has(item.id);
-              const canAfford = gold >= item.price;
-              const isPurge =
-                item.type === "purge" || item.type === "blood_purge";
               const isMaxHp = item.type === "max_hp";
-              const isUsableItem = item.type === "usable_item";
               const isAlly = item.type === "ally";
               const canAffordBloodPurge =
                 item.type !== "blood_purge" ||
@@ -296,14 +297,8 @@ export function ShopView({
                       "combat.spd"
                     )}`
                   : (item.allyDescription ?? "");
-              const isUsableInventoryFull =
-                usableItems.length >= usableItemCapacity;
-              const canPurgeDeck = deck.length > 1;
-              const canBuyItem = isUsableItem
-                ? canAfford && !isUsableInventoryFull
-                : isPurge
-                  ? canAfford && canAffordBloodPurge && canPurgeDeck
-                  : canAfford && canAffordBloodPurge;
+              const unavailable = getShopUnavailableReason(availability, item);
+              const canBuyItem = unavailable === null;
 
               // ── Card items: use GameCard with price badge ─────────────────────
               if (item.type === "card" && item.cardDef) {
@@ -320,7 +315,7 @@ export function ShopView({
                       definition={item.cardDef}
                       canPlay
                       size="lg"
-                      scrollable
+                      reading
                       className="!cursor-default"
                     />
                     <RogueButton
@@ -339,6 +334,7 @@ export function ShopView({
                         ? t("shop.sold")
                         : `${t("visual.buy")} · ${t("shop.priceGold", { price: item.price })}`}
                     </RogueButton>
+                    {!isSold && unavailable && <p className="shop-unavailable">{t(`shop.unavailable.${unavailable}`)}</p>}
                   </div>
                 );
               }
@@ -466,9 +462,7 @@ export function ShopView({
 
               const tilePrice = isSold
                 ? t("shop.sold")
-                : isUsableItem && isUsableInventoryFull
-                  ? t("shop.inventoryFull")
-                  : item.type === "blood_purge"
+                : item.type === "blood_purge"
                     ? t("shop.priceHp", { price: item.hpCost ?? 0 })
                     : t("shop.priceGold", { price: item.price });
 
@@ -486,10 +480,10 @@ export function ShopView({
                     recentlyPurchasedId === item.id &&
                       "scale-105 shadow-[0_0_28px_rgba(251,191,36,0.42)]",
                     isSold
-                      ? "opacity-35 grayscale"
+                      ? "opacity-75 grayscale"
                       : canBuyItem
                         ? "cursor-pointer hover:scale-[1.03] hover:shadow-xl hover:brightness-110"
-                        : "cursor-not-allowed opacity-50"
+                        : "cursor-not-allowed"
                   )}
                 >
                   {/* Art zone */}
@@ -544,6 +538,7 @@ export function ShopView({
                   </div>
 
                   {/* Price footer */}
+                  {!isSold && unavailable && <p className="shop-unavailable">{t(`shop.unavailable.${unavailable}`)}</p>}
                   <div className="border-white/8 flex items-center justify-between gap-1 border-t bg-black/25 px-2.5 py-1.5">
                     <span
                       className={cn(
@@ -569,7 +564,7 @@ export function ShopView({
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-7 rounded-b-2xl border-t border-amber-700/20 bg-gradient-to-b from-amber-950/75 to-black/70" />
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="shop-actions mt-5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <RogueButton
                 className={cn(

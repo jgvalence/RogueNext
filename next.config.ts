@@ -87,11 +87,22 @@ export default withPWA({
     "!images/cards/painted-v1/**/*",
     "!images/enemies/painted-v1/**/*",
     "!images/rooms/painted-v1/**/*",
+    "!sounds/music/**/*",
   ],
   disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
     runtimeCaching: [
+      {
+        urlPattern: /\/sounds\/music\/.*\.ogg$/,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "music-v1",
+          rangeRequests: true,
+          expiration: { maxEntries: 4, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [200] },
+        },
+      },
       {
         urlPattern: /\/images\/rooms\/painted-v1\/.*\.webp$/,
         handler: "StaleWhileRevalidate",

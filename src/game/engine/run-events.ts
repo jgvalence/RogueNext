@@ -46,7 +46,9 @@ export function isEventChoiceAvailable(
   state: RunState,
   choice: EventChoice
 ): boolean {
+  if (state.pendingEventPurge) return false;
   if ((choice.goldCost ?? 0) > state.gold) return false;
+  if (choice.requiresPurge && state.deck.length <= 1) return false;
   return choice.canApply ? choice.canApply(state) : true;
 }
 
@@ -1973,9 +1975,11 @@ export function applyEventChoice(
   choiceIndex: number
 ): RunState {
   const choice = event.choices[choiceIndex];
+  if (event.once && runState.seenEventIds?.includes(event.id)) return runState;
   if (!choice) return runState;
   if (!isEventChoiceAvailable(runState, choice)) return runState;
-  const newState = choice.apply(runState);
+  const applied = choice.apply(runState);
+  const newState = choice.requiresPurge ? { ...applied, pendingEventPurge: true } : applied;
 
   // Mark once-per-run events as seen
   const withSeen = event.once

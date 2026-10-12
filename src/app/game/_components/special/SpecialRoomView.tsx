@@ -87,6 +87,7 @@ export function SpecialRoomView({
   onRelicExchange,
   onSkip,
 }: SpecialRoomViewProps) {
+  const { t } = useTranslation();
   const roomType = useMemo(() => {
     if (forceEventWithRelic) return "EVENT" as const;
     if (forcedRoomType) return forcedRoomType;
@@ -96,6 +97,10 @@ export function SpecialRoomView({
     () => (forceEventWithRelic ? createGuaranteedRelicEvent() : null),
     [forceEventWithRelic]
   );
+
+  if (runState?.pendingEventPurge) {
+    return <CardPickerModal title={t("special.eventPurgeAction")} subtitle={t("shop.purgePickerSubtitle")} cards={deck} cardDefs={cardDefs} onPick={onPurgeCard} />;
+  }
 
   switch (roomType) {
     case "HEAL":
@@ -579,13 +584,12 @@ function RelicBazaarRoom({
     <div className="relative isolate flex min-h-full flex-col items-center gap-5 overflow-hidden px-4 py-10">
       <RoomBackdrop kind="bazaar" />
       <Divider />
-      <RoomLabel label="Bazar des Reliques" />
+      <RoomLabel label={t("special.bazaar.label")} />
       <RoomEmblem kind="bazaar" />
-      <RoomTitle>Le Marchand des Âmes</RoomTitle>
+      <RoomTitle>{t("special.bazaar.title")}</RoomTitle>
       <div className="h-px w-10 bg-gradient-to-r from-amber-500/60 to-transparent" />
       <p className="max-w-md text-center text-sm italic leading-relaxed text-amber-200/60">
-        Un étrange marchand vous propose d&apos;échanger vos trésors. Les offres
-        se renouvellent après chaque échange.
+        {t("special.bazaar.description")}
       </p>
 
       {/* Offered relics */}
@@ -596,7 +600,7 @@ function RelicBazaarRoom({
             "mb-2 text-center text-[0.5rem] uppercase tracking-[0.4em] text-amber-400/50"
           )}
         >
-          Offres du marchand
+          {t("special.bazaar.offers")}
         </p>
         <div className="flex flex-col gap-2">
           {offeredRelics.map((relic) => {
@@ -643,7 +647,7 @@ function RelicBazaarRoom({
           })}
           {offeredRelics.length === 0 && (
             <p className="text-center text-xs italic text-amber-100/30">
-              Le marchand n&apos;a plus rien à offrir.
+              {t("special.bazaar.empty")}
             </p>
           )}
         </div>
@@ -653,7 +657,7 @@ function RelicBazaarRoom({
       <div className="flex items-center gap-3 text-amber-500/30">
         <div className="h-px w-12 bg-amber-500/20" />
         <span className={cn(cinzel.className, "text-[0.6rem] tracking-widest")}>
-          contre
+          {t("special.bazaar.against")}
         </span>
         <div className="h-px w-12 bg-amber-500/20" />
       </div>
@@ -666,7 +670,7 @@ function RelicBazaarRoom({
             "mb-2 text-center text-[0.5rem] uppercase tracking-[0.4em] text-amber-400/50"
           )}
         >
-          Vos reliques
+          {t("special.bazaar.owned")}
         </p>
         <div className="flex flex-col gap-2">
           {ownedRelics.map((relic) => {
@@ -732,7 +736,7 @@ function RelicBazaarRoom({
           {canExchange && (
             <span className="inline-block h-[1.5px] w-8 shrink-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300/0 opacity-90" />
           )}
-          Échanger
+          {t("special.bazaar.exchange")}
         </RogueButton>
 
         <RogueButton
@@ -868,7 +872,8 @@ function buildChoiceSignals(
       text: t("special.choiceSignals.risk"),
     });
   }
-  return signals;
+  // The badge already supplies the sign; avoid displaying "− -15 PV".
+  return signals.map(signal => ({ ...signal, text: signal.text.replace(/^[+−-]\s*(?=\d)/, "") }));
 }
 
 const CHOICE_SIGNAL_STYLES: Record<ChoiceSignal["kind"], string> = {
@@ -889,11 +894,13 @@ function EventChoiceButton({
   choice,
   index,
   isUnavailable,
+  unavailableReason,
   onChoose,
 }: {
   choice: GameEvent["choices"][number];
   index: number;
   isUnavailable: boolean;
+  unavailableReason: string;
   onChoose: (index: number) => void;
 }) {
   const { t } = useTranslation();
@@ -910,7 +917,7 @@ function EventChoiceButton({
         "!bg-gradient-to-r !from-amber-950/20 !to-slate-950/55 !px-5 !py-4 !text-left",
         "!shadow-[0_12px_28px_rgba(0,0,0,0.18)] !transition-all !duration-150",
         isUnavailable
-          ? "!cursor-not-allowed !opacity-45"
+          ? "!cursor-not-allowed"
           : "hover:!-translate-y-0.5 hover:!border-amber-500/40 hover:!from-amber-950/40"
       )}
     >
@@ -946,6 +953,7 @@ function EventChoiceButton({
       <span className="text-xs leading-relaxed text-amber-100/55">
         {localizedDescription}
       </span>
+      {isUnavailable && <span className="text-sm font-semibold text-amber-200">{unavailableReason}</span>}
     </RogueButton>
   );
 }
@@ -999,6 +1007,7 @@ export function EventRoom({
   }, [event.id, runState]);
 
   const [chosenIndex, setChosenIndex] = useState<number | null>(null);
+  const choiceCommitted = useRef(false);
   const [showPurgePicker, setShowPurgePicker] = useState(false);
   const [pendingArchetypeChoiceIndex, setPendingArchetypeChoiceIndex] =
     useState<number | null>(null);
@@ -1058,6 +1067,7 @@ export function EventRoom({
   }, [cardDefs, event, runState]);
 
   const handleChoice = (choiceIndex: number) => {
+    if (choiceCommitted.current) return;
     const choice = event.choices[choiceIndex];
     const cardChoices = archetypeRewardChoicesByIndex.get(choiceIndex);
     const isMissingArchetypeReward =
@@ -1082,6 +1092,7 @@ export function EventRoom({
       return;
     }
 
+    choiceCommitted.current = true;
     onEventChoice(event, choiceIndex);
     playSound("BUTTON_CLICK", 0.45);
     setChosenIndex(choiceIndex);
@@ -1103,6 +1114,11 @@ export function EventRoom({
   const displayedChoices = event.choices.map((choice, index) => ({
     choice,
     index,
+    unavailableReason: (choice.goldCost ?? 0) > gold
+      ? t("shop.unavailable.gold")
+      : choice.requiresPurge && deck.length <= 1
+        ? t("shop.unavailable.deck")
+        : t("special.choiceUnavailable"),
     isUnavailable:
       !runState ||
       !isEventChoiceAvailable(runState, choice) ||
@@ -1289,12 +1305,13 @@ export function EventRoom({
 
       {/* Choices */}
       <div className="flex w-full max-w-md flex-col gap-3">
-        {displayedChoices.map(({ choice, index, isUnavailable }) => (
+        {displayedChoices.map(({ choice, index, isUnavailable, unavailableReason }) => (
           <EventChoiceButton
             key={index}
             choice={choice}
             index={index}
             isUnavailable={isUnavailable}
+            unavailableReason={unavailableReason}
             onChoose={handleChoice}
           />
         ))}
@@ -1313,6 +1330,8 @@ export function EventRoom({
           }))}
           cardDefs={cardDefs}
           onPick={(definitionId) => {
+            if (choiceCommitted.current) return;
+            choiceCommitted.current = true;
             onPickCardReward(definitionId);
             onEventChoice(event, pendingArchetypeChoiceIndex);
             setChosenIndex(pendingArchetypeChoiceIndex);
@@ -1326,6 +1345,8 @@ export function EventRoom({
         <RelicPickerModal
           relics={availableRelicsForPick}
           onPick={(relicId) => {
+            if (choiceCommitted.current) return;
+            choiceCommitted.current = true;
             onEventRelicPick?.(relicId);
             onEventChoice(event, pendingRelicChoiceIndex);
             setChosenIndex(pendingRelicChoiceIndex);

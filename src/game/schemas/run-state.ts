@@ -63,6 +63,7 @@ export const RunStateSchema = z.object({
   saveRevision: z.number().int().nonnegative().optional(),
   pendingRewards: PendingRewardsSchema.optional(),
   merchantCheckpoint: MerchantCheckpointSchema.optional(),
+  pendingEventPurge: z.boolean().optional(),
   seed: z.string(),
   status: RunStatus,
   runStartedAtMs: z.number().int().nonnegative().default(0),

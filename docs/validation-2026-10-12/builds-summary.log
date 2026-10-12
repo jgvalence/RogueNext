@@ -1,0 +1,1943 @@
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+{
+  "total": 275,
+  "active": 237,
+  "manual": 197,
+  "owned": {
+    "scribe": 39,
+    "bibliothecaire": 39,
+    "griot": 39,
+    "fou": 39
+  },
+  "totalAccessible": {
+    "scribe": 90,
+    "bibliothecaire": 90,
+    "griot": 90,
+    "fou": 90
+  },
+  "masteryOwned": {
+    "scribe": 10,
+    "bibliothecaire": 10,
+    "griot": 10,
+    "fou": 10
+  },
+  "lostMechanicsA": [
+    {
+      "id": "rituel_interdit",
+      "missing": [
+        "EXHAUST"
+      ]
+    },
+    {
+      "id": "concentration_totale",
+      "missing": [
+        "EXHAUST"
+      ]
+    }
+  ],
+  "harmfulGeneratedBranches": [],
+  "harmfulInkedAdditions": [],
+  "repeatedBasePatterns": [
+    [
+      "heavy_strike",
+      "mythic_blow"
+    ],
+    [
+      "gorgons_gaze",
+      "oral_history"
+    ],
+    [
+      "pharaohs_curse",
+      "plague_of_words"
+    ],
+    [
+      "sun_ritual",
+      "ares_verse"
+    ],
+    [
+      "logos_strike",
+      "griot_strike"
+    ]
+  ],
+  "effects": {
+    "ADD_CARD_TO_DISCARD": 13,
+    "ADD_CARD_TO_DRAW": 1,
+    "APPLY_BUFF": 5,
+    "APPLY_BUFF_PER_DEBUFF": 4,
+    "APPLY_BUFF_PER_EXHAUSTED_CARD": 3,
+    "APPLY_DEBUFF": 92,
+    "ARCHIVE_AND_DRAW": 3,
+    "BLOCK": 42,
+    "BLOCK_PER_CURRENT_INK": 3,
+    "BLOCK_PER_DEBUFF": 12,
+    "BLOCK_PER_EXHAUSTED_CARD": 4,
+    "COPY_LAST_CARD_TO_HAND": 2,
+    "DAMAGE": 79,
+    "DAMAGE_BONUS_IF_UPGRADED_IN_HAND": 4,
+    "DAMAGE_IF_TARGET_HAS_DEBUFF": 1,
+    "DAMAGE_PER_CLOG_IN_DISCARD": 3,
+    "DAMAGE_PER_CURRENT_INK": 5,
+    "DAMAGE_PER_DEBUFF": 12,
+    "DAMAGE_PER_DOT_STACKS": 2,
+    "DAMAGE_PER_DRAWN_THIS_TURN": 3,
+    "DAMAGE_PER_EXHAUSTED_CARD": 1,
+    "DAMAGE_PER_THIS_CARD_PLAYED": 2,
+    "DOUBLE_POISON": 1,
+    "DRAIN_INK": 1,
+    "DRAW_CARDS": 68,
+    "EMPTY_DRAW_PILE_BLOCK": 1,
+    "EXACT_ENERGY_REWARD": 1,
+    "EXACT_INK_REWARD": 2,
+    "EXHAUST": 45,
+    "FORCE_DISCARD_RANDOM": 4,
+    "GAIN_ENERGY": 11,
+    "GAIN_FOCUS": 13,
+    "GAIN_INK": 57,
+    "GAIN_STRENGTH": 31,
+    "HEAL": 19,
+    "MOVE_RANDOM_NON_CLOG_DISCARD_TO_HAND": 4,
+    "NEXT_CARD_DOUBLE_DAMAGE": 1,
+    "NEXT_DRAW_TO_DISCARD_THIS_TURN": 3,
+    "PROPAGATE_DOT": 2,
+    "RETAIN_CARDS": 2,
+    "RETRIGGER_THORNS_ON_WEAK_ATTACK": 1,
+    "REVEAL_AND_REVERSE_TOP": 1,
+    "RHYTHM_REWARD": 4,
+    "TAKE_ENERGY_DEBT": 3,
+    "TOPDECK_FROM_DISCARD": 2,
+    "UPGRADE_RANDOM_CARD_IN_HAND": 11
+  },
+  "coverage": [
+    {
+      "character": "scribe",
+      "accessible": 80,
+      "opening": [
+        "heavy_strike",
+        "ink_flow",
+        "tome_strike",
+        "double_strike",
+        "curse_word",
+        "ink_surge",
+        "exploit_weakness",
+        "iron_will",
+        "rune_storm",
+        "battle_inscription",
+        "logos_strike",
+        "hermes_dash",
+        "written_prophecy",
+        "ares_verse",
+        "hieroglyph_strike",
+        "spell_inscription",
+        "sacred_ink_burst",
+        "void_quill",
+        "necrotic_words",
+        "obsidian_quill"
+      ],
+      "paths": [
+        {
+          "path": "ink",
+          "enablers": [
+            "ink_flow",
+            "rage_of_ages",
+            "tome_strike",
+            "ink_surge",
+            "anubis_strike",
+            "canopic_ward",
+            "eye_of_ra",
+            "madness_spike",
+            "starborn_omen",
+            "eldritch_pact",
+            "ancient_grove",
+            "griot_legacy",
+            "hermes_dash",
+            "hieroglyph_strike",
+            "spell_inscription",
+            "sacred_ink_burst",
+            "eldritch_script",
+            "obsidian_quill",
+            "xipe_shield",
+            "sun_codex",
+            "illuminated_shield",
+            "ogham_inscription",
+            "celtic_illumination",
+            "baba_yaga_deal",
+            "ink_of_ancestors",
+            "ancestral_verse"
+          ],
+          "payoffs": [
+            "heavy_strike",
+            "mythic_blow",
+            "ink_flow",
+            "rage_of_ages",
+            "double_strike",
+            "curse_word",
+            "final_chapter",
+            "ink_surge",
+            "exploit_weakness",
+            "iron_will",
+            "berserker_charge",
+            "shield_wall",
+            "rune_strike",
+            "mjolnir_echo",
+            "saga_of_blood",
+            "valkyries_dive",
+            "olympian_guard",
+            "gorgons_gaze",
+            "labyrinth",
+            "heros_challenge",
+            "olympian_cleave",
+            "anubis_strike",
+            "eye_of_ra",
+            "sand_whip",
+            "forbidden_whisper",
+            "madness_spike",
+            "void_shield",
+            "void_touch",
+            "eldritch_pact",
+            "recursive_scratch",
+            "obsidian_jab",
+            "jaguar_pounce",
+            "thorn_slash",
+            "druids_breath",
+            "ancient_grove",
+            "faerie_fire",
+            "wild_gale",
+            "bear_claw",
+            "permafrost_ward",
+            "trickster_snare",
+            "spirit_drum",
+            "anansis_web",
+            "rune_storm",
+            "battle_inscription",
+            "logos_strike",
+            "hermes_dash",
+            "written_prophecy",
+            "ares_verse",
+            "hieroglyph_strike",
+            "spell_inscription",
+            "sacred_ink_burst",
+            "necrotic_words",
+            "obsidian_quill",
+            "illuminated_shield",
+            "triquetra_mark",
+            "ogham_inscription",
+            "celtic_illumination",
+            "winter_inscription",
+            "war_dance",
+            "ink_of_ancestors",
+            "buffalo_charge",
+            "ancestral_verse"
+          ],
+          "openingEnablers": [
+            "ink_flow",
+            "tome_strike",
+            "ink_surge",
+            "hermes_dash",
+            "hieroglyph_strike",
+            "spell_inscription",
+            "sacred_ink_burst",
+            "obsidian_quill"
+          ],
+          "openingPayoffs": [
+            "heavy_strike",
+            "ink_flow",
+            "double_strike",
+            "curse_word",
+            "ink_surge",
+            "exploit_weakness",
+            "iron_will",
+            "rune_storm",
+            "battle_inscription",
+            "logos_strike",
+            "hermes_dash",
+            "written_prophecy",
+            "ares_verse",
+            "hieroglyph_strike",
+            "spell_inscription",
+            "sacred_ink_burst",
+            "necrotic_words",
+            "obsidian_quill"
+          ]
+        },
+        {
+          "path": "armor",
+          "enablers": [
+            "iron_will",
+            "shield_wall",
+            "olympian_guard",
+            "heros_challenge",
+            "canopic_ward",
+            "void_shield",
+            "sun_ritual",
+            "eclipse_vow",
+            "iron_samovar",
+            "permafrost_ward",
+            "ancestral_drum",
+            "spirit_drum",
+            "battle_inscription",
+            "ares_verse",
+            "sacred_ink_burst",
+            "xipe_shield",
+            "illuminated_shield",
+            "celtic_illumination",
+            "winter_inscription",
+            "folk_epic"
+          ],
+          "payoffs": [
+            "wild_gale",
+            "illuminated_shield",
+            "winter_inscription",
+            "folk_epic"
+          ],
+          "openingEnablers": [
+            "iron_will",
+            "battle_inscription",
+            "ares_verse",
+            "sacred_ink_burst"
+          ],
+          "openingPayoffs": []
+        },
+        {
+          "path": "poison",
+          "enablers": [
+            "curse_word",
+            "pharaohs_curse",
+            "madness_spike",
+            "thorn_slash",
+            "faerie_fire",
+            "iron_samovar",
+            "trickster_snare",
+            "spell_inscription",
+            "celtic_illumination"
+          ],
+          "payoffs": [
+            "sacred_ink_burst"
+          ],
+          "openingEnablers": [
+            "curse_word",
+            "spell_inscription"
+          ],
+          "openingPayoffs": [
+            "sacred_ink_burst"
+          ]
+        },
+        {
+          "path": "bleed",
+          "enablers": [
+            "valkyries_dive",
+            "jaguar_pounce",
+            "rune_storm",
+            "hermes_dash",
+            "necrotic_words",
+            "buffalo_charge"
+          ],
+          "payoffs": [
+            "final_chapter"
+          ],
+          "openingEnablers": [
+            "rune_storm",
+            "hermes_dash",
+            "necrotic_words"
+          ],
+          "openingPayoffs": []
+        },
+        {
+          "path": "draw",
+          "enablers": [
+            "ink_surge",
+            "saga_of_blood",
+            "olympian_guard",
+            "gorgons_gaze",
+            "olympian_cleave",
+            "eye_of_ra",
+            "eldritch_pact",
+            "druids_breath",
+            "wild_gale",
+            "griot_legacy",
+            "spirit_drum",
+            "anansis_web",
+            "logos_strike",
+            "written_prophecy",
+            "eldritch_script",
+            "sun_codex",
+            "triquetra_mark",
+            "ogham_inscription",
+            "celtic_illumination",
+            "baba_yaga_deal",
+            "ink_of_ancestors",
+            "griot_strike",
+            "ancestral_verse"
+          ],
+          "payoffs": [
+            "written_prophecy",
+            "buffalo_charge"
+          ],
+          "openingEnablers": [
+            "ink_surge",
+            "logos_strike",
+            "written_prophecy"
+          ],
+          "openingPayoffs": [
+            "written_prophecy"
+          ]
+        },
+        {
+          "path": "exhaust",
+          "enablers": [
+            "rage_of_ages",
+            "final_chapter",
+            "iron_will",
+            "labyrinth",
+            "starborn_omen",
+            "eldritch_pact",
+            "recursive_scratch",
+            "eclipse_vow",
+            "ancient_grove",
+            "ancestral_drum",
+            "griot_legacy",
+            "hermes_dash",
+            "written_prophecy",
+            "celtic_illumination",
+            "folk_epic",
+            "ancestral_verse"
+          ],
+          "payoffs": [
+            "celtic_illumination"
+          ],
+          "openingEnablers": [
+            "iron_will",
+            "hermes_dash",
+            "written_prophecy"
+          ],
+          "openingPayoffs": []
+        },
+        {
+          "path": "discard",
+          "enablers": [
+            "canopic_ward",
+            "forbidden_whisper",
+            "void_shield",
+            "written_prophecy",
+            "void_quill",
+            "xipe_shield",
+            "ogham_inscription"
+          ],
+          "payoffs": [
+            "necrotic_words",
+            "ogham_inscription",
+            "ancestral_verse"
+          ],
+          "openingEnablers": [
+            "written_prophecy",
+            "void_quill"
+          ],
+          "openingPayoffs": [
+            "necrotic_words"
+          ]
+        },
+        {
+          "path": "strength",
+          "enablers": [
+            "rage_of_ages",
+            "berserker_charge",
+            "olympian_guard",
+            "sun_ritual",
+            "eclipse_vow",
+            "ancient_grove",
+            "bear_claw",
+            "griot_legacy",
+            "anansis_web",
+            "ares_verse",
+            "sun_codex",
+            "war_dance",
+            "ink_of_ancestors",
+            "buffalo_charge"
+          ],
+          "payoffs": [
+            "heavy_strike",
+            "mythic_blow",
+            "tome_strike",
+            "double_strike",
+            "curse_word",
+            "final_chapter",
+            "exploit_weakness",
+            "berserker_charge",
+            "rune_strike",
+            "mjolnir_echo",
+            "valkyries_dive",
+            "gorgons_gaze",
+            "heros_challenge",
+            "olympian_cleave",
+            "anubis_strike",
+            "pharaohs_curse",
+            "sand_whip",
+            "forbidden_whisper",
+            "madness_spike",
+            "void_touch",
+            "recursive_scratch",
+            "obsidian_jab",
+            "jaguar_pounce",
+            "thorn_slash",
+            "frost_nail",
+            "bear_claw",
+            "trickster_snare",
+            "rune_storm",
+            "logos_strike",
+            "hermes_dash",
+            "hieroglyph_strike",
+            "spell_inscription",
+            "void_quill",
+            "necrotic_words",
+            "war_dance",
+            "griot_strike",
+            "buffalo_charge"
+          ],
+          "openingEnablers": [
+            "ares_verse"
+          ],
+          "openingPayoffs": [
+            "heavy_strike",
+            "tome_strike",
+            "double_strike",
+            "curse_word",
+            "exploit_weakness",
+            "rune_storm",
+            "logos_strike",
+            "hermes_dash",
+            "hieroglyph_strike",
+            "spell_inscription",
+            "void_quill",
+            "necrotic_words"
+          ]
+        },
+        {
+          "path": "rhythm",
+          "enablers": [],
+          "payoffs": [],
+          "openingEnablers": [],
+          "openingPayoffs": []
+        },
+        {
+          "path": "archive",
+          "enablers": [],
+          "payoffs": [
+            "written_prophecy",
+            "buffalo_charge"
+          ],
+          "openingEnablers": [],
+          "openingPayoffs": [
+            "written_prophecy"
+          ]
+        },
+        {
+          "path": "upgrade",
+          "enablers": [
+            "ink_surge",
+            "eye_of_ra",
+            "battle_inscription",
+            "spell_inscription",
+            "triquetra_mark",
+            "ink_of_ancestors"
+          ],
+          "payoffs": [
+            "heavy_strike",
+            "mythic_blow",
+            "written_prophecy"
+          ],
+          "openingEnablers": [
+            "ink_surge",
+            "battle_inscription",
+            "spell_inscription"
+          ],
+          "openingPayoffs": [
+            "heavy_strike",
+            "written_prophecy"
+          ]
+        },
+        {
+          "path": "debt",
+          "enablers": [],
+          "payoffs": [],
+          "openingEnablers": [],
+          "openingPayoffs": []
+        }
+      ]
+    },
+    {
+      "character": "bibliothecaire",
+      "accessible": 80,
+      "opening": [
+        "fortify",
+        "healing_script",
+        "vulnerability_hex",
+        "quick_recovery",
+        "brace",
+        "ink_surge",
+        "annotated_thesis",
+        "forbidden_appendix",
+        "index_of_echoes",
+        "curator_pact",
+        "baobab_shield",
+        "oral_history",
+        "trickster_lore",
+        "fur_binding",
+        "herb_lore",
+        "temple_archive",
+        "obsidian_ward",
+        "necronomicon_page",
+        "apollos_archive",
+        "nordic_treatise"
+      ],
+      "paths": [
+        {
+          "path": "ink",
+          "enablers": [
+            "ink_surge",
+            "anubis_strike",
+            "canopic_ward",
+            "eye_of_ra",
+            "solar_hymn",
+            "madness_spike",
+            "starborn_omen",
+            "ancient_grove",
+            "griot_legacy",
+            "trickster_lore",
+            "matryoshka_lore",
+            "zhar_ptitsa",
+            "quetzal_shield",
+            "apollos_archive",
+            "norn_prophecy"
+          ],
+          "payoffs": [
+            "fortify",
+            "healing_script",
+            "vulnerability_hex",
+            "quick_recovery",
+            "brace",
+            "ink_surge",
+            "berserker_charge",
+            "shield_wall",
+            "rune_strike",
+            "mjolnir_echo",
+            "valkyries_dive",
+            "olympian_guard",
+            "gorgons_gaze",
+            "labyrinth",
+            "heros_challenge",
+            "olympian_cleave",
+            "anubis_strike",
+            "eye_of_ra",
+            "sand_whip",
+            "solar_hymn",
+            "forbidden_whisper",
+            "madness_spike",
+            "void_shield",
+            "void_touch",
+            "recursive_scratch",
+            "obsidian_jab",
+            "jaguar_pounce",
+            "thorn_slash",
+            "druids_breath",
+            "ancient_grove",
+            "faerie_fire",
+            "wild_gale",
+            "bear_claw",
+            "permafrost_ward",
+            "trickster_snare",
+            "spirit_drum",
+            "anansis_web",
+            "annotated_thesis",
+            "forbidden_appendix",
+            "baobab_shield",
+            "trickster_lore",
+            "fur_binding",
+            "leshy_ward",
+            "herb_lore",
+            "fairy_veil",
+            "selkie_song",
+            "calendric_ward",
+            "quetzal_shield",
+            "temple_archive",
+            "obsidian_ward",
+            "sealed_tome",
+            "necronomicon_page",
+            "mummy_ward",
+            "book_of_the_dead",
+            "apollos_archive",
+            "nordic_treatise",
+            "ancient_ward"
+          ],
+          "openingEnablers": [
+            "ink_surge",
+            "trickster_lore",
+            "apollos_archive"
+          ],
+          "openingPayoffs": [
+            "fortify",
+            "healing_script",
+            "vulnerability_hex",
+            "quick_recovery",
+            "brace",
+            "ink_surge",
+            "annotated_thesis",
+            "forbidden_appendix",
+            "baobab_shield",
+            "trickster_lore",
+            "fur_binding",
+            "herb_lore",
+            "temple_archive",
+            "obsidian_ward",
+            "necronomicon_page",
+            "apollos_archive",
+            "nordic_treatise"
+          ]
+        },
+        {
+          "path": "armor",
+          "enablers": [
+            "fortify",
+            "quick_recovery",
+            "brace",
+            "shield_wall",
+            "olympian_guard",
+            "heros_challenge",
+            "canopic_ward",
+            "void_shield",
+            "sun_ritual",
+            "eclipse_vow",
+            "iron_samovar",
+            "permafrost_ward",
+            "ancestral_drum",
+            "spirit_drum",
+            "annotated_thesis",
+            "baobab_shield",
+            "fur_binding",
+            "leshy_ward",
+            "fairy_veil",
+            "calendric_ward",
+            "quetzal_shield",
+            "obsidian_ward",
+            "sealed_tome",
+            "cosmic_archive",
+            "nordic_treatise",
+            "ancient_ward"
+          ],
+          "payoffs": [
+            "wild_gale",
+            "baobab_shield",
+            "frost_witch",
+            "fairy_veil",
+            "selkie_song"
+          ],
+          "openingEnablers": [
+            "fortify",
+            "quick_recovery",
+            "brace",
+            "annotated_thesis",
+            "baobab_shield",
+            "fur_binding",
+            "obsidian_ward",
+            "nordic_treatise"
+          ],
+          "openingPayoffs": [
+            "baobab_shield"
+          ]
+        },
+        {
+          "path": "poison",
+          "enablers": [
+            "pharaohs_curse",
+            "madness_spike",
+            "thorn_slash",
+            "faerie_fire",
+            "iron_samovar",
+            "trickster_snare",
+            "obsidian_ward"
+          ],
+          "payoffs": [
+            "obsidian_ward"
+          ],
+          "openingEnablers": [
+            "obsidian_ward"
+          ],
+          "openingPayoffs": [
+            "obsidian_ward"
+          ]
+        },
+        {
+          "path": "bleed",
+          "enablers": [
+            "valkyries_dive",
+            "jaguar_pounce"
+          ],
+          "payoffs": [],
+          "openingEnablers": [],
+          "openingPayoffs": []
+        },
+        {
+          "path": "draw",
+          "enablers": [
+            "vulnerability_hex",
+            "meditation",
+            "brace",
+            "ink_surge",
+            "olympian_guard",
+            "gorgons_gaze",
+            "olympian_cleave",
+            "eye_of_ra",
+            "solar_hymn",
+            "druids_breath",
+            "wild_gale",
+            "griot_legacy",
+            "spirit_drum",
+            "anansis_web",
+            "annotated_thesis",
+            "forbidden_appendix",
+            "index_of_echoes",
+            "oral_history",
+            "matryoshka_lore",
+            "herb_lore",
+            "selkie_song",
+            "calendric_ward",
+            "temple_archive",
+            "necronomicon_page",
+            "cosmic_archive",
+            "funerary_rite",
+            "book_of_the_dead",
+            "sphinx_riddle",
+            "nordic_treatise",
+            "norn_prophecy",
+            "ancient_ward",
+            "saga_keeper"
+          ],
+          "payoffs": [
+            "book_of_the_dead"
+          ],
+          "openingEnablers": [
+            "vulnerability_hex",
+            "brace",
+            "ink_surge",
+            "annotated_thesis",
+            "forbidden_appendix",
+            "index_of_echoes",
+            "oral_history",
+            "herb_lore",
+            "temple_archive",
+            "necronomicon_page",
+            "nordic_treatise"
+          ],
+          "openingPayoffs": []
+        },
+        {
+          "path": "exhaust",
+          "enablers": [
+            "meditation",
+            "quick_recovery",
+            "labyrinth",
+            "starborn_omen",
+            "recursive_scratch",
+            "eclipse_vow",
+            "ancient_grove",
+            "ancestral_drum",
+            "griot_legacy",
+            "forbidden_appendix",
+            "curator_pact",
+            "frost_witch",
+            "sealed_tome",
+            "cosmic_archive",
+            "book_of_the_dead",
+            "fates_decree",
+            "nordic_treatise",
+            "saga_keeper"
+          ],
+          "payoffs": [
+            "baobab_shield",
+            "cosmic_archive",
+            "saga_keeper"
+          ],
+          "openingEnablers": [
+            "quick_recovery",
+            "forbidden_appendix",
+            "curator_pact",
+            "nordic_treatise"
+          ],
+          "openingPayoffs": [
+            "baobab_shield"
+          ]
+        },
+        {
+          "path": "discard",
+          "enablers": [
+            "canopic_ward",
+            "forbidden_whisper",
+            "void_shield",
+            "curator_pact",
+            "fur_binding",
+            "matryoshka_lore",
+            "sealed_tome",
+            "cosmic_archive"
+          ],
+          "payoffs": [
+            "curator_pact",
+            "matryoshka_lore"
+          ],
+          "openingEnablers": [
+            "curator_pact",
+            "fur_binding"
+          ],
+          "openingPayoffs": [
+            "curator_pact"
+          ]
+        },
+        {
+          "path": "strength",
+          "enablers": [
+            "berserker_charge",
+            "olympian_guard",
+            "sun_ritual",
+            "eclipse_vow",
+            "ancient_grove",
+            "bear_claw",
+            "griot_legacy",
+            "anansis_web",
+            "book_of_the_dead",
+            "saga_keeper"
+          ],
+          "payoffs": [
+            "berserker_charge",
+            "rune_strike",
+            "mjolnir_echo",
+            "valkyries_dive",
+            "gorgons_gaze",
+            "heros_challenge",
+            "olympian_cleave",
+            "anubis_strike",
+            "pharaohs_curse",
+            "sand_whip",
+            "forbidden_whisper",
+            "madness_spike",
+            "void_touch",
+            "recursive_scratch",
+            "obsidian_jab",
+            "jaguar_pounce",
+            "thorn_slash",
+            "frost_nail",
+            "bear_claw",
+            "trickster_snare",
+            "oral_history",
+            "obsidian_ward",
+            "necronomicon_page",
+            "apollos_archive",
+            "fates_decree"
+          ],
+          "openingEnablers": [],
+          "openingPayoffs": [
+            "oral_history",
+            "obsidian_ward",
+            "necronomicon_page",
+            "apollos_archive"
+          ]
+        },
+        {
+          "path": "rhythm",
+          "enablers": [],
+          "payoffs": [],
+          "openingEnablers": [],
+          "openingPayoffs": []
+        },
+        {
+          "path": "archive",
+          "enablers": [
+            "healing_script",
+            "index_of_echoes",
+            "temple_archive",
+            "necronomicon_page",
+            "cosmic_archive",
+            "apollos_archive",
+            "ancient_ward"
+          ],
+          "payoffs": [
+            "book_of_the_dead"
+          ],
+          "openingEnablers": [
+            "healing_script",
+            "index_of_echoes",
+            "temple_archive",
+            "necronomicon_page",
+            "apollos_archive"
+          ],
+          "openingPayoffs": []
+        },
+        {
+          "path": "upgrade",
+          "enablers": [
+            "ink_surge",
+            "eye_of_ra",
+            "annotated_thesis",
+            "temple_archive",
+            "necronomicon_page",
+            "cosmic_archive"
+          ],
+          "payoffs": [
+            "forbidden_appendix"
+          ],
+          "openingEnablers": [
+            "ink_surge",
+            "annotated_thesis",
+            "temple_archive",
+            "necronomicon_page"
+          ],
+          "openingPayoffs": [
+            "forbidden_appendix"
+          ]
+        },
+        {
+          "path": "debt",
+          "enablers": [],
+          "payoffs": [],
+          "openingEnablers": [],
+          "openingPayoffs": []
+        }
+      ]
+    },
+    {
+      "character": "griot",
+      "accessible": 80,
+      "opening": [
+        "ink_surge",
+        "iron_verse",
+        "frost_rune_shield",
+        "scald_cry",
+        "philosophers_quill",
+        "sacred_papyrus",
+        "cursed_inscription",
+        "codex_strike",
+        "kells_strike",
+        "bardic_verse",
+        "drum_strike",
+        "star_chart",
+        "danse_des_esprits",
+        "scarification",
+        "coup_de_tambour",
+        "venin_du_serpent",
+        "transe_vaudou",
+        "frappe_maudite",
+        "rituel_interdit",
+        "invocation_ancestrale"
+      ],
+      "paths": [
+        {
+          "path": "ink",
+          "enablers": [
+            "ink_surge",
+            "anubis_strike",
+            "canopic_ward",
+            "eye_of_ra",
+            "madness_spike",
+            "starborn_omen",
+            "ancient_grove",
+            "griot_legacy",
+            "philosophers_quill",
+            "epic_simile",
+            "black_page",
+            "codex_strike",
+            "bardic_verse",
+            "byliny_verse",
+            "drum_strike",
+            "anansi_tale",
+            "cauldron_lore",
+            "star_chart",
+            "embalmed_tome",
+            "transe_vaudou"
+          ],
+          "payoffs": [
+            "ink_surge",
+            "berserker_charge",
+            "shield_wall",
+            "rune_strike",
+            "mjolnir_echo",
+            "valkyries_dive",
+            "olympian_guard",
+            "gorgons_gaze",
+            "labyrinth",
+            "heros_challenge",
+            "olympian_cleave",
+            "anubis_strike",
+            "eye_of_ra",
+            "sand_whip",
+            "forbidden_whisper",
+            "madness_spike",
+            "void_shield",
+            "void_touch",
+            "recursive_scratch",
+            "obsidian_jab",
+            "jaguar_pounce",
+            "jaguars_blood",
+            "thorn_slash",
+            "druids_breath",
+            "ancient_grove",
+            "faerie_fire",
+            "wild_gale",
+            "bear_claw",
+            "permafrost_ward",
+            "trickster_snare",
+            "spirit_drum",
+            "anansis_web",
+            "iron_verse",
+            "frost_rune_shield",
+            "scald_cry",
+            "philosophers_quill",
+            "epic_simile",
+            "sacred_papyrus",
+            "cursed_inscription",
+            "black_page",
+            "forbidden_verse",
+            "codex_strike",
+            "kells_strike",
+            "iron_bard",
+            "blizzard_verse",
+            "koschei_strike",
+            "drum_strike",
+            "spider_web",
+            "folk_curse",
+            "poison_herb",
+            "library_horror",
+            "death_scroll",
+            "plague_of_words",
+            "embalmed_tome",
+            "oracle_scroll",
+            "labyrinth_trap",
+            "rune_curse",
+            "danse_des_esprits",
+            "scarification",
+            "coup_de_tambour",
+            "venin_du_serpent",
+            "transe_vaudou",
+            "frappe_maudite",
+            "rituel_interdit",
+            "invocation_ancestrale"
+          ],
+          "openingEnablers": [
+            "ink_surge",
+            "philosophers_quill",
+            "codex_strike",
+            "bardic_verse",
+            "drum_strike",
+            "star_chart",
+            "transe_vaudou"
+          ],
+          "openingPayoffs": [
+            "ink_surge",
+            "iron_verse",
+            "frost_rune_shield",
+            "scald_cry",
+            "philosophers_quill",
+            "sacred_papyrus",
+            "cursed_inscription",
+            "codex_strike",
+            "kells_strike",
+            "drum_strike",
+            "danse_des_esprits",
+            "scarification",
+            "coup_de_tambour",
+            "venin_du_serpent",
+            "transe_vaudou",
+            "frappe_maudite",
+            "rituel_interdit",
+            "invocation_ancestrale"
+          ]
+        },
+        {
+          "path": "armor",
+          "enablers": [
+            "shield_wall",
+            "olympian_guard",
+            "heros_challenge",
+            "canopic_ward",
+            "void_shield",
+            "sun_ritual",
+            "eclipse_vow",
+            "jaguars_blood",
+            "iron_samovar",
+            "permafrost_ward",
+            "ancestral_drum",
+            "spirit_drum",
+            "frost_rune_shield",
+            "sacred_papyrus",
+            "iron_bard",
+            "blizzard_verse",
+            "spider_web",
+            "poison_herb",
+            "star_chart",
+            "labyrinth_trap"
+          ],
+          "payoffs": [
+            "wild_gale",
+            "spider_web"
+          ],
+          "openingEnablers": [
+            "frost_rune_shield",
+            "sacred_papyrus",
+            "star_chart"
+          ],
+          "openingPayoffs": []
+        },
+        {
+          "path": "poison",
+          "enablers": [
+            "pharaohs_curse",
+            "madness_spike",
+            "thorn_slash",
+            "faerie_fire",
+            "iron_samovar",
+            "trickster_snare",
+            "philosophers_quill",
+            "cursed_inscription",
+            "kells_strike",
+            "bardic_verse",
+            "cauldron_lore",
+            "poison_herb",
+            "death_scroll",
+            "plague_of_words",
+            "rune_curse",
+            "danse_des_esprits",
+            "coup_de_tambour",
+            "venin_du_serpent",
+            "rituel_interdit"
+          ],
+          "payoffs": [
+            "sacred_papyrus",
+            "iron_bard",
+            "poison_herb",
+            "death_scroll",
+            "danse_des_esprits",
+            "transe_vaudou",
+            "frappe_maudite",
+            "invocation_ancestrale"
+          ],
+          "openingEnablers": [
+            "philosophers_quill",
+            "cursed_inscription",
+            "kells_strike",
+            "bardic_verse",
+            "danse_des_esprits",
+            "coup_de_tambour",
+            "venin_du_serpent",
+            "rituel_interdit"
+          ],
+          "openingPayoffs": [
+            "sacred_papyrus",
+            "danse_des_esprits",
+            "transe_vaudou",
+            "frappe_maudite",
+            "invocation_ancestrale"
+          ]
+        },
+        {
+          "path": "bleed",
+          "enablers": [
+            "valkyries_dive",
+            "jaguar_pounce",
+            "jaguars_blood",
+            "iron_verse",
+            "scald_cry",
+            "forbidden_verse",
+            "codex_strike",
+            "iron_bard",
+            "koschei_strike",
+            "drum_strike",
+            "scarification",
+            "rituel_interdit"
+          ],
+          "payoffs": [
+            "jaguars_blood",
+            "iron_verse",
+            "frost_rune_shield",
+            "iron_bard",
+            "koschei_strike",
+            "danse_des_esprits",
+            "invocation_ancestrale"
+          ],
+          "openingEnablers": [
+            "iron_verse",
+            "scald_cry",
+            "codex_strike",
+            "drum_strike",
+            "scarification",
+            "rituel_interdit"
+          ],
+          "openingPayoffs": [
+            "iron_verse",
+            "frost_rune_shield",
+            "danse_des_esprits",
+            "invocation_ancestrale"
+          ]
+        },
+        {
+          "path": "draw",
+          "enablers": [
+            "ink_surge",
+            "olympian_guard",
+            "gorgons_gaze",
+            "olympian_cleave",
+            "eye_of_ra",
+            "druids_breath",
+            "wild_gale",
+            "griot_legacy",
+            "spirit_drum",
+            "anansis_web",
+            "scald_cry",
+            "philosophers_quill",
+            "kells_strike",
+            "bardic_verse",
+            "byliny_verse",
+            "drum_strike",
+            "anansi_tale",
+            "folk_curse",
+            "cauldron_lore",
+            "embalmed_tome",
+            "oracle_scroll",
+            "coup_de_tambour"
+          ],
+          "payoffs": [],
+          "openingEnablers": [
+            "ink_surge",
+            "scald_cry",
+            "philosophers_quill",
+            "kells_strike",
+            "bardic_verse",
+            "drum_strike",
+            "coup_de_tambour"
+          ],
+          "openingPayoffs": []
+        },
+        {
+          "path": "exhaust",
+          "enablers": [
+            "labyrinth",
+            "starborn_omen",
+            "recursive_scratch",
+            "eclipse_vow",
+            "ancient_grove",
+            "ancestral_drum",
+            "griot_legacy",
+            "embalmed_tome",
+            "rituel_interdit"
+          ],
+          "payoffs": [],
+          "openingEnablers": [
+            "rituel_interdit"
+          ],
+          "openingPayoffs": []
+        },
+        {
+          "path": "discard",
+          "enablers": [
+            "canopic_ward",
+            "forbidden_whisper",
+            "void_shield",
+            "cursed_inscription",
+            "folk_curse",
+            "library_horror",
+            "labyrinth_trap"
+          ],
+          "payoffs": [],
+          "openingEnablers": [
+            "cursed_inscription"
+          ],
+          "openingPayoffs": []
+        },
+        {
+          "path": "strength",
+          "enablers": [
+            "berserker_charge",
+            "olympian_guard",
+            "sun_ritual",
+            "eclipse_vow",
+            "jaguars_blood",
+            "ancient_grove",
+            "bear_claw",
+            "griot_legacy",
+            "anansis_web",
+            "scald_cry"
+          ],
+          "payoffs": [
+            "berserker_charge",
+            "rune_strike",
+            "mjolnir_echo",
+            "valkyries_dive",
+            "gorgons_gaze",
+            "heros_challenge",
+            "olympian_cleave",
+            "anubis_strike",
+            "pharaohs_curse",
+            "sand_whip",
+            "forbidden_whisper",
+            "madness_spike",
+            "void_touch",
+            "recursive_scratch",
+            "obsidian_jab",
+            "jaguar_pounce",
+            "jaguars_blood",
+            "thorn_slash",
+            "frost_nail",
+            "bear_claw",
+            "trickster_snare",
+            "epic_simile",
+            "cursed_inscription",
+            "forbidden_verse",
+            "codex_strike",
+            "kells_strike",
+            "iron_bard",
+            "blizzard_verse",
+            "koschei_strike",
+            "drum_strike",
+            "spider_web",
+            "library_horror",
+            "death_scroll",
+            "plague_of_words",
+            "labyrinth_trap",
+            "danse_des_esprits",
+            "venin_du_serpent",
+            "frappe_maudite"
+          ],
+          "openingEnablers": [
+            "scald_cry"
+          ],
+          "openingPayoffs": [
+            "cursed_inscription",
+            "codex_strike",
+            "kells_strike",
+            "drum_strike",
+            "danse_des_esprits",
+            "venin_du_serpent",
+            "frappe_maudite"
+          ]
+        },
+        {
+          "path": "rhythm",
+          "enablers": [
+            "codex_strike",
+            "drum_strike",
+            "star_chart",
+            "transe_vaudou"
+          ],
+          "payoffs": [
+            "codex_strike",
+            "drum_strike",
+            "star_chart",
+            "transe_vaudou"
+          ],
+          "openingEnablers": [
+            "codex_strike",
+            "drum_strike",
+            "star_chart",
+            "transe_vaudou"
+          ],
+          "openingPayoffs": [
+            "codex_strike",
+            "drum_strike",
+            "star_chart",
+            "transe_vaudou"
+          ]
+        },
+        {
+          "path": "archive",
+          "enablers": [],
+          "payoffs": [],
+          "openingEnablers": [],
+          "openingPayoffs": []
+        },
+        {
+          "path": "upgrade",
+          "enablers": [
+            "ink_surge",
+            "eye_of_ra",
+            "sacred_papyrus"
+          ],
+          "payoffs": [
+            "kells_strike"
+          ],
+          "openingEnablers": [
+            "ink_surge",
+            "sacred_papyrus"
+          ],
+          "openingPayoffs": [
+            "kells_strike"
+          ]
+        },
+        {
+          "path": "debt",
+          "enablers": [],
+          "payoffs": [],
+          "openingEnablers": [],
+          "openingPayoffs": []
+        }
+      ]
+    },
+    {
+      "character": "fou",
+      "accessible": 80,
+      "opening": [
+        "ink_surge",
+        "odin_script",
+        "epic_saga",
+        "titans_wrath",
+        "olympian_scripture",
+        "book_of_ra",
+        "scribes_judgment",
+        "void_scripture",
+        "sacrificial_word",
+        "hummingbird_strike",
+        "blood_codex",
+        "green_man_verse",
+        "sunbird_power",
+        "eclair_ephemere",
+        "frisson_du_risque",
+        "concentration_totale",
+        "double_ou_rien",
+        "adrenaline_pure",
+        "tempete_d_encre",
+        "pacte_final"
+      ],
+      "paths": [
+        {
+          "path": "ink",
+          "enablers": [
+            "ink_surge",
+            "anubis_strike",
+            "canopic_ward",
+            "eye_of_ra",
+            "madness_spike",
+            "starborn_omen",
+            "ancient_grove",
+            "griot_legacy",
+            "book_of_ra",
+            "sacrificial_word",
+            "blood_codex",
+            "green_man_verse",
+            "firebird_script",
+            "sunbird_power",
+            "healing_rhythm",
+            "cosmic_spider",
+            "ancient_manuscript",
+            "world_tree",
+            "feathered_serpent",
+            "readers_pact",
+            "void_librarian",
+            "osiris_archive",
+            "valhalla_codex"
+          ],
+          "payoffs": [
+            "ink_surge",
+            "berserker_charge",
+            "shield_wall",
+            "rune_strike",
+            "mjolnir_echo",
+            "valkyries_dive",
+            "olympian_guard",
+            "gorgons_gaze",
+            "labyrinth",
+            "heros_challenge",
+            "olympian_cleave",
+            "anubis_strike",
+            "eye_of_ra",
+            "sand_whip",
+            "forbidden_whisper",
+            "madness_spike",
+            "void_shield",
+            "void_touch",
+            "recursive_scratch",
+            "obsidian_jab",
+            "jaguar_pounce",
+            "thorn_slash",
+            "druids_breath",
+            "ancient_grove",
+            "faerie_fire",
+            "wild_gale",
+            "bear_claw",
+            "permafrost_ward",
+            "trickster_snare",
+            "spirit_drum",
+            "anansis_web",
+            "titans_wrath",
+            "scribes_judgment",
+            "hummingbird_strike",
+            "bogatyr_strike",
+            "ancestor_archive",
+            "snowstorm_trap",
+            "folklore_archive",
+            "morrigan_curse",
+            "world_tree",
+            "readers_pact",
+            "desert_wisdom",
+            "shield_of_athena",
+            "pythian_codex",
+            "saga_archive",
+            "eclair_ephemere",
+            "frisson_du_risque",
+            "concentration_totale",
+            "double_ou_rien",
+            "adrenaline_pure",
+            "tempete_d_encre",
+            "pacte_final"
+          ],
+          "openingEnablers": [
+            "ink_surge",
+            "book_of_ra",
+            "sacrificial_word",
+            "blood_codex",
+            "green_man_verse",
+            "sunbird_power"
+          ],
+          "openingPayoffs": [
+            "ink_surge",
+            "titans_wrath",
+            "scribes_judgment",
+            "hummingbird_strike",
+            "eclair_ephemere",
+            "frisson_du_risque",
+            "concentration_totale",
+            "double_ou_rien",
+            "adrenaline_pure",
+            "tempete_d_encre",
+            "pacte_final"
+          ]
+        },
+        {
+          "path": "armor",
+          "enablers": [
+            "shield_wall",
+            "olympian_guard",
+            "heros_challenge",
+            "canopic_ward",
+            "void_shield",
+            "sun_ritual",
+            "eclipse_vow",
+            "iron_samovar",
+            "permafrost_ward",
+            "ancestral_drum",
+            "spirit_drum",
+            "blood_codex",
+            "bogatyr_strike",
+            "firebird_script",
+            "world_tree",
+            "desert_wisdom",
+            "shield_of_athena"
+          ],
+          "payoffs": [
+            "wild_gale",
+            "green_man_verse"
+          ],
+          "openingEnablers": [
+            "blood_codex"
+          ],
+          "openingPayoffs": [
+            "green_man_verse"
+          ]
+        },
+        {
+          "path": "poison",
+          "enablers": [
+            "pharaohs_curse",
+            "madness_spike",
+            "thorn_slash",
+            "faerie_fire",
+            "iron_samovar",
+            "trickster_snare"
+          ],
+          "payoffs": [
+            "scribes_judgment"
+          ],
+          "openingEnablers": [],
+          "openingPayoffs": [
+            "scribes_judgment"
+          ]
+        },
+        {
+          "path": "bleed",
+          "enablers": [
+            "valkyries_dive",
+            "jaguar_pounce",
+            "hummingbird_strike"
+          ],
+          "payoffs": [
+            "epic_saga",
+            "scribes_judgment"
+          ],
+          "openingEnablers": [
+            "hummingbird_strike"
+          ],
+          "openingPayoffs": [
+            "epic_saga",
+            "scribes_judgment"
+          ]
+        },
+        {
+          "path": "draw",
+          "enablers": [
+            "ink_surge",
+            "olympian_guard",
+            "gorgons_gaze",
+            "olympian_cleave",
+            "eye_of_ra",
+            "druids_breath",
+            "wild_gale",
+            "griot_legacy",
+            "spirit_drum",
+            "anansis_web",
+            "olympian_scripture",
+            "book_of_ra",
+            "void_scripture",
+            "sunbird_power",
+            "healing_rhythm",
+            "ancestor_archive",
+            "folklore_archive",
+            "ancient_manuscript",
+            "forbidden_index",
+            "osiris_archive",
+            "saga_archive",
+            "frisson_du_risque",
+            "pacte_final"
+          ],
+          "payoffs": [
+            "hummingbird_strike"
+          ],
+          "openingEnablers": [
+            "ink_surge",
+            "olympian_scripture",
+            "book_of_ra",
+            "void_scripture",
+            "sunbird_power",
+            "frisson_du_risque",
+            "pacte_final"
+          ],
+          "openingPayoffs": [
+            "hummingbird_strike"
+          ]
+        },
+        {
+          "path": "exhaust",
+          "enablers": [
+            "labyrinth",
+            "starborn_omen",
+            "recursive_scratch",
+            "eclipse_vow",
+            "ancient_grove",
+            "ancestral_drum",
+            "griot_legacy",
+            "epic_saga",
+            "olympian_scripture",
+            "scribes_judgment",
+            "void_scripture",
+            "blood_codex",
+            "green_man_verse",
+            "sunbird_power",
+            "ancestor_archive",
+            "cosmic_spider",
+            "snowstorm_trap",
+            "folklore_archive",
+            "world_tree",
+            "feathered_serpent",
+            "readers_pact",
+            "void_librarian",
+            "osiris_archive",
+            "pythian_codex",
+            "saga_archive",
+            "valhalla_codex",
+            "concentration_totale",
+            "adrenaline_pure",
+            "pacte_final"
+          ],
+          "payoffs": [
+            "odin_script",
+            "blood_codex",
+            "green_man_verse",
+            "sunbird_power"
+          ],
+          "openingEnablers": [
+            "epic_saga",
+            "olympian_scripture",
+            "scribes_judgment",
+            "void_scripture",
+            "blood_codex",
+            "green_man_verse",
+            "sunbird_power",
+            "concentration_totale",
+            "adrenaline_pure",
+            "pacte_final"
+          ],
+          "openingPayoffs": [
+            "odin_script",
+            "blood_codex",
+            "green_man_verse",
+            "sunbird_power"
+          ]
+        },
+        {
+          "path": "discard",
+          "enablers": [
+            "canopic_ward",
+            "forbidden_whisper",
+            "void_shield",
+            "odin_script",
+            "void_scripture",
+            "forbidden_index",
+            "void_librarian"
+          ],
+          "payoffs": [
+            "void_scripture",
+            "ancestor_archive",
+            "cosmic_spider"
+          ],
+          "openingEnablers": [
+            "odin_script",
+            "void_scripture"
+          ],
+          "openingPayoffs": [
+            "void_scripture"
+          ]
+        },
+        {
+          "path": "strength",
+          "enablers": [
+            "berserker_charge",
+            "olympian_guard",
+            "sun_ritual",
+            "eclipse_vow",
+            "ancient_grove",
+            "bear_claw",
+            "griot_legacy",
+            "anansis_web",
+            "book_of_ra",
+            "hummingbird_strike",
+            "blood_codex",
+            "green_man_verse",
+            "firebird_script",
+            "sunbird_power",
+            "healing_rhythm",
+            "cosmic_spider",
+            "world_tree",
+            "saga_archive",
+            "valhalla_codex",
+            "frisson_du_risque",
+            "concentration_totale",
+            "pacte_final"
+          ],
+          "payoffs": [
+            "berserker_charge",
+            "rune_strike",
+            "mjolnir_echo",
+            "valkyries_dive",
+            "gorgons_gaze",
+            "heros_challenge",
+            "olympian_cleave",
+            "anubis_strike",
+            "pharaohs_curse",
+            "sand_whip",
+            "forbidden_whisper",
+            "madness_spike",
+            "void_touch",
+            "recursive_scratch",
+            "obsidian_jab",
+            "jaguar_pounce",
+            "thorn_slash",
+            "frost_nail",
+            "bear_claw",
+            "trickster_snare",
+            "titans_wrath",
+            "scribes_judgment",
+            "sacrificial_word",
+            "hummingbird_strike",
+            "bogatyr_strike",
+            "snowstorm_trap",
+            "morrigan_curse",
+            "ancient_manuscript",
+            "double_ou_rien"
+          ],
+          "openingEnablers": [
+            "book_of_ra",
+            "hummingbird_strike",
+            "blood_codex",
+            "green_man_verse",
+            "sunbird_power",
+            "frisson_du_risque",
+            "concentration_totale",
+            "pacte_final"
+          ],
+          "openingPayoffs": [
+            "titans_wrath",
+            "scribes_judgment",
+            "sacrificial_word",
+            "hummingbird_strike",
+            "double_ou_rien"
+          ]
+        },
+        {
+          "path": "rhythm",
+          "enablers": [],
+          "payoffs": [],
+          "openingEnablers": [],
+          "openingPayoffs": []
+        },
+        {
+          "path": "archive",
+          "enablers": [
+            "healing_rhythm"
+          ],
+          "payoffs": [
+            "hummingbird_strike"
+          ],
+          "openingEnablers": [],
+          "openingPayoffs": [
+            "hummingbird_strike"
+          ]
+        },
+        {
+          "path": "upgrade",
+          "enablers": [
+            "ink_surge",
+            "eye_of_ra",
+            "olympian_scripture",
+            "pythian_codex"
+          ],
+          "payoffs": [
+            "olympian_scripture"
+          ],
+          "openingEnablers": [
+            "ink_surge",
+            "olympian_scripture"
+          ],
+          "openingPayoffs": [
+            "olympian_scripture"
+          ]
+        },
+        {
+          "path": "debt",
+          "enablers": [
+            "titans_wrath",
+            "frisson_du_risque",
+            "double_ou_rien"
+          ],
+          "payoffs": [
+            "sacrificial_word",
+            "eclair_ephemere",
+            "concentration_totale",
+            "pacte_final"
+          ],
+          "openingEnablers": [
+            "titans_wrath",
+            "frisson_du_risque",
+            "double_ou_rien"
+          ],
+          "openingPayoffs": [
+            "sacrificial_word",
+            "eclair_ephemere",
+            "concentration_totale",
+            "pacte_final"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -68,7 +68,7 @@ export function computeMetaBonuses(
 
   const storyMap = new Map(histoireDefinitions.map((h) => [h.id, h]));
 
-  for (const id of unlockedStoryIds) {
+  for (const id of new Set(unlockedStoryIds)) {
     const histoire = storyMap.get(id);
     if (!histoire) continue;
     applyBonusToComputed(result, histoire.bonus, unlockedSlots);

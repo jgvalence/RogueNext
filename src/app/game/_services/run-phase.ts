@@ -33,6 +33,7 @@ export function deriveInitialPhase(state: RunState): GamePhase {
   if (state.status === "VICTORY") return "VICTORY";
   if (state.status === "DEFEAT") return "DEFEAT";
   if (state.status === "ABANDONED") return "ABANDONED";
+  if (state.pendingEventPurge) return "SPECIAL";
 
   const isRunStart = isRunStartState(state);
   const needsDifficultySelection = state.selectedDifficultyLevel === null;

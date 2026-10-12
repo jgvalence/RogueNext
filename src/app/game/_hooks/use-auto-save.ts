@@ -18,6 +18,7 @@ const checkpoint = (state: RunState) =>
     state.status,
     state.pendingRewards,
     state.merchantCheckpoint,
+    state.pendingEventPurge,
     state.map,
     state.combat === null,
     state.combat?.phase === "COMBAT_WON",

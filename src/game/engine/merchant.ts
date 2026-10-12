@@ -438,11 +438,52 @@ function getCardPrice(rarity: string, floor: number): number {
   return scaleShopPrice(base + floor * 6);
 }
 
+export function getShopUnavailableReason(
+  state: {
+    gold: number;
+    playerCurrentHp: number;
+    playerMaxHp?: number;
+    deck: readonly unknown[];
+    relicIds: readonly string[];
+    allyIds: readonly string[];
+    allySlots: number;
+    usableItems: readonly unknown[];
+    usableItemCapacity: number;
+  },
+  item: ShopItem
+): "invalid" | "gold" | "hp" | "deck" | "inventory" | "allies" | "owned" | "fullHealth" | null {
+  if (!Number.isFinite(item.price) || item.price < 0) return "invalid";
+  if (state.gold < item.price) return "gold";
+  if ((item.type === "purge" || item.type === "blood_purge") && state.deck.length <= 1) return "deck";
+  if (item.type === "blood_purge" && state.playerCurrentHp <= Math.max(0, item.hpCost ?? 0)) return "hp";
+  if (item.type === "heal" && state.playerCurrentHp >= (state.playerMaxHp ?? Infinity)) return "fullHealth";
+  if (item.type === "card" && !item.cardDef) return "invalid";
+  if (item.type === "relic") {
+    if (!item.relicId) return "invalid";
+    if (state.relicIds.includes(item.relicId)) return "owned";
+  }
+  if (item.type === "ally") {
+    if (!item.allyId) return "invalid";
+    if (state.allyIds.includes(item.allyId)) return "owned";
+    if (state.allyIds.length >= Math.min(GAME_CONSTANTS.MAX_ALLIES, Math.max(0, state.allySlots))) return "allies";
+  }
+  if (item.type === "usable_item") {
+    if (!item.usableItemDef) return "invalid";
+    if (state.usableItems.length >= state.usableItemCapacity) return "inventory";
+  }
+  return null;
+}
+
 export function buyShopItem(
   runState: RunState,
   item: ShopItem
 ): RunState | null {
-  if (runState.gold < item.price) return null;
+  if (getShopUnavailableReason({
+    ...runState,
+    allySlots: runState.metaBonuses?.allySlots ?? 0,
+    usableItems: runState.usableItems ?? [],
+    usableItemCapacity: runState.usableItemCapacity ?? GAME_CONSTANTS.MAX_USABLE_ITEMS,
+  }, item)) return null;
 
   let state = {
     ...runState,

@@ -4,6 +4,7 @@ import {
   endRunAction,
   persistRunState,
   resetRunSaveSession,
+  SaveConflictError,
 } from "./run-save-client";
 const { save, finish } = vi.hoisted(() => ({ save: vi.fn(), finish: vi.fn() }));
 vi.mock("@/server/actions/run", () => ({
@@ -20,6 +21,26 @@ beforeEach(() => {
   finish.mockResolvedValue({ success: true, data: { ended: true } });
 });
 describe("serialized save and finalization", () => {
+  it("stops queued writes after a conflict until a newer server revision is loaded", async () => {
+    save.mockResolvedValueOnce({ success: true, data: { saved: false } });
+    await expect(persistRunState(state())).rejects.toBeInstanceOf(SaveConflictError);
+    await expect(persistRunState({ ...state(), gold: 999 })).rejects.toBeInstanceOf(SaveConflictError);
+    expect(save).toHaveBeenCalledTimes(1);
+    await persistRunState({ ...state(), saveRevision: 5 });
+    expect(save.mock.calls[1]![0].state.saveRevision).toBe(5);
+  });
+  it("reconciles an uncertain pagehide request before the next regular save", async () => {
+    const fetchMock = vi.fn().mockRejectedValueOnce(new Error("offline"));
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      await expect(persistRunState({ ...state(), gold: 10 }, true)).rejects.toThrow("offline");
+      expect(fetchMock.mock.calls[0]![1].keepalive).toBe(true);
+      await persistRunState({ ...state(), gold: 20 });
+      expect(save.mock.calls.map(([input]) => [input.state.saveRevision, input.state.gold])).toEqual([[0, 10], [1, 20]]);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
   it("queues writes and ends with the last confirmed revision", async () => {
     let confirm!: (value: typeof ack) => void;
     save.mockImplementationOnce(

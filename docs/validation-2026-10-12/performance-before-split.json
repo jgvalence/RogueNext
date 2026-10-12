@@ -1,0 +1,1078 @@
+[
+  {
+    "slow": false,
+    "cpuMultiplier": 1,
+    "network": "unthrottled localhost",
+    "interactiveMs": 750,
+    "paints": [
+      {
+        "name": "first-paint",
+        "ms": 132
+      },
+      {
+        "name": "first-contentful-paint",
+        "ms": 132
+      }
+    ],
+    "resources": [
+      {
+        "name": "/_next/static/css/18131ebaf40828a6.css",
+        "bytes": 9903,
+        "duration": 38,
+        "type": "link"
+      },
+      {
+        "name": "/_next/static/css/967104e9fd9cfb93.css",
+        "bytes": 1467,
+        "duration": 35,
+        "type": "link"
+      },
+      {
+        "name": "/_next/static/css/73fcd64a770ff60c.css",
+        "bytes": 32193,
+        "duration": 48,
+        "type": "link"
+      },
+      {
+        "name": "/_next/static/chunks/webpack-9ea67bb0d657a1ce.js",
+        "bytes": 2111,
+        "duration": 36,
+        "type": "link"
+      },
+      {
+        "name": "/_next/static/chunks/4bd1b696-100b9d70ed4e49c1.js",
+        "bytes": 54664,
+        "duration": 52,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/4696-be0bcebe063c7d28.js",
+        "bytes": 48443,
+        "duration": 68,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/main-app-98cab51457a567ee.js",
+        "bytes": 881,
+        "duration": 46,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/5662-a37a452674c1d04a.js",
+        "bytes": 17239,
+        "duration": 54,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/2619-04bc32f026a0d946.js",
+        "bytes": 3706,
+        "duration": 62,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/8720-a282034726088b78.js",
+        "bytes": 9591,
+        "duration": 74,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/6743-a45c1992cf7b4529.js",
+        "bytes": 5246,
+        "duration": 72,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/9505-40e57951a7a55017.js",
+        "bytes": 14074,
+        "duration": 78,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/2318-5a58a244c5d0cbd6.js",
+        "bytes": 265106,
+        "duration": 129,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/app/layout-5e5047cdc84c4aec.js",
+        "bytes": 5951,
+        "duration": 89,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/7953-94350ec9cc819d83.js",
+        "bytes": 92020,
+        "duration": 95,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/app/game/error-3a39302110582e4a.js",
+        "bytes": 941,
+        "duration": 88,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/6199-0eedc70699454325.js",
+        "bytes": 2596,
+        "duration": 87,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/4862-0a918069051f21cf.js",
+        "bytes": 13279,
+        "duration": 100,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/723-5c413612cabd22a7.js",
+        "bytes": 3722,
+        "duration": 107,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/3405-d9581f3e38489992.js",
+        "bytes": 10211,
+        "duration": 111,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/545-20c36531b993a200.js",
+        "bytes": 36588,
+        "duration": 118,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/8291-f896a54bd234d642.js",
+        "bytes": 7899,
+        "duration": 117,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/1100-d8490d6f885d237e.js",
+        "bytes": 16878,
+        "duration": 124,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/9700-bf9d9ee01628b14c.js",
+        "bytes": 6364,
+        "duration": 124,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/1889-98e1ab50cd42b13b.js",
+        "bytes": 2352,
+        "duration": 133,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/app/game/%5BrunId%5D/page-e4b33aa1283ce9bd.js",
+        "bytes": 188794,
+        "duration": 165,
+        "type": "script"
+      },
+      {
+        "name": "/game/cmv3tbqzs0001twwwzd9mf615",
+        "bytes": 21656,
+        "duration": 58,
+        "type": "fetch"
+      },
+      {
+        "name": "/favicon.ico",
+        "bytes": 588,
+        "duration": 22,
+        "type": "other"
+      },
+      {
+        "name": "/game/cmv3tbqzs0001twwwzd9mf615",
+        "bytes": 8429,
+        "duration": 28,
+        "type": "fetch"
+      },
+      {
+        "name": "/game/cmv3tbqzs0001twwwzd9mf615",
+        "bytes": 1036,
+        "duration": 16,
+        "type": "fetch"
+      },
+      {
+        "name": "/game/cmv3tbqzs0001twwwzd9mf615",
+        "bytes": 4843,
+        "duration": 32,
+        "type": "fetch"
+      },
+      {
+        "name": "/images/scenes/panlibrarium-mobile-v2.webp",
+        "bytes": 50386,
+        "duration": 8,
+        "type": "img"
+      },
+      {
+        "name": "/images/enemies/painted-v1/ink_slime.webp",
+        "bytes": 97092,
+        "duration": 113,
+        "type": "img"
+      },
+      {
+        "name": "/images/enemies/painted-v1/paper_golem.webp",
+        "bytes": 85896,
+        "duration": 95,
+        "type": "img"
+      },
+      {
+        "name": "/images/enemies/painted-v1/tome_wraith.webp",
+        "bytes": 84264,
+        "duration": 91,
+        "type": "img"
+      },
+      {
+        "name": "/images/enemies/painted-v1/scroll_serpent.webp",
+        "bytes": 85356,
+        "duration": 94,
+        "type": "img"
+      },
+      {
+        "name": "/images/cards/painted-v1/defend-thumb.webp",
+        "bytes": 12528,
+        "duration": 87,
+        "type": "img"
+      },
+      {
+        "name": "/images/cards/painted-v1/parchemin_de_soin-thumb.webp",
+        "bytes": 12950,
+        "duration": 87,
+        "type": "img"
+      },
+      {
+        "name": "/images/cards/painted-v1/strike-thumb.webp",
+        "bytes": 15904,
+        "duration": 87,
+        "type": "img"
+      }
+    ],
+    "inspectionRoundTrips": 12,
+    "clickTimesIncludingDriverDelays": [
+      299,
+      296,
+      313,
+      293,
+      292,
+      836,
+      466,
+      374,
+      297,
+      286,
+      284,
+      286
+    ],
+    "before": [
+      {
+        "name": "Timestamp",
+        "value": 215343.80252
+      },
+      {
+        "name": "AudioHandlers",
+        "value": 0
+      },
+      {
+        "name": "AudioWorkletProcessors",
+        "value": 0
+      },
+      {
+        "name": "Documents",
+        "value": 1
+      },
+      {
+        "name": "Frames",
+        "value": 1
+      },
+      {
+        "name": "JSEventListeners",
+        "value": 533
+      },
+      {
+        "name": "LayoutObjects",
+        "value": 364
+      },
+      {
+        "name": "MediaKeySessions",
+        "value": 0
+      },
+      {
+        "name": "MediaKeys",
+        "value": 0
+      },
+      {
+        "name": "Nodes",
+        "value": 958
+      },
+      {
+        "name": "Resources",
+        "value": 242
+      },
+      {
+        "name": "ContextLifecycleStateObservers",
+        "value": 13
+      },
+      {
+        "name": "V8PerContextDatas",
+        "value": 1
+      },
+      {
+        "name": "WorkerGlobalScopes",
+        "value": 1
+      },
+      {
+        "name": "UACSSResources",
+        "value": 0
+      },
+      {
+        "name": "RTCPeerConnections",
+        "value": 0
+      },
+      {
+        "name": "ResourceFetchers",
+        "value": 3
+      },
+      {
+        "name": "AdSubframes",
+        "value": 0
+      },
+      {
+        "name": "DetachedScriptStates",
+        "value": 0
+      },
+      {
+        "name": "ArrayBufferContents",
+        "value": 0
+      },
+      {
+        "name": "LayoutCount",
+        "value": 9
+      },
+      {
+        "name": "RecalcStyleCount",
+        "value": 21
+      },
+      {
+        "name": "LayoutDuration",
+        "value": 0.004366
+      },
+      {
+        "name": "RecalcStyleDuration",
+        "value": 0.01485
+      },
+      {
+        "name": "DevToolsCommandDuration",
+        "value": 0.00553
+      },
+      {
+        "name": "ScriptDuration",
+        "value": 0.201044
+      },
+      {
+        "name": "V8CompileDuration",
+        "value": 0.00271
+      },
+      {
+        "name": "TaskDuration",
+        "value": 0.592257
+      },
+      {
+        "name": "TaskOtherDuration",
+        "value": 0.363757
+      },
+      {
+        "name": "ThreadTime",
+        "value": 0.431404
+      },
+      {
+        "name": "ProcessTime",
+        "value": 116.009782
+      },
+      {
+        "name": "JSHeapUsedSize",
+        "value": 10368784
+      },
+      {
+        "name": "JSHeapTotalSize",
+        "value": 12582912
+      },
+      {
+        "name": "FirstMeaningfulPaint",
+        "value": 215342.523005
+      },
+      {
+        "name": "DomContentLoaded",
+        "value": 215342.036872
+      },
+      {
+        "name": "NavigationStart",
+        "value": 215341.914686
+      }
+    ],
+    "after": [
+      {
+        "name": "Timestamp",
+        "value": 215353.181158
+      },
+      {
+        "name": "AudioHandlers",
+        "value": 0
+      },
+      {
+        "name": "AudioWorkletProcessors",
+        "value": 0
+      },
+      {
+        "name": "Documents",
+        "value": 1
+      },
+      {
+        "name": "Frames",
+        "value": 1
+      },
+      {
+        "name": "JSEventListeners",
+        "value": 537
+      },
+      {
+        "name": "LayoutObjects",
+        "value": 364
+      },
+      {
+        "name": "MediaKeySessions",
+        "value": 0
+      },
+      {
+        "name": "MediaKeys",
+        "value": 0
+      },
+      {
+        "name": "Nodes",
+        "value": 1009
+      },
+      {
+        "name": "Resources",
+        "value": 242
+      },
+      {
+        "name": "ContextLifecycleStateObservers",
+        "value": 14
+      },
+      {
+        "name": "V8PerContextDatas",
+        "value": 1
+      },
+      {
+        "name": "WorkerGlobalScopes",
+        "value": 1
+      },
+      {
+        "name": "UACSSResources",
+        "value": 0
+      },
+      {
+        "name": "RTCPeerConnections",
+        "value": 0
+      },
+      {
+        "name": "ResourceFetchers",
+        "value": 3
+      },
+      {
+        "name": "AdSubframes",
+        "value": 0
+      },
+      {
+        "name": "DetachedScriptStates",
+        "value": 0
+      },
+      {
+        "name": "ArrayBufferContents",
+        "value": 0
+      },
+      {
+        "name": "LayoutCount",
+        "value": 33
+      },
+      {
+        "name": "RecalcStyleCount",
+        "value": 328
+      },
+      {
+        "name": "LayoutDuration",
+        "value": 0.010282
+      },
+      {
+        "name": "RecalcStyleDuration",
+        "value": 0.061396
+      },
+      {
+        "name": "DevToolsCommandDuration",
+        "value": 0.032456
+      },
+      {
+        "name": "ScriptDuration",
+        "value": 0.825145
+      },
+      {
+        "name": "V8CompileDuration",
+        "value": 0.00271
+      },
+      {
+        "name": "TaskDuration",
+        "value": 3.605424
+      },
+      {
+        "name": "TaskOtherDuration",
+        "value": 2.673435
+      },
+      {
+        "name": "ThreadTime",
+        "value": 1.08786
+      },
+      {
+        "name": "ProcessTime",
+        "value": 117.688314
+      },
+      {
+        "name": "JSHeapUsedSize",
+        "value": 11484876
+      },
+      {
+        "name": "JSHeapTotalSize",
+        "value": 12845056
+      },
+      {
+        "name": "FirstMeaningfulPaint",
+        "value": 215342.523005
+      },
+      {
+        "name": "DomContentLoaded",
+        "value": 215342.036872
+      },
+      {
+        "name": "NavigationStart",
+        "value": 215341.914686
+      }
+    ]
+  },
+  {
+    "slow": true,
+    "cpuMultiplier": 4,
+    "network": "1.6 Mbps / 150 ms",
+    "interactiveMs": 9428,
+    "paints": [
+      {
+        "name": "first-paint",
+        "ms": 2880
+      },
+      {
+        "name": "first-contentful-paint",
+        "ms": 2880
+      }
+    ],
+    "resources": [
+      {
+        "name": "/_next/static/css/18131ebaf40828a6.css",
+        "bytes": 9903,
+        "duration": 335,
+        "type": "link"
+      },
+      {
+        "name": "/_next/static/css/73fcd64a770ff60c.css",
+        "bytes": 32193,
+        "duration": 849,
+        "type": "link"
+      },
+      {
+        "name": "/_next/static/css/967104e9fd9cfb93.css",
+        "bytes": 1467,
+        "duration": 226,
+        "type": "link"
+      },
+      {
+        "name": "/_next/static/chunks/webpack-9ea67bb0d657a1ce.js",
+        "bytes": 2111,
+        "duration": 260,
+        "type": "link"
+      },
+      {
+        "name": "/_next/static/chunks/4bd1b696-100b9d70ed4e49c1.js",
+        "bytes": 54664,
+        "duration": 1485,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/4696-be0bcebe063c7d28.js",
+        "bytes": 48443,
+        "duration": 1373,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/main-app-98cab51457a567ee.js",
+        "bytes": 881,
+        "duration": 388,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/5662-a37a452674c1d04a.js",
+        "bytes": 17239,
+        "duration": 852,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/2619-04bc32f026a0d946.js",
+        "bytes": 3706,
+        "duration": 600,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/2318-5a58a244c5d0cbd6.js",
+        "bytes": 265106,
+        "duration": 4496,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/6743-a45c1992cf7b4529.js",
+        "bytes": 5246,
+        "duration": 910,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/8720-a282034726088b78.js",
+        "bytes": 9591,
+        "duration": 1261,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/9505-40e57951a7a55017.js",
+        "bytes": 14074,
+        "duration": 1409,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/7953-94350ec9cc819d83.js",
+        "bytes": 92020,
+        "duration": 2947,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/app/layout-5e5047cdc84c4aec.js",
+        "bytes": 5951,
+        "duration": 1548,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/app/game/error-3a39302110582e4a.js",
+        "bytes": 941,
+        "duration": 1533,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/6199-0eedc70699454325.js",
+        "bytes": 2596,
+        "duration": 1611,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/4862-0a918069051f21cf.js",
+        "bytes": 13279,
+        "duration": 1976,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/723-5c413612cabd22a7.js",
+        "bytes": 3722,
+        "duration": 1792,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/3405-d9581f3e38489992.js",
+        "bytes": 10211,
+        "duration": 1991,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/545-20c36531b993a200.js",
+        "bytes": 36588,
+        "duration": 2643,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/8291-f896a54bd234d642.js",
+        "bytes": 7899,
+        "duration": 2142,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/1100-d8490d6f885d237e.js",
+        "bytes": 16878,
+        "duration": 2558,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/9700-bf9d9ee01628b14c.js",
+        "bytes": 6364,
+        "duration": 2356,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/1889-98e1ab50cd42b13b.js",
+        "bytes": 2352,
+        "duration": 2390,
+        "type": "script"
+      },
+      {
+        "name": "/_next/static/chunks/app/game/%5BrunId%5D/page-e4b33aa1283ce9bd.js",
+        "bytes": 188794,
+        "duration": 4567,
+        "type": "script"
+      },
+      {
+        "name": "/favicon.ico",
+        "bytes": 588,
+        "duration": 166,
+        "type": "other"
+      },
+      {
+        "name": "/game/cmv3tbqzs0001twwwzd9mf615",
+        "bytes": 21656,
+        "duration": 293,
+        "type": "fetch"
+      },
+      {
+        "name": "/game/cmv3tbqzs0001twwwzd9mf615",
+        "bytes": 8429,
+        "duration": 235,
+        "type": "fetch"
+      },
+      {
+        "name": "/game/cmv3tbqzs0001twwwzd9mf615",
+        "bytes": 1036,
+        "duration": 182,
+        "type": "fetch"
+      },
+      {
+        "name": "/game/cmv3tbqzs0001twwwzd9mf615",
+        "bytes": 4844,
+        "duration": 218,
+        "type": "fetch"
+      },
+      {
+        "name": "/images/cards/painted-v1/defend-thumb.webp",
+        "bytes": 12528,
+        "duration": 556,
+        "type": "img"
+      }
+    ],
+    "inspectionRoundTrips": 12,
+    "clickTimesIncludingDriverDelays": [
+      384,
+      350,
+      346,
+      337,
+      371,
+      374,
+      359,
+      340,
+      345,
+      333,
+      338,
+      323
+    ],
+    "before": [
+      {
+        "name": "Timestamp",
+        "value": 215366.893427
+      },
+      {
+        "name": "AudioHandlers",
+        "value": 0
+      },
+      {
+        "name": "AudioWorkletProcessors",
+        "value": 0
+      },
+      {
+        "name": "Documents",
+        "value": 1
+      },
+      {
+        "name": "Frames",
+        "value": 1
+      },
+      {
+        "name": "JSEventListeners",
+        "value": 533
+      },
+      {
+        "name": "LayoutObjects",
+        "value": 364
+      },
+      {
+        "name": "MediaKeySessions",
+        "value": 0
+      },
+      {
+        "name": "MediaKeys",
+        "value": 0
+      },
+      {
+        "name": "Nodes",
+        "value": 961
+      },
+      {
+        "name": "Resources",
+        "value": 242
+      },
+      {
+        "name": "ContextLifecycleStateObservers",
+        "value": 16
+      },
+      {
+        "name": "V8PerContextDatas",
+        "value": 1
+      },
+      {
+        "name": "WorkerGlobalScopes",
+        "value": 1
+      },
+      {
+        "name": "UACSSResources",
+        "value": 0
+      },
+      {
+        "name": "RTCPeerConnections",
+        "value": 0
+      },
+      {
+        "name": "ResourceFetchers",
+        "value": 3
+      },
+      {
+        "name": "AdSubframes",
+        "value": 0
+      },
+      {
+        "name": "DetachedScriptStates",
+        "value": 0
+      },
+      {
+        "name": "ArrayBufferContents",
+        "value": 0
+      },
+      {
+        "name": "LayoutCount",
+        "value": 11
+      },
+      {
+        "name": "RecalcStyleCount",
+        "value": 25
+      },
+      {
+        "name": "LayoutDuration",
+        "value": 0.015364
+      },
+      {
+        "name": "RecalcStyleDuration",
+        "value": 0.056517
+      },
+      {
+        "name": "DevToolsCommandDuration",
+        "value": 0.026989
+      },
+      {
+        "name": "ScriptDuration",
+        "value": 3.195487
+      },
+      {
+        "name": "V8CompileDuration",
+        "value": 0.005753
+      },
+      {
+        "name": "TaskDuration",
+        "value": 6.149569
+      },
+      {
+        "name": "TaskOtherDuration",
+        "value": 2.849459
+      },
+      {
+        "name": "ThreadTime",
+        "value": 1.379814
+      },
+      {
+        "name": "ProcessTime",
+        "value": 131.414126
+      },
+      {
+        "name": "JSHeapUsedSize",
+        "value": 10155336
+      },
+      {
+        "name": "JSHeapTotalSize",
+        "value": 11272192
+      },
+      {
+        "name": "FirstMeaningfulPaint",
+        "value": 215359.536023
+      },
+      {
+        "name": "DomContentLoaded",
+        "value": 215359.553284
+      },
+      {
+        "name": "NavigationStart",
+        "value": 215356.657058
+      }
+    ],
+    "after": [
+      {
+        "name": "Timestamp",
+        "value": 215375.478605
+      },
+      {
+        "name": "AudioHandlers",
+        "value": 0
+      },
+      {
+        "name": "AudioWorkletProcessors",
+        "value": 0
+      },
+      {
+        "name": "Documents",
+        "value": 1
+      },
+      {
+        "name": "Frames",
+        "value": 1
+      },
+      {
+        "name": "JSEventListeners",
+        "value": 537
+      },
+      {
+        "name": "LayoutObjects",
+        "value": 364
+      },
+      {
+        "name": "MediaKeySessions",
+        "value": 0
+      },
+      {
+        "name": "MediaKeys",
+        "value": 0
+      },
+      {
+        "name": "Nodes",
+        "value": 1012
+      },
+      {
+        "name": "Resources",
+        "value": 35
+      },
+      {
+        "name": "ContextLifecycleStateObservers",
+        "value": 16
+      },
+      {
+        "name": "V8PerContextDatas",
+        "value": 1
+      },
+      {
+        "name": "WorkerGlobalScopes",
+        "value": 0
+      },
+      {
+        "name": "UACSSResources",
+        "value": 0
+      },
+      {
+        "name": "RTCPeerConnections",
+        "value": 0
+      },
+      {
+        "name": "ResourceFetchers",
+        "value": 1
+      },
+      {
+        "name": "AdSubframes",
+        "value": 0
+      },
+      {
+        "name": "DetachedScriptStates",
+        "value": 0
+      },
+      {
+        "name": "ArrayBufferContents",
+        "value": 0
+      },
+      {
+        "name": "LayoutCount",
+        "value": 36
+      },
+      {
+        "name": "RecalcStyleCount",
+        "value": 360
+      },
+      {
+        "name": "LayoutDuration",
+        "value": 0.046349
+      },
+      {
+        "name": "RecalcStyleDuration",
+        "value": 0.268658
+      },
+      {
+        "name": "DevToolsCommandDuration",
+        "value": 0.13429
+      },
+      {
+        "name": "ScriptDuration",
+        "value": 4.803805
+      },
+      {
+        "name": "V8CompileDuration",
+        "value": 0.005753
+      },
+      {
+        "name": "TaskDuration",
+        "value": 9.420044
+      },
+      {
+        "name": "TaskOtherDuration",
+        "value": 4.161189
+      },
+      {
+        "name": "ThreadTime",
+        "value": 2.236113
+      },
+      {
+        "name": "ProcessTime",
+        "value": 141.857767
+      },
+      {
+        "name": "JSHeapUsedSize",
+        "value": 11592740
+      },
+      {
+        "name": "JSHeapTotalSize",
+        "value": 12845056
+      },
+      {
+        "name": "FirstMeaningfulPaint",
+        "value": 215359.536023
+      },
+      {
+        "name": "DomContentLoaded",
+        "value": 215359.553284
+      },
+      {
+        "name": "NavigationStart",
+        "value": 215356.657058
+      }
+    ]
+  }
+]

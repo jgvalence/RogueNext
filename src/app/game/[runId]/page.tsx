@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { getActiveRunAction } from "@/server/actions/run";
@@ -27,12 +28,6 @@ import { CombatView } from "../_components/combat/CombatView";
 import { BossRoomSelector } from "../_components/map/BossRoomSelector";
 import { FloorMap } from "../_components/map/FloorMap";
 import { RewardScreen } from "../_components/rewards/RewardScreen";
-import { ShopView } from "../_components/merchant/ShopView";
-import { SpecialRoomView } from "../_components/special/SpecialRoomView";
-import { BiomeSelectScreen } from "../_components/biome/BiomeSelectScreen";
-import { RunSetupScreen } from "../_components/run-setup/RunSetupScreen";
-import { PreBossRoomView } from "../_components/preboss/PreBossRoomView";
-import { RunOutcomeScreen } from "../_components/run-end/RunOutcomeScreen";
 import { useRunOutcomeSummary } from "../_hooks/use-run-outcome-summary";
 import {
   type GamePhase,
@@ -66,6 +61,13 @@ import {
   shouldShowFirstRunMapTutorial,
 } from "@/game/engine/first-run-script";
 import type { BiomeType } from "@/game/schemas/enums";
+
+const ShopView = dynamic(() => import("../_components/merchant/ShopView").then(m => m.ShopView));
+const SpecialRoomView = dynamic(() => import("../_components/special/SpecialRoomView").then(m => m.SpecialRoomView));
+const BiomeSelectScreen = dynamic(() => import("../_components/biome/BiomeSelectScreen").then(m => m.BiomeSelectScreen));
+const RunSetupScreen = dynamic(() => import("../_components/run-setup/RunSetupScreen").then(m => m.RunSetupScreen));
+const PreBossRoomView = dynamic(() => import("../_components/preboss/PreBossRoomView").then(m => m.PreBossRoomView));
+const RunOutcomeScreen = dynamic(() => import("../_components/run-end/RunOutcomeScreen").then(m => m.RunOutcomeScreen));
 
 export default function RunPage() {
   const { t } = useTranslation();
@@ -839,6 +841,7 @@ function GameContent({
             gold={state.gold}
             playerCurrentHp={state.playerCurrentHp}
             relicIds={state.relicIds}
+            playerMaxHp={state.playerMaxHp}
             unlockedCardIds={state.unlockedCardIds}
             unlockedRelicIds={state.unlockedRelicIds ?? []}
             unlockedDifficultyLevelSnapshot={

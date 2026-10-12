@@ -153,6 +153,11 @@ export function setMusicEnabled(enabled: boolean): void {
 
 export function startMusic(theme: MusicTheme): void {
   if (!MUSIC_ENABLED || !isBrowser()) return;
+  _lastTheme = theme;
+  if (readAudioPreferences().music === 0) {
+    stopMusic(0);
+    return;
+  }
   if (_currentTheme === theme && _currentTrack) return;
 
   _lastTheme = theme;
@@ -218,6 +223,14 @@ export function stopMusic(fadeOutSec = 1.5): void {
 }
 
 export function refreshMusicVolume(): void {
+  if (readAudioPreferences().music === 0) {
+    stopMusic(0);
+    return;
+  }
+  if (!_currentTrack && _lastTheme && MUSIC_ENABLED) {
+    startMusic(_lastTheme);
+    return;
+  }
   if (_currentTrack && _currentTheme)
     fadeTrack(
       _currentTrack,

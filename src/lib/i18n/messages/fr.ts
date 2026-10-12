@@ -2296,6 +2296,13 @@ export const fr = {
     huntSignal: "Affronter le gardien",
   },
   special: {
+    bazaar: {
+      label: "Bazar des Reliques", title: "Le Marchand des Âmes",
+      description: "Un étrange marchand vous propose d’échanger vos trésors. Les offres se renouvellent après chaque échange.",
+      offers: "Offres du marchand", empty: "Le marchand n’a plus rien à offrir.",
+      against: "contre", owned: "Vos reliques", exchange: "Échanger",
+    },
+    choiceUnavailable: "Conditions non réunies ou aucune récompense disponible",
     healTitle: "Source de soin",
     healDesc:
       "Entre deux rangees de grimoires, une vasque de pierre affleure le sol. L'eau qui s'en ecoule porte l'odeur de l'encre et du vieux parchemin. On dit que les mots des livres detruits s'y sont dissous — et qu'en boire, c'est laisser quelque chose d'ecrit vous recoudre de l'interieur.",
@@ -2400,6 +2407,11 @@ export const fr = {
     sold: "VENDU",
     soldOut: "RUPTURE",
     inventoryFull: "Inventaire plein",
+    unavailable: {
+      invalid: "Offre indisponible", gold: "Or insuffisant", hp: "PV insuffisants pour ce sacrifice",
+      deck: "Vous devez conserver au moins une carte", inventory: "Inventaire plein",
+      allies: "Aucune place d’allié disponible", owned: "Déjà acquis", fullHealth: "Vos PV sont déjà au maximum",
+    },
     priceGold: "{{price}} or",
     priceHp: "{{price}} PV",
     requiresMoreHp: "Pas assez de PV pour ce sacrifice",

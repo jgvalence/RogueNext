@@ -1,0 +1,4263 @@
+{
+  "config": {
+    "numRuns": 20,
+    "difficulty": 4,
+    "biome": null,
+    "character": "bibliothecaire",
+    "metaPreset": "strong",
+    "seed": "confirmation-1012-D4-strong",
+    "buildType": "draw",
+    "noArmorPayoffs": false,
+    "maxTurnsPerCombat": 60,
+    "writeCsv": false,
+    "verbose": false,
+    "extraStartCards": []
+  },
+  "runs": [
+    {
+      "won": false,
+      "floorsCompleted": 0,
+      "finalHp": 0,
+      "finalGold": 246,
+      "totalTurns": 57,
+      "damageTaken": 138,
+      "combats": 10,
+      "bossesDefeated": 0,
+      "cardsAdded": 7,
+      "relicsGained": 3,
+      "deckSizeAtEnd": 19,
+      "defeatedAtFloor": 1,
+      "defeatedAtRoom": 15,
+      "error": null,
+      "validatedCheckpoints": 16,
+      "defeatedBy": [
+        "quetzalcoatl_wrath"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 419,
+      "totalTurns": 70,
+      "damageTaken": 316,
+      "combats": 24,
+      "bossesDefeated": 2,
+      "cardsAdded": 22,
+      "relicsGained": 5,
+      "deckSizeAtEnd": 34,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 4,
+      "error": null,
+      "validatedCheckpoints": 39,
+      "defeatedBy": [
+        "czar_guard",
+        "iron_cossack",
+        "winter_wolf",
+        "snow_maiden"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "labyrinth",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 103,
+      "finalGold": 430,
+      "totalTurns": 177,
+      "damageTaken": 122,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 39,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 99,
+      "finalGold": 352,
+      "totalTurns": 213,
+      "damageTaken": 388,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 25,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "trickster_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 143,
+      "finalGold": 483,
+      "totalTurns": 254,
+      "damageTaken": 232,
+      "combats": 36,
+      "bossesDefeated": 3,
+      "cardsAdded": 32,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 43,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "baobab_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trickster_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "druids_breath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 544,
+      "totalTurns": 78,
+      "damageTaken": 206,
+      "combats": 24,
+      "bossesDefeated": 2,
+      "cardsAdded": 21,
+      "relicsGained": 6,
+      "deckSizeAtEnd": 33,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 5,
+      "error": null,
+      "validatedCheckpoints": 40,
+      "defeatedBy": [
+        "amber_hound",
+        "briar_beast",
+        "morrigan_wisp",
+        "bog_beast"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "anubis_strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "pharaohs_curse",
+          "upgraded": true,
+          "branch": "B"
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 133,
+      "finalGold": 637,
+      "totalTurns": 151,
+      "damageTaken": 228,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 30,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 43,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trickster_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "fur_binding",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trickster_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ancient_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 493,
+      "totalTurns": 71,
+      "damageTaken": 241,
+      "combats": 26,
+      "bossesDefeated": 2,
+      "cardsAdded": 19,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 31,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 5,
+      "error": null,
+      "validatedCheckpoints": 40,
+      "defeatedBy": [
+        "domovoi_titan"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spirit_drum",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "baobab_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 112,
+      "finalGold": 455,
+      "totalTurns": 132,
+      "damageTaken": 136,
+      "combats": 34,
+      "bossesDefeated": 3,
+      "cardsAdded": 28,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 40,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sphinx_riddle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bestiary_elite_minotaur",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sphinx_riddle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sphinx_riddle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "gorgons_gaze",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_cleave",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "eye_of_ra",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_the_dead",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 116,
+      "finalGold": 389,
+      "totalTurns": 124,
+      "damageTaken": 360,
+      "combats": 30,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 9,
+      "deckSizeAtEnd": 40,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "baobab_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "baobab_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trickster_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spirit_drum",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trickster_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "haunting_regret",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "druids_breath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "starborn_omen",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 203,
+      "finalGold": 372,
+      "totalTurns": 84,
+      "damageTaken": 135,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 26,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "jaguar_pounce",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "quetzal_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 170,
+      "finalGold": 557,
+      "totalTurns": 132,
+      "damageTaken": 222,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 29,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 40,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sun_ritual",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_whisper",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "fur_binding",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "madness_spike",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "quetzal_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 148,
+      "finalGold": 419,
+      "totalTurns": 125,
+      "damageTaken": 216,
+      "combats": 30,
+      "bossesDefeated": 3,
+      "cardsAdded": 25,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 37,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "spirit_drum",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "eye_of_ra",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 411,
+      "totalTurns": 87,
+      "damageTaken": 111,
+      "combats": 13,
+      "bossesDefeated": 1,
+      "cardsAdded": 9,
+      "relicsGained": 5,
+      "deckSizeAtEnd": 21,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 1,
+      "error": null,
+      "validatedCheckpoints": 19,
+      "defeatedBy": [
+        "cyclops",
+        "harpy",
+        "lamia"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "hexed_parchment",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 103,
+      "finalGold": 551,
+      "totalTurns": 77,
+      "damageTaken": 47,
+      "combats": 31,
+      "bossesDefeated": 3,
+      "cardsAdded": 25,
+      "relicsGained": 12,
+      "deckSizeAtEnd": 36,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "void_touch",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "obsidian_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 223,
+      "finalGold": 613,
+      "totalTurns": 149,
+      "damageTaken": 258,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 25,
+      "relicsGained": 13,
+      "deckSizeAtEnd": 36,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "matryoshka_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "matryoshka_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "baobab_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "trickster_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "matryoshka_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "thorn_slash",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "druids_breath",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "selkie_song",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 143,
+      "finalGold": 789,
+      "totalTurns": 124,
+      "damageTaken": 57,
+      "combats": 32,
+      "bossesDefeated": 3,
+      "cardsAdded": 27,
+      "relicsGained": 11,
+      "deckSizeAtEnd": 38,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "gorgons_gaze",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sphinx_riddle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "baobab_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "calendric_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "gorgons_gaze",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "baobab_shield",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "fur_binding",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sphinx_riddle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 1,
+      "finalHp": 0,
+      "finalGold": 302,
+      "totalTurns": 103,
+      "damageTaken": 268,
+      "combats": 21,
+      "bossesDefeated": 1,
+      "cardsAdded": 17,
+      "relicsGained": 6,
+      "deckSizeAtEnd": 28,
+      "defeatedAtFloor": 2,
+      "defeatedAtRoom": 15,
+      "error": null,
+      "validatedCheckpoints": 33,
+      "defeatedBy": [
+        "quetzalcoatl_wrath"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "matryoshka_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "annotated_thesis",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": true,
+      "floorsCompleted": 3,
+      "finalHp": 118,
+      "finalGold": 474,
+      "totalTurns": 116,
+      "damageTaken": 270,
+      "combats": 33,
+      "bossesDefeated": 3,
+      "cardsAdded": 29,
+      "relicsGained": 10,
+      "deckSizeAtEnd": 40,
+      "defeatedAtFloor": null,
+      "defeatedAtRoom": null,
+      "error": null,
+      "validatedCheckpoints": 50,
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "index_of_echoes",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "olympian_guard",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_the_dead",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "gorgons_gaze",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "healing_script",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "nordic_treatise",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "sphinx_riddle",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "book_of_the_dead",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    },
+    {
+      "won": false,
+      "floorsCompleted": 2,
+      "finalHp": 0,
+      "finalGold": 563,
+      "totalTurns": 62,
+      "damageTaken": 258,
+      "combats": 25,
+      "bossesDefeated": 2,
+      "cardsAdded": 22,
+      "relicsGained": 6,
+      "deckSizeAtEnd": 33,
+      "defeatedAtFloor": 3,
+      "defeatedAtRoom": 5,
+      "error": null,
+      "validatedCheckpoints": 40,
+      "defeatedBy": [
+        "wadjet_guardian",
+        "scarab_swarm",
+        "ushabti_servant",
+        "sand_guardian"
+      ],
+      "finalDeck": [
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "strike",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "defend",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "catalogue",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "chuchotement",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "marque_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "brace",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": true,
+          "branch": "A"
+        },
+        {
+          "id": "apollos_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "obsidian_ward",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "herb_lore",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "necronomicon_page",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "oral_history",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "forbidden_appendix",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "temple_archive",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "ink_surge",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "bestiary_normal_snow_maiden",
+          "upgraded": false,
+          "branch": null
+        },
+        {
+          "id": "vulnerability_hex",
+          "upgraded": false,
+          "branch": null
+        }
+      ]
+    }
+  ],
+  "wins": 13,
+  "errors": [],
+  "draftStats": {
+    "temple_archive": {
+      "offered": 65,
+      "picked": 60
+    },
+    "apollos_archive": {
+      "offered": 115,
+      "picked": 19
+    },
+    "curator_pact": {
+      "offered": 78,
+      "picked": 0
+    },
+    "herb_lore": {
+      "offered": 74,
+      "picked": 46
+    },
+    "sun_ritual": {
+      "offered": 23,
+      "picked": 1
+    },
+    "necronomicon_page": {
+      "offered": 61,
+      "picked": 48
+    },
+    "baobab_shield": {
+      "offered": 62,
+      "picked": 7
+    },
+    "ancient_grove": {
+      "offered": 31,
+      "picked": 0
+    },
+    "ink_surge": {
+      "offered": 50,
+      "picked": 26
+    },
+    "fortify": {
+      "offered": 70,
+      "picked": 0
+    },
+    "blood_offering": {
+      "offered": 10,
+      "picked": 0
+    },
+    "nordic_treatise": {
+      "offered": 63,
+      "picked": 26
+    },
+    "brace": {
+      "offered": 56,
+      "picked": 19
+    },
+    "quick_recovery": {
+      "offered": 101,
+      "picked": 0
+    },
+    "calendric_ward": {
+      "offered": 34,
+      "picked": 15
+    },
+    "healing_script": {
+      "offered": 48,
+      "picked": 1
+    },
+    "obsidian_jab": {
+      "offered": 38,
+      "picked": 0
+    },
+    "trickster_lore": {
+      "offered": 50,
+      "picked": 7
+    },
+    "shield_wall": {
+      "offered": 15,
+      "picked": 0
+    },
+    "oral_history": {
+      "offered": 66,
+      "picked": 54
+    },
+    "berserker_charge": {
+      "offered": 18,
+      "picked": 0
+    },
+    "labyrinth": {
+      "offered": 48,
+      "picked": 1
+    },
+    "vulnerability_hex": {
+      "offered": 60,
+      "picked": 22
+    },
+    "fur_binding": {
+      "offered": 70,
+      "picked": 3
+    },
+    "annotated_thesis": {
+      "offered": 44,
+      "picked": 12
+    },
+    "index_of_echoes": {
+      "offered": 22,
+      "picked": 20
+    },
+    "olympian_guard": {
+      "offered": 39,
+      "picked": 19
+    },
+    "mjolnir_echo": {
+      "offered": 7,
+      "picked": 0
+    },
+    "ancient_ward": {
+      "offered": 3,
+      "picked": 1
+    },
+    "iron_samovar": {
+      "offered": 17,
+      "picked": 0
+    },
+    "gorgons_gaze": {
+      "offered": 10,
+      "picked": 4
+    },
+    "thorn_slash": {
+      "offered": 41,
+      "picked": 3
+    },
+    "starborn_omen": {
+      "offered": 46,
+      "picked": 1
+    },
+    "fairy_veil": {
+      "offered": 14,
+      "picked": 0
+    },
+    "druids_breath": {
+      "offered": 16,
+      "picked": 3
+    },
+    "forbidden_appendix": {
+      "offered": 14,
+      "picked": 13
+    },
+    "wild_gale": {
+      "offered": 7,
+      "picked": 0
+    },
+    "obsidian_ward": {
+      "offered": 24,
+      "picked": 9
+    },
+    "jaguar_pounce": {
+      "offered": 34,
+      "picked": 1
+    },
+    "faerie_fire": {
+      "offered": 5,
+      "picked": 0
+    },
+    "quetzal_shield": {
+      "offered": 8,
+      "picked": 2
+    },
+    "ancestral_drum": {
+      "offered": 33,
+      "picked": 0
+    },
+    "trickster_snare": {
+      "offered": 7,
+      "picked": 0
+    },
+    "spirit_drum": {
+      "offered": 8,
+      "picked": 3
+    },
+    "bestiary_normal_harpy": {
+      "offered": 9,
+      "picked": 0
+    },
+    "bestiary_normal_gorgon": {
+      "offered": 3,
+      "picked": 0
+    },
+    "olympian_cleave": {
+      "offered": 16,
+      "picked": 1
+    },
+    "mummy_ward": {
+      "offered": 34,
+      "picked": 0
+    },
+    "canopic_ward": {
+      "offered": 32,
+      "picked": 0
+    },
+    "anubis_strike": {
+      "offered": 35,
+      "picked": 1
+    },
+    "fates_decree": {
+      "offered": 8,
+      "picked": 0
+    },
+    "pharaohs_curse": {
+      "offered": 13,
+      "picked": 1
+    },
+    "rune_strike": {
+      "offered": 3,
+      "picked": 0
+    },
+    "sealed_tome": {
+      "offered": 25,
+      "picked": 0
+    },
+    "forbidden_whisper": {
+      "offered": 18,
+      "picked": 4
+    },
+    "bestiary_normal_cultist_scribe": {
+      "offered": 2,
+      "picked": 0
+    },
+    "saga_keeper": {
+      "offered": 1,
+      "picked": 0
+    },
+    "sand_whip": {
+      "offered": 9,
+      "picked": 0
+    },
+    "frost_nail": {
+      "offered": 13,
+      "picked": 0
+    },
+    "heros_challenge": {
+      "offered": 5,
+      "picked": 0
+    },
+    "sphinx_riddle": {
+      "offered": 7,
+      "picked": 6
+    },
+    "bestiary_elite_minotaur": {
+      "offered": 1,
+      "picked": 1
+    },
+    "eye_of_ra": {
+      "offered": 2,
+      "picked": 2
+    },
+    "book_of_the_dead": {
+      "offered": 4,
+      "picked": 3
+    },
+    "recursive_scratch": {
+      "offered": 1,
+      "picked": 0
+    },
+    "void_shield": {
+      "offered": 2,
+      "picked": 0
+    },
+    "madness_spike": {
+      "offered": 8,
+      "picked": 1
+    },
+    "void_touch": {
+      "offered": 4,
+      "picked": 1
+    },
+    "matryoshka_lore": {
+      "offered": 5,
+      "picked": 4
+    },
+    "bestiary_normal_rusalka": {
+      "offered": 9,
+      "picked": 0
+    },
+    "bear_claw": {
+      "offered": 2,
+      "picked": 0
+    },
+    "permafrost_ward": {
+      "offered": 4,
+      "picked": 0
+    },
+    "selkie_song": {
+      "offered": 2,
+      "picked": 1
+    },
+    "zhar_ptitsa": {
+      "offered": 2,
+      "picked": 0
+    },
+    "bestiary_normal_snow_maiden": {
+      "offered": 1,
+      "picked": 1
+    }
+  },
+  "upgradeStats": {
+    "A": 67,
+    "B": 1
+  }
+}

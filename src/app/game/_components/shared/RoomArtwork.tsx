@@ -8,7 +8,7 @@ export function RoomArtwork({ scene, className = "", background = false }: { sce
   const fallback = "/images/backgrounds/combat.svg";
   return (
     <picture className={className} data-room-art={scene}>
-      {failed !== scene && <source media="(max-width: 600px)" srcSet={getRoomArtSrc(scene, background ? "scene" : "small")} />}
+      {failed !== scene && <source media="(max-width: 1023px)" srcSet={getRoomArtSrc(scene, background ? "scene" : "small")} />}
       <img src={failed === scene ? fallback : getRoomArtSrc(scene, background ? "full" : "scene")}
         alt="" width={1536} height={1024} decoding="async"
         className="h-full w-full object-cover object-center"

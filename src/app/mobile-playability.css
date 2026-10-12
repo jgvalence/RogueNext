@@ -1,4 +1,12 @@
 /* Reading surfaces grow with the rules text. Only their page/modal scrolls. */
+.card-picker-grid { grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); justify-items: center; align-items: start; }
+.card-picker-scroll { max-height: max(120px, calc(85dvh - 150px)); overscroll-behavior: contain; }
+.card-picker-grid [data-card-reading] { width: min(240px, calc(100vw - 88px)) !important; text-align: left; white-space: normal; }
+.shop-unavailable { color: #f6d39a; font-size: 13px; line-height: 1.4; padding: 6px 10px; max-width: 240px; }
+.merchant-room .shop-actions { position: sticky; bottom: 0; z-index: 20; padding: 10px; background: #0b1420f5; border-radius: 12px; }
+.merchant-room .shop-actions button { min-height: 44px; }
+.merchant-room button:disabled { opacity: 1; }
+.merchant-room button p { font-size: 13px; }
 [data-game-card][data-card-reading] {
   width: 240px !important;
   height: auto !important;

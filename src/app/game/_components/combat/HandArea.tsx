@@ -254,17 +254,8 @@ function MobileHandCard({
       data-card-selected={isSelected}
       data-card-inked={isPendingInked}
       data-has-ink={hasInkedVariant}
-      role="button"
-      tabIndex={0}
+      role="group"
       aria-label={`${localizedName}. ${localizeCardDescription(displayDefinition, t)}`}
-      aria-disabled={!canPlay}
-      onKeyDown={(event) => {
-        if (event.target !== event.currentTarget) return;
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          if (canPlay) onPlay();
-        }
-      }}
       onClick={() => {
         if (suppressNextClickRef.current) {
           suppressNextClickRef.current = false;
@@ -306,7 +297,13 @@ function MobileHandCard({
         thumbnail
         className="mobile-card-art pointer-events-none absolute inset-x-0 top-8 h-16 w-full object-cover object-center"
       />
-      <div className="relative z-10 flex h-full flex-col">
+      <RogueButton
+        type="text"
+        className="mobile-card-play !absolute !inset-0 !z-20 !h-full !w-full !border-0 !bg-transparent !p-0"
+        disabled={!canPlay}
+        aria-label={`${localizedName}. ${localizeCardDescription(displayDefinition, t)}`}
+      />
+      <div className="relative flex h-full flex-col">
         <div className="card-cost pointer-events-none absolute left-1 top-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/15 bg-black/30 text-[13px] font-black text-slate-50 shadow-[0_8px_18px_rgba(0,0,0,0.35)]">
           {displayedEnergyCost}
         </div>
@@ -378,7 +375,7 @@ function MobileHandCard({
         <p className="mobile-card-effect">
           {localizeCardDescription(displayDefinition, t)}
         </p>
-        <div className="mobile-card-actions">
+        <div className="mobile-card-actions relative z-30">
           <RogueButton
             type="text"
             className="mobile-card-inspect"

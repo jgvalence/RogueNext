@@ -2286,6 +2286,13 @@ export const en = {
     huntSignal: "Face the guardian",
   },
   special: {
+    bazaar: {
+      label: "Relic Bazaar", title: "The Soul Merchant",
+      description: "A strange merchant offers to trade your treasures. Offers refresh after each exchange.",
+      offers: "Merchant’s offers", empty: "The merchant has nothing left to offer.",
+      against: "for", owned: "Your relics", exchange: "Trade",
+    },
+    choiceUnavailable: "Requirements not met or no reward available",
     healTitle: "Healing Spring",
     healDesc:
       "Between two rows of grimoires, a stone basin rests flush with the floor. The water flowing from it smells of ink and old parchment. They say the words of destroyed books dissolved within — and that to drink is to let something written mend you from the inside.",
@@ -2387,6 +2394,11 @@ export const en = {
     sold: "SOLD",
     soldOut: "SOLD OUT",
     inventoryFull: "Inventory full",
+    unavailable: {
+      invalid: "Offer unavailable", gold: "Not enough gold", hp: "Not enough HP for this sacrifice",
+      deck: "You must keep at least one card", inventory: "Inventory full",
+      allies: "No ally slot available", owned: "Already owned", fullHealth: "You are already at full health",
+    },
     priceGold: "{{price}} gold",
     priceHp: "{{price}} HP",
     requiresMoreHp: "Not enough HP for this sacrifice",

@@ -1,0 +1,2195 @@
+{
+  "issues": [],
+  "stories": [
+    {
+      "id": "encyclopedie_du_savoir",
+      "biome": "LIBRARY",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "PAGES": 11
+      },
+      "cumulativeCost": {
+        "PAGES": 11
+      },
+      "normalFloor1FightsForOwnCost": 6,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 1,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "traite_de_lenergie",
+      "biome": "LIBRARY",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "PAGES": 16
+      },
+      "cumulativeCost": {
+        "PAGES": 16
+      },
+      "normalFloor1FightsForOwnCost": 8,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 2,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "grimoire_des_index",
+      "biome": "LIBRARY",
+      "tier": 2,
+      "prerequisites": [
+        "encyclopedie_du_savoir"
+      ],
+      "cost": {
+        "PAGES": 30
+      },
+      "cumulativeCost": {
+        "PAGES": 41
+      },
+      "normalFloor1FightsForOwnCost": 15,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 1,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 1,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "manuel_de_revision",
+      "biome": "LIBRARY",
+      "tier": 2,
+      "prerequisites": [
+        "traite_de_lenergie"
+      ],
+      "cost": {
+        "PAGES": 26
+      },
+      "cumulativeCost": {
+        "PAGES": 42
+      },
+      "normalFloor1FightsForOwnCost": 13,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 2,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": true,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "le_codex_infini",
+      "biome": "LIBRARY",
+      "tier": 3,
+      "prerequisites": [
+        "grimoire_des_index",
+        "manuel_de_revision"
+      ],
+      "cost": {
+        "PAGES": 84,
+        "LAURIERS": 12
+      },
+      "cumulativeCost": {
+        "PAGES": 167,
+        "LAURIERS": 12
+      },
+      "normalFloor1FightsForOwnCost": 42,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 1,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 2,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 1,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 1,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": true,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "saga_de_ragnar",
+      "biome": "VIKING",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "RUNES": 11
+      },
+      "cumulativeCost": {
+        "RUNES": 11
+      },
+      "normalFloor1FightsForOwnCost": 11,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 1,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "edda_des_berserkers",
+      "biome": "VIKING",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "RUNES": 14
+      },
+      "cumulativeCost": {
+        "RUNES": 14
+      },
+      "normalFloor1FightsForOwnCost": 14,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 15,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "chant_de_skald",
+      "biome": "VIKING",
+      "tier": 2,
+      "prerequisites": [
+        "saga_de_ragnar"
+      ],
+      "cost": {
+        "RUNES": 24
+      },
+      "cumulativeCost": {
+        "RUNES": 35
+      },
+      "normalFloor1FightsForOwnCost": 24,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 1,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 1,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "runes_du_valhalla",
+      "biome": "VIKING",
+      "tier": 2,
+      "prerequisites": [
+        "edda_des_berserkers"
+      ],
+      "cost": {
+        "RUNES": 30
+      },
+      "cumulativeCost": {
+        "RUNES": 44
+      },
+      "normalFloor1FightsForOwnCost": 30,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 15,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": true,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "le_poeme_de_beowulf",
+      "biome": "VIKING",
+      "tier": 3,
+      "prerequisites": [
+        "chant_de_skald",
+        "runes_du_valhalla"
+      ],
+      "cost": {
+        "RUNES": 78,
+        "PAGES": 12
+      },
+      "cumulativeCost": {
+        "RUNES": 157,
+        "PAGES": 12
+      },
+      "normalFloor1FightsForOwnCost": 78,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 2,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 15,
+        "extraHandAtStart": 0,
+        "attackBonus": 1,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": true,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "l_odyssee",
+      "biome": "GREEK",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "LAURIERS": 11
+      },
+      "cumulativeCost": {
+        "LAURIERS": 11
+      },
+      "normalFloor1FightsForOwnCost": 11,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 25,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "la_republique",
+      "biome": "GREEK",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "LAURIERS": 16
+      },
+      "cumulativeCost": {
+        "LAURIERS": 16
+      },
+      "normalFloor1FightsForOwnCost": 16,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 1,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "les_travaux_d_heracles",
+      "biome": "GREEK",
+      "tier": 2,
+      "prerequisites": [
+        "l_odyssee"
+      ],
+      "cost": {
+        "LAURIERS": 24
+      },
+      "cumulativeCost": {
+        "LAURIERS": 35
+      },
+      "normalFloor1FightsForOwnCost": 24,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 25,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 20,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "hymnes_homeriques",
+      "biome": "GREEK",
+      "tier": 2,
+      "prerequisites": [
+        "la_republique"
+      ],
+      "cost": {
+        "LAURIERS": 28
+      },
+      "cumulativeCost": {
+        "LAURIERS": 44
+      },
+      "normalFloor1FightsForOwnCost": 28,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 1,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 2
+      }
+    },
+    {
+      "id": "le_banquet",
+      "biome": "GREEK",
+      "tier": 3,
+      "prerequisites": [
+        "les_travaux_d_heracles",
+        "hymnes_homeriques"
+      ],
+      "cost": {
+        "LAURIERS": 80,
+        "PAGES": 12
+      },
+      "cumulativeCost": {
+        "LAURIERS": 159,
+        "PAGES": 12
+      },
+      "normalFloor1FightsForOwnCost": 80,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 1,
+        "allyHpPercent": 0,
+        "startingGold": 25,
+        "extraCardRewardChoices": 1,
+        "relicDiscount": 20,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 2
+      }
+    },
+    {
+      "id": "livre_des_morts",
+      "biome": "EGYPTIAN",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "GLYPHES": 11
+      },
+      "cumulativeCost": {
+        "GLYPHES": 11
+      },
+      "normalFloor1FightsForOwnCost": 11,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 10,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "hymne_a_re",
+      "biome": "EGYPTIAN",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "GLYPHES": 16
+      },
+      "cumulativeCost": {
+        "GLYPHES": 16
+      },
+      "normalFloor1FightsForOwnCost": 16,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 3,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "textes_des_pyramides",
+      "biome": "EGYPTIAN",
+      "tier": 2,
+      "prerequisites": [
+        "livre_des_morts"
+      ],
+      "cost": {
+        "GLYPHES": 30
+      },
+      "cumulativeCost": {
+        "GLYPHES": 41
+      },
+      "normalFloor1FightsForOwnCost": 30,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 10,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1,
+          2
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "papyrus_d_ani",
+      "biome": "EGYPTIAN",
+      "tier": 2,
+      "prerequisites": [
+        "hymne_a_re"
+      ],
+      "cost": {
+        "GLYPHES": 26
+      },
+      "cumulativeCost": {
+        "GLYPHES": 42
+      },
+      "normalFloor1FightsForOwnCost": 26,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 3,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 3,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "le_rituel_du_soleil",
+      "biome": "EGYPTIAN",
+      "tier": 3,
+      "prerequisites": [
+        "textes_des_pyramides",
+        "papyrus_d_ani"
+      ],
+      "cost": {
+        "GLYPHES": 86,
+        "PAGES": 14
+      },
+      "cumulativeCost": {
+        "GLYPHES": 169,
+        "PAGES": 14
+      },
+      "normalFloor1FightsForOwnCost": 86,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 3,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 10,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1,
+          2,
+          3
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 3,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "codex_fejerváry",
+      "biome": "AZTEC",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "OBSIDIENNE": 11
+      },
+      "cumulativeCost": {
+        "OBSIDIENNE": 11
+      },
+      "normalFloor1FightsForOwnCost": 11,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 10,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "calendrier_de_pierre",
+      "biome": "AZTEC",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "OBSIDIENNE": 14
+      },
+      "cumulativeCost": {
+        "OBSIDIENNE": 14
+      },
+      "normalFloor1FightsForOwnCost": 14,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 3,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "chant_de_quetzalcoatl",
+      "biome": "AZTEC",
+      "tier": 2,
+      "prerequisites": [
+        "codex_fejerváry"
+      ],
+      "cost": {
+        "OBSIDIENNE": 22
+      },
+      "cumulativeCost": {
+        "OBSIDIENNE": 33
+      },
+      "normalFloor1FightsForOwnCost": 22,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 15,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "rite_du_soleil_noir",
+      "biome": "AZTEC",
+      "tier": 2,
+      "prerequisites": [
+        "calendrier_de_pierre"
+      ],
+      "cost": {
+        "OBSIDIENNE": 24
+      },
+      "cumulativeCost": {
+        "OBSIDIENNE": 38
+      },
+      "normalFloor1FightsForOwnCost": 24,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 1,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 3,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "le_sacrifice_cosmique",
+      "biome": "AZTEC",
+      "tier": 3,
+      "prerequisites": [
+        "chant_de_quetzalcoatl",
+        "rite_du_soleil_noir"
+      ],
+      "cost": {
+        "OBSIDIENNE": 76,
+        "RUNES": 10
+      },
+      "cumulativeCost": {
+        "OBSIDIENNE": 147,
+        "RUNES": 10
+      },
+      "normalFloor1FightsForOwnCost": 76,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 2,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 15,
+        "extraHandAtStart": 0,
+        "attackBonus": 1,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 3,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "necronomicon_fragment",
+      "biome": "LOVECRAFTIAN",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "FRAGMENTS": 16
+      },
+      "cumulativeCost": {
+        "FRAGMENTS": 16
+      },
+      "normalFloor1FightsForOwnCost": 16,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 10,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "journal_de_miskatonic",
+      "biome": "LOVECRAFTIAN",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "FRAGMENTS": 14
+      },
+      "cumulativeCost": {
+        "FRAGMENTS": 14
+      },
+      "normalFloor1FightsForOwnCost": 14,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": true,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "cultes_innommables",
+      "biome": "LOVECRAFTIAN",
+      "tier": 2,
+      "prerequisites": [
+        "necronomicon_fragment"
+      ],
+      "cost": {
+        "FRAGMENTS": 28
+      },
+      "cumulativeCost": {
+        "FRAGMENTS": 44
+      },
+      "normalFloor1FightsForOwnCost": 28,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 1,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 10,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "mondes_sans_nom",
+      "biome": "LOVECRAFTIAN",
+      "tier": 2,
+      "prerequisites": [
+        "journal_de_miskatonic"
+      ],
+      "cost": {
+        "FRAGMENTS": 30
+      },
+      "cumulativeCost": {
+        "FRAGMENTS": 44
+      },
+      "normalFloor1FightsForOwnCost": 30,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": true,
+        "startingRareCard": false,
+        "rewardRerolls": 1
+      }
+    },
+    {
+      "id": "le_signe_des_anciens",
+      "biome": "LOVECRAFTIAN",
+      "tier": 3,
+      "prerequisites": [
+        "cultes_innommables",
+        "mondes_sans_nom"
+      ],
+      "cost": {
+        "FRAGMENTS": 78,
+        "GLYPHES": 10
+      },
+      "cumulativeCost": {
+        "FRAGMENTS": 166,
+        "GLYPHES": 10
+      },
+      "normalFloor1FightsForOwnCost": 78,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 1,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 10,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 1,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": true,
+        "startingRareCard": false,
+        "rewardRerolls": 1
+      }
+    },
+    {
+      "id": "mabinogion",
+      "biome": "CELTIC",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "AMBRE": 11
+      },
+      "cumulativeCost": {
+        "AMBRE": 11
+      },
+      "normalFloor1FightsForOwnCost": 11,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 3,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "cycle_d_ulster",
+      "biome": "CELTIC",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "AMBRE": 14
+      },
+      "cumulativeCost": {
+        "AMBRE": 14
+      },
+      "normalFloor1FightsForOwnCost": 14,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 1,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "taliesin",
+      "biome": "CELTIC",
+      "tier": 2,
+      "prerequisites": [
+        "mabinogion"
+      ],
+      "cost": {
+        "AMBRE": 22
+      },
+      "cumulativeCost": {
+        "AMBRE": 33
+      },
+      "normalFloor1FightsForOwnCost": 22,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 1,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 3,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "les_triades_galloises",
+      "biome": "CELTIC",
+      "tier": 2,
+      "prerequisites": [
+        "cycle_d_ulster"
+      ],
+      "cost": {
+        "AMBRE": 26
+      },
+      "cumulativeCost": {
+        "AMBRE": 40
+      },
+      "normalFloor1FightsForOwnCost": 26,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 1,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 1,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "le_chaudron_de_dagda",
+      "biome": "CELTIC",
+      "tier": 3,
+      "prerequisites": [
+        "taliesin",
+        "les_triades_galloises"
+      ],
+      "cost": {
+        "AMBRE": 74,
+        "OBSIDIENNE": 10
+      },
+      "cumulativeCost": {
+        "AMBRE": 147,
+        "OBSIDIENNE": 10
+      },
+      "normalFloor1FightsForOwnCost": 74,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 1,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 1,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 5,
+        "healAfterCombatFlat": 3,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "byliny_de_ilya",
+      "biome": "RUSSIAN",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "SCEAUX": 11
+      },
+      "cumulativeCost": {
+        "SCEAUX": 11
+      },
+      "normalFloor1FightsForOwnCost": 11,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 12,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "contes_de_baba_yaga",
+      "biome": "RUSSIAN",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "SCEAUX": 14
+      },
+      "cumulativeCost": {
+        "SCEAUX": 14
+      },
+      "normalFloor1FightsForOwnCost": 14,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 1,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "l_oiseau_de_feu",
+      "biome": "RUSSIAN",
+      "tier": 2,
+      "prerequisites": [
+        "byliny_de_ilya"
+      ],
+      "cost": {
+        "SCEAUX": 22
+      },
+      "cumulativeCost": {
+        "SCEAUX": 33
+      },
+      "normalFloor1FightsForOwnCost": 22,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 12,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 30,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "domovoi",
+      "biome": "RUSSIAN",
+      "tier": 2,
+      "prerequisites": [
+        "contes_de_baba_yaga"
+      ],
+      "cost": {
+        "SCEAUX": 22
+      },
+      "cumulativeCost": {
+        "SCEAUX": 36
+      },
+      "normalFloor1FightsForOwnCost": 22,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 1,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 4,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "le_grand_livre_des_sorts",
+      "biome": "RUSSIAN",
+      "tier": 3,
+      "prerequisites": [
+        "l_oiseau_de_feu",
+        "domovoi"
+      ],
+      "cost": {
+        "SCEAUX": 74,
+        "AMBRE": 10
+      },
+      "cumulativeCost": {
+        "SCEAUX": 143,
+        "AMBRE": 10
+      },
+      "normalFloor1FightsForOwnCost": 74,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 1,
+        "firstHitDamageReduction": 0,
+        "extraHp": 12,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 30,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 1,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 4,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "epopee_de_soundiata",
+      "biome": "AFRICAN",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "MASQUES": 11
+      },
+      "cumulativeCost": {
+        "MASQUES": 11
+      },
+      "normalFloor1FightsForOwnCost": 11,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 1,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "contes_d_anansi",
+      "biome": "AFRICAN",
+      "tier": 1,
+      "prerequisites": [],
+      "cost": {
+        "MASQUES": 14
+      },
+      "cumulativeCost": {
+        "MASQUES": 14
+      },
+      "normalFloor1FightsForOwnCost": 14,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 1,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "rites_de_passage",
+      "biome": "AFRICAN",
+      "tier": 2,
+      "prerequisites": [
+        "epopee_de_soundiata"
+      ],
+      "cost": {
+        "MASQUES": 22
+      },
+      "cumulativeCost": {
+        "MASQUES": 33
+      },
+      "normalFloor1FightsForOwnCost": 22,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 0,
+        "startingFocus": 0,
+        "startingRegen": 1,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 1,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 0,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "masque_de_legba",
+      "biome": "AFRICAN",
+      "tier": 2,
+      "prerequisites": [
+        "contes_d_anansi"
+      ],
+      "cost": {
+        "MASQUES": 24
+      },
+      "cumulativeCost": {
+        "MASQUES": 38
+      },
+      "normalFloor1FightsForOwnCost": 24,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 1,
+        "startingFocus": 0,
+        "startingRegen": 0,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 0,
+        "allyHpPercent": 0,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 1,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    },
+    {
+      "id": "le_griot_immortel",
+      "biome": "AFRICAN",
+      "tier": 3,
+      "prerequisites": [
+        "rites_de_passage",
+        "masque_de_legba"
+      ],
+      "cost": {
+        "MASQUES": 80,
+        "LAURIERS": 10
+      },
+      "cumulativeCost": {
+        "MASQUES": 151,
+        "LAURIERS": 10
+      },
+      "normalFloor1FightsForOwnCost": 80,
+      "bonusesAfterPrerequisites": {
+        "extraDraw": 0,
+        "extraEnergyMax": 0,
+        "extraInkMax": 0,
+        "inkPerCardChance": 0,
+        "inkPerCardValue": 0,
+        "startingInk": 0,
+        "startingBlock": 0,
+        "startingStrength": 1,
+        "startingFocus": 0,
+        "startingRegen": 1,
+        "firstHitDamageReduction": 0,
+        "extraHp": 0,
+        "extraHandAtStart": 0,
+        "attackBonus": 0,
+        "allySlots": 2,
+        "allyHpPercent": 25,
+        "startingGold": 0,
+        "extraCardRewardChoices": 0,
+        "relicDiscount": 0,
+        "lootLuck": 1,
+        "unlockedPowerSlots": [
+          1
+        ],
+        "healAfterCombat": 0,
+        "healAfterCombatFlat": 0,
+        "exhaustKeepChance": 0,
+        "survivalOnce": false,
+        "freeUpgradePerRun": false,
+        "startingUncommonCardChoice": false,
+        "startingRareCard": false,
+        "rewardRerolls": 0
+      }
+    }
+  ],
+  "allBonuses": {
+    "extraDraw": 1,
+    "extraEnergyMax": 0,
+    "extraInkMax": 0,
+    "inkPerCardChance": 0,
+    "inkPerCardValue": 0,
+    "startingInk": 5,
+    "startingBlock": 0,
+    "startingStrength": 2,
+    "startingFocus": 1,
+    "startingRegen": 1,
+    "firstHitDamageReduction": 0,
+    "extraHp": 15,
+    "extraHandAtStart": 1,
+    "attackBonus": 1,
+    "allySlots": 3,
+    "allyHpPercent": 25,
+    "startingGold": 55,
+    "extraCardRewardChoices": 1,
+    "relicDiscount": 20,
+    "lootLuck": 4,
+    "unlockedPowerSlots": [
+      1,
+      2,
+      3
+    ],
+    "healAfterCombat": 5,
+    "healAfterCombatFlat": 4,
+    "exhaustKeepChance": 0,
+    "survivalOnce": true,
+    "freeUpgradePerRun": true,
+    "startingUncommonCardChoice": true,
+    "startingRareCard": false,
+    "rewardRerolls": 3
+  },
+  "assumption": "Combat-equivalent estimates at floor 1, without spending elsewhere; not a prediction of human sessions."
+}

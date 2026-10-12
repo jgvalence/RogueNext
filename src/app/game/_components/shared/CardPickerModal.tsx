@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { RogueButton, RogueEmpty, RogueModal } from "@/components/ui/rogue";
 import type { CardInstance, CardDefinition } from "@/game/schemas/cards";
 import { GameCard } from "../combat/GameCard";
@@ -31,6 +31,7 @@ export function CardPickerModal({
   showUpgradePreview = false,
 }: CardPickerModalProps) {
   const { t } = useTranslation();
+  const picked = useRef(false);
   const [hoverInfo, setHoverInfo] = useState<UpgradePreviewHoverInfo | null>(
     null
   );
@@ -71,14 +72,14 @@ export function CardPickerModal({
         }
         className="[&_.ant-modal-content]:!max-h-[85vh] [&_.ant-modal-content]:!overflow-hidden [&_.ant-modal-content]:!rounded-xl [&_.ant-modal-content]:!border [&_.ant-modal-content]:!border-rose-800/60 [&_.ant-modal-content]:!bg-slate-900 [&_.ant-modal-header]:!border-b [&_.ant-modal-header]:!border-slate-700/60 [&_.ant-modal-header]:!bg-transparent"
       >
-        <div className="max-h-[65vh] overflow-y-auto p-1">
+        <div className="card-picker-scroll max-h-[65vh] overflow-y-auto p-1">
           {cards.length === 0 ? (
             <RogueEmpty
               description={t("cardPicker.noCards")}
               className="py-8 [&_.ant-empty-description]:!text-sm [&_.ant-empty-description]:!text-slate-500"
             />
           ) : (
-            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+            <div className="card-picker-grid grid gap-3">
               {cards.map((card) => {
                 const def = cardDefs.get(card.definitionId);
                 if (!def) return null;
@@ -87,7 +88,11 @@ export function CardPickerModal({
                     key={card.instanceId}
                     type="text"
                     className="!flex !h-auto !w-auto !cursor-pointer !justify-center !rounded-lg !p-0 !ring-2 !ring-transparent transition hover:!ring-rose-500 focus:!ring-rose-400"
-                    onClick={() => onPick(card.instanceId)}
+                    onClick={() => {
+                      if (picked.current) return;
+                      picked.current = true;
+                      onPick(card.instanceId);
+                    }}
                     onMouseEnter={(e) => handleCardMouseEnter(e, def)}
                     onMouseLeave={handleCardMouseLeave}
                   >
@@ -99,6 +104,7 @@ export function CardPickerModal({
                       canPlay={false}
                       className="!cursor-pointer !opacity-100 !saturate-100"
                       size="sm"
+                      reading
                     />
                   </RogueButton>
                 );
