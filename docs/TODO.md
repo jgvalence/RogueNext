@@ -8,7 +8,7 @@ La [passe autonome du 12 octobre](PASSE_AUTONOME_2026-10-12.md) traite les douze
 
 ## Où trouver le détail
 
-Assouplissement ciblé : [premier étage D0, 12 octobre](d0-opening-2026-10-12/RESULTATS.md). Coefficient de dégâts réduit de 3,08 % avant arrondi, 240 simulations comparées et 365 tests réussis. La validation humaine du départ sans méta reste ouverte.
+Assouplissement ciblé : [courbe progressive du premier étage D0](d0-progressive-2026-10-12/RESULTATS.md), de −12,5 % en première salle à −5 % au boss. Remplace la baisse uniforme de 3,08 %. 120 simulations supplémentaires et 367 tests réussis ; la validation humaine du départ sans méta reste ouverte.
 
 Assouplissement ciblé : [premier étage D0, 12 octobre](d0-opening-2026-10-12/RESULTATS.md). Coefficient de dégâts réduit de 3,08 % avant arrondi, 240 simulations comparées et 365 tests réussis. La validation humaine du départ sans méta reste ouverte.
 

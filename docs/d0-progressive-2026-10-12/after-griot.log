@@ -1,0 +1,976 @@
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+
+╔══════════════════════════════════════════════════╗
+║          RogueNext — Headless Simulator          ║
+╚══════════════════════════════════════════════════╝
+  Runs: 30  |  Diff: 0  |  Character: griot  |  Méta: none  |  Build: mixed
+  Biome: aléatoire  |  Seed: "d0-opening-1012"
+
+
+── Run 1 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d2 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d3 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d4 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d6 NORM [quill_sprite+quill_sprite] HP:68→68 turns:1
+    fl1 d7 NORM [paper_golem] HP:68→68 turns:2
+    fl1 d9 NORM [scroll_serpent+scroll_serpent] HP:68→68 turns:2
+    fl1 d11 NORM [quill_sprite+quill_sprite] HP:68→68 turns:1
+    fl1 d12 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d14 ELITE [venom_wyrm] HP:88→88 turns:1
+    fl1 d15 BOSS [chapter_guardian] HP:88→86 turns:4
+    fl2 d0 NORM [briar_beast+sidhe_raider] HP:86→82 turns:2
+    fl2 d1 NORM [bog_beast] HP:82→83 turns:1
+    fl2 d3 NORM [briar_beast+sidhe_raider] HP:88→88 turns:2
+    fl2 d5 NORM [amber_hound+briar_beast] HP:88→88 turns:3
+    fl2 d6 NORM [bog_beast+druid_apprentice] HP:88→82 turns:2
+    fl2 d7 ELITE [wild_hunt_hound] HP:82→86 turns:3
+    fl2 d9 NORM [morrigan_wisp+briar_beast+druid_apprentice] HP:86→88 turns:2
+    fl2 d10 NORM [amber_hound+briar_beast] HP:88→84 turns:2
+    fl2 d11 NORM [briar_beast+sidhe_raider+sidhe_raider] HP:84→86 turns:2
+    fl2 d13 NORM [druid_apprentice+druid_apprentice+amber_hound] HP:86→88 turns:2
+    fl2 d14 ELITE [wild_hunt_hound] HP:88→85 turns:2
+    fl2 d15 BOSS [dagda_shadow] HP:85→64 turns:4
+    fl3 d0 NORM [shoggoth_spawn+cultist_scribe+star_spawn] HP:64→48 turns:3
+    fl3 d1 NORM [shoggoth_spawn+byakhee] HP:48→48 turns:2
+    fl3 d3 NORM [void_tendril+deep_one] HP:48→51 turns:2
+    fl3 d4 NORM [byakhee+void_tendril+star_spawn] HP:51→44 turns:3
+    fl3 d6 NORM [byakhee+shoggoth_spawn+cultist_scribe] HP:44→26 turns:2
+    fl3 d7 ELITE [elder_hybrid] HP:26→21 turns:3
+    fl3 d10 NORM [deep_one+byakhee+star_spawn] HP:77→61 turns:2
+    fl3 d11 NORM [cultist_scribe+shoggoth_spawn+byakhee] HP:61→64 turns:3
+    fl3 d13 NORM [void_tendril+cultist_scribe+shoggoth_spawn] HP:84→86 turns:3
+    fl3 d14 ELITE [elder_hybrid] HP:86→70 turns:2
+    fl3 d15 BOSS [nyarlathotep_shard] HP:70→61 turns:5
+  VICTOIRE fl3 | HP:66 | deck:40 | boss:3 | tours:73
+
+── Run 2 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d1 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d2 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d5 NORM [paper_golem] HP:68→68 turns:1
+    fl1 d6 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d7 ELITE [ink_archon] HP:68→68 turns:2
+    fl1 d10 NORM [scroll_serpent+ink_slime] HP:68→68 turns:2
+    fl1 d11 NORM [ink_slime+quill_sprite] HP:68→68 turns:1
+    fl1 d12 NORM [ink_slime+quill_sprite] HP:68→68 turns:1
+    fl1 d14 ELITE [ink_archon] HP:68→68 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:68→68 turns:3
+    fl2 d0 NORM [apep_scion+wadjet_guardian] HP:68→68 turns:2
+    fl2 d1 NORM [tomb_priest+wadjet_guardian] HP:68→68 turns:2
+    fl2 d3 NORM [sand_guardian] HP:68→68 turns:2
+    fl2 d5 ELITE [anubis_champion] HP:93→88 turns:2
+    fl2 d7 NORM [wadjet_guardian+scarab_swarm+apep_scion] HP:93→93 turns:2
+    fl2 d10 NORM [sand_guardian+tomb_priest] HP:93→93 turns:2
+    fl2 d11 NORM [ushabti_servant+wadjet_guardian] HP:93→93 turns:2
+    fl2 d12 NORM [sand_guardian+scarab_swarm] HP:93→93 turns:2
+    fl2 d14 ELITE [sekhmet_chosen] HP:93→93 turns:2
+    fl2 d15 BOSS [ra_avatar] HP:93→93 turns:3
+    fl3 d0 NORM [sidhe_raider+amber_hound+briar_beast] HP:93→78 turns:3
+    fl3 d2 NORM [bog_beast+briar_beast] HP:93→88 turns:3
+    fl3 d3 NORM [bog_beast+briar_beast] HP:93→85 turns:2
+    fl3 d6 NORM [briar_beast+amber_hound+sidhe_raider+sidhe_raider] HP:90→84 turns:3
+    fl3 d7 ELITE [wild_hunt_hound] HP:89→86 turns:3
+    fl3 d9 NORM [bog_beast+briar_beast+sidhe_raider] HP:91→92 turns:2
+    fl3 d11 NORM [amber_hound+briar_beast+sidhe_raider+sidhe_raider] HP:113→99 turns:2
+    fl3 d12 NORM [amber_hound+bog_beast+druid_apprentice] HP:104→95 turns:3
+    fl3 d14 ELITE [morrigan_chosen] HP:113→113 turns:3
+    fl3 d15 BOSS [cernunnos_shade] HP:113→108 turns:3
+  VICTOIRE fl3 | HP:113 | deck:36 | boss:3 | tours:64
+
+── Run 3 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d2 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d3 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d5 NORM [ink_slime+scroll_serpent] HP:58→58 turns:1
+    fl1 d6 ELITE [venom_wyrm] HP:61→61 turns:2
+    fl1 d9 NORM [scroll_serpent+ink_slime] HP:61→61 turns:1
+    fl1 d11 NORM [quill_sprite+ink_slime] HP:64→64 turns:1
+    fl1 d12 NORM [tome_wraith] HP:67→67 turns:1
+    fl1 d14 ELITE [ink_archon] HP:68→68 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:68→55 turns:5
+    fl2 d0 NORM [byakhee+cultist_scribe] HP:55→55 turns:2
+    fl2 d2 NORM [byakhee+cultist_scribe] HP:85→85 turns:2
+    fl2 d3 NORM [void_tendril+cultist_scribe] HP:85→78 turns:2
+    fl2 d5 NORM [shoggoth_spawn+cultist_scribe] HP:83→78 turns:2
+    fl2 d6 ELITE [elder_hybrid] HP:78→66 turns:3
+    fl2 d9 NORM [shoggoth_spawn+cultist_scribe] HP:66→54 turns:2
+    fl2 d10 NORM [byakhee+void_tendril] HP:54→50 turns:2
+    fl2 d11 ELITE [elder_hybrid] HP:50→43 turns:3
+    fl2 d12 NORM [void_tendril+byakhee] HP:43→43 turns:2
+    fl2 d15 BOSS [shub_spawn] HP:72→33 turns:5
+    fl3 d0 NORM [mummy_knight+ushabti_servant+scarab_swarm] HP:33→12 turns:3
+  * fl3 d2 NORM [wadjet_guardian+ushabti_servant+tomb_priest] HP:32→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:28 | boss:2 | tours:46
+
+── Run 4 ─────────────────────────────────────
+    fl1 d0 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d3 NORM [scroll_serpent] HP:88→88 turns:1
+    fl1 d5 ELITE [venom_wyrm] HP:88→88 turns:2
+    fl1 d6 NORM [paper_golem] HP:88→85 turns:1
+    fl1 d9 NORM [scroll_serpent+quill_sprite] HP:88→86 turns:1
+    fl1 d10 NORM [ink_slime+ink_slime] HP:88→88 turns:1
+    fl1 d12 NORM [quill_sprite+ink_slime] HP:88→87 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:88→84 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:84→75 turns:4
+    fl2 d0 NORM [briar_beast+sidhe_raider] HP:75→69 turns:3
+    fl2 d1 NORM [amber_hound+druid_apprentice] HP:69→69 turns:1
+    fl2 d3 NORM [briar_beast+druid_apprentice] HP:88→76 turns:2
+    fl2 d6 NORM [amber_hound+briar_beast] HP:101→101 turns:2
+    fl2 d7 ELITE [wild_hunt_hound] HP:101→100 turns:2
+    fl2 d10 NORM [druid_apprentice+briar_beast+morrigan_wisp] HP:113→113 turns:2
+    fl2 d11 NORM [amber_hound+druid_apprentice+sidhe_raider] HP:113→93 turns:2
+    fl2 d13 NORM [bog_beast+druid_apprentice] HP:83→66 turns:2
+    fl2 d15 BOSS [cernunnos_shade] HP:99→92 turns:4
+    fl3 d0 NORM [byakhee+deep_one] HP:92→83 turns:2
+    fl3 d2 NORM [void_tendril+deep_one] HP:113→113 turns:2
+    fl3 d3 NORM [shoggoth_spawn+byakhee] HP:113→113 turns:3
+    fl3 d4 NORM [deep_one+void_tendril] HP:113→101 turns:3
+    fl3 d6 NORM [shoggoth_spawn+void_tendril+cultist_scribe] HP:121→101 turns:2
+    fl3 d9 NORM [void_tendril+byakhee+star_spawn+cultist_scribe] HP:133→98 turns:3
+    fl3 d10 NORM [void_tendril+shoggoth_spawn+star_spawn] HP:98→85 turns:3
+    fl3 d11 NORM [byakhee+cultist_scribe+star_spawn+void_tendril] HP:85→65 turns:4
+    fl3 d13 NORM [byakhee+shoggoth_spawn+star_spawn] HP:85→69 turns:4
+    fl3 d15 BOSS [nyarlathotep_shard] HP:114→113 turns:5
+  VICTOIRE fl3 | HP:113 | deck:36 | boss:3 | tours:65
+
+── Run 5 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d1 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d3 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d5 NORM [ink_slime+quill_sprite] HP:68→67 turns:1
+    fl1 d6 ELITE [venom_wyrm] HP:68→68 turns:2
+    fl1 d9 NORM [quill_sprite+scroll_serpent] HP:68→68 turns:1
+    fl1 d10 NORM [ink_slime+scroll_serpent] HP:68→68 turns:2
+    fl1 d11 NORM [quill_sprite+scroll_serpent] HP:68→68 turns:1
+    fl1 d12 NORM [ink_slime+quill_sprite] HP:68→68 turns:1
+    fl1 d14 ELITE [ink_archon] HP:68→68 turns:2
+    fl1 d15 BOSS [the_archivist] HP:68→68 turns:3
+    fl2 d0 NORM [gorgon+satyr] HP:68→68 turns:2
+    fl2 d1 NORM [cyclops] HP:68→68 turns:2
+    fl2 d3 NORM [cyclops] HP:68→64 turns:2
+    fl2 d5 NORM [bronze_automaton+harpy] HP:64→60 turns:2
+    fl2 d6 NORM [bronze_automaton+harpy] HP:60→58 turns:2
+    fl2 d7 NORM [bronze_automaton+satyr] HP:58→58 turns:2
+    fl2 d9 NORM [lamia+gorgon] HP:58→46 turns:1
+    fl2 d11 NORM [bronze_automaton+harpy] HP:66→62 turns:2
+    fl2 d13 NORM [gorgon+lamia] HP:62→62 turns:1
+    fl2 d15 BOSS [medusa] HP:88→67 turns:3
+    fl3 d0 NORM [frost_troll+shield_maiden] HP:67→60 turns:2
+    fl3 d1 NORM [frost_troll+einherjar] HP:60→41 turns:1
+    fl3 d3 NORM [einherjar+frost_troll] HP:41→35 turns:2
+    fl3 d5 NORM [einherjar+frost_troll+draugr] HP:35→25 turns:2
+    fl3 d6 NORM [einherjar+rune_berserker+shield_maiden] HP:25→21 turns:2
+  * fl3 d7 NORM [einherjar+frost_troll+rune_shaman] HP:21→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:35 | boss:2 | tours:45
+
+── Run 6 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d2 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d3 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d4 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d7 NORM [paper_golem] HP:68→64 turns:1
+    fl1 d9 NORM [scroll_serpent+ink_slime] HP:67→66 turns:1
+    fl1 d10 NORM [quill_sprite+scroll_serpent] HP:68→68 turns:2
+    fl1 d11 ELITE [venom_wyrm] HP:68→68 turns:2
+    fl1 d12 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:68→68 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:68→65 turns:3
+    fl2 d0 NORM [mummy_knight+tomb_priest] HP:65→65 turns:2
+    fl2 d2 NORM [tomb_priest+wadjet_guardian] HP:68→68 turns:2
+    fl2 d3 NORM [mummy_knight+tomb_priest] HP:68→68 turns:2
+    fl2 d4 NORM [mummy_knight+tomb_priest] HP:68→68 turns:2
+    fl2 d6 NORM [ushabti_servant+wadjet_guardian] HP:68→68 turns:3
+    fl2 d7 ELITE [anubis_champion] HP:68→68 turns:3
+    fl2 d10 NORM [scarab_swarm+tomb_priest+scarab_swarm+scarab_swarm] HP:68→68 turns:2
+    fl2 d11 ELITE [anubis_champion] HP:68→68 turns:2
+    fl2 d13 NORM [mummy_knight+wadjet_guardian] HP:68→68 turns:2
+    fl2 d14 ELITE [sekhmet_chosen] HP:68→68 turns:3
+    fl2 d15 BOSS [ra_avatar] HP:68→54 turns:4
+    fl3 d0 NORM [morrigan_wisp+amber_hound+sidhe_raider+druid_apprentice] HP:54→38 turns:3
+    fl3 d1 NORM [sidhe_raider+amber_hound+druid_apprentice+morrigan_wisp] HP:38→18 turns:2
+    fl3 d3 NORM [bog_beast+morrigan_wisp+druid_apprentice] HP:38→38 turns:2
+    fl3 d4 NORM [bog_beast+sidhe_raider+druid_apprentice] HP:38→20 turns:2
+    fl3 d6 NORM [amber_hound+druid_apprentice+druid_apprentice+briar_beast] HP:20→13 turns:3
+    fl3 d7 ELITE [morrigan_chosen] HP:13→12 turns:3
+    fl3 d9 NORM [amber_hound+briar_beast+druid_apprentice+morrigan_wisp] HP:37→21 turns:3
+    fl3 d10 NORM [briar_beast+bog_beast+morrigan_wisp] HP:21→17 turns:3
+    fl3 d11 ELITE [morrigan_chosen] HP:17→20 turns:3
+    fl3 d13 NORM [briar_beast+bog_beast+druid_apprentice] HP:20→20 turns:3
+    fl3 d15 BOSS [cernunnos_shade] HP:40→38 turns:4
+  VICTOIRE fl3 | HP:38 | deck:37 | boss:3 | tours:74
+
+── Run 7 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d1 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d3 NORM [scroll_serpent] HP:88→88 turns:1
+    fl1 d5 NORM [paper_golem] HP:88→88 turns:2
+    fl1 d6 NORM [ink_slime+scroll_serpent] HP:88→87 turns:1
+    fl1 d7 ELITE [ink_archon] HP:88→85 turns:2
+    fl1 d10 NORM [quill_sprite+quill_sprite] HP:88→88 turns:1
+    fl1 d13 NORM [quill_sprite+ink_slime] HP:88→88 turns:1
+    fl1 d14 ELITE [venom_wyrm] HP:88→88 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:88→86 turns:3
+    fl2 d0 NORM [bog_beast] HP:86→80 turns:2
+    fl2 d1 NORM [amber_hound+druid_apprentice] HP:80→73 turns:2
+    fl2 d2 NORM [bog_beast] HP:73→67 turns:2
+    fl2 d5 ELITE [wild_hunt_hound] HP:52→52 turns:3
+    fl2 d6 NORM [amber_hound+morrigan_wisp+druid_apprentice] HP:52→41 turns:2
+    fl2 d9 NORM [amber_hound+briar_beast] HP:66→61 turns:2
+    fl2 d10 ELITE [morrigan_chosen] HP:61→55 turns:2
+    fl2 d11 NORM [briar_beast+amber_hound] HP:55→50 turns:2
+    fl2 d12 NORM [briar_beast+morrigan_wisp+sidhe_raider] HP:50→50 turns:2
+    fl2 d15 BOSS [dagda_shadow] HP:85→70 turns:4
+    fl3 d0 NORM [sand_guardian+wadjet_guardian] HP:70→67 turns:2
+    fl3 d1 NORM [sand_guardian+wadjet_guardian] HP:67→67 turns:2
+    fl3 d3 NORM [sand_guardian+wadjet_guardian] HP:72→66 turns:2
+    fl3 d4 NORM [wadjet_guardian+tomb_priest+apep_scion+apep_scion] HP:66→66 turns:2
+    fl3 d6 NORM [scarab_swarm+mummy_knight+wadjet_guardian+scarab_swarm] HP:66→55 turns:2
+    fl3 d7 ELITE [anubis_champion] HP:55→33 turns:3
+    fl3 d9 NORM [sand_guardian+ushabti_servant+tomb_priest] HP:58→44 turns:3
+    fl3 d10 ELITE [sekhmet_chosen] HP:44→32 turns:3
+    fl3 d11 NORM [sand_guardian+wadjet_guardian+tomb_priest] HP:32→29 turns:3
+    fl3 d13 NORM [scarab_swarm+wadjet_guardian+ushabti_servant+tomb_priest] HP:29→20 turns:2
+    fl3 d15 BOSS [osiris_judgment] HP:55→55 turns:4
+  VICTOIRE fl3 | HP:55 | deck:36 | boss:3 | tours:66
+
+── Run 8 ─────────────────────────────────────
+    fl1 d0 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d1 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d2 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d5 NORM [quill_sprite+quill_sprite] HP:68→68 turns:1
+    fl1 d6 NORM [ink_slime+ink_slime] HP:68→68 turns:2
+    fl1 d7 ELITE [venom_wyrm] HP:68→68 turns:2
+    fl1 d9 NORM [paper_golem] HP:68→64 turns:1
+    fl1 d10 NORM [ink_slime+quill_sprite] HP:67→67 turns:1
+    fl1 d11 NORM [ink_slime+ink_slime] HP:68→67 turns:1
+    fl1 d13 NORM [quill_sprite+quill_sprite] HP:68→68 turns:1
+    fl1 d14 ELITE [ink_archon] HP:68→68 turns:1
+    fl1 d15 BOSS [the_archivist] HP:68→66 turns:2
+    fl2 d0 NORM [kikimora+iron_cossack] HP:66→61 turns:2
+    fl2 d2 NORM [czar_guard] HP:68→68 turns:2
+    fl2 d3 NORM [rusalka+kikimora+rusalka] HP:68→49 turns:2
+    fl2 d5 ELITE [koschei_herald] HP:49→40 turns:3
+    fl2 d6 NORM [kikimora+kikimora+iron_cossack] HP:40→38 turns:2
+    fl2 d9 NORM [snow_maiden+winter_wolf+winter_wolf] HP:63→61 turns:2
+    fl2 d10 NORM [iron_cossack+kikimora+rusalka] HP:61→57 turns:2
+    fl2 d13 NORM [czar_guard+kikimora] HP:58→46 turns:2
+    fl2 d15 BOSS [koschei_deathless] HP:66→17 turns:6
+  * fl3 d0 NORM [gorgon+bronze_automaton] HP:17→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:29 | boss:2 | tours:39
+
+── Run 9 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:2
+    fl1 d1 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d3 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d5 NORM [paper_golem] HP:68→68 turns:2
+    fl1 d7 NORM [quill_sprite+quill_sprite] HP:68→68 turns:2
+    fl1 d9 NORM [quill_sprite+ink_slime] HP:68→67 turns:1
+    fl1 d11 NORM [quill_sprite+ink_slime] HP:68→68 turns:1
+    fl1 d13 NORM [quill_sprite+scroll_serpent] HP:68→68 turns:2
+    fl1 d14 ELITE [venom_wyrm] HP:68→68 turns:2
+    fl1 d15 BOSS [the_archivist] HP:68→66 turns:4
+    fl2 d0 NORM [stone_idol] HP:66→66 turns:2
+    fl2 d1 NORM [tzitzimitl+obsidian_priest] HP:66→55 turns:2
+    fl2 d3 NORM [obsidian_priest+tzitzimitl] HP:75→64 turns:2
+    fl2 d4 NORM [stone_idol] HP:64→64 turns:2
+    fl2 d6 ELITE [huitzilopochtli_enforcer] HP:69→69 turns:3
+    fl2 d10 NORM [tzitzimitl+eagle_knight] HP:94→86 turns:2
+    fl2 d11 NORM [eagle_knight+tzitzimitl] HP:86→86 turns:1
+    fl2 d13 NORM [eagle_knight+tzitzimitl] HP:113→113 turns:2
+    fl2 d14 ELITE [quetzal_harbinger] HP:113→106 turns:2
+    fl2 d15 BOSS [tezcatlipoca_echo] HP:106→85 turns:4
+    fl3 d0 NORM [satyr+harpy+cyclops] HP:85→65 turns:3
+    fl3 d2 NORM [harpy+lamia+gorgon] HP:98→84 turns:3
+    fl3 d3 NORM [cyclops+lamia] HP:84→57 turns:2
+    fl3 d5 NORM [cyclops+gorgon+satyr] HP:77→41 turns:2
+    fl3 d7 NORM [cyclops+gorgon+satyr] HP:80→56 turns:3
+    fl3 d9 NORM [harpy+bronze_automaton+gorgon] HP:81→56 turns:2
+    fl3 d10 NORM [harpy+lamia+cyclops] HP:56→50 turns:4
+    fl3 d11 NORM [lamia+bronze_automaton+harpy] HP:50→25 turns:2
+    fl3 d13 NORM [cyclops+lamia+harpy] HP:25→7 turns:2
+    fl3 d15 BOSS [medusa] HP:46→37 turns:4
+  VICTOIRE fl3 | HP:42 | deck:38 | boss:3 | tours:67
+
+── Run 10 ─────────────────────────────────────
+    fl1 d0 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d1 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d3 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d5 NORM [quill_sprite+ink_slime] HP:68→68 turns:2
+    fl1 d6 NORM [scroll_serpent+quill_sprite] HP:68→66 turns:1
+    fl1 d9 NORM [scroll_serpent+quill_sprite] HP:68→68 turns:1
+    fl1 d10 ELITE [tome_colossus] HP:68→68 turns:2
+    fl1 d11 NORM [ink_slime+ink_slime] HP:68→68 turns:2
+    fl1 d12 NORM [quill_sprite+ink_slime] HP:68→68 turns:1
+    fl1 d14 ELITE [ink_archon] HP:68→68 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:68→61 turns:4
+    fl2 d0 NORM [tokoloshe+impundulu] HP:61→61 turns:1
+    fl2 d1 NORM [impundulu+hyena_pack] HP:61→61 turns:2
+    fl2 d3 NORM [impundulu+tokoloshe] HP:61→61 turns:2
+    fl2 d4 NORM [mask_hunter+hyena_pack] HP:61→53 turns:2
+    fl2 d6 NORM [serpent_oracle+mask_hunter] HP:53→48 turns:2
+    fl2 d7 ELITE [oya_harbinger] HP:48→36 turns:3
+    fl2 d10 NORM [impundulu+serpent_oracle] HP:68→61 turns:2
+    fl2 d11 NORM [serpent_oracle+tokoloshe+tokoloshe] HP:61→60 turns:3
+    fl2 d13 NORM [serpent_oracle+impundulu] HP:68→68 turns:1
+    fl2 d14 ELITE [oya_harbinger] HP:68→68 turns:2
+    fl2 d15 BOSS [soundiata_spirit] HP:68→64 turns:5
+    fl3 d0 NORM [bog_beast+briar_beast] HP:64→53 turns:2
+    fl3 d1 NORM [morrigan_wisp+briar_beast+sidhe_raider+sidhe_raider] HP:53→33 turns:2
+    fl3 d3 NORM [sidhe_raider+bog_beast+druid_apprentice] HP:38→32 turns:3
+    fl3 d4 NORM [bog_beast+druid_apprentice+morrigan_wisp] HP:32→15 turns:2
+    fl3 d6 NORM [bog_beast+amber_hound+druid_apprentice] HP:20→9 turns:2
+    fl3 d9 NORM [briar_beast+bog_beast+druid_apprentice] HP:54→24 turns:3
+    fl3 d11 NORM [briar_beast+amber_hound+morrigan_wisp+sidhe_raider] HP:44→17 turns:2
+    fl3 d13 NORM [druid_apprentice+amber_hound+briar_beast+morrigan_wisp] HP:22→14 turns:3
+    fl3 d15 BOSS [dagda_shadow] HP:34→8 turns:4
+  VICTOIRE fl3 | HP:8 | deck:38 | boss:3 | tours:66
+
+── Run 11 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d1 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d3 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d4 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d7 ELITE [ink_archon] HP:68→65 turns:2
+    fl1 d10 NORM [quill_sprite+scroll_serpent] HP:68→68 turns:1
+    fl1 d11 ELITE [venom_wyrm] HP:68→66 turns:2
+    fl1 d12 NORM [quill_sprite+ink_slime] HP:66→66 turns:1
+    fl1 d14 ELITE [venom_wyrm] HP:88→88 turns:2
+    fl1 d15 BOSS [the_archivist] HP:88→84 turns:5
+    fl2 d0 NORM [bronze_automaton] HP:84→84 turns:2
+    fl2 d1 NORM [bronze_automaton] HP:84→84 turns:2
+    fl2 d2 NORM [satyr+harpy+harpy] HP:84→81 turns:2
+    fl2 d4 NORM [cyclops] HP:111→106 turns:2
+    fl2 d6 NORM [gorgon+lamia] HP:106→98 turns:2
+    fl2 d9 NORM [cyclops+satyr] HP:98→90 turns:2
+    fl2 d10 NORM [satyr+bronze_automaton] HP:90→90 turns:2
+    fl2 d11 NORM [cyclops+satyr] HP:90→83 turns:2
+    fl2 d12 NORM [bronze_automaton+harpy] HP:83→83 turns:2
+    fl2 d15 BOSS [hydra_aspect] HP:118→82 turns:4
+    fl3 d0 NORM [rune_berserker+frost_troll] HP:82→74 turns:2
+    fl3 d1 NORM [rune_berserker+rune_shaman+einherjar] HP:74→71 turns:2
+    fl3 d2 NORM [einherjar+frost_troll] HP:71→46 turns:2
+    fl3 d3 NORM [shield_maiden+einherjar+rune_shaman] HP:46→12 turns:2
+    fl3 d5 ELITE [jormungandr_spawn] HP:12→12 turns:3
+    fl3 d6 NORM [einherjar+shield_maiden+rune_berserker] HP:12→3 turns:2
+    fl3 d10 NORM [frost_troll+rune_berserker+draugr] HP:28→8 turns:3
+  * fl3 d11 NORM [rune_shaman+einherjar+frost_troll] HP:8→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:34 | boss:2 | tours:56
+
+── Run 12 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d1 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d3 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d4 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d6 NORM [paper_golem] HP:68→65 turns:2
+    fl1 d9 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d11 NORM [paper_golem] HP:68→68 turns:1
+    fl1 d13 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:68→68 turns:2
+    fl1 d15 BOSS [the_archivist] HP:68→55 turns:4
+    fl2 d0 NORM [czar_guard] HP:55→55 turns:2
+    fl2 d1 NORM [snow_maiden+winter_wolf] HP:55→48 turns:2
+    fl2 d3 NORM [czar_guard] HP:68→65 turns:2
+    fl2 d4 NORM [snow_maiden+rusalka] HP:65→65 turns:2
+    fl2 d7 NORM [czar_guard+winter_wolf] HP:65→63 turns:3
+    fl2 d9 NORM [rusalka+snow_maiden+winter_wolf] HP:63→50 turns:2
+    fl2 d10 NORM [rusalka+snow_maiden+rusalka] HP:50→34 turns:2
+    fl2 d12 NORM [iron_cossack+kikimora+rusalka] HP:34→34 turns:2
+    fl2 d15 BOSS [baba_yaga_hut] HP:80→75 turns:4
+    fl3 d0 NORM [shoggoth_spawn+byakhee] HP:75→75 turns:2
+    fl3 d2 NORM [shoggoth_spawn+byakhee] HP:88→69 turns:2
+    fl3 d3 NORM [byakhee+shoggoth_spawn] HP:69→48 turns:2
+    fl3 d5 NORM [byakhee+deep_one+star_spawn] HP:53→33 turns:2
+    fl3 d6 NORM [shoggoth_spawn+deep_one] HP:33→12 turns:3
+    fl3 d7 ELITE [mi_go_surgeon] HP:12→2 turns:4
+    fl3 d10 NORM [byakhee+deep_one+star_spawn] HP:53→34 turns:3
+    fl3 d11 ELITE [mi_go_surgeon] HP:34→29 turns:3
+    fl3 d13 NORM [byakhee+deep_one+cultist_scribe] HP:34→8 turns:2
+    fl3 d15 BOSS [nyarlathotep_shard] HP:39→11 turns:5
+  VICTOIRE fl3 | HP:16 | deck:37 | boss:3 | tours:64
+
+── Run 13 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d2 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d3 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d5 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d7 NORM [quill_sprite+ink_slime] HP:68→68 turns:2
+    fl1 d9 NORM [ink_slime+ink_slime] HP:68→68 turns:1
+    fl1 d10 NORM [paper_golem] HP:68→68 turns:1
+    fl1 d11 NORM [quill_sprite+quill_sprite] HP:68→68 turns:1
+    fl1 d12 NORM [paper_golem] HP:68→68 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:68→66 turns:2
+    fl1 d15 BOSS [the_archivist] HP:66→63 turns:3
+    fl2 d0 NORM [amber_hound+druid_apprentice] HP:63→63 turns:2
+    fl2 d1 NORM [amber_hound+druid_apprentice] HP:63→63 turns:3
+    fl2 d3 NORM [briar_beast+druid_apprentice] HP:68→68 turns:2
+    fl2 d5 NORM [bog_beast+druid_apprentice] HP:68→59 turns:2
+    fl2 d6 NORM [bog_beast+druid_apprentice] HP:59→50 turns:2
+    fl2 d7 ELITE [morrigan_chosen] HP:50→50 turns:2
+    fl2 d9 NORM [briar_beast+amber_hound] HP:50→49 turns:3
+    fl2 d11 NORM [bog_beast+druid_apprentice] HP:54→54 turns:2
+    fl2 d12 NORM [amber_hound+briar_beast] HP:59→52 turns:2
+    fl2 d14 ELITE [wild_hunt_hound] HP:68→68 turns:3
+    fl2 d15 BOSS [dagda_shadow] HP:68→62 turns:3
+    fl3 d0 NORM [snow_maiden+czar_guard] HP:67→62 turns:3
+    fl3 d1 NORM [snow_maiden+czar_guard] HP:67→58 turns:2
+    fl3 d3 NORM [czar_guard+snow_maiden] HP:68→62 turns:2
+    fl3 d5 ELITE [domovoi_titan] HP:67→60 turns:3
+    fl3 d6 NORM [iron_cossack+snow_maiden+winter_wolf+rusalka] HP:65→49 turns:2
+    fl3 d9 NORM [czar_guard+iron_cossack+rusalka] HP:54→53 turns:2
+    fl3 d10 NORM [czar_guard+iron_cossack+winter_wolf] HP:58→40 turns:2
+    fl3 d11 ELITE [koschei_herald] HP:45→38 turns:3
+    fl3 d12 NORM [iron_cossack+snow_maiden+kikimora+kikimora] HP:43→7 turns:2
+    fl3 d15 BOSS [baba_yaga_hut] HP:32→31 turns:4
+  VICTOIRE fl3 | HP:36 | deck:38 | boss:3 | tours:66
+
+── Run 14 ─────────────────────────────────────
+    fl1 d0 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d1 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d2 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d4 NORM [ink_slime] HP:88→88 turns:1
+    fl1 d6 NORM [tome_wraith] HP:88→88 turns:1
+    fl1 d7 ELITE [venom_wyrm] HP:88→88 turns:2
+    fl1 d10 NORM [paper_golem] HP:88→88 turns:1
+    fl1 d11 NORM [quill_sprite+quill_sprite] HP:88→88 turns:1
+    fl1 d12 NORM [scroll_serpent+ink_slime] HP:88→82 turns:1
+    fl1 d14 ELITE [ink_archon] HP:85→85 turns:2
+    fl1 d15 BOSS [the_archivist] HP:88→86 turns:3
+    fl2 d0 NORM [flayed_cultist+obsidian_priest] HP:86→86 turns:2
+    fl2 d1 NORM [stone_idol] HP:86→86 turns:2
+    fl2 d3 NORM [tzitzimitl+obsidian_priest] HP:116→116 turns:2
+    fl2 d5 NORM [tzitzimitl+obsidian_priest+obsidian_priest] HP:116→108 turns:2
+    fl2 d6 NORM [flayed_cultist+tzitzimitl] HP:108→97 turns:2
+    fl2 d7 ELITE [huitzilopochtli_enforcer] HP:97→97 turns:3
+    fl2 d9 NORM [flayed_cultist+jaguar_warrior+jaguar_warrior] HP:105→92 turns:1
+    fl2 d10 NORM [tzitzimitl+jaguar_warrior+jaguar_warrior] HP:92→92 turns:3
+    fl2 d11 NORM [jaguar_warrior+tzitzimitl+obsidian_priest] HP:92→79 turns:1
+    fl2 d12 NORM [stone_idol+jaguar_warrior] HP:79→79 turns:2
+    fl2 d15 BOSS [quetzalcoatl_wrath] HP:138→134 turns:4
+    fl3 d0 NORM [tzitzimitl+obsidian_priest+obsidian_priest+obsidian_priest] HP:134→101 turns:2
+    fl3 d1 NORM [stone_idol+tzitzimitl] HP:101→97 turns:2
+    fl3 d3 NORM [eagle_knight+stone_idol] HP:138→129 turns:3
+    fl3 d5 NORM [flayed_cultist+eagle_knight+jaguar_warrior+obsidian_priest] HP:129→116 turns:3
+    fl3 d7 NORM [stone_idol+obsidian_priest+flayed_cultist] HP:138→138 turns:2
+    fl3 d9 NORM [tzitzimitl+stone_idol+obsidian_priest] HP:138→120 turns:2
+    fl3 d10 NORM [tzitzimitl+stone_idol+jaguar_warrior] HP:120→103 turns:2
+    fl3 d11 NORM [stone_idol+flayed_cultist+obsidian_priest] HP:103→103 turns:2
+    fl3 d13 NORM [eagle_knight+stone_idol+jaguar_warrior] HP:138→104 turns:3
+    fl3 d14 ELITE [quetzal_harbinger] HP:104→104 turns:3
+    fl3 d15 BOSS [tezcatlipoca_echo] HP:112→87 turns:4
+  VICTOIRE fl3 | HP:87 | deck:40 | boss:3 | tours:67
+
+── Run 15 ─────────────────────────────────────
+    fl1 d0 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d1 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d2 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d7 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d9 NORM [quill_sprite+ink_slime] HP:68→68 turns:1
+    fl1 d10 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d11 ELITE [tome_colossus] HP:68→60 turns:2
+    fl1 d13 NORM [quill_sprite+scroll_serpent] HP:60→60 turns:2
+    fl1 d14 ELITE [venom_wyrm] HP:63→63 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:63→58 turns:4
+    fl2 d0 NORM [serpent_oracle+hyena_pack] HP:58→49 turns:2
+    fl2 d2 NORM [impundulu+tokoloshe] HP:68→62 turns:2
+    fl2 d3 NORM [impundulu+tokoloshe] HP:62→56 turns:2
+    fl2 d5 ELITE [legba_emissary] HP:68→68 turns:2
+    fl2 d6 NORM [baobab_giant+tokoloshe] HP:68→68 turns:2
+    fl2 d9 NORM [baobab_giant+tokoloshe] HP:68→58 turns:1
+    fl2 d11 NORM [baobab_giant+tokoloshe] HP:58→45 turns:2
+    fl2 d12 NORM [serpent_oracle+mask_hunter] HP:45→45 turns:1
+    fl2 d15 BOSS [anansi_weaver] HP:65→55 turns:3
+    fl3 d0 NORM [cyclops+satyr+harpy] HP:55→33 turns:2
+    fl3 d1 NORM [bronze_automaton+gorgon] HP:33→20 turns:2
+    fl3 d3 NORM [lamia+gorgon+harpy] HP:40→29 turns:2
+    fl3 d4 NORM [gorgon+lamia+harpy] HP:29→13 turns:2
+  * fl3 d6 NORM [bronze_automaton+gorgon+harpy] HP:13→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:31 | boss:2 | tours:42
+
+── Run 16 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d1 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d3 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d5 NORM [paper_golem] HP:68→68 turns:1
+    fl1 d6 NORM [ink_slime+scroll_serpent] HP:68→66 turns:1
+    fl1 d7 ELITE [ink_archon] HP:68→68 turns:2
+    fl1 d9 NORM [quill_sprite+scroll_serpent] HP:68→68 turns:2
+    fl1 d11 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d12 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:58→57 turns:2
+    fl1 d15 BOSS [the_archivist] HP:57→52 turns:3
+    fl2 d0 NORM [bronze_automaton] HP:57→51 turns:1
+    fl2 d1 NORM [cyclops] HP:56→49 turns:1
+    fl2 d3 NORM [bronze_automaton] HP:54→54 turns:2
+    fl2 d4 NORM [bronze_automaton] HP:59→52 turns:1
+    fl2 d6 NORM [bronze_automaton+harpy] HP:57→57 turns:2
+    fl2 d9 NORM [cyclops+satyr] HP:68→55 turns:2
+    fl2 d10 NORM [lamia+gorgon] HP:60→60 turns:1
+    fl2 d11 NORM [gorgon+harpy+satyr] HP:65→65 turns:2
+    fl2 d12 NORM [gorgon+lamia] HP:68→55 turns:1
+    fl2 d14 ELITE [lernaean_broodling] HP:60→60 turns:2
+    fl2 d15 BOSS [medusa] HP:65→65 turns:3
+    fl3 d0 NORM [tokoloshe+hyena_pack+baobab_giant] HP:68→68 turns:2
+    fl3 d1 NORM [mask_hunter+serpent_oracle+hyena_pack] HP:68→63 turns:2
+    fl3 d3 NORM [mask_hunter+serpent_oracle+hyena_pack] HP:68→48 turns:2
+    fl3 d4 NORM [mask_hunter+serpent_oracle+hyena_pack] HP:53→52 turns:3
+    fl3 d6 ELITE [legba_emissary] HP:77→74 turns:2
+    fl3 d9 NORM [mask_hunter+impundulu+serpent_oracle] HP:79→57 turns:2
+    fl3 d10 NORM [baobab_giant+impundulu+tokoloshe] HP:62→25 turns:2
+    fl3 d12 NORM [baobab_giant+hyena_pack+serpent_oracle] HP:30→18 turns:2
+    fl3 d15 BOSS [soundiata_spirit] HP:49→35 turns:4
+  VICTOIRE fl3 | HP:40 | deck:38 | boss:3 | tours:55
+
+── Run 17 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d1 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d3 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d5 ELITE [ink_archon] HP:68→68 turns:2
+    fl1 d7 NORM [paper_golem] HP:68→68 turns:2
+    fl1 d9 NORM [tome_wraith] HP:68→65 turns:1
+    fl1 d10 ELITE [tome_colossus] HP:68→68 turns:2
+    fl1 d11 NORM [ink_slime+ink_slime] HP:68→68 turns:1
+    fl1 d13 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:68→66 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:66→61 turns:5
+    fl2 d0 NORM [stone_idol] HP:61→59 turns:2
+    fl2 d2 NORM [jaguar_warrior+obsidian_priest+obsidian_priest] HP:68→64 turns:3
+    fl2 d3 NORM [stone_idol] HP:64→56 turns:2
+    fl2 d5 ELITE [huitzilopochtli_enforcer] HP:56→51 turns:2
+    fl2 d6 NORM [tzitzimitl+eagle_knight] HP:51→43 turns:2
+    fl2 d9 NORM [stone_idol+jaguar_warrior] HP:43→42 turns:3
+    fl2 d10 NORM [stone_idol+jaguar_warrior] HP:42→42 turns:2
+    fl2 d11 ELITE [huitzilopochtli_enforcer] HP:42→42 turns:3
+    fl2 d12 NORM [tzitzimitl+obsidian_priest+obsidian_priest] HP:42→39 turns:3
+    fl2 d14 ELITE [quetzal_harbinger] HP:59→47 turns:2
+    fl2 d15 BOSS [quetzalcoatl_wrath] HP:47→46 turns:5
+    fl3 d0 NORM [bronze_automaton+gorgon] HP:46→46 turns:2
+    fl3 d2 NORM [harpy+satyr+gorgon+harpy] HP:66→42 turns:2
+    fl3 d3 NORM [gorgon+bronze_automaton] HP:42→33 turns:2
+    fl3 d5 NORM [cyclops+lamia+harpy] HP:33→6 turns:2
+  * fl3 d6 NORM [harpy+cyclops+lamia] HP:6→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:31 | boss:2 | tours:57
+
+── Run 18 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d1 NORM [scroll_serpent] HP:68→68 turns:2
+    fl1 d3 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d4 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d6 ELITE [tome_colossus] HP:68→68 turns:2
+    fl1 d9 NORM [quill_sprite+scroll_serpent] HP:80→80 turns:1
+    fl1 d10 NORM [quill_sprite+scroll_serpent] HP:80→80 turns:1
+    fl1 d11 ELITE [venom_wyrm] HP:80→75 turns:2
+    fl1 d13 NORM [paper_golem] HP:75→71 turns:1
+    fl1 d14 ELITE [venom_wyrm] HP:74→69 turns:2
+    fl1 d15 BOSS [the_archivist] HP:69→69 turns:4
+    fl2 d0 NORM [snow_maiden+kikimora] HP:69→65 turns:2
+    fl2 d1 NORM [snow_maiden+rusalka] HP:65→61 turns:2
+    fl2 d2 NORM [czar_guard] HP:61→61 turns:1
+    fl2 d5 ELITE [domovoi_titan] HP:61→48 turns:2
+    fl2 d7 NORM [iron_cossack+snow_maiden] HP:48→48 turns:2
+    fl2 d9 NORM [iron_cossack+winter_wolf+rusalka] HP:48→29 turns:2
+    fl2 d10 NORM [czar_guard+winter_wolf] HP:29→26 turns:2
+    fl2 d11 ELITE [koschei_herald] HP:26→21 turns:3
+    fl2 d13 NORM [czar_guard+kikimora] HP:26→23 turns:1
+    fl2 d15 BOSS [baba_yaga_hut] HP:47→47 turns:4
+    fl3 d0 NORM [rune_shaman+shield_maiden+einherjar] HP:52→46 turns:2
+    fl3 d2 NORM [frost_troll+rune_berserker] HP:75→75 turns:2
+    fl3 d4 NORM [shield_maiden+einherjar+draugr] HP:80→66 turns:2
+    fl3 d5 NORM [shield_maiden+einherjar+rune_berserker] HP:71→60 turns:2
+    fl3 d6 NORM [shield_maiden+einherjar+rune_berserker] HP:65→63 turns:3
+    fl3 d7 ELITE [valkyrie] HP:68→68 turns:2
+    fl3 d9 NORM [frost_troll+draugr+shield_maiden] HP:73→56 turns:2
+    fl3 d10 NORM [frost_troll+einherjar+rune_shaman] HP:61→49 turns:2
+    fl3 d11 NORM [frost_troll+rune_berserker+rune_shaman] HP:54→54 turns:2
+    fl3 d12 NORM [frost_troll+rune_berserker+draugr] HP:59→37 turns:2
+    fl3 d15 BOSS [fenrir] HP:92→38 turns:5
+  VICTOIRE fl3 | HP:43 | deck:37 | boss:3 | tours:65
+
+── Run 19 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d2 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d3 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d4 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d6 NORM [quill_sprite+quill_sprite] HP:68→68 turns:2
+    fl1 d9 NORM [quill_sprite+quill_sprite] HP:68→68 turns:1
+    fl1 d10 NORM [ink_slime+scroll_serpent] HP:68→68 turns:1
+    fl1 d11 ELITE [ink_archon] HP:68→68 turns:2
+    fl1 d13 NORM [ink_slime+quill_sprite] HP:58→57 turns:1
+    fl1 d14 ELITE [venom_wyrm] HP:60→60 turns:2
+    fl1 d15 BOSS [the_archivist] HP:60→58 turns:4
+    fl2 d0 NORM [bronze_automaton] HP:58→57 turns:1
+    fl2 d1 NORM [lamia+harpy] HP:57→57 turns:1
+    fl2 d2 NORM [satyr+gorgon] HP:57→57 turns:1
+    fl2 d4 NORM [gorgon+satyr] HP:62→56 turns:2
+    fl2 d6 NORM [cyclops+satyr] HP:56→53 turns:2
+    fl2 d7 ELITE [lernaean_broodling] HP:53→27 turns:2
+    fl2 d9 NORM [gorgon+lamia] HP:52→52 turns:2
+    fl2 d11 NORM [lamia+gorgon] HP:52→46 turns:2
+    fl2 d12 NORM [lamia+harpy+harpy] HP:46→46 turns:1
+    fl2 d14 ELITE [lernaean_broodling] HP:66→54 turns:2
+    fl2 d15 BOSS [medusa] HP:54→30 turns:3
+    fl3 d0 NORM [shoggoth_spawn+void_tendril] HP:30→16 turns:2
+    fl3 d1 NORM [byakhee+deep_one] HP:16→11 turns:2
+  * fl3 d2 NORM [deep_one+void_tendril] HP:11→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:31 | boss:2 | tours:41
+
+── Run 20 ─────────────────────────────────────
+    fl1 d0 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d1 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d2 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d4 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d6 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d7 ELITE [tome_colossus] HP:68→61 turns:2
+    fl1 d9 NORM [scroll_serpent+scroll_serpent] HP:61→61 turns:2
+    fl1 d10 NORM [quill_sprite+quill_sprite] HP:64→64 turns:1
+    fl1 d11 ELITE [tome_colossus] HP:67→66 turns:2
+    fl1 d12 NORM [paper_golem] HP:66→66 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:68→68 turns:2
+    fl1 d15 BOSS [the_archivist] HP:68→54 turns:3
+    fl2 d0 NORM [stone_idol] HP:54→54 turns:2
+    fl2 d1 NORM [obsidian_priest+tzitzimitl] HP:54→51 turns:2
+    fl2 d3 NORM [eagle_knight+obsidian_priest] HP:68→65 turns:2
+    fl2 d5 NORM [tzitzimitl+obsidian_priest+jaguar_warrior] HP:65→49 turns:2
+    fl2 d6 NORM [obsidian_priest+tzitzimitl] HP:49→49 turns:2
+    fl2 d9 NORM [eagle_knight+tzitzimitl] HP:49→46 turns:2
+    fl2 d11 NORM [flayed_cultist+obsidian_priest+jaguar_warrior] HP:66→66 turns:3
+    fl2 d12 NORM [tzitzimitl+flayed_cultist] HP:66→65 turns:2
+    fl2 d14 ELITE [huitzilopochtli_enforcer] HP:68→68 turns:3
+    fl2 d15 BOSS [quetzalcoatl_wrath] HP:68→57 turns:4
+    fl3 d0 NORM [ushabti_servant+wadjet_guardian] HP:57→57 turns:3
+    fl3 d2 NORM [scarab_swarm+sand_guardian+apep_scion] HP:68→68 turns:3
+    fl3 d3 NORM [sand_guardian+wadjet_guardian] HP:68→68 turns:3
+    fl3 d7 NORM [mummy_knight+scarab_swarm+scarab_swarm+wadjet_guardian] HP:68→68 turns:2
+    fl3 d9 NORM [wadjet_guardian+ushabti_servant+mummy_knight] HP:68→42 turns:2
+    fl3 d11 NORM [ushabti_servant+mummy_knight+apep_scion+tomb_priest] HP:62→62 turns:3
+    fl3 d12 NORM [wadjet_guardian+sand_guardian+apep_scion] HP:62→62 turns:3
+    fl3 d14 ELITE [anubis_champion] HP:67→67 turns:3
+    fl3 d15 BOSS [osiris_judgment] HP:67→45 turns:4
+  VICTOIRE fl3 | HP:45 | deck:37 | boss:3 | tours:68
+
+── Run 21 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d1 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d3 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d5 NORM [scroll_serpent+ink_slime] HP:68→68 turns:2
+    fl1 d6 NORM [ink_slime+ink_slime] HP:68→68 turns:2
+    fl1 d9 NORM [quill_sprite+quill_sprite] HP:68→68 turns:1
+    fl1 d11 NORM [paper_golem] HP:68→68 turns:2
+    fl1 d12 NORM [tome_wraith] HP:68→65 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:68→68 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:68→68 turns:6
+    fl2 d0 NORM [tokoloshe+impundulu] HP:68→62 turns:2
+    fl2 d2 NORM [baobab_giant] HP:68→64 turns:2
+    fl2 d3 NORM [serpent_oracle+hyena_pack] HP:64→51 turns:1
+    fl2 d4 NORM [impundulu+tokoloshe] HP:51→51 turns:2
+    fl2 d7 NORM [mask_hunter+serpent_oracle] HP:51→40 turns:2
+    fl2 d9 NORM [serpent_oracle+impundulu] HP:65→46 turns:1
+    fl2 d10 NORM [tokoloshe+impundulu+hyena_pack] HP:46→44 turns:2
+    fl2 d11 NORM [mask_hunter+serpent_oracle] HP:44→43 turns:2
+    fl2 d12 NORM [baobab_giant+hyena_pack] HP:43→33 turns:2
+    fl2 d15 BOSS [anansi_weaver] HP:45→43 turns:3
+    fl3 d0 NORM [obsidian_priest+flayed_cultist+obsidian_priest+obsidian_priest] HP:48→25 turns:3
+  * fl3 d1 NORM [stone_idol+eagle_knight] HP:29→MORT turns:3 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:31 | boss:2 | tours:44
+
+── Run 22 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d1 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d3 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d4 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d6 ELITE [tome_colossus] HP:88→88 turns:2
+    fl1 d9 NORM [quill_sprite+quill_sprite] HP:88→88 turns:1
+    fl1 d11 NORM [scroll_serpent+ink_slime] HP:88→88 turns:2
+    fl1 d13 NORM [paper_golem] HP:88→88 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:88→81 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:81→56 turns:3
+    fl2 d0 NORM [sand_guardian] HP:61→52 turns:2
+    fl2 d1 NORM [mummy_knight+tomb_priest] HP:57→57 turns:2
+    fl2 d3 NORM [apep_scion+wadjet_guardian] HP:62→55 turns:2
+    fl2 d5 NORM [sand_guardian+scarab_swarm] HP:60→60 turns:2
+    fl2 d6 ELITE [anubis_champion] HP:65→52 turns:2
+    fl2 d10 NORM [sand_guardian+apep_scion] HP:83→67 turns:2
+    fl2 d11 NORM [ushabti_servant+wadjet_guardian] HP:72→66 turns:2
+    fl2 d12 NORM [ushabti_servant+apep_scion+apep_scion] HP:71→71 turns:2
+    fl2 d14 ELITE [anubis_champion] HP:88→79 turns:3
+    fl2 d15 BOSS [osiris_judgment] HP:84→71 turns:3
+    fl3 d0 NORM [sand_guardian+wadjet_guardian] HP:76→64 turns:2
+    fl3 d1 NORM [wadjet_guardian+ushabti_servant+apep_scion] HP:69→61 turns:3
+    fl3 d2 NORM [scarab_swarm+sand_guardian+scarab_swarm] HP:66→44 turns:2
+    fl3 d4 NORM [ushabti_servant+apep_scion+scarab_swarm+apep_scion] HP:69→49 turns:3
+    fl3 d6 NORM [wadjet_guardian+scarab_swarm+mummy_knight+scarab_swarm] HP:54→31 turns:2
+    fl3 d9 NORM [sand_guardian+ushabti_servant+tomb_priest] HP:61→16 turns:4
+  * fl3 d10 ELITE [sekhmet_chosen] HP:21→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:33 | boss:2 | tours:55
+
+── Run 23 ─────────────────────────────────────
+    fl1 d0 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d1 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d3 NORM [scroll_serpent] HP:58→58 turns:1
+    fl1 d4 NORM [quill_sprite] HP:61→61 turns:1
+    fl1 d6 NORM [paper_golem] HP:64→64 turns:2
+    fl1 d7 ELITE [ink_archon] HP:67→67 turns:2
+    fl1 d9 NORM [scroll_serpent+quill_sprite] HP:67→67 turns:1
+    fl1 d10 ELITE [venom_wyrm] HP:68→63 turns:2
+    fl1 d11 NORM [paper_golem] HP:63→63 turns:1
+    fl1 d12 NORM [tome_wraith] HP:66→66 turns:1
+    fl1 d14 ELITE [tome_colossus] HP:68→68 turns:2
+    fl1 d15 BOSS [the_archivist] HP:68→62 turns:3
+    fl2 d0 NORM [czar_guard] HP:62→61 turns:1
+    fl2 d2 NORM [czar_guard] HP:68→68 turns:1
+    fl2 d3 NORM [iron_cossack+winter_wolf] HP:68→68 turns:2
+    fl2 d5 NORM [czar_guard+winter_wolf] HP:68→60 turns:2
+    fl2 d7 NORM [snow_maiden+rusalka+winter_wolf] HP:60→44 turns:2
+    fl2 d9 NORM [iron_cossack+winter_wolf+kikimora] HP:44→44 turns:2
+    fl2 d10 NORM [kikimora+snow_maiden+rusalka] HP:44→44 turns:1
+    fl2 d11 NORM [iron_cossack+snow_maiden] HP:44→44 turns:2
+    fl2 d13 NORM [kikimora+snow_maiden+rusalka] HP:44→41 turns:2
+    fl2 d15 BOSS [koschei_deathless] HP:61→46 turns:5
+    fl3 d0 NORM [serpent_oracle+impundulu+tokoloshe] HP:46→46 turns:1
+    fl3 d1 NORM [baobab_giant+mask_hunter] HP:46→39 turns:2
+    fl3 d3 NORM [baobab_giant+impundulu] HP:59→59 turns:2
+    fl3 d5 NORM [mask_hunter+serpent_oracle+hyena_pack+tokoloshe] HP:59→47 turns:2
+    fl3 d6 NORM [tokoloshe+baobab_giant+hyena_pack+tokoloshe] HP:47→13 turns:3
+    fl3 d9 NORM [hyena_pack+mask_hunter+baobab_giant] HP:38→13 turns:2
+    fl3 d10 NORM [baobab_giant+serpent_oracle+tokoloshe] HP:13→9 turns:2
+  * fl3 d13 NORM [hyena_pack+serpent_oracle+mask_hunter+hyena_pack] HP:9→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:37 | boss:2 | tours:53
+
+── Run 24 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d1 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d2 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d5 NORM [ink_slime+quill_sprite] HP:68→67 turns:1
+    fl1 d6 NORM [quill_sprite+scroll_serpent] HP:68→68 turns:1
+    fl1 d7 ELITE [tome_colossus] HP:68→67 turns:2
+    fl1 d9 NORM [tome_wraith] HP:67→67 turns:1
+    fl1 d10 NORM [scroll_serpent+quill_sprite] HP:68→68 turns:1
+    fl1 d11 NORM [ink_slime+quill_sprite] HP:68→68 turns:1
+    fl1 d13 NORM [ink_slime+ink_slime] HP:88→88 turns:1
+    fl1 d14 ELITE [venom_wyrm] HP:88→83 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:83→71 turns:3
+    fl2 d0 NORM [tzitzimitl+obsidian_priest] HP:71→68 turns:2
+    fl2 d1 NORM [stone_idol] HP:68→60 turns:2
+    fl2 d3 NORM [stone_idol] HP:86→78 turns:2
+    fl2 d5 NORM [stone_idol+jaguar_warrior] HP:78→74 turns:2
+    fl2 d6 NORM [flayed_cultist+tzitzimitl] HP:74→67 turns:2
+    fl2 d9 NORM [stone_idol+jaguar_warrior] HP:67→52 turns:2
+    fl2 d10 NORM [stone_idol+jaguar_warrior] HP:52→34 turns:2
+    fl2 d11 NORM [stone_idol+jaguar_warrior] HP:34→34 turns:2
+    fl2 d15 BOSS [tezcatlipoca_echo] HP:86→50 turns:5
+    fl3 d0 NORM [mask_hunter+impundulu+hyena_pack] HP:50→36 turns:2
+    fl3 d3 NORM [impundulu+serpent_oracle+hyena_pack] HP:67→30 turns:3
+    fl3 d4 NORM [baobab_giant+serpent_oracle] HP:30→16 turns:2
+  * fl3 d7 NORM [baobab_giant+serpent_oracle+hyena_pack] HP:16→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:33 | boss:2 | tours:45
+
+── Run 25 ─────────────────────────────────────
+    fl1 d0 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d1 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d2 NORM [ink_slime] HP:68→67 turns:1
+    fl1 d5 NORM [ink_slime+scroll_serpent] HP:68→65 turns:2
+    fl1 d6 ELITE [tome_colossus] HP:68→65 turns:3
+    fl1 d9 NORM [scroll_serpent+scroll_serpent] HP:65→65 turns:2
+    fl1 d10 NORM [paper_golem] HP:68→68 turns:1
+    fl1 d11 ELITE [venom_wyrm] HP:68→68 turns:2
+    fl1 d12 NORM [scroll_serpent+scroll_serpent] HP:68→68 turns:2
+    fl1 d14 ELITE [venom_wyrm] HP:68→68 turns:2
+    fl1 d15 BOSS [the_archivist] HP:68→68 turns:4
+    fl2 d0 NORM [lamia+harpy] HP:68→68 turns:1
+    fl2 d2 NORM [cyclops] HP:68→68 turns:2
+    fl2 d3 NORM [bronze_automaton] HP:68→66 turns:2
+    fl2 d7 NORM [gorgon+lamia] HP:68→68 turns:2
+    fl2 d9 NORM [lamia+gorgon] HP:68→68 turns:2
+    fl2 d10 NORM [lamia+gorgon] HP:68→68 turns:2
+    fl2 d11 NORM [bronze_automaton+harpy] HP:68→68 turns:2
+    fl2 d12 NORM [bronze_automaton+satyr] HP:68→67 turns:2
+    fl2 d14 ELITE [lernaean_broodling] HP:67→61 turns:2
+    fl2 d15 BOSS [hydra_aspect] HP:61→61 turns:4
+    fl3 d0 NORM [tzitzimitl+stone_idol] HP:61→57 turns:2
+    fl3 d2 NORM [stone_idol+eagle_knight] HP:68→68 turns:2
+    fl3 d3 NORM [eagle_knight+stone_idol] HP:68→65 turns:3
+    fl3 d5 ELITE [quetzal_harbinger] HP:95→95 turns:3
+    fl3 d7 NORM [eagle_knight+stone_idol+obsidian_priest] HP:95→94 turns:2
+    fl3 d9 NORM [stone_idol+eagle_knight+obsidian_priest] HP:94→98 turns:3
+    fl3 d10 NORM [eagle_knight+flayed_cultist+obsidian_priest+obsidian_priest] HP:98→97 turns:2
+    fl3 d11 ELITE [quetzal_harbinger] HP:97→98 turns:3
+    fl3 d12 NORM [obsidian_priest+flayed_cultist+stone_idol] HP:98→84 turns:3
+    fl3 d14 ELITE [huitzilopochtli_enforcer] HP:84→90 turns:4
+    fl3 d15 BOSS [quetzalcoatl_wrath] HP:90→92 turns:4
+  VICTOIRE fl3 | HP:97 | deck:36 | boss:3 | tours:73
+
+── Run 26 ─────────────────────────────────────
+    fl1 d0 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d1 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d3 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d5 NORM [ink_slime+scroll_serpent] HP:88→86 turns:2
+    fl1 d6 NORM [quill_sprite+ink_slime] HP:88→87 turns:1
+    fl1 d9 NORM [tome_wraith] HP:88→88 turns:1
+    fl1 d10 NORM [scroll_serpent+quill_sprite] HP:88→88 turns:1
+    fl1 d11 NORM [paper_golem] HP:88→88 turns:1
+    fl1 d13 NORM [ink_slime+quill_sprite] HP:88→88 turns:1
+    fl1 d14 ELITE [venom_wyrm] HP:88→88 turns:2
+    fl1 d15 BOSS [the_archivist] HP:88→82 turns:3
+    fl2 d0 NORM [czar_guard] HP:82→77 turns:2
+    fl2 d2 NORM [snow_maiden+winter_wolf] HP:77→72 turns:2
+    fl2 d3 NORM [rusalka+snow_maiden] HP:72→58 turns:1
+    fl2 d4 NORM [czar_guard] HP:58→51 turns:2
+    fl2 d6 NORM [rusalka+winter_wolf+iron_cossack] HP:51→33 turns:2
+    fl2 d7 ELITE [koschei_herald] HP:33→22 turns:3
+    fl2 d10 NORM [snow_maiden+iron_cossack] HP:73→57 turns:2
+    fl2 d11 NORM [winter_wolf+winter_wolf+snow_maiden] HP:57→36 turns:2
+    fl2 d12 NORM [czar_guard+kikimora] HP:36→29 turns:2
+    fl2 d15 BOSS [koschei_deathless] HP:81→21 turns:6
+    fl3 d0 NORM [stone_idol+flayed_cultist] HP:26→12 turns:3
+    fl3 d2 NORM [eagle_knight+stone_idol] HP:43→29 turns:3
+    fl3 d3 NORM [eagle_knight+stone_idol] HP:34→6 turns:3
+  * fl3 d4 NORM [flayed_cultist+stone_idol] HP:11→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:33 | boss:2 | tours:49
+
+── Run 27 ─────────────────────────────────────
+    fl1 d0 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d1 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d2 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d4 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d6 NORM [ink_slime+ink_slime] HP:68→68 turns:2
+    fl1 d9 NORM [tome_wraith] HP:68→65 turns:1
+    fl1 d10 NORM [ink_slime+ink_slime] HP:68→68 turns:1
+    fl1 d11 NORM [scroll_serpent+quill_sprite] HP:68→66 turns:1
+    fl1 d13 NORM [tome_wraith] HP:68→68 turns:1
+    fl1 d14 ELITE [venom_wyrm] HP:68→68 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:68→67 turns:3
+    fl2 d0 NORM [flayed_cultist+obsidian_priest] HP:67→64 turns:2
+    fl2 d1 NORM [tzitzimitl+obsidian_priest] HP:64→51 turns:2
+    fl2 d3 NORM [eagle_knight+obsidian_priest] HP:68→55 turns:2
+    fl2 d4 NORM [jaguar_warrior+obsidian_priest+obsidian_priest] HP:55→49 turns:2
+    fl2 d7 NORM [tzitzimitl+eagle_knight] HP:49→36 turns:2
+    fl2 d9 NORM [jaguar_warrior+tzitzimitl+jaguar_warrior] HP:61→32 turns:2
+    fl2 d10 NORM [stone_idol+jaguar_warrior] HP:32→14 turns:2
+  * fl2 d11 NORM [tzitzimitl+obsidian_priest+jaguar_warrior] HP:14→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl1 | HP:0 | deck:28 | boss:1 | tours:31
+
+── Run 28 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d2 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d3 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d4 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d5 NORM [ink_slime+quill_sprite] HP:68→68 turns:2
+    fl1 d7 NORM [ink_slime+quill_sprite] HP:68→68 turns:1
+    fl1 d9 NORM [ink_slime+scroll_serpent] HP:68→66 turns:1
+    fl1 d11 NORM [paper_golem] HP:68→68 turns:1
+    fl1 d12 NORM [scroll_serpent+quill_sprite] HP:68→68 turns:1
+    fl1 d14 ELITE [ink_archon] HP:68→68 turns:2
+    fl1 d15 BOSS [chapter_guardian] HP:68→64 turns:3
+    fl2 d0 NORM [stone_idol] HP:64→56 turns:2
+    fl2 d2 NORM [stone_idol] HP:68→60 turns:2
+    fl2 d3 NORM [flayed_cultist+obsidian_priest] HP:60→60 turns:2
+    fl2 d5 NORM [tzitzimitl+flayed_cultist] HP:68→66 turns:2
+    fl2 d6 NORM [tzitzimitl+flayed_cultist] HP:66→53 turns:2
+    fl2 d9 NORM [flayed_cultist+obsidian_priest+jaguar_warrior] HP:53→25 turns:2
+    fl2 d10 NORM [obsidian_priest+eagle_knight+jaguar_warrior] HP:25→21 turns:2
+    fl2 d11 NORM [tzitzimitl+flayed_cultist] HP:21→13 turns:2
+    fl2 d13 NORM [eagle_knight+tzitzimitl] HP:13→9 turns:2
+    fl2 d15 BOSS [tezcatlipoca_echo] HP:29→13 turns:2
+    fl3 d0 NORM [void_tendril+deep_one] HP:18→2 turns:2
+    fl3 d1 NORM [star_spawn+byakhee+void_tendril] HP:7→2 turns:2
+    fl3 d5 NORM [void_tendril+star_spawn+shoggoth_spawn] HP:32→14 turns:2
+    fl3 d7 NORM [star_spawn+byakhee+shoggoth_spawn] HP:39→6 turns:2
+    fl3 d9 NORM [byakhee+shoggoth_spawn+cultist_scribe] HP:36→32 turns:2
+    fl3 d11 NORM [shoggoth_spawn+deep_one] HP:37→19 turns:2
+  * fl3 d12 NORM [byakhee+deep_one+cultist_scribe] HP:24→MORT turns:2 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:38 | boss:2 | tours:49
+
+── Run 29 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d1 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d3 NORM [quill_sprite] HP:68→68 turns:1
+    fl1 d4 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d6 NORM [paper_golem] HP:68→68 turns:1
+    fl1 d7 NORM [quill_sprite+quill_sprite] HP:68→68 turns:1
+    fl1 d9 NORM [scroll_serpent+ink_slime] HP:68→68 turns:2
+    fl1 d10 NORM [paper_golem] HP:68→64 turns:1
+    fl1 d11 NORM [tome_wraith] HP:67→67 turns:1
+    fl1 d13 NORM [quill_sprite+quill_sprite] HP:68→68 turns:1
+    fl1 d14 ELITE [ink_archon] HP:68→65 turns:2
+    fl1 d15 BOSS [the_archivist] HP:65→62 turns:3
+    fl2 d0 NORM [frost_troll] HP:67→56 turns:2
+    fl2 d1 NORM [einherjar+draugr] HP:61→48 turns:2
+    fl2 d3 NORM [frost_troll] HP:78→70 turns:2
+    fl2 d4 NORM [rune_berserker+rune_shaman] HP:75→75 turns:2
+    fl2 d6 NORM [rune_berserker+einherjar] HP:80→75 turns:2
+    fl2 d7 ELITE [jormungandr_spawn] HP:80→59 turns:2
+    fl2 d9 NORM [rune_berserker+einherjar] HP:64→56 turns:2
+    fl2 d11 NORM [rune_berserker+draugr+rune_shaman] HP:88→88 turns:2
+    fl2 d14 ELITE [jormungandr_spawn] HP:93→71 turns:2
+    fl2 d15 BOSS [fenrir] HP:76→65 turns:3
+    fl3 d0 NORM [bronze_automaton+gorgon] HP:70→43 turns:2
+    fl3 d2 NORM [bronze_automaton+gorgon] HP:75→48 turns:2
+    fl3 d3 NORM [lamia+cyclops] HP:53→31 turns:3
+    fl3 d5 NORM [cyclops+satyr+gorgon] HP:56→7 turns:3
+    fl3 d6 NORM [gorgon+bronze_automaton+harpy] HP:12→9 turns:3
+  * fl3 d7 ELITE [lernaean_broodling] HP:14→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:35 | boss:2 | tours:51
+
+── Run 30 ─────────────────────────────────────
+    fl1 d0 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d2 NORM [ink_slime] HP:68→68 turns:1
+    fl1 d3 NORM [scroll_serpent] HP:68→68 turns:1
+    fl1 d5 ELITE [venom_wyrm] HP:68→63 turns:2
+    fl1 d6 NORM [paper_golem] HP:63→63 turns:1
+    fl1 d9 NORM [tome_wraith] HP:66→66 turns:1
+    fl1 d10 NORM [ink_slime+quill_sprite] HP:68→68 turns:1
+    fl1 d11 NORM [paper_golem] HP:68→68 turns:2
+    fl1 d12 NORM [paper_golem] HP:68→64 turns:1
+    fl1 d14 ELITE [ink_archon] HP:68→62 turns:2
+    fl1 d15 BOSS [the_archivist] HP:62→52 turns:4
+    fl2 d0 NORM [mummy_knight+scarab_swarm] HP:52→52 turns:2
+    fl2 d1 NORM [wadjet_guardian+scarab_swarm] HP:52→52 turns:2
+    fl2 d2 NORM [ushabti_servant+apep_scion] HP:52→48 turns:2
+    fl2 d4 NORM [wadjet_guardian+scarab_swarm] HP:48→44 turns:2
+    fl2 d6 NORM [ushabti_servant+wadjet_guardian] HP:44→36 turns:2
+    fl2 d9 NORM [sand_guardian+tomb_priest] HP:61→46 turns:2
+    fl2 d10 ELITE [sekhmet_chosen] HP:46→39 turns:3
+    fl2 d11 NORM [sand_guardian+tomb_priest] HP:39→35 turns:2
+    fl2 d12 NORM [mummy_knight+wadjet_guardian] HP:35→31 turns:2
+    fl2 d15 BOSS [ra_avatar] HP:51→23 turns:3
+    fl3 d0 NORM [tzitzimitl+stone_idol] HP:28→5 turns:3
+    fl3 d1 NORM [jaguar_warrior+stone_idol+obsidian_priest] HP:10→9 turns:2
+    fl3 d3 NORM [tzitzimitl+stone_idol] HP:34→12 turns:3
+  * fl3 d5 ELITE [quetzal_harbinger] HP:7→MORT turns:1 [DÉFAITE]
+  DÉFAITE fl2 | HP:0 | deck:32 | boss:2 | tours:48
+
+── Total: 10.5s ───────────────────────────────
+
+══════════════════════════════════════════════════
+  RÉSULTATS  (30 runs, diff: 0, méta: none, build: mixed)
+══════════════════════════════════════════════════
+
+  ── Victoires ────────────────────────────────────
+  Taux de victoire       : 46.7%  (14/30)
+  Moy. étages complétés  : 2.4 / 3
+  Moy. boss tués         : 2.4
+
+  ── Combat ───────────────────────────────────────
+  Moy. combats/run       : 28.1
+  Moy. tours/run         : 56.1
+  Moy. dégâts subis/run  : 162
+  Moy. HP restants (win) : 57
+  Moy. HP restants (def) : 0
+
+  ── Deck / Progression ───────────────────────────
+  Moy. cartes ajoutées   : 23.7
+  Moy. reliques gagnées  : 8.5
+  Moy. taille deck final : 34.8
+  Moy. or final          : 608
+
+  ── Défaites par étage ───────────────────────────
+  Étage 2  :    1    6.3%  █
+  Étage 3  :   15   93.8%  ███████████████████
+
+  ── Répartition étages atteints ──────────────────
+  3 étage(s)  :   14   46.7%  █████████
+  2 étage(s)  :   15   50.0%  ██████████
+  1 étage(s)  :    1    3.3%  █
+
+══════════════════════════════════════════════════
+

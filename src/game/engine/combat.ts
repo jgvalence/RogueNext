@@ -17,6 +17,7 @@ import {
   getDifficultyFloorRamp,
   getDifficultyModifiers,
   getEnemyStartingBlock,
+  getOpeningDamageMultiplier,
   getPostFloorCapEscalation,
 } from "./difficulty";
 import {
@@ -209,7 +210,13 @@ export function initCombat(
     (1 + (runState.floor - 1) * 0.18) *
     difficultyMods.enemyDamageMultiplier *
     postFloorEscalation.enemyDamageMultiplier *
-    diff0Ramp.enemyDamageMultiplier;
+    diff0Ramp.enemyDamageMultiplier *
+    getOpeningDamageMultiplier(
+      difficultyLevel,
+      runState.floor,
+      runState.currentRoom,
+      runState.map.length || GAME_CONSTANTS.ROOMS_PER_FLOOR
+    );
   const enemySpawnCountByDef: Record<string, number> = {};
   const scriptedArchivistAdds = enemyIds.includes("the_archivist")
     ? [ARCHIVIST_BLACK_INKWELL_ID, ARCHIVIST_PALE_INKWELL_ID].filter(

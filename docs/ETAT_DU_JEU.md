@@ -2,7 +2,7 @@
 
 ## État actuel et priorités
 
-Le [premier étage en D0](d0-opening-2026-10-12/RESULTATS.md) bénéficie d’une baisse très légère du coefficient de dégâts ennemis (0,65 → 0,63), sans modifier les PV, D1–D5 ni les étages suivants. Les comparaisons sans méta mesurent environ un PV supplémentaire après le premier boss ; elles ne démontrent pas une hausse du taux de victoire final. Version des règles des nouvelles parties : `2026-10-12.1`.
+Le [premier étage en D0](d0-progressive-2026-10-12/RESULTATS.md) bénéficie maintenant d’une réduction progressive des dégâts ennemis : −12,5 % en première salle, puis −0,5 point de réduction par salle jusqu’à −5 % au boss sur 16 salles. Cette courbe remplace la baisse uniforme précédente, sans modifier les PV, D1–D5 ni les étages suivants. 367 tests et 120 simulations supplémentaires passent ; le confort humain reste à vérifier. Version des règles des nouvelles parties : `2026-10-12.2`.
 
 Le [tutoriel mobile du 12 octobre](TUTORIEL_MOBILE_2026-10-12.md) a été simplifié après un retour de compréhension : sept étapes, gestes tactiles explicites, commandes directes et reprise sans redemander les actions déjà accomplies. Huit tests ciblés et 28 contrôles mobiles passent ; la compréhension par une nouvelle personne reste à retester sur téléphone physique.
 

@@ -397,15 +397,25 @@ export function getDiff0FloorRamp(floor: number): {
 export function getDifficultyFloorRamp(level: number, floor: number) {
   const base = getDiff0FloorRamp(floor);
   const l = clampDifficulty(level);
-  // Small opening allowance for discovery mistakes. Keep the shared base
-  // unchanged so this does not also weaken D1-D5 or later floors.
-  if (l === 0 && floor === 1) {
-    return { ...base, enemyDamageMultiplier: 0.63 };
-  }
   return {
     enemyHpMultiplier: Math.min(1, base.enemyHpMultiplier + [0, 0.1, 0.16, 0.18, 0.2, 0.22][l]!),
     enemyDamageMultiplier: Math.min(1, base.enemyDamageMultiplier + [0, 0.09, 0.12, 0.13, 0.14, 0.15][l]!),
   };
+}
+
+/** D0 discovery allowance: -12.5% at entry, tapering to -5% at the boss.
+ * Normalize by map length so shortened/extended floors keep both endpoints.
+ */
+export function getOpeningDamageMultiplier(
+  level: number,
+  floor: number,
+  roomIndex: number,
+  roomCount: number
+): number {
+  if (clampDifficulty(level) !== 0 || floor !== 1) return 1;
+  const lastRoom = Math.max(0, roomCount - 1);
+  const progress = lastRoom === 0 ? 1 : Math.min(1, Math.max(0, roomIndex / lastRoom));
+  return 0.875 + 0.075 * progress;
 }
 
 export function getDifficultyModifiers(level: number): {
