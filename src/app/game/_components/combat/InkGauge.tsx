@@ -184,6 +184,9 @@ export function InkGauge({
                       : "!cursor-not-allowed !bg-gray-700 !text-gray-500"
                   )}
                   disabled={!canUse}
+                  data-tutorial-power={
+                    allowedPowers?.includes(power.type) || undefined
+                  }
                   onClick={() => onUsePower(power.type)}
                 >
                   {t(`inkGauge.powers.${power.type}.label`, power.label)} (
@@ -268,6 +271,9 @@ export function InkGauge({
                     : "!cursor-not-allowed !bg-gray-700 !text-gray-500"
                 )}
                 disabled={!canUse}
+                data-tutorial-power={
+                  allowedPowers?.includes(power.type) || undefined
+                }
                 onClick={() => onUsePower(power.type)}
               >
                 <span className="flex min-w-0 flex-col items-center gap-1 text-center">

@@ -5,12 +5,10 @@ import { useCallback, useState } from "react";
 const FIRST_COMBAT_TUTORIAL_STEPS = [
   "cards",
   "energy",
-  "armor",
   "incomingDamage",
   "ink",
   "inkPowers",
   "inkedCard",
-  "deckCycle",
   "endTurn",
 ] as const;
 
@@ -19,20 +17,32 @@ type FirstCombatTutorialStep = (typeof FIRST_COMBAT_TUTORIAL_STEPS)[number];
 interface UseFirstCombatTutorialParams {
   showFirstCombatTutorial: boolean;
   onDismissFirstCombatTutorial?: () => void;
+  completedPower?: boolean;
+  completedInkedCard?: boolean;
+  completedTurn?: boolean;
 }
 
 export function useFirstCombatTutorial({
   showFirstCombatTutorial,
   onDismissFirstCombatTutorial,
+  completedPower = false,
+  completedInkedCard = false,
+  completedTurn = false,
 }: UseFirstCombatTutorialParams) {
+  // The saved combat is the source of truth after a reload, including old runs.
+  const initialStep = completedInkedCard
+    ? FIRST_COMBAT_TUTORIAL_STEPS.indexOf("endTurn")
+    : completedPower
+      ? FIRST_COMBAT_TUTORIAL_STEPS.indexOf("inkedCard")
+      : 0;
   const [firstCombatTutorialStepIndex, setFirstCombatTutorialStepIndex] =
-    useState(0);
+    useState(initialStep);
   const [
     furthestFirstCombatTutorialStepIndex,
     setFurthestFirstCombatTutorialStepIndex,
-  ] = useState(0);
+  ] = useState(initialStep);
   const [firstCombatTutorialHidden, setFirstCombatTutorialHidden] =
-    useState(false);
+    useState(completedTurn);
 
   const isFirstCombatTutorialVisible =
     showFirstCombatTutorial && !firstCombatTutorialHidden;
@@ -42,10 +52,11 @@ export function useFirstCombatTutorial({
         firstCombatTutorialStepIndex,
         FIRST_COMBAT_TUTORIAL_STEPS.length - 1
       )
-    ] ?? "armor";
+    ] ?? "cards";
 
   const isArmorTutorialStep =
-    isFirstCombatTutorialVisible && firstCombatTutorialCurrentStep === "armor";
+    isFirstCombatTutorialVisible &&
+    firstCombatTutorialCurrentStep === "incomingDamage";
   const isCardsTutorialStep =
     isFirstCombatTutorialVisible && firstCombatTutorialCurrentStep === "cards";
   const isEnergyTutorialStep =
@@ -63,7 +74,7 @@ export function useFirstCombatTutorial({
     firstCombatTutorialCurrentStep === "inkedCard";
   const isDeckCycleTutorialStep =
     isFirstCombatTutorialVisible &&
-    firstCombatTutorialCurrentStep === "deckCycle";
+    firstCombatTutorialCurrentStep === "endTurn";
   const isEndTurnTutorialStep =
     isFirstCombatTutorialVisible &&
     firstCombatTutorialCurrentStep === "endTurn";

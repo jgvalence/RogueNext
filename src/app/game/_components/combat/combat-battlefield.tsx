@@ -7,7 +7,7 @@ import type { CombatState } from "@/game/schemas/combat-state";
 import type { AllyDefinition, EnemyDefinition } from "@/game/schemas/entities";
 import type { BiomeType } from "@/game/schemas/enums";
 import { COMBAT_BACKGROUNDS, COMBAT_BACKGROUND_FALLBACKS } from "@/lib/assets";
-import { FirstCombatTutorialOverlay } from "./first-combat-tutorial";
+
 import { BossMechanicsPanel } from "./BossMechanicsPanel";
 import { BiomeSceneSilhouette } from "./BiomeSceneSilhouette";
 import { CombatMobileGrid } from "./combat-mobile-grid";
@@ -25,15 +25,6 @@ interface CombatBattlefieldProps {
   turnNumber: number;
   turnBadgeClass: string;
   turnLabel: string;
-  isFirstCombatTutorialVisible: boolean;
-  firstCombatTutorialCurrentStep: string;
-  firstCombatTutorialStepIndex: number;
-  firstCombatTutorialTotalSteps: number;
-  isLastFirstCombatTutorialStep: boolean;
-  isNextFirstCombatTutorialDisabled?: boolean;
-  onDismissFirstCombatTutorial: () => void;
-  onPreviousFirstCombatTutorial: () => void;
-  onNextFirstCombatTutorial: () => void;
   summonAnnouncement: string | null;
   enemyRowRef: RefObject<HTMLDivElement | null>;
   combat: CombatState;
@@ -89,15 +80,6 @@ export function CombatBattlefield({
   turnNumber,
   turnBadgeClass,
   turnLabel,
-  isFirstCombatTutorialVisible,
-  firstCombatTutorialCurrentStep,
-  firstCombatTutorialStepIndex,
-  firstCombatTutorialTotalSteps,
-  isLastFirstCombatTutorialStep,
-  isNextFirstCombatTutorialDisabled = false,
-  onDismissFirstCombatTutorial,
-  onPreviousFirstCombatTutorial,
-  onNextFirstCombatTutorial,
   summonAnnouncement,
   enemyRowRef,
   combat,
@@ -261,18 +243,6 @@ export function CombatBattlefield({
       </div>
 
       <BossMechanicsPanel combat={combat} />
-
-      <FirstCombatTutorialOverlay
-        isVisible={isFirstCombatTutorialVisible}
-        currentStep={firstCombatTutorialCurrentStep}
-        stepIndex={firstCombatTutorialStepIndex}
-        totalSteps={firstCombatTutorialTotalSteps}
-        isLastStep={isLastFirstCombatTutorialStep}
-        isNextDisabled={isNextFirstCombatTutorialDisabled}
-        onSkip={onDismissFirstCombatTutorial}
-        onPrevious={onPreviousFirstCombatTutorial}
-        onNext={onNextFirstCombatTutorial}
-      />
 
       {summonAnnouncement && (
         <div

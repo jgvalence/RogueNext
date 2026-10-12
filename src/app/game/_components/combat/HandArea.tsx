@@ -719,6 +719,9 @@ export function HandArea({
               return (
                 <div
                   key={`mobile-card-${card.instanceId}`}
+                  data-tutorial-ink-card={
+                    isTutorialPlayableInkedCard || undefined
+                  }
                   data-resting={!isPlaying && !isDiscarding}
                   ref={(el) => {
                     mobileWrapperRefs.current[index] = el;
@@ -855,6 +858,7 @@ export function HandArea({
           return (
             <div
               key={card.instanceId}
+              data-tutorial-ink-card={isTutorialPlayableInkedCard || undefined}
               ref={(el) => {
                 wrapperRefs.current[index] = el;
               }}

@@ -587,19 +587,19 @@ export const en = {
     },
     firstRunTutorial: {
       kicker: "First Expedition",
-      title: "Quick tutorial",
+      title: "Your first expedition",
       subtitle:
-        "This first expedition teaches the core loop. Difficulty 0 is the only available chapter for now.",
+        "A guide will help you through your first battle. You can keep the suggested starting options.",
       steps: {
         chooseDifficulty:
-          "Choose level 0. It is the only difficulty available for this first expedition.",
+          "Choose “Archivist”: this is the first difficulty level.",
         pickMode: "Pick Normal for a standard 3-floor expedition.",
         planRoute:
-          "On the map, prioritize fights to grow your deck, then visit merchants when you can afford upgrades.",
+          "Tap “Launch expedition”, then “Fight” on the map to enter a battle.",
         combatFlow:
-          "In combat: play cards, watch energy/ink, then end your turn.",
+          "The guide shows you your cards, enemy attacks, and which buttons to use.",
         endOfRun:
-          "At the end of the expedition, claim your rewards and return to the Library to invest your resources.",
+          "After a victory, choose a card to add to your deck, or skip if you do not want any of them.",
       },
     },
     sections: {
@@ -1919,60 +1919,54 @@ export const en = {
     allAllies: "All allies",
     ally: "Ally",
     firstCombatTutorial: {
-      kicker: "Combat tutorial",
+      kicker: "First battle",
       actionRequired: "Your turn",
       stepCounter: "Step {{current}} / {{total}}",
-      previous: "Previous",
-      next: "Next",
-      done: "Finish",
-      skip: "Skip",
+      previous: "Previous step",
+      next: "Got it",
+      done: "Play",
+      skip: "Leave guide",
+      openPowers: "Open powers",
+      findCard: "Show the card",
       steps: {
         cards: {
-          title: "Cards in hand",
+          title: "Your goal: defeat the enemies",
           description:
-            "Each card has an energy cost and an effect. Read attack/skill/status before playing.",
+            "Your HP is next to your hero. Your cards are at the bottom: tap “Read” to inspect their effects without playing them. Swipe your hand to see the other cards.",
         },
         energy: {
-          title: "Energy per turn",
+          title: "How to play a card",
           description:
-            "You spend energy to play cards. It refills at the start of your next turn.",
-        },
-        armor: {
-          title: "Armor (block)",
-          description:
-            "The 🛡 badge shows current armor. It absorbs incoming damage before HP.",
+            "The round number is its energy cost. Tap the card, then the enemy to target. For a card without a target, tap it again to play it. Actions unlock as you follow this guide.",
         },
         incomingDamage: {
-          title: "Incoming damage",
+          title: "Prepare for the next attack",
           description:
-            "Enemy intents and ⚔/🛡 badges show expected damage for the next enemy turn.",
+            "“DMG 5” under an enemy means it will deal 5 damage on its turn. Your Armor absorbs damage before HP: with 3 Armor, you lose 2 HP. A Defend card grants Armor.",
         },
         ink: {
-          title: "Ink",
+          title: "Ink: a second resource",
           description:
-            "Your ink gauge fuels inked card variants and special combat powers.",
+            "Energy pays for cards. Ink powers your hero’s abilities and the “Ink” button on some cards. Both uses spend the same blue reserve.",
         },
         inkPowers: {
-          title: "Ink powers",
+          title: "Try your power",
           description:
-            "I am giving you enough ink for this: use your ink power now. Here, it upgrades one card in your hand for this combat.",
-          action: "Activate the highlighted ink power to continue.",
+            "The guide supplies Ink for this exercise. Open powers, read “{{power}}”, then tap its button.",
+          action: "Use “{{power}}”. The guide will continue automatically.",
         },
         inkedCard: {
-          title: "Inked card",
+          title: "Try a card with Ink",
           description:
-            "Your power just upgraded a card: an upgraded card has stronger numbers, and sometimes a better cost or effect for this combat. Look for the golden treatment. Clicking the card plays its base version; the Ink button at the bottom plays the + Ink version. I am topping your ink up again: use the Ink button on the highlighted card now.",
-          action: "Play the highlighted card's Ink variant to continue.",
-        },
-        deckCycle: {
-          title: "Draw / Discard / Exhaust",
-          description:
-            "Played cards go to discard. When draw pile is empty, discard is shuffled back. Exhaust removes cards for this combat.",
+            "“{{card}}” is outlined in blue. Its “Ink” button plays its variant, at a cost in both energy and Ink.",
+          action:
+            "Tap “Ink” on this card, then the requested target, or tap “Ink” again if no target is needed.",
         },
         endTurn: {
-          title: "Ending your turn",
+          title: "Then let the enemies act",
           description:
-            "When you have no useful action left, end your turn now. Enemies will then act based on their intents.",
+            "“End turn” lets the enemies act. Your energy refills and you draw new cards on your next turn. After this guide, you can play several cards before ending your turn.",
+          action: "Tap “End turn” to finish this exercise and play freely.",
         },
       },
     },
@@ -2287,10 +2281,15 @@ export const en = {
   },
   special: {
     bazaar: {
-      label: "Relic Bazaar", title: "The Soul Merchant",
-      description: "A strange merchant offers to trade your treasures. Offers refresh after each exchange.",
-      offers: "Merchant’s offers", empty: "The merchant has nothing left to offer.",
-      against: "for", owned: "Your relics", exchange: "Trade",
+      label: "Relic Bazaar",
+      title: "The Soul Merchant",
+      description:
+        "A strange merchant offers to trade your treasures. Offers refresh after each exchange.",
+      offers: "Merchant’s offers",
+      empty: "The merchant has nothing left to offer.",
+      against: "for",
+      owned: "Your relics",
+      exchange: "Trade",
     },
     choiceUnavailable: "Requirements not met or no reward available",
     healTitle: "Healing Spring",
@@ -2395,9 +2394,14 @@ export const en = {
     soldOut: "SOLD OUT",
     inventoryFull: "Inventory full",
     unavailable: {
-      invalid: "Offer unavailable", gold: "Not enough gold", hp: "Not enough HP for this sacrifice",
-      deck: "You must keep at least one card", inventory: "Inventory full",
-      allies: "No ally slot available", owned: "Already owned", fullHealth: "You are already at full health",
+      invalid: "Offer unavailable",
+      gold: "Not enough gold",
+      hp: "Not enough HP for this sacrifice",
+      deck: "You must keep at least one card",
+      inventory: "Inventory full",
+      allies: "No ally slot available",
+      owned: "Already owned",
+      fullHealth: "You are already at full health",
     },
     priceGold: "{{price}} gold",
     priceHp: "{{price}} HP",

@@ -1,3 +1,30 @@
+/* A tutorial owns its space: it must not cover the thing it explains. */
+.first-combat-guide { position: absolute; right: 12px; top: 12px; width: 340px; max-height: calc(100% - 24px); z-index: 35; display: flex; flex-direction: column; gap: 10px; padding: 14px; border: 1px solid #71c9da; border-radius: 12px; background: #0b1d2bf5; box-shadow: 0 8px 24px #0005; }
+.first-combat-guide-copy { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.first-combat-guide-heading { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; color: #a4e1ec; }
+.first-combat-guide h3 { margin: 5px 0; font-size: 17px; line-height: 1.2; color: #fff0ce; }
+.first-combat-guide p { margin: 0; font-size: 14px; line-height: 1.4; color: #eef5fa; }
+.first-combat-guide .first-combat-guide-task { margin-top: 8px; color: #ffe1a6; }
+.first-combat-guide-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex-wrap: wrap; }
+.first-combat-guide-actions .ant-btn { min-height: 44px; height: auto; padding: 6px 9px; white-space: normal; font-size: 13px; }
+.first-combat-guide-actions .ant-btn:last-child { margin-left: auto; border-color: #75d7e4; }
+.combat-view[data-tutorial-step="energy"] .combat-action-bar > div:first-child,
+.combat-view[data-tutorial-step="ink"] .combat-action-bar > div:nth-child(2),
+.combat-view[data-tutorial-step="inkPowers"] .combat-action-bar > div:nth-child(2),
+.combat-view[data-tutorial-step="incomingDamage"] .mobile-enemy-intent { outline: 2px solid #78e6ed; outline-offset: 2px; }
+@media (max-width: 1023px) {
+  .combat-view[data-tutorial-step] { overflow-y: auto; }
+  .combat-view .first-combat-guide { position: relative; inset: auto; width: auto; max-height: 240px; flex-shrink: 0; margin: 6px; padding: 10px; gap: 6px; }
+  .combat-view[data-tutorial-step] [data-battlefield] { min-height: 180px; flex-shrink: 0; }
+  .combat-view[data-tutorial-step] [data-player-zone] { position: relative; }
+}
+@media (max-width: 1023px) and (orientation: landscape) {
+  .combat-view[data-tutorial-step] { display: grid; grid-template-columns: minmax(210px, 29%) minmax(0, 1fr); grid-template-rows: minmax(124px, 1fr) auto; align-content: start; }
+  .combat-view .first-combat-guide { grid-column: 1; grid-row: 1 / 3; min-height: 0; max-height: calc(100dvh - 60px); position: sticky; top: 6px; align-self: start; }
+  .combat-view[data-tutorial-step] [data-battlefield] { grid-column: 2; grid-row: 1; min-height: 124px; }
+  .combat-view[data-tutorial-step] [data-player-zone] { grid-column: 2; grid-row: 2; min-width: 0; }
+}
+
 /* Reading surfaces grow with the rules text. Only their page/modal scrolls. */
 .card-picker-grid { grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); justify-items: center; align-items: start; }
 .card-picker-scroll { max-height: max(120px, calc(85dvh - 150px)); overscroll-behavior: contain; }

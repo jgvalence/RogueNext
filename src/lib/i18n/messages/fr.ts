@@ -596,20 +596,20 @@ export const fr = {
     },
     firstRunTutorial: {
       kicker: "Premiere expedition",
-      title: "Mini tutoriel",
+      title: "Ta première partie",
       subtitle:
-        "Cette partie sert a prendre en main les bases. Pour cette premiere expedition, la difficulte 0 est la seule disponible.",
+        "Un guide t’accompagne dans le premier combat. Tu peux garder les options de départ proposées.",
       steps: {
         chooseDifficulty:
-          "Choisis le niveau 0. C'est la seule difficulte disponible pour cette premiere expedition.",
+          "Choisis « Archiviste » : c’est le premier niveau de difficulté.",
         pickMode:
           "Selectionne Normal pour une expedition classique en 3 etages.",
         planRoute:
-          "Sur la carte, vise des combats pour renforcer ton deck, et passe au marchand si tu as assez d'or.",
+          "Touche « Lancer l’expédition », puis « Affrontement » sur la carte pour entrer en combat.",
         combatFlow:
-          "En combat: joue tes cartes, garde un oeil sur l'energie/encre, puis termine ton tour.",
+          "Le guide te montre tes cartes, les attaques ennemies et les boutons à utiliser.",
         endOfRun:
-          "En fin d'expedition, recupere tes recompenses et retourne a la Bibliotheque pour investir tes ressources.",
+          "Après une victoire, choisis une carte à ajouter à ton deck, ou passe si tu n’en veux aucune.",
       },
     },
     sections: {
@@ -1919,62 +1919,55 @@ export const fr = {
     allAllies: "Tous les allies",
     ally: "Allie",
     firstCombatTutorial: {
-      kicker: "Tutoriel combat",
-      actionRequired: "A toi de jouer",
-      stepCounter: "Etape {{current}} / {{total}}",
-      previous: "Precedent",
-      next: "Suivant",
-      done: "Terminer",
-      skip: "Passer",
+      kicker: "Premier combat",
+      actionRequired: "À toi de jouer",
+      stepCounter: "Étape {{current}} / {{total}}",
+      previous: "Étape précédente",
+      next: "Compris",
+      done: "Jouer",
+      skip: "Quitter l’aide",
+      openPowers: "Ouvrir les pouvoirs",
+      findCard: "Montrer la carte",
       steps: {
         cards: {
-          title: "Cartes en main",
+          title: "Ton but : battre les ennemis",
           description:
-            "Chaque carte a un cout en energie et un effet. Lis bien attaque/skill/statut avant de jouer.",
+            "Tes PV sont près de ton héros. Tes cartes sont en bas : touche « Lire » pour voir leurs effets sans les jouer. Fais glisser la main pour voir les autres cartes.",
         },
         energy: {
-          title: "Energie par tour",
+          title: "Comment jouer une carte",
           description:
-            "Tu depenses ton energie pour jouer tes cartes. Elle se recharge au debut de ton prochain tour.",
-        },
-        armor: {
-          title: "Armure (bloc)",
-          description:
-            "Le badge 🛡 indique l'armure actuelle. Elle absorbe les degats recus avant vos PV.",
+            "Le chiffre rond est son coût en énergie. Touche la carte, puis l’ennemi à viser. Pour une carte sans cible, touche-la une seconde fois pour la jouer. Les actions se débloquent au fil de ce guide.",
         },
         incomingDamage: {
-          title: "Degats entrants",
+          title: "Prépare la prochaine attaque",
           description:
-            "Les intentions ennemies et les badges ⚔/🛡 montrent les degats prevus au prochain tour.",
+            "« DEG 5 » sous un ennemi annonce 5 dégâts à son tour. Ton Armure les absorbe avant tes PV : avec 3 Armure, tu perds 2 PV. Une carte Défense donne de l’Armure.",
         },
         ink: {
-          title: "Encre",
+          title: "L’Encre : une deuxième ressource",
           description:
-            "La jauge d'encre sert a activer les variantes encrees des cartes et vos pouvoirs speciaux.",
+            "L’énergie paie les cartes. L’Encre sert aux pouvoirs de ton héros et au bouton « Encre » de certaines cartes. Ces deux usages dépensent la même réserve bleue.",
         },
         inkPowers: {
-          title: "Pouvoirs d'encre",
+          title: "Essaie ton pouvoir",
           description:
-            "Je te donne assez d'encre pour ca: utilise maintenant ton pouvoir d'encre. Ici, il ameliore une carte en main pour ce combat.",
-          action:
-            "Active le pouvoir d'encre indique dans l'interface pour poursuivre.",
+            "Pour cet essai, le guide te fournit de l’Encre. Ouvre les pouvoirs, lis « {{power}} », puis touche son bouton.",
+          action: "Utilise « {{power}} ». Le guide continuera automatiquement.",
         },
         inkedCard: {
-          title: "Carte encree",
+          title: "Essaie une carte avec Encre",
           description:
-            "Le pouvoir vient d'ameliorer une carte: une carte amelioree a des chiffres renforces, et parfois un cout ou un effet meilleur pour ce combat. Repere-la a son habillage dore. Cliquer sur la carte joue sa version normale; le bouton Encre en bas joue sa version + Encre. Je te redonne de l'encre: utilise maintenant le bouton Encre de la carte surlignee dans ta main.",
+            "« {{card}} » est entourée en bleu. Son bouton « Encre » joue sa variante, avec un coût en énergie et en encre.",
           action:
-            "Joue la variante Encre de la carte surlignee pour poursuivre.",
-        },
-        deckCycle: {
-          title: "Pioche / Defausse / Epuise",
-          description:
-            "Les cartes jouees vont en defausse. Quand la pioche est vide, la defausse est melangee. Epuise = retire pour ce combat.",
+            "Touche « Encre » sur cette carte, puis la cible demandée ou une seconde fois « Encre » si elle n’a pas de cible.",
         },
         endTurn: {
-          title: "Finir son tour",
+          title: "Puis laisse jouer les ennemis",
           description:
-            "Quand tu n'as plus d'action utile, termine maintenant ton tour. Les ennemis joueront ensuite selon leurs intentions.",
+            "« Fin du tour » fait agir les ennemis. Au tour suivant, ton énergie revient et tu pioches de nouvelles cartes. Après ce guide, tu pourras jouer plusieurs cartes avant de finir ton tour.",
+          action:
+            "Touche « Fin du tour » pour terminer cet essai et jouer librement.",
         },
       },
     },
@@ -2297,10 +2290,15 @@ export const fr = {
   },
   special: {
     bazaar: {
-      label: "Bazar des Reliques", title: "Le Marchand des Âmes",
-      description: "Un étrange marchand vous propose d’échanger vos trésors. Les offres se renouvellent après chaque échange.",
-      offers: "Offres du marchand", empty: "Le marchand n’a plus rien à offrir.",
-      against: "contre", owned: "Vos reliques", exchange: "Échanger",
+      label: "Bazar des Reliques",
+      title: "Le Marchand des Âmes",
+      description:
+        "Un étrange marchand vous propose d’échanger vos trésors. Les offres se renouvellent après chaque échange.",
+      offers: "Offres du marchand",
+      empty: "Le marchand n’a plus rien à offrir.",
+      against: "contre",
+      owned: "Vos reliques",
+      exchange: "Échanger",
     },
     choiceUnavailable: "Conditions non réunies ou aucune récompense disponible",
     healTitle: "Source de soin",
@@ -2408,9 +2406,14 @@ export const fr = {
     soldOut: "RUPTURE",
     inventoryFull: "Inventaire plein",
     unavailable: {
-      invalid: "Offre indisponible", gold: "Or insuffisant", hp: "PV insuffisants pour ce sacrifice",
-      deck: "Vous devez conserver au moins une carte", inventory: "Inventaire plein",
-      allies: "Aucune place d’allié disponible", owned: "Déjà acquis", fullHealth: "Vos PV sont déjà au maximum",
+      invalid: "Offre indisponible",
+      gold: "Or insuffisant",
+      hp: "PV insuffisants pour ce sacrifice",
+      deck: "Vous devez conserver au moins une carte",
+      inventory: "Inventaire plein",
+      allies: "Aucune place d’allié disponible",
+      owned: "Déjà acquis",
+      fullHealth: "Vos PV sont déjà au maximum",
     },
     priceGold: "{{price}} or",
     priceHp: "{{price}} PV",

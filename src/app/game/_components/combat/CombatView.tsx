@@ -10,6 +10,8 @@ import type {
   UsableItemInstance,
 } from "@/game/schemas/items";
 import { CombatPlayerZone } from "./combat-player-zone";
+import { FirstCombatTutorialOverlay } from "./first-combat-tutorial";
+import { localizeCardName } from "@/lib/i18n/card-text";
 import { CombatBattlefield } from "./combat-battlefield";
 import { CombatTargetPrompts } from "./combat-target-prompts";
 import { useCombatVisualEffects } from "./use-combat-visual-effects";
@@ -206,6 +208,13 @@ export function CombatView({
   } = useFirstCombatTutorial({
     showFirstCombatTutorial,
     onDismissFirstCombatTutorial,
+    completedPower:
+      combat.inkPowerUsedThisTurn ||
+      Object.values(combat.analyticsInkPowerUses ?? {}).some(
+        (count) => count > 0
+      ),
+    completedInkedCard: (combat.analyticsInkedCardsPlayed ?? 0) > 0,
+    completedTurn: combat.turnNumber > 1,
   });
 
   const tutorialInkedCard = useMemo(
@@ -423,7 +432,6 @@ export function CombatView({
     resetInteractionState,
   ]);
 
-
   const previewEffects = useMemo(() => {
     if (!selectedDef || !selectedCardId) return [];
     const selectedCard =
@@ -524,9 +532,82 @@ export function CombatView({
 
   return (
     <div
+      data-tutorial-step={
+        isFirstCombatTutorialVisible
+          ? firstCombatTutorialCurrentStep
+          : undefined
+      }
       className="combat-view relative flex h-full min-h-0 flex-col overflow-hidden"
       onClick={handleGlobalClick}
     >
+      <FirstCombatTutorialOverlay
+        isVisible={isFirstCombatTutorialVisible}
+        currentStep={firstCombatTutorialCurrentStep}
+        stepIndex={firstCombatTutorialStepIndex}
+        totalSteps={firstCombatTutorialTotalSteps}
+        isLastStep={isLastFirstCombatTutorialStep}
+        isNextDisabled={isFirstCombatTutorialNextDisabled}
+        explanationValues={{
+          power: tutorialPrimaryInkPower
+            ? t(`inkGauge.powers.${tutorialPrimaryInkPower}.label`)
+            : "",
+          card:
+            tutorialInkedCard && cardDefs.get(tutorialInkedCard.definitionId)
+              ? localizeCardName(
+                  cardDefs.get(tutorialInkedCard.definitionId)!,
+                  t
+                )
+              : "",
+        }}
+        actionLabel={
+          isInkPowersTutorialStep
+            ? t("combat.firstCombatTutorial.openPowers")
+            : isInkedCardTutorialStep
+              ? t("combat.firstCombatTutorial.findCard")
+              : isEndTurnTutorialStep
+                ? t("combat.endTurn")
+                : undefined
+        }
+        onAction={
+          isInkPowersTutorialStep
+            ? () => {
+                if (window.matchMedia("(max-width: 1023px)").matches)
+                  window.dispatchEvent(
+                    new CustomEvent("game:mobile-combat-action", {
+                      detail: { action: "open-ink" },
+                    })
+                  );
+                else
+                  document
+                    .querySelector<HTMLElement>("[data-tutorial-power]")
+                    ?.focus();
+              }
+            : isInkedCardTutorialStep
+              ? () => {
+                  const card = Array.from(
+                    document.querySelectorAll<HTMLElement>(
+                      '[data-tutorial-ink-card="true"]'
+                    )
+                  ).find((el) => el.getBoundingClientRect().width > 0);
+                  card?.scrollIntoView({
+                    block: "nearest",
+                    inline: "center",
+                    behavior: "instant",
+                  });
+                  card
+                    ?.querySelector<HTMLButtonElement>(
+                      ".mobile-card-actions button:last-child"
+                    )
+                    ?.focus({ preventScroll: true });
+                }
+              : isEndTurnTutorialStep
+                ? handleTutorialEndTurn
+                : undefined
+        }
+        onSkip={dismissFirstCombatTutorial}
+        onPrevious={handleFirstCombatTutorialPrevious}
+        onNext={handleFirstCombatTutorialNext}
+      />
       <CombatBattlefield
         characterId={runState.characterId}
         biome={biome}
@@ -535,15 +616,6 @@ export function CombatView({
         turnNumber={combat.turnNumber}
         turnBadgeClass={turnBadgeClass}
         turnLabel={turnLabel}
-        isFirstCombatTutorialVisible={isFirstCombatTutorialVisible}
-        firstCombatTutorialCurrentStep={firstCombatTutorialCurrentStep}
-        firstCombatTutorialStepIndex={firstCombatTutorialStepIndex}
-        firstCombatTutorialTotalSteps={firstCombatTutorialTotalSteps}
-        isLastFirstCombatTutorialStep={isLastFirstCombatTutorialStep}
-        isNextFirstCombatTutorialDisabled={isFirstCombatTutorialNextDisabled}
-        onDismissFirstCombatTutorial={dismissFirstCombatTutorial}
-        onPreviousFirstCombatTutorial={handleFirstCombatTutorialPrevious}
-        onNextFirstCombatTutorial={handleFirstCombatTutorialNext}
         summonAnnouncement={summonAnnouncement}
         enemyRowRef={enemyRowRef}
         combat={combat}
